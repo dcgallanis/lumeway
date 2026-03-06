@@ -431,13 +431,17 @@
       </svg>
     </button>
   </div>
-  <div class="input-footer">Lumeway is an AI guide, not a licensed professional. For legal or financial decisions, always consult a qualified advisor.</div>
+  <div class="input-footer">         <span>Lumeway is an AI guide, not a licensed professional. For legal or financial decisions, always consult a qualified advisor.</span>         <button id="summary-btn" onclick="getSummary()" style="background:none;border:1px solid #E8E2D9;border-radius:100px;padding:4px 14px;font-size:12px;color:#7A736B;cursor:pointer;font-family:'DM Sans',sans-serif;margin-left:12px;">📋 Get summary</button>       </div>
 </div>
 
 <script>
   let history = [];
   let isLoading = false;
-
+function getSummary() {
+    if (isLoading || history.length === 0) return;
+    const summaryRequest = "Please give me a session summary — what we covered today, my complete task list with statuses, and my single most urgent next step.";
+    sendMessageText(summaryRequest);
+  }
   // Simple markdown parser
   function parseMarkdown(text) {
     return text
@@ -532,7 +536,13 @@
     const t = document.getElementById('typing');
     if (t) t.remove();
   }
-
+function sendMessageText(text) {
+    addMessage('user', text);
+    history = [...history, {role: 'user', content: text}];
+    showTyping();
+    isLoading = true;
+    fetchReply(text);
+  }
   async function sendMessage(text) {
     const input = document.getElementById('input');
     const message = text || input.value.trim();
