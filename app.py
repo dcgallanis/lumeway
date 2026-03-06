@@ -229,6 +229,10 @@ def about():
 def privacy():
     return send_from_directory(".", "privacy.html")
 
+@app.route("/loss-of-spouse")
+def loss_of_spouse():
+    return send_from_directory(".", "loss-of-spouse.html")
+
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
