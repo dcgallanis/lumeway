@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — Lumeway</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #2C2825; --muted: #7A736B; --accent: #7C6A58; --accent-light: #B8977E; --border: #E8E2D9; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 32px; height: 32px; background: var(--text); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text); }
+    .nav-cta { display: flex; gap: 12px; }
+    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost:hover { background: var(--text); color: var(--cream); }
+    .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--text); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .page { max-width: 720px; margin: 0 auto; padding: 140px 24px 100px; }
+    .page-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .page-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 6vw, 64px); font-weight: 300; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 48px; }
+    .page-title em { font-style: italic; color: var(--accent-light); }
+    .prose p { font-size: 17px; font-weight: 300; line-height: 1.85; color: var(--text); margin-bottom: 28px; }
+    .prose strong { font-weight: 500; }
+    .divider { width: 48px; height: 1px; background: var(--accent-light); margin: 48px 0; }
+    .mission-block { background: var(--warm-white); border: 1px solid var(--border); border-left: 3px solid var(--accent-light); border-radius: 0 16px 16px 0; padding: 32px 36px; margin: 48px 0; }
+    .mission-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .mission-text { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; line-height: 1.5; font-style: italic; }
+    .values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 48px 0; }
+    .value-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+    .value-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+    .value-desc { font-size: 13px; color: var(--muted); line-height: 1.7; font-weight: 300; }
+    .cta-block { background: var(--text); border-radius: 24px; padding: 48px; text-align: center; margin-top: 64px; }
+    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: var(--cream); margin-bottom: 12px; }
+    .cta-subtitle { font-size: 15px; color: rgba(247,244,239,0.6); font-weight: 300; margin-bottom: 28px; }
+    .btn-large { display: inline-block; padding: 14px 32px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; text-decoration: none; background: var(--cream); color: var(--text); transition: all 0.2s; }
+    .btn-large:hover { background: var(--accent-light); color: white; transform: translateY(-2px); }
+    footer { padding: 40px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
+    @media (max-width: 580px) { nav { padding: 16px 20px; } .values-grid { grid-template-columns: 1fr; } .cta-block { padding: 32px 24px; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo">
+      <div class="nav-logo-icon">L</div>
+      <span class="nav-logo-text">Lumeway</span>
+    </a>
+    <div class="nav-cta">
+      <a href="/chat" class="btn-ghost">Try it free</a>
+      <a href="/#waitlist" class="btn-primary">Join waitlist</a>
+    </div>
+  </nav>
+  <div class="page">
+    <p class="page-label">Our story</p>
+    <h1 class="page-title">Built by someone<br>who has <em>been there</em></h1>
+    <div class="prose">
+      <p>Lumeway was born from a simple, painful observation: when life falls apart, the world doesn't stop asking things of you.</p>
+      <p>The paperwork arrives. The deadlines don't pause. The phone calls still need to be made — to insurance companies, banks, government agencies, employers. And you're expected to handle all of it while also trying to survive emotionally.</p>
+      <p>Our founder experienced this firsthand. After a devastating loss, the grief was only part of the burden. There were <strong>127 administrative tasks</strong> that needed attention in the weeks that followed — and no single place to turn for calm, organized guidance on what to do next.</p>
+    </div>
+    <div class="mission-block">
+      <div class="mission-label">Our mission</div>
+      <div class="mission-text">"To make sure that when life changes, no one has to face the paperwork alone."</div>
+    </div>
+    <div class="prose">
+      <p>We built Lumeway to be the calm, organized friend everyone deserves in a crisis — someone who knows what needs to happen, in what order, and can help you do it without judgment or overwhelm.</p>
+      <p>Lumeway is not a therapist, a lawyer, or a financial advisor. But it's the kind of thoughtful, knowledgeable guide who can sit with you, map out the path ahead, and walk through it with you one step at a time.</p>
+      <p>We believe that <strong>navigating life's hardest moments should not require you to also become an expert in bureaucracy.</strong> That's our job.</p>
+    </div>
+    <div class="divider"></div>
+    <div class="values-grid">
+      <div class="value-card"><div class="value-title">Empathy first</div><p class="value-desc">We acknowledge the emotional weight before anything practical. You are a person, not a to-do list.</p></div>
+      <div class="value-card"><div class="value-title">Clarity over complexity</div><p class="value-desc">We give you 3–5 next steps, never a wall of tasks. Progress feels possible when the path is clear.</p></div>
+      <div class="value-card"><div class="value-title">Know our limits</div><p class="value-desc">We always tell you when a human professional is needed — and help you find the right one.</p></div>
+      <div class="value-card"><div class="value-title">Your approval, always</div><p class="value-desc">We never act on your behalf without your explicit say-so. You stay in control.</p></div>
+    </div>
+    <div class="cta-block">
+      <div class="cta-title">Ready to find your way through?</div>
+      <p class="cta-subtitle">Try Lumeway free — no signup required.</p>
+      <a href="/chat" class="btn-large">Start a conversation →</a>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-logo">Lumeway</div>
+    <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions.</p>
+  </footer>
+</body>
+</html>
