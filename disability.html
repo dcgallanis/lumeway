@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Disability Claims — Lumeway</title>
+  <meta name="description" content="A step-by-step guide for navigating disability claims and SSDI. Deadlines, resources, and guidance from Lumeway."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #2C2825; --muted: #7A736B; --accent: #7C6A58; --accent-light: #B8977E; --border: #E8E2D9; --shadow: 0 2px 40px rgba(44,40,37,0.08); }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 32px; height: 32px; background: var(--text); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text); }
+    .nav-cta { display: flex; gap: 12px; }
+    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost:hover { background: var(--text); color: var(--cream); }
+    .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--text); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .hero { padding: 140px 24px 80px; max-width: 800px; margin: 0 auto; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
+    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 7vw, 72px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 24px; }
+    .hero-title em { font-style: italic; color: var(--accent-light); }
+    .hero-subtitle { font-size: 18px; font-weight: 300; color: var(--muted); line-height: 1.75; margin-bottom: 40px; max-width: 600px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-large { padding: 14px 32px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-large-primary { background: var(--text); color: var(--cream); border: 1.5px solid var(--text); }
+    .btn-large-primary:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+    .btn-large-secondary { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-large-secondary:hover { border-color: var(--text); transform: translateY(-2px); }
+    .section { padding: 80px 24px; max-width: 900px; margin: 0 auto; }
+    .section-divider { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
+    .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.15; margin-bottom: 48px; }
+    .section-title em { font-style: italic; color: var(--accent-light); }
+    .timeline { display: flex; flex-direction: column; gap: 2px; }
+    .timeline-item { display: grid; grid-template-columns: 140px 1fr; background: var(--warm-white); border: 1px solid var(--border); }
+    .timeline-item:first-child { border-radius: 16px 16px 0 0; }
+    .timeline-item:last-child { border-radius: 0 0 16px 16px; }
+    .timeline-period { background: var(--text); color: var(--cream); padding: 24px 20px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; font-weight: 500; line-height: 1.4; }
+    .timeline-content { padding: 24px 28px; }
+    .timeline-content h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+    .timeline-content ul { list-style: none; }
+    .timeline-content ul li { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.7; padding-left: 16px; position: relative; }
+    .timeline-content ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent-light); }
+    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; border-top: 3px solid #C0392B; }
+    .deadline-days { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: #C0392B; line-height: 1; margin-bottom: 8px; }
+    .deadline-title { font-weight: 500; font-size: 15px; margin-bottom: 6px; }
+    .deadline-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.2s; text-decoration: none; display: block; }
+    .resource-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
+    .resource-icon { font-size: 24px; margin-bottom: 12px; }
+    .resource-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .resource-link { font-size: 12px; color: var(--accent); margin-top: 8px; display: block; }
+    .cta-section { padding: 80px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
+    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
+    .cta-title em { font-style: italic; color: var(--accent-light); }
+    .cta-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
+    .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    footer { padding: 40px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
+    @media (max-width: 640px) { nav { padding: 16px 20px; } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 32px 20px; flex-direction: column; } }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo"><div class="nav-logo-icon">L</div><span class="nav-logo-text">Lumeway</span></a>
+  <div class="nav-cta">
+    <a href="/chat" class="btn-ghost">Try it free</a>
+    <a href="/#waitlist" class="btn-primary">Join waitlist</a>
+  </div>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">🩺 Disability claims</div>
+  <h1 class="hero-title">The system is complex.<br><em>You don't have to be.</em></h1>
+  <p class="hero-subtitle">Navigating disability claims — whether SSDI, SSI, or private insurance — is one of the most paperwork-intensive processes there is. Lumeway helps you understand the steps, meet the deadlines, and build the strongest possible case.</p>
+  <div class="hero-actions">
+    <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+    <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="section">
+  <p class="section-label">What to expect</p>
+  <h2 class="section-title">A timeline of what<br><em>needs to happen</em></h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-period">Apply now</div>
+      <div class="timeline-content"><h3>Start your application</h3><ul>
+        <li>Apply for SSDI online at ssa.gov or by calling 1-800-772-1213</li>
+        <li>Gather medical records, doctor contact info, and work history</li>
+        <li>Document all conditions — list every diagnosis, not just the primary one</li>
+        <li>Note your exact last day of work</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">3–6 months</div>
+      <div class="timeline-content"><h3>Initial decision</h3><ul>
+        <li>SSA reviews your application — most initial claims take 3-6 months</li>
+        <li>Respond promptly to any requests for additional information</li>
+        <li>Continue medical treatment and keep detailed records</li>
+        <li>Most initial applications are denied — this is normal, not final</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">If denied</div>
+      <div class="timeline-content"><h3>Appeal immediately</h3><ul>
+        <li>File a Request for Reconsideration within 60 days of denial</li>
+        <li>Consider hiring a disability attorney (they work on contingency)</li>
+        <li>Gather additional medical evidence to strengthen your case</li>
+        <li>Request an ALJ hearing if reconsideration is also denied</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">If approved</div>
+      <div class="timeline-content"><h3>After approval</h3><ul>
+        <li>Understand your back pay — benefits may go back to your application date</li>
+        <li>Medicare eligibility begins 24 months after SSDI approval</li>
+        <li>Report any work activity or income changes to SSA promptly</li>
+        <li>Review Ticket to Work program if you want to return to work</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="section">
+  <p class="section-label">Critical deadlines</p>
+  <h2 class="section-title">Don't miss these<br><em>time-sensitive steps</em></h2>
+  <div class="deadlines-grid">
+    <div class="deadline-card"><div class="deadline-days">ASAP</div><div class="deadline-title">Apply as soon as possible</div><p class="deadline-desc">SSDI has a 5-month waiting period from your disability onset date. The sooner you apply, the sooner benefits can begin.</p></div>
+    <div class="deadline-card"><div class="deadline-days">60 days</div><div class="deadline-title">Appeal a denial</div><p class="deadline-desc">You have 60 days plus 5 days for mailing to appeal a denial. Missing this window means starting the entire process over.</p></div>
+    <div class="deadline-card"><div class="deadline-days">5 months</div><div class="deadline-title">Waiting period</div><p class="deadline-desc">SSDI has a mandatory 5-month waiting period. Benefits begin on the 6th full month of disability.</p></div>
+    <div class="deadline-card"><div class="deadline-days">24 months</div><div class="deadline-title">Medicare eligibility</div><p class="deadline-desc">Medicare coverage begins 24 months after your first month of SSDI entitlement. Plan your healthcare coverage accordingly.</p></div>
+    <div class="deadline-card"><div class="deadline-days">Immediately</div><div class="deadline-title">Report income changes</div><p class="deadline-desc">If you receive SSDI and return to work or earn income, you must report it to SSA immediately to avoid overpayment issues.</p></div>
+    <div class="deadline-card"><div class="deadline-days">Varies</div><div class="deadline-title">Private disability insurance</div><p class="deadline-desc">Short-term disability typically has a 7-30 day waiting period. Long-term disability kicks in after 90-180 days. Check your policy.</p></div>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="section">
+  <p class="section-label">National resources</p>
+  <h2 class="section-title">Trusted organizations<br><em>that can help</em></h2>
+  <div class="resources-grid">
+    <a href="https://www.ssa.gov/disability" target="_blank" class="resource-card"><div class="resource-icon">🏛️</div><div class="resource-title">SSA Disability Benefits</div><p class="resource-desc">Apply for SSDI and SSI online, check your application status, and find your local Social Security office.</p><span class="resource-link">ssa.gov/disability →</span></a>
+    <a href="https://www.nosscr.org" target="_blank" class="resource-card"><div class="resource-icon">⚖️</div><div class="resource-title">Find a Disability Attorney</div><p class="resource-desc">NOSSCR directory of Social Security disability attorneys who work on contingency — no upfront cost.</p><span class="resource-link">nosscr.org →</span></a>
+    <a href="https://www.benefits.gov/benefit/4340" target="_blank" class="resource-card"><div class="resource-icon">📋</div><div class="resource-title">Benefits.gov SSDI Guide</div><p class="resource-desc">Comprehensive government guide to SSDI eligibility requirements and the application process.</p><span class="resource-link">benefits.gov →</span></a>
+    <a href="https://www.dol.gov/agencies/ebsa/workers-and-families/private-disability-insurance" target="_blank" class="resource-card"><div class="resource-icon">🏥</div><div class="resource-title">Private Disability Insurance (DOL)</div><p class="resource-desc">Department of Labor guide to private disability insurance rights and how to appeal a denied claim.</p><span class="resource-link">dol.gov →</span></a>
+  </div>
+</div>
+<div class="cta-section">
+  <h2 class="cta-title">Let's build your<br><em>strongest case</em></h2>
+  <p class="cta-subtitle">Lumeway walks you through every step of the disability claims process — from application to appeal — so nothing gets missed.</p>
+  <div class="cta-actions">
+    <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+    <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+  </div>
+</div>
+<footer>
+  <div class="footer-logo">Lumeway</div>
+  <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. · <a href="/about" style="color:var(--muted);">About</a> · <a href="/privacy" style="color:var(--muted);">Privacy</a></p>
+</footer>
+</body>
+</html>
