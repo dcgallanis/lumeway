@@ -62,7 +62,14 @@
     footer { padding: 40px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
     .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
-  </style>
+.nav-dropdown { position: relative; }
+.nav-drop-btn { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); cursor: pointer; padding: 8px 4px; }
+.nav-drop-btn:hover { color: var(--accent); }
+.nav-drop-menu { display: none; position: absolute; top: 100%; left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 8px; min-width: 160px; box-shadow: 0 8px 24px rgba(44,40,37,0.1); z-index: 200; }
+.nav-drop-menu a { display: block; padding: 8px 12px; font-size: 14px; color: var(--text); text-decoration: none; border-radius: 8px; }
+.nav-drop-menu a:hover { background: var(--cream); color: var(--accent); }
+.nav-dropdown:hover .nav-drop-menu { display: block; }  
+    </style>
 </head>
 <body>
   <nav>
@@ -70,7 +77,14 @@
       <div class="nav-logo-icon">L</div>
       <span class="nav-logo-text">Lumeway</span>
     </a>
-    <div class="nav-cta">
+    <div style="display:flex; align-items:center; gap:24px;">
+      <div class="nav-dropdown">
+        <button class="nav-drop-btn">Company ▾</button>
+        <div class="nav-drop-menu">
+          <a href="/about">About</a>
+          <a href="/privacy">Privacy Policy</a>
+        </div>
+      </div>
       <a href="/chat" class="btn-ghost">Try it free</a>
       <a href="#waitlist" class="btn-primary">Join waitlist</a>
     </div>
