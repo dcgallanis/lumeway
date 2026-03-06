@@ -233,6 +233,26 @@ def privacy():
 def loss_of_spouse():
     return send_from_directory(".", "loss-of-spouse.html")
 
+@app.route("/divorce")
+def divorce():
+    return send_from_directory(".", "divorce.html")
+
+@app.route("/job-loss")
+def job_loss():
+    return send_from_directory(".", "job-loss.html")
+
+@app.route("/relocation")
+def relocation():
+    return send_from_directory(".", "relocation.html")
+
+@app.route("/disability")
+def disability():
+    return send_from_directory(".", "disability.html")
+
+@app.route("/retirement")
+def retirement():
+    return send_from_directory(".", "retirement.html")
+
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
