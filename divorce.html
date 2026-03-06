@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Divorce — Lumeway</title>
+  <meta name="description" content="A step-by-step guide for navigating divorce. Deadlines, resources, and compassionate guidance from Lumeway."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #2C2825; --muted: #7A736B; --accent: #7C6A58; --accent-light: #B8977E; --border: #E8E2D9; --shadow: 0 2px 40px rgba(44,40,37,0.08); }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 32px; height: 32px; background: var(--text); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text); }
+    .nav-cta { display: flex; gap: 12px; }
+    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost:hover { background: var(--text); color: var(--cream); }
+    .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--text); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .hero { padding: 140px 24px 80px; max-width: 800px; margin: 0 auto; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
+    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 7vw, 72px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 24px; }
+    .hero-title em { font-style: italic; color: var(--accent-light); }
+    .hero-subtitle { font-size: 18px; font-weight: 300; color: var(--muted); line-height: 1.75; margin-bottom: 40px; max-width: 600px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-large { padding: 14px 32px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-large-primary { background: var(--text); color: var(--cream); border: 1.5px solid var(--text); }
+    .btn-large-primary:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+    .btn-large-secondary { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-large-secondary:hover { border-color: var(--text); transform: translateY(-2px); }
+    .section { padding: 80px 24px; max-width: 900px; margin: 0 auto; }
+    .section-divider { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
+    .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.15; margin-bottom: 48px; }
+    .section-title em { font-style: italic; color: var(--accent-light); }
+    .timeline { display: flex; flex-direction: column; gap: 2px; }
+    .timeline-item { display: grid; grid-template-columns: 140px 1fr; background: var(--warm-white); border: 1px solid var(--border); }
+    .timeline-item:first-child { border-radius: 16px 16px 0 0; }
+    .timeline-item:last-child { border-radius: 0 0 16px 16px; }
+    .timeline-period { background: var(--text); color: var(--cream); padding: 24px 20px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; font-weight: 500; line-height: 1.4; }
+    .timeline-content { padding: 24px 28px; }
+    .timeline-content h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+    .timeline-content ul { list-style: none; }
+    .timeline-content ul li { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.7; padding-left: 16px; position: relative; }
+    .timeline-content ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent-light); }
+    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; border-top: 3px solid #C0392B; }
+    .deadline-days { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: #C0392B; line-height: 1; margin-bottom: 8px; }
+    .deadline-title { font-weight: 500; font-size: 15px; margin-bottom: 6px; }
+    .deadline-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.2s; text-decoration: none; display: block; }
+    .resource-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
+    .resource-icon { font-size: 24px; margin-bottom: 12px; }
+    .resource-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .resource-link { font-size: 12px; color: var(--accent); margin-top: 8px; display: block; }
+    .cta-section { padding: 80px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
+    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
+    .cta-title em { font-style: italic; color: var(--accent-light); }
+    .cta-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
+    .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    footer { padding: 40px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
+    @media (max-width: 640px) { nav { padding: 16px 20px; } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 32px 20px; flex-direction: column; } }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo"><div class="nav-logo-icon">L</div><span class="nav-logo-text">Lumeway</span></a>
+  <div class="nav-cta">
+    <a href="/chat" class="btn-ghost">Try it free</a>
+    <a href="/#waitlist" class="btn-primary">Join waitlist</a>
+  </div>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">⚖️ Divorce</div>
+  <h1 class="hero-title">A new chapter starts<br>with <em>clarity</em></h1>
+  <p class="hero-subtitle">Divorce involves dozens of legal, financial, and practical decisions — often made under enormous emotional stress. Lumeway helps you understand what needs to happen, in what order, so nothing falls through the cracks.</p>
+  <div class="hero-actions">
+    <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+    <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="section">
+  <p class="section-label">What to expect</p>
+  <h2 class="section-title">A timeline of what<br><em>needs to happen</em></h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-period">Immediately</div>
+      <div class="timeline-content"><h3>Protect yourself first</h3><ul>
+        <li>Open individual bank accounts in your name only</li>
+        <li>Gather financial documents: tax returns, bank statements, retirement accounts</li>
+        <li>Make copies of all important documents</li>
+        <li>Consult with a divorce attorney before making major decisions</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">First month</div>
+      <div class="timeline-content"><h3>Legal and financial groundwork</h3><ul>
+        <li>File or respond to divorce petition</li>
+        <li>Address temporary orders for support, custody, and use of marital home</li>
+        <li>Begin asset and debt inventory</li>
+        <li>Notify HR about beneficiary and insurance changes needed</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">During process</div>
+      <div class="timeline-content"><h3>Negotiate and settle</h3><ul>
+        <li>Complete financial disclosure forms</li>
+        <li>Negotiate division of assets, debts, and retirement accounts</li>
+        <li>File QDRO for retirement account division before divorce is final</li>
+        <li>Establish parenting plan if children are involved</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">After divorce</div>
+      <div class="timeline-content"><h3>Update everything</h3><ul>
+        <li>Update name on Social Security card, driver's license, passport</li>
+        <li>Update beneficiaries on all accounts and insurance policies</li>
+        <li>Establish individual health insurance coverage</li>
+        <li>Create or update your own will and estate plan</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="section">
+  <p class="section-label">Critical deadlines</p>
+  <h2 class="section-title">Don't miss these<br><em>time-sensitive steps</em></h2>
+  <div class="deadlines-grid">
+    <div class="deadline-card"><div class="deadline-days">Before final</div><div class="deadline-title">QDRO for retirement accounts</div><p class="deadline-desc">A Qualified Domestic Relations Order must be filed before your divorce is finalized to divide retirement accounts without tax penalties.</p></div>
+    <div class="deadline-card"><div class="deadline-days">60 days</div><div class="deadline-title">COBRA health insurance</div><p class="deadline-desc">You have 60 days from loss of coverage to elect COBRA. After divorce, you're no longer eligible for your spouse's employer plan.</p></div>
+    <div class="deadline-card"><div class="deadline-days">2 years</div><div class="deadline-title">Social Security name change</div><p class="deadline-desc">You have 2 years from the divorce decree to change your name on your Social Security record without additional documentation.</p></div>
+    <div class="deadline-card"><div class="deadline-days">10 years</div><div class="deadline-title">Social Security benefits eligibility</div><p class="deadline-desc">If your marriage lasted 10+ years, you may be eligible for Social Security benefits based on your ex-spouse's record.</p></div>
+    <div class="deadline-card"><div class="deadline-days">Varies</div><div class="deadline-title">Divorce waiting periods</div><p class="deadline-desc">Most states require a waiting period of 30–180 days after filing before a divorce can be finalized. Check your state's requirements.</p></div>
+    <div class="deadline-card"><div class="deadline-days">Urgent</div><div class="deadline-title">Update beneficiaries</div><p class="deadline-desc">Update beneficiaries on life insurance, retirement accounts, and bank accounts immediately — don't wait until the divorce is final.</p></div>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="section">
+  <p class="section-label">National resources</p>
+  <h2 class="section-title">Trusted organizations<br><em>that can help</em></h2>
+  <div class="resources-grid">
+    <a href="https://www.womenslaw.org" target="_blank" class="resource-card"><div class="resource-icon">⚖️</div><div class="resource-title">WomensLaw.org</div><p class="resource-desc">Legal information and resources for people going through divorce, especially those experiencing abuse.</p><span class="resource-link">womenslaw.org →</span></a>
+    <a href="https://www.divorcenet.com" target="_blank" class="resource-card"><div class="resource-icon">📋</div><div class="resource-title">DivorceNet</div><p class="resource-desc">State-specific divorce laws, forms, and guidance on the divorce process from Nolo's legal team.</p><span class="resource-link">divorcenet.com →</span></a>
+    <a href="https://www.ssa.gov/benefits/retirement/planner/divorcedspouse.html" target="_blank" class="resource-card"><div class="resource-icon">🏛️</div><div class="resource-title">SSA Divorced Spouse Benefits</div><p class="resource-desc">Learn whether you qualify for Social Security benefits based on your ex-spouse's record.</p><span class="resource-link">ssa.gov →</span></a>
+    <a href="https://www.dol.gov/agencies/ebsa/laws-and-regulations/laws/cobra" target="_blank" class="resource-card"><div class="resource-icon">🏥</div><div class="resource-title">COBRA Information (DOL)</div><p class="resource-desc">Official Department of Labor guide to COBRA continuation health coverage after divorce.</p><span class="resource-link">dol.gov →</span></a>
+  </div>
+</div>
+<div class="cta-section">
+  <h2 class="cta-title">Ready to make sense<br>of <em>what comes next?</em></h2>
+  <p class="cta-subtitle">Lumeway walks you through every step of your divorce transition — from protecting your finances to rebuilding your life.</p>
+  <div class="cta-actions">
+    <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+    <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+  </div>
+</div>
+<footer>
+  <div class="footer-logo">Lumeway</div>
+  <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. · <a href="/about" style="color:var(--muted);">About</a> · <a href="/privacy" style="color:var(--muted);">Privacy</a></p>
+</footer>
+</body>
+</html>
