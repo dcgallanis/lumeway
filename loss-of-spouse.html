@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>What to Do After a Spouse Dies — Lumeway</title>
-  <meta name="description" content="A clear, compassionate guide to the practical steps after losing a spouse. Estate, benefits, finances — handled one step at a time."/>
+  <title>Loss of a Spouse — Lumeway</title>
+  <meta name="description" content="A step-by-step guide for what to do after losing a spouse. Deadlines, resources, and compassionate guidance from Lumeway."/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -18,168 +18,229 @@
     .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
     .btn-ghost:hover { background: var(--text); color: var(--cream); }
     .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--text); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+
     .hero { padding: 140px 24px 80px; max-width: 800px; margin: 0 auto; }
-    .hero-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
-    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 6vw, 72px); font-weight: 300; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 24px; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
+    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 7vw, 72px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 24px; }
     .hero-title em { font-style: italic; color: var(--accent-light); }
-    .hero-subtitle { font-size: 18px; font-weight: 300; color: var(--muted); line-height: 1.7; margin-bottom: 40px; max-width: 600px; }
+    .hero-subtitle { font-size: 18px; font-weight: 300; color: var(--muted); line-height: 1.75; margin-bottom: 40px; max-width: 600px; }
     .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn-large { padding: 14px 32px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; text-decoration: none; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-large { padding: 14px 32px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px; }
     .btn-large-primary { background: var(--text); color: var(--cream); border: 1.5px solid var(--text); }
     .btn-large-primary:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
     .btn-large-secondary { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
     .btn-large-secondary:hover { border-color: var(--text); transform: translateY(-2px); }
-    .section { max-width: 800px; margin: 0 auto; padding: 60px 24px; }
+
+    .section { padding: 80px 24px; max-width: 900px; margin: 0 auto; }
+    .section-divider { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
     .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
-    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(30px, 4vw, 44px); font-weight: 300; line-height: 1.2; margin-bottom: 32px; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.15; margin-bottom: 48px; }
     .section-title em { font-style: italic; color: var(--accent-light); }
+
     .timeline { display: flex; flex-direction: column; gap: 2px; }
-    .timeline-item { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 28px 32px; display: grid; grid-template-columns: 80px 1fr; gap: 24px; align-items: start; transition: all 0.2s; }
-    .timeline-item:hover { box-shadow: var(--shadow); }
-    .timeline-when { font-family: 'Cormorant Garamond', serif; font-size: 13px; font-weight: 500; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; padding-top: 3px; }
-    .timeline-content h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; margin-bottom: 8px; }
-    .timeline-content p { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; }
-    .urgent { border-left: 3px solid #C0392B; }
-    .urgent .timeline-when { color: #C0392B; }
-    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 24px; text-decoration: none; transition: all 0.2s; display: block; }
-    .resource-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent-light); }
-    .resource-org { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
-    .resource-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-    .resource-desc { font-size: 12px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .timeline-item { display: grid; grid-template-columns: 140px 1fr; background: var(--warm-white); border: 1px solid var(--border); border-radius: 0; overflow: hidden; }
+    .timeline-item:first-child { border-radius: 16px 16px 0 0; }
+    .timeline-item:last-child { border-radius: 0 0 16px 16px; }
+    .timeline-period { background: var(--text); color: var(--cream); padding: 24px 20px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; font-weight: 500; line-height: 1.4; }
+    .timeline-content { padding: 24px 28px; }
+    .timeline-content h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+    .timeline-content ul { list-style: none; }
+    .timeline-content ul li { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.7; padding-left: 16px; position: relative; }
+    .timeline-content ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent-light); }
+
+    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; border-top: 3px solid #C0392B; }
+    .deadline-days { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: #C0392B; line-height: 1; margin-bottom: 8px; }
+    .deadline-title { font-weight: 500; font-size: 15px; margin-bottom: 6px; }
+    .deadline-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.2s; text-decoration: none; display: block; }
+    .resource-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
+    .resource-icon { font-size: 24px; margin-bottom: 12px; }
+    .resource-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .resource-link { font-size: 12px; color: var(--accent); margin-top: 8px; display: block; }
+
     .state-section { background: var(--text); padding: 80px 24px; }
     .state-inner { max-width: 800px; margin: 0 auto; }
-    .state-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(30px, 4vw, 44px); font-weight: 300; color: var(--cream); margin-bottom: 16px; }
-    .state-subtitle { font-size: 15px; color: rgba(247,244,239,0.6); font-weight: 300; margin-bottom: 32px; }
-    .state-select { width: 100%; max-width: 400px; padding: 14px 20px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 15px; margin-bottom: 24px; cursor: pointer; }
-    .state-links { display: none; flex-direction: column; gap: 8px; }
-    .state-links.visible { display: flex; }
-    .state-link { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 16px 20px; text-decoration: none; color: var(--cream); transition: all 0.2s; }
-    .state-link:hover { background: rgba(255,255,255,0.15); }
-    .state-link-label { font-size: 12px; color: rgba(247,244,239,0.5); margin-bottom: 2px; }
-    .state-link-name { font-size: 15px; font-weight: 400; }
-    .cta-section { max-width: 800px; margin: 0 auto; padding: 80px 24px; text-align: center; }
-    .cta-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 24px; padding: 56px 48px; }
-    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; margin-bottom: 16px; }
+    .state-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 16px; }
+    .state-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; color: var(--cream); margin-bottom: 12px; }
+    .state-subtitle { font-size: 16px; color: rgba(247,244,239,0.6); font-weight: 300; margin-bottom: 32px; }
+    .state-select { width: 100%; padding: 14px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 15px; margin-bottom: 24px; cursor: pointer; }
+    .state-select option { background: var(--text); color: var(--cream); }
+    .state-results { display: none; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 28px; }
+    .state-results.visible { display: block; }
+    .state-results h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--cream); margin-bottom: 16px; }
+    .state-link { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); text-decoration: none; }
+    .state-link:last-child { border-bottom: none; }
+    .state-link-title { font-size: 14px; color: var(--cream); font-weight: 400; }
+    .state-link-url { font-size: 12px; color: var(--accent-light); }
+    .state-link:hover .state-link-title { color: var(--accent-light); }
+
+    .cta-section { padding: 80px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
+    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
     .cta-title em { font-style: italic; color: var(--accent-light); }
-    .cta-subtitle { font-size: 16px; color: var(--muted); font-weight: 300; margin-bottom: 32px; line-height: 1.7; }
+    .cta-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
+    .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
     footer { padding: 40px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
     .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
-    .footer-links { display: flex; gap: 20px; }
-    .footer-links a { font-size: 12px; color: var(--muted); text-decoration: none; }
-    .footer-links a:hover { color: var(--text); }
-    @media (max-width: 640px) { nav { padding: 16px 20px; } .timeline-item { grid-template-columns: 1fr; gap: 4px; } .cta-box { padding: 32px 24px; } }
+    .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
+    @media (max-width: 640px) { nav { padding: 16px 20px; } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 32px 20px; flex-direction: column; } }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="/" class="nav-logo">
-      <div class="nav-logo-icon">L</div>
-      <span class="nav-logo-text">Lumeway</span>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-icon">L</div>
+    <span class="nav-logo-text">Lumeway</span>
+  </a>
+  <div class="nav-cta">
+    <a href="/chat" class="btn-ghost">Try it free</a>
+    <a href="/#waitlist" class="btn-primary">Join waitlist</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">🕊️ Loss of a spouse</div>
+  <h1 class="hero-title">You don't have to figure<br>this out <em>alone</em></h1>
+  <p class="hero-subtitle">Losing a spouse is one of life's most devastating experiences. In the weeks that follow, there are over 100 practical tasks that need attention — while you're also grieving. Lumeway helps you know what to do, in what order, one step at a time.</p>
+  <div class="hero-actions">
+    <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+    <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<div class="section">
+  <p class="section-label">What to expect</p>
+  <h2 class="section-title">A timeline of what<br><em>needs to happen</em></h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-period">First 24–48 hours</div>
+      <div class="timeline-content">
+        <h3>Immediate needs</h3>
+        <ul>
+          <li>Obtain the death certificate (you'll need 10–15 certified copies)</li>
+          <li>Notify immediate family and close friends</li>
+          <li>Contact a funeral home to begin arrangements</li>
+          <li>Locate your spouse's will if one exists</li>
+        </ul>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">First 1–2 weeks</div>
+      <div class="timeline-content">
+        <h3>Notify key institutions</h3>
+        <ul>
+          <li>Contact Social Security Administration (1-800-772-1213)</li>
+          <li>Notify your spouse's employer about final paycheck and benefits</li>
+          <li>Contact life insurance companies to begin claims</li>
+          <li>Notify banks and financial institutions</li>
+          <li>Contact an estate attorney to begin probate if needed</li>
+        </ul>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">First month</div>
+      <div class="timeline-content">
+        <h3>Financial and legal steps</h3>
+        <ul>
+          <li>Apply for survivor benefits through Social Security</li>
+          <li>Review and update health insurance coverage</li>
+          <li>Transfer or retitle jointly owned assets</li>
+          <li>Review and update your own will and beneficiaries</li>
+          <li>File for any pension or retirement account survivor benefits</li>
+        </ul>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">First 3–6 months</div>
+      <div class="timeline-content">
+        <h3>Longer-term planning</h3>
+        <ul>
+          <li>File final tax return for your spouse</li>
+          <li>Close or transfer accounts in your spouse's name</li>
+          <li>Review your own financial plan and budget</li>
+          <li>Update vehicle titles, property deeds, and other legal documents</li>
+          <li>Consider meeting with a financial advisor</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<div class="section">
+  <p class="section-label">Critical deadlines</p>
+  <h2 class="section-title">Don't miss these<br><em>time-sensitive steps</em></h2>
+  <div class="deadlines-grid">
+    <div class="deadline-card">
+      <div class="deadline-days">60 days</div>
+      <div class="deadline-title">COBRA health insurance</div>
+      <p class="deadline-desc">You have 60 days from loss of coverage to elect COBRA continuation coverage. Missing this window means losing access entirely.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">6 months</div>
+      <div class="deadline-title">Social Security survivor benefits</div>
+      <p class="deadline-desc">Benefits don't back-pay more than 6 months. Apply as soon as possible — don't wait until you "feel ready."</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">9 months</div>
+      <div class="deadline-title">Estate tax return</div>
+      <p class="deadline-desc">Federal estate tax return (Form 706) is due 9 months after date of death if the estate exceeds the exemption threshold.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">2 years</div>
+      <div class="deadline-title">File as qualifying widow(er)</div>
+      <p class="deadline-desc">You can file taxes at the married filing jointly rate for 2 years after your spouse's death if you have a dependent child.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">Varies</div>
+      <div class="deadline-title">Probate filing</div>
+      <p class="deadline-desc">Most states require the will to be filed with probate court within 30–90 days of death. Check your state's specific requirements.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">No deadline</div>
+      <div class="deadline-title">Update beneficiaries</div>
+      <p class="deadline-desc">There's no hard deadline, but outdated beneficiaries on retirement accounts and life insurance can cause serious problems. Do this soon.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<div class="section">
+  <p class="section-label">National resources</p>
+  <h2 class="section-title">Trusted organizations<br><em>that can help</em></h2>
+  <div class="resources-grid">
+    <a href="https://www.ssa.gov/survivors" target="_blank" class="resource-card">
+      <div class="resource-icon">🏛️</div>
+      <div class="resource-title">Social Security Survivors</div>
+      <p class="resource-desc">Apply for survivor benefits, understand what you're entitled to, and find your local SSA office.</p>
+      <span class="resource-link">ssa.gov/survivors →</span>
     </a>
-    <div class="nav-cta">
-      <a href="/chat" class="btn-ghost">Try it free</a>
-      <a href="/#waitlist" class="btn-primary">Join waitlist</a>
-    </div>
-  </nav>
-
-  <div class="hero">
-    <p class="hero-label">Loss of a spouse</p>
-    <h1 class="hero-title">You don't have to figure<br>this out <em>alone</em></h1>
-    <p class="hero-subtitle">Losing a spouse is devastating. And yet the world keeps asking things of you — paperwork, phone calls, deadlines. Here's a clear guide to what needs to happen and when.</p>
-    <div class="hero-actions">
-      <a href="/chat" class="btn-large btn-large-primary">Get personalized guidance →</a>
-      <a href="#checklist" class="btn-large btn-large-secondary">See the checklist</a>
-    </div>
-  </div>
-
-  <div class="section" id="checklist">
-    <p class="section-label">What needs to happen</p>
-    <h2 class="section-title">The first <em>30 days</em></h2>
-    <div class="timeline">
-      <div class="timeline-item urgent">
-        <div class="timeline-when">Day 1–3</div>
-        <div class="timeline-content">
-          <h3>Obtain death certificates</h3>
-          <p>Order at least 10–12 certified copies from the funeral home or vital records office. You'll need them for banks, insurance, Social Security, and more. Each institution will want an original.</p>
-        </div>
-      </div>
-      <div class="timeline-item urgent">
-        <div class="timeline-when">Day 1–7</div>
-        <div class="timeline-content">
-          <h3>Notify Social Security</h3>
-          <p>Call 1-800-772-1213. If your spouse received benefits, payments must stop. You may be eligible for a one-time $255 death benefit and ongoing survivor benefits.</p>
-        </div>
-      </div>
-      <div class="timeline-item urgent">
-        <div class="timeline-when">Day 1–7</div>
-        <div class="timeline-content">
-          <h3>Contact life insurance companies</h3>
-          <p>Locate all policies and file claims promptly. You'll need the death certificate and policy numbers. Benefits are typically paid within 30–60 days of a complete claim.</p>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-when">Week 1–2</div>
-        <div class="timeline-content">
-          <h3>Locate the will and contact an estate attorney</h3>
-          <p>Find the original will (not a copy). Contact a probate attorney to understand next steps — most states require the estate to go through probate if assets exceed a threshold.</p>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-when">Week 2–4</div>
-        <div class="timeline-content">
-          <h3>Notify financial institutions</h3>
-          <p>Contact banks, investment accounts, and credit card companies. Transfer or close joint accounts. Freeze or cancel cards in your spouse's name to prevent fraud.</p>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-when">Within 60 days</div>
-        <div class="timeline-content">
-          <h3>Elect COBRA health insurance</h3>
-          <p>If you were covered under your spouse's employer health plan, you have 60 days to elect COBRA continuation coverage. Missing this deadline means losing coverage.</p>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-when">Within 60 days</div>
-        <div class="timeline-content">
-          <h3>Apply for survivor benefits</h3>
-          <p>Social Security survivor benefits don't back-pay beyond 6 months — apply as soon as possible. You may also be eligible for pension survivor benefits from your spouse's employer.</p>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-when">First tax year</div>
-        <div class="timeline-content">
-          <h3>File taxes as qualifying surviving spouse</h3>
-          <p>You can file a joint return for the year your spouse died. For the next two years you may qualify for "qualifying surviving spouse" status with lower tax rates if you have dependent children.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <p class="section-label">National resources</p>
-    <h2 class="section-title">Organizations that <em>can help</em></h2>
-    <div class="resources-grid">
-      <a href="https://www.ssa.gov/survivors" target="_blank" class="resource-card">
-        <div class="resource-org">Federal Government</div>
-        <div class="resource-name">Social Security Survivors</div>
-        <div class="resource-desc">Official SSA guide to survivor benefits, how to apply, and what you may be eligible for.</div>
-      </a>
-      <a href="https://www.usa.gov/death-of-loved-one" target="_blank" class="resource-card">
-        <div class="resource-org">Federal Government</div>
-        <div class="resource-name">USA.gov Death Guide</div>
-        <div class="resource-desc">Comprehensive checklist of federal agencies to notify and benefits to claim.</div>
-      </a>
-      <a href="https://www.modernwidowsclub.com" target="_blank" class="resource-card">
-        <div class="resource-org">Support Community</div>
-        <div class="resource-name">Modern Widows Club</div>
-        <div class="resource-desc">Community, resources, and empowerment programs for widows navigating life after loss.</div>
-      </a>
-      <a href="https://www.griefshare.org" target="_blank" class="resource-card">
-        <div class="resource-org">Grief Support</div>
-        <div class="resource-name">GriefShare</div>
-        <div class="resource-desc">Find a grief support group near you. Over 15,000 groups worldwide.</div>
-      </a>
-      <a href="https://www.nolo.com/legal-encyclopedia/probate" target="_blank" class="resource-card">
-        <div class="resource-org">Legal Resource</div>
-        <div class="resource-name">Nolo Probate Guide
+    <a href="https://www.usa.gov/survivor-benefits" target="_blank" class="resource-card">
+      <div class="resource-icon">🇺🇸</div>
+      <div class="resource-title">USA.gov Survivor Benefits</div>
+      <p class="resource-desc">Official government guide to all federal survivor benefits including veterans, federal employees, and more.</p>
+      <span class="resource-link">usa.gov/survivor-benefits →</span>
+    </a>
+    <a href="https://www.modernwidowsclub.com" target="_blank" class="resource-card">
+      <div class="resource-icon">🤝</div>
+      <div class="resource-title">Modern Widows Club</div>
+      <p class="resource-desc">Community, resources, and peer support for widows navigating life after loss.</p>
+      <span class="resource-link">modernwidowsclub.com →</span>
+    </a>
+    <a href="https://www.griefshare.org" target="_blank" class="resource-card">
+      <div class="resource-icon">💙</div>
+      <div class="resource-title">GriefShare</div>
+      <p class="resource-desc">Find grief support groups near you. Over 15,000 groups worldwide to help you heal.</p>
+      <span class="resource-link">griefshare.org →</span>
+    </a>
+    <a href="https://www.benefits.gov" target="_blank" class="resource-card">
+      <div class="resource-ico
