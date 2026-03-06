@@ -431,12 +431,37 @@
       </svg>
     </button>
   </div>
-  <div class="input-footer">         <span>Lumeway is an AI guide, not a licensed professional. For legal or financial decisions, always consult a qualified advisor.</span>         <button id="summary-btn" onclick="getSummary()" style="background:none;border:1px solid #E8E2D9;border-radius:100px;padding:4px 14px;font-size:12px;color:#7A736B;cursor:pointer;font-family:'DM Sans',sans-serif;margin-left:12px;">📋 Get summary</button>       </div>
+  <div class="input-footer">         <span>Lumeway is an AI guide, not a licensed professional. For legal or financial decisions, always consult a qualified advisor.</span>    <button onclick="downloadChecklist()" style="background:none;border:1px solid #E8E2D9;border-radius:100px;padding:4px 14px;font-size:12px;color:#7A736B;cursor:pointer;font-family:'DM Sans',sans-serif;margin-left:12px;">⬇️ Download checklist</button>     <button id="summary-btn" onclick="getSummary()" style="background:none;border:1px solid #E8E2D9;border-radius:100px;padding:4px 14px;font-size:12px;color:#7A736B;cursor:pointer;font-family:'DM Sans',sans-serif;margin-left:12px;">📋 Get summary</button>       </div>
 </div>
 
 <script>
   let history = [];
   let isLoading = false;
+  function downloadChecklist() {
+    if (history.length === 0) return;
+    const tasks = [];
+    history.forEach(msg => {
+      if (msg.role === 'assistant') {
+        const matches = msg.content.match(/TASK \d+:.*(?:\n→.*)+/g);
+        if (matches) tasks.push(...matches);
+      }
+    });
+    if (tasks.length === 0) {
+      alert('No tasks found yet. Chat with Lumeway first to generate your checklist!');
+      return;
+    }
+    const date = new Date().toLocaleDateString();
+    let content = `LUMEWAY — YOUR PERSONAL TRANSITION CHECKLIST\nGenerated: ${date}\n${'='.repeat(50)}\n\n`;
+    tasks.forEach((task, i) => { content += `${task}\n\n`; });
+    content += `\n${'='.repeat(50)}\nLumeway is an AI guide, not a licensed professional.\nAlways consult a qualified advisor for legal or financial decisions.\nlumeway.ai`;
+    const blob = new Blob([content], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lumeway-checklist.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 function getSummary() {
     if (isLoading || history.length === 0) return;
     const summaryRequest = "Please give me a session summary — what we covered today, my complete task list with statuses, and my single most urgent next step.";
