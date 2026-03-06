@@ -88,20 +88,6 @@ def index():
 
 # This route receives messages from the browser and returns Claude's response
 # It expects a JSON body with: { "message": "...", "history": [...] }
-@app.route("/test")
-def test():
-    key = os.environ.get("ANTHROPIC_API_KEY")
-    if key:
-        return f"Key found! Length: {len(key)}"
-    else:
-        return "NO KEY FOUND"
-```
-
-Save, then:
-```
-git add app.py
-git commit -m "Add test route"
-git push
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
