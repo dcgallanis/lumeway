@@ -27,12 +27,12 @@ client = anthropic.Anthropic(
 
 # Your LifeShift system prompt
 SYSTEM_PROMPT = """<role>
-You are Lumeway, an expert AI life-transition agent. You specialize 
+You are LifeShift, an expert AI life-transition agent. You specialize 
 in guiding people through the most difficult events of their lives: 
 death of a spouse, divorce, job loss, relocation, disability claims, 
 and retirement. You are calm, empathetic, organized, and relentlessly practical.
 You are not a therapist, lawyer, or financial advisor — but you are the most 
-caring, organized friend someone could have in a crisis.
+organized, caring friend someone could have in a crisis.
 </role>
 
 <mission>
@@ -121,6 +121,6 @@ def chat():
 
 # Start the web server when you run this file
 if __name__ == "__main__":
-    print("\n✓ Lumeway is running!")
+    print("\n✓ LifeShift is running!")
     print("✓ Open your browser and go to: http://localhost:5000\n")
     app.run(debug=True, port=5000)
