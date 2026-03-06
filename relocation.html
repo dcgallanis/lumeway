@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Relocation — Lumeway</title>
+  <meta name="description" content="A step-by-step guide for moving to a new state or city. Checklists, deadlines, and guidance from Lumeway."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #2C2825; --muted: #7A736B; --accent: #7C6A58; --accent-light: #B8977E; --border: #E8E2D9; --shadow: 0 2px 40px rgba(44,40,37,0.08); }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 32px; height: 32px; background: var(--text); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text); }
+    .nav-cta { display: flex; gap: 12px; }
+    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost:hover { background: var(--text); color: var(--cream); }
+    .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--text); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .hero { padding: 140px 24px 80px; max-width: 800px; margin: 0 auto; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
+    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 7vw, 72px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 24px; }
+    .hero-title em { font-style: italic; color: var(--accent-light); }
+    .hero-subtitle { font-size: 18px; font-weight: 300; color: var(--muted); line-height: 1.75; margin-bottom: 40px; max-width: 600px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-large { padding: 14px 32px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-large-primary { background: var(--text); color: var(--cream); border: 1.5px solid var(--text); }
+    .btn-large-primary:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+    .btn-large-secondary { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-large-secondary:hover { border-color: var(--text); transform: translateY(-2px); }
+    .section { padding: 80px 24px; max-width: 900px; margin: 0 auto; }
+    .section-divider { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
+    .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.15; margin-bottom: 48px; }
+    .section-title em { font-style: italic; color: var(--accent-light); }
+    .timeline { display: flex; flex-direction: column; gap: 2px; }
+    .timeline-item { display: grid; grid-template-columns: 140px 1fr; background: var(--warm-white); border: 1px solid var(--border); }
+    .timeline-item:first-child { border-radius: 16px 16px 0 0; }
+    .timeline-item:last-child { border-radius: 0 0 16px 16px; }
+    .timeline-period { background: var(--text); color: var(--cream); padding: 24px 20px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; font-weight: 500; line-height: 1.4; }
+    .timeline-content { padding: 24px 28px; }
+    .timeline-content h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+    .timeline-content ul { list-style: none; }
+    .timeline-content ul li { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.7; padding-left: 16px; position: relative; }
+    .timeline-content ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent-light); }
+    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; border-top: 3px solid #C0392B; }
+    .deadline-days { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: #C0392B; line-height: 1; margin-bottom: 8px; }
+    .deadline-title { font-weight: 500; font-size: 15px; margin-bottom: 6px; }
+    .deadline-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.2s; text-decoration: none; display: block; }
+    .resource-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
+    .resource-icon { font-size: 24px; margin-bottom: 12px; }
+    .resource-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .resource-link { font-size: 12px; color: var(--accent); margin-top: 8px; display: block; }
+    .cta-section { padding: 80px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
+    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
+    .cta-title em { font-style: italic; color: var(--accent-light); }
+    .cta-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
+    .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    footer { padding: 40px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
+    @media (max-width: 640px) { nav { padding: 16px 20px; } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 32px 20px; flex-direction: column; } }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo"><div class="nav-logo-icon">L</div><span class="nav-logo-text">Lumeway</span></a>
+  <div class="nav-cta">
+    <a href="/chat" class="btn-ghost">Try it free</a>
+    <a href="/#waitlist" class="btn-primary">Join waitlist</a>
+  </div>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">📦 Relocation</div>
+  <h1 class="hero-title">Every detail handled,<br><em>nothing forgotten</em></h1>
+  <p class="hero-subtitle">Moving to a new city or state involves dozens of overlapping tasks — utilities, licenses, registrations, school transfers, and more. Lumeway keeps everything organized so nothing slips through the cracks.</p>
+  <div class="hero-actions">
+    <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+    <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="section">
+  <p class="section-label">What to expect</p>
+  <h2 class="section-title">A timeline of what<br><em>needs to happen</em></h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-period">8 weeks before</div>
+      <div class="timeline-content"><h3>Plan and prepare</h3><ul>
+        <li>Research new city — neighborhoods, schools, healthcare providers</li>
+        <li>Get moving quotes from at least 3 licensed movers</li>
+        <li>Begin decluttering — donate, sell, or discard what you won't move</li>
+        <li>Notify employer of address change for payroll and tax purposes</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">4 weeks before</div>
+      <div class="timeline-content"><h3>Notify and transfer</h3><ul>
+        <li>File change of address with USPS</li>
+        <li>Notify banks, credit cards, and subscription services</li>
+        <li>Transfer or request school records for children</li>
+        <li>Schedule utility disconnection and new service setup</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">Move week</div>
+      <div class="timeline-content"><h3>Execute the move</h3><ul>
+        <li>Confirm moving company details and insurance coverage</li>
+        <li>Pack essentials bag for first night in new home</li>
+        <li>Document condition of old and new home with photos</li>
+        <li>Transfer prescriptions to new pharmacy</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">First 30 days</div>
+      <div class="timeline-content"><h3>Establish yourself</h3><ul>
+        <li>Update driver's license and vehicle registration in new state</li>
+        <li>Register to vote in new location</li>
+        <li>Find new doctors, dentists, and specialists</li>
+        <li>Update homeowner's or renter's insurance</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="section">
+  <p class="section-label">Critical deadlines</p>
+  <h2 class="section-title">Don't miss these<br><em>time-sensitive steps</em></h2>
+  <div class="deadlines-grid">
+    <div class="deadline-card"><div class="deadline-days">30 days</div><div class="deadline-title">Driver's license update</div><p class="deadline-desc">Most states require you to update your driver's license within 30-60 days of establishing residency. Check your new state's DMV.</p></div>
+    <div class="deadline-card"><div class="deadline-days">30 days</div><div class="deadline-title">Vehicle registration</div><p class="deadline-desc">Register your vehicle in your new state within 30-90 days. Driving with out-of-state plates too long can result in fines.</p></div>
+    <div class="deadline-card"><div class="deadline-days">Tax year</div><div class="deadline-title">State tax residency</div><p class="deadline-desc">You may owe taxes in both your old and new state for the year you move. Keep records of your move date for tax filing purposes.</p></div>
+    <div class="deadline-card"><div class="deadline-days">Before move</div><div class="deadline-title">USPS mail forwarding</div><p class="deadline-desc">Set up mail forwarding before your move date. USPS forwards mail for up to 12 months but it's not a substitute for updating your address.</p></div>
+    <div class="deadline-card"><div class="deadline-days">30 days</div><div class="deadline-title">Voter registration</div><p class="deadline-desc">Register to vote in your new state. Deadlines vary — some states allow same-day registration, others require 30 days in advance.</p></div>
+    <div class="deadline-card"><div class="deadline-days">Varies</div><div class="deadline-title">Professional licenses</div><p class="deadline-desc">If you hold a professional license (nurse, teacher, contractor, etc.), check if it transfers or needs to be re-obtained in your new state.</p></div>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="section">
+  <p class="section-label">National resources</p>
+  <h2 class="section-title">Trusted organizations<br><em>that can help</em></h2>
+  <div class="resources-grid">
+    <a href="https://moversguide.usps.com" target="_blank" class="resource-card"><div class="resource-icon">📬</div><div class="resource-title">USPS Mover's Guide</div><p class="resource-desc">Official USPS mail forwarding and change of address service. Set up forwarding and notify government agencies.</p><span class="resource-link">moversguide.usps.com →</span></a>
+    <a href="https://www.usa.gov/moving" target="_blank" class="resource-card"><div class="resource-icon">🏛️</div><div class="resource-title">USA.gov Moving Guide</div><p class="resource-desc">Official government checklist for updating federal and state records when you move.</p><span class="resource-link">usa.gov/moving →</span></a>
+    <a href="https://www.fmcsa.dot.gov/protect-your-move" target="_blank" class="resource-card"><div class="resource-icon">🚚</div><div class="resource-title">Protect Your Move (FMCSA)</div><p class="resource-desc">Federal guide to hiring licensed, insured movers and avoiding moving scams.</p><span class="resource-link">fmcsa.dot.gov →</span></a>
+    <a href="https://www.irs.gov/taxtopics/tc452" target="_blank" class="resource-card"><div class="resource-icon">💰</div><div class="resource-title">IRS Moving Expense Guide</div><p class="resource-desc">IRS guidance on moving expenses and how relocation may affect your taxes.</p><span class="resource-link">irs.gov →</span></a>
+  </div>
+</div>
+<div class="cta-section">
+  <h2 class="cta-title">Let's make your move<br><em>actually manageable</em></h2>
+  <p class="cta-subtitle">Lumeway builds you a personalized moving checklist and walks you through every step — from 8 weeks out to fully settled in.</p>
+  <div class="cta-actions">
+    <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+    <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+  </div>
+</div>
+<footer>
+  <div class="footer-logo">Lumeway</div>
+  <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. · <a href="/about" style="color:var(--muted);">About</a> · <a href="/privacy" style="color:var(--muted);">Privacy</a></p>
+</footer>
+</body>
+</html>
