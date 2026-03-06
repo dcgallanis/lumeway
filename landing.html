@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lumeway — Your Life Transition Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #2C2825;
+      --muted: #7A736B; --accent: #7C6A58; --accent-light: #B8977E;
+      --border: #E8E2D9; --shadow: 0 2px 40px rgba(44,40,37,0.08);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 32px; height: 32px; background: var(--text); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text); }
+    .nav-cta { display: flex; gap: 12px; align-items: center; }
+    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost:hover { background: var(--text); color: var(--cream); border-color: var(--text); }
+    .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--text); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .btn-primary:hover { background: var(--accent); }
+    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 120px 24px 80px; text-align: center; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 32px; }
+    .hero-eyebrow::before { content: ''; width: 6px; height: 6px; background: #7C9A6A; border-radius: 50%; }
+    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(48px, 8vw, 96px); font-weight: 300; line-height: 1.05; letter-spacing: -0.02em; color: var(--text); max-width: 800px; margin-bottom: 24px; }
+    .hero-title em { font-style: italic; color: var(--accent-light); }
+    .hero-subtitle { font-size: 18px; font-weight: 300; color: var(--muted); max-width: 520px; line-height: 1.7; margin-bottom: 48px; }
+    .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; }
+    .btn-large { padding: 14px 32px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-large-primary { background: var(--text); color: var(--cream); border: 1.5px solid var(--text); }
+    .btn-large-primary:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+    .btn-large-secondary { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-large-secondary:hover { border-color: var(--text); transform: translateY(-2px); }
+    .transitions-strip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 56px; }
+    .transition-pill { padding: 6px 14px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; font-size: 13px; color: var(--muted); }
+    .section-divider { width: 1px; height: 80px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
+    .section { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+    .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; text-align: center; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.15; text-align: center; margin-bottom: 64px; }
+    .section-title em { font-style: italic; color: var(--accent-light); }
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2px; background: var(--border); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
+    .step { background: var(--warm-white); padding: 40px 36px; }
+    .step-number { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 300; color: var(--border); line-height: 1; margin-bottom: 20px; }
+    .step-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; margin-bottom: 10px; }
+    .step-desc { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; }
+    .transitions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    .transition-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; padding: 32px; transition: all 0.25s; }
+    .transition-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent-light); }
+    .transition-icon { font-size: 28px; margin-bottom: 16px; }
+    .transition-name { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; margin-bottom: 8px; }
+    .transition-desc { font-size: 13px; color: var(--muted); line-height: 1.7; font-weight: 300; }
+    .waitlist-section { padding: 100px 24px; background: var(--text); }
+    .waitlist-inner { max-width: 600px; margin: 0 auto; text-align: center; }
+    .waitlist-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 16px; }
+    .waitlist-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; color: var(--cream); line-height: 1.15; margin-bottom: 16px; }
+    .waitlist-subtitle { font-size: 16px; color: rgba(247,244,239,0.6); font-weight: 300; line-height: 1.7; margin-bottom: 40px; }
+    .tally-embed { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; min-height: 200px; }
+    footer { padding: 40px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">L</div>
+      <span class="nav-logo-text">Lumeway</span>
+    </a>
+    <div class="nav-cta">
+      <a href="/chat" class="btn-ghost">Try it free</a>
+      <a href="#waitlist" class="btn-primary">Join waitlist</a>
+    </div>
+  </nav>
+  <section class="hero">
+    <div class="hero-eyebrow">Now in early access</div>
+    <h1 class="hero-title">When life changes,<br><em>find your way through</em></h1>
+    <p class="hero-subtitle">Lumeway guides you through life's hardest transitions — from paperwork and deadlines to knowing who to call and what to do first.</p>
+    <div class="hero-actions">
+      <a href="/chat" class="btn-large btn-large-primary">Try Lumeway free →</a>
+      <a href="#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+    </div>
+    <div class="transitions-strip">
+      <span class="transition-pill">Loss of a spouse</span>
+      <span class="transition-pill">Divorce</span>
+      <span class="transition-pill">Job loss</span>
+      <span class="transition-pill">Relocation</span>
+      <span class="transition-pill">Disability claims</span>
+      <span class="transition-pill">Retirement</span>
+    </div>
+  </section>
+  <div class="section-divider"></div>
+  <div class="section">
+    <p class="section-label">How it works</p>
+    <h2 class="section-title">Calm in the chaos</h2>
+    <div class="steps-grid">
+      <div class="step"><div class="step-number">01</div><div class="step-title">Tell us what's happening</div><p class="step-desc">No forms, no intake paperwork. Just tell Lumeway what you're going through in your own words.</p></div>
+      <div class="step"><div class="step-number">02</div><div class="step-title">Get a clear plan</div><p class="step-desc">Lumeway maps out exactly what needs to happen — in the right order, with deadlines that matter.</p></div>
+      <div class="step"><div class="step-number">03</div><div class="step-title">Take it one step at a time</div><p class="step-desc">Work through tasks together. Lumeway drafts letters, explains forms, and knows when to bring in a professional.</p></div>
+    </div>
+  </div>
+  <div class="section-divider"></div>
+  <div class="section">
+    <p class="section-label">Who we help</p>
+    <h2 class="section-title">Every major life transition,<br><em>handled with care</em></h2>
+    <div class="transitions-grid">
+      <div class="transition-card"><div class="transition-icon">🕊️</div><div class="transition-name">Loss of a spouse</div><p class="transition-desc">127 tasks in the weeks after loss. Lumeway helps you navigate estate, benefits, and finances without the overwhelm.</p></div>
+      <div class="transition-card"><div class="transition-icon">⚖️</div><div class="transition-name">Divorce</div><p class="transition-desc">From asset division to new accounts, Lumeway organizes the legal, financial, and practical steps you need to take.</p></div>
+      <div class="transition-card"><div class="transition-icon">💼</div><div class="transition-name">Job loss</div><p class="transition-desc">File for unemployment, review your severance, protect your health insurance. We make sure nothing falls through the cracks.</p></div>
+      <div class="transition-card"><div class="transition-icon">📦</div><div class="transition-name">Relocation</div><p class="transition-desc">Coordinate every moving part — from utilities and school transfers to DMV and voter registration.</p></div>
+      <div class="transition-card"><div class="transition-icon">🩺</div><div class="transition-name">Disability claims</div><p class="transition-desc">SSDI and insurance claims are complex. Lumeway guides you through the paperwork and deadlines step by step.</p></div>
+      <div class="transition-card"><div class="transition-icon">🌅</div><div class="transition-name">Retirement</div><p class="transition-desc">Social Security timing, Medicare enrollment, pension elections — Lumeway helps you make confident decisions.</p></div>
+    </div>
+  </div>
+  <section class="waitlist-section" id="waitlist">
+    <div class="waitlist-inner">
+      <p class="waitlist-label">Early access</p>
+      <h2 class="waitlist-title">Be the first to know<br>when we launch</h2>
+      <p class="waitlist-subtitle">We're letting in a small group of early users. Join the waitlist and get access before anyone else.</p>
+      <div class="tally-embed">
+        <iframe data-tally-src="https://tally.so/embed/PdE1ve?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="200" frameborder="0" title="Join the Lumeway Waitlist" style="background:transparent;"></iframe>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-logo">Lumeway</div>
+    <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions.</p>
+  </footer>
+  <script async src="https://tally.so/widgets/embed.js"></script>
+</body>
+</html>
