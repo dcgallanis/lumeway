@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Job Loss — Lumeway</title>
+  <meta name="description" content="A step-by-step guide for what to do after losing your job. Deadlines, resources, and compassionate guidance from Lumeway."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #2C2825; --muted: #7A736B; --accent: #7C6A58; --accent-light: #B8977E; --border: #E8E2D9; --shadow: 0 2px 40px rgba(44,40,37,0.08); }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 32px; height: 32px; background: var(--text); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text); }
+    .nav-cta { display: flex; gap: 12px; }
+    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost:hover { background: var(--text); color: var(--cream); }
+    .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--text); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .hero { padding: 140px 24px 80px; max-width: 800px; margin: 0 auto; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
+    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 7vw, 72px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 24px; }
+    .hero-title em { font-style: italic; color: var(--accent-light); }
+    .hero-subtitle { font-size: 18px; font-weight: 300; color: var(--muted); line-height: 1.75; margin-bottom: 40px; max-width: 600px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-large { padding: 14px 32px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-large-primary { background: var(--text); color: var(--cream); border: 1.5px solid var(--text); }
+    .btn-large-primary:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+    .btn-large-secondary { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-large-secondary:hover { border-color: var(--text); transform: translateY(-2px); }
+    .section { padding: 80px 24px; max-width: 900px; margin: 0 auto; }
+    .section-divider { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
+    .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.15; margin-bottom: 48px; }
+    .section-title em { font-style: italic; color: var(--accent-light); }
+    .timeline { display: flex; flex-direction: column; gap: 2px; }
+    .timeline-item { display: grid; grid-template-columns: 140px 1fr; background: var(--warm-white); border: 1px solid var(--border); }
+    .timeline-item:first-child { border-radius: 16px 16px 0 0; }
+    .timeline-item:last-child { border-radius: 0 0 16px 16px; }
+    .timeline-period { background: var(--text); color: var(--cream); padding: 24px 20px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; font-weight: 500; line-height: 1.4; }
+    .timeline-content { padding: 24px 28px; }
+    .timeline-content h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+    .timeline-content ul { list-style: none; }
+    .timeline-content ul li { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.7; padding-left: 16px; position: relative; }
+    .timeline-content ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent-light); }
+    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; border-top: 3px solid #C0392B; }
+    .deadline-days { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: #C0392B; line-height: 1; margin-bottom: 8px; }
+    .deadline-title { font-weight: 500; font-size: 15px; margin-bottom: 6px; }
+    .deadline-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.2s; text-decoration: none; display: block; }
+    .resource-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
+    .resource-icon { font-size: 24px; margin-bottom: 12px; }
+    .resource-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .resource-link { font-size: 12px; color: var(--accent); margin-top: 8px; display: block; }
+    .cta-section { padding: 80px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
+    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
+    .cta-title em { font-style: italic; color: var(--accent-light); }
+    .cta-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
+    .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    footer { padding: 40px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
+    @media (max-width: 640px) { nav { padding: 16px 20px; } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 32px 20px; flex-direction: column; } }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo"><div class="nav-logo-icon">L</div><span class="nav-logo-text">Lumeway</span></a>
+  <div class="nav-cta">
+    <a href="/chat" class="btn-ghost">Try it free</a>
+    <a href="/#waitlist" class="btn-primary">Join waitlist</a>
+  </div>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">💼 Job loss</div>
+  <h1 class="hero-title">You have more options<br>than it <em>feels like right now</em></h1>
+  <p class="hero-subtitle">Losing a job is disorienting and stressful. There are deadlines to meet, benefits to protect, and decisions to make — all while managing the emotional weight of what just happened. Lumeway helps you act quickly and wisely.</p>
+  <div class="hero-actions">
+    <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+    <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="section">
+  <p class="section-label">What to expect</p>
+  <h2 class="section-title">A timeline of what<br><em>needs to happen</em></h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-period">Day 1</div>
+      <div class="timeline-content"><h3>Immediate steps</h3><ul>
+        <li>Review your termination or separation paperwork carefully</li>
+        <li>Do not sign anything immediately — you usually have time to review</li>
+        <li>Ask for a copy of your employee file and any performance reviews</li>
+        <li>Note your last day of health insurance coverage</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">First week</div>
+      <div class="timeline-content"><h3>Protect your benefits</h3><ul>
+        <li>File for unemployment insurance in your state (don't wait)</li>
+        <li>Elect COBRA health insurance or find alternative coverage</li>
+        <li>Review severance agreement with an employment attorney if offered</li>
+        <li>Request your final paycheck and any unused PTO payout</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">First month</div>
+      <div class="timeline-content"><h3>Financial protection</h3><ul>
+        <li>Build a lean budget based on unemployment income</li>
+        <li>Contact creditors proactively if you anticipate payment issues</li>
+        <li>Decide what to do with your 401k (leave, roll over, or cash out)</li>
+        <li>Use FSA funds before coverage ends</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">Ongoing</div>
+      <div class="timeline-content"><h3>Next chapter</h3><ul>
+        <li>Update your resume, LinkedIn, and professional references</li>
+        <li>Expand your network — most jobs come through connections</li>
+        <li>Consider skills training or certification if pivoting careers</li>
+        <li>Track job search expenses — some may be tax deductible</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="section">
+  <p class="section-label">Critical deadlines</p>
+  <h2 class="section-title">Don't miss these<br><em>time-sensitive steps</em></h2>
+  <div class="deadlines-grid">
+    <div class="deadline-card"><div class="deadline-days">ASAP</div><div class="deadline-title">File for unemployment</div><p class="deadline-desc">File within the first 1-2 weeks of job loss. Benefits don't back-pay to your last day of work — every week you wait is money lost.</p></div>
+    <div class="deadline-card"><div class="deadline-days">60 days</div><div class="deadline-title">COBRA health insurance</div><p class="deadline-desc">You have 60 days from loss of coverage to elect COBRA. Missing this window means losing access to continuation coverage entirely.</p></div>
+    <div class="deadline-card"><div class="deadline-days">60 days</div><div class="deadline-title">401k rollover</div><p class="deadline-desc">If you take a 401k distribution, you have 60 days to roll it into an IRA or new employer plan to avoid taxes and penalties.</p></div>
+    <div class="deadline-card"><div class="deadline-days">Before signing</div><div class="deadline-title">Severance review</div><p class="deadline-desc">If offered severance, you typically have 21 days to review the agreement. Workers over 40 have 21 days by law under the ADEA.</p></div>
+    <div class="deadline-card"><div class="deadline-days">End of coverage</div><div class="deadline-title">FSA funds</div><p class="deadline-desc">Flexible spending account funds may be forfeited when your coverage ends. Use them for eligible expenses before your last day.</p></div>
+    <div class="deadline-card"><div class="deadline-days">Varies</div><div class="deadline-title">Non-compete agreements</div><p class="deadline-desc">Review any non-compete clauses in your employment agreement before accepting a new job. Enforcement varies significantly by state.</p></div>
+  </div>
+</div>
+<div class="section-divider"></div>
+<div class="section">
+  <p class="section-label">National resources</p>
+  <h2 class="section-title">Trusted organizations<br><em>that can help</em></h2>
+  <div class="resources-grid">
+    <a href="https://www.careeronestop.org" target="_blank" class="resource-card"><div class="resource-icon">💼</div><div class="resource-title">CareerOneStop</div><p class="resource-desc">Sponsored by the U.S. Department of Labor — find unemployment benefits, job training, and career resources by state.</p><span class="resource-link">careeronestop.org →</span></a>
+    <a href="https://www.dol.gov/agencies/eta/unemploy" target="_blank" class="resource-card"><div class="resource-icon">🏛️</div><div class="resource-title">Unemployment Insurance (DOL)</div><p class="resource-desc">Official Department of Labor guide to unemployment insurance benefits and how to file in your state.</p><span class="resource-link">dol.gov →</span></a>
+    <a href="https://www.healthcare.gov/unemployed/coverage/" target="_blank" class="resource-card"><div class="resource-icon">🏥</div><div class="resource-title">Healthcare.gov Job Loss Guide</div><p class="resource-desc">Understand your health insurance options after job loss including Marketplace plans, Medicaid, and COBRA.</p><span class="resource-link">healthcare.gov →</span></a>
+    <a href="https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-termination-of-employment" target="_blank" class="resource-card"><div class="resource-icon">💰</div><div class="resource-title">IRS 401k Guidance</div><p class="resource-desc">Official IRS guidance on what happens to your retirement plan when you leave a job.</p><span class="resource-link">irs.gov →</span></a>
+  </div>
+</div>
+<div class="cta-section">
+  <h2 class="cta-title">Let's figure out<br><em>your next move</em></h2>
+  <p class="cta-subtitle">Lumeway helps you protect your benefits, manage your finances, and plan your next chapter — one step at a time.</p>
+  <div class="cta-actions">
+    <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+    <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+  </div>
+</div>
+<footer>
+  <div class="footer-logo">Lumeway</div>
+  <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. · <a href="/about" style="color:var(--muted);">About</a> · <a href="/privacy" style="color:var(--muted);">Privacy</a></p>
+</footer>
+</body>
+</html>
