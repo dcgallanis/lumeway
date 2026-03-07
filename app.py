@@ -253,9 +253,40 @@ def disability():
 def retirement():
     return send_from_directory(".", "retirement.html")
     
-@app.route("/research")
-def research():
-    return send_from_directory(".", "research.html")
+@app.route("/api/research", methods=["POST"])
+def research_api():
+    try:
+        data = request.json
+        topic = data.get("topic", "")
+
+        response = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=2000,
+            tools=[{"type": "web_search_20250305", "name": "web_search"}],
+            system="""You are a market research agent for Lumeway, an AI life-transition guide. Search for real online conversations where people are struggling with life transitions.
+
+Find recent Reddit posts and forum threads showing people who are overwhelmed and don't know where to start. Focus on specific pain points, common questions, and high-engagement threads.
+
+Return ONLY a JSON array with exactly 4 results. Each result must have:
+- topic: the transition category
+- title: the post/thread title
+- community: subreddit or forum name
+- url: actual URL if found, otherwise empty string
+- summary: 2-3 sentence summary of what the person is struggling with
+- painPoints: array of 3 specific pain points or questions
+- opportunityScore: number 1-10 (10 = highest need for Lumeway)
+- engagementHint: brief note on why this thread matters
+
+Return ONLY the JSON array, no other text.""",
+            messages=[{"role": "user", "content": f"Find real online conversations where people are struggling with: {topic}. Search Reddit and forums for recent posts showing genuine pain and overwhelm."}]
+        )
+
+        full_text = "".join([block.text for block in response.content if hasattr(block, "text")])
+        return jsonify({"result": full_text})
+
+    except Exception as e:
+        print(f"Research API error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
     
 @app.route("/chat", methods=["POST"])
 def chat():
