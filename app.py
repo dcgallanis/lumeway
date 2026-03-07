@@ -252,6 +252,7 @@ def disability():
 @app.route("/retirement")
 def retirement():
     return send_from_directory(".", "retirement.html")
+    
 @app.route("/research")
 def research():
     return send_from_directory(".", "research.html")
