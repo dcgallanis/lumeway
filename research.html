@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lumeway Research Agent</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #2C2825; --muted: #7A736B; --accent: #7C6A58; --accent-light: #B8977E; --border: #E8E2D9; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; padding: 40px 24px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .header { margin-bottom: 40px; }
+    .header h1 { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 300; margin-bottom: 8px; }
+    .header h1 em { font-style: italic; color: var(--accent-light); }
+    .header p { color: var(--muted); font-size: 15px; font-weight: 300; }
+    .controls { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 32px; }
+    .controls-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .topic-btn { padding: 8px 18px; border-radius: 100px; border: 1px solid var(--border); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+    .topic-btn.active { background: var(--text); color: var(--cream); border-color: var(--text); }
+    .topic-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+    .search-row { display: flex; gap: 12px; align-items: center; }
+    .custom-input { flex: 1; padding: 12px 18px; border: 1px solid var(--border); border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--cream); color: var(--text); outline: none; }
+    .custom-input:focus { border-color: var(--accent); }
+    .run-btn { padding: 12px 28px; border-radius: 100px; background: var(--text); color: var(--cream); border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .run-btn:hover { background: var(--accent); }
+    .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .status { text-align: center; padding: 60px 24px; color: var(--muted); font-size: 15px; font-weight: 300; }
+    .status .spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .results { display: flex; flex-direction: column; gap: 16px; }
+    .result-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+    .result-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .result-topic { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .result-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; line-height: 1.3; }
+    .result-meta { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .pain-score { text-align: center; flex-shrink: 0; }
+    .pain-score .score { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; line-height: 1; }
+    .pain-score .score-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .score-high { color: #C0392B; }
+    .score-mid { color: #E67E22; }
+    .score-low { color: #27AE60; }
+    .result-summary { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 16px; }
+    .result-insights { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .insight { display: flex; gap: 10px; font-size: 13px; line-height: 1.5; }
+    .insight-icon { flex-shrink: 0; }
+    .result-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .action-btn { padding: 7px 16px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-block; }
+    .action-primary { background: var(--text); color: var(--cream); border: 1px solid var(--text); }
+    .action-primary:hover { background: var(--accent); border-color: var(--accent); }
+    .action-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .action-secondary:hover { border-color: var(--text); }
+    .summary-bar { background: var(--text); color: var(--cream); border-radius: 16px; padding: 20px 28px; margin-bottom: 24px; display: flex; gap: 32px; flex-wrap: wrap; }
+    .summary-stat { text-align: center; }
+    .summary-stat .num { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; line-height: 1; }
+    .summary-stat .lbl { font-size: 11px; color: rgba(247,244,239,0.6); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+    .draft-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; padding: 24px; }
+    .draft-modal.open { display: flex; }
+    .draft-box { background: var(--warm-white); border-radius: 20px; padding: 32px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; }
+    .draft-box h3 { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 500; margin-bottom: 16px; }
+    .draft-text { background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 16px; font-size: 14px; line-height: 1.7; white-space: pre-wrap; margin-bottom: 16px; color: var(--text); }
+    .draft-actions { display: flex; gap: 10px; }
+    .copy-btn { padding: 10px 24px; border-radius: 100px; background: var(--text); color: var(--cream); border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; }
+    .close-btn { padding: 10px 24px; border-radius: 100px; background: transparent; color: var(--text); border: 1px solid var(--border); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Lumeway <em>Research Agent</em></h1>
+    <p>Find real conversations where people need help — and where Lumeway can make a difference.</p>
+  </div>
+
+  <div class="controls">
+    <div class="controls-row">
+      <button class="topic-btn active" data-topic="loss of spouse widow widower">🕊️ Loss of spouse</button>
+      <button class="topic-btn" data-topic="divorce separation">⚖️ Divorce</button>
+      <button class="topic-btn" data-topic="job loss layoff unemployed">💼 Job loss</button>
+      <button class="topic-btn" data-topic="relocation moving to new state">📦 Relocation</button>
+      <button class="topic-btn" data-topic="disability SSDI benefits claim">🩺 Disability</button>
+      <button class="topic-btn" data-topic="retirement Medicare Social Security">🌅 Retirement</button>
+    </div>
+    <div class="search-row">
+      <input class="custom-input" id="customTopic" placeholder="Or type a custom topic..."/>
+      <button class="run-btn" id="runBtn" onclick="runResearch()">Run research →</button>
+    </div>
+  </div>
+
+  <div id="output"><div class="status">Choose a transition topic above and click Run research.</div></div>
+</div>
+
+<div class="draft-modal" id="draftModal">
+  <div class="draft-box">
+    <h3>Draft reply</h3>
+    <div class="draft-text" id="draftText"></div>
+    <div class="draft-actions">
+      <button class="copy-btn" onclick="copyDraft()">Copy to clipboard</button>
+      <button class="close-btn" onclick="closeDraft()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let selectedTopic = 'loss of spouse widow widower';
+  let currentResults = [];
+
+  document.querySelectorAll('.topic-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedTopic = btn.dataset.topic;
+      document.getElementById('customTopic').value = '';
+    });
+  });
+
+  async function runResearch() {
+    const custom = document.getElementById('customTopic').value.trim();
+    const topic = custom || selectedTopic;
+    const btn = document.getElementById('runBtn');
+    btn.disabled = true;
+    btn.textContent = 'Researching...';
+
+    document.getElementById('output').innerHTML = `
+      <div class="status">
+        <div class="spinner"></div>
+        Searching for conversations about "${topic}"...
+      </div>`;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+          system: `You are a market research agent for Lumeway, an AI life-transition guide. Your job is to find real online conversations where people are struggling with life transitions and need help.
+
+Search for recent Reddit posts, forum threads, and community discussions about the given topic. Focus on finding:
+1. People who are overwhelmed and don't know where to start
+2. Specific pain points and questions being asked
+3. Gaps where an AI guide could genuinely help
+4. High-engagement threads (lots of comments/upvotes)
+
+Return ONLY a JSON array with exactly 4 results. Each result must have:
+- topic: the transition category
+- title: the post/thread title
+- community: subreddit or forum name
+- url: the actual URL if found, otherwise a realistic example
+- summary: 2-3 sentence summary of what the person is struggling with
+- painPoints: array of 3 specific pain points or questions from the thread
+- opportunityScore: number 1-10 (10 = highest need for Lumeway)
+- engagementHint: brief note on why this thread matters
+
+Return ONLY the JSON array, no other text.`,
+          messages: [{ role: 'user', content: `Find real online conversations where people are struggling with: ${topic}. Search Reddit and forums for recent posts showing genuine pain and overwhelm.` }]
+        })
+      });
+
+      const data = await response.json();
+      const fullText = data.content.map(i => i.text || '').filter(Boolean).join('\n');
+      
+      let results;
+      try {
+        const clean = fullText.replace(/```json|```/g, '').trim();
+        const jsonMatch = clean.match(/\[[\s\S]*\]/);
+        results = JSON.parse(jsonMatch ? jsonMatch[0] : clean);
+      } catch(e) {
+        throw new Error('Could not parse results. Try again.');
+      }
+
+      currentResults = results;
+      renderResults(results, topic);
+
+    } catch(err) {
+      document.getElementById('output').innerHTML = `<div class="status">Something went wrong: ${err.message}<br><br>Please try again.</div>`;
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Run research →';
+  }
+
+  function renderResults(results, topic) {
+    const high = results.filter(r => r.opportunityScore >= 8).length;
+    const avg = Math.round(results.reduce((s, r) => s + r.opportunityScore, 0) / results.length * 10) / 10;
+
+    let html = `
+      <div class="summary-bar">
+        <div class="summary-stat"><div class="num">${results.length}</div><div class="lbl">Threads found</div></div>
+        <div class="summary-stat"><div class="num">${high}</div><div class="lbl">High opportunity</div></div>
+        <div class="summary-stat"><div class="num">${avg}/10</div><div class="lbl">Avg pain score</div></div>
+        <div class="summary-stat"><div class="num">${results.filter(r=>r.opportunityScore>=7).length}</div><div class="lbl">Worth engaging</div></div>
+      </div>
+      <div class="results">`;
+
+    results.forEach((r, i) => {
+      const scoreClass = r.opportunityScore >= 8 ? 'score-high' : r.opportunityScore >= 6 ? 'score-mid' : 'score-low';
+      html += `
+        <div class="result-card">
+          <div class="result-header">
+            <div>
+              <div class="result-topic">${r.community}</div>
+              <div class="result-title">${r.title}</div>
+              <div class="result-meta">Opportunity score: ${r.opportunityScore}/10 · ${r.engagementHint}</div>
+            </div>
+            <div class="pain-score">
+              <div class="score ${scoreClass}">${r.opportunityScore}</div>
+              <div class="score-label">Pain score</div>
+            </div>
+          </div>
+          <p class="result-summary">${r.summary}</p>
+          <div class="result-insights">
+            ${r.painPoints.map(p => `<div class="insight"><span class="insight-icon">→</span><span>${p}</span></div>`).join('')}
+          </div>
+          <div class="result-actions">
+            <button class="action-btn action-primary" onclick="draftReply(${i})">Draft a reply</button>
+            ${r.url && r.url.startsWith('http') ? `<a class="action-btn action-secondary" href="${r.url}" target="_blank">View thread →</a>` : ''}
+          </div>
+        </div>`;
+    });
+
+    html += '</div>';
+    document.getElementById('output').innerHTML = html;
+  }
+
+  async function draftReply(index) {
+    const result = currentResults[index];
+    document.getElementById('draftText').textContent = 'Drafting reply...';
+    document.getElementById('draftModal').classList.add('open');
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: `You are helping the founder of Lumeway (lumeway.ai) draft authentic, helpful replies to people struggling with life transitions. 
+
+Rules:
+- Sound like a real human, not a company
+- Lead with genuine empathy and acknowledgment
+- Provide 2-3 actually useful tips or resources
+- Mention Lumeway naturally at the end only if it genuinely fits — never force it
+- Never sound salesy or promotional
+- Keep it under 150 words
+- Write in plain text, no markdown`,
+          messages: [{ role: 'user', content: `Draft a helpful, human reply to this post:\n\nCommunity: ${result.community}\nTitle: ${result.title}\nSummary: ${result.summary}\nPain points: ${result.painPoints.join(', ')}` }]
+        })
+      });
+
+      const data = await response.json();
+      const reply = data.content[0].text;
+      document.getElementById('draftText').textContent = reply;
+    } catch(err) {
+      document.getElementById('draftText').textContent = 'Error drafting reply. Please try again.';
+    }
+  }
+
+  function copyDraft() {
+    navigator.clipboard.writeText(document.getElementById('draftText').textContent);
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to clipboard', 2000);
+  }
+
+  function closeDraft() {
+    document.getElementById('draftModal').classList.remove('open');
+  }
+</script>
+</body>
+</html>
