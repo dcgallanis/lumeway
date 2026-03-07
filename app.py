@@ -262,59 +262,17 @@ def research_api():
     try:
         data = request.json
         topic = data.get("topic", "")
-
-response = client.messages.create(
+        response = client.messages.create(
             model="claude-sonnet-4-6",
             max_tokens=2000,
-            system="""You are a market research agent for Lumeway, an AI life-transition guide. Based on your knowledge, identify realistic examples of the kinds of conversations and pain points people share online when going through life transitions.
-
-Return ONLY a JSON array with exactly 4 results. Each result must have:
-- topic: the transition category
-- title: a realistic post title someone might write
-- community: subreddit or forum name (e.g. r/widowers, r/divorce)
-- url: empty string
-- summary: 2-3 sentence summary of what the person is struggling with
-- painPoints: array of 3 specific pain points or questions
-- opportunityScore: number 1-10 (10 = highest need for Lumeway)
-- engagementHint: brief note on why this type of post gets high engagement
-
-Return ONLY the JSON array, no other text.""",
+            system="You are a market research agent for Lumeway, an AI life-transition guide. Based on your knowledge, identify realistic examples of the kinds of conversations and pain points people share online when going through life transitions. Return ONLY a JSON array with exactly 4 results. Each result must have: topic (transition category), title (realistic post title), community (subreddit or forum like r/widowers), url (empty string), summary (2-3 sentences of what person struggles with), painPoints (array of 3 specific pain points), opportunityScore (number 1-10), engagementHint (why this post gets engagement). Return ONLY the JSON array, no other text.",
             messages=[{"role": "user", "content": "Find realistic examples of online conversations where people struggle with: " + topic}]
         )
-
         full_text = "".join([block.text for block in response.content if hasattr(block, "text")])
         return jsonify({"result": full_text})
-
     except Exception as e:
         print(f"Research API error: {str(e)}")
         return jsonify({"error": str(e)}), 500
-    
-@app.route("/chat", methods=["POST"])
-def chat():
-    try:
-        data = request.json
-        user_message = data.get("message", "")
-        history = data.get("history", [])
-
-        if not user_message:
-            return jsonify({"error": "No message provided"}), 400
-
-        messages = history + [{"role": "user", "content": user_message}]
-
-        response = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=2048,
-            system=SYSTEM_PROMPT,
-            messages=messages
-        )
-
-        reply = response.content[0].text
-        updated_history = messages + [{"role": "assistant", "content": reply}]
-        return jsonify({"reply": reply, "history": updated_history})
-
-    except Exception as e:
-        print(f"ERROR: {str(e)}")
-        return jsonify({"error": str(e), "reply": f"Error: {str(e)}"}), 500
 
 
 if __name__ == "__main__":
