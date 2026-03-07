@@ -191,7 +191,7 @@
           </div>
           <div class="result-actions">
             <button class="action-btn action-primary" onclick="draftReply(${i})">Draft a reply</button>
-            ${r.url && r.url.startsWith('http') ? `<a class="action-btn action-secondary" href="${r.url}" target="_blank">View thread →</a>` : ''}
+            <a class="action-btn action-secondary" href="https://www.google.com/search?q=site:reddit.com+${encodeURIComponent(r.title)}" target="_blank">Find on Reddit →</a>
           </div>
         </div>`;
     });
