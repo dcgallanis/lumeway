@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
 import anthropic
 import os
@@ -293,7 +293,34 @@ def draft_reply_api():
     except Exception as e:
         print(f"Draft reply error: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
+@app.route("/chat", methods=["POST"])
+def chat():
+    try:
+        data = request.json
+        user_message = data.get("message", "")
+        history = data.get("history", [])
+        if not user_message:
+            return jsonify({"error": "No message provided"}), 400
+        messages = history + [{"role": "user", "content": user_message}]
+        def generate():
+            full_reply = ""
+            with client.messages.stream(
+                model="claude-sonnet-4-6",
+                max_tokens=2048,
+                system=SYSTEM_PROMPT,
+                messages=messages
+            ) as stream:
+                for text in stream.text_stream:
+                    full_reply += text
+                    yield f"data: {text}\n\n"
+            import json
+            updated_history = messages + [{"role": "assistant", "content": full_reply}]
+            yield f"data: [DONE]{json.dumps(updated_history)}\n\n"
+        return Response(generate(), mimetype="text/event-stream")
+    except Exception as e:
+        print(f"ERROR: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+        
 if __name__ == "__main__":
     print("\n✓ Lumeway is running!")
     app.run(debug=True, port=5000)
