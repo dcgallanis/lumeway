@@ -285,7 +285,7 @@ def draft_reply_api():
         response = client.messages.create(
             model="claude-sonnet-4-6",
             max_tokens=400,
-            system="You are helping the founder of Lumeway (lumeway.ai) draft authentic, helpful replies to people struggling with life transitions. Sound like a real human, not a company. Lead with genuine empathy. Provide 2-3 actually useful tips. Mention Lumeway naturally at the end only if it genuinely fits. Never sound salesy. Keep it under 150 words. Plain text only, no markdown.",
+            system="You are helping the founder of Lumeway (lumeway.ai) draft authentic, helpful replies to people struggling with life transitions. Rules: Sound like a real human, not a company. Lead with genuine empathy and acknowledgment. Provide 2-3 actually useful tips or resources. Mention Lumeway naturally at the end only if it genuinely fits — never force it. Never sound salesy or promotional. Keep it under 150 words. Write in plain text, no markdown.",
             messages=[{"role": "user", "content": "Draft a helpful reply to this post:\nCommunity: " + community + "\nTitle: " + title + "\nSummary: " + summary + "\nPain points: " + ", ".join(pain_points)}]
         )
         reply = response.content[0].text
