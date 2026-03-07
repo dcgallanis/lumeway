@@ -127,38 +127,15 @@
       </div>`;
 
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('/api/research', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-          system: `You are a market research agent for Lumeway, an AI life-transition guide. Your job is to find real online conversations where people are struggling with life transitions and need help.
-
-Search for recent Reddit posts, forum threads, and community discussions about the given topic. Focus on finding:
-1. People who are overwhelmed and don't know where to start
-2. Specific pain points and questions being asked
-3. Gaps where an AI guide could genuinely help
-4. High-engagement threads (lots of comments/upvotes)
-
-Return ONLY a JSON array with exactly 4 results. Each result must have:
-- topic: the transition category
-- title: the post/thread title
-- community: subreddit or forum name
-- url: the actual URL if found, otherwise a realistic example
-- summary: 2-3 sentence summary of what the person is struggling with
-- painPoints: array of 3 specific pain points or questions from the thread
-- opportunityScore: number 1-10 (10 = highest need for Lumeway)
-- engagementHint: brief note on why this thread matters
-
-Return ONLY the JSON array, no other text.`,
-          messages: [{ role: 'user', content: `Find real online conversations where people are struggling with: ${topic}. Search Reddit and forums for recent posts showing genuine pain and overwhelm.` }]
-        })
+        body: JSON.stringify({ topic })
       });
 
       const data = await response.json();
-      const fullText = data.content.map(i => i.text || '').filter(Boolean).join('\n');
+      if (data.error) throw new Error(data.error);
+      const fullText = data.result;
       
       let results;
       try {
