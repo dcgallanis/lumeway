@@ -263,26 +263,23 @@ def research_api():
         data = request.json
         topic = data.get("topic", "")
 
-        response = client.messages.create(
+response = client.messages.create(
             model="claude-sonnet-4-6",
             max_tokens=2000,
-            tools=[{"type": "web_search_20250305", "name": "web_search"}],
-            system="""You are a market research agent for Lumeway, an AI life-transition guide. Search for real online conversations where people are struggling with life transitions.
-
-Find recent Reddit posts and forum threads showing people who are overwhelmed and don't know where to start. Focus on specific pain points, common questions, and high-engagement threads.
+            system="""You are a market research agent for Lumeway, an AI life-transition guide. Based on your knowledge, identify realistic examples of the kinds of conversations and pain points people share online when going through life transitions.
 
 Return ONLY a JSON array with exactly 4 results. Each result must have:
 - topic: the transition category
-- title: the post/thread title
-- community: subreddit or forum name
-- url: actual URL if found, otherwise empty string
+- title: a realistic post title someone might write
+- community: subreddit or forum name (e.g. r/widowers, r/divorce)
+- url: empty string
 - summary: 2-3 sentence summary of what the person is struggling with
 - painPoints: array of 3 specific pain points or questions
 - opportunityScore: number 1-10 (10 = highest need for Lumeway)
-- engagementHint: brief note on why this thread matters
+- engagementHint: brief note on why this type of post gets high engagement
 
 Return ONLY the JSON array, no other text.""",
-            messages=[{"role": "user", "content": f"Find real online conversations where people are struggling with: {topic}. Search Reddit and forums for recent posts showing genuine pain and overwhelm."}]
+            messages=[{"role": "user", "content": "Find realistic examples of online conversations where people struggle with: " + topic}]
         )
 
         full_text = "".join([block.text for block in response.content if hasattr(block, "text")])
