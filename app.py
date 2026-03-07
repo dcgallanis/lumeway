@@ -273,7 +273,26 @@ def research_api():
     except Exception as e:
         print(f"Research API error: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
+        
+@app.route("/api/draft-reply", methods=["POST"])
+def draft_reply_api():
+    try:
+        data = request.json
+        community = data.get("community", "")
+        title = data.get("title", "")
+        summary = data.get("summary", "")
+        pain_points = data.get("painPoints", [])
+        response = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=400,
+            system="You are helping the founder of Lumeway (lumeway.ai) draft authentic, helpful replies to people struggling with life transitions. Sound like a real human, not a company. Lead with genuine empathy. Provide 2-3 actually useful tips. Mention Lumeway naturally at the end only if it genuinely fits. Never sound salesy. Keep it under 150 words. Plain text only, no markdown.",
+            messages=[{"role": "user", "content": "Draft a helpful reply to this post:\nCommunity: " + community + "\nTitle: " + title + "\nSummary: " + summary + "\nPain points: " + ", ".join(pain_points)}]
+        )
+        reply = response.content[0].text
+        return jsonify({"reply": reply})
+    except Exception as e:
+        print(f"Draft reply error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     print("\n✓ Lumeway is running!")
