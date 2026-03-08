@@ -588,15 +588,29 @@ function sendMessageText(text) {
         body: JSON.stringify({ message, history })
       });
 
-      const data = await res.json();
-      removeTyping();
-
-      if (data.error) {
-        addMessage('bot', 'Something went wrong. Please try again.');
-      } else {
-        history = data.history;
-        addMessage('bot', data.reply);
+removeTyping();
+    const msgDiv = addMessage('bot', '');
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value);
+      const lines = chunk.split('\n');
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const payload = line.slice(6);
+          if (payload.startsWith('[DONE]')) {
+            try { history = JSON.parse(payload.slice(6)); } catch(e) {}
+          } else {
+            fullText += payload;
+            msgDiv.innerHTML = parseMarkdown(fullText);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+          }
+        }
       }
+    }
     } catch (err) {
       removeTyping();
       addMessage('bot', 'Could not connect to Lumeway. Make sure the server is running.');
