@@ -471,25 +471,26 @@ function getSummary() {
     sendMessageText(summaryRequest);
   }
   // Simple markdown parser
-  function parseMarkdown(text) {
-    return text
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-      .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-      .replace(/^---$/gm, '<hr>')
-      .replace(/^[\*\-] (.+)$/gm, '<li>$1</li>')
-      .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/^(?!<[hul]|<li|<hr)(.+)$/gm, (m) => m.startsWith('<') ? m : m)
-      .split('\n').map(line => {
-        if (line.match(/^<(h[123]|ul|ol|li|hr|p)/)) return line;
-        if (line.trim() === '') return '';
-        return line;
-      }).join('\n');
-  }
+function parseMarkdown(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')  // bold
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')               // italic
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/^---$/gm, '<hr>')
+    .replace(/^[\*\-] (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>')    // fixed: non-greedy + global
+    .replace(/\n\n/g, '</p><p>')
+    .split('\n').map(line => {
+      if (line.match(/^<(h[123]|ul|ol|li|hr|p)/)) return line;
+      if (line.trim() === '') return '';
+      return `<p>${line}</p>`;   // fixed: wrap bare lines in <p>
+    }).join('\n');
+}
 
   function formatMessage(text) {
     // Split into paragraphs and format
