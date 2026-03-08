@@ -589,6 +589,7 @@ function sendMessageText(text) {
       });
 
 removeTyping();
+    const messagesDiv = document.getElementById('messages');
     const msgDiv = addMessage('bot', '');
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
