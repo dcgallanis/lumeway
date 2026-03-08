@@ -250,12 +250,15 @@
       line-height: 1.7;
     }
 
-    .message.bot .bubble {
-      background: var(--bot-bg);
-      border: 1px solid var(--border);
-      border-top-left-radius: 4px;
-      color: var(--text);
-    }
+     .message.bot .bubble {
+          background: var(--bot-bg);
+          border: 1px solid var(--border);
+          border-top-left-radius: 4px;
+          color: var(--text);
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
+        }
 
     .message.user .bubble {
       background: var(--user-bg);
