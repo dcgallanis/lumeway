@@ -609,12 +609,12 @@
       <p>Lumeway helps you navigate life's hardest transitions — from paperwork and deadlines to knowing who to call and what to do first.</p>
       <p class="starters-label">Where are you right now?</p>
       <div class="starters">
-        <button class="starter-btn" onclick="sendStarter(this)">My spouse just passed away. I don't know where to start.</button>
-        <button class="starter-btn" onclick="sendStarter(this)">I just got laid off. What do I need to do right away?</button>
-        <button class="starter-btn" onclick="sendStarter(this)">I'm going through a divorce and feel completely overwhelmed.</button>
-        <button class="starter-btn" onclick="sendStarter(this)">I'm moving to a new state next month.</button>
-        <button class="starter-btn" onclick="sendStarter(this)">I'm applying for disability benefits and don't know where to begin.</button>
-        <button class="starter-btn" onclick="sendStarter(this)">I'm retiring soon and need help with Medicare and Social Security.</button>
+        <button class="starter-btn" onclick="sendStarter(this)" data-message="My spouse just passed away. I don't know where to start.">Death &amp; Estate</button>
+        <button class="starter-btn" onclick="sendStarter(this)" data-message="I just got laid off. What do I need to do right away?">Job Loss &amp; Income Crisis</button>
+        <button class="starter-btn" onclick="sendStarter(this)" data-message="I'm going through a divorce and feel completely overwhelmed.">Divorce &amp; Separation</button>
+        <button class="starter-btn" onclick="sendStarter(this)" data-message="I'm moving to a new state next month.">Moving &amp; Relocation</button>
+        <button class="starter-btn" onclick="sendStarter(this)" data-message="I'm applying for disability benefits and don't know where to begin.">Disability &amp; Benefits</button>
+        <button class="starter-btn" onclick="sendStarter(this)" data-message="I need help navigating a business or contract issue.">Business &amp; Contracts</button>
         <button class="starter-btn other" onclick="focusInput()">Something else is going on…</button>
       </div>
     </div>
@@ -870,7 +870,7 @@
   }
 
   function sendStarter(btn) {
-    sendMessage(btn.textContent.trim());
+    sendMessage(btn.dataset.message || btn.textContent.trim());
   }
 
   function focusInput() {
