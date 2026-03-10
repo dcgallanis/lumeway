@@ -46,6 +46,8 @@
       justify-content: center;
       padding: 16px;
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     /* Grain texture */
@@ -371,7 +373,7 @@
     }
     .bubble p:last-child { margin-bottom: 0; }
 
-    .bubble strong { font-weight: 600; color: inherit; }
+    .bubble strong { font-weight: 500; color: inherit; }
     .bubble em { font-style: italic; }
 
     .bubble h1, .bubble h2, .bubble h3 {
@@ -394,6 +396,30 @@
       line-height: 1.65;
     }
     .bubble li::marker { color: var(--gold); }
+
+    /* Checklist items */
+    .bubble .checklist {
+      list-style: none;
+      padding-left: 0;
+      margin: 8px 0;
+    }
+    .bubble .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.5;
+    }
+    .bubble .checklist li:last-child { border-bottom: none; }
+    .bubble .checklist li input[type="checkbox"] {
+      margin-top: 3px;
+      flex-shrink: 0;
+      width: 15px;
+      height: 15px;
+      accent-color: var(--navy);
+      cursor: pointer;
+    }
 
     .bubble hr {
       border: none;
@@ -647,6 +673,7 @@
     const output = [];
     let inUL = false;
     let inOL = false;
+    let inCL = false;
 
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i];
@@ -672,9 +699,21 @@
         closeList(); output.push('<hr>'); continue;
       }
 
-      // Unordered list
-      if (/^[\*\-•] (.+)$/.test(line)) {
+      // Checklist items: - [ ], * [ ], [ ], or checked variants
+      if (/^([-*] )?\[(x| )\] (.+)$/i.test(line)) {
+        const checked = /\[x\]/i.test(line);
+        const text = line.replace(/^([-*] )?\[(x| )\] /i, '');
         if (inOL) { output.push('</ol>'); inOL = false; }
+        if (inUL) { output.push('</ul>'); inUL = false; }
+        if (!inCL) { output.push('<ul class="checklist">'); inCL = true; }
+        output.push(`<li><input type="checkbox"${checked ? ' checked' : ''}><span${checked ? ' style="text-decoration:line-through;opacity:0.5"' : ''}>${text}</span></li>`);
+        continue;
+      }
+
+      // Unordered list (exclude checklist lines already handled above)
+      if (/^[\*\-•] (.+)$/.test(line) && !/^([-*] )?\[(x| )\]/i.test(line)) {
+        if (inOL) { output.push('</ol>'); inOL = false; }
+        if (inCL) { output.push('</ul>'); inCL = false; }
         if (!inUL) { output.push('<ul>'); inUL = true; }
         output.push(line.replace(/^[\*\-•] (.+)$/, '<li>$1</li>'));
         continue;
@@ -683,6 +722,7 @@
       // Ordered list
       if (/^\d+\. (.+)$/.test(line)) {
         if (inUL) { output.push('</ul>'); inUL = false; }
+        if (inCL) { output.push('</ul>'); inCL = false; }
         if (!inOL) { output.push('<ol>'); inOL = true; }
         output.push(line.replace(/^\d+\. (.+)$/, '<li>$1</li>'));
         continue;
@@ -705,6 +745,7 @@
     function closeList() {
       if (inUL) { output.push('</ul>'); inUL = false; }
       if (inOL) { output.push('</ol>'); inOL = false; }
+      if (inCL) { output.push('</ul>'); inCL = false; }
     }
   }
 
@@ -795,19 +836,23 @@
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let fullText = '';
+      let lineBuffer = '';
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n');
+        lineBuffer += decoder.decode(value, { stream: true });
+        const lines = lineBuffer.split('\n');
+        // Keep the last (potentially incomplete) line in the buffer
+        lineBuffer = lines.pop();
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             const payload = line.slice(6);
             if (payload.startsWith('[DONE]')) {
               try { history = JSON.parse(payload.slice(6)); } catch(e) {}
             } else {
-              fullText += payload;
+              // Decode \n back to real newlines (backend encodes them to avoid SSE line-splitting)
+              fullText += payload === '' ? '\n' : payload.replace(/\\n/g, '\n');
               updateBubble(msgDiv, fullText);
             }
           }
