@@ -276,6 +276,46 @@ def retirement():
 def research():
     return send_from_directory(".", "research.html")
 
+@app.route("/api/export", methods=["POST"])
+def export_checklist():
+    try:
+        import json as _json
+        data = request.json
+        history = data.get("history", [])
+        response = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=2000,
+            system="""You are extracting structured data from a Lumeway conversation. Return ONLY valid JSON — no markdown, no explanation.
+
+Extract the user's situation and all tasks discussed. Use this exact structure:
+{
+  "situation": "One sentence describing the user's transition (e.g. 'Job loss in Illinois, two children, happened this week')",
+  "tasks": [
+    {
+      "number": 1,
+      "title": "Task title",
+      "why": "One sentence why this matters",
+      "steps": ["Step 1", "Step 2", "Step 3"],
+      "timeNeeded": "30 minutes",
+      "deadline": "File within 2 weeks"
+    }
+  ]
+}
+
+If a field is unknown, use null. Always return valid JSON.""",
+            messages=[{"role": "user", "content": "Extract tasks from this conversation:\n\n" + _json.dumps(history)}]
+        )
+        text = response.content[0].text.strip()
+        # Strip markdown code fences if present
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+        return jsonify(_json.loads(text))
+    except Exception as e:
+        print(f"Export error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/api/research", methods=["POST"])
 def research_api():
     try:

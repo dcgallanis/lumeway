@@ -893,35 +893,122 @@
     el.style.height = Math.min(el.scrollHeight, 120) + 'px';
   }
 
-  // ── Download checklist ──
-  function downloadChecklist() {
+  // ── Export checklist as print-ready PDF page ──
+  async function downloadChecklist() {
     if (history.length === 0) {
-      alert('Chat with Lumeway first to generate your checklist!');
+      alert('Chat with Lumeway first to generate your checklist.');
       return;
     }
-    const date = new Date().toLocaleDateString();
-    let content = `LUMEWAY — YOUR TRANSITION CHECKLIST\nGenerated: ${date}\n${'─'.repeat(48)}\n\n`;
 
-    history.forEach(msg => {
-      if (msg.role === 'assistant') {
-        const matches = msg.content.match(/TASK \d+:.*(?:\n→.*)+/g);
-        if (matches) matches.forEach(t => { content += t + '\n\n'; });
-      }
-    });
+    const btn = document.querySelector('[onclick="downloadChecklist()"]');
+    const orig = btn.textContent;
+    btn.textContent = 'Generating…';
+    btn.disabled = true;
 
-    if (content.trim().split('\n').length <= 4) {
-      content += '(Continue your conversation to build out your task list.)\n';
+    try {
+      const res = await fetch('/api/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ history })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      openChecklistWindow(data);
+    } catch (e) {
+      alert('Could not generate checklist. Please try again.');
+    } finally {
+      btn.textContent = orig;
+      btn.disabled = false;
     }
+  }
 
-    content += `\n${'─'.repeat(48)}\nLumeway is an AI guide, not a licensed professional.\nlumeway.ai`;
+  function openChecklistWindow(data) {
+    const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const tasks = (data.tasks || []).map((t, i) => {
+      const steps = (t.steps || []).map(s =>
+        `<li><label><input type="checkbox"> <span>${s}</span></label></li>`
+      ).join('');
+      const deadline = t.deadline ? `<div class="meta"><span class="meta-label">Deadline</span>${t.deadline}</div>` : '';
+      const time = t.timeNeeded ? `<div class="meta"><span class="meta-label">Time needed</span>${t.timeNeeded}</div>` : '';
+      return `
+        <div class="task">
+          <div class="task-header">
+            <span class="task-num">Task ${t.number}</span>
+            <span class="task-title">${t.title}</span>
+          </div>
+          ${t.why ? `<div class="task-why">${t.why}</div>` : ''}
+          <ul class="task-steps">${steps}</ul>
+          <div class="task-meta">${time}${deadline}</div>
+        </div>`;
+    }).join('');
 
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'lumeway-checklist.txt';
-    a.click();
-    URL.revokeObjectURL(url);
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lumeway — Your Transition Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #fff; color: #1B2A38; padding: 48px; max-width: 720px; margin: 0 auto; font-size: 13.5px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .doc-header { border-bottom: 2px solid #1B3A5C; padding-bottom: 20px; margin-bottom: 28px; display: flex; justify-content: space-between; align-items: flex-end; }
+  .brand { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: #1B3A5C; letter-spacing: -0.3px; }
+  .brand span { color: #B8977E; }
+  .doc-meta { text-align: right; font-size: 11px; color: #8A8278; }
+  .doc-meta strong { display: block; font-size: 12px; color: #4A5A6A; font-weight: 500; margin-bottom: 2px; }
+  .situation { background: #F6F2EC; border-left: 3px solid #B8977E; border-radius: 0 8px 8px 0; padding: 12px 16px; margin-bottom: 28px; font-size: 13px; color: #4A5A6A; }
+  .situation strong { color: #1B3A5C; display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+  .task { margin-bottom: 24px; border: 1px solid #E2D8CB; border-radius: 10px; overflow: hidden; break-inside: avoid; }
+  .task-header { background: #1B3A5C; color: #fff; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
+  .task-num { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; white-space: nowrap; }
+  .task-title { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; }
+  .task-why { padding: 10px 16px 0; font-size: 12.5px; color: #4A5A6A; font-style: italic; }
+  .task-steps { list-style: none; padding: 10px 16px 12px; }
+  .task-steps li { padding: 5px 0; border-bottom: 1px solid #F0EBE3; }
+  .task-steps li:last-child { border-bottom: none; }
+  .task-steps label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+  .task-steps input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; accent-color: #1B3A5C; width: 14px; height: 14px; }
+  .task-meta { display: flex; gap: 16px; padding: 8px 16px; background: #F6F2EC; border-top: 1px solid #E2D8CB; font-size: 11.5px; color: #4A5A6A; flex-wrap: wrap; }
+  .meta-label { font-weight: 500; color: #1B3A5C; margin-right: 4px; }
+  .footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #E2D8CB; font-size: 10.5px; color: #8A8278; display: flex; justify-content: space-between; }
+  @media print {
+    body { padding: 24px; }
+    .no-print { display: none; }
+    .task { break-inside: avoid; }
+  }
+  .print-btn { position: fixed; top: 20px; right: 20px; background: #1B3A5C; color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; box-shadow: 0 2px 12px rgba(27,58,92,0.2); }
+  .print-btn:hover { background: #B8977E; }
+</style>
+</head>
+<body>
+<button class="print-btn no-print" onclick="window.print()">Save as PDF</button>
+<div class="doc-header">
+  <div class="brand">Lume<span>way</span></div>
+  <div class="doc-meta"><strong>Your Transition Checklist</strong>Generated ${date}</div>
+</div>
+${data.situation ? `<div class="situation"><strong>Your Situation</strong>${data.situation}</div>` : ''}
+${tasks || '<p style="color:#8A8278;font-style:italic">No tasks found. Continue your conversation to build out your checklist.</p>'}
+<div class="footer">
+  <span>Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</span>
+  <span>lumeway.ai</span>
+</div>
+</body>
+</html>`;
+
+    // Open in new tab; fall back to blob download if popups are blocked
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write(html);
+      w.document.close();
+    } else {
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'lumeway-checklist.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
   }
 
   // ── Session summary ──
