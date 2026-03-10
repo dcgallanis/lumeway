@@ -11,22 +11,25 @@
     :root {
       --bg:         #F6F2EC;
       --surface:    #FDFAF6;
-      --surface2:   #F0EBE3;
-      --border:     #E4DDD3;
-      --border2:    #D5CCC0;
-      --text:       #28231F;
-      --text2:      #5C534A;
-      --muted:      #9E9188;
-      --accent:     #7A6652;
-      --accent2:    #B5896A;
-      --accent3:    #D4A882;
-      --user-bg:    #28231F;
+      --surface2:   #EEE8DE;
+      --border:     #E2D8CB;
+      --border2:    #CEBFB0;
+      --text:       #1B2A38;
+      --text2:      #4A5A6A;
+      --muted:      #8A8278;
+      --navy:       #1B3A5C;
+      --gold:       #B8977E;
+      --gold-light: #D4BA9E;
+      --accent:     #1B3A5C;
+      --accent2:    #B8977E;
+      --accent3:    #D4BA9E;
+      --user-bg:    #1B3A5C;
       --user-text:  #F6F2EC;
       --bot-bg:     #FDFAF6;
       --green:      #7DB896;
-      --shadow-sm:  0 1px 4px rgba(40,35,31,0.06);
-      --shadow-md:  0 4px 32px rgba(40,35,31,0.09), 0 1px 4px rgba(40,35,31,0.05);
-      --shadow-lg:  0 8px 64px rgba(40,35,31,0.12), 0 2px 8px rgba(40,35,31,0.06);
+      --shadow-sm:  0 1px 4px rgba(27,58,92,0.07);
+      --shadow-md:  0 4px 32px rgba(27,58,92,0.10), 0 1px 4px rgba(27,58,92,0.05);
+      --shadow-lg:  0 8px 64px rgba(27,58,92,0.13), 0 2px 8px rgba(27,58,92,0.07);
       --radius:     22px;
     }
 
@@ -63,7 +66,7 @@
       right: -10%;
       width: 60vw;
       height: 60vw;
-      background: radial-gradient(circle, rgba(181,137,106,0.07) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(184,151,126,0.09) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
@@ -102,7 +105,7 @@
     .logo-mark {
       width: 38px;
       height: 38px;
-      background: var(--user-bg);
+      background: var(--navy);
       border-radius: 11px;
       display: flex;
       align-items: center;
@@ -121,7 +124,7 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: 20px;
       font-weight: 600;
-      color: var(--text);
+      color: var(--navy);
       line-height: 1;
       letter-spacing: -0.3px;
     }
@@ -153,8 +156,8 @@
     }
 
     .header-action:hover {
-      border-color: var(--accent2);
-      color: var(--accent);
+      border-color: var(--gold);
+      color: var(--navy);
       background: var(--surface2);
     }
 
@@ -223,7 +226,7 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: 26px;
       font-weight: 600;
-      color: var(--text);
+      color: var(--navy);
       line-height: 1.25;
       letter-spacing: -0.3px;
       max-width: 380px;
@@ -271,8 +274,8 @@
 
     .starter-btn:hover {
       background: var(--surface);
-      border-color: var(--accent3);
-      color: var(--text);
+      border-color: var(--gold);
+      color: var(--navy);
       transform: translateY(-1px);
       box-shadow: var(--shadow-sm);
     }
@@ -283,13 +286,15 @@
       color: var(--muted);
       font-style: italic;
       border-style: dashed;
+      border-color: var(--border2);
     }
 
     .starter-btn.other:hover {
-      color: var(--accent);
-      border-color: var(--accent2);
+      color: var(--navy);
+      border-color: var(--gold);
       border-style: solid;
       font-style: normal;
+      background: var(--surface2);
     }
 
     /* ── Message bubbles ── */
@@ -320,7 +325,7 @@
     }
 
     .avatar.bot {
-      background: var(--user-bg);
+      background: var(--navy);
       color: var(--bg);
       font-family: 'Cormorant Garamond', serif;
       font-size: 13px;
@@ -378,7 +383,7 @@
     }
     .bubble h1 { font-size: 20px; }
     .bubble h2 { font-size: 17px; }
-    .bubble h3 { font-size: 15px; color: var(--accent); }
+    .bubble h3 { font-size: 15px; color: var(--gold); }
 
     .bubble ul, .bubble ol {
       padding-left: 16px;
@@ -388,7 +393,7 @@
       margin-bottom: 5px;
       line-height: 1.65;
     }
-    .bubble li::marker { color: var(--accent3); }
+    .bubble li::marker { color: var(--gold); }
 
     .bubble hr {
       border: none;
@@ -400,7 +405,7 @@
     .bubble .task-block {
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-left: 3px solid var(--accent2);
+      border-left: 3px solid var(--gold);
       border-radius: 8px;
       padding: 10px 13px;
       margin: 8px 0;
@@ -409,7 +414,7 @@
 
     .bubble .task-block strong {
       display: block;
-      color: var(--accent);
+      color: var(--navy);
       margin-bottom: 3px;
     }
 
@@ -445,7 +450,7 @@
 
     @keyframes bounce {
       0%, 60%, 100% { transform: translateY(0); background: var(--border2); }
-      30% { transform: translateY(-5px); background: var(--accent3); }
+      30% { transform: translateY(-5px); background: var(--gold); }
     }
 
     /* ── Input area ── */
@@ -480,14 +485,14 @@
     textarea::placeholder { color: var(--muted); }
 
     textarea:focus {
-      border-color: var(--accent2);
-      box-shadow: 0 0 0 3px rgba(181,137,106,0.1);
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(184,151,126,0.14);
     }
 
     .send-btn {
       width: 42px;
       height: 42px;
-      background: var(--user-bg);
+      background: var(--navy);
       border: none;
       border-radius: 11px;
       cursor: pointer;
@@ -500,7 +505,7 @@
     }
 
     .send-btn:hover:not(:disabled) {
-      background: var(--accent);
+      background: var(--gold);
       transform: scale(1.06);
     }
 
@@ -539,8 +544,8 @@
     }
 
     .footer-btn:hover {
-      border-color: var(--accent2);
-      color: var(--accent);
+      border-color: var(--gold);
+      color: var(--navy);
       background: var(--surface2);
     }
 
@@ -584,7 +589,7 @@
         <button class="starter-btn" onclick="sendStarter(this)">I'm moving to a new state next month.</button>
         <button class="starter-btn" onclick="sendStarter(this)">I'm applying for disability benefits and don't know where to begin.</button>
         <button class="starter-btn" onclick="sendStarter(this)">I'm retiring soon and need help with Medicare and Social Security.</button>
-        <button class="starter-btn other" onclick="sendStarter(this)">Something else is going on</button>
+        <button class="starter-btn other" onclick="focusInput()">Something else is going on…</button>
       </div>
     </div>
   </div>
@@ -615,13 +620,27 @@
   let history = [];
   let isLoading = false;
 
-  // ── Single unified markdown renderer ──
+  // ── Markdown renderer with streaming-safe incomplete token handling ──
   function renderMarkdown(text) {
     // Escape HTML first
     let html = text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
+
+    // Streaming safety: strip trailing incomplete bold/italic markers so they
+    // don't flash as literal asterisks while the AI is still typing.
+    // If there's an odd number of ** pairs, the last unclosed ** is removed.
+    const boldCount = (html.match(/\*\*/g) || []).length;
+    if (boldCount % 2 !== 0) {
+      // Remove the last standalone ** (not followed by a closing **)
+      html = html.replace(/\*\*([^*]*)$/, '$1');
+    }
+    // Same for single * italic (only if not a list bullet at line start)
+    const singleStar = html.replace(/\*\*/g, '').match(/(?<![*])\*(?![*])/g);
+    if (singleStar && singleStar.length % 2 !== 0) {
+      html = html.replace(/(?<![*])\*([^*]*)$/, '$1');
+    }
 
     // Process line by line
     const lines = html.split('\n');
@@ -635,7 +654,7 @@
       // Apply inline formatting
       line = line
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.+?)\*/g, '<em>$1</em>');
+        .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
 
       // Headings
       if (/^### (.+)$/.test(line)) {
@@ -674,7 +693,6 @@
 
       // Empty line or content
       if (line.trim() === '') {
-        // skip blank lines (paragraph spacing handled by CSS)
         continue;
       }
 
@@ -808,6 +826,14 @@
 
   function sendStarter(btn) {
     sendMessage(btn.textContent.trim());
+  }
+
+  function focusInput() {
+    const welcome = document.getElementById('welcome');
+    if (welcome) welcome.remove();
+    const input = document.getElementById('input');
+    input.focus();
+    input.placeholder = 'Tell me what\'s going on…';
   }
 
   function handleKey(e) {
