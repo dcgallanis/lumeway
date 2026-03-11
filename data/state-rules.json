@@ -1,0 +1,632 @@
+{
+  "CA": {
+    "name": "California",
+    "loss_of_spouse": {
+      "headline": "California: Estate &amp; Survivor Rules",
+      "bullets": [
+        "Community property state — jointly held assets transfer to the surviving spouse automatically, often without probate",
+        "Simplified probate (Petition to Determine Succession to Property) available for estates under $184,500 (2024 threshold)",
+        "No California estate tax; federal estate tax applies only above $13.61M",
+        "Order certified death certificates from the county recorder's office — budget for 10–15 copies",
+        "Spousal Property Petition allows quick court confirmation of community property without full probate administration"
+      ]
+    },
+    "divorce": {
+      "headline": "California: Divorce Rules",
+      "bullets": [
+        "Mandatory 6-month waiting period from the date the respondent is served — no exceptions",
+        "Community property state — marital assets and debts are presumed to be divided 50/50 by default",
+        "Spousal support duration is typically half the length of the marriage for marriages under 10 years",
+        "California Family Law Facilitator offices (in every county) provide free help with court paperwork",
+        "File in Superior Court in the county where either spouse has lived for at least 3 months"
+      ]
+    },
+    "job_loss": {
+      "headline": "California: Job Loss Benefits",
+      "bullets": [
+        "File for EDD unemployment at edd.ca.gov within the first week — benefits up to $450/wk for up to 26 weeks",
+        "California SDI (State Disability Insurance) provides up to 52 weeks of benefits if illness or injury prevents work",
+        "CA WARN Act requires 60-day advance notice for mass layoffs at companies with 75+ workers",
+        "California prohibits non-compete agreements — you are legally free to work for a competitor immediately",
+        "File EDD UI claim immediately — California does not back-pay for weeks prior to your filing date"
+      ]
+    },
+    "relocation": {
+      "headline": "California: Relocation Requirements",
+      "bullets": [
+        "Update your California driver's license within 10 days of establishing new residency in the state",
+        "Register your vehicle with the DMV within 20 days of bringing it into California",
+        "California requires a smog check for most vehicles at initial registration",
+        "Register to vote at your new address — California offers same-day voter registration at the polls",
+        "AB 60 licenses are available regardless of immigration status"
+      ]
+    },
+    "disability": {
+      "headline": "California: Disability Benefits",
+      "bullets": [
+        "California SDI pays 60–70% of wages (up to approximately $1,620/wk in 2024) for up to 52 weeks",
+        "File your SDI claim with EDD within 49 days of disability onset or you may lose benefits",
+        "California has no waiting period for SDI — benefits begin after 7 days (vs. federal SSDI's 5-month wait)",
+        "IHSS (In-Home Supportive Services) provides paid in-home care for eligible Medi-Cal recipients",
+        "California's SDI program can bridge the gap during the 5-month federal SSDI waiting period"
+      ]
+    },
+    "retirement": {
+      "headline": "California: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "California taxes Social Security income — there is no state-level SS exemption",
+        "State income tax rates reach up to 13.3%, making pre-retirement Roth conversions worth considering",
+        "CalPERS and CalSTRS pension income is subject to California income tax",
+        "No California estate tax; however CA has unique capital gains treatment on inherited property",
+        "Medicare and Social Security enrollment follow federal timelines; CalPERS may offer retiree health coverage"
+      ]
+    }
+  },
+  "TX": {
+    "name": "Texas",
+    "loss_of_spouse": {
+      "headline": "Texas: Estate &amp; Survivor Rules",
+      "bullets": [
+        "Community property state — assets owned jointly transfer to the surviving spouse automatically",
+        "Muniment of Title is a streamlined Texas court process to transfer real estate without full probate administration",
+        "Affidavit of Heirship can establish real property title without a court proceeding for qualifying estates",
+        "No Texas state estate tax or state income tax",
+        "Texas allows Independent Administration — a faster, less court-supervised probate option if specified in the will"
+      ]
+    },
+    "divorce": {
+      "headline": "Texas: Divorce Rules",
+      "bullets": [
+        "60-day waiting period from the date of filing before a divorce can be finalized (one of the shortest in the US)",
+        "Community property state — marital property is presumed to be split equally absent compelling reasons",
+        "Texas allows fault-based divorce (cruelty, adultery, abandonment) which can affect property division",
+        "Spousal maintenance is limited — typically requires 10+ years of marriage or documented family violence",
+        "File in the district court of the county where either spouse has lived for 90+ days"
+      ]
+    },
+    "job_loss": {
+      "headline": "Texas: Job Loss Benefits",
+      "bullets": [
+        "File for TWC unemployment at twc.texas.gov within 2 weeks of job loss — benefits up to $563/wk for 26 weeks",
+        "Texas is a strict at-will employment state — no state-specific termination protections beyond federal law",
+        "Federal WARN Act requires 60 days' notice for mass layoffs at companies with 100+ employees",
+        "No Texas income tax means unemployment benefits are only subject to federal income tax",
+        "Texas Workforce Commission (TWC) offers free skills assessments, job matching, and training at any WorkInTexas.com office"
+      ]
+    },
+    "relocation": {
+      "headline": "Texas: Relocation Requirements",
+      "bullets": [
+        "Obtain a Texas driver's license within 90 days of establishing residency — bring current license, proof of residence, and SS card",
+        "Register your vehicle with the county Tax Assessor-Collector within 30 days",
+        "Annual vehicle safety inspection required — most inspection stations also process registration",
+        "Apply for homestead exemption by April 30 for significant property tax savings on your primary residence",
+        "Register to vote at least 30 days before an election — Texas does not have same-day voter registration"
+      ]
+    },
+    "disability": {
+      "headline": "Texas: Disability Benefits",
+      "bullets": [
+        "Texas has no state-run short-term disability insurance program — SSDI is the primary federal option",
+        "File for SSDI as soon as disability begins — the 5-month waiting period starts from your disability onset date",
+        "HHSC (Health and Human Services Commission) manages STAR+PLUS Medicaid for long-term care services",
+        "DARS (Dept. of Assistive and Rehabilitative Services) offers free vocational rehabilitation and job training",
+        "No state income tax means SSDI benefits are only subject to federal income tax rules"
+      ]
+    },
+    "retirement": {
+      "headline": "Texas: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "No Texas state income tax — Social Security, pensions, 401(k), and IRA withdrawals are completely state-tax-free",
+        "TRS (Teacher Retirement System of Texas) and ERS (Employees Retirement System) are the major state pension systems",
+        "Property taxes are among the highest in the country — the over-65 homestead exemption is critical to claim promptly",
+        "No Texas estate or inheritance tax",
+        "Medicare enrollment follows federal timelines; Texas has no state supplemental Medicare program"
+      ]
+    }
+  },
+  "FL": {
+    "name": "Florida",
+    "loss_of_spouse": {
+      "headline": "Florida: Estate &amp; Survivor Rules",
+      "bullets": [
+        "Common law property state — assets held solely in your spouse's name will go through probate",
+        "Summary Administration available for estates worth less than $75,000 or where death occurred more than 2 years ago",
+        "Florida homestead law strongly protects the surviving spouse — right to life estate or undivided 50% interest",
+        "No Florida estate tax or state income tax",
+        "File for probate in the Circuit Court of the county where the decedent lived"
+      ]
+    },
+    "divorce": {
+      "headline": "Florida: Divorce Rules",
+      "bullets": [
+        "No mandatory waiting period — divorce can be finalized as soon as the court schedules a final hearing",
+        "Florida is a pure no-fault state — irretrievable breakdown of the marriage is the only required ground",
+        "Equitable distribution: courts divide marital assets fairly, not necessarily 50/50",
+        "Required parenting course (4 hours) for all cases involving minor children",
+        "Permanent alimony was abolished in 2023 — durational alimony is now capped based on marriage length"
+      ]
+    },
+    "job_loss": {
+      "headline": "Florida: Job Loss Benefits",
+      "bullets": [
+        "File with DEO (Dept. of Economic Opportunity) at connect.myflorida.com — benefits range $32–$275/wk (some of the lowest in the US)",
+        "Maximum benefit duration is 12–23 weeks depending on the statewide unemployment rate",
+        "Apply immediately — Florida does not back-pay for weeks you didn't file a weekly certification",
+        "No Florida income tax means unemployment benefits are only taxed at the federal level",
+        "Florida is an at-will state with no additional termination protections beyond federal law"
+      ]
+    },
+    "relocation": {
+      "headline": "Florida: Relocation Requirements",
+      "bullets": [
+        "Obtain a Florida driver's license within 30 days of establishing residency",
+        "Register your vehicle within 10 days of becoming a Florida resident",
+        "No statewide vehicle inspection required (emissions testing applies in some South Florida counties)",
+        "File for homestead exemption by March 1 of the year following your move for property tax savings",
+        "No state income tax — Florida is a common destination for tax-motivated relocation"
+      ]
+    },
+    "disability": {
+      "headline": "Florida: Disability Benefits",
+      "bullets": [
+        "Florida has no state short-term disability insurance program — federal SSDI is the primary resource",
+        "SSDI 5-month federal waiting period applies; file immediately after disability onset",
+        "Florida Division of Vocational Rehabilitation (VR) provides free job training, placement, and adaptive equipment",
+        "Medicaid through AHCA is available for qualifying low-income individuals with disabilities",
+        "Workers' compensation covers on-the-job injuries — report to your employer within 30 days to preserve your claim"
+      ]
+    },
+    "retirement": {
+      "headline": "Florida: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "No Florida state income tax — Social Security, pensions, 401(k), and IRA distributions are completely state-tax-free",
+        "Florida Retirement System (FRS) covers state employees and most local government employees",
+        "No Florida estate or inheritance tax",
+        "Homestead exemption ($50,000) reduces property taxes on your primary residence — file promptly",
+        "Medigap plans are widely available and competitively priced in Florida"
+      ]
+    }
+  },
+  "NY": {
+    "name": "New York",
+    "loss_of_spouse": {
+      "headline": "New York: Estate &amp; Survivor Rules",
+      "bullets": [
+        "Probate is handled through the Surrogate's Court in the county where the decedent lived",
+        "Voluntary Administration available for estates under $50,000 (simplified and faster process)",
+        "New York imposes a state estate tax on estates over $6.94M (2024) at rates up to 16%",
+        "Surviving spouse is entitled to an 'elective share' — the right to claim at least 1/3 of the net estate",
+        "Order death certificates from NYC DOHMH (city residents) or county clerk (upstate) — get 10–15 certified copies"
+      ]
+    },
+    "divorce": {
+      "headline": "New York: Divorce Rules",
+      "bullets": [
+        "No-fault divorce available — irretrievable breakdown of the marriage for 6+ months is sufficient",
+        "Equitable distribution of marital property — courts weigh many factors, not simply 50/50",
+        "Spousal maintenance guidelines are formula-based, making outcomes more predictable",
+        "File in Supreme Court (the trial-level court in NY despite the name) in the county of residence",
+        "A parenting plan and child support order must be in place before a divorce with minor children is granted"
+      ]
+    },
+    "job_loss": {
+      "headline": "New York: Job Loss Benefits",
+      "bullets": [
+        "File with NYSDOL at labor.ny.gov within the first week — benefits up to $504/wk for up to 26 weeks",
+        "NY WARN Act requires 90 days' notice for layoffs (stricter than the federal 60-day requirement)",
+        "If your employer violated NY WARN, you may be owed up to 90 days of back pay and benefits",
+        "NYC residents: Workforce1 Career Centers offer free job placement, training, and resume services",
+        "Apply within the first week — New York does not back-pay more than one week prior to your filing date"
+      ]
+    },
+    "relocation": {
+      "headline": "New York: Relocation Requirements",
+      "bullets": [
+        "Obtain a New York driver's license within 30 days of establishing residency",
+        "Register your vehicle with the DMV within 30 days",
+        "STAR program: register for school tax relief on your primary residence — Basic STAR is available to most homeowners",
+        "NYC residents: update Con Edison/National Grid, MTA transit accounts, and borough-specific services",
+        "Enhanced STAR is available for homeowners 65+ with qualifying income — file by the county deadline"
+      ]
+    },
+    "disability": {
+      "headline": "New York: Disability Benefits",
+      "bullets": [
+        "New York has mandatory short-term disability (DBL) insurance — benefits up to $170/wk for up to 26 weeks",
+        "File your DBL claim through your employer's carrier within 30 days of disability onset",
+        "New York Paid Family Leave (PFL) provides up to 67% of your AWW for qualifying family situations",
+        "SSDI federal 5-month waiting period still applies for long-term disability",
+        "NY ACCES-VR (Adult Career and Continuing Education Services) provides vocational rehabilitation support"
+      ]
+    },
+    "retirement": {
+      "headline": "New York: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from New York state income tax",
+        "Pensions from NY state/local government and the federal government are fully exempt from NY tax",
+        "Private pensions and retirement account distributions: up to $20,000/year exempt for those 59½+",
+        "NYC residents pay an additional city income tax on non-exempt retirement income",
+        "NYSLRS and TRS (Teacher Retirement System) are the major New York public pension systems"
+      ]
+    }
+  },
+  "PA": {
+    "name": "Pennsylvania",
+    "loss_of_spouse": {
+      "headline": "Pennsylvania: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File with the Register of Wills in the county where the decedent lived",
+        "Small Estate process available for gross estates under $50,000 (simpler than full probate)",
+        "Pennsylvania Inheritance Tax: 0% for surviving spouse — no tax on any assets passing to you",
+        "Children of the decedent pay 4.5% inheritance tax; other beneficiaries pay 12–15%",
+        "No Pennsylvania estate tax; federal estate tax applies only above $13.61M"
+      ]
+    },
+    "divorce": {
+      "headline": "Pennsylvania: Divorce Rules",
+      "bullets": [
+        "Mutual consent divorce: both parties sign an Affidavit of Consent, waiving the standard 90-day waiting period",
+        "Contested divorce: 90-day waiting period from service of the divorce complaint before proceeding",
+        "Equitable distribution — marital property is divided fairly but not necessarily equally",
+        "Alimony pendente lite (support during proceedings) is available while the case is active",
+        "File in the Court of Common Pleas in the county where either spouse has lived for at least 6 months"
+      ]
+    },
+    "job_loss": {
+      "headline": "Pennsylvania: Job Loss Benefits",
+      "bullets": [
+        "File with PA Dept. of Labor &amp; Industry at uc.pa.gov — benefits up to $572/wk for 26 weeks",
+        "File within 2 weeks of your last day — PA does not back-pay for weeks not claimed timely",
+        "PA WARN Act requires 60 days' notice for mass layoffs at companies with 50+ employees",
+        "PA CareerLink centers offer free job search, training, and career counseling statewide",
+        "COBRA: elect within 60 days of losing employer health coverage to avoid a gap in coverage"
+      ]
+    },
+    "relocation": {
+      "headline": "Pennsylvania: Relocation Requirements",
+      "bullets": [
+        "Obtain a Pennsylvania driver's license within 60 days of establishing residency — one of the most lenient timelines",
+        "Register your vehicle with PennDOT within 20 days of becoming a PA resident",
+        "Pennsylvania has a 2% real estate transfer tax (state + local) when purchasing a home",
+        "Register to vote at least 15 days before an election at vote.pa.gov",
+        "PennDOT handles both driver's licenses and vehicle registrations — most transactions available online"
+      ]
+    },
+    "disability": {
+      "headline": "Pennsylvania: Disability Benefits",
+      "bullets": [
+        "Pennsylvania has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "PA Office of Vocational Rehabilitation (OVR) provides free career counseling, training, and job placement",
+        "Workers' compensation covers work-related injuries — report to your employer within 21 days",
+        "PA Medicaid (Medical Assistance) is available for qualifying individuals with disabilities"
+      ]
+    },
+    "retirement": {
+      "headline": "Pennsylvania: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Pennsylvania does not tax retirement income — Social Security, pensions, 401(k), and IRA withdrawals are all PA-tax-exempt",
+        "Widely considered one of the most retirement-tax-friendly states in the country",
+        "PSERS (Public School Employees' Retirement) and SERS (State Employees' Retirement) are the major PA pension systems",
+        "No PA inheritance tax for surviving spouses; 4.5% for children; 12–15% for others",
+        "PACE/PACENET programs assist lower-income seniors with prescription drug costs"
+      ]
+    }
+  },
+  "IL": {
+    "name": "Illinois",
+    "loss_of_spouse": {
+      "headline": "Illinois: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Circuit Court of the county where the decedent lived",
+        "Small Estate Affidavit available for total estate value under $100,000 (simplified process)",
+        "Illinois imposes a state estate tax on estates over $4M at rates up to 16%",
+        "Illinois probate typically takes 9–12+ months; Independent Administration speeds the process",
+        "Order death certificates from the Illinois Department of Public Health or county clerk — get 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Illinois: Divorce Rules",
+      "bullets": [
+        "No mandatory waiting period after filing — courts can finalize once both parties agree or the case is tried",
+        "Equitable distribution of marital property — not necessarily 50/50",
+        "Spousal maintenance guidelines use a formula based on income and length of marriage",
+        "The Illinois Marriage and Dissolution of Marriage Act governs all proceedings",
+        "File in the Circuit Court of the county where either spouse has resided for at least 90 days"
+      ]
+    },
+    "job_loss": {
+      "headline": "Illinois: Job Loss Benefits",
+      "bullets": [
+        "File with IDES at ides.illinois.gov — benefits up to $484/wk for 26 weeks",
+        "File during your first week of unemployment — Illinois does not back-pay beyond one week",
+        "Illinois WARN Act requires 60 days' notice for layoffs at companies with 75+ employees",
+        "Illinois workNet centers provide free job coaching, training, and career resources statewide",
+        "Illinois has a continuation law for smaller employers not covered by federal COBRA — ask your employer"
+      ]
+    },
+    "relocation": {
+      "headline": "Illinois: Relocation Requirements",
+      "bullets": [
+        "Obtain an Illinois driver's license within 90 days of establishing residency — one of the longest grace periods",
+        "Register your vehicle with the Secretary of State within 30 days of becoming an IL resident",
+        "Chicago residents: update CTA Ventra account, city parking permits, and ward/precinct registration",
+        "Register to vote at least 28 days before an election — same-day registration available during early voting",
+        "Illinois has a flat income tax rate of 4.95% — straightforward compared to graduated-rate states"
+      ]
+    },
+    "disability": {
+      "headline": "Illinois: Disability Benefits",
+      "bullets": [
+        "Illinois has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; apply through ssa.gov immediately after disability begins",
+        "DHS Division of Rehabilitation Services (DRS) provides free vocational rehabilitation and job placement",
+        "Illinois Medicaid (through HFS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers work-related injuries — report to your employer within 45 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Illinois: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Illinois does not tax retirement income — Social Security, pensions, 401(k), and IRA distributions are all IL-tax-exempt",
+        "One of the most retirement-tax-friendly states in the country on income tax",
+        "SERS, TRS, SURS (university employees), and IMRF are the major Illinois public pension systems",
+        "High property taxes (among the highest nationally) — Homestead Exemption and Senior exemptions help but are limited",
+        "Illinois has a flat 4.95% income tax on non-exempt income such as wages and rental income"
+      ]
+    }
+  },
+  "OH": {
+    "name": "Ohio",
+    "loss_of_spouse": {
+      "headline": "Ohio: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Probate Court of the county where the decedent lived",
+        "Release from Administration available for estates under $35,000 (much simpler than full probate)",
+        "No Ohio estate or inheritance tax (both were repealed in 2013)",
+        "Ohio allows a Transfer on Death (TOD) designation for real property — avoids probate on the home entirely",
+        "Order death certificates from the Ohio Department of Health Vital Statistics or county registrar"
+      ]
+    },
+    "divorce": {
+      "headline": "Ohio: Divorce Rules",
+      "bullets": [
+        "30-day waiting period after the initial hearing before a divorce can be finalized",
+        "Equitable distribution of marital property — courts consider many factors",
+        "Ohio also allows 'dissolution' — a no-fault, mutual agreement process that is often faster and less expensive",
+        "Spousal support awards are at judicial discretion — there is no mandatory state formula",
+        "File in the Court of Common Pleas (Domestic Relations division) in the county of residence"
+      ]
+    },
+    "job_loss": {
+      "headline": "Ohio: Job Loss Benefits",
+      "bullets": [
+        "File with ODJFS at unemployment.ohio.gov — benefits up to $413/wk for up to 26 weeks",
+        "File within the first week of job loss — Ohio does not back-pay beyond one week",
+        "No Ohio WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "OhioMeansJobs.com and local WorkSource offices offer free job search tools and career assistance",
+        "Ohio has a city/local income tax (varies by municipality) — update your employer withholding after any move"
+      ]
+    },
+    "relocation": {
+      "headline": "Ohio: Relocation Requirements",
+      "bullets": [
+        "Obtain an Ohio driver's license within 30 days of establishing residency",
+        "Register your vehicle with the county BMV title office within 30 days",
+        "Emissions testing required in certain Ohio counties (Cuyahoga, Franklin, Hamilton, and others)",
+        "Register to vote by the 30th day before an election — Ohio has no same-day voter registration",
+        "Ohio has a city/local income tax system — your rate depends on which municipality you move to"
+      ]
+    },
+    "disability": {
+      "headline": "Ohio: Disability Benefits",
+      "bullets": [
+        "Ohio has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "OOD (Opportunities for Ohioans with Disabilities) provides free vocational rehabilitation services",
+        "Ohio Medicaid (through ODM) is available for qualifying individuals with disabilities",
+        "Workers' compensation is state-administered in Ohio (unique vs. private carriers) — report injuries promptly"
+      ]
+    },
+    "retirement": {
+      "headline": "Ohio: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Ohio state income tax",
+        "Pension and retirement account income is partially taxable — but a retirement income credit reduces what you owe",
+        "OPERS (Ohio Public Employees Retirement System), STRS Ohio, and SERS are the major Ohio pensions",
+        "No Ohio estate or inheritance tax (both repealed in 2013)",
+        "OSHIIP (Ohio Senior Health Insurance Information Program) offers free Medicare counseling statewide"
+      ]
+    }
+  },
+  "GA": {
+    "name": "Georgia",
+    "loss_of_spouse": {
+      "headline": "Georgia: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Probate Court of the county where the decedent lived",
+        "No Georgia state estate tax or inheritance tax",
+        "Georgia's 'Year's Support' law allows the surviving spouse to quickly claim family assets without full probate",
+        "Small estate affidavit available for estates below the simplified threshold — ask the Probate Court clerk",
+        "Order death certificates from the Georgia Vital Records office or county registrar"
+      ]
+    },
+    "divorce": {
+      "headline": "Georgia: Divorce Rules",
+      "bullets": [
+        "30-day waiting period from date of service before a final divorce hearing can be set",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "Georgia courts consider adultery when awarding or denying alimony — it is a fault-aware state",
+        "File in the Superior Court of the county where either spouse lives",
+        "Parenting plan and child support order required before finalization when minor children are involved"
+      ]
+    },
+    "job_loss": {
+      "headline": "Georgia: Job Loss Benefits",
+      "bullets": [
+        "File with GDOL at dol.georgia.gov — benefits up to $365/wk for 14–20 weeks (duration varies with unemployment rate)",
+        "Georgia pays one of the shortest maximum benefit durations in the country",
+        "No Georgia WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Georgia WorkSource offices provide free job coaching, resume help, and employer connections statewide",
+        "File immediately — Georgia does not back-pay for missed weeks of certification"
+      ]
+    },
+    "relocation": {
+      "headline": "Georgia: Relocation Requirements",
+      "bullets": [
+        "Obtain a Georgia driver's license within 30 days of establishing residency",
+        "Register your vehicle with the county Tag office within 30 days of becoming a GA resident",
+        "Georgia charges a Title Ad Valorem Tax (TAVT) of approximately 7% on vehicle purchases/transfers",
+        "Register to vote by the fifth Monday before any primary or general election",
+        "Georgia has a flat income tax rate moving toward 5.39% — verify current rate when filing"
+      ]
+    },
+    "disability": {
+      "headline": "Georgia: Disability Benefits",
+      "bullets": [
+        "Georgia has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov immediately upon disability",
+        "GVR (Georgia Vocational Rehabilitation Agency) provides free vocational rehabilitation services",
+        "Georgia Medicaid (DCH) is available for qualifying individuals with disabilities",
+        "Workers' compensation required for employers with 3+ workers — report injuries within 30 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Georgia: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is not taxed by Georgia",
+        "Georgia offers a generous retirement income exclusion — up to $65,000 per person for those 65+ from all retirement sources combined",
+        "Georgia Teachers Retirement System (TRS) and ERSGA are the major state pension systems",
+        "No Georgia estate or inheritance tax",
+        "Senior homestead exemption available for those 65+ — up to $10,000 off assessed value for school taxes"
+      ]
+    }
+  },
+  "NC": {
+    "name": "North Carolina",
+    "loss_of_spouse": {
+      "headline": "North Carolina: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for estate administration with the Clerk of Superior Court in the county of residence",
+        "Summary Administration available for smaller estates — contact the Clerk's office for current thresholds",
+        "No North Carolina estate or inheritance tax (estate tax repealed 2013, inheritance tax repealed 1999)",
+        "North Carolina allows beneficiary designations on real property — verify all assets have current beneficiaries named",
+        "Order death certificates from the NC Vital Records office — budget for 8–10 certified copies"
+      ]
+    },
+    "divorce": {
+      "headline": "North Carolina: Divorce Rules",
+      "bullets": [
+        "North Carolina requires 1 year of physical separation before you can file for divorce — one of the strictest requirements in the US",
+        "No-fault divorce based on one year of separation; fault grounds (adultery, abandonment) also available",
+        "Equitable distribution of marital property — you must file a claim for ED before the divorce is final or forfeit the right",
+        "Alimony claims must also be filed before the divorce is final",
+        "File in the District Court of the county where either spouse resides"
+      ]
+    },
+    "job_loss": {
+      "headline": "North Carolina: Job Loss Benefits",
+      "bullets": [
+        "File with NCDES at des.nc.gov — benefits up to $350/wk for 12–20 weeks (one of the shorter durations nationally)",
+        "Benefit duration varies with the state unemployment rate — currently near the lower end of the range",
+        "No North Carolina WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "NCWorks Career Centers provide free job search, training, and employer connections statewide",
+        "File immediately after job loss — NC does not back-pay beyond one week prior to filing"
+      ]
+    },
+    "relocation": {
+      "headline": "North Carolina: Relocation Requirements",
+      "bullets": [
+        "Obtain a North Carolina driver's license within 60 days of establishing residency",
+        "Register your vehicle with your county DMV office within 30 days",
+        "NC requires annual vehicle safety inspection and, in some counties, an emissions test",
+        "Register to vote by 25 days before an election — same-day registration available only during early voting",
+        "NC has a flat income tax rate of 4.75% (decreasing further under current law)"
+      ]
+    },
+    "disability": {
+      "headline": "North Carolina: Disability Benefits",
+      "bullets": [
+        "North Carolina has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "DVRS (Division of Vocational Rehabilitation Services) provides free job training and placement",
+        "NC Medicaid (DHHS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most NC employees — report work injuries to your employer within 30 days"
+      ]
+    },
+    "retirement": {
+      "headline": "North Carolina: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is generally exempt from NC tax if total income is below $25,000 (single) or $32,000 (married)",
+        "NC Retirement Systems (TSERS for teachers, LGERS for local government) are major state pension programs",
+        "NC income tax rate is 4.75% and declining under current law — a favorable trend for retirees",
+        "No North Carolina estate or inheritance tax",
+        "Bailey exclusion: NC government retirees who vested before August 1989 may have fully exempt retirement income"
+      ]
+    }
+  },
+  "MI": {
+    "name": "Michigan",
+    "loss_of_spouse": {
+      "headline": "Michigan: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Probate Court of the county where the decedent lived",
+        "Simplified Succession procedures available for total estate value under $25,000",
+        "No Michigan inheritance tax or estate tax (both were repealed)",
+        "Michigan allows Transfer on Death (TOD) deeds for real property — avoids probate on the family home",
+        "Order death certificates from the Michigan Vital Records office or county registrar"
+      ]
+    },
+    "divorce": {
+      "headline": "Michigan: Divorce Rules",
+      "bullets": [
+        "60-day waiting period (180 days if there are minor children) before a divorce can be granted",
+        "Equitable distribution state — courts divide marital property fairly based on multiple factors",
+        "Michigan requires a Joint Final Pretrial Statement before the final hearing in contested cases",
+        "Spousal support (alimony) determination is at judicial discretion — no mandatory state formula",
+        "File in the Circuit Court Family Division in the county where either spouse has lived for at least 180 days"
+      ]
+    },
+    "job_loss": {
+      "headline": "Michigan: Job Loss Benefits",
+      "bullets": [
+        "File with UIA at michigan.gov/uia — benefits up to $362/wk for up to 20 weeks",
+        "File within the first week of unemployment — Michigan does not retroactively pay for unclaimed weeks",
+        "No Michigan WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Michigan Works! service centers provide free job search assistance, training, and career services statewide",
+        "COBRA: elect within 60 days of losing employer health coverage to continue insurance"
+      ]
+    },
+    "relocation": {
+      "headline": "Michigan: Relocation Requirements",
+      "bullets": [
+        "Obtain a Michigan driver's license within 30 days of establishing residency",
+        "Register your vehicle with the Secretary of State within 30 days of becoming a MI resident",
+        "Michigan requires annual vehicle registration renewal with the Secretary of State",
+        "Register to vote by 15 days before an election — same-day voter registration is also available at the polls",
+        "Michigan has a flat income tax rate of 4.05% (2024) on most income"
+      ]
+    },
+    "disability": {
+      "headline": "Michigan: Disability Benefits",
+      "bullets": [
+        "Michigan has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file as soon as disability begins",
+        "MRS (Michigan Rehabilitation Services) provides free vocational rehabilitation and employment assistance",
+        "Michigan Medicaid (MDHHS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Michigan employees — report workplace injuries within 90 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Michigan: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Michigan state income tax",
+        "Pension income tax rules depend on your birth year — those born before 1946 have full exemption; verify current rules for your birth year",
+        "ORS (Office of Retirement Services) manages state employee and Michigan Public School Employees pensions",
+        "No Michigan estate or inheritance tax",
+        "Additional Homestead Property Tax Credit available for qualifying seniors and lower-income renters"
+      ]
+    }
+  }
+}

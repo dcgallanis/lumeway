@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Moving &amp; Relocation — Lumeway</title>
-  <meta name="description" content="A step-by-step guide for moving to a new state or city. Checklists, deadlines, and guidance from Lumeway."/>
+  <title>Moving &amp; Relocation Guide — Lumeway</title>
+  <meta name="description" content="Step-by-step guidance for navigating a move or relocation. Timelines, deadlines, and resources — all in one place."/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How soon do I need to get a new driver's license?","acceptedAnswer":{"@type":"Answer","text":"It varies by state — from as few as 10 days to as many as 90 days after establishing residency. Check your new state's DMV website immediately after moving. Driving with an out-of-state license past the deadline can result in fines."}},{"@type":"Question","name":"Do I need to re-register my car?","acceptedAnswer":{"@type":"Answer","text":"Yes. Most states require vehicle registration within 30 days of establishing residency. You'll likely also need a state vehicle inspection or emissions test, which can take time to schedule."}},{"@type":"Question","name":"How do I transfer my kids' school records?","acceptedAnswer":{"@type":"Answer","text":"Contact your current school to request official records be sent to the new school. You'll typically need immunization records, transcripts, and any IEP or 504 plans. Start this process early — some transfers take several weeks."}},{"@type":"Question","name":"How long does mail forwarding last?","acceptedAnswer":{"@type":"Answer","text":"USPS mail forwarding lasts 12 months for first-class mail. After that, unforwarded mail is returned to sender. Use that year to update your address with every account, subscription, and institution."}},{"@type":"Question","name":"Do I need to update my will when I move states?","acceptedAnswer":{"@type":"Answer","text":"Yes — this is commonly overlooked. Estate laws, power of attorney rules, and healthcare directive requirements vary between states. A will that's valid in your old state may not work optimally in your new one."}},{"@type":"Question","name":"What if I need to break my lease?","acceptedAnswer":{"@type":"Answer","text":"Review your lease for early termination terms. Many states require only 30–60 days written notice with an early termination fee. Certain situations — military orders, domestic violence, and sometimes job relocation — have legal protections that may let you break a lease without penalty."}}]}
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #1B2A38; --muted: #6E7D8A; --navy: #1B3A5C; --gold: #B8977E; --accent: #1B3A5C; --accent-light: #B8977E; --border: #E4DDD3; --shadow: 0 2px 40px rgba(27,58,92,0.09); }
@@ -65,6 +68,49 @@
     .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--navy); }
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
     @media (max-width: 640px) { nav { padding: 16px 20px; } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 32px 20px; flex-direction: column; } }
+    /* Chat Preview */
+    .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
+    .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
+    .cp-msg { display: flex; gap: 10px; margin-bottom: 16px; }
+    .cp-msg:last-child { margin-bottom: 0; }
+    .cp-msg.user { flex-direction: row-reverse; }
+    .cp-avatar { width: 28px; height: 28px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 3px; font-size: 10px; letter-spacing: 0.03em; }
+    .cp-avatar.bot { background: var(--navy); color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 13px; font-weight: 600; border-radius: 8px; }
+    .cp-avatar.user { background: #EEE8DE; border: 1px solid var(--border); color: var(--muted); border-radius: 50%; }
+    .cp-bubble { max-width: 80%; padding: 11px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.7; }
+    .cp-msg.bot .cp-bubble { background: #FDFAF6; border: 1px solid var(--border); border-top-left-radius: 4px; color: var(--text); max-width: 88%; }
+    .cp-msg.user .cp-bubble { background: var(--navy); color: var(--cream); border-top-right-radius: 4px; }
+    .cp-anim .cp-msg { opacity: 0; transform: translateY(8px); transition: opacity 0.4s ease, transform 0.4s ease; }
+    .cp-anim .cp-msg.cp-visible { opacity: 1; transform: translateY(0); }
+    .chat-preview-cta { text-align: center; margin-top: 24px; }
+    /* FAQ Accordion */
+    .faq-list { display: flex; flex-direction: column; gap: 2px; }
+    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; }
+    .faq-item:first-child { border-radius: 16px 16px 0 0; }
+    .faq-item:last-child { border-radius: 0 0 16px 16px; }
+    .faq-question { width: 100%; text-align: left; background: none; border: none; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; }
+    .faq-question > span:first-child { flex: 1; min-width: 0; }
+    .faq-question:hover { background: rgba(27,58,92,0.03); }
+    .faq-question[aria-expanded="true"] { color: var(--navy); }
+    .faq-icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 14px; line-height: 1; transition: transform 0.25s ease, border-color 0.2s; }
+    .faq-question[aria-expanded="true"] .faq-icon { transform: rotate(45deg); border-color: var(--navy); color: var(--navy); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .faq-answer-inner { padding: 0 24px 20px; font-size: 14px; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .faq-answer-inner a { color: var(--navy); text-decoration: underline; text-underline-offset: 2px; }
+    .faq-answer-inner a:hover { color: var(--gold); }
+    /* State Selector */
+    .state-selector-section { padding: 0 24px 48px; max-width: 800px; margin: 0 auto; }
+    .state-selector-intro { font-size: 13px; color: var(--muted); font-weight: 300; margin-bottom: 12px; }
+    .state-select-input { padding: 11px 40px 11px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--warm-white); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E7D8A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; min-width: 220px; }
+    .state-select-input:focus { outline: 2px solid var(--navy); outline-offset: 2px; }
+    .state-callout { margin-top: 20px; background: var(--warm-white); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 0 16px 16px 0; padding: 24px 28px; max-width: 680px; }
+    .state-callout-headline { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; margin-bottom: 16px; color: var(--text); }
+    .state-callout-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .state-callout-bullets li { font-size: 14px; color: var(--muted); line-height: 1.65; padding-left: 20px; position: relative; font-weight: 300; }
+    .state-callout-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--gold); }
+    .state-disclaimer { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 20px; line-height: 1.6; }
+    .state-fallback-card { margin-top: 20px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; max-width: 680px; }
+    .state-fallback-card p { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 20px; }
   </style>
 </head>
 <body>
@@ -75,93 +121,294 @@
     <a href="/#waitlist" class="btn-primary">Join waitlist</a>
   </div>
 </nav>
+
 <div class="hero">
   <div class="hero-eyebrow">📦 Moving &amp; Relocation</div>
-  <h1 class="hero-title">Every detail handled,<br><em>nothing forgotten</em></h1>
-  <p class="hero-subtitle">Moving to a new city or state involves dozens of overlapping tasks — utilities, licenses, registrations, school transfers, and more. Lumeway keeps everything organized so nothing slips through the cracks.</p>
+  <h1 class="hero-title">Every moving part,<br><em>handled</em></h1>
+  <p class="hero-subtitle">Moving to a new state means updating dozens of accounts, registrations, and records — on top of the physical move itself. Lumeway maps out everything so nothing falls through the cracks.</p>
   <div class="hero-actions">
     <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
     <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
   </div>
 </div>
+
+<div class="state-selector-section">
+  <p class="state-selector-intro">See rules specific to your state:</p>
+  <select id="stateSelect" class="state-select-input" aria-label="Select your state for local guidance">
+    <option value="">Select your state →</option>
+    <option value="CA">California</option>
+    <option value="TX">Texas</option>
+    <option value="FL">Florida</option>
+    <option value="NY">New York</option>
+    <option value="PA">Pennsylvania</option>
+    <option value="IL">Illinois</option>
+    <option value="OH">Ohio</option>
+    <option value="GA">Georgia</option>
+    <option value="NC">North Carolina</option>
+    <option value="MI">Michigan</option>
+    <option value="OTHER">My state isn't listed yet</option>
+  </select>
+  <div id="stateResult" class="state-callout" hidden aria-live="polite">
+    <h3 id="stateResultHeadline" class="state-callout-headline"></h3>
+    <ul id="stateResultBullets" class="state-callout-bullets"></ul>
+    <p class="state-disclaimer">Rules and requirements change — always verify with your state's official agencies.</p>
+    <a href="/chat" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Get personalized guidance →</a>
+  </div>
+  <div id="stateFallback" class="state-fallback-card" hidden>
+    <p>We're adding more states soon. In the meantime, Lumeway can walk you through state-specific guidance in the chat.</p>
+    <a href="/chat" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Talk to Lumeway free →</a>
+  </div>
+</div>
+
 <div class="section-divider"></div>
+
 <div class="section">
   <p class="section-label">What to expect</p>
   <h2 class="section-title">A timeline of what<br><em>needs to happen</em></h2>
   <div class="timeline">
     <div class="timeline-item">
-      <div class="timeline-period">8 weeks before</div>
-      <div class="timeline-content"><h3>Plan and prepare</h3><ul>
-        <li>Research new city — neighborhoods, schools, healthcare providers</li>
-        <li>Get moving quotes from at least 3 licensed movers</li>
-        <li>Begin decluttering — donate, sell, or discard what you won't move</li>
-        <li>Notify employer of address change for payroll and tax purposes</li>
+      <div class="timeline-period">6–8 weeks before</div>
+      <div class="timeline-content"><h3>Research and prepare</h3><ul>
+        <li>Research your new area: cost of living, schools, healthcare providers, neighborhoods</li>
+        <li>Give notice to your landlord or list your home for sale</li>
+        <li>Start transferring medical records and requesting prescription transfers</li>
+        <li>Notify your employer if working remotely and changing states (tax implications)</li>
       </ul></div>
     </div>
     <div class="timeline-item">
-      <div class="timeline-period">4 weeks before</div>
-      <div class="timeline-content"><h3>Notify and transfer</h3><ul>
-        <li>File change of address with USPS</li>
-        <li>Notify banks, credit cards, and subscription services</li>
-        <li>Transfer or request school records for children</li>
-        <li>Schedule utility disconnection and new service setup</li>
+      <div class="timeline-period">2–4 weeks before</div>
+      <div class="timeline-content"><h3>Start the paperwork</h3><ul>
+        <li>Set up mail forwarding through USPS (do this at least 2 weeks early)</li>
+        <li>Call your auto insurance company — rates change by state and ZIP code</li>
+        <li>Research your new state's requirements for driver's license and vehicle registration</li>
+        <li>Schedule utility setup at your new address and cancellation at your current one</li>
       </ul></div>
     </div>
     <div class="timeline-item">
-      <div class="timeline-period">Move week</div>
-      <div class="timeline-content"><h3>Execute the move</h3><ul>
-        <li>Confirm moving company details and insurance coverage</li>
-        <li>Pack essentials bag for first night in new home</li>
-        <li>Document condition of old and new home with photos</li>
-        <li>Transfer prescriptions to new pharmacy</li>
-      </ul></div>
-    </div>
-    <div class="timeline-item">
-      <div class="timeline-period">First 30 days</div>
+      <div class="timeline-period">First week after</div>
       <div class="timeline-content"><h3>Establish yourself</h3><ul>
-        <li>Update driver's license and vehicle registration in new state</li>
-        <li>Register to vote in new location</li>
-        <li>Find new doctors, dentists, and specialists</li>
-        <li>Update homeowner's or renter's insurance</li>
+        <li>Get your new driver's license and register your vehicles (check your state's deadline — some are as short as 10 days)</li>
+        <li>Register to vote at your new address</li>
+        <li>Find a new primary care doctor, dentist, and any specialists</li>
+        <li>Update your address with banks, credit cards, insurance, and subscriptions</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">First 1–3 months</div>
+      <div class="timeline-content"><h3>Settle in</h3><ul>
+        <li>Establish residency for tax purposes (important if you moved mid-year)</li>
+        <li>Update your will and estate documents — state laws differ significantly</li>
+        <li>Enroll kids in school and transfer records</li>
+        <li>Find local community resources: library, recreation, places of worship, support groups</li>
       </ul></div>
     </div>
   </div>
 </div>
+
 <div class="section-divider"></div>
+
 <div class="section">
   <p class="section-label">Critical deadlines</p>
   <h2 class="section-title">Don't miss these<br><em>time-sensitive steps</em></h2>
   <div class="deadlines-grid">
-    <div class="deadline-card"><div class="deadline-days">30 days</div><div class="deadline-title">Driver's license update</div><p class="deadline-desc">Most states require you to update your driver's license within 30-60 days of establishing residency. Check your new state's DMV.</p></div>
-    <div class="deadline-card"><div class="deadline-days">30 days</div><div class="deadline-title">Vehicle registration</div><p class="deadline-desc">Register your vehicle in your new state within 30-90 days. Driving with out-of-state plates too long can result in fines.</p></div>
-    <div class="deadline-card"><div class="deadline-days">Tax year</div><div class="deadline-title">State tax residency</div><p class="deadline-desc">You may owe taxes in both your old and new state for the year you move. Keep records of your move date for tax filing purposes.</p></div>
-    <div class="deadline-card"><div class="deadline-days">Before move</div><div class="deadline-title">USPS mail forwarding</div><p class="deadline-desc">Set up mail forwarding before your move date. USPS forwards mail for up to 12 months but it's not a substitute for updating your address.</p></div>
-    <div class="deadline-card"><div class="deadline-days">30 days</div><div class="deadline-title">Voter registration</div><p class="deadline-desc">Register to vote in your new state. Deadlines vary — some states allow same-day registration, others require 30 days in advance.</p></div>
-    <div class="deadline-card"><div class="deadline-days">Varies</div><div class="deadline-title">Professional licenses</div><p class="deadline-desc">If you hold a professional license (nurse, teacher, contractor, etc.), check if it transfers or needs to be re-obtained in your new state.</p></div>
+    <div class="deadline-card">
+      <div class="deadline-days">10–90 days</div>
+      <div class="deadline-title">Driver's license transfer</div>
+      <p class="deadline-desc">This varies wildly by state. Some (like Florida and Georgia) require transfer within 30 days. Others give you 90 days. A few require it within 10 days. Check your new state immediately.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">30 days</div>
+      <div class="deadline-title">Vehicle registration</div>
+      <p class="deadline-desc">Most states require vehicle registration within 30 days of establishing residency. You may also need a new state inspection or emissions test.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">30 days</div>
+      <div class="deadline-title">Voter registration update</div>
+      <p class="deadline-desc">Update your registration at vote.org or your local election office. You'll need to re-register in your new state — your old registration doesn't transfer.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">Varies</div>
+      <div class="deadline-title">State income tax residency</div>
+      <p class="deadline-desc">If you move mid-year, you may owe income tax in both states. Rules for establishing residency vary — some states count days, others look at where your "domicile" is.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">60 days</div>
+      <div class="deadline-title">Insurance updates</div>
+      <p class="deadline-desc">Update homeowner's or renter's insurance for your new address. Auto insurance rates change by location — failing to update could void your coverage.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">Before enrollment</div>
+      <div class="deadline-title">School registration</div>
+      <p class="deadline-desc">Contact your new school district early. You'll need immunization records, previous transcripts, and proof of residency. IEP/504 plans should be transferred as well.</p>
+    </div>
   </div>
 </div>
+
 <div class="section-divider"></div>
+
+<div class="section">
+  <p class="section-label">See it in action</p>
+  <h2 class="section-title">See how Lumeway<br><em>helps</em></h2>
+  <div class="chat-preview-wrap">
+    <div class="chat-preview">
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">I'm moving from New York to North Carolina in about 6 weeks and I have no idea how to handle all the paperwork.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">Six weeks is a solid amount of time — let's make sure nothing slips through the cracks. Are you renting or do you own your home in New York?</div></div>
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">Renting. I need to give notice.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">Check your lease for the required notice period — in New York it's typically 30 days, but your lease may specify differently. That should be your first step this week. Next, North Carolina requires you to get a new driver's license within 60 days of moving. You'll also need to register your car within 30 days. Want me to build you a week-by-week checklist for the full move?</div></div>
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">Yes please, that would be amazing.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">I'll put one together based on your 6-week timeline. A couple more quick questions — are you moving with anyone? Kids, partner, pets?</div></div>
+    </div>
+    <div class="chat-preview-cta">
+      <a href="/chat" class="btn-large btn-large-primary">Ready to get started? Try Lumeway free →</a>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
 <div class="section">
   <p class="section-label">National resources</p>
   <h2 class="section-title">Trusted organizations<br><em>that can help</em></h2>
   <div class="resources-grid">
-    <a href="https://moversguide.usps.com" target="_blank" class="resource-card"><div class="resource-icon">📬</div><div class="resource-title">USPS Mover's Guide</div><p class="resource-desc">Official USPS mail forwarding and change of address service. Set up forwarding and notify government agencies.</p><span class="resource-link">moversguide.usps.com →</span></a>
-    <a href="https://www.usa.gov/moving" target="_blank" class="resource-card"><div class="resource-icon">🏛️</div><div class="resource-title">USA.gov Moving Guide</div><p class="resource-desc">Official government checklist for updating federal and state records when you move.</p><span class="resource-link">usa.gov/moving →</span></a>
-    <a href="https://www.fmcsa.dot.gov/protect-your-move" target="_blank" class="resource-card"><div class="resource-icon">🚚</div><div class="resource-title">Protect Your Move (FMCSA)</div><p class="resource-desc">Federal guide to hiring licensed, insured movers and avoiding moving scams.</p><span class="resource-link">fmcsa.dot.gov →</span></a>
-    <a href="https://www.irs.gov/taxtopics/tc452" target="_blank" class="resource-card"><div class="resource-icon">💰</div><div class="resource-title">IRS Moving Expense Guide</div><p class="resource-desc">IRS guidance on moving expenses and how relocation may affect your taxes.</p><span class="resource-link">irs.gov →</span></a>
+    <a href="https://www.usps.com/move" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">📬</div>
+      <div class="resource-title">USPS Mail Forwarding</div>
+      <p class="resource-desc">Set up official mail forwarding before your move. Covers first-class mail for 12 months.</p>
+      <span class="resource-link">usps.com/move →</span>
+    </a>
+    <a href="https://www.dmv.org" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">🚗</div>
+      <div class="resource-title">DMV.org</div>
+      <p class="resource-desc">State-by-state guide to driver's license transfers, vehicle registration, and title requirements.</p>
+      <span class="resource-link">dmv.org →</span>
+    </a>
+    <a href="https://www.greatschools.org" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">🏫</div>
+      <div class="resource-title">GreatSchools.org</div>
+      <p class="resource-desc">School ratings, reviews, and comparison tools to research schools in your new area.</p>
+      <span class="resource-link">greatschools.org →</span>
+    </a>
+    <a href="https://www.vote.org" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">🗳️</div>
+      <div class="resource-title">Vote.org</div>
+      <p class="resource-desc">Register to vote or update your registration at your new address in minutes.</p>
+      <span class="resource-link">vote.org →</span>
+    </a>
   </div>
 </div>
+
+<div class="section-divider"></div>
+
+<div class="section">
+  <p class="section-label">Common questions</p>
+  <h2 class="section-title">Frequently asked<br><em>questions</em></h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="rel-a1" id="rel-q1"><span>How soon do I need to get a new driver's license?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="rel-a1" role="region" aria-labelledby="rel-q1"><div class="faq-answer-inner">It varies by state — from as few as 10 days to as many as 90 days after establishing residency. Check your new state's DMV website immediately after moving. Driving with an out-of-state license past the deadline can result in fines.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="rel-a2" id="rel-q2"><span>Do I need to re-register my car?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="rel-a2" role="region" aria-labelledby="rel-q2"><div class="faq-answer-inner">Yes. Most states require vehicle registration within 30 days of establishing residency. You'll likely also need a state vehicle inspection or emissions test, which can take time to schedule.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="rel-a3" id="rel-q3"><span>How do I transfer my kids' school records?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="rel-a3" role="region" aria-labelledby="rel-q3"><div class="faq-answer-inner">Contact your current school to request official records be sent to the new school. You'll typically need immunization records, transcripts, and any IEP or 504 plans. Start this process early — some transfers take several weeks. <a href="/chat">Lumeway can build you a school transfer checklist →</a></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="rel-a4" id="rel-q4"><span>How long does mail forwarding last?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="rel-a4" role="region" aria-labelledby="rel-q4"><div class="faq-answer-inner">USPS mail forwarding lasts 12 months for first-class mail. After that, unforwarded mail is returned to sender. Use that year to update your address with every account, subscription, and institution.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="rel-a5" id="rel-q5"><span>Do I need to update my will when I move states?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="rel-a5" role="region" aria-labelledby="rel-q5"><div class="faq-answer-inner">Yes — this is commonly overlooked. Estate laws, power of attorney rules, and healthcare directive requirements vary between states. A will that's valid in your old state may not work optimally in your new one.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="rel-a6" id="rel-q6"><span>What if I need to break my lease?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="rel-a6" role="region" aria-labelledby="rel-q6"><div class="faq-answer-inner">Review your lease for early termination terms. Many states require only 30–60 days written notice with an early termination fee. Certain situations — military orders, domestic violence, and sometimes job relocation — have legal protections that may let you break a lease without penalty.</div></div>
+    </div>
+  </div>
+</div>
+
 <div class="cta-section">
-  <h2 class="cta-title">Let's make your move<br><em>actually manageable</em></h2>
-  <p class="cta-subtitle">Lumeway builds you a personalized moving checklist and walks you through every step — from 8 weeks out to fully settled in.</p>
+  <h2 class="cta-title">Ready to settle into<br><em>your new home?</em></h2>
+  <p class="cta-subtitle">Lumeway maps out every step of your move so nothing falls through the cracks — from paperwork to getting settled.</p>
   <div class="cta-actions">
     <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
     <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
   </div>
 </div>
+
 <footer>
   <div class="footer-logo">Lumeway</div>
   <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. · <a href="/about" style="color:var(--muted);text-decoration:none;">About</a> · <a href="/privacy" style="color:var(--muted);text-decoration:none;">Privacy</a></p>
 </footer>
+<script>
+  var preview = document.querySelector('.chat-preview');
+  if (preview && 'IntersectionObserver' in window) {
+    preview.classList.add('cp-anim');
+    var msgs = preview.querySelectorAll('.cp-msg');
+    var obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) {
+        msgs.forEach(function(m, i) { setTimeout(function() { m.classList.add('cp-visible'); }, i * 150); });
+        obs.disconnect();
+      }
+    }, { threshold: 0.15 });
+    obs.observe(preview);
+  }
+</script>
+<script>
+  // FAQ Accordion
+  var faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(function(item, idx) {
+    var btn = item.querySelector('.faq-question');
+    var ans = item.querySelector('.faq-answer');
+    btn.addEventListener('click', function() {
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      faqItems.forEach(function(other) {
+        other.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        other.querySelector('.faq-answer').style.maxHeight = '0';
+      });
+      if (!expanded) {
+        btn.setAttribute('aria-expanded', 'true');
+        ans.style.maxHeight = ans.scrollHeight + 'px';
+      }
+    });
+    btn.addEventListener('keydown', function(e) {
+      var n, p;
+      if (e.key === 'ArrowDown') { e.preventDefault(); n = faqItems[idx + 1]; if (n) n.querySelector('.faq-question').focus(); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); p = faqItems[idx - 1]; if (p) p.querySelector('.faq-question').focus(); }
+      if (e.key === 'Home') { e.preventDefault(); faqItems[0].querySelector('.faq-question').focus(); }
+      if (e.key === 'End')  { e.preventDefault(); faqItems[faqItems.length - 1].querySelector('.faq-question').focus(); }
+    });
+  });
+</script>
+<script>
+  // State Selector
+  (function() {
+    var CATEGORY = 'relocation';
+    var sel = document.getElementById('stateSelect');
+    var result = document.getElementById('stateResult');
+    var fallback = document.getElementById('stateFallback');
+    var headline = document.getElementById('stateResultHeadline');
+    var bullets = document.getElementById('stateResultBullets');
+    var stateData = null;
+    function renderState(code) {
+      result.hidden = true; fallback.hidden = true;
+      if (!code) return;
+      if (code === 'OTHER') { fallback.hidden = false; return; }
+      if (!stateData || !stateData[code] || !stateData[code][CATEGORY]) { fallback.hidden = false; return; }
+      var info = stateData[code][CATEGORY];
+      headline.innerHTML = info.headline;
+      bullets.innerHTML = info.bullets.map(function(b) { return '<li>' + b + '</li>'; }).join('');
+      result.hidden = false;
+    }
+    sel.addEventListener('change', function() { renderState(sel.value); });
+    fetch('/static/data/state-rules.json')
+      .then(function(r) { return r.json(); })
+      .then(function(data) { stateData = data; if (sel.value) renderState(sel.value); })
+      .catch(function() {});
+  })();
+</script>
 </body>
 </html>

@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Disability &amp; Benefits — Lumeway</title>
-  <meta name="description" content="A step-by-step guide for navigating disability claims and SSDI. Deadlines, resources, and guidance from Lumeway."/>
+  <title>Disability &amp; Benefits Guide — Lumeway</title>
+  <meta name="description" content="Step-by-step guidance for navigating disability claims. Timelines, deadlines, and resources — all in one place."/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the difference between SSDI and SSI?","acceptedAnswer":{"@type":"Answer","text":"SSDI (Social Security Disability Insurance) is based on your work history and requires sufficient work credits. SSI (Supplemental Security Income) is needs-based for people with limited income and assets. You may qualify for one or both — they're separate programs with different rules."}},{"@type":"Question","name":"How long does SSDI approval take?","acceptedAnswer":{"@type":"Answer","text":"Initial applications typically take 3–6 months. About 65% of initial applications are denied. If you need to appeal, the process can add another 6–18 months. Starting early and having thorough medical documentation gives you the best chance."}},{"@type":"Question","name":"Do I need a disability lawyer?","acceptedAnswer":{"@type":"Answer","text":"Not for the initial application, but strongly consider one if you're denied and need to appeal. Most disability attorneys work on contingency — they only get paid (a percentage of your back benefits) if you win. This means there's usually no upfront cost."}},{"@type":"Question","name":"Can I work while receiving SSDI?","acceptedAnswer":{"@type":"Answer","text":"SSDI includes a 9-month trial work period where you can test your ability to work without losing benefits. There are also programs like Ticket to Work that support the transition back to employment."}},{"@type":"Question","name":"What medical evidence do I need?","acceptedAnswer":{"@type":"Answer","text":"Detailed records from your treating physicians are essential — including diagnosis, treatment history, functional limitations, and prognosis. The more specific and consistent your documentation, the stronger your application."}},{"@type":"Question","name":"When does Medicare start with SSDI?","acceptedAnswer":{"@type":"Answer","text":"Medicare coverage begins 24 months after your SSDI benefits start — and benefits don't start until after the 5-month waiting period. So from disability onset to Medicare, it's actually about 29 months. During that gap, explore Medicaid, COBRA, or marketplace coverage."}}]}
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #1B2A38; --muted: #6E7D8A; --navy: #1B3A5C; --gold: #B8977E; --accent: #1B3A5C; --accent-light: #B8977E; --border: #E4DDD3; --shadow: 0 2px 40px rgba(27,58,92,0.09); }
@@ -65,6 +68,49 @@
     .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--navy); }
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
     @media (max-width: 640px) { nav { padding: 16px 20px; } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 32px 20px; flex-direction: column; } }
+    /* Chat Preview */
+    .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
+    .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
+    .cp-msg { display: flex; gap: 10px; margin-bottom: 16px; }
+    .cp-msg:last-child { margin-bottom: 0; }
+    .cp-msg.user { flex-direction: row-reverse; }
+    .cp-avatar { width: 28px; height: 28px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 3px; font-size: 10px; letter-spacing: 0.03em; }
+    .cp-avatar.bot { background: var(--navy); color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 13px; font-weight: 600; border-radius: 8px; }
+    .cp-avatar.user { background: #EEE8DE; border: 1px solid var(--border); color: var(--muted); border-radius: 50%; }
+    .cp-bubble { max-width: 80%; padding: 11px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.7; }
+    .cp-msg.bot .cp-bubble { background: #FDFAF6; border: 1px solid var(--border); border-top-left-radius: 4px; color: var(--text); max-width: 88%; }
+    .cp-msg.user .cp-bubble { background: var(--navy); color: var(--cream); border-top-right-radius: 4px; }
+    .cp-anim .cp-msg { opacity: 0; transform: translateY(8px); transition: opacity 0.4s ease, transform 0.4s ease; }
+    .cp-anim .cp-msg.cp-visible { opacity: 1; transform: translateY(0); }
+    .chat-preview-cta { text-align: center; margin-top: 24px; }
+    /* FAQ Accordion */
+    .faq-list { display: flex; flex-direction: column; gap: 2px; }
+    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; }
+    .faq-item:first-child { border-radius: 16px 16px 0 0; }
+    .faq-item:last-child { border-radius: 0 0 16px 16px; }
+    .faq-question { width: 100%; text-align: left; background: none; border: none; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; }
+    .faq-question > span:first-child { flex: 1; min-width: 0; }
+    .faq-question:hover { background: rgba(27,58,92,0.03); }
+    .faq-question[aria-expanded="true"] { color: var(--navy); }
+    .faq-icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 14px; line-height: 1; transition: transform 0.25s ease, border-color 0.2s; }
+    .faq-question[aria-expanded="true"] .faq-icon { transform: rotate(45deg); border-color: var(--navy); color: var(--navy); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .faq-answer-inner { padding: 0 24px 20px; font-size: 14px; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .faq-answer-inner a { color: var(--navy); text-decoration: underline; text-underline-offset: 2px; }
+    .faq-answer-inner a:hover { color: var(--gold); }
+    /* State Selector */
+    .state-selector-section { padding: 0 24px 48px; max-width: 800px; margin: 0 auto; }
+    .state-selector-intro { font-size: 13px; color: var(--muted); font-weight: 300; margin-bottom: 12px; }
+    .state-select-input { padding: 11px 40px 11px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--warm-white); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E7D8A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; min-width: 220px; }
+    .state-select-input:focus { outline: 2px solid var(--navy); outline-offset: 2px; }
+    .state-callout { margin-top: 20px; background: var(--warm-white); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 0 16px 16px 0; padding: 24px 28px; max-width: 680px; }
+    .state-callout-headline { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; margin-bottom: 16px; color: var(--text); }
+    .state-callout-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .state-callout-bullets li { font-size: 14px; color: var(--muted); line-height: 1.65; padding-left: 20px; position: relative; font-weight: 300; }
+    .state-callout-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--gold); }
+    .state-disclaimer { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 20px; line-height: 1.6; }
+    .state-fallback-card { margin-top: 20px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; max-width: 680px; }
+    .state-fallback-card p { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 20px; }
   </style>
 </head>
 <body>
@@ -75,93 +121,294 @@
     <a href="/#waitlist" class="btn-primary">Join waitlist</a>
   </div>
 </nav>
+
 <div class="hero">
   <div class="hero-eyebrow">🩺 Disability &amp; Benefits</div>
-  <h1 class="hero-title">The system is complex.<br><em>You don't have to be.</em></h1>
-  <p class="hero-subtitle">Navigating disability claims — whether SSDI, SSI, or private insurance — is one of the most paperwork-intensive processes there is. Lumeway helps you understand the steps, meet the deadlines, and build the strongest possible case.</p>
+  <h1 class="hero-title">The process is complicated.<br>Your next step <em>doesn't have to be.</em></h1>
+  <p class="hero-subtitle">Applying for disability benefits can feel like navigating a maze. Lumeway breaks it down into clear, manageable steps — from gathering documentation to handling appeals.</p>
   <div class="hero-actions">
     <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
     <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
   </div>
 </div>
+
+<div class="state-selector-section">
+  <p class="state-selector-intro">See rules specific to your state:</p>
+  <select id="stateSelect" class="state-select-input" aria-label="Select your state for local guidance">
+    <option value="">Select your state →</option>
+    <option value="CA">California</option>
+    <option value="TX">Texas</option>
+    <option value="FL">Florida</option>
+    <option value="NY">New York</option>
+    <option value="PA">Pennsylvania</option>
+    <option value="IL">Illinois</option>
+    <option value="OH">Ohio</option>
+    <option value="GA">Georgia</option>
+    <option value="NC">North Carolina</option>
+    <option value="MI">Michigan</option>
+    <option value="OTHER">My state isn't listed yet</option>
+  </select>
+  <div id="stateResult" class="state-callout" hidden aria-live="polite">
+    <h3 id="stateResultHeadline" class="state-callout-headline"></h3>
+    <ul id="stateResultBullets" class="state-callout-bullets"></ul>
+    <p class="state-disclaimer">Rules and requirements change — always verify with your state's official agencies.</p>
+    <a href="/chat" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Get personalized guidance →</a>
+  </div>
+  <div id="stateFallback" class="state-fallback-card" hidden>
+    <p>We're adding more states soon. In the meantime, Lumeway can walk you through state-specific guidance in the chat.</p>
+    <a href="/chat" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Talk to Lumeway free →</a>
+  </div>
+</div>
+
 <div class="section-divider"></div>
+
 <div class="section">
   <p class="section-label">What to expect</p>
   <h2 class="section-title">A timeline of what<br><em>needs to happen</em></h2>
   <div class="timeline">
     <div class="timeline-item">
-      <div class="timeline-period">Apply now</div>
-      <div class="timeline-content"><h3>Start your application</h3><ul>
-        <li>Apply for SSDI online at ssa.gov or by calling 1-800-772-1213</li>
-        <li>Gather medical records, doctor contact info, and work history</li>
-        <li>Document all conditions — list every diagnosis, not just the primary one</li>
-        <li>Note your exact last day of work</li>
+      <div class="timeline-period">Immediately</div>
+      <div class="timeline-content"><h3>Document everything</h3><ul>
+        <li>Ask your doctor to thoroughly document your condition, functional limitations, and prognosis</li>
+        <li>Understand your employer's short-term disability process (if currently employed)</li>
+        <li>Request FMLA leave if you're still working — this protects your job for up to 12 weeks</li>
+        <li>Begin gathering all medical records, test results, and treatment history</li>
       </ul></div>
     </div>
     <div class="timeline-item">
-      <div class="timeline-period">3–6 months</div>
-      <div class="timeline-content"><h3>Initial decision</h3><ul>
-        <li>SSA reviews your application — most initial claims take 3-6 months</li>
-        <li>Respond promptly to any requests for additional information</li>
-        <li>Continue medical treatment and keep detailed records</li>
-        <li>Most initial applications are denied — this is normal, not final</li>
+      <div class="timeline-period">First 1–2 weeks</div>
+      <div class="timeline-content"><h3>File your claims</h3><ul>
+        <li>File for employer short-term disability (if applicable)</li>
+        <li>Apply for SSDI through Social Security (ssa.gov or your local SSA office)</li>
+        <li>Check if your state has its own disability program (CA, HI, NJ, NY, RI, and WA do)</li>
+        <li>Notify creditors if you anticipate difficulty making payments — many have hardship programs</li>
       </ul></div>
     </div>
     <div class="timeline-item">
-      <div class="timeline-period">If denied</div>
-      <div class="timeline-content"><h3>Appeal immediately</h3><ul>
-        <li>File a Request for Reconsideration within 60 days of denial</li>
-        <li>Consider hiring a disability attorney (they work on contingency)</li>
-        <li>Gather additional medical evidence to strengthen your case</li>
-        <li>Request an ALJ hearing if reconsideration is also denied</li>
+      <div class="timeline-period">First 1–3 months</div>
+      <div class="timeline-content"><h3>Follow up and prepare</h3><ul>
+        <li>Check SSDI application status regularly (ssa.gov or 1-800-772-1213)</li>
+        <li>Continue all medical treatment and keep detailed records of appointments</li>
+        <li>Attend any consultative exams SSA schedules — missing one can result in automatic denial</li>
+        <li>Apply for assistance programs you may qualify for (Medicaid, SNAP, utility assistance, state programs)</li>
       </ul></div>
     </div>
     <div class="timeline-item">
-      <div class="timeline-period">If approved</div>
-      <div class="timeline-content"><h3>After approval</h3><ul>
-        <li>Understand your back pay — benefits may go back to your application date</li>
-        <li>Medicare eligibility begins 24 months after SSDI approval</li>
-        <li>Report any work activity or income changes to SSA promptly</li>
-        <li>Review Ticket to Work program if you want to return to work</li>
+      <div class="timeline-period">3–12 months</div>
+      <div class="timeline-content"><h3>Appeals and long-term planning</h3><ul>
+        <li>If denied SSDI, file your appeal within 60 days — do not miss this deadline</li>
+        <li>Consider hiring a disability attorney for appeals (most work on contingency — no upfront cost)</li>
+        <li>Explore vocational rehabilitation services through your state</li>
+        <li>Look into long-term housing assistance, transportation programs, and community support</li>
       </ul></div>
     </div>
   </div>
 </div>
+
 <div class="section-divider"></div>
+
 <div class="section">
   <p class="section-label">Critical deadlines</p>
   <h2 class="section-title">Don't miss these<br><em>time-sensitive steps</em></h2>
   <div class="deadlines-grid">
-    <div class="deadline-card"><div class="deadline-days">ASAP</div><div class="deadline-title">Apply as soon as possible</div><p class="deadline-desc">SSDI has a 5-month waiting period from your disability onset date. The sooner you apply, the sooner benefits can begin.</p></div>
-    <div class="deadline-card"><div class="deadline-days">60 days</div><div class="deadline-title">Appeal a denial</div><p class="deadline-desc">You have 60 days plus 5 days for mailing to appeal a denial. Missing this window means starting the entire process over.</p></div>
-    <div class="deadline-card"><div class="deadline-days">5 months</div><div class="deadline-title">Waiting period</div><p class="deadline-desc">SSDI has a mandatory 5-month waiting period. Benefits begin on the 6th full month of disability.</p></div>
-    <div class="deadline-card"><div class="deadline-days">24 months</div><div class="deadline-title">Medicare eligibility</div><p class="deadline-desc">Medicare coverage begins 24 months after your first month of SSDI entitlement. Plan your healthcare coverage accordingly.</p></div>
-    <div class="deadline-card"><div class="deadline-days">Immediately</div><div class="deadline-title">Report income changes</div><p class="deadline-desc">If you receive SSDI and return to work or earn income, you must report it to SSA immediately to avoid overpayment issues.</p></div>
-    <div class="deadline-card"><div class="deadline-days">Varies</div><div class="deadline-title">Private disability insurance</div><p class="deadline-desc">Short-term disability typically has a 7-30 day waiting period. Long-term disability kicks in after 90-180 days. Check your policy.</p></div>
+    <div class="deadline-card">
+      <div class="deadline-days">~30 days</div>
+      <div class="deadline-title">Employer short-term disability filing</div>
+      <p class="deadline-desc">Most employer STD policies require filing within 30 days of disability onset. Check your specific policy — missing this deadline can forfeit your benefits.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">12 weeks</div>
+      <div class="deadline-title">FMLA job protection</div>
+      <p class="deadline-desc">FMLA protects your job for 12 weeks. After that, your employer is not legally required to hold your position. Plan accordingly and understand your company's policy.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">5 months</div>
+      <div class="deadline-title">SSDI waiting period</div>
+      <p class="deadline-desc">Even if approved, SSDI benefits don't begin until 5 full months after your disability onset date. Plan your finances for this gap.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">60 days</div>
+      <div class="deadline-title">SSDI appeal after denial</div>
+      <p class="deadline-desc">If your SSDI application is denied, you have exactly 60 days from the denial date to request reconsideration. Missing this means starting the entire application over.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">24 months</div>
+      <div class="deadline-title">Medicare eligibility</div>
+      <p class="deadline-desc">Medicare coverage begins 24 months after your SSDI benefits start (not 24 months after approval — after benefits start, which is after the 5-month waiting period). That's a 29-month gap from onset to Medicare.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">Ongoing</div>
+      <div class="deadline-title">Medical documentation</div>
+      <p class="deadline-desc">There's no single deadline, but consistent, ongoing medical documentation is the single most important factor in SSDI approval. Every gap in treatment weakens your case.</p>
+    </div>
   </div>
 </div>
+
 <div class="section-divider"></div>
+
+<div class="section">
+  <p class="section-label">See it in action</p>
+  <h2 class="section-title">See how Lumeway<br><em>helps</em></h2>
+  <div class="chat-preview-wrap">
+    <div class="chat-preview">
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">I have a chronic condition that's gotten worse and I can't work anymore. I need to apply for disability.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">I'm sorry you're dealing with this. The disability application process can feel daunting, but I'll help you break it down. First — are you currently employed, or have you already stopped working?</div></div>
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">I'm still technically employed but on medical leave.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">Okay, that's actually helpful for your timeline. If you haven't already, make sure you've filed for FMLA — that protects your job for 12 weeks while you figure out next steps. The most important thing right now is medical documentation. Has your doctor written a detailed assessment of your condition and how it limits your ability to work?</div></div>
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">He's given me notes but I'm not sure how detailed they are.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">The level of detail in your medical records is the single biggest factor in a successful SSDI application. I can help you understand exactly what SSA looks for so you can ask your doctor to include the right information. Want to start there?</div></div>
+    </div>
+    <div class="chat-preview-cta">
+      <a href="/chat" class="btn-large btn-large-primary">Ready to get started? Try Lumeway free →</a>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
 <div class="section">
   <p class="section-label">National resources</p>
   <h2 class="section-title">Trusted organizations<br><em>that can help</em></h2>
   <div class="resources-grid">
-    <a href="https://www.ssa.gov/disability" target="_blank" class="resource-card"><div class="resource-icon">🏛️</div><div class="resource-title">SSA Disability Benefits</div><p class="resource-desc">Apply for SSDI and SSI online, check your application status, and find your local Social Security office.</p><span class="resource-link">ssa.gov/disability →</span></a>
-    <a href="https://www.nosscr.org" target="_blank" class="resource-card"><div class="resource-icon">⚖️</div><div class="resource-title">Find a Disability Attorney</div><p class="resource-desc">NOSSCR directory of Social Security disability attorneys who work on contingency — no upfront cost.</p><span class="resource-link">nosscr.org →</span></a>
-    <a href="https://www.benefits.gov/benefit/4340" target="_blank" class="resource-card"><div class="resource-icon">📋</div><div class="resource-title">Benefits.gov SSDI Guide</div><p class="resource-desc">Comprehensive government guide to SSDI eligibility requirements and the application process.</p><span class="resource-link">benefits.gov →</span></a>
-    <a href="https://www.dol.gov/agencies/ebsa/workers-and-families/private-disability-insurance" target="_blank" class="resource-card"><div class="resource-icon">🏥</div><div class="resource-title">Private Disability Insurance (DOL)</div><p class="resource-desc">Department of Labor guide to private disability insurance rights and how to appeal a denied claim.</p><span class="resource-link">dol.gov →</span></a>
+    <a href="https://www.ssa.gov/disability" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">🏛️</div>
+      <div class="resource-title">SSA.gov Disability</div>
+      <p class="resource-desc">Apply for SSDI online, check application status, and find your local Social Security office.</p>
+      <span class="resource-link">ssa.gov/disability →</span>
+    </a>
+    <a href="https://www.ndrn.org" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">⚖️</div>
+      <div class="resource-title">Disability Rights Network</div>
+      <p class="resource-desc">National network of legal advocacy organizations for people with disabilities — free legal help by state.</p>
+      <span class="resource-link">ndrn.org →</span>
+    </a>
+    <a href="https://askjan.org" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">💼</div>
+      <div class="resource-title">Job Accommodation Network (JAN)</div>
+      <p class="resource-desc">Free expert guidance on workplace accommodations for people with disabilities.</p>
+      <span class="resource-link">askjan.org →</span>
+    </a>
+    <a href="https://www.benefits.gov" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">🔍</div>
+      <div class="resource-title">Benefits.gov</div>
+      <p class="resource-desc">Federal screening tool to find all government benefit programs you may qualify for.</p>
+      <span class="resource-link">benefits.gov →</span>
+    </a>
   </div>
 </div>
+
+<div class="section-divider"></div>
+
+<div class="section">
+  <p class="section-label">Common questions</p>
+  <h2 class="section-title">Frequently asked<br><em>questions</em></h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="dis-a1" id="dis-q1"><span>What's the difference between SSDI and SSI?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="dis-a1" role="region" aria-labelledby="dis-q1"><div class="faq-answer-inner">SSDI (Social Security Disability Insurance) is based on your work history and requires sufficient work credits. SSI (Supplemental Security Income) is needs-based for people with limited income and assets. You may qualify for one or both — they're separate programs with different rules. <a href="/chat">Lumeway can help you figure out which you qualify for →</a></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="dis-a2" id="dis-q2"><span>How long does SSDI approval take?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="dis-a2" role="region" aria-labelledby="dis-q2"><div class="faq-answer-inner">Initial applications typically take 3–6 months. About 65% of initial applications are denied. If you need to appeal, the process can add another 6–18 months. Starting early and having thorough medical documentation gives you the best chance.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="dis-a3" id="dis-q3"><span>Do I need a disability lawyer?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="dis-a3" role="region" aria-labelledby="dis-q3"><div class="faq-answer-inner">Not for the initial application, but strongly consider one if you're denied and need to appeal. Most disability attorneys work on contingency — they only get paid (a percentage of your back benefits) if you win. This means there's usually no upfront cost.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="dis-a4" id="dis-q4"><span>Can I work while receiving SSDI?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="dis-a4" role="region" aria-labelledby="dis-q4"><div class="faq-answer-inner">SSDI includes a 9-month trial work period where you can test your ability to work without losing benefits. There are also programs like Ticket to Work that support the transition back to employment.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="dis-a5" id="dis-q5"><span>What medical evidence do I need?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="dis-a5" role="region" aria-labelledby="dis-q5"><div class="faq-answer-inner">Detailed records from your treating physicians are essential — including diagnosis, treatment history, functional limitations, and prognosis. The more specific and consistent your documentation, the stronger your application.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="dis-a6" id="dis-q6"><span>When does Medicare start with SSDI?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="dis-a6" role="region" aria-labelledby="dis-q6"><div class="faq-answer-inner">Medicare coverage begins 24 months after your SSDI benefits start — and benefits don't start until after the 5-month waiting period. So from disability onset to Medicare, it's actually about 29 months. During that gap, explore Medicaid, COBRA, or marketplace coverage.</div></div>
+    </div>
+  </div>
+</div>
+
 <div class="cta-section">
-  <h2 class="cta-title">Let's build your<br><em>strongest case</em></h2>
-  <p class="cta-subtitle">Lumeway walks you through every step of the disability claims process — from application to appeal — so nothing gets missed.</p>
+  <h2 class="cta-title">Ready to take<br><em>the next step?</em></h2>
+  <p class="cta-subtitle">Lumeway helps you navigate disability claims, appeals, and benefits — breaking down every step into something manageable.</p>
   <div class="cta-actions">
     <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
     <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
   </div>
 </div>
+
 <footer>
   <div class="footer-logo">Lumeway</div>
   <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. · <a href="/about" style="color:var(--muted);text-decoration:none;">About</a> · <a href="/privacy" style="color:var(--muted);text-decoration:none;">Privacy</a></p>
 </footer>
+<script>
+  var preview = document.querySelector('.chat-preview');
+  if (preview && 'IntersectionObserver' in window) {
+    preview.classList.add('cp-anim');
+    var msgs = preview.querySelectorAll('.cp-msg');
+    var obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) {
+        msgs.forEach(function(m, i) { setTimeout(function() { m.classList.add('cp-visible'); }, i * 150); });
+        obs.disconnect();
+      }
+    }, { threshold: 0.15 });
+    obs.observe(preview);
+  }
+</script>
+<script>
+  // FAQ Accordion
+  var faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(function(item, idx) {
+    var btn = item.querySelector('.faq-question');
+    var ans = item.querySelector('.faq-answer');
+    btn.addEventListener('click', function() {
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      faqItems.forEach(function(other) {
+        other.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        other.querySelector('.faq-answer').style.maxHeight = '0';
+      });
+      if (!expanded) {
+        btn.setAttribute('aria-expanded', 'true');
+        ans.style.maxHeight = ans.scrollHeight + 'px';
+      }
+    });
+    btn.addEventListener('keydown', function(e) {
+      var n, p;
+      if (e.key === 'ArrowDown') { e.preventDefault(); n = faqItems[idx + 1]; if (n) n.querySelector('.faq-question').focus(); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); p = faqItems[idx - 1]; if (p) p.querySelector('.faq-question').focus(); }
+      if (e.key === 'Home') { e.preventDefault(); faqItems[0].querySelector('.faq-question').focus(); }
+      if (e.key === 'End')  { e.preventDefault(); faqItems[faqItems.length - 1].querySelector('.faq-question').focus(); }
+    });
+  });
+</script>
+<script>
+  // State Selector
+  (function() {
+    var CATEGORY = 'disability';
+    var sel = document.getElementById('stateSelect');
+    var result = document.getElementById('stateResult');
+    var fallback = document.getElementById('stateFallback');
+    var headline = document.getElementById('stateResultHeadline');
+    var bullets = document.getElementById('stateResultBullets');
+    var stateData = null;
+    function renderState(code) {
+      result.hidden = true; fallback.hidden = true;
+      if (!code) return;
+      if (code === 'OTHER') { fallback.hidden = false; return; }
+      if (!stateData || !stateData[code] || !stateData[code][CATEGORY]) { fallback.hidden = false; return; }
+      var info = stateData[code][CATEGORY];
+      headline.innerHTML = info.headline;
+      bullets.innerHTML = info.bullets.map(function(b) { return '<li>' + b + '</li>'; }).join('');
+      result.hidden = false;
+    }
+    sel.addEventListener('change', function() { renderState(sel.value); });
+    fetch('/static/data/state-rules.json')
+      .then(function(r) { return r.json(); })
+      .then(function(data) { stateData = data; if (sel.value) renderState(sel.value); })
+      .catch(function() {});
+  })();
+</script>
 </body>
 </html>

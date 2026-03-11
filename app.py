@@ -276,6 +276,10 @@ def retirement():
 def research():
     return send_from_directory(".", "research.html")
 
+@app.route("/static/data/state-rules.json")
+def state_rules():
+    return send_from_directory("data", "state-rules.json")
+
 @app.route("/api/export", methods=["POST"])
 def export_checklist():
     try:

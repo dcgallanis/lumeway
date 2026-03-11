@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Divorce &amp; Separation — Lumeway</title>
-  <meta name="description" content="A step-by-step guide for navigating divorce. Deadlines, resources, and compassionate guidance from Lumeway."/>
+  <title>Divorce &amp; Separation Guide — Lumeway</title>
+  <meta name="description" content="Step-by-step guidance for navigating divorce. Timelines, deadlines, and resources — all in one place."/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Should I move out of the house?","acceptedAnswer":{"@type":"Answer","text":"Consult a family law attorney before leaving the marital home. In some states, moving out can weaken your position on property rights or custody. Get legal advice specific to your situation first."}},{"@type":"Question","name":"How long does a divorce take?","acceptedAnswer":{"@type":"Answer","text":"It varies significantly by state and complexity. An uncontested divorce with no children can be finalized in 2–6 months in many states. Contested divorces involving custody, significant assets, or disputes can take 1–3 years."}},{"@type":"Question","name":"How is property divided?","acceptedAnswer":{"@type":"Answer","text":"In community property states (like California and Texas), marital assets are generally split 50/50. In equitable distribution states (the majority), courts divide assets fairly — which doesn't always mean equally."}},{"@type":"Question","name":"What's a QDRO and do I need one?","acceptedAnswer":{"@type":"Answer","text":"A Qualified Domestic Relations Order is a legal document that divides retirement accounts (401k, pension) in a divorce. If either spouse has a retirement account earned during the marriage, you almost certainly need one."}},{"@type":"Question","name":"Can I change my name back during the divorce?","acceptedAnswer":{"@type":"Answer","text":"Yes. Most courts will include a legal name change as part of the final divorce decree if you request it — this is typically the easiest and cheapest way to do it."}},{"@type":"Question","name":"What if I can't afford a lawyer?","acceptedAnswer":{"@type":"Answer","text":"Many states have legal aid organizations that provide free or low-cost divorce assistance. You may also qualify for a court fee waiver. LawHelp.org can connect you with resources in your state."}}]}
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #1B2A38; --muted: #6E7D8A; --navy: #1B3A5C; --gold: #B8977E; --accent: #1B3A5C; --accent-light: #B8977E; --border: #E4DDD3; --shadow: 0 2px 40px rgba(27,58,92,0.09); }
@@ -65,6 +68,49 @@
     .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--navy); }
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
     @media (max-width: 640px) { nav { padding: 16px 20px; } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 32px 20px; flex-direction: column; } }
+    /* Chat Preview */
+    .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
+    .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
+    .cp-msg { display: flex; gap: 10px; margin-bottom: 16px; }
+    .cp-msg:last-child { margin-bottom: 0; }
+    .cp-msg.user { flex-direction: row-reverse; }
+    .cp-avatar { width: 28px; height: 28px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 3px; font-size: 10px; letter-spacing: 0.03em; }
+    .cp-avatar.bot { background: var(--navy); color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 13px; font-weight: 600; border-radius: 8px; }
+    .cp-avatar.user { background: #EEE8DE; border: 1px solid var(--border); color: var(--muted); border-radius: 50%; }
+    .cp-bubble { max-width: 80%; padding: 11px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.7; }
+    .cp-msg.bot .cp-bubble { background: #FDFAF6; border: 1px solid var(--border); border-top-left-radius: 4px; color: var(--text); max-width: 88%; }
+    .cp-msg.user .cp-bubble { background: var(--navy); color: var(--cream); border-top-right-radius: 4px; }
+    .cp-anim .cp-msg { opacity: 0; transform: translateY(8px); transition: opacity 0.4s ease, transform 0.4s ease; }
+    .cp-anim .cp-msg.cp-visible { opacity: 1; transform: translateY(0); }
+    .chat-preview-cta { text-align: center; margin-top: 24px; }
+    /* FAQ Accordion */
+    .faq-list { display: flex; flex-direction: column; gap: 2px; }
+    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; }
+    .faq-item:first-child { border-radius: 16px 16px 0 0; }
+    .faq-item:last-child { border-radius: 0 0 16px 16px; }
+    .faq-question { width: 100%; text-align: left; background: none; border: none; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; }
+    .faq-question > span:first-child { flex: 1; min-width: 0; }
+    .faq-question:hover { background: rgba(27,58,92,0.03); }
+    .faq-question[aria-expanded="true"] { color: var(--navy); }
+    .faq-icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 14px; line-height: 1; transition: transform 0.25s ease, border-color 0.2s; }
+    .faq-question[aria-expanded="true"] .faq-icon { transform: rotate(45deg); border-color: var(--navy); color: var(--navy); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .faq-answer-inner { padding: 0 24px 20px; font-size: 14px; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .faq-answer-inner a { color: var(--navy); text-decoration: underline; text-underline-offset: 2px; }
+    .faq-answer-inner a:hover { color: var(--gold); }
+    /* State Selector */
+    .state-selector-section { padding: 0 24px 48px; max-width: 800px; margin: 0 auto; }
+    .state-selector-intro { font-size: 13px; color: var(--muted); font-weight: 300; margin-bottom: 12px; }
+    .state-select-input { padding: 11px 40px 11px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--warm-white); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E7D8A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; min-width: 220px; }
+    .state-select-input:focus { outline: 2px solid var(--navy); outline-offset: 2px; }
+    .state-callout { margin-top: 20px; background: var(--warm-white); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 0 16px 16px 0; padding: 24px 28px; max-width: 680px; }
+    .state-callout-headline { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; margin-bottom: 16px; color: var(--text); }
+    .state-callout-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .state-callout-bullets li { font-size: 14px; color: var(--muted); line-height: 1.65; padding-left: 20px; position: relative; font-weight: 300; }
+    .state-callout-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--gold); }
+    .state-disclaimer { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 20px; line-height: 1.6; }
+    .state-fallback-card { margin-top: 20px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; max-width: 680px; }
+    .state-fallback-card p { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 20px; }
   </style>
 </head>
 <body>
@@ -75,16 +121,47 @@
     <a href="/#waitlist" class="btn-primary">Join waitlist</a>
   </div>
 </nav>
+
 <div class="hero">
   <div class="hero-eyebrow">⚖️ Divorce &amp; Separation</div>
-  <h1 class="hero-title">A new chapter starts<br>with <em>clarity</em></h1>
-  <p class="hero-subtitle">Divorce involves dozens of legal, financial, and practical decisions — often made under enormous emotional stress. Lumeway helps you understand what needs to happen, in what order, so nothing falls through the cracks.</p>
+  <h1 class="hero-title">You don't have to navigate<br>this <em>alone</em></h1>
+  <p class="hero-subtitle">Divorce touches every part of your life — finances, housing, parenting, and identity. Lumeway helps you understand what needs to happen, protect yourself, and move forward one step at a time.</p>
   <div class="hero-actions">
     <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
     <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
   </div>
 </div>
+
+<div class="state-selector-section">
+  <p class="state-selector-intro">See rules specific to your state:</p>
+  <select id="stateSelect" class="state-select-input" aria-label="Select your state for local guidance">
+    <option value="">Select your state →</option>
+    <option value="CA">California</option>
+    <option value="TX">Texas</option>
+    <option value="FL">Florida</option>
+    <option value="NY">New York</option>
+    <option value="PA">Pennsylvania</option>
+    <option value="IL">Illinois</option>
+    <option value="OH">Ohio</option>
+    <option value="GA">Georgia</option>
+    <option value="NC">North Carolina</option>
+    <option value="MI">Michigan</option>
+    <option value="OTHER">My state isn't listed yet</option>
+  </select>
+  <div id="stateResult" class="state-callout" hidden aria-live="polite">
+    <h3 id="stateResultHeadline" class="state-callout-headline"></h3>
+    <ul id="stateResultBullets" class="state-callout-bullets"></ul>
+    <p class="state-disclaimer">Rules and requirements change — always verify with your state's official agencies.</p>
+    <a href="/chat" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Get personalized guidance →</a>
+  </div>
+  <div id="stateFallback" class="state-fallback-card" hidden>
+    <p>We're adding more states soon. In the meantime, Lumeway can walk you through state-specific guidance in the chat.</p>
+    <a href="/chat" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Talk to Lumeway free →</a>
+  </div>
+</div>
+
 <div class="section-divider"></div>
+
 <div class="section">
   <p class="section-label">What to expect</p>
   <h2 class="section-title">A timeline of what<br><em>needs to happen</em></h2>
@@ -92,76 +169,246 @@
     <div class="timeline-item">
       <div class="timeline-period">Immediately</div>
       <div class="timeline-content"><h3>Protect yourself first</h3><ul>
-        <li>Open individual bank accounts in your name only</li>
-        <li>Gather financial documents: tax returns, bank statements, retirement accounts</li>
-        <li>Make copies of all important documents</li>
-        <li>Consult with a divorce attorney before making major decisions</li>
+        <li>Secure copies of all financial records (tax returns, bank statements, investment accounts, debts)</li>
+        <li>Open an individual bank account in your name only</li>
+        <li>Document all shared assets and debts</li>
+        <li>Consult with a family law attorney before making major decisions</li>
       </ul></div>
     </div>
     <div class="timeline-item">
-      <div class="timeline-period">First month</div>
-      <div class="timeline-content"><h3>Legal and financial groundwork</h3><ul>
-        <li>File or respond to divorce petition</li>
-        <li>Address temporary orders for support, custody, and use of marital home</li>
-        <li>Begin asset and debt inventory</li>
-        <li>Notify HR about beneficiary and insurance changes needed</li>
+      <div class="timeline-period">First 1–2 weeks</div>
+      <div class="timeline-content"><h3>Legal and financial foundations</h3><ul>
+        <li>File temporary orders if needed (asset freeze, temporary custody arrangement)</li>
+        <li>Notify mortgage company or landlord of changing circumstances</li>
+        <li>Update emergency contacts at work, school, and medical providers</li>
+        <li>Begin gathering financial disclosure documents (required in most states)</li>
       </ul></div>
     </div>
     <div class="timeline-item">
-      <div class="timeline-period">During process</div>
-      <div class="timeline-content"><h3>Negotiate and settle</h3><ul>
-        <li>Complete financial disclosure forms</li>
-        <li>Negotiate division of assets, debts, and retirement accounts</li>
-        <li>File QDRO for retirement account division before divorce is final</li>
-        <li>Establish parenting plan if children are involved</li>
+      <div class="timeline-period">First 1–3 months</div>
+      <div class="timeline-content"><h3>Negotiate and divide</h3><ul>
+        <li>Complete mandatory financial disclosure</li>
+        <li>Negotiate custody and parenting plan (or begin mediation)</li>
+        <li>File QDRO to divide retirement accounts</li>
+        <li>Evaluate health insurance options (COBRA or marketplace if losing spouse's coverage)</li>
       </ul></div>
     </div>
     <div class="timeline-item">
-      <div class="timeline-period">After divorce</div>
-      <div class="timeline-content"><h3>Update everything</h3><ul>
-        <li>Update name on Social Security card, driver's license, passport</li>
-        <li>Update beneficiaries on all accounts and insurance policies</li>
-        <li>Establish individual health insurance coverage</li>
-        <li>Create or update your own will and estate plan</li>
+      <div class="timeline-period">3–12 months</div>
+      <div class="timeline-content"><h3>Finalize and rebuild</h3><ul>
+        <li>Finalize settlement agreement or prepare for trial</li>
+        <li>Update your will, power of attorney, and beneficiaries</li>
+        <li>Retitle property, vehicles, and accounts</li>
+        <li>Establish new household budget based on single income</li>
       </ul></div>
     </div>
   </div>
 </div>
+
 <div class="section-divider"></div>
+
 <div class="section">
   <p class="section-label">Critical deadlines</p>
   <h2 class="section-title">Don't miss these<br><em>time-sensitive steps</em></h2>
   <div class="deadlines-grid">
-    <div class="deadline-card"><div class="deadline-days">Before final</div><div class="deadline-title">QDRO for retirement accounts</div><p class="deadline-desc">A Qualified Domestic Relations Order must be filed before your divorce is finalized to divide retirement accounts without tax penalties.</p></div>
-    <div class="deadline-card"><div class="deadline-days">60 days</div><div class="deadline-title">COBRA health insurance</div><p class="deadline-desc">You have 60 days from loss of coverage to elect COBRA. After divorce, you're no longer eligible for your spouse's employer plan.</p></div>
-    <div class="deadline-card"><div class="deadline-days">2 years</div><div class="deadline-title">Social Security name change</div><p class="deadline-desc">You have 2 years from the divorce decree to change your name on your Social Security record without additional documentation.</p></div>
-    <div class="deadline-card"><div class="deadline-days">10 years</div><div class="deadline-title">Social Security benefits eligibility</div><p class="deadline-desc">If your marriage lasted 10+ years, you may be eligible for Social Security benefits based on your ex-spouse's record.</p></div>
-    <div class="deadline-card"><div class="deadline-days">Varies</div><div class="deadline-title">Divorce waiting periods</div><p class="deadline-desc">Most states require a waiting period of 30–180 days after filing before a divorce can be finalized. Check your state's requirements.</p></div>
-    <div class="deadline-card"><div class="deadline-days">Urgent</div><div class="deadline-title">Update beneficiaries</div><p class="deadline-desc">Update beneficiaries on life insurance, retirement accounts, and bank accounts immediately — don't wait until the divorce is final.</p></div>
+    <div class="deadline-card">
+      <div class="deadline-days">30 days</div>
+      <div class="deadline-title">Temporary restraining order on assets</div>
+      <p class="deadline-desc">Some states issue automatic asset freezes upon filing; others require a separate motion. Missing this can allow a spouse to drain accounts or hide assets.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">60 days</div>
+      <div class="deadline-title">COBRA health insurance</div>
+      <p class="deadline-desc">If you lose coverage through your spouse's employer, you have 60 days to elect COBRA continuation. After that, the window closes permanently.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">90 days</div>
+      <div class="deadline-title">QDRO for retirement accounts</div>
+      <p class="deadline-desc">A Qualified Domestic Relations Order should be filed with or shortly after the divorce decree. Delays can complicate retirement account division significantly.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">Varies by state</div>
+      <div class="deadline-title">Residency requirement</div>
+      <p class="deadline-desc">Most states require 6 months to 1 year of residency before you can file. Check your state's requirement before beginning the process.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">Tax year</div>
+      <div class="deadline-title">Filing status change</div>
+      <p class="deadline-desc">Your tax filing status is based on your marital status as of December 31. The year your divorce is finalized, you'll file as single or head of household.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-days">No deadline</div>
+      <div class="deadline-title">Update beneficiaries</div>
+      <p class="deadline-desc">Retirement accounts, life insurance, and transfer-on-death designations may still name your ex-spouse. Update these as soon as the divorce is final.</p>
+    </div>
   </div>
 </div>
+
 <div class="section-divider"></div>
+
+<div class="section">
+  <p class="section-label">See it in action</p>
+  <h2 class="section-title">See how Lumeway<br><em>helps</em></h2>
+  <div class="chat-preview-wrap">
+    <div class="chat-preview">
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">I'm thinking about filing for divorce but I don't know where to start.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">That's a really big step, and it's okay to take your time thinking it through. Before anything else — what state are you in? The process is different depending on where you live.</div></div>
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">Texas.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">In Texas, you'll need to have been a resident for at least 6 months before filing. There's also a mandatory 60-day waiting period after filing before a divorce can be finalized. The first thing I'd recommend is securing copies of all your financial records — tax returns, bank statements, retirement account balances. Do you have access to those?</div></div>
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">Some of them. My spouse handles most of the finances.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">That's very common. Start by gathering what you can — you're legally entitled to all joint financial information. I can help you make a checklist of exactly what to collect. Would that be helpful?</div></div>
+    </div>
+    <div class="chat-preview-cta">
+      <a href="/chat" class="btn-large btn-large-primary">Ready to get started? Try Lumeway free →</a>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
 <div class="section">
   <p class="section-label">National resources</p>
   <h2 class="section-title">Trusted organizations<br><em>that can help</em></h2>
   <div class="resources-grid">
-    <a href="https://www.womenslaw.org" target="_blank" class="resource-card"><div class="resource-icon">⚖️</div><div class="resource-title">WomensLaw.org</div><p class="resource-desc">Legal information and resources for people going through divorce, especially those experiencing abuse.</p><span class="resource-link">womenslaw.org →</span></a>
-    <a href="https://www.divorcenet.com" target="_blank" class="resource-card"><div class="resource-icon">📋</div><div class="resource-title">DivorceNet</div><p class="resource-desc">State-specific divorce laws, forms, and guidance on the divorce process from Nolo's legal team.</p><span class="resource-link">divorcenet.com →</span></a>
-    <a href="https://www.ssa.gov/benefits/retirement/planner/divorcedspouse.html" target="_blank" class="resource-card"><div class="resource-icon">🏛️</div><div class="resource-title">SSA Divorced Spouse Benefits</div><p class="resource-desc">Learn whether you qualify for Social Security benefits based on your ex-spouse's record.</p><span class="resource-link">ssa.gov →</span></a>
-    <a href="https://www.dol.gov/agencies/ebsa/laws-and-regulations/laws/cobra" target="_blank" class="resource-card"><div class="resource-icon">🏥</div><div class="resource-title">COBRA Information (DOL)</div><p class="resource-desc">Official Department of Labor guide to COBRA continuation health coverage after divorce.</p><span class="resource-link">dol.gov →</span></a>
+    <a href="https://www.lawhelp.org" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">🏛️</div>
+      <div class="resource-title">LawHelp.org</div>
+      <p class="resource-desc">Find free and low-cost legal aid in your state for divorce, custody, and family law matters.</p>
+      <span class="resource-link">lawhelp.org →</span>
+    </a>
+    <a href="https://www.womenslaw.org" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">🛡️</div>
+      <div class="resource-title">WomensLaw.org</div>
+      <p class="resource-desc">Legal resources and safety planning for anyone experiencing domestic violence during separation.</p>
+      <span class="resource-link">womenslaw.org →</span>
+    </a>
+    <a href="https://www.ourfamilywizard.com" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">👨‍👩‍👧</div>
+      <div class="resource-title">OurFamilyWizard</div>
+      <p class="resource-desc">Co-parenting communication platform for managing custody schedules, expenses, and messaging.</p>
+      <span class="resource-link">ourfamilywizard.com →</span>
+    </a>
+    <a href="https://www.divorce.com" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">📋</div>
+      <div class="resource-title">Divorce.com</div>
+      <p class="resource-desc">State-specific divorce filing guides, forms, and requirements.</p>
+      <span class="resource-link">divorce.com →</span>
+    </a>
   </div>
 </div>
+
+<div class="section-divider"></div>
+
+<div class="section">
+  <p class="section-label">Common questions</p>
+  <h2 class="section-title">Frequently asked<br><em>questions</em></h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="div-a1" id="div-q1"><span>Should I move out of the house?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="div-a1" role="region" aria-labelledby="div-q1"><div class="faq-answer-inner">Consult a family law attorney before leaving the marital home. In some states, moving out can weaken your position on property rights or custody. Get legal advice specific to your situation first. <a href="/chat">Lumeway can walk you through this →</a></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="div-a2" id="div-q2"><span>How long does a divorce take?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="div-a2" role="region" aria-labelledby="div-q2"><div class="faq-answer-inner">It varies significantly by state and complexity. An uncontested divorce with no children can be finalized in 2–6 months in many states. Contested divorces involving custody, significant assets, or disputes can take 1–3 years.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="div-a3" id="div-q3"><span>How is property divided?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="div-a3" role="region" aria-labelledby="div-q3"><div class="faq-answer-inner">In community property states (like California and Texas), marital assets are generally split 50/50. In equitable distribution states (the majority), courts divide assets "fairly" — which doesn't always mean equally.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="div-a4" id="div-q4"><span>What's a QDRO and do I need one?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="div-a4" role="region" aria-labelledby="div-q4"><div class="faq-answer-inner">A Qualified Domestic Relations Order is a legal document that divides retirement accounts (401k, pension) in a divorce. If either spouse has a retirement account earned during the marriage, you almost certainly need one.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="div-a5" id="div-q5"><span>Can I change my name back during the divorce?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="div-a5" role="region" aria-labelledby="div-q5"><div class="faq-answer-inner">Yes. Most courts will include a legal name change as part of the final divorce decree if you request it — this is typically the easiest and cheapest way to do it.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="div-a6" id="div-q6"><span>What if I can't afford a lawyer?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="div-a6" role="region" aria-labelledby="div-q6"><div class="faq-answer-inner">Many states have legal aid organizations that provide free or low-cost divorce assistance. You may also qualify for a court fee waiver. <a href="https://www.lawhelp.org" target="_blank" rel="noopener noreferrer">LawHelp.org</a> can connect you with resources in your state.</div></div>
+    </div>
+  </div>
+</div>
+
 <div class="cta-section">
-  <h2 class="cta-title">Ready to make sense<br>of <em>what comes next?</em></h2>
-  <p class="cta-subtitle">Lumeway walks you through every step of your divorce transition — from protecting your finances to rebuilding your life.</p>
+  <h2 class="cta-title">Ready to protect yourself<br>and move <em>forward?</em></h2>
+  <p class="cta-subtitle">Lumeway helps you navigate every step of your divorce — from securing your finances to rebuilding your life.</p>
   <div class="cta-actions">
     <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
     <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
   </div>
 </div>
+
 <footer>
   <div class="footer-logo">Lumeway</div>
   <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. · <a href="/about" style="color:var(--muted);text-decoration:none;">About</a> · <a href="/privacy" style="color:var(--muted);text-decoration:none;">Privacy</a></p>
 </footer>
+<script>
+  var preview = document.querySelector('.chat-preview');
+  if (preview && 'IntersectionObserver' in window) {
+    preview.classList.add('cp-anim');
+    var msgs = preview.querySelectorAll('.cp-msg');
+    var obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) {
+        msgs.forEach(function(m, i) { setTimeout(function() { m.classList.add('cp-visible'); }, i * 150); });
+        obs.disconnect();
+      }
+    }, { threshold: 0.15 });
+    obs.observe(preview);
+  }
+</script>
+<script>
+  // FAQ Accordion
+  var faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(function(item, idx) {
+    var btn = item.querySelector('.faq-question');
+    var ans = item.querySelector('.faq-answer');
+    btn.addEventListener('click', function() {
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      faqItems.forEach(function(other) {
+        other.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        other.querySelector('.faq-answer').style.maxHeight = '0';
+      });
+      if (!expanded) {
+        btn.setAttribute('aria-expanded', 'true');
+        ans.style.maxHeight = ans.scrollHeight + 'px';
+      }
+    });
+    btn.addEventListener('keydown', function(e) {
+      var n, p;
+      if (e.key === 'ArrowDown') { e.preventDefault(); n = faqItems[idx + 1]; if (n) n.querySelector('.faq-question').focus(); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); p = faqItems[idx - 1]; if (p) p.querySelector('.faq-question').focus(); }
+      if (e.key === 'Home') { e.preventDefault(); faqItems[0].querySelector('.faq-question').focus(); }
+      if (e.key === 'End')  { e.preventDefault(); faqItems[faqItems.length - 1].querySelector('.faq-question').focus(); }
+    });
+  });
+</script>
+<script>
+  // State Selector
+  (function() {
+    var CATEGORY = 'divorce';
+    var sel = document.getElementById('stateSelect');
+    var result = document.getElementById('stateResult');
+    var fallback = document.getElementById('stateFallback');
+    var headline = document.getElementById('stateResultHeadline');
+    var bullets = document.getElementById('stateResultBullets');
+    var stateData = null;
+    function renderState(code) {
+      result.hidden = true; fallback.hidden = true;
+      if (!code) return;
+      if (code === 'OTHER') { fallback.hidden = false; return; }
+      if (!stateData || !stateData[code] || !stateData[code][CATEGORY]) { fallback.hidden = false; return; }
+      var info = stateData[code][CATEGORY];
+      headline.innerHTML = info.headline;
+      bullets.innerHTML = info.bullets.map(function(b) { return '<li>' + b + '</li>'; }).join('');
+      result.hidden = false;
+    }
+    sel.addEventListener('change', function() { renderState(sel.value); });
+    fetch('/static/data/state-rules.json')
+      .then(function(r) { return r.json(); })
+      .then(function(data) { stateData = data; if (sel.value) renderState(sel.value); })
+      .catch(function() {});
+  })();
+</script>
 </body>
 </html>

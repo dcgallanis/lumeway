@@ -6,6 +6,9 @@
   <title>Death &amp; Estate — Lumeway</title>
   <meta name="description" content="A step-by-step guide for what to do after losing a spouse. Deadlines, resources, and compassionate guidance from Lumeway."/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How many death certificates do I need?","acceptedAnswer":{"@type":"Answer","text":"You'll typically need 10–15 certified copies. Banks, insurance companies, government agencies, and financial institutions each require their own original certified copy."}},{"@type":"Question","name":"Do I need a lawyer for probate?","acceptedAnswer":{"@type":"Answer","text":"It depends on the complexity of the estate. If there's a valid will, no disputes, and the estate falls below your state's small estate threshold, you may be able to handle it yourself. For larger or contested estates, an attorney is strongly recommended."}},{"@type":"Question","name":"When should I apply for survivor benefits?","acceptedAnswer":{"@type":"Answer","text":"As soon as possible. Social Security survivor benefits don't back-pay more than 6 months, so every month you wait beyond that is money you can't recover."}},{"@type":"Question","name":"What bills should I pay first?","acceptedAnswer":{"@type":"Answer","text":"Prioritize housing (mortgage or rent), utilities, and insurance premiums. Hold off on debts that were solely in your spouse's name until you understand the estate's obligations — you may not be personally responsible."}},{"@type":"Question","name":"Can creditors come after me for my spouse's debts?","acceptedAnswer":{"@type":"Answer","text":"Generally, you're only responsible for joint debts. In community property states, the rules are more complex. If creditors are contacting you, consult an estate attorney before paying anything."}},{"@type":"Question","name":"What's the difference between probate and non-probate assets?","acceptedAnswer":{"@type":"Answer","text":"Probate assets are those owned solely by the deceased with no beneficiary designation. Non-probate assets — like joint bank accounts, life insurance with a named beneficiary, and retirement accounts — pass directly to the beneficiary and skip probate entirely."}}]}
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #1B2A38; --muted: #6E7D8A; --navy: #1B3A5C; --gold: #B8977E; --accent: #1B3A5C; --accent-light: #B8977E; --border: #E4DDD3; --shadow: 0 2px 40px rgba(27,58,92,0.09); }
@@ -62,21 +65,19 @@
     .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
     .resource-link { font-size: 12px; color: var(--accent); margin-top: 8px; display: block; }
 
-    .state-section { background: var(--text); padding: 80px 24px; }
-    .state-inner { max-width: 800px; margin: 0 auto; }
-    .state-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 16px; }
-    .state-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; color: var(--cream); margin-bottom: 12px; }
-    .state-subtitle { font-size: 16px; color: rgba(247,244,239,0.6); font-weight: 300; margin-bottom: 32px; }
-    .state-select { width: 100%; padding: 14px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 15px; margin-bottom: 24px; cursor: pointer; }
-    .state-select option { background: var(--text); color: var(--cream); }
-    .state-results { display: none; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 28px; }
-    .state-results.visible { display: block; }
-    .state-results h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--cream); margin-bottom: 16px; }
-    .state-link { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); text-decoration: none; }
-    .state-link:last-child { border-bottom: none; }
-    .state-link-title { font-size: 14px; color: var(--cream); font-weight: 400; }
-    .state-link-url { font-size: 12px; color: var(--accent-light); }
-    .state-link:hover .state-link-title { color: var(--accent-light); }
+    /* State Selector */
+    .state-selector-section { padding: 0 24px 48px; max-width: 800px; margin: 0 auto; }
+    .state-selector-intro { font-size: 13px; color: var(--muted); font-weight: 300; margin-bottom: 12px; }
+    .state-select-input { padding: 11px 40px 11px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--warm-white); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E7D8A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; min-width: 220px; }
+    .state-select-input:focus { outline: 2px solid var(--navy); outline-offset: 2px; }
+    .state-callout { margin-top: 20px; background: var(--warm-white); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 0 16px 16px 0; padding: 24px 28px; max-width: 680px; }
+    .state-callout-headline { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; margin-bottom: 16px; color: var(--text); }
+    .state-callout-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .state-callout-bullets li { font-size: 14px; color: var(--muted); line-height: 1.65; padding-left: 20px; position: relative; font-weight: 300; }
+    .state-callout-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--gold); }
+    .state-disclaimer { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 20px; line-height: 1.6; }
+    .state-fallback-card { margin-top: 20px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; max-width: 680px; }
+    .state-fallback-card p { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 20px; }
 
     .cta-section { padding: 48px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
     .cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
@@ -88,6 +89,36 @@
     .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--navy); }
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
     @media (max-width: 640px) { nav { padding: 16px 20px; } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 32px 20px; flex-direction: column; } }
+    /* Chat Preview */
+    .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
+    .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
+    .cp-msg { display: flex; gap: 10px; margin-bottom: 16px; }
+    .cp-msg:last-child { margin-bottom: 0; }
+    .cp-msg.user { flex-direction: row-reverse; }
+    .cp-avatar { width: 28px; height: 28px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 3px; font-size: 10px; letter-spacing: 0.03em; }
+    .cp-avatar.bot { background: var(--navy); color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 13px; font-weight: 600; border-radius: 8px; }
+    .cp-avatar.user { background: #EEE8DE; border: 1px solid var(--border); color: var(--muted); border-radius: 50%; }
+    .cp-bubble { max-width: 80%; padding: 11px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.7; }
+    .cp-msg.bot .cp-bubble { background: #FDFAF6; border: 1px solid var(--border); border-top-left-radius: 4px; color: var(--text); max-width: 88%; }
+    .cp-msg.user .cp-bubble { background: var(--navy); color: var(--cream); border-top-right-radius: 4px; }
+    .cp-anim .cp-msg { opacity: 0; transform: translateY(8px); transition: opacity 0.4s ease, transform 0.4s ease; }
+    .cp-anim .cp-msg.cp-visible { opacity: 1; transform: translateY(0); }
+    .chat-preview-cta { text-align: center; margin-top: 24px; }
+    /* FAQ Accordion */
+    .faq-list { display: flex; flex-direction: column; gap: 2px; }
+    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; }
+    .faq-item:first-child { border-radius: 16px 16px 0 0; }
+    .faq-item:last-child { border-radius: 0 0 16px 16px; }
+    .faq-question { width: 100%; text-align: left; background: none; border: none; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; }
+    .faq-question > span:first-child { flex: 1; min-width: 0; }
+    .faq-question:hover { background: rgba(27,58,92,0.03); }
+    .faq-question[aria-expanded="true"] { color: var(--navy); }
+    .faq-icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 14px; line-height: 1; transition: transform 0.25s ease, border-color 0.2s; }
+    .faq-question[aria-expanded="true"] .faq-icon { transform: rotate(45deg); border-color: var(--navy); color: var(--navy); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .faq-answer-inner { padding: 0 24px 20px; font-size: 14px; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .faq-answer-inner a { color: var(--navy); text-decoration: underline; text-underline-offset: 2px; }
+    .faq-answer-inner a:hover { color: var(--gold); }
   </style>
 </head>
 <body>
@@ -110,6 +141,34 @@
   <div class="hero-actions">
     <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
     <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+  </div>
+</div>
+
+<div class="state-selector-section">
+  <p class="state-selector-intro">See rules specific to your state:</p>
+  <select id="stateSelect" class="state-select-input" aria-label="Select your state for local guidance">
+    <option value="">Select your state →</option>
+    <option value="CA">California</option>
+    <option value="TX">Texas</option>
+    <option value="FL">Florida</option>
+    <option value="NY">New York</option>
+    <option value="PA">Pennsylvania</option>
+    <option value="IL">Illinois</option>
+    <option value="OH">Ohio</option>
+    <option value="GA">Georgia</option>
+    <option value="NC">North Carolina</option>
+    <option value="MI">Michigan</option>
+    <option value="OTHER">My state isn't listed yet</option>
+  </select>
+  <div id="stateResult" class="state-callout" hidden aria-live="polite">
+    <h3 id="stateResultHeadline" class="state-callout-headline"></h3>
+    <ul id="stateResultBullets" class="state-callout-bullets"></ul>
+    <p class="state-disclaimer">Rules and requirements change — always verify with your state's official agencies.</p>
+    <a href="/chat" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Get personalized guidance →</a>
+  </div>
+  <div id="stateFallback" class="state-fallback-card" hidden>
+    <p>We're adding more states soon. In the meantime, Lumeway can walk you through state-specific guidance in the chat.</p>
+    <a href="/chat" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Talk to Lumeway free →</a>
   </div>
 </div>
 
@@ -242,5 +301,148 @@
       <p class="resource-desc">Find grief support groups near you. Over 15,000 groups worldwide to help you heal.</p>
       <span class="resource-link">griefshare.org →</span>
     </a>
-    <a href="https://www.benefits.gov" target="_blank" class="resource-card">
-      <div class="resource-ico
+    <a href="https://www.benefits.gov" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon">🔍</div>
+      <div class="resource-title">Benefits.gov</div>
+      <p class="resource-desc">Federal screening tool to find all government benefit programs you may qualify for after a spouse's death.</p>
+      <span class="resource-link">benefits.gov →</span>
+    </a>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<div class="section">
+  <p class="section-label">See it in action</p>
+  <h2 class="section-title">See how Lumeway<br><em>helps</em></h2>
+  <div class="chat-preview-wrap">
+    <div class="chat-preview">
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">My husband passed away two weeks ago. I'm overwhelmed and don't know what to do first.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">I'm so sorry for your loss. You don't have to figure everything out at once — let's take it one step at a time together. Can I ask, what state are you in?</div></div>
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">California.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">Thank you. In California, the will needs to be filed with probate court within 30 days. But the very first thing — have you been able to get certified copies of the death certificate? You'll need about 10–15 copies for insurance, banks, and government agencies.</div></div>
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">I got 5 copies. Is that enough?</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">You'll likely want more — I'd recommend at least 10. You can order additional copies from the county recorder's office. Would you like me to walk you through what to do next?</div></div>
+    </div>
+    <div class="chat-preview-cta">
+      <a href="/chat" class="btn-large btn-large-primary">Ready to get started? Try Lumeway free →</a>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<div class="section">
+  <p class="section-label">Common questions</p>
+  <h2 class="section-title">Frequently asked<br><em>questions</em></h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="los-a1" id="los-q1"><span>How many death certificates do I need?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="los-a1" role="region" aria-labelledby="los-q1"><div class="faq-answer-inner">You'll typically need 10–15 certified copies. Banks, insurance companies, government agencies, and financial institutions each require their own original certified copy. <a href="/chat">Lumeway can help you track which institutions need one →</a></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="los-a2" id="los-q2"><span>Do I need a lawyer for probate?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="los-a2" role="region" aria-labelledby="los-q2"><div class="faq-answer-inner">It depends on the complexity of the estate. If there's a valid will, no disputes, and the estate falls below your state's small estate threshold, you may be able to handle it yourself. For larger or contested estates, an attorney is strongly recommended.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="los-a3" id="los-q3"><span>When should I apply for survivor benefits?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="los-a3" role="region" aria-labelledby="los-q3"><div class="faq-answer-inner">As soon as possible. Social Security survivor benefits don't back-pay more than 6 months, so every month you wait beyond that is money you can't recover. <a href="/chat">Try Lumeway free to get a personalized deadline timeline →</a></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="los-a4" id="los-q4"><span>What bills should I pay first?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="los-a4" role="region" aria-labelledby="los-q4"><div class="faq-answer-inner">Prioritize housing (mortgage or rent), utilities, and insurance premiums. Hold off on debts that were solely in your spouse's name until you understand the estate's obligations — you may not be personally responsible.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="los-a5" id="los-q5"><span>Can creditors come after me for my spouse's debts?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="los-a5" role="region" aria-labelledby="los-q5"><div class="faq-answer-inner">Generally, you're only responsible for joint debts. In community property states, the rules are more complex. If creditors are contacting you, consult an estate attorney before paying anything.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false" aria-controls="los-a6" id="los-q6"><span>What's the difference between probate and non-probate assets?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="los-a6" role="region" aria-labelledby="los-q6"><div class="faq-answer-inner">Probate assets are those owned solely by the deceased with no beneficiary designation. Non-probate assets — like joint bank accounts, life insurance with a named beneficiary, and retirement accounts — pass directly to the beneficiary and skip probate entirely.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-section">
+  <h2 class="cta-title">You don't have to do<br>this <em>alone</em></h2>
+  <p class="cta-subtitle">Lumeway walks alongside you through every step — from the first phone calls to the longer-term decisions ahead.</p>
+  <div class="cta-actions">
+    <a href="/chat" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+    <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Lumeway</div>
+  <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. · <a href="/about" style="color:var(--muted);text-decoration:none;">About</a> · <a href="/privacy" style="color:var(--muted);text-decoration:none;">Privacy</a></p>
+</footer>
+
+<script>
+  var preview = document.querySelector('.chat-preview');
+  if (preview && 'IntersectionObserver' in window) {
+    preview.classList.add('cp-anim');
+    var msgs = preview.querySelectorAll('.cp-msg');
+    var obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) {
+        msgs.forEach(function(m, i) { setTimeout(function() { m.classList.add('cp-visible'); }, i * 150); });
+        obs.disconnect();
+      }
+    }, { threshold: 0.15 });
+    obs.observe(preview);
+  }
+</script>
+<script>
+  // FAQ Accordion
+  var faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(function(item, idx) {
+    var btn = item.querySelector('.faq-question');
+    var ans = item.querySelector('.faq-answer');
+    btn.addEventListener('click', function() {
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      faqItems.forEach(function(other) {
+        other.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        other.querySelector('.faq-answer').style.maxHeight = '0';
+      });
+      if (!expanded) {
+        btn.setAttribute('aria-expanded', 'true');
+        ans.style.maxHeight = ans.scrollHeight + 'px';
+      }
+    });
+    btn.addEventListener('keydown', function(e) {
+      var n, p;
+      if (e.key === 'ArrowDown') { e.preventDefault(); n = faqItems[idx + 1]; if (n) n.querySelector('.faq-question').focus(); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); p = faqItems[idx - 1]; if (p) p.querySelector('.faq-question').focus(); }
+      if (e.key === 'Home') { e.preventDefault(); faqItems[0].querySelector('.faq-question').focus(); }
+      if (e.key === 'End')  { e.preventDefault(); faqItems[faqItems.length - 1].querySelector('.faq-question').focus(); }
+    });
+  });
+</script>
+<script>
+  // State Selector
+  (function() {
+    var CATEGORY = 'loss_of_spouse';
+    var sel = document.getElementById('stateSelect');
+    var result = document.getElementById('stateResult');
+    var fallback = document.getElementById('stateFallback');
+    var headline = document.getElementById('stateResultHeadline');
+    var bullets = document.getElementById('stateResultBullets');
+    var stateData = null;
+    function renderState(code) {
+      result.hidden = true; fallback.hidden = true;
+      if (!code) return;
+      if (code === 'OTHER') { fallback.hidden = false; return; }
+      if (!stateData || !stateData[code] || !stateData[code][CATEGORY]) { fallback.hidden = false; return; }
+      var info = stateData[code][CATEGORY];
+      headline.innerHTML = info.headline;
+      bullets.innerHTML = info.bullets.map(function(b) { return '<li>' + b + '</li>'; }).join('');
+      result.hidden = false;
+    }
+    sel.addEventListener('change', function() { renderState(sel.value); });
+    fetch('/static/data/state-rules.json')
+      .then(function(r) { return r.json(); })
+      .then(function(data) { stateData = data; if (sel.value) renderState(sel.value); })
+      .catch(function() {});
+  })();
+</script>
+</body>
+</html>
