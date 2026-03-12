@@ -17,6 +17,18 @@
     .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
     .btn-ghost:hover { background: var(--navy); color: var(--cream); }
     .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .nav-left { display: flex; align-items: center; gap: 28px; }
+    .nav-right { display: flex; gap: 12px; align-items: center; }
+    .nav-dropdown { position: relative; }
+    .nav-drop-btn { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
+    .nav-drop-btn:hover { color: var(--navy); }
+    .nav-drop-btn .chev { display: inline-block; transition: transform 0.2s ease; }
+    .nav-drop-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+    .nav-drop-menu { display: none; position: absolute; top: calc(100% + 8px); left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 200px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
+    .nav-drop-menu a { display: block; padding: 9px 12px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 7px; }
+    .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--cream); color: var(--navy); }
+    .nav-drop-menu .menu-div { height: 1px; background: var(--border); margin: 4px 6px; }
+    .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
     .page { max-width: 720px; margin: 0 auto; padding: 120px 24px 64px; }
     .page-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
     .page-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 12px; }
@@ -35,11 +47,26 @@
 </head>
 <body>
   <nav>
-    <a href="/" class="nav-logo">
-      <div class="nav-logo-icon">L</div>
-      <span class="nav-logo-text">Lumeway</span>
-    </a>
-    <div class="nav-cta">
+    <div class="nav-left">
+      <a href="/" class="nav-logo">
+        <div class="nav-logo-icon">L</div>
+        <span class="nav-logo-text">Lumeway</span>
+      </a>
+      <div class="nav-dropdown">
+        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">▾</span></button>
+        <div class="nav-drop-menu">
+          <a href="/loss-of-spouse">Death &amp; Estate</a>
+          <a href="/divorce">Divorce &amp; Separation</a>
+          <a href="/job-loss">Job Loss &amp; Income Crisis</a>
+          <a href="/relocation">Moving &amp; Relocation</a>
+          <a href="/disability">Disability &amp; Benefits</a>
+          <a href="/retirement">Retirement</a>
+          <div class="menu-div"></div>
+          <a href="/about">About</a>
+        </div>
+      </div>
+    </div>
+    <div class="nav-right">
       <a href="/chat" class="btn-ghost">Try it free</a>
       <a href="/#waitlist" class="btn-primary">Join waitlist</a>
     </div>
@@ -96,5 +123,30 @@
     <div class="footer-logo">Lumeway</div>
     <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions.</p>
   </footer>
+  <script>
+    (function() {
+      var dd = document.querySelector('.nav-dropdown');
+      if (!dd) return;
+      var btn = dd.querySelector('.nav-drop-btn');
+      var menu = dd.querySelector('.nav-drop-menu');
+      var links = Array.from(menu.querySelectorAll('a'));
+      links.forEach(function(a) { if (a.getAttribute('href') === window.location.pathname) a.classList.add('active'); });
+      function open() { dd.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+      function close() { dd.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+      btn.addEventListener('click', function(e) { e.stopPropagation(); dd.classList.contains('open') ? close() : open(); });
+      document.addEventListener('click', close);
+      menu.addEventListener('click', function(e) { e.stopPropagation(); });
+      btn.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowDown') { e.preventDefault(); open(); if (links[0]) links[0].focus(); }
+        if (e.key === 'Escape') close();
+      });
+      menu.addEventListener('keydown', function(e) {
+        var idx = links.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') { e.preventDefault(); if (links[idx + 1]) links[idx + 1].focus(); }
+        if (e.key === 'ArrowUp') { e.preventDefault(); idx > 0 ? links[idx - 1].focus() : btn.focus(); }
+        if (e.key === 'Escape') { close(); btn.focus(); }
+      });
+    })();
+  </script>
 </body>
 </html>
