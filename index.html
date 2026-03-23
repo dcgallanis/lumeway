@@ -644,6 +644,7 @@
 
 <script>
   let history = [];
+  let sessionId = null;
   let isLoading = false;
 
   // ── Markdown renderer with streaming-safe incomplete token handling ──
@@ -821,7 +822,7 @@
       const res = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, history })
+        body: JSON.stringify({ message, history, session_id: sessionId })
       });
 
       removeTyping();
@@ -849,7 +850,11 @@
           if (line.startsWith('data: ')) {
             const payload = line.slice(6);
             if (payload.startsWith('[DONE]')) {
-              try { history = JSON.parse(payload.slice(6)); } catch(e) {}
+              try {
+                const doneData = JSON.parse(payload.slice(6));
+                history = doneData.history || doneData;
+                if (doneData.session_id) sessionId = doneData.session_id;
+              } catch(e) {}
             } else {
               // Decode \n back to real newlines (backend encodes them to avoid SSE line-splitting)
               fullText += payload === '' ? '\n' : payload.replace(/\\n/g, '\n');
@@ -880,6 +885,13 @@
     input.focus();
     input.placeholder = 'Tell me what\'s going on…';
   }
+
+  window.addEventListener('beforeunload', function() {
+    if (sessionId) {
+      navigator.sendBeacon('/api/session/' + sessionId + '/end',
+        new Blob([JSON.stringify({})], { type: 'application/json' }));
+    }
+  });
 
   function handleKey(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -990,7 +1002,7 @@ ${data.situation ? `<div class="situation"><strong>Your Situation</strong>${data
 ${tasks || '<p style="color:#8A8278;font-style:italic">No tasks found. Continue your conversation to build out your checklist.</p>'}
 <div class="footer">
   <span>Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</span>
-  <span>lumeway.ai</span>
+  <span>lumeway.co</span>
 </div>
 </body>
 </html>`;
