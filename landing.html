@@ -373,14 +373,14 @@
       function() { popupDismiss.style.display = 'none'; setTimeout(hidePopup, 1000); }
     );
 
-    // Show popup after 8s if not subscribed/dismissed recently
+    // Show popup after 4s if not subscribed/dismissed recently
     (function() {
       var subscribed = localStorage.getItem('lumeway_subscribed');
       var dismissed = localStorage.getItem('lumeway_popup_dismissed');
       var sevenDays = 7 * 24 * 60 * 60 * 1000;
       if (subscribed) return;
       if (dismissed && (Date.now() - parseInt(dismissed)) < sevenDays) return;
-      setTimeout(showPopup, 8000);
+      setTimeout(showPopup, 4000);
     })();
 
     // Allow #waitlist links to trigger popup if already at bottom
