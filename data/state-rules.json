@@ -628,5 +628,2525 @@
         "Additional Homestead Property Tax Credit available for qualifying seniors and lower-income renters"
       ]
     }
+  },
+  "AL": {
+    "name": "Alabama",
+    "loss_of_spouse": {
+      "headline": "Alabama: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Probate Court of the county where the decedent lived",
+        "Small estate affidavit available for estates under $25,000 — allows transfer of assets without full probate",
+        "No Alabama estate tax or inheritance tax",
+        "Alabama allows Transfer on Death (TOD) deeds for real property — avoids probate on the home",
+        "Order death certificates from the Alabama Center for Health Statistics or county health department — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Alabama: Divorce Rules",
+      "bullets": [
+        "30-day waiting period from filing before a divorce can be finalized",
+        "Equitable distribution state — marital property is divided fairly, not necessarily 50/50",
+        "Alabama allows both no-fault (incompatibility or irretrievable breakdown) and fault-based grounds",
+        "Alimony types include rehabilitative, periodic, and permanent — awarded at judicial discretion",
+        "File in the Circuit Court of the county where the defendant resides or where the couple last lived together"
+      ]
+    },
+    "job_loss": {
+      "headline": "Alabama: Job Loss Benefits",
+      "bullets": [
+        "File with ADOL at labor.alabama.gov — benefits up to $275/wk for up to 26 weeks",
+        "File within the first week of unemployment — Alabama does not back-pay for unclaimed weeks",
+        "No Alabama WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Alabama Career Center System provides free job search, resume help, and training statewide",
+        "Alabama is a strict at-will employment state — no state-specific termination protections beyond federal law"
+      ]
+    },
+    "relocation": {
+      "headline": "Alabama: Relocation Requirements",
+      "bullets": [
+        "Obtain an Alabama driver's license within 30 days of establishing residency",
+        "Register your vehicle with the county Probate Judge or License Commissioner within 30 days",
+        "Alabama does not require a vehicle emissions or safety inspection",
+        "Register to vote at least 14 days before an election — Alabama does not offer same-day registration",
+        "Alabama has a state income tax with rates of 2–5% on taxable income"
+      ]
+    },
+    "disability": {
+      "headline": "Alabama: Disability Benefits",
+      "bullets": [
+        "Alabama has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "ADRS (Alabama Department of Rehabilitation Services) provides free vocational rehabilitation and job placement",
+        "Alabama Medicaid is available for qualifying individuals with disabilities — apply through myDHR.alabama.gov",
+        "Workers' compensation covers most Alabama employees — report workplace injuries to your employer within 5 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Alabama: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Alabama state income tax",
+        "Alabama does not tax pension income from defined benefit retirement plans (state, federal, or private)",
+        "401(k) and IRA withdrawals are subject to Alabama income tax at rates of 2–5%",
+        "RSA (Retirement Systems of Alabama) manages TRS and ERS, the major state pension systems",
+        "No Alabama estate or inheritance tax"
+      ]
+    }
+  },
+  "AK": {
+    "name": "Alaska",
+    "loss_of_spouse": {
+      "headline": "Alaska: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Superior Court of the judicial district where the decedent lived",
+        "Small estate affidavit available for personal property under $100,000 and real property under $200,000",
+        "No Alaska estate tax or inheritance tax",
+        "Alaska is an opt-in community property state — couples can elect community property via a trust agreement",
+        "Order death certificates from the Alaska Bureau of Vital Statistics — budget for 10–15 certified copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Alaska: Divorce Rules",
+      "bullets": [
+        "No mandatory waiting period — divorce can be finalized as soon as the court schedules a hearing",
+        "Equitable distribution state — marital property is divided fairly based on multiple factors",
+        "Alaska allows both no-fault (incompatibility) and fault-based divorce grounds",
+        "Residency requirement: at least one spouse must be an Alaska resident at the time of filing (no minimum duration)",
+        "File in the Superior Court of the judicial district where either spouse resides"
+      ]
+    },
+    "job_loss": {
+      "headline": "Alaska: Job Loss Benefits",
+      "bullets": [
+        "File with DOLWD at labor.alaska.gov — benefits up to $370/wk for up to 26 weeks",
+        "File within the first week of job loss — Alaska does not retroactively pay for unclaimed weeks",
+        "No Alaska state income tax — unemployment benefits are only subject to federal income tax",
+        "Alaska Job Center Network provides free job search, training, and career counseling statewide",
+        "Permanent Fund Dividend (PFD) is a separate annual payment to Alaska residents — does not affect UI eligibility"
+      ]
+    },
+    "relocation": {
+      "headline": "Alaska: Relocation Requirements",
+      "bullets": [
+        "Obtain an Alaska driver's license within 90 days of establishing residency",
+        "Register your vehicle with the DMV within 10 days of becoming an Alaska resident",
+        "No statewide vehicle safety or emissions inspection required in Alaska",
+        "Register to vote at least 30 days before an election — Alaska does not have same-day registration",
+        "No Alaska state income or sales tax — but local sales taxes and property taxes vary significantly by borough"
+      ]
+    },
+    "disability": {
+      "headline": "Alaska: Disability Benefits",
+      "bullets": [
+        "Alaska has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "DVR (Alaska Division of Vocational Rehabilitation) provides free job training and placement for eligible individuals",
+        "Alaska Medicaid (DHSS) is available for qualifying individuals with disabilities",
+        "Workers' compensation is mandatory for nearly all Alaska employers — report injuries within 30 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Alaska: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "No Alaska state income tax — Social Security, pensions, 401(k), and IRA distributions are completely state-tax-free",
+        "Alaska Permanent Fund Dividend (PFD) provides an annual payment to all qualifying residents",
+        "PERS (Public Employees' Retirement System) and TRS (Teachers' Retirement System) are the major state pensions",
+        "No Alaska estate or inheritance tax",
+        "High cost of living, especially in rural areas — factor into retirement planning despite zero state income tax"
+      ]
+    }
+  },
+  "AZ": {
+    "name": "Arizona",
+    "loss_of_spouse": {
+      "headline": "Arizona: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Superior Court of the county where the decedent lived",
+        "Small estate affidavit available for personal property under $75,000 and real property under $100,000",
+        "No Arizona estate tax or inheritance tax",
+        "Community property state — jointly held assets transfer to the surviving spouse automatically without probate",
+        "Arizona allows Beneficiary Deeds for real property — transfers the home on death without probate"
+      ]
+    },
+    "divorce": {
+      "headline": "Arizona: Divorce Rules",
+      "bullets": [
+        "60-day waiting period from the date the respondent is served before the divorce can be finalized",
+        "Community property state — marital assets and debts are presumed split 50/50",
+        "Arizona is a no-fault divorce state — irretrievable breakdown of the marriage is the only ground required",
+        "Spousal maintenance (alimony) is available but not guaranteed — courts weigh duration of marriage and earning capacity",
+        "File in the Superior Court of the county where either spouse has lived for at least 90 days"
+      ]
+    },
+    "job_loss": {
+      "headline": "Arizona: Job Loss Benefits",
+      "bullets": [
+        "File with DES at des.az.gov — benefits up to $240/wk for up to 26 weeks (one of the lower maximums nationally)",
+        "File within the first week of unemployment — Arizona does not back-pay for missed weeks",
+        "No Arizona WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "ARIZONA@WORK Job Centers provide free job search assistance, training, and career counseling statewide",
+        "Arizona is an at-will employment state with no state-specific termination protections beyond federal law"
+      ]
+    },
+    "relocation": {
+      "headline": "Arizona: Relocation Requirements",
+      "bullets": [
+        "Obtain an Arizona driver's license within 30 days of establishing residency (note: AZ licenses do not expire until age 65)",
+        "Register your vehicle with the MVD within 15 days of becoming an Arizona resident",
+        "Emissions testing required in Maricopa and Pima counties for most vehicles",
+        "Register to vote at least 29 days before an election at azsos.gov — Arizona does not offer same-day registration",
+        "Arizona has a flat income tax rate of 2.5% — one of the lowest in the nation"
+      ]
+    },
+    "disability": {
+      "headline": "Arizona: Disability Benefits",
+      "bullets": [
+        "Arizona has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "RSA (Rehabilitation Services Administration under DES) provides free vocational rehabilitation and job placement",
+        "AHCCCS (Arizona's Medicaid program) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Arizona employees — report workplace injuries to your employer promptly"
+      ]
+    },
+    "retirement": {
+      "headline": "Arizona: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Arizona state income tax",
+        "Arizona taxes pension, 401(k), and IRA income at the flat 2.5% rate — one of the lowest state tax burdens on retirement income",
+        "ASRS (Arizona State Retirement System) and PSPRS (Public Safety) are the major state pension systems",
+        "No Arizona estate or inheritance tax",
+        "Up to $2,500 per person exemption on military, federal, and Arizona public pension income"
+      ]
+    }
+  },
+  "AR": {
+    "name": "Arkansas",
+    "loss_of_spouse": {
+      "headline": "Arkansas: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Circuit Court (Probate Division) of the county where the decedent lived",
+        "Small estate affidavit available for personal property under $100,000 (no real property included)",
+        "No Arkansas estate tax or inheritance tax",
+        "Surviving spouse has a right to dower/curtesy (1/3 life estate in real property) or the elective share",
+        "Order death certificates from the Arkansas Department of Health Vital Records — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Arkansas: Divorce Rules",
+      "bullets": [
+        "18-month separation required for no-fault divorce — one of the longest separation periods in the US",
+        "Fault-based grounds (adultery, cruelty, felony conviction) can bypass the 18-month separation requirement",
+        "Equitable distribution state — marital property is divided fairly, not necessarily 50/50",
+        "Alimony is awarded at judicial discretion based on need and ability to pay",
+        "File in the Circuit Court of the county where the plaintiff has lived for at least 60 days"
+      ]
+    },
+    "job_loss": {
+      "headline": "Arkansas: Job Loss Benefits",
+      "bullets": [
+        "File with DWS at dws.arkansas.gov — benefits up to $451/wk for up to 16 weeks",
+        "Arkansas has one of the shorter maximum benefit durations — file immediately to avoid losing any weeks",
+        "No Arkansas WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Arkansas Workforce Centers provide free job search, resume help, and training statewide",
+        "Arkansas is an at-will employment state with no additional termination protections beyond federal law"
+      ]
+    },
+    "relocation": {
+      "headline": "Arkansas: Relocation Requirements",
+      "bullets": [
+        "Obtain an Arkansas driver's license within 30 days of establishing residency",
+        "Register your vehicle with the Department of Finance and Administration (DFA) within 30 days",
+        "No statewide vehicle emissions or safety inspection required in Arkansas",
+        "Register to vote at least 30 days before an election — Arkansas does not have same-day registration",
+        "Arkansas income tax rates range from 2–4.4% (recent reductions under current law)"
+      ]
+    },
+    "disability": {
+      "headline": "Arkansas: Disability Benefits",
+      "bullets": [
+        "Arkansas has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "ARS (Arkansas Rehabilitation Services) provides free vocational rehabilitation and job placement",
+        "Arkansas Medicaid (DHS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Arkansas employees — report workplace injuries within a reasonable time to preserve your claim"
+      ]
+    },
+    "retirement": {
+      "headline": "Arkansas: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Arkansas state income tax",
+        "Up to $6,000 per person in retirement income (pensions, 401(k), IRA) is exempt from Arkansas income tax",
+        "ATRS (Arkansas Teacher Retirement System) and APERS (Arkansas Public Employees Retirement System) are the major state pensions",
+        "No Arkansas estate or inheritance tax",
+        "Arkansas income tax rates have been declining — verify current rates for retirement planning"
+      ]
+    }
+  },
+  "CO": {
+    "name": "Colorado",
+    "loss_of_spouse": {
+      "headline": "Colorado: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the District Court of the county where the decedent lived",
+        "Small estate affidavit available for personal property under $74,000 and real property under $74,000 (2024 threshold)",
+        "No Colorado estate tax or inheritance tax",
+        "Colorado allows Beneficiary Deeds for real property — avoids probate on the home entirely",
+        "Order death certificates from the Colorado CDPHE Vital Records office — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Colorado: Divorce Rules",
+      "bullets": [
+        "91-day waiting period from the date of service before a divorce can be finalized",
+        "Equitable distribution state — courts divide marital property fairly, not necessarily 50/50",
+        "Colorado is a purely no-fault state — irretrievable breakdown of the marriage is the only ground",
+        "Spousal maintenance (alimony) guidelines use a statutory formula for marriages under 20 years",
+        "File in the District Court of the county where either spouse has lived for at least 91 days"
+      ]
+    },
+    "job_loss": {
+      "headline": "Colorado: Job Loss Benefits",
+      "bullets": [
+        "File with CDLE at coloradoui.gov — benefits up to $618/wk for up to 26 weeks",
+        "Colorado FAMLI (Family and Medical Leave Insurance) provides up to 12 weeks of paid leave starting 2024",
+        "Colorado WARN Act requires 60 days' notice for layoffs at companies with 100+ employees",
+        "Colorado Workforce Centers provide free job search, career coaching, and skills training statewide",
+        "File within the first week — Colorado does not retroactively pay for weeks before your filing date"
+      ]
+    },
+    "relocation": {
+      "headline": "Colorado: Relocation Requirements",
+      "bullets": [
+        "Obtain a Colorado driver's license within 30 days of establishing residency",
+        "Register your vehicle with the county clerk within 30 days of becoming a Colorado resident",
+        "Emissions testing required in the Denver metro area and several Front Range counties",
+        "Register to vote at least 8 days before an election — Colorado also allows same-day voter registration",
+        "Colorado has a flat income tax rate of 4.4% (recently reduced from 4.55%)"
+      ]
+    },
+    "disability": {
+      "headline": "Colorado: Disability Benefits",
+      "bullets": [
+        "Colorado FAMLI (Family and Medical Leave Insurance) provides up to 12 weeks of paid leave for qualifying medical conditions",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "DVR (Division of Vocational Rehabilitation) provides free job training and placement for eligible individuals",
+        "Health First Colorado (state Medicaid) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Colorado employees — report workplace injuries within 4 days to your employer"
+      ]
+    },
+    "retirement": {
+      "headline": "Colorado: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Colorado state income tax for those 65+ (partial exemption ages 55–64)",
+        "Colorado offers a $24,000 retirement income subtraction for those 65+ from all retirement sources combined",
+        "PERA (Colorado Public Employees' Retirement Association) is the major state pension system",
+        "No Colorado estate or inheritance tax",
+        "Colorado income tax is a flat 4.4% on non-exempt income"
+      ]
+    }
+  },
+  "CT": {
+    "name": "Connecticut",
+    "loss_of_spouse": {
+      "headline": "Connecticut: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Probate Court of the district where the decedent lived",
+        "Simplified probate (voluntary representation) available for small estates — check district court for current thresholds",
+        "Connecticut imposes a state estate tax on estates over $13.61M (2024, now aligned with federal threshold)",
+        "Connecticut is an equitable distribution state for marital property",
+        "Order death certificates from the Connecticut DPH Vital Records or town clerk — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Connecticut: Divorce Rules",
+      "bullets": [
+        "90-day waiting period from the return date (court service date) before a divorce can be finalized",
+        "Equitable distribution state — marital property is divided fairly by the court",
+        "Connecticut is a no-fault state — irretrievable breakdown is the primary ground for divorce",
+        "Alimony duration and amount are at judicial discretion — courts consider length of marriage, earning capacity, and health",
+        "File in the Superior Court (Family Division) of the judicial district where either spouse lives"
+      ]
+    },
+    "job_loss": {
+      "headline": "Connecticut: Job Loss Benefits",
+      "bullets": [
+        "File with CTDOL at filectui.com — benefits up to $649/wk (plus dependent allowances) for up to 26 weeks",
+        "Connecticut has one of the highest maximum weekly benefit amounts in the US",
+        "CT WARN Act requires 60 days' notice for layoffs at companies with 100+ employees",
+        "American Job Centers (CT Works) provide free job placement, training, and career services statewide",
+        "File within the first week of unemployment — Connecticut does not back-pay for missed weeks"
+      ]
+    },
+    "relocation": {
+      "headline": "Connecticut: Relocation Requirements",
+      "bullets": [
+        "Obtain a Connecticut driver's license within 30 days of establishing residency",
+        "Register your vehicle with the DMV within 60 days of becoming a CT resident",
+        "Emissions testing required biennially at a licensed emissions station",
+        "Register to vote at least 7 days before an election — Connecticut allows same-day registration on Election Day",
+        "Connecticut income tax rates range from 3–6.99% on a graduated scale"
+      ]
+    },
+    "disability": {
+      "headline": "Connecticut: Disability Benefits",
+      "bullets": [
+        "Connecticut Paid Leave (CT Paid Leave) provides up to 12 weeks of benefits at up to 95% of minimum wage per week",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "BRS (Bureau of Rehabilitation Services) provides free vocational rehabilitation and job placement",
+        "Connecticut HUSKY Medicaid is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Connecticut employees — report workplace injuries within a reasonable time"
+      ]
+    },
+    "retirement": {
+      "headline": "Connecticut: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is exempt from Connecticut tax if federal AGI is below $75,000 (single) or $100,000 (joint)",
+        "Connecticut taxes pension, 401(k), and IRA income at graduated rates from 3–6.99%",
+        "SERS (State Employees Retirement System) and TRS are the major Connecticut pension systems",
+        "Connecticut has a state estate tax on estates over $13.61M (2024) at rates up to 12%",
+        "Property taxes in Connecticut are among the highest in the country — factor into retirement budgeting"
+      ]
+    }
+  },
+  "DE": {
+    "name": "Delaware",
+    "loss_of_spouse": {
+      "headline": "Delaware: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Register of Wills office of the county where the decedent lived",
+        "Small estate voluntary administration available for estates under $30,000 in personal property",
+        "No Delaware estate tax or inheritance tax",
+        "Delaware allows for summary probate procedures for qualifying smaller estates",
+        "Order death certificates from the Delaware Division of Public Health Vital Statistics — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Delaware: Divorce Rules",
+      "bullets": [
+        "No mandatory waiting period after filing — but requires 6-month separation before filing for no-fault divorce",
+        "Equitable distribution state — marital property is divided fairly, not necessarily 50/50",
+        "Delaware is primarily a no-fault state — irretrievable breakdown after separation is the standard ground",
+        "Alimony is awarded at judicial discretion based on multiple statutory factors",
+        "File in Family Court of the county where either spouse has lived for at least 6 months"
+      ]
+    },
+    "job_loss": {
+      "headline": "Delaware: Job Loss Benefits",
+      "bullets": [
+        "File with DOL at ui.delawareworks.com — benefits up to $400/wk for up to 26 weeks",
+        "File within the first week of job loss — Delaware does not back-pay for unclaimed weeks",
+        "No Delaware WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Delaware JobLink provides free job search, career counseling, and training services",
+        "Delaware is an at-will employment state with no additional termination protections beyond federal law"
+      ]
+    },
+    "relocation": {
+      "headline": "Delaware: Relocation Requirements",
+      "bullets": [
+        "Obtain a Delaware driver's license within 60 days of establishing residency",
+        "Register your vehicle with the DMV within 60 days of becoming a DE resident",
+        "No statewide vehicle emissions or safety inspection required in Delaware",
+        "Register to vote at least 24 days before an election — Delaware does not offer same-day registration",
+        "Delaware has no sales tax — graduated income tax rates range from 2.2–6.6%"
+      ]
+    },
+    "disability": {
+      "headline": "Delaware: Disability Benefits",
+      "bullets": [
+        "Delaware has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "DVR (Division of Vocational Rehabilitation) provides free vocational rehabilitation and job placement",
+        "Delaware Medicaid (DHSS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Delaware employees — report workplace injuries to your employer promptly"
+      ]
+    },
+    "retirement": {
+      "headline": "Delaware: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Delaware state income tax",
+        "Persons 60+ may exclude up to $12,500 per person in pension and retirement income from Delaware tax",
+        "DPERS (Delaware Public Employees' Retirement System) is the major state pension system",
+        "No Delaware estate or inheritance tax",
+        "Delaware has no sales tax — a meaningful savings on everyday purchases in retirement"
+      ]
+    }
+  },
+  "HI": {
+    "name": "Hawaii",
+    "loss_of_spouse": {
+      "headline": "Hawaii: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Circuit Court of the judicial circuit where the decedent lived",
+        "Small estate affidavit available for personal property under $100,000",
+        "No Hawaii estate tax on estates under $5.49M (2024); estates above that threshold are taxed up to 20%",
+        "Hawaii is an equitable distribution state, but property held as tenants by the entirety passes automatically to the survivor",
+        "Order death certificates from the Hawaii DOH Vital Records — budget for 10–15 certified copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Hawaii: Divorce Rules",
+      "bullets": [
+        "No mandatory waiting period after filing — divorce can proceed as soon as the court schedule allows",
+        "Equitable distribution state — marital property is divided fairly by the court",
+        "Hawaii is a pure no-fault divorce state — irretrievable breakdown is the only ground required",
+        "Alimony is awarded at judicial discretion; courts consider standard of living, duration of marriage, and earning capacity",
+        "File in the Family Court of the circuit where either spouse has lived for at least 6 months"
+      ]
+    },
+    "job_loss": {
+      "headline": "Hawaii: Job Loss Benefits",
+      "bullets": [
+        "File with DLIR at huiclaims.hawaii.gov — benefits up to $694/wk for up to 26 weeks",
+        "Hawaii has one of the highest maximum weekly benefit amounts in the US",
+        "No Hawaii WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "American Job Centers Hawaii provide free job search, training, and career counseling statewide",
+        "Hawaii requires employers to provide TDI (Temporary Disability Insurance) — see disability section"
+      ]
+    },
+    "relocation": {
+      "headline": "Hawaii: Relocation Requirements",
+      "bullets": [
+        "Obtain a Hawaii driver's license within 30 days of establishing residency — apply at your county DMV",
+        "Register your vehicle within 30 days of becoming a Hawaii resident — safety inspection required",
+        "Periodic vehicle safety inspections are required in Hawaii (annually for most vehicles)",
+        "Register to vote at least 30 days before an election — Hawaii also allows same-day voter registration",
+        "Hawaii has a graduated income tax with rates from 1.4–11% — the top rate is among the highest in the US"
+      ]
+    },
+    "disability": {
+      "headline": "Hawaii: Disability Benefits",
+      "bullets": [
+        "Hawaii has mandatory Temporary Disability Insurance (TDI) — employers must provide short-term disability coverage",
+        "TDI benefits are up to 58% of wages, with a maximum of approximately $681/wk for up to 26 weeks",
+        "File your TDI claim through your employer's carrier within 90 days of disability onset",
+        "SSDI federal 5-month waiting period applies for long-term disability — Hawaii TDI can bridge this gap",
+        "DVR (Division of Vocational Rehabilitation) provides free vocational rehabilitation services"
+      ]
+    },
+    "retirement": {
+      "headline": "Hawaii: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Hawaii state income tax",
+        "Hawaii taxes most other retirement income (pensions, 401(k), IRA) at graduated rates up to 11%",
+        "Public pension income from Hawaii ERS (Employees' Retirement System) is subject to state income tax",
+        "Hawaii has a state estate tax on estates over $5.49M (2024) at rates up to 20%",
+        "High cost of living — factor housing, food, and healthcare costs into retirement planning despite no SS tax"
+      ]
+    }
+  },
+  "ID": {
+    "name": "Idaho",
+    "loss_of_spouse": {
+      "headline": "Idaho: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Magistrate Division of the District Court in the county where the decedent lived",
+        "Small estate affidavit available for estates under $100,000 in total value",
+        "No Idaho estate tax or inheritance tax",
+        "Community property state — jointly held community property transfers to the surviving spouse without probate",
+        "Order death certificates from the Idaho Bureau of Vital Records and Health Statistics — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Idaho: Divorce Rules",
+      "bullets": [
+        "20-day waiting period from the date of filing before a divorce can be finalized — one of the shortest in the US",
+        "Community property state — marital assets and debts are presumed to be divided equally",
+        "Idaho allows both no-fault (irreconcilable differences) and fault-based grounds for divorce",
+        "Spousal maintenance is available but not mandatory — courts consider duration of marriage and financial need",
+        "File in the District Court of the county where either spouse resides"
+      ]
+    },
+    "job_loss": {
+      "headline": "Idaho: Job Loss Benefits",
+      "bullets": [
+        "File with IDOL at labor.idaho.gov — benefits up to $463/wk for up to 20 weeks",
+        "Idaho has a shorter maximum benefit duration than most states — file immediately after job loss",
+        "No Idaho WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "IDOL workforce development offices provide free job search, training, and career counseling",
+        "Idaho is an at-will employment state with no additional termination protections beyond federal law"
+      ]
+    },
+    "relocation": {
+      "headline": "Idaho: Relocation Requirements",
+      "bullets": [
+        "Obtain an Idaho driver's license within 90 days of establishing residency",
+        "Register your vehicle with the county assessor's office within 90 days of becoming an Idaho resident",
+        "No statewide vehicle emissions or safety inspection required in Idaho",
+        "Register to vote at least 25 days before an election — Idaho allows same-day registration on Election Day",
+        "Idaho has a flat income tax rate of 5.8% on taxable income"
+      ]
+    },
+    "disability": {
+      "headline": "Idaho: Disability Benefits",
+      "bullets": [
+        "Idaho has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "IDVR (Idaho Division of Vocational Rehabilitation) provides free vocational rehabilitation and job placement",
+        "Idaho Medicaid (DHW) is available for qualifying individuals with disabilities",
+        "Workers' compensation is required for most Idaho employers — report workplace injuries promptly"
+      ]
+    },
+    "retirement": {
+      "headline": "Idaho: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Idaho state income tax",
+        "Idaho taxes pension, 401(k), and IRA income at the flat 5.8% rate",
+        "PERSI (Public Employee Retirement System of Idaho) is the major state pension system",
+        "No Idaho estate or inheritance tax",
+        "Idaho's cost of living is moderate — property tax circuit breaker program available for qualifying seniors"
+      ]
+    }
+  },
+  "IN": {
+    "name": "Indiana",
+    "loss_of_spouse": {
+      "headline": "Indiana: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Circuit or Superior Court of the county where the decedent lived",
+        "Small estate affidavit available for estates under $50,000 in total value (after 45 days from death)",
+        "No Indiana estate tax (repealed 2013); Indiana inheritance tax was repealed in 2022",
+        "Indiana allows Transfer on Death (TOD) deeds for real property — avoids probate on the home",
+        "Order death certificates from the Indiana State Department of Health Vital Records — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Indiana: Divorce Rules",
+      "bullets": [
+        "60-day waiting period from the date of filing before a divorce can be finalized",
+        "Equitable distribution state — Indiana presumes a 50/50 split of marital property, but courts can deviate",
+        "Indiana is a no-fault divorce state — irretrievable breakdown of the marriage is the sole ground",
+        "Spousal maintenance is limited — generally available only for incapacitated spouses or during rehabilitative periods",
+        "File in the Circuit or Superior Court of the county where either spouse has lived for at least 6 months"
+      ]
+    },
+    "job_loss": {
+      "headline": "Indiana: Job Loss Benefits",
+      "bullets": [
+        "File with DWD at unemployment.in.gov — benefits up to $390/wk for up to 26 weeks",
+        "File within the first week of job loss — Indiana does not retroactively pay for unclaimed weeks",
+        "No Indiana WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "WorkOne Career Centers provide free job search, resume help, and skills training statewide",
+        "Indiana is an at-will employment state with no additional termination protections beyond federal law"
+      ]
+    },
+    "relocation": {
+      "headline": "Indiana: Relocation Requirements",
+      "bullets": [
+        "Obtain an Indiana driver's license within 60 days of establishing residency",
+        "Register your vehicle with the BMV within 60 days of becoming an Indiana resident",
+        "No statewide vehicle emissions or safety inspection required in Indiana (select counties may differ)",
+        "Register to vote at least 29 days before an election — Indiana does not have same-day voter registration",
+        "Indiana has a flat income tax rate of 3.05% plus county income taxes that vary (typically 1–3%)"
+      ]
+    },
+    "disability": {
+      "headline": "Indiana: Disability Benefits",
+      "bullets": [
+        "Indiana has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "Indiana VR (Vocational Rehabilitation Services) provides free job training and placement for eligible individuals",
+        "Indiana Medicaid (FSSA) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Indiana employees — report workplace injuries to your employer within 30 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Indiana: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Indiana state income tax",
+        "Indiana taxes pension, 401(k), and IRA income at the flat 3.05% rate plus county tax — one of the lower combined rates",
+        "INPRS (Indiana Public Retirement System) manages PERF and TRF, the major state pension systems",
+        "No Indiana estate or inheritance tax (both repealed)",
+        "County income tax rates vary significantly — research the county rate before choosing where to retire in Indiana"
+      ]
+    }
+  },
+  "IA": {
+    "name": "Iowa",
+    "loss_of_spouse": {
+      "headline": "Iowa: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the District Court of the county where the decedent lived",
+        "Small estate affidavit available for personal property under $25,000 (real property requires probate)",
+        "Iowa inheritance tax was fully repealed effective January 1, 2025 — no state inheritance or estate tax going forward",
+        "Iowa allows for simplified probate administration for qualifying estates",
+        "Order death certificates from the Iowa Department of Public Health Vital Records — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Iowa: Divorce Rules",
+      "bullets": [
+        "90-day waiting period from the date of service before a divorce can be finalized",
+        "Equitable distribution state — marital property is divided fairly, not necessarily 50/50",
+        "Iowa is a pure no-fault state — irretrievable breakdown of the marriage is the only ground required",
+        "Alimony (spousal support) is at judicial discretion — courts consider length of marriage, earning capacity, and contributions",
+        "File in the District Court of the county where either spouse resides (1-year Iowa residency required)"
+      ]
+    },
+    "job_loss": {
+      "headline": "Iowa: Job Loss Benefits",
+      "bullets": [
+        "File with IWD at uiclaims.iwd.iowa.gov — benefits up to $501/wk for up to 26 weeks",
+        "File within the first week of job loss — Iowa does not back-pay for unclaimed weeks",
+        "No Iowa WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "IowaWORKS centers provide free job search, career counseling, and skills training statewide",
+        "Iowa has a flat income tax rate of 3.8% (recently simplified from a graduated system)"
+      ]
+    },
+    "relocation": {
+      "headline": "Iowa: Relocation Requirements",
+      "bullets": [
+        "Obtain an Iowa driver's license within 30 days of establishing residency",
+        "Register your vehicle with the county treasurer within 30 days of becoming an Iowa resident",
+        "No statewide vehicle emissions or safety inspection required in Iowa",
+        "Register to vote at least 15 days before an election — Iowa allows same-day voter registration on Election Day",
+        "Iowa has a flat income tax rate of 3.8% (effective 2026) — verify the current rate when filing"
+      ]
+    },
+    "disability": {
+      "headline": "Iowa: Disability Benefits",
+      "bullets": [
+        "Iowa has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "IVRS (Iowa Vocational Rehabilitation Services) provides free job training and placement for eligible individuals",
+        "Iowa Medicaid (DHS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Iowa employees — report workplace injuries within 90 days to preserve your claim"
+      ]
+    },
+    "retirement": {
+      "headline": "Iowa: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Iowa state income tax",
+        "Iowa fully exempts retirement income (pensions, 401(k), IRA) from state tax for those 55+ (effective 2023)",
+        "IPERS (Iowa Public Employees' Retirement System) is the major state pension system",
+        "Iowa inheritance tax was fully repealed effective January 1, 2025 — no state estate or inheritance tax",
+        "Iowa is now one of the most retirement-tax-friendly states in the Midwest"
+      ]
+    }
+  },
+  "KS": {
+    "name": "Kansas",
+    "loss_of_spouse": {
+      "headline": "Kansas: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the District Court of the county where the decedent lived",
+        "Simplified administration available for estates where all beneficiaries agree and no creditor issues exist",
+        "No Kansas estate tax or inheritance tax",
+        "Kansas allows Transfer on Death (TOD) deeds for real property — avoids probate on the home",
+        "Order death certificates from the Kansas KDHE Vital Statistics or county health department — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Kansas: Divorce Rules",
+      "bullets": [
+        "60-day waiting period from the date of filing before a divorce can be finalized",
+        "Equitable distribution state — courts divide marital property fairly based on multiple factors",
+        "Kansas allows both no-fault (incompatibility) and fault-based grounds for divorce",
+        "Spousal maintenance is awarded at judicial discretion — Kansas has no mandatory formula",
+        "File in the District Court of the county where either spouse has lived for at least 60 days"
+      ]
+    },
+    "job_loss": {
+      "headline": "Kansas: Job Loss Benefits",
+      "bullets": [
+        "File with KDOL at getkansasbenefits.gov — benefits up to $503/wk for up to 16 weeks",
+        "Kansas has one of the shorter maximum benefit durations — file immediately to avoid losing weeks",
+        "No Kansas WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "KANSASWORKS centers provide free job search, career counseling, and training statewide",
+        "Kansas is an at-will employment state with no additional termination protections beyond federal law"
+      ]
+    },
+    "relocation": {
+      "headline": "Kansas: Relocation Requirements",
+      "bullets": [
+        "Obtain a Kansas driver's license within 90 days of establishing residency",
+        "Register your vehicle with the county treasurer within 90 days of becoming a Kansas resident",
+        "No statewide vehicle emissions inspection required (select counties in the Kansas City metro area may require it)",
+        "Register to vote at least 21 days before an election — Kansas does not have same-day voter registration",
+        "Kansas income tax rates range from 3.1–5.7% on a graduated scale"
+      ]
+    },
+    "disability": {
+      "headline": "Kansas: Disability Benefits",
+      "bullets": [
+        "Kansas has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "Kansas VR (Vocational Rehabilitation Services) provides free job training and placement for eligible individuals",
+        "KanCare (Kansas Medicaid) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Kansas employees — report workplace injuries within 200 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Kansas: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is exempt from Kansas tax if federal AGI is $75,000 or less",
+        "Kansas taxes pension, 401(k), and IRA income at graduated rates from 3.1–5.7%",
+        "KPERS (Kansas Public Employees Retirement System) is the major state pension system",
+        "No Kansas estate or inheritance tax",
+        "Kansas KPERS pension income is specifically exempt from Kansas state income tax"
+      ]
+    }
+  },
+  "KY": {
+    "name": "Kentucky",
+    "loss_of_spouse": {
+      "headline": "Kentucky: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the District Court of the county where the decedent lived",
+        "Small estate affidavit (Dispensing with Administration) available for estates under $15,000 in personal property",
+        "Kentucky has an inheritance tax — rates vary from 4–16% depending on the beneficiary's relationship to the decedent",
+        "Surviving spouses are exempt from Kentucky inheritance tax — Class A beneficiaries pay 0%",
+        "Order death certificates from the Kentucky Office of Vital Statistics — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Kentucky: Divorce Rules",
+      "bullets": [
+        "60-day waiting period from the date of filing before a divorce can be finalized",
+        "Equitable distribution state — courts divide marital property fairly, not necessarily 50/50",
+        "Kentucky is a pure no-fault state — irretrievable breakdown is the only ground for divorce",
+        "Spousal maintenance is available based on need and inability to be self-supporting through appropriate employment",
+        "File in the Circuit Court (Family Division) of the county where either spouse has lived for at least 180 days"
+      ]
+    },
+    "job_loss": {
+      "headline": "Kentucky: Job Loss Benefits",
+      "bullets": [
+        "File with KEWES at kewes.ky.gov — benefits up to $552/wk for up to 26 weeks",
+        "File within the first week of job loss — Kentucky does not back-pay for unclaimed weeks",
+        "No Kentucky WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Kentucky Career Centers (KCC) provide free job search, resume help, and skills training statewide",
+        "Kentucky is an at-will employment state with no additional termination protections beyond federal law"
+      ]
+    },
+    "relocation": {
+      "headline": "Kentucky: Relocation Requirements",
+      "bullets": [
+        "Obtain a Kentucky driver's license within 30 days of establishing residency",
+        "Register your vehicle with the county clerk within 15 days of becoming a Kentucky resident",
+        "Kentucky does not require a vehicle emissions test; select counties require a property tax receipt for registration",
+        "Register to vote at least 29 days before an election — Kentucky does not have same-day voter registration",
+        "Kentucky has a flat income tax rate of 4% on taxable income"
+      ]
+    },
+    "disability": {
+      "headline": "Kentucky: Disability Benefits",
+      "bullets": [
+        "Kentucky has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "OVR (Office of Vocational Rehabilitation) provides free job training and placement for eligible individuals",
+        "Kentucky Medicaid (DMS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Kentucky employees — report workplace injuries within 2 years but as soon as possible"
+      ]
+    },
+    "retirement": {
+      "headline": "Kentucky: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Kentucky state income tax",
+        "Kentucky excludes up to $31,110 per person in retirement income (pensions, 401(k), IRA) from state tax",
+        "KRS (Kentucky Retirement Systems) and KTRS (Kentucky Teachers' Retirement System) are the major state pensions",
+        "Kentucky has an inheritance tax — but surviving spouses and Class A beneficiaries are fully exempt",
+        "Kentucky flat income tax rate of 4% applies to retirement income above the exclusion amount"
+      ]
+    }
+  },
+  "LA": {
+    "name": "Louisiana",
+    "loss_of_spouse": {
+      "headline": "Louisiana: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate (called 'Succession') in the District Court of the parish where the decedent lived",
+        "Small succession affidavit available for estates under $125,000 where the decedent died without a will",
+        "No Louisiana estate tax or inheritance tax",
+        "Community property state — the surviving spouse typically retains their half of community property automatically",
+        "Louisiana has 'forced heirship' rules — children under 24 (or any age if disabled) may be entitled to a share of the estate"
+      ]
+    },
+    "divorce": {
+      "headline": "Louisiana: Divorce Rules",
+      "bullets": [
+        "180-day waiting period after filing for no-fault divorce (365 days if minor children are involved)",
+        "Community property state — marital assets and debts are presumed split 50/50",
+        "Louisiana uses the term 'living separate and apart' for the no-fault waiting period — physical separation is required",
+        "Spousal support (alimony) can be temporary or permanent; final support is limited to 1/3 of the paying spouse's income",
+        "File in the District Court of the parish where either spouse is domiciled"
+      ]
+    },
+    "job_loss": {
+      "headline": "Louisiana: Job Loss Benefits",
+      "bullets": [
+        "File with LWC at louisianaworks.net — benefits up to $247/wk for up to 26 weeks (one of the lowest maximums nationally)",
+        "File within the first week of job loss — Louisiana does not back-pay for unclaimed weeks",
+        "No Louisiana WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Louisiana Workforce Commission career centers provide free job search, training, and career counseling",
+        "Louisiana is an at-will employment state with no additional termination protections beyond federal law"
+      ]
+    },
+    "relocation": {
+      "headline": "Louisiana: Relocation Requirements",
+      "bullets": [
+        "Obtain a Louisiana driver's license within 30 days of establishing residency",
+        "Register your vehicle with the OMV (Office of Motor Vehicles) within 30 days of becoming a LA resident",
+        "Louisiana requires an annual vehicle safety inspection (emissions in certain parishes)",
+        "Register to vote at least 20 days before an election (30 days for mail) — Louisiana does not offer same-day registration",
+        "Louisiana income tax rates range from 1.85–4.25% on a graduated scale"
+      ]
+    },
+    "disability": {
+      "headline": "Louisiana: Disability Benefits",
+      "bullets": [
+        "Louisiana has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "LRS (Louisiana Rehabilitation Services) provides free vocational rehabilitation and job placement",
+        "Louisiana Medicaid (LDH) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Louisiana employees — report workplace injuries within 1 year but as soon as possible"
+      ]
+    },
+    "retirement": {
+      "headline": "Louisiana: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Louisiana state income tax",
+        "Louisiana exempts up to $6,000 per person of annual retirement income (pensions, 401(k), IRA) from state tax",
+        "LASERS and TRSL (Teachers' Retirement System of Louisiana) are the major state pension systems",
+        "State and local government pension income is fully exempt from Louisiana state income tax",
+        "No Louisiana estate or inheritance tax"
+      ]
+    }
+  },
+  "ME": {
+    "name": "Maine",
+    "loss_of_spouse": {
+      "headline": "Maine: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Probate Court of the county where the decedent lived",
+        "Small estate affidavit available for estates under $40,000 in personal property (after 30 days from death)",
+        "Maine has a state estate tax on estates over $6.8M (2024) at rates up to 12%",
+        "Maine is an equitable distribution state for marital property",
+        "Order death certificates from the Maine CDC Vital Records — budget for 10–15 certified copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Maine: Divorce Rules",
+      "bullets": [
+        "60-day waiting period from the date of filing before a divorce can be finalized",
+        "Equitable distribution state — marital property is divided fairly, not necessarily 50/50",
+        "Maine is a pure no-fault state — irreconcilable marital differences is the standard ground",
+        "Spousal support (alimony) types include general, transitional, reimbursement, and nominal",
+        "File in the District Court of the division where either spouse has lived for at least 6 months"
+      ]
+    },
+    "job_loss": {
+      "headline": "Maine: Job Loss Benefits",
+      "bullets": [
+        "File with MDOL at reemployme.maine.gov — benefits up to $521/wk (plus dependent allowances) for up to 26 weeks",
+        "File within the first week of job loss — Maine does not back-pay for unclaimed weeks",
+        "No Maine WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Maine CareerCenters provide free job search, training, and career counseling statewide",
+        "Maine has a graduated income tax with rates from 5.8–7.15%"
+      ]
+    },
+    "relocation": {
+      "headline": "Maine: Relocation Requirements",
+      "bullets": [
+        "Obtain a Maine driver's license within 30 days of establishing residency",
+        "Register your vehicle with the BMV within 30 days of becoming a Maine resident",
+        "Maine requires an annual vehicle safety inspection at a licensed station",
+        "Register to vote at least 21 days before an election (or in person on Election Day — Maine allows same-day registration)",
+        "Maine income tax rates range from 5.8–7.15% on a graduated scale"
+      ]
+    },
+    "disability": {
+      "headline": "Maine: Disability Benefits",
+      "bullets": [
+        "Maine has a Paid Family and Medical Leave program launching in 2026 — check current status for availability",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "Bureau of Rehabilitation Services (BRS) provides free vocational rehabilitation and job placement",
+        "MaineCare (Medicaid) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Maine employees — report workplace injuries to your employer promptly"
+      ]
+    },
+    "retirement": {
+      "headline": "Maine: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is exempt from Maine state income tax if federal AGI is below $25,000 (single) or $32,000 (joint)",
+        "Maine offers a pension income deduction of up to $25,000 that is reduced dollar-for-dollar by Social Security benefits received",
+        "MainePERS (Maine Public Employees Retirement System) is the major state pension system",
+        "Maine has a state estate tax on estates over $6.8M (2024) at rates up to 12%",
+        "Maine Homestead Exemption provides $25,000 off assessed value for property tax on primary residence"
+      ]
+    }
+  },
+  "MD": {
+    "name": "Maryland",
+    "loss_of_spouse": {
+      "headline": "Maryland: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Orphans' Court (or Circuit Court in Montgomery and Harford counties) where the decedent lived",
+        "Small estate simplified process available for estates under $50,000 ($100,000 if the surviving spouse is the sole heir)",
+        "Maryland imposes both an estate tax (over $5M) and an inheritance tax (10% on non-lineal heirs)",
+        "Surviving spouses and children are exempt from Maryland inheritance tax",
+        "Order death certificates from the Maryland DHMH Vital Statistics or local health department — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Maryland: Divorce Rules",
+      "bullets": [
+        "Mutual consent divorce available with no waiting period if both spouses agree and have no minor children (or have a signed agreement)",
+        "Contested no-fault divorce requires a 6-month separation period before filing",
+        "Equitable distribution state — courts divide marital property fairly based on statutory factors",
+        "Alimony types include rehabilitative, indefinite, and pendente lite — awarded at judicial discretion",
+        "File in the Circuit Court of the county or Baltimore City where either spouse has resided for at least 6 months"
+      ]
+    },
+    "job_loss": {
+      "headline": "Maryland: Job Loss Benefits",
+      "bullets": [
+        "File with MDOL at mdunemployment.com — benefits up to $430/wk for up to 26 weeks",
+        "File within the first week of job loss — Maryland does not back-pay for unclaimed weeks",
+        "Maryland WARN Act requires 60 days' notice for layoffs at businesses with 50+ employees (stricter than federal 100+)",
+        "American Job Centers (Maryland Workforce Exchange) provide free job search and career services statewide",
+        "Maryland has a graduated income tax with rates from 2–5.75% plus county income tax surcharges"
+      ]
+    },
+    "relocation": {
+      "headline": "Maryland: Relocation Requirements",
+      "bullets": [
+        "Obtain a Maryland driver's license within 60 days of establishing residency",
+        "Register your vehicle with the MVA within 60 days of becoming a Maryland resident",
+        "Maryland requires a vehicle safety inspection at registration (not annually)",
+        "Register to vote at least 21 days before an election — Maryland allows same-day voter registration during early voting",
+        "Maryland has both a state income tax (2–5.75%) and a county income tax (up to ~3.2%) — rates vary by county"
+      ]
+    },
+    "disability": {
+      "headline": "Maryland: Disability Benefits",
+      "bullets": [
+        "Maryland has no state-run short-term disability insurance program (but state employees have TPDI coverage)",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "DORS (Division of Rehabilitation Services) provides free vocational rehabilitation and job placement",
+        "Maryland Medicaid is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Maryland employees — report workplace injuries to your employer within 10 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Maryland: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is exempt from Maryland state income tax if federal AGI is below $75,000 (single) or $100,000 (joint)",
+        "Maryland offers a pension exclusion of up to $36,200 per person for those 65+ (income limits apply)",
+        "MSRPS (Maryland State Retirement and Pension System) is the major state pension system",
+        "Maryland has both estate tax (over $5M) and inheritance tax (10% for non-lineal heirs) — spouses are exempt from both",
+        "County income tax rates vary from ~2.25–3.2% and are in addition to the state income tax"
+      ]
+    }
+  },
+  "MA": {
+    "name": "Massachusetts",
+    "loss_of_spouse": {
+      "headline": "Massachusetts: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Probate and Family Court of the county where the decedent lived",
+        "Voluntary administration available for estates under $25,000 in personal property (no real estate)",
+        "Massachusetts imposes a state estate tax on estates over $2M — one of the lowest thresholds in the US",
+        "Estate tax applies to the full estate value once the $2M threshold is exceeded (cliff effect — plan carefully)",
+        "Order death certificates from the city/town clerk or the Massachusetts Registry of Vital Records"
+      ]
+    },
+    "divorce": {
+      "headline": "Massachusetts: Divorce Rules",
+      "bullets": [
+        "No mandatory waiting period for uncontested divorces — contested cases involve a typical 14-month process",
+        "Equitable distribution state — courts divide marital property fairly, considering length of marriage and contributions",
+        "Massachusetts offers both no-fault (irretrievable breakdown) and fault-based grounds",
+        "Alimony reform law (2011) caps duration based on length of marriage — e.g., marriages under 5 years: no more than 50% of the marriage length",
+        "File in the Probate and Family Court of the county where either spouse lives"
+      ]
+    },
+    "job_loss": {
+      "headline": "Massachusetts: Job Loss Benefits",
+      "bullets": [
+        "File with DUA at mass.gov/unemployment — benefits up to $823/wk (plus dependent allowances) for up to 26 weeks",
+        "Massachusetts has one of the highest maximum weekly benefit amounts in the nation",
+        "MA WARN Act requires 60 days' notice for layoffs at companies with 50+ employees",
+        "MassHire Career Centers provide free job search, training, and career counseling statewide",
+        "File within the first week — Massachusetts does not back-pay for weeks before your initial filing"
+      ]
+    },
+    "relocation": {
+      "headline": "Massachusetts: Relocation Requirements",
+      "bullets": [
+        "Obtain a Massachusetts driver's license within 30 days of establishing residency — apply at the RMV",
+        "Register your vehicle with the RMV within 30 days of becoming a MA resident — requires proof of insurance first",
+        "Annual vehicle safety inspection required within 7 days of registration",
+        "Register to vote at least 20 days before an election — Massachusetts allows same-day registration on Election Day",
+        "Massachusetts has a flat income tax rate of 5% plus a 4% surtax on income over $1M (9% total above $1M)"
+      ]
+    },
+    "disability": {
+      "headline": "Massachusetts: Disability Benefits",
+      "bullets": [
+        "Massachusetts Paid Family and Medical Leave (PFML) provides up to 20 weeks of medical leave at up to $1,100/wk",
+        "PFML is funded by payroll contributions — file through paidleave.mass.gov",
+        "SSDI federal 5-month waiting period applies for long-term disability; PFML can bridge this gap",
+        "MRC (Massachusetts Rehabilitation Commission) provides free vocational rehabilitation and job placement",
+        "MassHealth (Medicaid) is available for qualifying individuals with disabilities"
+      ]
+    },
+    "retirement": {
+      "headline": "Massachusetts: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Massachusetts state income tax",
+        "Massachusetts taxes pension, 401(k), and IRA income at the flat 5% rate (9% above $1M with surtax)",
+        "Government pension income (MA state/local and federal) is exempt from Massachusetts income tax",
+        "Massachusetts has a state estate tax on estates over $2M — the cliff effect means the entire estate is taxed once this threshold is exceeded",
+        "MSERS and MTRS are the major Massachusetts public pension systems"
+      ]
+    }
+  },
+  "MN": {
+    "name": "Minnesota",
+    "loss_of_spouse": {
+      "headline": "Minnesota: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the District Court (Probate Division) of the county where the decedent lived",
+        "Small estate affidavit available for estates under $75,000 in total value (after 30 days from death)",
+        "Minnesota imposes a state estate tax on estates over $3M at rates up to 16%",
+        "Minnesota allows Transfer on Death (TOD) deeds for real property — avoids probate on the home",
+        "Order death certificates from the Minnesota Office of Vital Records — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Minnesota: Divorce Rules",
+      "bullets": [
+        "30-day waiting period from the date of service before a divorce can be finalized (court may waive in certain cases)",
+        "Equitable distribution state — courts divide marital property fairly, not necessarily 50/50",
+        "Minnesota is a pure no-fault state — irretrievable breakdown of the marriage is the only ground",
+        "Spousal maintenance guidelines are at judicial discretion — courts consider duration of marriage, standard of living, and earning capacity",
+        "File in the District Court of the county where either spouse has lived for at least 180 days"
+      ]
+    },
+    "job_loss": {
+      "headline": "Minnesota: Job Loss Benefits",
+      "bullets": [
+        "File with DEED at uimn.org — benefits up to $857/wk (with dependents) for up to 26 weeks",
+        "Minnesota has one of the highest maximum weekly benefit amounts in the nation",
+        "Minnesota WARN Act requires 60 days' notice for layoffs at companies with 100+ employees",
+        "CareerForce centers provide free job search, resume help, and skills training statewide",
+        "File within the first week of unemployment — Minnesota does not retroactively pay unclaimed weeks"
+      ]
+    },
+    "relocation": {
+      "headline": "Minnesota: Relocation Requirements",
+      "bullets": [
+        "Obtain a Minnesota driver's license within 60 days of establishing residency",
+        "Register your vehicle with a DVS (Driver and Vehicle Services) office within 60 days of becoming a MN resident",
+        "No statewide vehicle emissions or safety inspection required in Minnesota",
+        "Register to vote at least 21 days before an election — Minnesota allows same-day voter registration on Election Day",
+        "Minnesota income tax rates range from 5.35–9.85% on a graduated scale — one of the higher top rates nationally"
+      ]
+    },
+    "disability": {
+      "headline": "Minnesota: Disability Benefits",
+      "bullets": [
+        "Minnesota Paid Leave program launches in 2026 — up to 12 weeks of paid medical leave for qualifying conditions",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "VRS (Vocational Rehabilitation Services under DEED) provides free job training and placement",
+        "Minnesota Medical Assistance (Medicaid) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Minnesota employees — report workplace injuries within 180 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Minnesota: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is partially taxable in Minnesota — a subtraction is available for qualifying lower-income filers",
+        "Minnesota taxes pension, 401(k), and IRA income at graduated rates from 5.35–9.85%",
+        "MSRS, PERA, and TRA (Teachers Retirement Association) are the major Minnesota public pension systems",
+        "Minnesota has a state estate tax on estates over $3M at rates up to 16%",
+        "Minnesota's Senior Citizens Property Tax Deferral program allows qualifying seniors to defer property taxes"
+      ]
+    }
+  },
+  "MS": {
+    "name": "Mississippi",
+    "loss_of_spouse": {
+      "headline": "Mississippi: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Chancery Court of the county where the decedent lived",
+        "Simplified probate available for estates meeting Mississippi's small estate threshold — contact the Chancery Clerk",
+        "No Mississippi estate tax or inheritance tax",
+        "Mississippi is an equitable distribution state — but jointly titled property passes to the surviving spouse automatically",
+        "Order death certificates from the Mississippi State Department of Health Vital Records — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Mississippi: Divorce Rules",
+      "bullets": [
+        "60-day waiting period from the date of filing before a divorce can be finalized on irreconcilable differences grounds",
+        "Equitable distribution state — marital property is divided fairly, not necessarily 50/50",
+        "Mississippi allows both no-fault (irreconcilable differences with agreement) and fault-based grounds",
+        "Alimony types include periodic, lump sum, and rehabilitative — courts consider length of marriage and earning capacity",
+        "File in the Chancery Court of the county where either spouse resides (6-month residency required)"
+      ]
+    },
+    "job_loss": {
+      "headline": "Mississippi: Job Loss Benefits",
+      "bullets": [
+        "File with MDES at mdes.ms.gov — benefits up to $235/wk for up to 26 weeks (one of the lowest maximums nationally)",
+        "File within the first week of unemployment — Mississippi does not back-pay for unclaimed weeks",
+        "No Mississippi WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "WIN Job Centers (Mississippi Works) provide free job search, training, and career counseling statewide",
+        "Mississippi is an at-will employment state with no additional termination protections beyond federal law"
+      ]
+    },
+    "relocation": {
+      "headline": "Mississippi: Relocation Requirements",
+      "bullets": [
+        "Obtain a Mississippi driver's license within 60 days of establishing residency",
+        "Register your vehicle with the county Tax Collector within 30 days of becoming a MS resident",
+        "No statewide vehicle emissions or safety inspection required in Mississippi",
+        "Register to vote at least 30 days before an election — Mississippi does not have same-day voter registration",
+        "Mississippi income tax rates range from 0–5% (income under $10,000 is exempt)"
+      ]
+    },
+    "disability": {
+      "headline": "Mississippi: Disability Benefits",
+      "bullets": [
+        "Mississippi has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "MDRS (Mississippi Department of Rehabilitation Services) provides free vocational rehabilitation and job placement",
+        "Mississippi Medicaid (DOM) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Mississippi employees — report workplace injuries within 30 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Mississippi: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Mississippi state income tax",
+        "Mississippi fully exempts all qualified retirement income (pensions, 401(k), IRA, annuities) from state income tax",
+        "PERS (Public Employees' Retirement System of Mississippi) is the major state pension system",
+        "No Mississippi estate or inheritance tax",
+        "Mississippi is one of the most retirement-tax-friendly states in the country for retirees of all income levels"
+      ]
+    }
+  },
+  "MO": {
+    "name": "Missouri",
+    "loss_of_spouse": {
+      "headline": "Missouri: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Probate Division of the Circuit Court in the county where the decedent lived",
+        "Small estate affidavit available for estates under $40,000 in total value (after 30 days from death)",
+        "No Missouri estate tax or inheritance tax",
+        "Missouri allows Beneficiary Deeds (Transfer on Death deeds) for real property — avoids probate on the home",
+        "Order death certificates from the Missouri DHSS Bureau of Vital Records — budget for 10–15 copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Missouri: Divorce Rules",
+      "bullets": [
+        "30-day waiting period from the date of filing before a divorce can be finalized",
+        "Equitable distribution state — courts divide marital property fairly, not necessarily 50/50",
+        "Missouri is a pure no-fault state — irretrievable breakdown of the marriage is the only ground required",
+        "Spousal maintenance is at judicial discretion — courts consider financial resources, earning capacity, and length of marriage",
+        "File in the Circuit Court of the county where either spouse has lived for at least 90 days"
+      ]
+    },
+    "job_loss": {
+      "headline": "Missouri: Job Loss Benefits",
+      "bullets": [
+        "File with DES at uinteract.labor.mo.gov — benefits up to $320/wk for up to 20 weeks",
+        "Missouri has one of the lower maximum benefit amounts and shorter durations — file immediately",
+        "No Missouri WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Missouri Job Centers provide free job search, career counseling, and skills training statewide",
+        "Missouri is an at-will employment state with no additional termination protections beyond federal law"
+      ]
+    },
+    "relocation": {
+      "headline": "Missouri: Relocation Requirements",
+      "bullets": [
+        "Obtain a Missouri driver's license within 30 days of establishing residency",
+        "Register your vehicle with the DOR (Department of Revenue) within 30 days of becoming a MO resident",
+        "Safety inspection required at registration; emissions testing required in St. Louis and Kansas City metro areas",
+        "Register to vote at least 27 days before an election — Missouri does not have same-day voter registration",
+        "Missouri income tax rates range from 2–4.95% on a graduated scale (top rate recently reduced)"
+      ]
+    },
+    "disability": {
+      "headline": "Missouri: Disability Benefits",
+      "bullets": [
+        "Missouri has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "DESE-VR (Division of Vocational Rehabilitation) provides free job training and placement for eligible individuals",
+        "MO HealthNet (Medicaid) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Missouri employees — report workplace injuries within 30 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Missouri: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Missouri state income tax if AGI is below $85,000 (single) or $100,000 (joint)",
+        "Missouri offers a public pension exemption and a partial private pension deduction for qualifying retirees",
+        "MOSERS (Missouri State Employees' Retirement System) and PSRS (Public School Retirement System) are major state pensions",
+        "No Missouri estate or inheritance tax",
+        "Missouri income tax top rate has been declining — verify current rate for retirement income planning"
+      ]
+    }
+  },
+  "MT": {
+    "name": "Montana",
+    "loss_of_spouse": {
+      "headline": "Montana: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the District Court of the county where the decedent lived",
+        "Small estate affidavit available for estates valued under $50,000 — no formal probate required",
+        "No Montana estate tax or inheritance tax",
+        "Montana adopted the Uniform Probate Code — informal probate is available and significantly faster than formal proceedings",
+        "Order death certificates from the Montana DPHHS Vital Records office — budget for 10–15 certified copies"
+      ]
+    },
+    "divorce": {
+      "headline": "Montana: Divorce Rules",
+      "bullets": [
+        "20-day waiting period after filing and service before a divorce can be finalized",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "Montana is a purely no-fault divorce state — irretrievable breakdown of the marriage is the only ground",
+        "File in the District Court of the county where either spouse has lived for at least 90 days",
+        "Montana courts consider length of marriage, financial resources, and earning capacity when awarding maintenance"
+      ]
+    },
+    "job_loss": {
+      "headline": "Montana: Job Loss Benefits",
+      "bullets": [
+        "File with Montana DLI at uid.dli.mt.gov — benefits up to $552/wk for up to 28 weeks",
+        "Montana is the only state that is not fully at-will — the Wrongful Discharge from Employment Act requires good cause for termination after probation",
+        "No Montana WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Montana Job Service offices provide free job search assistance and training statewide",
+        "File within the first week of job loss — Montana does not back-pay for unclaimed weeks"
+      ]
+    },
+    "relocation": {
+      "headline": "Montana: Relocation Requirements",
+      "bullets": [
+        "Obtain a Montana driver's license within 60 days of establishing residency",
+        "Register your vehicle with the county Treasurer's office within 60 days of becoming a MT resident",
+        "Montana has no state sales tax — vehicle purchases are not subject to sales tax",
+        "Register to vote at least 30 days before an election — late registration available at the county election office",
+        "Montana has a graduated income tax with a top rate of 6.75% on income over $19,800"
+      ]
+    },
+    "disability": {
+      "headline": "Montana: Disability Benefits",
+      "bullets": [
+        "Montana has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "Montana DPHHS Vocational Rehabilitation provides free job training, placement, and adaptive services",
+        "Montana Medicaid (through DPHHS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Montana employees — report workplace injuries to your employer promptly"
+      ]
+    },
+    "retirement": {
+      "headline": "Montana: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is taxable in Montana if federal AGI exceeds $25,000 (single) or $32,000 (married filing jointly)",
+        "Pension and retirement account distributions are subject to Montana income tax with limited exemptions",
+        "Montana PERS (Public Employees' Retirement System) and TRS (Teachers' Retirement System) are the major state pensions",
+        "No Montana estate or inheritance tax",
+        "Montana's top income tax rate is 6.75% — higher than neighboring Wyoming and South Dakota (which have no income tax)"
+      ]
+    }
+  },
+  "NE": {
+    "name": "Nebraska",
+    "loss_of_spouse": {
+      "headline": "Nebraska: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the County Court of the county where the decedent lived",
+        "Small estate affidavit available for personal property estates under $50,000 — avoids formal probate",
+        "Nebraska imposes a county inheritance tax: 1% for immediate family, 13% for remote relatives, 18% for unrelated beneficiaries",
+        "No Nebraska estate tax — but the inheritance tax applies to most transfers except to a surviving spouse",
+        "Nebraska adopted the Uniform Probate Code — informal probate is available for uncontested estates"
+      ]
+    },
+    "divorce": {
+      "headline": "Nebraska: Divorce Rules",
+      "bullets": [
+        "60-day waiting period from the date of filing before a divorce can be finalized",
+        "Equitable distribution state — marital property is divided fairly based on relevant factors",
+        "Nebraska is a no-fault state — irretrievable breakdown of the marriage is the only ground for dissolution",
+        "File in the District Court of the county where either spouse resides",
+        "Parenting plan and child support calculations are required before finalization when minor children are involved"
+      ]
+    },
+    "job_loss": {
+      "headline": "Nebraska: Job Loss Benefits",
+      "bullets": [
+        "File with NDOL at dol.nebraska.gov — benefits up to $440/wk for up to 26 weeks",
+        "File within the first week of unemployment — Nebraska does not back-pay for unclaimed weeks",
+        "No Nebraska WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "NEworks.nebraska.gov and American Job Centers provide free job search tools and career assistance statewide",
+        "Nebraska has a relatively low unemployment rate — job placement services are often effective quickly"
+      ]
+    },
+    "relocation": {
+      "headline": "Nebraska: Relocation Requirements",
+      "bullets": [
+        "Obtain a Nebraska driver's license within 30 days of establishing residency",
+        "Register your vehicle with the county Treasurer's office within 30 days of becoming a NE resident",
+        "Nebraska has no vehicle emissions testing requirement",
+        "Register to vote at least 11 days before an election (or 2nd Friday before) — no same-day registration",
+        "Nebraska has a graduated income tax with a top rate of 6.64% on income over $33,180 (single)"
+      ]
+    },
+    "disability": {
+      "headline": "Nebraska: Disability Benefits",
+      "bullets": [
+        "Nebraska has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "Nebraska VR (Vocational Rehabilitation) provides free job training, placement, and support services",
+        "Nebraska Medicaid (through DHHS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Nebraska employees — report injuries to your employer within the statutory timeframe"
+      ]
+    },
+    "retirement": {
+      "headline": "Nebraska: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is partially taxable in Nebraska — but an exemption phases out higher-income earners",
+        "Military retirement pay is fully exempt from Nebraska state income tax as of 2022",
+        "NPERS (Nebraska Public Employees Retirement Systems) manages state, county, and school employee pensions",
+        "Nebraska imposes a county inheritance tax (1% for immediate family, up to 18% for non-relatives) — plan accordingly",
+        "Nebraska's top income tax rate is 6.64% — consider timing of Roth conversions and large distributions"
+      ]
+    }
+  },
+  "NV": {
+    "name": "Nevada",
+    "loss_of_spouse": {
+      "headline": "Nevada: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the District Court of the county where the decedent lived",
+        "Set Aside Without Administration available for estates under $100,000 — one of the higher simplified thresholds nationally",
+        "Community property state — jointly held community assets transfer to the surviving spouse automatically",
+        "No Nevada estate tax, inheritance tax, or state income tax",
+        "Order death certificates from the Nevada Office of Vital Records or county Health District"
+      ]
+    },
+    "divorce": {
+      "headline": "Nevada: Divorce Rules",
+      "bullets": [
+        "No mandatory waiting period after filing — uncontested divorces can be finalized quickly, sometimes within weeks",
+        "Community property state — marital assets and debts are presumed divided 50/50",
+        "Nevada is a no-fault state — incompatibility is the most common ground for divorce",
+        "At least one spouse must have lived in Nevada for 6 weeks before filing (one of the shortest residency requirements nationally)",
+        "File in the Family Court division of the District Court in the county where either spouse resides"
+      ]
+    },
+    "job_loss": {
+      "headline": "Nevada: Job Loss Benefits",
+      "bullets": [
+        "File with DETR at ui.nv.gov — benefits up to $469/wk for up to 26 weeks",
+        "File during the first week of job loss — Nevada does not back-pay for unclaimed weeks",
+        "No Nevada WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Nevada JobConnect offices provide free job search, resume assistance, and training statewide",
+        "No state income tax means unemployment benefits are taxed only at the federal level"
+      ]
+    },
+    "relocation": {
+      "headline": "Nevada: Relocation Requirements",
+      "bullets": [
+        "Obtain a Nevada driver's license within 30 days of establishing residency",
+        "Register your vehicle with the Nevada DMV within 30 days of becoming a NV resident",
+        "Clark County (Las Vegas) requires smog certification for vehicle registration",
+        "Register to vote at least 28 days before an election — same-day registration available during early voting and on Election Day",
+        "No state income tax — Nevada is a popular destination for tax-motivated relocation"
+      ]
+    },
+    "disability": {
+      "headline": "Nevada: Disability Benefits",
+      "bullets": [
+        "Nevada has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "Nevada Bureau of Vocational Rehabilitation provides free job training, placement, and adaptive services",
+        "Nevada Medicaid (through DHCFP) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Nevada employees — report injuries to your employer within 7 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Nevada: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "No Nevada state income tax — Social Security, pensions, 401(k), and IRA withdrawals are completely state-tax-free",
+        "NVPERS (Nevada Public Employees' Retirement System) is the primary state pension plan",
+        "No Nevada estate or inheritance tax",
+        "Property taxes are relatively low (capped by state law) — but verify your county's effective rate",
+        "No state income tax makes Nevada one of the most retirement-tax-friendly states in the country"
+      ]
+    }
+  },
+  "NH": {
+    "name": "New Hampshire",
+    "loss_of_spouse": {
+      "headline": "New Hampshire: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate with the Circuit Court (Probate Division) in the county where the decedent lived",
+        "Voluntary Administration available for estates under $10,000 in personal property — simplified process",
+        "No New Hampshire estate tax or inheritance tax",
+        "New Hampshire allows joint tenancy with right of survivorship and TOD designations to avoid probate",
+        "Order death certificates from the NH Division of Vital Records Administration or town/city clerk"
+      ]
+    },
+    "divorce": {
+      "headline": "New Hampshire: Divorce Rules",
+      "bullets": [
+        "No mandatory waiting period — uncontested divorces can be finalized once the court schedules a hearing",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "New Hampshire allows both no-fault (irreconcilable differences) and fault-based grounds for divorce",
+        "File in the Circuit Court (Family Division) of the county where either spouse resides",
+        "At least one spouse must have lived in New Hampshire for 1 year before filing (or both must be residents at time of filing)"
+      ]
+    },
+    "job_loss": {
+      "headline": "New Hampshire: Job Loss Benefits",
+      "bullets": [
+        "File with NHES at nhes.nh.gov — benefits up to $427/wk for up to 26 weeks",
+        "File during the first week of unemployment — NH does not back-pay for unclaimed weeks",
+        "No New Hampshire WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "NHES local offices and NH Works centers provide free job search assistance and training",
+        "No state income tax on wages — unemployment benefits are taxed only at the federal level"
+      ]
+    },
+    "relocation": {
+      "headline": "New Hampshire: Relocation Requirements",
+      "bullets": [
+        "Obtain a New Hampshire driver's license within 60 days of establishing residency",
+        "Register your vehicle with the town/city clerk's office — NH uses a town-based registration system",
+        "New Hampshire has no vehicle emissions testing or safety inspection requirement",
+        "Register to vote at your town/city clerk's office — same-day registration is available on Election Day",
+        "No state income tax on wages or salaries — NH taxes only interest and dividends (being phased out by 2027)"
+      ]
+    },
+    "disability": {
+      "headline": "New Hampshire: Disability Benefits",
+      "bullets": [
+        "New Hampshire has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "NH Vocational Rehabilitation provides free employment services and job training for eligible individuals",
+        "New Hampshire Medicaid (through DHHS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most NH employees — report workplace injuries to your employer promptly"
+      ]
+    },
+    "retirement": {
+      "headline": "New Hampshire: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "No state income tax on wages, pensions, Social Security, or retirement account withdrawals",
+        "Interest and dividends tax (5%) is being phased out and will be fully eliminated by January 2027",
+        "NHRS (New Hampshire Retirement System) covers state employees, teachers, police, and firefighters",
+        "No New Hampshire estate or inheritance tax",
+        "Property taxes are among the highest in the nation — critical to budget for when relocating for retirement"
+      ]
+    }
+  },
+  "NJ": {
+    "name": "New Jersey",
+    "loss_of_spouse": {
+      "headline": "New Jersey: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate with the Surrogate's Court in the county where the decedent lived",
+        "Simplified probate available for estates under $50,000 in personal property — contact the Surrogate's office",
+        "New Jersey imposes an estate tax on estates over $2M (one of the lowest thresholds in the US) at rates up to 16%",
+        "NJ inheritance tax: 0% for Class A beneficiaries (spouse, children, parents); 11–16% for siblings and others",
+        "Order death certificates from the NJ Office of Vital Statistics or local registrar"
+      ]
+    },
+    "divorce": {
+      "headline": "New Jersey: Divorce Rules",
+      "bullets": [
+        "No mandatory waiting period for no-fault divorce based on irreconcilable differences (6+ months)",
+        "Equitable distribution state — marital assets are divided fairly, considering many factors",
+        "Alimony reform (2014) limits duration of alimony to the length of the marriage for marriages under 20 years",
+        "File in the Superior Court (Family Division) of the county where either spouse resides",
+        "Mandatory parenting classes required when minor children are involved"
+      ]
+    },
+    "job_loss": {
+      "headline": "New Jersey: Job Loss Benefits",
+      "bullets": [
+        "File with NJDOL at myunemployment.nj.gov — benefits up to $830/wk for up to 26 weeks (one of the highest maximums nationally)",
+        "New Jersey also offers TDI (Temporary Disability Insurance) if you lose your job due to a non-work medical condition",
+        "NJ WARN Act requires 90 days' notice for mass layoffs (stricter than the federal 60-day requirement)",
+        "NJ One-Stop Career Centers provide free job search assistance and training statewide",
+        "File within the first week — NJ does not back-pay for weeks you did not file a claim"
+      ]
+    },
+    "relocation": {
+      "headline": "New Jersey: Relocation Requirements",
+      "bullets": [
+        "Obtain a New Jersey driver's license within 60 days of establishing residency",
+        "Register your vehicle with the NJ MVC within 60 days of becoming a NJ resident",
+        "NJ requires vehicle emissions inspection every 2 years (no safety inspection since 2010)",
+        "Register to vote at least 21 days before an election at nj.gov/state/elections",
+        "NJ has a graduated income tax with a top rate of 10.75% on income over $1M — plan accordingly"
+      ]
+    },
+    "disability": {
+      "headline": "New Jersey: Disability Benefits",
+      "bullets": [
+        "New Jersey has a mandatory Temporary Disability Insurance (TDI) program — benefits up to $993/wk for up to 26 weeks",
+        "File TDI claims through your employer's private carrier or the State plan within 30 days of disability onset",
+        "NJ Family Leave Insurance (FLI) provides up to 85% of weekly wages for qualifying family situations",
+        "SSDI federal 5-month waiting period applies for long-term disability — NJ TDI can bridge the gap",
+        "NJ DVRS (Division of Vocational Rehabilitation Services) provides free employment support for individuals with disabilities"
+      ]
+    },
+    "retirement": {
+      "headline": "New Jersey: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from New Jersey state income tax",
+        "NJ offers a retirement income exclusion — up to $100,000 for married couples filing jointly (62+ with income under $150,000)",
+        "NJDPB (NJ Division of Pensions and Benefits) manages PERS, TPAF, PFRS, and other state pension systems",
+        "NJ estate tax applies to estates over $2M — one of only a handful of states with both estate and inheritance taxes",
+        "Property taxes are the highest in the nation — the Senior Freeze (PTR) program reimburses increases for eligible seniors"
+      ]
+    }
+  },
+  "NM": {
+    "name": "New Mexico",
+    "loss_of_spouse": {
+      "headline": "New Mexico: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Probate Court or District Court of the county where the decedent lived",
+        "Summary proceedings available for estates under $50,000 — filed through the Probate Court without a full probate",
+        "Community property state — jointly held community assets transfer to the surviving spouse automatically",
+        "No New Mexico estate tax or inheritance tax",
+        "Order death certificates from the NM Vital Records and Health Statistics office"
+      ]
+    },
+    "divorce": {
+      "headline": "New Mexico: Divorce Rules",
+      "bullets": [
+        "30-day waiting period from the date of filing before a divorce can be finalized",
+        "Community property state — marital assets and debts are presumed divided 50/50",
+        "New Mexico allows both no-fault (incompatibility) and fault-based grounds for divorce",
+        "File in the District Court of the county where either spouse has resided for at least 6 months",
+        "Spousal support (alimony) is at judicial discretion — courts consider length of marriage, earning capacity, and standard of living"
+      ]
+    },
+    "job_loss": {
+      "headline": "New Mexico: Job Loss Benefits",
+      "bullets": [
+        "File with NMDWS at www.jobs.state.nm.us — benefits up to $461/wk for up to 26 weeks",
+        "File during the first week of unemployment — NM does not back-pay for unclaimed weeks",
+        "No New Mexico WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "NM Workforce Connection centers provide free job search, training, and career services statewide",
+        "New Mexico has a graduated income tax with a top rate of 5.9% on income over $210,000"
+      ]
+    },
+    "relocation": {
+      "headline": "New Mexico: Relocation Requirements",
+      "bullets": [
+        "Obtain a New Mexico driver's license within 30 days of establishing residency",
+        "Register your vehicle with the NM MVD within 30 days of becoming a NM resident",
+        "Bernalillo County (Albuquerque) requires emissions testing for vehicle registration",
+        "Register to vote at least 28 days before an election — same-day registration available on Election Day",
+        "NM does not require a vehicle safety inspection statewide"
+      ]
+    },
+    "disability": {
+      "headline": "New Mexico: Disability Benefits",
+      "bullets": [
+        "New Mexico has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "NM Division of Vocational Rehabilitation provides free job training, placement, and support services",
+        "New Mexico Medicaid (through HSD) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most NM employees — report workplace injuries to your employer within 15 days"
+      ]
+    },
+    "retirement": {
+      "headline": "New Mexico: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is exempt from NM state tax for single filers with AGI under $100,000 and joint filers under $150,000",
+        "Pension and retirement income above the exemption threshold is subject to NM income tax up to 5.9%",
+        "PERA (Public Employees Retirement Association) and ERB (Educational Retirement Board) are the major NM pension systems",
+        "No New Mexico estate or inheritance tax",
+        "NM offers a low-income tax credit for seniors — verify eligibility through the Taxation and Revenue Department"
+      ]
+    }
+  },
+  "ND": {
+    "name": "North Dakota",
+    "loss_of_spouse": {
+      "headline": "North Dakota: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the District Court of the county where the decedent lived",
+        "Small estate affidavit available for estates under $50,000 in personal property — bypasses formal probate",
+        "No North Dakota estate tax or inheritance tax",
+        "North Dakota adopted the Uniform Probate Code — informal probate is available for uncontested estates",
+        "Order death certificates from the ND Department of Health Vital Records office"
+      ]
+    },
+    "divorce": {
+      "headline": "North Dakota: Divorce Rules",
+      "bullets": [
+        "60-day waiting period from the date of service before a divorce can be finalized",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "North Dakota allows both no-fault (irreconcilable differences) and fault-based grounds for divorce",
+        "File in the District Court of the county where either spouse has lived for at least 6 months",
+        "Spousal support is at judicial discretion — courts consider length of marriage, needs, and earning capacity"
+      ]
+    },
+    "job_loss": {
+      "headline": "North Dakota: Job Loss Benefits",
+      "bullets": [
+        "File with Job Service North Dakota at jobsnd.com — benefits up to $618/wk for up to 26 weeks",
+        "File within the first week of job loss — ND does not back-pay for unclaimed weeks",
+        "No North Dakota WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Job Service ND offices provide free job matching, career counseling, and skills training statewide",
+        "North Dakota has a low income tax rate (top rate 1.95%) — unemployment benefits face minimal state tax"
+      ]
+    },
+    "relocation": {
+      "headline": "North Dakota: Relocation Requirements",
+      "bullets": [
+        "Obtain a North Dakota driver's license within 60 days of establishing residency",
+        "Register your vehicle with the ND DOT within 60 days of becoming a ND resident",
+        "North Dakota has no vehicle emissions testing or safety inspection requirement",
+        "North Dakota is the only state that does not require voter registration — just show valid ID at the polls",
+        "North Dakota has a low graduated income tax with a top rate of 1.95% — one of the lowest in the US"
+      ]
+    },
+    "disability": {
+      "headline": "North Dakota: Disability Benefits",
+      "bullets": [
+        "North Dakota has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "ND DVR (Division of Vocational Rehabilitation) provides free job training and employment support",
+        "North Dakota Medicaid (through DHS) is available for qualifying individuals with disabilities",
+        "Workers' compensation is administered by WSI (Workforce Safety and Insurance) — report injuries to your employer promptly"
+      ]
+    },
+    "retirement": {
+      "headline": "North Dakota: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is not taxed by North Dakota for most retirees (follows federal taxability rules with state deductions)",
+        "Pension and retirement income is subject to ND income tax, but the top rate is only 1.95%",
+        "NDPERS (ND Public Employees Retirement System) and TFFR (Teachers' Fund for Retirement) are the major state pension systems",
+        "No North Dakota estate or inheritance tax",
+        "Very low overall tax burden makes ND one of the more retirement-friendly states in the northern plains"
+      ]
+    }
+  },
+  "OK": {
+    "name": "Oklahoma",
+    "loss_of_spouse": {
+      "headline": "Oklahoma: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the District Court of the county where the decedent lived",
+        "Summary Administration available for estates under $200,000 — one of the higher simplified thresholds nationally",
+        "No Oklahoma estate tax or inheritance tax",
+        "Oklahoma allows Transfer on Death (TOD) deeds for real property — avoids probate on the home",
+        "Order death certificates from the Oklahoma State Department of Health Vital Records office"
+      ]
+    },
+    "divorce": {
+      "headline": "Oklahoma: Divorce Rules",
+      "bullets": [
+        "10-day waiting period (90 days if minor children are involved) from date of filing before finalization",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "Oklahoma allows both no-fault (incompatibility) and fault-based grounds (adultery, abandonment, cruelty) for divorce",
+        "File in the District Court of the county where the petitioner has lived for at least 6 months",
+        "Spousal support (alimony) duration is limited — generally cannot exceed the length of the marriage"
+      ]
+    },
+    "job_loss": {
+      "headline": "Oklahoma: Job Loss Benefits",
+      "bullets": [
+        "File with OESC at unemployment.state.ok.us — benefits up to $539/wk for up to 26 weeks",
+        "File during the first week of unemployment — Oklahoma does not back-pay for unclaimed weeks",
+        "No Oklahoma WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Oklahoma Works and American Job Centers provide free job search and career services statewide",
+        "Oklahoma has a top income tax rate of 4.75% — unemployment benefits are subject to state and federal tax"
+      ]
+    },
+    "relocation": {
+      "headline": "Oklahoma: Relocation Requirements",
+      "bullets": [
+        "Obtain an Oklahoma driver's license within 30 days of establishing residency",
+        "Register your vehicle with the Oklahoma Tax Commission within 30 days of becoming an OK resident",
+        "Oklahoma requires annual vehicle registration renewal — no statewide emissions testing",
+        "Register to vote at least 25 days before an election — no same-day voter registration",
+        "Oklahoma has a top income tax rate of 4.75% and no tax on groceries (as of 2024)"
+      ]
+    },
+    "disability": {
+      "headline": "Oklahoma: Disability Benefits",
+      "bullets": [
+        "Oklahoma has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "Oklahoma DRS (Department of Rehabilitation Services) provides free vocational rehabilitation and job placement",
+        "Oklahoma Medicaid (SoonerCare through OHCA) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Oklahoma employees — report injuries to your employer within 30 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Oklahoma: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Oklahoma state income tax",
+        "Oklahoma allows a retirement income exclusion of up to $10,000 per person from pensions and retirement accounts",
+        "OPERS (Oklahoma Public Employees Retirement System) and TRS are the major state pension systems",
+        "No Oklahoma estate or inheritance tax",
+        "Oklahoma's top income tax rate is 4.75% — relatively moderate compared to neighboring states"
+      ]
+    }
+  },
+  "OR": {
+    "name": "Oregon",
+    "loss_of_spouse": {
+      "headline": "Oregon: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Circuit Court of the county where the decedent lived",
+        "Small estate affidavit available for estates with personal property under $75,000 and real property under $200,000",
+        "Oregon imposes a state estate tax on estates over $1M — one of the lowest thresholds in the US, with rates up to 16%",
+        "No Oregon inheritance tax — only the estate tax applies",
+        "Order death certificates from the Oregon Center for Health Statistics or county registrar"
+      ]
+    },
+    "divorce": {
+      "headline": "Oregon: Divorce Rules",
+      "bullets": [
+        "90-day waiting period from the date of filing and service before a divorce can be finalized",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "Oregon is a purely no-fault state — irreconcilable differences is the only ground for dissolution",
+        "File in the Circuit Court of the county where either spouse resides",
+        "Spousal support considers length of marriage, earning capacity, and the standard of living during marriage"
+      ]
+    },
+    "job_loss": {
+      "headline": "Oregon: Job Loss Benefits",
+      "bullets": [
+        "File with Oregon Employment Department at unemployment.oregon.gov — benefits up to $648/wk for up to 26 weeks",
+        "File during the first week of unemployment — Oregon does not back-pay for unclaimed weeks",
+        "Oregon WARN Act requires 60 days' notice for layoffs at businesses with 100+ employees",
+        "WorkSource Oregon centers provide free job search, training, and career assistance statewide",
+        "Oregon has no state sales tax — but a high income tax (top rate 9.9%) applies to unemployment benefits"
+      ]
+    },
+    "relocation": {
+      "headline": "Oregon: Relocation Requirements",
+      "bullets": [
+        "Obtain an Oregon driver's license within 30 days of establishing residency",
+        "Register your vehicle with Oregon DMV within 30 days of becoming an OR resident",
+        "Portland metro area requires DEQ emissions testing for vehicle registration",
+        "Register to vote at least 21 days before an election — Oregon uses automatic voter registration and vote-by-mail",
+        "Oregon has no state sales tax — but income tax rates reach up to 9.9%"
+      ]
+    },
+    "disability": {
+      "headline": "Oregon: Disability Benefits",
+      "bullets": [
+        "Oregon Paid Leave (launched 2023) provides up to 12 weeks of paid leave for medical and family reasons at up to $1,523/wk",
+        "File Oregon Paid Leave claims through the Oregon Employment Department",
+        "SSDI federal 5-month waiting period applies for long-term disability",
+        "Oregon VR (Vocational Rehabilitation Division) provides free employment support and job training",
+        "Oregon Medicaid (Oregon Health Plan) is available for qualifying individuals with disabilities"
+      ]
+    },
+    "retirement": {
+      "headline": "Oregon: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Oregon state income tax",
+        "Pension and retirement account distributions are fully taxable at Oregon's top rate of 9.9%",
+        "PERS (Oregon Public Employees Retirement System) is the major state pension — covers state and local government employees",
+        "Oregon estate tax applies to estates over $1M — one of the lowest thresholds in the country",
+        "Oregon has no sales tax, but high income tax rates make it important to manage retirement distributions carefully"
+      ]
+    }
+  },
+  "RI": {
+    "name": "Rhode Island",
+    "loss_of_spouse": {
+      "headline": "Rhode Island: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate with the Municipal/Probate Court in the city or town where the decedent lived",
+        "Voluntary Administration available for estates under $15,000 in personal property — simplified process",
+        "Rhode Island imposes a state estate tax on estates over $1,774,583 (2024, indexed for inflation) at rates up to 16%",
+        "No Rhode Island inheritance tax",
+        "Order death certificates from the RI Department of Health Office of Vital Records"
+      ]
+    },
+    "divorce": {
+      "headline": "Rhode Island: Divorce Rules",
+      "bullets": [
+        "Mandatory 3-month waiting period from the final hearing before the divorce decree becomes absolute",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "Rhode Island allows both no-fault (irreconcilable differences) and fault-based grounds for divorce",
+        "File in the Family Court for the county where either spouse resides — at least one spouse must have lived in RI for 1 year",
+        "Alimony is at judicial discretion — courts consider length of marriage, conduct, and financial needs"
+      ]
+    },
+    "job_loss": {
+      "headline": "Rhode Island: Job Loss Benefits",
+      "bullets": [
+        "File with DLT at dlt.ri.gov — benefits up to $586/wk (plus dependent allowance) for up to 26 weeks",
+        "File during the first week of unemployment — RI does not back-pay for unclaimed weeks",
+        "No Rhode Island WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "netWORKri career centers provide free job search, training, and career assistance statewide",
+        "Rhode Island has a TDI (Temporary Disability Insurance) program — available if you become unable to work for medical reasons"
+      ]
+    },
+    "relocation": {
+      "headline": "Rhode Island: Relocation Requirements",
+      "bullets": [
+        "Obtain a Rhode Island driver's license within 30 days of establishing residency",
+        "Register your vehicle with the RI DMV within 30 days of becoming a RI resident",
+        "No statewide vehicle emissions testing required in Rhode Island",
+        "Register to vote at least 30 days before an election at vote.ri.gov",
+        "Rhode Island has a graduated income tax with a top rate of 5.99% on income over $166,950"
+      ]
+    },
+    "disability": {
+      "headline": "Rhode Island: Disability Benefits",
+      "bullets": [
+        "Rhode Island has a mandatory Temporary Disability Insurance (TDI) program — benefits for up to 30 weeks",
+        "File TDI claims with DLT within 90 days of disability onset — benefits replace approximately 60% of wages",
+        "Rhode Island Temporary Caregiver Insurance (TCI) provides up to 6 weeks of paid family leave",
+        "SSDI federal 5-month waiting period applies for long-term disability — RI TDI can bridge the gap",
+        "ORS (Office of Rehabilitation Services) provides free vocational rehabilitation and employment assistance"
+      ]
+    },
+    "retirement": {
+      "headline": "Rhode Island: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is exempt from RI tax if federal AGI is below $101,000 (single) or $126,250 (joint)",
+        "Rhode Island allows a $20,000 exemption on other retirement income for those meeting age and income limits",
+        "ERSRI (Employees' Retirement System of Rhode Island) manages state employee and teacher pensions",
+        "Rhode Island estate tax applies to estates over $1,774,583 (2024, indexed)",
+        "Rhode Island's top income tax rate is 5.99% — moderate by New England standards"
+      ]
+    }
+  },
+  "SC": {
+    "name": "South Carolina",
+    "loss_of_spouse": {
+      "headline": "South Carolina: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Probate Court of the county where the decedent lived",
+        "Small estate affidavit available for estates under $25,000 in personal property — avoids formal probate",
+        "No South Carolina estate tax or inheritance tax",
+        "South Carolina allows informal probate through the Probate Court for uncontested estates",
+        "Order death certificates from the SC DHEC Vital Records office or county registrar"
+      ]
+    },
+    "divorce": {
+      "headline": "South Carolina: Divorce Rules",
+      "bullets": [
+        "90-day waiting period for no-fault divorce based on living separate and apart for 1 year",
+        "Equitable distribution state — marital property is divided fairly based on relevant factors",
+        "South Carolina allows fault-based grounds (adultery, desertion, physical cruelty, habitual drunkenness) which can affect alimony",
+        "File in the Family Court of the county where either spouse resides — residency requirement is 3 months (1 year if only one spouse lives in SC)",
+        "Permanent alimony is still available in SC — courts consider duration of marriage, fault, and financial need"
+      ]
+    },
+    "job_loss": {
+      "headline": "South Carolina: Job Loss Benefits",
+      "bullets": [
+        "File with SCDEW at dew.sc.gov — benefits up to $326/wk for up to 20 weeks (one of the lower maximums nationally)",
+        "File within the first week of job loss — SC does not back-pay for unclaimed weeks",
+        "No South Carolina WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "SC Works centers provide free job search, training, and career assistance statewide",
+        "South Carolina has a top income tax rate of 6.5% — unemployment benefits are subject to state tax"
+      ]
+    },
+    "relocation": {
+      "headline": "South Carolina: Relocation Requirements",
+      "bullets": [
+        "Obtain a South Carolina driver's license within 90 days of establishing residency",
+        "Register your vehicle with the SC DMV within 45 days of becoming a SC resident",
+        "South Carolina has no vehicle emissions testing requirement",
+        "Register to vote at least 30 days before an election — no same-day voter registration",
+        "Apply for homestead exemption if 65+ or permanently disabled — up to $50,000 off fair market value for property tax"
+      ]
+    },
+    "disability": {
+      "headline": "South Carolina: Disability Benefits",
+      "bullets": [
+        "South Carolina has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "SC VR (Vocational Rehabilitation Department) provides free job training and employment support",
+        "South Carolina Medicaid (through SCDHHS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most SC employees — report injuries to your employer within 90 days"
+      ]
+    },
+    "retirement": {
+      "headline": "South Carolina: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from South Carolina state income tax",
+        "Retirement income deduction: up to $3,000 for those under 65; up to $10,000 for those 65+ from qualified retirement income",
+        "SCRS (South Carolina Retirement System) and PORS (Police Officers Retirement System) are the major state pension systems",
+        "No South Carolina estate or inheritance tax",
+        "South Carolina's top income tax rate is 6.5% — but generous retirement exemptions reduce the effective rate for retirees"
+      ]
+    }
+  },
+  "SD": {
+    "name": "South Dakota",
+    "loss_of_spouse": {
+      "headline": "South Dakota: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Circuit Court of the county where the decedent lived",
+        "Summary Administration available for estates with personal property under $50,000 — simplified probate",
+        "No South Dakota estate tax or inheritance tax",
+        "South Dakota adopted the Uniform Probate Code — informal probate is available for uncontested estates",
+        "Order death certificates from the SD Department of Health Vital Records office"
+      ]
+    },
+    "divorce": {
+      "headline": "South Dakota: Divorce Rules",
+      "bullets": [
+        "60-day waiting period from date of service before a divorce can be heard — court may waive for good cause",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "South Dakota allows both no-fault and fault-based grounds including adultery, cruelty, and abandonment",
+        "File in the Circuit Court of the county where either spouse resides — at least one spouse must live in SD at time of filing",
+        "Alimony is at judicial discretion — courts consider the length of marriage, earning capacity, and financial circumstances"
+      ]
+    },
+    "job_loss": {
+      "headline": "South Dakota: Job Loss Benefits",
+      "bullets": [
+        "File with SD DLR at dlr.sd.gov — benefits up to $428/wk for up to 26 weeks",
+        "File during the first week of unemployment — SD does not back-pay for unclaimed weeks",
+        "No South Dakota WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "SD DLR local offices provide free job search, training, and career assistance",
+        "No state income tax — unemployment benefits are taxed only at the federal level"
+      ]
+    },
+    "relocation": {
+      "headline": "South Dakota: Relocation Requirements",
+      "bullets": [
+        "Obtain a South Dakota driver's license within 90 days of establishing residency",
+        "Register your vehicle with the county Treasurer's office within 90 days of becoming a SD resident",
+        "South Dakota has no vehicle emissions testing or safety inspection requirement",
+        "Register to vote at least 15 days before an election — no same-day voter registration",
+        "No state income tax — South Dakota is a common destination for tax-motivated relocation and domicile"
+      ]
+    },
+    "disability": {
+      "headline": "South Dakota: Disability Benefits",
+      "bullets": [
+        "South Dakota has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "SD DHS Division of Rehabilitation Services provides free vocational rehabilitation and employment support",
+        "South Dakota Medicaid (through DSS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most SD employees — report workplace injuries to your employer within 3 business days"
+      ]
+    },
+    "retirement": {
+      "headline": "South Dakota: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "No South Dakota state income tax — Social Security, pensions, 401(k), and IRA withdrawals are completely state-tax-free",
+        "SDRS (South Dakota Retirement System) is the primary state pension plan for public employees",
+        "No South Dakota estate or inheritance tax",
+        "South Dakota is widely considered one of the most tax-friendly states for retirees in the country",
+        "Property taxes are moderate — the owner-occupied property tax reduction program provides relief for eligible seniors"
+      ]
+    }
+  },
+  "TN": {
+    "name": "Tennessee",
+    "loss_of_spouse": {
+      "headline": "Tennessee: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Probate Court or Chancery Court of the county where the decedent lived",
+        "Small estate affidavit available for estates under $50,000 — bypasses formal probate",
+        "No Tennessee estate tax (repealed 2016) or inheritance tax (repealed 2016)",
+        "Tennessee allows the surviving spouse to claim a homestead exemption and a year's support from the estate",
+        "Order death certificates from the Tennessee Office of Vital Records or county registrar"
+      ]
+    },
+    "divorce": {
+      "headline": "Tennessee: Divorce Rules",
+      "bullets": [
+        "60-day waiting period (90 days if minor children are involved) from date of filing before finalization",
+        "Equitable distribution state — marital property is divided fairly based on relevant factors",
+        "Tennessee allows both no-fault (irreconcilable differences) and fault-based grounds (adultery, cruelty, desertion)",
+        "File in the Circuit Court or Chancery Court of the county where either spouse resides — 6-month residency requirement",
+        "Alimony types include transitional, rehabilitative, and long-term — courts consider the length and circumstances of the marriage"
+      ]
+    },
+    "job_loss": {
+      "headline": "Tennessee: Job Loss Benefits",
+      "bullets": [
+        "File with TDLWD at jobs4tn.gov — benefits up to $275/wk for up to 26 weeks (one of the lowest maximums nationally)",
+        "File during the first week of unemployment — Tennessee does not back-pay for unclaimed weeks",
+        "No Tennessee WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "American Job Centers across Tennessee provide free job search and career services",
+        "No state income tax on wages — unemployment benefits are taxed only at the federal level"
+      ]
+    },
+    "relocation": {
+      "headline": "Tennessee: Relocation Requirements",
+      "bullets": [
+        "Obtain a Tennessee driver's license within 30 days of establishing residency",
+        "Register your vehicle with the county clerk's office within 30 days of becoming a TN resident",
+        "Emissions testing required in Davidson, Hamilton, Rutherford, Sumner, Williamson, and Wilson counties",
+        "Register to vote at least 30 days before an election — no same-day voter registration",
+        "No state income tax on wages or salaries — Tennessee fully repealed its Hall income tax in 2021"
+      ]
+    },
+    "disability": {
+      "headline": "Tennessee: Disability Benefits",
+      "bullets": [
+        "Tennessee has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "Tennessee VR (Vocational Rehabilitation Program) provides free job training and employment support",
+        "TennCare (Tennessee's Medicaid program) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most TN employees — report workplace injuries to your employer within 15 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Tennessee: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "No Tennessee state income tax — Social Security, pensions, 401(k), and IRA withdrawals are completely state-tax-free",
+        "TCRS (Tennessee Consolidated Retirement System) is the major state pension plan for public employees",
+        "No Tennessee estate or inheritance tax (both repealed in 2016)",
+        "Tennessee has a 7% state sales tax (one of the highest nationally) — factor into retirement budgeting",
+        "No state income tax makes Tennessee one of the most retirement-tax-friendly states in the country"
+      ]
+    }
+  },
+  "UT": {
+    "name": "Utah",
+    "loss_of_spouse": {
+      "headline": "Utah: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the District Court of the county where the decedent lived",
+        "Small estate affidavit available for estates under $100,000 in net value — avoids formal probate",
+        "No Utah estate tax or inheritance tax",
+        "Utah adopted the Uniform Probate Code — informal probate is available for uncontested estates",
+        "Order death certificates from the Utah Office of Vital Records and Statistics"
+      ]
+    },
+    "divorce": {
+      "headline": "Utah: Divorce Rules",
+      "bullets": [
+        "90-day waiting period from the date of filing before a divorce can be finalized — court may waive for good cause",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "Utah requires a divorce education class for all parties in cases with minor children",
+        "File in the District Court of the county where either spouse has lived for at least 3 months",
+        "Alimony duration generally cannot exceed the length of the marriage — courts consider financial need and ability to pay"
+      ]
+    },
+    "job_loss": {
+      "headline": "Utah: Job Loss Benefits",
+      "bullets": [
+        "File with DWS at jobs.utah.gov — benefits up to $580/wk for up to 26 weeks",
+        "File during the first week of unemployment — Utah does not back-pay for unclaimed weeks",
+        "No Utah WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "DWS employment centers provide free job search, training, and career services statewide",
+        "Utah has a flat income tax rate of 4.65% — unemployment benefits are subject to state and federal tax"
+      ]
+    },
+    "relocation": {
+      "headline": "Utah: Relocation Requirements",
+      "bullets": [
+        "Obtain a Utah driver's license within 60 days of establishing residency",
+        "Register your vehicle with the Utah DMV within 60 days of becoming a UT resident",
+        "Emissions testing required in Salt Lake, Davis, Utah, Weber, and Cache counties",
+        "Register to vote at least 11 days before an election — same-day registration available on Election Day",
+        "Utah has a flat income tax rate of 4.65% on all income"
+      ]
+    },
+    "disability": {
+      "headline": "Utah: Disability Benefits",
+      "bullets": [
+        "Utah has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "USOR (Utah State Office of Rehabilitation) provides free vocational rehabilitation and employment services",
+        "Utah Medicaid (through DOH) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Utah employees — report injuries to your employer within 180 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Utah: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Utah taxes Social Security income — but offers a nonrefundable tax credit that offsets the tax for lower-income retirees",
+        "Pension and retirement account income is subject to Utah's flat 4.65% income tax",
+        "URS (Utah Retirement Systems) manages pension plans for state and local government employees",
+        "No Utah estate or inheritance tax",
+        "Utah's Social Security tax credit phases out as income increases — verify your eligibility each tax year"
+      ]
+    }
+  },
+  "VT": {
+    "name": "Vermont",
+    "loss_of_spouse": {
+      "headline": "Vermont: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Probate Division of the Superior Court in the district where the decedent lived",
+        "Small estate procedures available for estates under $10,000 — simplified administration",
+        "No Vermont estate tax on estates under $5M (2024 threshold); rates up to 16% apply above that",
+        "No Vermont inheritance tax",
+        "Order death certificates from the Vermont Department of Health Vital Records office"
+      ]
+    },
+    "divorce": {
+      "headline": "Vermont: Divorce Rules",
+      "bullets": [
+        "6-month separation period required before a no-fault divorce can be granted (living apart continuously)",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "Vermont also allows fault-based grounds including adultery, intolerable severity, and willful desertion",
+        "File in the Family Division of the Superior Court in the county where either spouse resides",
+        "Spousal maintenance considers the length of the marriage, standard of living, and each party's financial resources"
+      ]
+    },
+    "job_loss": {
+      "headline": "Vermont: Job Loss Benefits",
+      "bullets": [
+        "File with VDOL at labor.vermont.gov — benefits up to $513/wk for up to 26 weeks",
+        "File during the first week of unemployment — Vermont does not back-pay for unclaimed weeks",
+        "No Vermont WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Vermont Job Centers provide free job search, career counseling, and training services statewide",
+        "Vermont has a graduated income tax with a top rate of 8.75% — unemployment benefits are subject to state tax"
+      ]
+    },
+    "relocation": {
+      "headline": "Vermont: Relocation Requirements",
+      "bullets": [
+        "Obtain a Vermont driver's license within 60 days of establishing residency",
+        "Register your vehicle with the Vermont DMV within 60 days of becoming a VT resident",
+        "Vermont has no vehicle emissions testing or safety inspection requirement",
+        "Register to vote at your town clerk's office — Vermont allows Election Day voter registration",
+        "Vermont has a graduated income tax with a top rate of 8.75% — among the highest in the country"
+      ]
+    },
+    "disability": {
+      "headline": "Vermont: Disability Benefits",
+      "bullets": [
+        "Vermont has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "Vermont DVR (Division of Vocational Rehabilitation) provides free job training and employment support",
+        "Vermont Medicaid (through DVHA) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most VT employees — report workplace injuries to your employer within the required timeframe"
+      ]
+    },
+    "retirement": {
+      "headline": "Vermont: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is exempt from Vermont tax for single filers with AGI under $50,000 and joint filers under $65,000",
+        "Pension and retirement account income is subject to Vermont's graduated income tax (top rate 8.75%)",
+        "VSERS (Vermont State Employees' Retirement System) and VSTRS (Teachers' Retirement System) are the major state pensions",
+        "Vermont estate tax applies to estates over $5M (2024 threshold)",
+        "Vermont's high income tax rate makes it important to plan retirement distributions and consider Roth conversions early"
+      ]
+    }
+  },
+  "VA": {
+    "name": "Virginia",
+    "loss_of_spouse": {
+      "headline": "Virginia: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Circuit Court of the city or county where the decedent lived",
+        "Small estate affidavit available for estates under $50,000 — no formal probate required",
+        "No Virginia estate tax or inheritance tax",
+        "Virginia allows augmented estate claim — the surviving spouse can elect to take one-third of the augmented estate",
+        "Order death certificates from the Virginia Department of Health Division of Vital Records"
+      ]
+    },
+    "divorce": {
+      "headline": "Virginia: Divorce Rules",
+      "bullets": [
+        "6-month separation required if no minor children and a separation agreement is signed; 1 year otherwise",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "Virginia allows both no-fault (living separate and apart) and fault-based grounds (adultery, cruelty, abandonment)",
+        "File in the Circuit Court of the city or county where either spouse resides — 6-month residency requirement",
+        "Spousal support is formula-based and considers income, duration of marriage, and contributions to the household"
+      ]
+    },
+    "job_loss": {
+      "headline": "Virginia: Job Loss Benefits",
+      "bullets": [
+        "File with VEC at vec.virginia.gov — benefits up to $378/wk for up to 26 weeks",
+        "File during the first week of unemployment — Virginia does not back-pay for unclaimed weeks",
+        "No Virginia WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Virginia Career Works centers provide free job search, training, and career assistance statewide",
+        "Virginia's top income tax rate is 5.75% — unemployment benefits are subject to state and federal tax"
+      ]
+    },
+    "relocation": {
+      "headline": "Virginia: Relocation Requirements",
+      "bullets": [
+        "Obtain a Virginia driver's license within 60 days of establishing residency",
+        "Register your vehicle with the Virginia DMV within 30 days of becoming a VA resident",
+        "Virginia requires annual vehicle safety inspection — emissions testing required in Northern Virginia and some other localities",
+        "Register to vote at least 22 days before an election at vote.virginia.gov — no same-day registration",
+        "Virginia has a graduated income tax with a top rate of 5.75% on income over $17,000"
+      ]
+    },
+    "disability": {
+      "headline": "Virginia: Disability Benefits",
+      "bullets": [
+        "Virginia has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "DARS (Department for Aging and Rehabilitative Services) provides free vocational rehabilitation and employment support",
+        "Virginia Medicaid (through DMAS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most Virginia employees — report workplace injuries to your employer promptly"
+      ]
+    },
+    "retirement": {
+      "headline": "Virginia: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Virginia state income tax",
+        "Virginia offers a $12,000 age deduction per person for those 65+ (income-limited phaseout above $75,000 AGI)",
+        "VRS (Virginia Retirement System) manages pensions for state employees, teachers, and local government workers",
+        "No Virginia estate or inheritance tax",
+        "Virginia's top income tax rate is 5.75% — moderate, with the age deduction providing meaningful relief for retirees"
+      ]
+    }
+  },
+  "WA": {
+    "name": "Washington",
+    "loss_of_spouse": {
+      "headline": "Washington: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Superior Court of the county where the decedent lived",
+        "Small estate affidavit available for estates under $100,000 in net personal property — avoids formal probate",
+        "Washington imposes a state estate tax on estates over $2,193,000 (2024, indexed) at rates from 10% to 20%",
+        "Community property state — jointly held community assets transfer to the surviving spouse automatically",
+        "Order death certificates from the Washington DOH Center for Health Statistics or county registrar"
+      ]
+    },
+    "divorce": {
+      "headline": "Washington: Divorce Rules",
+      "bullets": [
+        "90-day waiting period from the date of filing and service before a divorce (dissolution) can be finalized",
+        "Community property state — marital assets and debts are presumed divided equally (50/50)",
+        "Washington is a purely no-fault state — irretrievable breakdown is the only ground for dissolution",
+        "File in the Superior Court of the county where either spouse resides — no minimum residency period required (just must be a WA resident)",
+        "Spousal maintenance considers length of marriage, financial resources, and each spouse's ability to be self-supporting"
+      ]
+    },
+    "job_loss": {
+      "headline": "Washington: Job Loss Benefits",
+      "bullets": [
+        "File with ESD at esd.wa.gov — benefits up to $999/wk for up to 26 weeks (one of the highest maximums nationally)",
+        "File during the first week of unemployment — WA does not back-pay for unclaimed weeks",
+        "Washington WARN Act requires 60 days' notice for layoffs at businesses with 100+ employees",
+        "WorkSource centers provide free job search, career coaching, and training statewide",
+        "No state income tax — unemployment benefits are taxed only at the federal level"
+      ]
+    },
+    "relocation": {
+      "headline": "Washington: Relocation Requirements",
+      "bullets": [
+        "Obtain a Washington driver's license within 30 days of establishing residency",
+        "Register your vehicle with the WA DOL within 30 days of becoming a WA resident",
+        "Emissions testing required in parts of Clark, King, Pierce, Snohomish, and Spokane counties",
+        "Register to vote at least 8 days before an election — same-day registration available in person",
+        "No state income tax — but Washington has a high sales tax (6.5% state + local additions up to ~10.5%)"
+      ]
+    },
+    "disability": {
+      "headline": "Washington: Disability Benefits",
+      "bullets": [
+        "Washington Paid Family and Medical Leave (PFML) provides up to 12 weeks at up to $1,456/wk (2024)",
+        "File PFML claims through ESD — applies to most Washington employees",
+        "SSDI federal 5-month waiting period applies for long-term disability",
+        "DVR (Division of Vocational Rehabilitation) provides free employment support and job training",
+        "Washington Medicaid (Apple Health) is available for qualifying individuals with disabilities"
+      ]
+    },
+    "retirement": {
+      "headline": "Washington: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "No Washington state income tax — Social Security, pensions, 401(k), and IRA withdrawals are completely state-tax-free",
+        "Washington enacted a 7% capital gains tax on gains over $250,000 — relevant for large investment sales in retirement",
+        "DRS (Department of Retirement Systems) manages PERS, TRS, LEOFF, and other state pension plans",
+        "Washington estate tax applies to estates over $2,193,000 (2024) — one of the more aggressive state estate taxes",
+        "No income tax but high sales tax (up to ~10.5%) and the capital gains tax affect overall retirement planning"
+      ]
+    }
+  },
+  "WV": {
+    "name": "West Virginia",
+    "loss_of_spouse": {
+      "headline": "West Virginia: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the County Commission of the county where the decedent lived",
+        "Small estate process available for estates under $50,000 — simplified administration",
+        "No West Virginia estate tax or inheritance tax",
+        "West Virginia allows Transfer on Death (TOD) deeds for real property — avoids probate on the home",
+        "Order death certificates from the WV Vital Registration Office or county Health Department"
+      ]
+    },
+    "divorce": {
+      "headline": "West Virginia: Divorce Rules",
+      "bullets": [
+        "No mandatory waiting period for fault-based divorce; 1-year separation required for no-fault divorce",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "West Virginia allows both no-fault (irreconcilable differences/separation) and fault-based grounds",
+        "File in the Family Court of the county where either spouse resides — at least 1 year WV residency required for no-fault",
+        "Spousal support (alimony) is at judicial discretion — courts consider financial need, earning capacity, and length of marriage"
+      ]
+    },
+    "job_loss": {
+      "headline": "West Virginia: Job Loss Benefits",
+      "bullets": [
+        "File with WorkForce West Virginia at workforcewv.org — benefits up to $424/wk for up to 26 weeks",
+        "File during the first week of unemployment — WV does not back-pay for unclaimed weeks",
+        "No West Virginia WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "WorkForce WV career centers provide free job search, training, and career assistance statewide",
+        "West Virginia has a graduated income tax with a top rate of 6.5% — unemployment benefits are subject to state tax"
+      ]
+    },
+    "relocation": {
+      "headline": "West Virginia: Relocation Requirements",
+      "bullets": [
+        "Obtain a West Virginia driver's license within 30 days of establishing residency",
+        "Register your vehicle with the WV DMV within 30 days of becoming a WV resident",
+        "West Virginia has no vehicle emissions testing requirement",
+        "Register to vote at least 21 days before an election — no same-day voter registration",
+        "West Virginia has a graduated income tax with a top rate of 6.5% on income over $60,000"
+      ]
+    },
+    "disability": {
+      "headline": "West Virginia: Disability Benefits",
+      "bullets": [
+        "West Virginia has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "WV DRS (Division of Rehabilitation Services) provides free vocational rehabilitation and employment support",
+        "West Virginia Medicaid (through DHHR/BMS) is available for qualifying individuals with disabilities",
+        "Workers' compensation covers most WV employees — report injuries to your employer promptly"
+      ]
+    },
+    "retirement": {
+      "headline": "West Virginia: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is being phased out of WV taxation — 65% exempt in 2024, fully exempt by 2026",
+        "Pension and retirement account income is subject to WV income tax with limited deductions",
+        "CPRB (Consolidated Public Retirement Board) manages state employee, teacher, and public safety pensions",
+        "No West Virginia estate or inheritance tax",
+        "West Virginia's top income tax rate is 6.5% — but the Social Security exemption phaseout improves the outlook for retirees"
+      ]
+    }
+  },
+  "WI": {
+    "name": "Wisconsin",
+    "loss_of_spouse": {
+      "headline": "Wisconsin: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the Circuit Court (Probate Division) of the county where the decedent lived",
+        "Transfer by Affidavit available for estates under $50,000 — bypasses formal probate entirely",
+        "No Wisconsin estate tax or inheritance tax",
+        "Wisconsin is a marital property (community property) state — marital assets transfer to the surviving spouse automatically",
+        "Order death certificates from the Wisconsin Vital Records office or county Register of Deeds"
+      ]
+    },
+    "divorce": {
+      "headline": "Wisconsin: Divorce Rules",
+      "bullets": [
+        "120-day waiting period from the date of service before a divorce can be finalized — one of the longer waiting periods nationally",
+        "Marital property (community property) state — marital assets are presumed divided 50/50",
+        "Wisconsin is a purely no-fault state — irretrievable breakdown of the marriage is the only ground",
+        "File in the Circuit Court of the county where either spouse has resided for at least 30 days (6 months state residency required)",
+        "Spousal maintenance (alimony) considers length of marriage, earning capacity, and the division of property"
+      ]
+    },
+    "job_loss": {
+      "headline": "Wisconsin: Job Loss Benefits",
+      "bullets": [
+        "File with DWD at dwd.wisconsin.gov — benefits up to $370/wk for up to 26 weeks",
+        "File during the first week of unemployment — Wisconsin does not back-pay for unclaimed weeks",
+        "Wisconsin has its own mini-WARN Act requiring 60 days' notice for business closings affecting 25+ employees",
+        "Wisconsin Job Centers provide free job search, career counseling, and training statewide",
+        "Wisconsin has a graduated income tax with a top rate of 7.65% — unemployment benefits are subject to state tax"
+      ]
+    },
+    "relocation": {
+      "headline": "Wisconsin: Relocation Requirements",
+      "bullets": [
+        "Obtain a Wisconsin driver's license within 60 days of establishing residency",
+        "Register your vehicle with the Wisconsin DMV within 2 business days of purchase or within 60 days of becoming a WI resident",
+        "Wisconsin has no vehicle emissions testing requirement (Southeastern Wisconsin's program was discontinued)",
+        "Register to vote at least 20 days before an election — same-day registration available at the polls with proof of residence",
+        "Wisconsin has a graduated income tax with a top rate of 7.65% on income over $280,950"
+      ]
+    },
+    "disability": {
+      "headline": "Wisconsin: Disability Benefits",
+      "bullets": [
+        "Wisconsin has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "DVR (Division of Vocational Rehabilitation) through DWD provides free job training and employment support",
+        "Wisconsin Medicaid (through DHS) is available for qualifying individuals with disabilities — includes IRIS self-directed program",
+        "Workers' compensation covers most Wisconsin employees — report workplace injuries to your employer within 30 days"
+      ]
+    },
+    "retirement": {
+      "headline": "Wisconsin: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "Social Security income is fully exempt from Wisconsin state income tax",
+        "Wisconsin allows a $5,000 deduction on qualifying retirement income (pensions, annuities) for each taxpayer",
+        "WRS (Wisconsin Retirement System) is one of the best-funded state pension systems — covers most public employees",
+        "No Wisconsin estate or inheritance tax",
+        "Wisconsin's top income tax rate is 7.65% — taxable retirement income above the deduction is subject to this rate"
+      ]
+    }
+  },
+  "WY": {
+    "name": "Wyoming",
+    "loss_of_spouse": {
+      "headline": "Wyoming: Estate &amp; Survivor Rules",
+      "bullets": [
+        "File for probate in the District Court of the county where the decedent lived",
+        "Small estate affidavit available for estates under $200,000 — one of the highest simplified thresholds in the US",
+        "No Wyoming estate tax or inheritance tax",
+        "Wyoming adopted the Uniform Probate Code — informal probate is available for uncontested estates",
+        "Order death certificates from the Wyoming Vital Statistics Services office"
+      ]
+    },
+    "divorce": {
+      "headline": "Wyoming: Divorce Rules",
+      "bullets": [
+        "20-day waiting period from the date of service before a divorce can be granted — one of the shortest nationally",
+        "Equitable distribution state — marital property is divided fairly, not necessarily equally",
+        "Wyoming is a no-fault state — irreconcilable differences is the primary ground for divorce",
+        "File in the District Court of the county where either spouse has resided for at least 60 days",
+        "Alimony is at judicial discretion — Wyoming courts consider financial need and the length of the marriage"
+      ]
+    },
+    "job_loss": {
+      "headline": "Wyoming: Job Loss Benefits",
+      "bullets": [
+        "File with Wyoming DWS at wyomingworkforce.org — benefits up to $508/wk for up to 26 weeks",
+        "File during the first week of unemployment — Wyoming does not back-pay for unclaimed weeks",
+        "No Wyoming WARN Act — federal WARN Act (60-day notice, 100+ employees) applies",
+        "Wyoming Workforce Centers provide free job search, training, and career services statewide",
+        "No state income tax — unemployment benefits are taxed only at the federal level"
+      ]
+    },
+    "relocation": {
+      "headline": "Wyoming: Relocation Requirements",
+      "bullets": [
+        "Obtain a Wyoming driver's license within 30 days of establishing residency — visit your county Clerk's office",
+        "Register your vehicle with the county Clerk's office within 30 days of becoming a WY resident",
+        "Wyoming has no vehicle emissions testing or safety inspection requirement",
+        "Register to vote at least 14 days before an election — same-day registration available on Election Day",
+        "No state income tax — Wyoming is a popular destination for tax-motivated relocation"
+      ]
+    },
+    "disability": {
+      "headline": "Wyoming: Disability Benefits",
+      "bullets": [
+        "Wyoming has no state-run short-term disability insurance program",
+        "SSDI federal 5-month waiting period applies; file through ssa.gov as soon as disability begins",
+        "Wyoming DVR (Division of Vocational Rehabilitation) provides free job training and employment support",
+        "Wyoming Medicaid (through DOH) is available for qualifying individuals with disabilities",
+        "Workers' compensation in Wyoming is administered by the state — report injuries to your employer promptly"
+      ]
+    },
+    "retirement": {
+      "headline": "Wyoming: Retirement Taxes &amp; Rules",
+      "bullets": [
+        "No Wyoming state income tax — Social Security, pensions, 401(k), and IRA withdrawals are completely state-tax-free",
+        "WRS (Wyoming Retirement System) is the primary state pension plan for public employees",
+        "No Wyoming estate or inheritance tax",
+        "Wyoming has no state income tax and low property taxes — one of the most tax-friendly states for retirees overall",
+        "Low cost of living combined with no income tax makes Wyoming attractive for retirement relocation"
+      ]
+    }
   }
 }

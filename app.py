@@ -691,4 +691,4 @@ def flagged_sessions():
         
 if __name__ == "__main__":
     print("\n✓ Lumeway is running!")
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=int(os.environ.get("PORT", 5000)))
