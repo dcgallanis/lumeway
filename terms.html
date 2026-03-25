@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terms of Service — Lumeway</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #1B2A38; --muted: #6E7D8A; --navy: #1B3A5C; --gold: #B8977E; --accent: #1B3A5C; --accent-light: #B8977E; --border: #E4DDD3; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 32px; height: 32px; background: var(--navy); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text); }
+    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost:hover { background: var(--navy); color: var(--cream); }
+    .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .nav-left { display: flex; align-items: center; gap: 28px; }
+    .nav-right { display: flex; gap: 12px; align-items: center; }
+    .nav-dropdown { position: relative; }
+    .nav-drop-btn { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
+    .nav-drop-btn:hover { color: var(--navy); }
+    .nav-drop-btn .chev { display: inline-block; transition: transform 0.2s ease; }
+    .nav-drop-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+    .nav-drop-menu { display: none; position: absolute; top: calc(100% + 8px); left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 200px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
+    .nav-drop-menu a { display: block; padding: 9px 12px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 7px; }
+    .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--cream); color: var(--navy); }
+    .nav-drop-menu .menu-div { height: 1px; background: var(--border); margin: 4px 6px; }
+    .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
+    .page { max-width: 720px; margin: 0 auto; padding: 120px 24px 64px; }
+    .page-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+    .page-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .last-updated { font-size: 13px; color: var(--muted); margin-bottom: 48px; }
+    h2 { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 500; margin: 40px 0 12px; }
+    p { font-size: 15px; font-weight: 300; line-height: 1.85; color: var(--text); margin-bottom: 16px; }
+    ul { margin: 0 0 16px 20px; }
+    ul li { font-size: 15px; font-weight: 300; line-height: 1.85; color: var(--text); margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: underline; }
+    .notice { background: var(--warm-white); border: 1px solid var(--border); border-left: 3px solid var(--accent-light); border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 32px 0; font-size: 14px; color: var(--muted); line-height: 1.7; }
+    footer { padding: 28px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--navy); }
+    .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
+    .footer-note a { color: var(--muted); }
+    @media (max-width: 580px) { nav { padding: 16px 20px; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-left">
+      <a href="/" class="nav-logo">
+        <div class="nav-logo-icon">L</div>
+        <span class="nav-logo-text">Lumeway</span>
+      </a>
+      <div class="nav-dropdown">
+        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">▾</span></button>
+        <div class="nav-drop-menu">
+          <a href="/loss-of-spouse">Death &amp; Estate</a>
+          <a href="/divorce">Divorce &amp; Separation</a>
+          <a href="/job-loss">Job Loss &amp; Income Crisis</a>
+          <a href="/relocation">Moving &amp; Relocation</a>
+          <a href="/disability">Disability &amp; Benefits</a>
+          <a href="/retirement">Retirement</a>
+          <div class="menu-div"></div>
+          <a href="/about">About</a>
+        </div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <a href="/chat" class="btn-ghost">Try it free</a>
+      <a href="/#waitlist" class="btn-primary">Join waitlist</a>
+    </div>
+  </nav>
+  <div class="page">
+    <p class="page-label">Legal</p>
+    <h1 class="page-title">Terms of Service</h1>
+    <p class="last-updated">Last updated: March 24, 2026</p>
+    <div class="notice">Lumeway is an early-stage product. These terms reflect our current practices and will be updated as the product evolves. We recommend consulting an attorney before relying on these terms for any legal purpose.</div>
+
+    <h2>Acceptance of terms</h2>
+    <p>By accessing or using Lumeway ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.</p>
+
+    <h2>Description of service</h2>
+    <p>Lumeway is an AI-powered organizational guide that helps individuals navigate major life transitions such as job loss, divorce, disability, retirement, relocation, and the death of a spouse. The Service provides general process guidance, organizational worksheets, and informational resources.</p>
+    <p>Lumeway is <strong>not</strong> a law firm, financial advisor, medical provider, or licensed professional of any kind. The Service does not provide legal, financial, tax, medical, or therapeutic advice.</p>
+
+    <div class="notice"><strong>AI Content Disclosure:</strong> Lumeway uses artificial intelligence (Anthropic's Claude) to generate conversational guidance. AI-generated content may contain errors, may not reflect the most current laws or regulations, and should not be relied upon as professional advice. Always verify important information with a qualified, licensed professional before making legal or financial decisions.</div>
+
+    <h2>User responsibilities</h2>
+    <p>When using Lumeway, you agree to:</p>
+    <ul>
+      <li>Provide accurate information when interacting with the Service</li>
+      <li>Use the Service only for lawful purposes</li>
+      <li>Not attempt to reverse-engineer, copy, or misuse the Service</li>
+      <li>Consult qualified professionals for legal, financial, or medical decisions</li>
+      <li>Not share sensitive personal information (such as Social Security numbers or financial account numbers) in chat conversations</li>
+    </ul>
+
+    <h2>Intellectual property</h2>
+    <p>All content, design, and functionality of Lumeway — including but not limited to text, graphics, templates, and code — are the property of Lumeway and are protected by applicable intellectual property laws. You may not reproduce, distribute, or create derivative works from our content without written permission.</p>
+    <p>Templates purchased from Lumeway are licensed for your personal use only. You may not resell, redistribute, or share purchased templates.</p>
+
+    <h2>Limitation of liability</h2>
+    <p>To the maximum extent permitted by law, Lumeway and its founders, employees, and affiliates shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the Service. This includes, but is not limited to, damages resulting from:</p>
+    <ul>
+      <li>Reliance on any information provided through the Service</li>
+      <li>Errors or omissions in AI-generated content</li>
+      <li>Missed deadlines, incorrect filings, or other actions taken based on the Service's guidance</li>
+      <li>Unauthorized access to or alteration of your data</li>
+    </ul>
+
+    <h2>Disclaimer of warranties</h2>
+    <p>The Service is provided "as is" and "as available" without warranties of any kind, either express or implied. Lumeway does not warrant that the Service will be uninterrupted, error-free, or that any information provided will be accurate, complete, or current.</p>
+
+    <h2>Termination</h2>
+    <p>We reserve the right to suspend or terminate your access to the Service at any time, with or without cause, and with or without notice. You may stop using the Service at any time.</p>
+
+    <h2>Governing law</h2>
+    <p>These terms shall be governed by and construed in accordance with the laws of the State of North Carolina, without regard to its conflict of law provisions.</p>
+
+    <h2>Changes to these terms</h2>
+    <p>We may update these Terms of Service as our product evolves. We will post any changes on this page with an updated date. Your continued use of the Service after changes are posted constitutes acceptance of the updated terms.</p>
+
+    <h2>Contact us</h2>
+    <p>If you have any questions about these Terms of Service, please contact us at <a href="mailto:hello@lumeway.co">hello@lumeway.co</a>.</p>
+  </div>
+  <footer>
+    <div class="footer-logo">Lumeway</div>
+    <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. &nbsp;·&nbsp; <a href="/about">About</a> &nbsp;·&nbsp; <a href="/privacy">Privacy Policy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></p>
+  </footer>
+  <script>
+    (function() {
+      var dd = document.querySelector('.nav-dropdown');
+      if (!dd) return;
+      var btn = dd.querySelector('.nav-drop-btn');
+      var menu = dd.querySelector('.nav-drop-menu');
+      var links = Array.from(menu.querySelectorAll('a'));
+      links.forEach(function(a) { if (a.getAttribute('href') === window.location.pathname) a.classList.add('active'); });
+      function open() { dd.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+      function close() { dd.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+      btn.addEventListener('click', function(e) { e.stopPropagation(); dd.classList.contains('open') ? close() : open(); });
+      document.addEventListener('click', close);
+      menu.addEventListener('click', function(e) { e.stopPropagation(); });
+      btn.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowDown') { e.preventDefault(); open(); if (links[0]) links[0].focus(); }
+        if (e.key === 'Escape') close();
+      });
+      menu.addEventListener('keydown', function(e) {
+        var idx = links.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') { e.preventDefault(); if (links[idx + 1]) links[idx + 1].focus(); }
+        if (e.key === 'ArrowUp') { e.preventDefault(); idx > 0 ? links[idx - 1].focus() : btn.focus(); }
+        if (e.key === 'Escape') { close(); btn.focus(); }
+      });
+    })();
+  </script>
+</body>
+</html>

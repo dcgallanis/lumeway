@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FAQ — Lumeway</title>
+  <meta name="description" content="Frequently asked questions about Lumeway — how the AI works, whether documents are legally valid, pricing, refunds, and more."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Lumeway?","acceptedAnswer":{"@type":"Answer","text":"Lumeway is an AI-powered guide that helps you navigate major life transitions — like job loss, divorce, disability, retirement, relocation, or the death of a spouse. We provide step-by-step process guidance, organizational worksheets, and deadline tracking so you know what to do, in what order, without the overwhelm."}},{"@type":"Question","name":"How does the AI work?","acceptedAnswer":{"@type":"Answer","text":"Lumeway is built on Anthropic's Claude, a conversational AI model. When you describe your situation, the AI draws on structured guidance for your specific transition to give you clear, prioritized next steps. It does not search the internet or access your personal accounts — it works only with what you share in the conversation."}},{"@type":"Question","name":"Is my information private and secure?","acceptedAnswer":{"@type":"Answer","text":"Yes. We do not permanently store your conversations. Chat sessions are processed through Anthropic's Claude API and are not used to train AI models. We do not sell or share your personal information. See our Privacy Policy for full details."}},{"@type":"Question","name":"Are the documents Lumeway provides legally valid?","acceptedAnswer":{"@type":"Answer","text":"Lumeway templates are organizational tools designed to help you gather information and prepare for life transition processes. They are not court forms, legal documents, or substitutes for professional legal advice. For documents that will be filed with a court or government agency, we recommend having an attorney review them. Requirements vary by state."}},{"@type":"Question","name":"Do I still need a lawyer or financial advisor?","acceptedAnswer":{"@type":"Answer","text":"For many routine tasks — organizing paperwork, tracking deadlines, understanding a general process — Lumeway can save you significant time and stress. But for decisions with legal or financial consequences, yes, we strongly recommend consulting a licensed professional. Lumeway will tell you when professional help is needed."}},{"@type":"Question","name":"Is Lumeway a substitute for professional advice?","acceptedAnswer":{"@type":"Answer","text":"No. Lumeway is an organizational guide, not a licensed professional. We help you understand what needs to happen and in what order, but we do not provide legal, financial, tax, or medical advice. Think of us as the knowledgeable friend who helps you prepare before you meet with your lawyer or advisor."}},{"@type":"Question","name":"What does the free version include?","acceptedAnswer":{"@type":"Answer","text":"The free Lumeway chat gives you access to AI-powered guidance for any life transition. You can describe your situation and get personalized next steps, deadline reminders, and resource recommendations — no signup required."}},{"@type":"Question","name":"What are Lumeway Templates?","acceptedAnswer":{"@type":"Answer","text":"Templates are organizational tools for each life transition — things like checklists, planning worksheets, information organizers, and step-by-step guides. They are available individually or as category bundles. Templates save you the time of creating these tools from scratch."}},{"@type":"Question","name":"Can I get a refund on templates?","acceptedAnswer":{"@type":"Answer","text":"Because templates are digital products delivered immediately upon purchase, we generally cannot offer refunds. However, if you experience a technical issue or receive the wrong product, please contact us at hello@lumeway.co and we will make it right."}},{"@type":"Question","name":"What life transitions does Lumeway cover?","acceptedAnswer":{"@type":"Answer","text":"Lumeway currently covers six major life transitions: job loss and income crisis, death and estate settlement, divorce and separation, disability and benefits, moving and relocation, and retirement planning."}},{"@type":"Question","name":"How do I get started?","acceptedAnswer":{"@type":"Answer","text":"Just visit the chat page and describe what you are going through. No account or signup is needed. Lumeway will ask a few questions to understand your situation and then walk you through your next steps."}},{"@type":"Question","name":"Can Lumeway help with my specific state's laws?","acceptedAnswer":{"@type":"Answer","text":"Lumeway includes state-specific information for many common processes like probate timelines, unemployment filing, and divorce requirements. Our landing pages feature a state selector that shows rules specific to your location. However, laws change frequently, so always verify current requirements with a local professional."}}]}
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #1B2A38; --muted: #6E7D8A; --navy: #1B3A5C; --gold: #B8977E; --accent: #1B3A5C; --accent-light: #B8977E; --border: #E4DDD3; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 32px; height: 32px; background: var(--navy); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text); }
+    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost:hover { background: var(--navy); color: var(--cream); }
+    .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .nav-left { display: flex; align-items: center; gap: 28px; }
+    .nav-right { display: flex; gap: 12px; align-items: center; }
+    .nav-dropdown { position: relative; }
+    .nav-drop-btn { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
+    .nav-drop-btn:hover { color: var(--navy); }
+    .nav-drop-btn .chev { display: inline-block; transition: transform 0.2s ease; }
+    .nav-drop-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+    .nav-drop-menu { display: none; position: absolute; top: calc(100% + 8px); left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 200px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
+    .nav-drop-menu a { display: block; padding: 9px 12px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 7px; }
+    .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--cream); color: var(--navy); }
+    .nav-drop-menu .menu-div { height: 1px; background: var(--border); margin: 4px 6px; }
+    .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
+    .page { max-width: 720px; margin: 0 auto; padding: 120px 24px 64px; }
+    .page-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+    .page-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .page-intro { font-size: 17px; font-weight: 300; line-height: 1.85; color: var(--muted); margin-bottom: 48px; }
+    .faq-group-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; color: var(--navy); margin: 40px 0 16px; }
+    .faq-group-title:first-of-type { margin-top: 0; }
+    .faq-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 32px; }
+    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; }
+    .faq-item:first-child { border-radius: 16px 16px 0 0; }
+    .faq-item:last-child { border-radius: 0 0 16px 16px; }
+    .faq-question { width: 100%; text-align: left; background: none; border: none; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; }
+    .faq-question > span:first-child { flex: 1; min-width: 0; }
+    .faq-question:hover { background: rgba(27,58,92,0.03); }
+    .faq-question[aria-expanded="true"] { color: var(--navy); }
+    .faq-icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 14px; line-height: 1; transition: transform 0.25s ease, border-color 0.2s; }
+    .faq-question[aria-expanded="true"] .faq-icon { transform: rotate(45deg); border-color: var(--navy); color: var(--navy); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .faq-answer-inner { padding: 0 24px 20px; font-size: 14px; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .faq-answer-inner a { color: var(--navy); text-decoration: underline; text-underline-offset: 2px; }
+    .faq-answer-inner a:hover { color: var(--gold); }
+    .cta-block { background: var(--navy); border-radius: 24px; padding: 40px; text-align: center; margin-top: 48px; }
+    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: var(--cream); margin-bottom: 12px; }
+    .cta-subtitle { font-size: 15px; color: rgba(247,244,239,0.6); font-weight: 300; margin-bottom: 28px; }
+    .btn-large { display: inline-block; padding: 14px 32px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; text-decoration: none; background: var(--cream); color: var(--text); transition: all 0.2s; }
+    .btn-large:hover { background: var(--accent-light); color: white; transform: translateY(-2px); }
+    footer { padding: 28px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--navy); }
+    .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
+    .footer-note a { color: var(--muted); }
+    @media (max-width: 580px) { nav { padding: 16px 20px; } .cta-block { padding: 32px 24px; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-left">
+      <a href="/" class="nav-logo">
+        <div class="nav-logo-icon">L</div>
+        <span class="nav-logo-text">Lumeway</span>
+      </a>
+      <div class="nav-dropdown">
+        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">▾</span></button>
+        <div class="nav-drop-menu">
+          <a href="/loss-of-spouse">Death &amp; Estate</a>
+          <a href="/divorce">Divorce &amp; Separation</a>
+          <a href="/job-loss">Job Loss &amp; Income Crisis</a>
+          <a href="/relocation">Moving &amp; Relocation</a>
+          <a href="/disability">Disability &amp; Benefits</a>
+          <a href="/retirement">Retirement</a>
+          <div class="menu-div"></div>
+          <a href="/about">About</a>
+        </div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <a href="/chat" class="btn-ghost">Try it free</a>
+      <a href="/#waitlist" class="btn-primary">Join waitlist</a>
+    </div>
+  </nav>
+  <div class="page">
+    <p class="page-label">Support</p>
+    <h1 class="page-title">Frequently Asked Questions</h1>
+    <p class="page-intro">Navigating life transitions is hard enough without having to wonder whether your tools are trustworthy. Here are answers to the questions we hear most.</p>
+
+    <h2 class="faq-group-title">About Lumeway</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a1" id="faq-q1"><span>What is Lumeway?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+        <div class="faq-answer" id="faq-a1" role="region" aria-labelledby="faq-q1"><div class="faq-answer-inner">Lumeway is an AI-powered guide that helps you navigate major life transitions — like job loss, divorce, disability, retirement, relocation, or the death of a spouse. We provide step-by-step process guidance, organizational worksheets, and deadline tracking so you know what to do, in what order, without the overwhelm.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a2" id="faq-q2"><span>How does the AI work?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+        <div class="faq-answer" id="faq-a2" role="region" aria-labelledby="faq-q2"><div class="faq-answer-inner">Lumeway is built on Anthropic's Claude, a conversational AI model. When you describe your situation, the AI draws on structured guidance for your specific transition to give you clear, prioritized next steps. It does not search the internet or access your personal accounts — it works only with what you share in the conversation.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a3" id="faq-q3"><span>Is my information private and secure?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+        <div class="faq-answer" id="faq-a3" role="region" aria-labelledby="faq-q3"><div class="faq-answer-inner">Yes. We do not permanently store your conversations. Chat sessions are processed through Anthropic's Claude API and are not used to train AI models. We do not sell or share your personal information. See our <a href="/privacy">Privacy Policy</a> for full details.</div></div>
+      </div>
+    </div>
+
+    <h2 class="faq-group-title">Legal &amp; trust</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a4" id="faq-q4"><span>Are the documents Lumeway provides legally valid?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+        <div class="faq-answer" id="faq-a4" role="region" aria-labelledby="faq-q4"><div class="faq-answer-inner">Lumeway templates are organizational tools designed to help you gather information and prepare for life transition processes. They are not court forms, legal documents, or substitutes for professional legal advice. For documents that will be filed with a court or government agency, we recommend having an attorney review them. Requirements vary by state.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a5" id="faq-q5"><span>Do I still need a lawyer or financial advisor?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+        <div class="faq-answer" id="faq-a5" role="region" aria-labelledby="faq-q5"><div class="faq-answer-inner">For many routine tasks — organizing paperwork, tracking deadlines, understanding a general process — Lumeway can save you significant time and stress. But for decisions with legal or financial consequences, yes, we strongly recommend consulting a licensed professional. Lumeway will tell you when professional help is needed.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a6" id="faq-q6"><span>Is Lumeway a substitute for professional advice?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+        <div class="faq-answer" id="faq-a6" role="region" aria-labelledby="faq-q6"><div class="faq-answer-inner">No. Lumeway is an organizational guide, not a licensed professional. We help you understand what needs to happen and in what order, but we do not provide legal, financial, tax, or medical advice. Think of us as the knowledgeable friend who helps you prepare before you meet with your lawyer or advisor.</div></div>
+      </div>
+    </div>
+
+    <h2 class="faq-group-title">Product &amp; pricing</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a7" id="faq-q7"><span>What does the free version include?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+        <div class="faq-answer" id="faq-a7" role="region" aria-labelledby="faq-q7"><div class="faq-answer-inner">The free Lumeway chat gives you access to AI-powered guidance for any life transition. You can describe your situation and get personalized next steps, deadline reminders, and resource recommendations — no signup required. <a href="/chat">Try it now →</a></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a8" id="faq-q8"><span>What are Lumeway Templates?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+        <div class="faq-answer" id="faq-a8" role="region" aria-labelledby="faq-q8"><div class="faq-answer-inner">Templates are organizational tools for each life transition — things like checklists, planning worksheets, information organizers, and step-by-step guides. They are available individually or as category bundles. Templates save you the time of creating these tools from scratch. <a href="/templates">Browse templates →</a></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a9" id="faq-q9"><span>Can I get a refund on templates?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+        <div class="faq-answer" id="faq-a9" role="region" aria-labelledby="faq-q9"><div class="faq-answer-inner">Because templates are digital products delivered immediately upon purchase, we generally cannot offer refunds. However, if you experience a technical issue or receive the wrong product, please contact us at <a href="mailto:hello@lumeway.co">hello@lumeway.co</a> and we will make it right.</div></div>
+      </div>
+    </div>
+
+    <h2 class="faq-group-title">Getting help</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a10" id="faq-q10"><span>What life transitions does Lumeway cover?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+        <div class="faq-answer" id="faq-a10" role="region" aria-labelledby="faq-q10"><div class="faq-answer-inner">Lumeway currently covers six major life transitions: <a href="/job-loss">job loss and income crisis</a>, <a href="/loss-of-spouse">death and estate settlement</a>, <a href="/divorce">divorce and separation</a>, <a href="/disability">disability and benefits</a>, <a href="/relocation">moving and relocation</a>, and <a href="/retirement">retirement planning</a>.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a11" id="faq-q11"><span>How do I get started?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+        <div class="faq-answer" id="faq-a11" role="region" aria-labelledby="faq-q11"><div class="faq-answer-inner">Just visit the <a href="/chat">chat page</a> and describe what you are going through. No account or signup is needed. Lumeway will ask a few questions to understand your situation and then walk you through your next steps.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a12" id="faq-q12"><span>Can Lumeway help with my specific state's laws?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+        <div class="faq-answer" id="faq-a12" role="region" aria-labelledby="faq-q12"><div class="faq-answer-inner">Lumeway includes state-specific information for many common processes like probate timelines, unemployment filing, and divorce requirements. Our landing pages feature a state selector that shows rules specific to your location. However, laws change frequently, so always verify current requirements with a local professional.</div></div>
+      </div>
+    </div>
+
+    <div class="cta-block">
+      <div class="cta-title">Still have a question?</div>
+      <p class="cta-subtitle">Talk to Lumeway directly — no signup required.</p>
+      <a href="/chat" class="btn-large">Start a conversation →</a>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-logo">Lumeway</div>
+    <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. &nbsp;·&nbsp; <a href="/about">About</a> &nbsp;·&nbsp; <a href="/privacy">Privacy Policy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></p>
+  </footer>
+  <script>
+    (function() {
+      var dd = document.querySelector('.nav-dropdown');
+      if (!dd) return;
+      var btn = dd.querySelector('.nav-drop-btn');
+      var menu = dd.querySelector('.nav-drop-menu');
+      var links = Array.from(menu.querySelectorAll('a'));
+      links.forEach(function(a) { if (a.getAttribute('href') === window.location.pathname) a.classList.add('active'); });
+      function open() { dd.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+      function close() { dd.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+      btn.addEventListener('click', function(e) { e.stopPropagation(); dd.classList.contains('open') ? close() : open(); });
+      document.addEventListener('click', close);
+      menu.addEventListener('click', function(e) { e.stopPropagation(); });
+      btn.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowDown') { e.preventDefault(); open(); if (links[0]) links[0].focus(); }
+        if (e.key === 'Escape') close();
+      });
+      menu.addEventListener('keydown', function(e) {
+        var idx = links.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') { e.preventDefault(); if (links[idx + 1]) links[idx + 1].focus(); }
+        if (e.key === 'ArrowUp') { e.preventDefault(); idx > 0 ? links[idx - 1].focus() : btn.focus(); }
+        if (e.key === 'Escape') { close(); btn.focus(); }
+      });
+    })();
+  </script>
+  <script>
+    // FAQ Accordion
+    var faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(function(item, idx) {
+      var btn = item.querySelector('.faq-question');
+      var ans = item.querySelector('.faq-answer');
+      btn.addEventListener('click', function() {
+        var expanded = btn.getAttribute('aria-expanded') === 'true';
+        faqItems.forEach(function(other) {
+          other.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+          other.querySelector('.faq-answer').style.maxHeight = '0';
+        });
+        if (!expanded) {
+          btn.setAttribute('aria-expanded', 'true');
+          ans.style.maxHeight = ans.scrollHeight + 'px';
+        }
+      });
+      btn.addEventListener('keydown', function(e) {
+        var n, p;
+        if (e.key === 'ArrowDown') { e.preventDefault(); n = faqItems[idx + 1]; if (n) n.querySelector('.faq-question').focus(); }
+        if (e.key === 'ArrowUp')   { e.preventDefault(); p = faqItems[idx - 1]; if (p) p.querySelector('.faq-question').focus(); }
+        if (e.key === 'Home') { e.preventDefault(); faqItems[0].querySelector('.faq-question').focus(); }
+        if (e.key === 'End')  { e.preventDefault(); faqItems[faqItems.length - 1].querySelector('.faq-question').focus(); }
+      });
+    });
+  </script>
+</body>
+</html>

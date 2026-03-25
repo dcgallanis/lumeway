@@ -464,6 +464,22 @@ def retirement():
 def research():
     return send_from_directory(".", "research.html")
 
+@app.route("/terms")
+def terms():
+    return send_from_directory(".", "terms.html")
+
+@app.route("/faq")
+def faq():
+    return send_from_directory(".", "faq.html")
+
+@app.route("/templates")
+def templates():
+    return send_from_directory(".", "templates.html")
+
+@app.route("/blog")
+def blog():
+    return send_from_directory(".", "blog.html")
+
 @app.route("/static/data/state-rules.json")
 def state_rules():
     return send_from_directory("data", "state-rules.json")
