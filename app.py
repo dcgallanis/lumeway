@@ -533,10 +533,43 @@ def templates():
 
 BLOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "blog-posts")
 
-def parse_blog_post(filepath):
+def parse_html_post(filepath):
+    """Parse a cowork-generated HTML blog post, extract content and metadata."""
+    with open(filepath, "r") as f:
+        raw = f.read()
+    meta = {}
+    slug = os.path.splitext(os.path.basename(filepath))[0]
+    meta["slug"] = slug
+    # Extract date from slug (e.g., 2026-03-25-first-30-days...)
+    date_match = re.match(r"(\d{4}-\d{2}-\d{2})", slug)
+    if date_match:
+        meta["date"] = date_match.group(1)
+    # Extract title from <h1>
+    title_match = re.search(r"<h1[^>]*>(.*?)</h1>", raw, re.DOTALL)
+    if title_match:
+        meta["title"] = re.sub(r"<[^>]+>", "", title_match.group(1)).strip()
+    # Extract meta description
+    desc_match = re.search(r'<meta\s+name="description"\s+content="([^"]*)"', raw)
+    if desc_match:
+        meta["excerpt"] = desc_match.group(1)
+    # Extract category from blog-category div
+    cat_match = re.search(r'class="blog-category"[^>]*>(.*?)</div>', raw, re.DOTALL)
+    if cat_match:
+        meta["category"] = re.sub(r"<[^>]+>", "", cat_match.group(1)).strip()
+    # Extract blog-content div (the actual post body)
+    content_match = re.search(r'<div class="blog-content">(.*?)</div>\s*</article>', raw, re.DOTALL)
+    if content_match:
+        meta["body_html"] = content_match.group(1).strip()
+    else:
+        # Fallback: grab everything between </nav> and <footer>
+        fallback = re.search(r"</nav>(.*?)<footer>", raw, re.DOTALL)
+        meta["body_html"] = fallback.group(1).strip() if fallback else ""
+    return meta
+
+def parse_md_post(filepath):
+    """Parse a markdown blog post with frontmatter."""
     with open(filepath, "r") as f:
         content = f.read()
-    # Parse frontmatter
     meta = {}
     if content.startswith("---"):
         parts = content.split("---", 2)
@@ -553,9 +586,12 @@ def parse_blog_post(filepath):
 
 def get_all_posts():
     posts = []
-    for f in sorted(globmod.glob(os.path.join(BLOG_DIR, "*.md")), reverse=True):
+    for f in globmod.glob(os.path.join(BLOG_DIR, "*.html")) + globmod.glob(os.path.join(BLOG_DIR, "*.md")):
         try:
-            posts.append(parse_blog_post(f))
+            if f.endswith(".html"):
+                posts.append(parse_html_post(f))
+            else:
+                posts.append(parse_md_post(f))
         except Exception:
             continue
     posts.sort(key=lambda p: p.get("date", ""), reverse=True)
@@ -583,10 +619,14 @@ def blog():
 
 @app.route("/blog/<slug>")
 def blog_post(slug):
-    filepath = os.path.join(BLOG_DIR, f"{slug}.md")
-    if not os.path.exists(filepath):
+    html_path = os.path.join(BLOG_DIR, f"{slug}.html")
+    md_path = os.path.join(BLOG_DIR, f"{slug}.md")
+    if os.path.exists(html_path):
+        post = parse_html_post(html_path)
+    elif os.path.exists(md_path):
+        post = parse_md_post(md_path)
+    else:
         return "Post not found", 404
-    post = parse_blog_post(filepath)
     return render_template_string(BLOG_POST_TEMPLATE, post=post)
 
 BLOG_POST_TEMPLATE = """<!DOCTYPE html>
@@ -594,14 +634,14 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{{ post.title }} — Lumeway Blog</title>
+  <title>{{ post.get('title', 'Blog') }} — Lumeway Blog</title>
   <meta name="description" content="{{ post.get('excerpt', '') }}"/>
   <meta name="p:domain_verify" content="730a746e44038ebaf9f0330e062795d6"/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--cream:#F7F4EF;--warm-white:#FDFCFA;--text:#1B2A38;--muted:#6E7D8A;--navy:#1B3A5C;--gold:#B8977E;--border:#E4DDD3}
-    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.7;font-size:17px;font-weight:300}
     nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,244,239,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
     .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
     .nav-logo-icon{width:32px;height:32px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500}
@@ -616,15 +656,24 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
     .post-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:var(--warm-white);border:1px solid var(--border);padding:3px 10px;border-radius:100px;margin-bottom:16px}
     .post-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,48px);font-weight:300;line-height:1.15;letter-spacing:-0.02em;margin-bottom:12px}
     .post-date{font-size:13px;color:var(--muted)}
+    .post-divider{width:60px;height:2px;background:var(--gold);margin-bottom:40px}
     .post-body{font-size:16px;line-height:1.85;font-weight:300;color:var(--text)}
-    .post-body h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin:40px 0 16px;color:var(--navy)}
+    .post-body h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin:48px 0 20px;color:var(--navy);line-height:1.3}
     .post-body h3{font-size:18px;font-weight:500;margin:28px 0 12px;color:var(--text)}
-    .post-body p{margin-bottom:20px}
+    .post-body p{margin-bottom:18px}
     .post-body ul,.post-body ol{margin:0 0 20px 24px}
     .post-body li{margin-bottom:8px;line-height:1.7}
     .post-body strong{font-weight:500}
-    .post-body a{color:var(--navy);text-decoration:underline}
-    .post-body blockquote{border-left:3px solid var(--gold);padding:12px 20px;margin:24px 0;background:var(--warm-white);border-radius:0 8px 8px 0;font-style:italic;color:var(--muted)}
+    .post-body a{color:var(--navy);text-decoration:underline;text-decoration-color:var(--border);text-underline-offset:3px}
+    .post-body a:hover{text-decoration-color:var(--navy)}
+    .post-body .template-callout{background:var(--warm-white);border-left:3px solid var(--gold);padding:20px 24px;margin:28px 0;border-radius:0 8px 8px 0}
+    .post-body .template-callout p{font-size:15px;color:var(--muted);margin-bottom:0}
+    .post-body .cta-box{background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:32px;margin:40px 0;text-align:center}
+    .post-body .cta-box h3{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--navy);margin-bottom:12px}
+    .post-body .cta-box p{font-size:15px;color:var(--muted);margin-bottom:20px}
+    .post-body .cta-button{display:inline-block;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--cream);background:var(--navy);padding:14px 32px;border-radius:28px;text-decoration:none;transition:background 0.2s}
+    .post-body .cta-button:hover{background:var(--gold);color:white}
+    .post-body .disclaimer{font-size:13px;font-style:italic;color:var(--muted);border-top:1px solid var(--border);padding-top:32px;margin-top:48px;line-height:1.6}
     .post-back{display:inline-block;margin-top:48px;font-size:14px;color:var(--muted);text-decoration:none}
     .post-back:hover{color:var(--navy)}
     footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:64px}
@@ -650,11 +699,12 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
   <article>
     <div class="post-meta">
       <span class="post-tag">{{ post.get('category', 'General') }}</span>
-      <h1 class="post-title">{{ post.title }}</h1>
+      <h1 class="post-title">{{ post.get('title', 'Untitled') }}</h1>
       <p class="post-date">{{ post.get('date', '') }}</p>
     </div>
+    <div class="post-divider"></div>
     <div class="post-body">
-      {{ post.body_html | safe }}
+      {{ post.get('body_html', '') | safe }}
     </div>
     <a href="/blog" class="post-back">&larr; Back to all posts</a>
   </article>
