@@ -559,6 +559,31 @@ def subscriber_count():
     conn.close()
     return jsonify({"count": count})
 
+ADMIN_KEY = os.environ.get("ADMIN_KEY", "")
+
+@app.route("/admin/subscribers")
+def admin_subscribers():
+    key = request.args.get("key", "")
+    if not ADMIN_KEY or key != ADMIN_KEY:
+        return "Unauthorized", 401
+    conn = get_db()
+    rows = conn.execute("SELECT email, source, transition_category, subscribed_at, unsubscribed_at FROM subscribers ORDER BY subscribed_at DESC").fetchall()
+    conn.close()
+    html = """<!DOCTYPE html><html><head><title>Lumeway Subscribers</title>
+    <style>body{font-family:sans-serif;max-width:900px;margin:40px auto;padding:0 20px}
+    table{width:100%;border-collapse:collapse;margin-top:20px}
+    th,td{padding:8px 12px;border:1px solid #ddd;text-align:left}
+    th{background:#1B2A38;color:#fff}tr:nth-child(even){background:#f9f9f9}
+    h1{color:#1B2A38}.count{color:#6E7D8A;margin-bottom:10px}</style></head><body>
+    <h1>Lumeway Subscribers</h1><p class="count">Total active: {count}</p>
+    <table><tr><th>Email</th><th>Source</th><th>Category</th><th>Subscribed</th><th>Status</th></tr>{rows}</table></body></html>"""
+    active_count = sum(1 for r in rows if r[4] is None)
+    row_html = ""
+    for r in rows:
+        status = "Active" if r[4] is None else f"Unsubscribed {r[4]}"
+        row_html += f"<tr><td>{r[0]}</td><td>{r[1] or ''}</td><td>{r[2] or ''}</td><td>{r[3] or ''}</td><td>{status}</td></tr>"
+    return html.format(count=active_count, rows=row_html)
+
 @app.route("/api/export", methods=["POST"])
 def export_checklist():
     try:
