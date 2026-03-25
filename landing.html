@@ -263,9 +263,9 @@
     </div>
   </section>
 
-  <div id="emailPopup" class="popup-overlay" hidden>
+  <div id="emailPopup" class="popup-overlay" hidden onclick="if(event.target===this){this.hidden=true;localStorage.setItem('lumeway_popup_dismissed',Date.now())}">
     <div class="popup-card">
-      <button class="popup-close" aria-label="Close">&times;</button>
+      <button class="popup-close" aria-label="Close" onclick="document.getElementById('emailPopup').hidden=true;localStorage.setItem('lumeway_popup_dismissed',Date.now())">&times;</button>
       <p class="popup-label">Stay in the loop</p>
       <h2 class="popup-title">Get early access to Lumeway</h2>
       <p class="popup-desc">Join our waitlist for planning tools, step-by-step checklists, and a free Transition Navigator.</p>
@@ -274,7 +274,7 @@
         <button type="submit" class="popup-btn">Join the waitlist →</button>
       </form>
       <p id="popupMsg" class="popup-msg" hidden></p>
-      <button class="popup-dismiss" id="popupDismiss">No thanks</button>
+      <button class="popup-dismiss" id="popupDismiss" onclick="document.getElementById('emailPopup').hidden=true;localStorage.setItem('lumeway_popup_dismissed',Date.now())">No thanks</button>
     </div>
   </div>
 
@@ -331,7 +331,7 @@
           if (data.ok) {
             form.style.display = 'none';
             localStorage.setItem('lumeway_subscribed', Date.now());
-            if (onSuccess) setTimeout(onSuccess, 1500);
+            if (onSuccess) onSuccess();
           } else {
             btn.textContent = 'Join the waitlist →';
             btn.disabled = false;
@@ -357,10 +357,11 @@
     // Popup
     var popup = document.getElementById('emailPopup');
     var popupClose = popup.querySelector('.popup-close');
-    function showPopup() { popup.hidden = false; document.body.style.overflow = 'hidden'; }
-    function hidePopup() { popup.hidden = true; document.body.style.overflow = ''; localStorage.setItem('lumeway_popup_dismissed', Date.now()); }
-    popupClose.addEventListener('click', hidePopup);
-    document.getElementById('popupDismiss').addEventListener('click', hidePopup);
+    var popupDismiss = document.getElementById('popupDismiss');
+    function showPopup() { popup.hidden = false; }
+    function hidePopup() { popup.hidden = true; localStorage.setItem('lumeway_popup_dismissed', Date.now()); }
+    popupClose.addEventListener('click', function(e) { e.stopPropagation(); hidePopup(); });
+    popupDismiss.addEventListener('click', function(e) { e.stopPropagation(); hidePopup(); });
     popup.addEventListener('click', function(e) { if (e.target === popup) hidePopup(); });
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && !popup.hidden) hidePopup(); });
 
@@ -369,7 +370,7 @@
       document.getElementById('popupEmail'),
       document.getElementById('popupMsg'),
       'popup',
-      hidePopup
+      function() { popupDismiss.style.display = 'none'; setTimeout(hidePopup, 1000); }
     );
 
     // Show popup after 8s if not subscribed/dismissed recently
