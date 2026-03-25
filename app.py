@@ -612,10 +612,12 @@ def blog():
             <span class="blog-card-date" style="font-size:12px;color:#6E7D8A;margin-top:auto">{p.get("date", "")}</span>
           </a>
         </div>'''
-    return send_from_directory(".", "blog.html").data.decode().replace(
-        '<div class="blog-grid">',
-        '<div class="blog-grid">' + cards_html
-    ).replace('Coming soon</span>\n      </div>', '').replace('<span class="blog-card-soon">Coming soon</span>', '').replace('Coming soon</span>', '')
+    blog_html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "blog.html")
+    with open(blog_html_path, "r") as f:
+        html = f.read()
+    html = html.replace('<div class="blog-grid">', '<div class="blog-grid">' + cards_html)
+    html = html.replace('<span class="blog-card-soon">Coming soon</span>', '')
+    return html
 
 @app.route("/blog/<slug>")
 def blog_post(slug):
