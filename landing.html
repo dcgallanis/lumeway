@@ -308,7 +308,7 @@
   </script>
   <script>
     // Email subscribe handler (shared by inline form and popup)
-    function handleSubscribe(form, emailInput, msgEl, source) {
+    function handleSubscribe(form, emailInput, msgEl, source, onSuccess) {
       form.addEventListener('submit', function(e) {
         e.preventDefault();
         var email = emailInput.value.trim();
@@ -328,6 +328,7 @@
           if (data.ok) {
             form.style.display = 'none';
             localStorage.setItem('lumeway_subscribed', Date.now());
+            if (onSuccess) setTimeout(onSuccess, 1500);
           } else {
             btn.textContent = 'Join the waitlist →';
             btn.disabled = false;
@@ -363,7 +364,8 @@
       document.getElementById('popupForm'),
       document.getElementById('popupEmail'),
       document.getElementById('popupMsg'),
-      'popup'
+      'popup',
+      hidePopup
     );
 
     // Show popup after 8s if not subscribed/dismissed recently
