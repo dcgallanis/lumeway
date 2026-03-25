@@ -137,8 +137,18 @@
         <a href="/relocation">Moving &amp; Relocation</a>
         <a href="/disability">Disability &amp; Benefits</a>
         <a href="/retirement">Retirement</a>
+      </div>
+    </div>
+    <div class="nav-dropdown">
+      <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">▾</span></button>
+      <div class="nav-drop-menu">
+        <a href="/faq">FAQ</a>
+        <a href="/templates">Templates</a>
+        <a href="/blog">Blog</a>
         <div class="menu-div"></div>
         <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
       </div>
     </div>
   </div>
@@ -412,27 +422,28 @@
 <script>
   // Nav dropdown
   (function() {
-    var dd = document.querySelector('.nav-dropdown');
-    if (!dd) return;
-    var btn = dd.querySelector('.nav-drop-btn');
-    var menu = dd.querySelector('.nav-drop-menu');
-    var links = Array.from(menu.querySelectorAll('a'));
-    links.forEach(function(a) { if (a.getAttribute('href') === window.location.pathname) a.classList.add('active'); });
-    function open() { dd.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
-    function close() { dd.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
-    btn.addEventListener('click', function(e) { e.stopPropagation(); dd.classList.contains('open') ? close() : open(); });
-    document.addEventListener('click', close);
-    menu.addEventListener('click', function(e) { e.stopPropagation(); });
-    btn.addEventListener('keydown', function(e) {
-      if (e.key === 'ArrowDown') { e.preventDefault(); open(); if (links[0]) links[0].focus(); }
-      if (e.key === 'Escape') close();
+    var dropdowns = document.querySelectorAll('.nav-dropdown');
+    dropdowns.forEach(function(dd) {
+      var btn = dd.querySelector('.nav-drop-btn');
+      var menu = dd.querySelector('.nav-drop-menu');
+      var links = Array.from(menu.querySelectorAll('a'));
+      links.forEach(function(a) { if (a.getAttribute('href') === window.location.pathname) a.classList.add('active'); });
+      function open() { dropdowns.forEach(function(other) { if (other !== dd) { other.classList.remove('open'); other.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false'); } }); dd.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+      function close() { dd.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+      btn.addEventListener('click', function(e) { e.stopPropagation(); dd.classList.contains('open') ? close() : open(); });
+      menu.addEventListener('click', function(e) { e.stopPropagation(); });
+      btn.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowDown') { e.preventDefault(); open(); if (links[0]) links[0].focus(); }
+        if (e.key === 'Escape') close();
+      });
+      menu.addEventListener('keydown', function(e) {
+        var idx = links.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') { e.preventDefault(); if (links[idx + 1]) links[idx + 1].focus(); }
+        if (e.key === 'ArrowUp') { e.preventDefault(); idx > 0 ? links[idx - 1].focus() : btn.focus(); }
+        if (e.key === 'Escape') { close(); btn.focus(); }
+      });
     });
-    menu.addEventListener('keydown', function(e) {
-      var idx = links.indexOf(document.activeElement);
-      if (e.key === 'ArrowDown') { e.preventDefault(); if (links[idx + 1]) links[idx + 1].focus(); }
-      if (e.key === 'ArrowUp') { e.preventDefault(); idx > 0 ? links[idx - 1].focus() : btn.focus(); }
-      if (e.key === 'Escape') { close(); btn.focus(); }
-    });
+    document.addEventListener('click', function() { dropdowns.forEach(function(dd) { dd.classList.remove('open'); dd.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false'); }); });
   })();
 </script>
 <script>
