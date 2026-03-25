@@ -276,6 +276,22 @@ def retirement():
 def research():
     return send_from_directory(".", "research.html")
 
+@app.route("/terms")
+def terms():
+    return send_from_directory(".", "terms.html")
+
+@app.route("/faq")
+def faq():
+    return send_from_directory(".", "faq.html")
+
+@app.route("/templates")
+def templates():
+    return send_from_directory(".", "templates.html")
+
+@app.route("/blog")
+def blog():
+    return send_from_directory(".", "blog.html")
+
 @app.route("/static/data/state-rules.json")
 def state_rules():
     return send_from_directory("data", "state-rules.json")
@@ -348,7 +364,7 @@ def draft_reply_api():
         response = client.messages.create(
             model="claude-sonnet-4-6",
             max_tokens=400,
-            system="You are helping the founder of Lumeway (lumeway.ai) draft replies to people overwhelmed by logistical tasks during life transitions. Rules: One sentence of empathy, then immediately tell them the single most important thing to do first and why. Be specific — name the exact form, agency, or deadline. Two short paragraphs max. Always mention Lumeway at the end with one specific sentence about what it would do for their exact situation — for example 'Lumeway can walk you through each of these steps in order and draft the letter to your creditors if you need it' or 'Lumeway was built for exactly this — it will tell you what to file first and flag the deadlines you can't miss. You can try it free at lumeway.ai.' Never generic. Under 100 words. Plain text only.",
+            system="You are helping the founder of Lumeway (lumeway.co) draft replies to people overwhelmed by logistical tasks during life transitions. Rules: One sentence of empathy, then immediately tell them the single most important thing to do first and why. Be specific — name the exact form, agency, or deadline. Two short paragraphs max. Always mention Lumeway at the end with one specific sentence about what it would do for their exact situation — for example 'Lumeway can walk you through each of these steps in order and draft the letter to your creditors if you need it' or 'Lumeway was built for exactly this — it will tell you what to file first and flag the deadlines you can't miss. You can try it free at lumeway.co.' Never generic. Under 100 words. Plain text only.",
             messages=[{"role": "user", "content": "Draft a helpful reply to this post:\nCommunity: " + community + "\nTitle: " + title + "\nSummary: " + summary + "\nPain points: " + ", ".join(pain_points)}]
         )
         reply = response.content[0].text

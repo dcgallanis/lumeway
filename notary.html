@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Privacy Policy — Lumeway</title>
+  <title>Notary Services — Lumeway</title>
+  <meta name="description" content="Remote online notarization for life transition documents — estate planning, powers of attorney, affidavits, and more. Coming soon from Lumeway."/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,18 +31,27 @@
     .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
     .page { max-width: 720px; margin: 0 auto; padding: 120px 24px 64px; }
     .page-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
-    .page-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 12px; }
-    .last-updated { font-size: 13px; color: var(--muted); margin-bottom: 48px; }
-    h2 { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 500; margin: 40px 0 12px; }
-    p { font-size: 15px; font-weight: 300; line-height: 1.85; color: var(--text); margin-bottom: 16px; }
-    ul { margin: 0 0 16px 20px; }
-    ul li { font-size: 15px; font-weight: 300; line-height: 1.85; color: var(--text); margin-bottom: 6px; }
-    a { color: var(--accent); text-decoration: underline; }
+    .page-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 6vw, 64px); font-weight: 300; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 32px; }
+    .page-title em { font-style: italic; color: var(--accent-light); }
+    .prose p { font-size: 17px; font-weight: 300; line-height: 1.85; color: var(--text); margin-bottom: 28px; }
+    .prose strong { font-weight: 500; }
+    .divider { width: 48px; height: 1px; background: var(--gold); margin: 32px 0; }
+    .values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
+    .value-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+    .value-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; margin-bottom: 8px; color: var(--navy); }
+    .value-desc { font-size: 13px; color: var(--muted); line-height: 1.7; font-weight: 300; }
     .notice { background: var(--warm-white); border: 1px solid var(--border); border-left: 3px solid var(--accent-light); border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 32px 0; font-size: 14px; color: var(--muted); line-height: 1.7; }
+    .notice strong { font-weight: 500; color: var(--text); }
+    .cta-block { background: var(--navy); border-radius: 24px; padding: 40px; text-align: center; margin-top: 48px; }
+    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: var(--cream); margin-bottom: 12px; }
+    .cta-subtitle { font-size: 15px; color: rgba(247,244,239,0.6); font-weight: 300; margin-bottom: 28px; }
+    .btn-large { display: inline-block; padding: 14px 32px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; text-decoration: none; background: var(--cream); color: var(--text); transition: all 0.2s; }
+    .btn-large:hover { background: var(--accent-light); color: white; transform: translateY(-2px); }
     footer { padding: 28px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
     .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--navy); }
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
-    @media (max-width: 580px) { nav { padding: 16px 20px; } }
+    .footer-note a { color: var(--muted); }
+    @media (max-width: 580px) { nav { padding: 16px 20px; } .values-grid { grid-template-columns: 1fr; } .cta-block { padding: 32px 24px; } }
   </style>
 </head>
 <body>
@@ -71,56 +81,41 @@
     </div>
   </nav>
   <div class="page">
-    <p class="page-label">Legal</p>
-    <h1 class="page-title">Privacy Policy</h1>
-    <p class="last-updated">Last updated: March 6, 2026</p>
-    <div class="notice">Lumeway is an early-stage product. This policy reflects our current practices and will be updated as the product grows. We are committed to being transparent about how we handle your information.</div>
-    <h2>Who we are</h2>
-    <p>Lumeway ("we," "us," or "our") is an AI-powered life transition guide available at lumeway.co. We help individuals navigate major life changes by providing organized, empathetic guidance.</p>
-    <h2>Information we collect</h2>
-    <p>We collect information in the following ways:</p>
-    <ul>
-      <li><strong>Waitlist signups:</strong> If you join our waitlist, we collect your name and email address via Tally.</li>
-      <li><strong>Chat conversations:</strong> When you use the Lumeway chat, your messages are sent to Anthropic's Claude API to generate responses. We do not permanently store your conversation history on our servers.</li>
-      <li><strong>Usage data:</strong> We may collect basic analytics such as page views to understand how people use our site.</li>
-    </ul>
-    <h2>How we use your information</h2>
-    <ul>
-      <li>To send you waitlist updates and product announcements (if you signed up)</li>
-      <li>To provide and improve the Lumeway chat experience</li>
-      <li>To understand how our product is being used</li>
-    </ul>
-    <h2>Third-party services</h2>
-    <p>Lumeway uses the following third-party services:</p>
-    <ul>
-      <li><strong>Anthropic Claude API:</strong> Your chat messages are processed by Anthropic. See <a href="https://www.anthropic.com/privacy" target="_blank">Anthropic's Privacy Policy</a>.</li>
-      <li><strong>Tally:</strong> Used for waitlist signups. See <a href="https://tally.so/privacy" target="_blank">Tally's Privacy Policy</a>.</li>
-      <li><strong>Railway:</strong> Used to host our application. See <a href="https://railway.app/privacy" target="_blank">Railway's Privacy Policy</a>.</li>
-    </ul>
-    <h2>Sensitive information</h2>
-    <p>We understand that conversations about life transitions may involve sensitive personal circumstances. We treat all information shared with Lumeway with the utmost discretion. We do not sell, rent, or share your personal information with third parties for marketing purposes.</p>
-    <h2>Data retention</h2>
-    <p>Waitlist email addresses are retained until you unsubscribe. Chat conversations are not permanently stored by Lumeway — each session starts fresh.</p>
-    <h2>Your rights</h2>
-    <p>You have the right to:</p>
-    <ul>
-      <li>Request deletion of your email address from our waitlist at any time</li>
-      <li>Ask what information we hold about you</li>
-      <li>Opt out of any communications from us</li>
-    </ul>
-    <p>To exercise any of these rights, email us at <a href="mailto:hello@lumeway.co">hello@lumeway.co</a>.</p>
-    <h2>Cookies</h2>
-    <p>Lumeway does not currently use tracking cookies. Basic session data may be stored in your browser to maintain your chat session.</p>
-    <h2>Children's privacy</h2>
-    <p>Lumeway is not intended for use by individuals under the age of 18. We do not knowingly collect personal information from children.</p>
-    <h2>Changes to this policy</h2>
-    <p>We may update this Privacy Policy as our product evolves. We will post any changes on this page with an updated date.</p>
-    <h2>Contact us</h2>
-    <p>If you have any questions about this Privacy Policy, please contact us at <a href="mailto:hello@lumeway.co">hello@lumeway.co</a>.</p>
+    <p class="page-label">Coming Soon</p>
+    <h1 class="page-title">Notary services,<br><em>without the hassle</em></h1>
+    <div class="prose">
+      <p>During a life transition, the last thing you need is to spend hours tracking down a notary. Estate documents, powers of attorney, affidavits, divorce filings — many of the most important papers require notarization, often on tight deadlines.</p>
+      <p>Lumeway is building <strong>remote online notarization</strong> directly into the transition experience — so you can get documents notarized from home, on your schedule, by a commissioned notary who understands what you are going through.</p>
+    </div>
+    <div class="divider"></div>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-title">Remote online notarization</div>
+        <p class="value-desc">Get documents notarized via secure video call from anywhere. No driving, no waiting rooms, no appointments weeks away.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-title">Same-day availability</div>
+        <p class="value-desc">When deadlines are tight, you should not have to wait. We are building scheduling that gets you notarized the same day you need it.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-title">Bundled with templates</div>
+        <p class="value-desc">Lumeway templates are designed to be notary-ready. Fill out your documents, then get them notarized — all in one place.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-title">Affordable flat-rate pricing</div>
+        <p class="value-desc">Simple, transparent pricing with no hidden fees. Know exactly what you will pay before you book.</p>
+      </div>
+    </div>
+    <div class="notice"><strong>We are working on it.</strong> We are partnering with commissioned notaries to bring this service to you. Join the waitlist below to be the first to know when notary services launch.</div>
+    <div class="cta-block">
+      <div class="cta-title">Be the first to know</div>
+      <p class="cta-subtitle">Join the waitlist and we will notify you when notary services are available.</p>
+      <a href="/#waitlist" class="btn-large">Join the waitlist →</a>
+    </div>
   </div>
   <footer>
     <div class="footer-logo">Lumeway</div>
-    <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions.</p>
+    <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. &nbsp;·&nbsp; <a href="/about">About</a> &nbsp;·&nbsp; <a href="/privacy">Privacy Policy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></p>
   </footer>
   <script>
     (function() {
