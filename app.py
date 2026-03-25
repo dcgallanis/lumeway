@@ -3,6 +3,9 @@ from flask_cors import CORS
 import anthropic
 import json
 import os
+import re
+import sqlite3
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 import conversation_log
 
@@ -10,6 +13,23 @@ load_dotenv()
 
 app = Flask(__name__, static_folder=".")
 CORS(app)
+
+SUBSCRIBERS_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lumeway_subscribers.db")
+
+def init_subscribers_db():
+    conn = sqlite3.connect(SUBSCRIBERS_DB)
+    conn.execute("""CREATE TABLE IF NOT EXISTS subscribers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE NOT NULL,
+        source TEXT DEFAULT 'popup',
+        transition_category TEXT,
+        subscribed_at TEXT NOT NULL,
+        unsubscribed_at TEXT
+    )""")
+    conn.commit()
+    conn.close()
+
+init_subscribers_db()
 
 client = anthropic.Anthropic(
     api_key=os.environ.get("ANTHROPIC_API_KEY")
@@ -483,6 +503,35 @@ def blog():
 @app.route("/static/data/state-rules.json")
 def state_rules():
     return send_from_directory("data", "state-rules.json")
+
+@app.route("/api/subscribe", methods=["POST"])
+def subscribe():
+    data = request.json or {}
+    email = (data.get("email") or "").strip().lower()
+    if not email or not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        return jsonify({"error": "Please enter a valid email address."}), 400
+    source = data.get("source", "popup")
+    category = data.get("transition_category")
+    try:
+        conn = sqlite3.connect(SUBSCRIBERS_DB)
+        conn.execute(
+            "INSERT INTO subscribers (email, source, transition_category, subscribed_at) VALUES (?, ?, ?, ?)",
+            (email, source, category, datetime.now(timezone.utc).isoformat())
+        )
+        conn.commit()
+        conn.close()
+        return jsonify({"ok": True, "message": "You're on the list!"})
+    except sqlite3.IntegrityError:
+        return jsonify({"ok": True, "message": "You're already on the list!"})
+    except Exception as e:
+        return jsonify({"error": "Something went wrong. Please try again."}), 500
+
+@app.route("/api/subscribers/count")
+def subscriber_count():
+    conn = sqlite3.connect(SUBSCRIBERS_DB)
+    count = conn.execute("SELECT COUNT(*) FROM subscribers WHERE unsubscribed_at IS NULL").fetchone()[0]
+    conn.close()
+    return jsonify({"count": count})
 
 @app.route("/api/export", methods=["POST"])
 def export_checklist():
