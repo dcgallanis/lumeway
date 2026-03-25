@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
 import anthropic
+import csv
+import io
 import json
 import os
 import re
@@ -631,8 +633,10 @@ def admin_subscribers():
     h1{{font-family:'Cormorant Garamond',serif;font-size:28px;color:#1B2A38;margin-bottom:4px}}
     .count{{color:#6E7D8A;font-size:14px;margin-bottom:20px}}
     .topbar{{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}}
-    .logout{{color:#6E7D8A;font-size:13px;text-decoration:none}}
+    .logout{{color:#6E7D8A;font-size:13px;text-decoration:none;margin-left:16px}}
     .logout:hover{{color:#1B2A38}}
+    .export-btn{{display:inline-block;padding:8px 16px;background:#1B2A38;color:#fff;border-radius:6px;font-size:13px;text-decoration:none}}
+    .export-btn:hover{{background:#2a3d4f}}
     table{{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06)}}
     th,td{{padding:10px 14px;text-align:left;font-size:13px}}
     th{{background:#1B2A38;color:#fff;font-weight:500}}
@@ -645,13 +649,32 @@ def admin_subscribers():
     <div class="container">
       <div class="topbar">
         <div><h1>Subscribers</h1><p class="count">{active_count} active subscribers</p></div>
-        <a href="/admin" class="logout">Logout</a>
+        <div><a href="/admin/subscribers/export?key={key}" class="export-btn">Download CSV</a> <a href="/admin" class="logout">Logout</a></div>
       </div>
       <table>
         <tr><th>Email</th><th>Source</th><th>Category</th><th>Subscribed</th><th>Status</th></tr>
         {row_html}
       </table>
     </div></body></html>"""
+
+@app.route("/admin/subscribers/export")
+def admin_export_csv():
+    key = request.args.get("key", "")
+    if not ADMIN_KEY or key != ADMIN_KEY:
+        return "Unauthorized", 401
+    conn = get_db()
+    rows = db_execute(conn, "SELECT email, source, transition_category, subscribed_at, unsubscribed_at FROM subscribers ORDER BY subscribed_at DESC").fetchall()
+    conn.close()
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Email", "Source", "Category", "Subscribed At", "Unsubscribed At"])
+    for r in rows:
+        writer.writerow([r[0], r[1] or "", r[2] or "", r[3] or "", r[4] or ""])
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": f"attachment;filename=lumeway_subscribers_{datetime.now().strftime('%Y%m%d')}.csv"}
+    )
 
 @app.route("/api/export", methods=["POST"])
 def export_checklist():
