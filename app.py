@@ -28,10 +28,19 @@ def get_db():
         return psycopg2.connect(DATABASE_URL)
     return sqlite3.connect(SQLITE_DB)
 
+def db_execute(conn, sql, params=None):
+    """Execute SQL on both Postgres (cursor) and SQLite (connection)."""
+    if USE_POSTGRES:
+        cur = conn.cursor()
+        cur.execute(sql, params)
+        return cur
+    else:
+        return conn.execute(sql, params or ())
+
 def init_subscribers_db():
     conn = get_db()
     if USE_POSTGRES:
-        conn.execute("""CREATE TABLE IF NOT EXISTS subscribers (
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id SERIAL PRIMARY KEY,
             email TEXT UNIQUE NOT NULL,
             source TEXT DEFAULT 'popup',
@@ -40,7 +49,7 @@ def init_subscribers_db():
             unsubscribed_at TEXT
         )""")
     else:
-        conn.execute("""CREATE TABLE IF NOT EXISTS subscribers (
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT UNIQUE NOT NULL,
             source TEXT DEFAULT 'popup',
@@ -538,7 +547,7 @@ def subscribe():
     sql = f"INSERT INTO subscribers (email, source, transition_category, subscribed_at) VALUES ({param}, {param}, {param}, {param})"
     try:
         conn = get_db()
-        conn.execute(sql, (email, source, category, datetime.now(timezone.utc).isoformat()))
+        db_execute(conn, sql, (email, source, category, datetime.now(timezone.utc).isoformat()))
         conn.commit()
         conn.close()
         return jsonify({"ok": True, "message": "You're on the list!"})
@@ -555,7 +564,7 @@ def subscribe():
 @app.route("/api/subscribers/count")
 def subscriber_count():
     conn = get_db()
-    count = conn.execute("SELECT COUNT(*) FROM subscribers WHERE unsubscribed_at IS NULL").fetchone()[0]
+    count = db_execute(conn, "SELECT COUNT(*) FROM subscribers WHERE unsubscribed_at IS NULL").fetchone()[0]
     conn.close()
     return jsonify({"count": count})
 
@@ -567,7 +576,7 @@ def admin_subscribers():
     if not ADMIN_KEY or key != ADMIN_KEY:
         return "Unauthorized", 401
     conn = get_db()
-    rows = conn.execute("SELECT email, source, transition_category, subscribed_at, unsubscribed_at FROM subscribers ORDER BY subscribed_at DESC").fetchall()
+    rows = db_execute(conn, "SELECT email, source, transition_category, subscribed_at, unsubscribed_at FROM subscribers ORDER BY subscribed_at DESC").fetchall()
     conn.close()
     html = """<!DOCTYPE html><html><head><title>Lumeway Subscribers</title>
     <style>body{font-family:sans-serif;max-width:900px;margin:40px auto;padding:0 20px}
