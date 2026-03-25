@@ -106,8 +106,10 @@
 
     .popup-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(27,42,56,0.55); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; }
     .popup-card { background: var(--warm-white); border-radius: 24px; padding: 48px 40px; max-width: 440px; width: 100%; position: relative; box-shadow: 0 24px 64px rgba(27,58,92,0.18); text-align: center; }
-    .popup-close { position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 24px; color: var(--muted); cursor: pointer; padding: 4px 8px; line-height: 1; transition: color 0.15s; }
+    .popup-close { position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 28px; color: var(--muted); cursor: pointer; padding: 8px 12px; line-height: 1; transition: color 0.15s; z-index: 1; }
     .popup-close:hover { color: var(--text); }
+    .popup-dismiss { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--muted); cursor: pointer; margin-top: 16px; padding: 4px; text-decoration: underline; text-underline-offset: 2px; }
+    .popup-dismiss:hover { color: var(--text); }
     .popup-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
     .popup-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; line-height: 1.2; margin-bottom: 12px; color: var(--text); }
     .popup-desc { font-size: 15px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 28px; }
@@ -272,6 +274,7 @@
         <button type="submit" class="popup-btn">Join the waitlist →</button>
       </form>
       <p id="popupMsg" class="popup-msg" hidden></p>
+      <button class="popup-dismiss" id="popupDismiss">No thanks</button>
     </div>
   </div>
 
@@ -357,6 +360,7 @@
     function showPopup() { popup.hidden = false; document.body.style.overflow = 'hidden'; }
     function hidePopup() { popup.hidden = true; document.body.style.overflow = ''; localStorage.setItem('lumeway_popup_dismissed', Date.now()); }
     popupClose.addEventListener('click', hidePopup);
+    document.getElementById('popupDismiss').addEventListener('click', hidePopup);
     popup.addEventListener('click', function(e) { if (e.target === popup) hidePopup(); });
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && !popup.hidden) hidePopup(); });
 
