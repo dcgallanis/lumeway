@@ -1,9 +1,11 @@
-from flask import Flask, request, jsonify, send_from_directory, Response
+from flask import Flask, request, jsonify, send_from_directory, Response, render_template_string
 from flask_cors import CORS
 import anthropic
 import csv
+import glob as globmod
 import io
 import json
+import markdown
 import os
 import re
 import sqlite3
@@ -529,9 +531,139 @@ def faq():
 def templates():
     return send_from_directory(".", "templates.html")
 
+BLOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "blog-posts")
+
+def parse_blog_post(filepath):
+    with open(filepath, "r") as f:
+        content = f.read()
+    # Parse frontmatter
+    meta = {}
+    if content.startswith("---"):
+        parts = content.split("---", 2)
+        if len(parts) >= 3:
+            for line in parts[1].strip().split("\n"):
+                if ":" in line:
+                    key, val = line.split(":", 1)
+                    meta[key.strip()] = val.strip()
+            content = parts[2].strip()
+    slug = os.path.splitext(os.path.basename(filepath))[0]
+    meta["slug"] = slug
+    meta["body_html"] = markdown.markdown(content, extensions=["extra", "toc"])
+    return meta
+
+def get_all_posts():
+    posts = []
+    for f in sorted(globmod.glob(os.path.join(BLOG_DIR, "*.md")), reverse=True):
+        try:
+            posts.append(parse_blog_post(f))
+        except Exception:
+            continue
+    posts.sort(key=lambda p: p.get("date", ""), reverse=True)
+    return posts
+
 @app.route("/blog")
 def blog():
-    return send_from_directory(".", "blog.html")
+    posts = get_all_posts()
+    if not posts:
+        return send_from_directory(".", "blog.html")
+    cards_html = ""
+    for p in posts:
+        cards_html += f'''<div class="blog-card">
+          <a href="/blog/{p['slug']}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;height:100%">
+            <span class="blog-tag">{p.get("category", "General")}</span>
+            <h2 class="blog-card-title">{p.get("title", "Untitled")}</h2>
+            <p class="blog-card-excerpt">{p.get("excerpt", "")}</p>
+            <span class="blog-card-date" style="font-size:12px;color:#6E7D8A;margin-top:auto">{p.get("date", "")}</span>
+          </a>
+        </div>'''
+    return send_from_directory(".", "blog.html").data.decode().replace(
+        '<div class="blog-grid">',
+        '<div class="blog-grid">' + cards_html
+    ).replace('Coming soon</span>\n      </div>', '').replace('<span class="blog-card-soon">Coming soon</span>', '').replace('Coming soon</span>', '')
+
+@app.route("/blog/<slug>")
+def blog_post(slug):
+    filepath = os.path.join(BLOG_DIR, f"{slug}.md")
+    if not os.path.exists(filepath):
+        return "Post not found", 404
+    post = parse_blog_post(filepath)
+    return render_template_string(BLOG_POST_TEMPLATE, post=post)
+
+BLOG_POST_TEMPLATE = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{ post.title }} — Lumeway Blog</title>
+  <meta name="description" content="{{ post.get('excerpt', '') }}"/>
+  <meta name="p:domain_verify" content="730a746e44038ebaf9f0330e062795d6"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--cream:#F7F4EF;--warm-white:#FDFCFA;--text:#1B2A38;--muted:#6E7D8A;--navy:#1B3A5C;--gold:#B8977E;--border:#E4DDD3}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,244,239,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .nav-logo-icon{width:32px;height:32px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500}
+    .nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text)}
+    .nav-left{display:flex;align-items:center;gap:28px}
+    .nav-right{display:flex;gap:12px;align-items:center}
+    .btn-ghost{padding:8px 20px;border:1px solid var(--border);border-radius:100px;background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;text-decoration:none;transition:all 0.2s}
+    .btn-ghost:hover{background:var(--navy);color:var(--cream)}
+    .btn-primary{padding:8px 20px;border:none;border-radius:100px;background:var(--navy);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:14px;text-decoration:none;transition:all 0.2s}
+    article{max-width:720px;margin:0 auto;padding:120px 24px 64px}
+    .post-meta{margin-bottom:32px}
+    .post-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:var(--warm-white);border:1px solid var(--border);padding:3px 10px;border-radius:100px;margin-bottom:16px}
+    .post-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,48px);font-weight:300;line-height:1.15;letter-spacing:-0.02em;margin-bottom:12px}
+    .post-date{font-size:13px;color:var(--muted)}
+    .post-body{font-size:16px;line-height:1.85;font-weight:300;color:var(--text)}
+    .post-body h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin:40px 0 16px;color:var(--navy)}
+    .post-body h3{font-size:18px;font-weight:500;margin:28px 0 12px;color:var(--text)}
+    .post-body p{margin-bottom:20px}
+    .post-body ul,.post-body ol{margin:0 0 20px 24px}
+    .post-body li{margin-bottom:8px;line-height:1.7}
+    .post-body strong{font-weight:500}
+    .post-body a{color:var(--navy);text-decoration:underline}
+    .post-body blockquote{border-left:3px solid var(--gold);padding:12px 20px;margin:24px 0;background:var(--warm-white);border-radius:0 8px 8px 0;font-style:italic;color:var(--muted)}
+    .post-back{display:inline-block;margin-top:48px;font-size:14px;color:var(--muted);text-decoration:none}
+    .post-back:hover{color:var(--navy)}
+    footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:64px}
+    .footer-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--navy)}
+    .footer-note{font-size:12px;color:var(--muted);font-weight:300}
+    .footer-note a{color:var(--muted)}
+    @media(max-width:580px){nav{padding:16px 20px}article{padding:100px 20px 48px}}
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-left">
+      <a href="/" class="nav-logo">
+        <div class="nav-logo-icon">L</div>
+        <span class="nav-logo-text">Lumeway</span>
+      </a>
+    </div>
+    <div class="nav-right">
+      <a href="/chat" class="btn-ghost">Try it free</a>
+      <a href="/#waitlist" class="btn-primary">Join waitlist</a>
+    </div>
+  </nav>
+  <article>
+    <div class="post-meta">
+      <span class="post-tag">{{ post.get('category', 'General') }}</span>
+      <h1 class="post-title">{{ post.title }}</h1>
+      <p class="post-date">{{ post.get('date', '') }}</p>
+    </div>
+    <div class="post-body">
+      {{ post.body_html | safe }}
+    </div>
+    <a href="/blog" class="post-back">&larr; Back to all posts</a>
+  </article>
+  <footer>
+    <span class="footer-logo">Lumeway</span>
+    <span class="footer-note">&copy; 2026 Lumeway. All rights reserved. <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></span>
+  </footer>
+</body>
+</html>"""
 
 @app.route("/static/data/state-rules.json")
 def state_rules():

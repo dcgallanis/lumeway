@@ -2,5 +2,6 @@ anthropic
 flask
 flask-cors
 gunicorn
+markdown
 psycopg2-binary
 python-dotenv
