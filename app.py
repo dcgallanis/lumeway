@@ -570,6 +570,45 @@ def subscriber_count():
 
 ADMIN_KEY = os.environ.get("ADMIN_KEY", "")
 
+@app.route("/admin")
+def admin_login_page():
+    return """<!DOCTYPE html><html><head><title>Lumeway Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:#F7F4EF;min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .login-card{background:#fff;border-radius:12px;padding:48px 40px;max-width:400px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
+    .login-card h1{font-family:'Cormorant Garamond',serif;font-size:28px;color:#1B2A38;margin-bottom:8px}
+    .login-card p{color:#6E7D8A;font-size:14px;margin-bottom:24px}
+    label{font-size:13px;color:#1B2A38;font-weight:500;display:block;margin-bottom:6px}
+    input[type=password]{width:100%;padding:10px 14px;border:1px solid #d1cdc7;border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none}
+    input[type=password]:focus{border-color:#1B2A38}
+    button{width:100%;padding:12px;background:#1B2A38;color:#fff;border:none;border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:16px}
+    button:hover{background:#2a3d4f}
+    .error{color:#c0392b;font-size:13px;margin-top:12px;display:none}
+    </style></head><body>
+    <div class="login-card">
+      <h1>Lumeway Admin</h1>
+      <p>Enter your admin key to continue.</p>
+      <form onsubmit="return doLogin(event)">
+        <label for="key">Admin Key</label>
+        <input type="password" id="key" placeholder="Enter admin key" autofocus/>
+        <button type="submit">Sign In</button>
+        <p class="error" id="err">Invalid admin key. Please try again.</p>
+      </form>
+    </div>
+    <script>
+    function doLogin(e){
+      e.preventDefault();
+      var key=document.getElementById('key').value;
+      fetch('/admin/subscribers?key='+encodeURIComponent(key)).then(function(r){
+        if(r.ok){sessionStorage.setItem('admin_key',key);window.location='/admin/subscribers?key='+encodeURIComponent(key)}
+        else{document.getElementById('err').style.display='block'}
+      });
+      return false;
+    }
+    </script></body></html>"""
+
 @app.route("/admin/subscribers")
 def admin_subscribers():
     key = request.args.get("key", "")
@@ -578,20 +617,41 @@ def admin_subscribers():
     conn = get_db()
     rows = db_execute(conn, "SELECT email, source, transition_category, subscribed_at, unsubscribed_at FROM subscribers ORDER BY subscribed_at DESC").fetchall()
     conn.close()
-    html = """<!DOCTYPE html><html><head><title>Lumeway Subscribers</title>
-    <style>body{font-family:sans-serif;max-width:900px;margin:40px auto;padding:0 20px}
-    table{width:100%;border-collapse:collapse;margin-top:20px}
-    th,td{padding:8px 12px;border:1px solid #ddd;text-align:left}
-    th{background:#1B2A38;color:#fff}tr:nth-child(even){background:#f9f9f9}
-    h1{color:#1B2A38}.count{color:#6E7D8A;margin-bottom:10px}</style></head><body>
-    <h1>Lumeway Subscribers</h1><p class="count">Total active: {count}</p>
-    <table><tr><th>Email</th><th>Source</th><th>Category</th><th>Subscribed</th><th>Status</th></tr>{rows}</table></body></html>"""
     active_count = sum(1 for r in rows if r[4] is None)
     row_html = ""
     for r in rows:
         status = "Active" if r[4] is None else f"Unsubscribed {r[4]}"
         row_html += f"<tr><td>{r[0]}</td><td>{r[1] or ''}</td><td>{r[2] or ''}</td><td>{r[3] or ''}</td><td>{status}</td></tr>"
-    return html.format(count=active_count, rows=row_html)
+    return f"""<!DOCTYPE html><html><head><title>Lumeway Subscribers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+    *{{box-sizing:border-box;margin:0;padding:0}}
+    body{{font-family:'DM Sans',sans-serif;background:#F7F4EF;min-height:100vh;padding:40px 20px}}
+    .container{{max-width:960px;margin:0 auto}}
+    h1{{font-family:'Cormorant Garamond',serif;font-size:28px;color:#1B2A38;margin-bottom:4px}}
+    .count{{color:#6E7D8A;font-size:14px;margin-bottom:20px}}
+    .topbar{{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}}
+    .logout{{color:#6E7D8A;font-size:13px;text-decoration:none}}
+    .logout:hover{{color:#1B2A38}}
+    table{{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06)}}
+    th,td{{padding:10px 14px;text-align:left;font-size:13px}}
+    th{{background:#1B2A38;color:#fff;font-weight:500}}
+    tr:nth-child(even){{background:#faf9f7}}
+    td{{border-bottom:1px solid #eee;color:#1B2A38}}
+    .badge{{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px}}
+    .badge-active{{background:#e8f5e9;color:#2e7d32}}
+    .badge-unsub{{background:#fce4ec;color:#c62828}}
+    </style></head><body>
+    <div class="container">
+      <div class="topbar">
+        <div><h1>Subscribers</h1><p class="count">{active_count} active subscribers</p></div>
+        <a href="/admin" class="logout">Logout</a>
+      </div>
+      <table>
+        <tr><th>Email</th><th>Source</th><th>Category</th><th>Subscribed</th><th>Status</th></tr>
+        {row_html}
+      </table>
+    </div></body></html>"""
 
 @app.route("/api/export", methods=["POST"])
 def export_checklist():
