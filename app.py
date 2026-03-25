@@ -12,18 +12,40 @@ load_dotenv()
 app = Flask(__name__, static_folder=".")
 CORS(app)
 
-SUBSCRIBERS_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lumeway_subscribers.db")
+DATABASE_URL = os.environ.get("DATABASE_URL")
+USE_POSTGRES = bool(DATABASE_URL)
+
+if USE_POSTGRES:
+    import psycopg2
+    import psycopg2.errors
+
+SQLITE_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lumeway_subscribers.db")
+
+def get_db():
+    if USE_POSTGRES:
+        return psycopg2.connect(DATABASE_URL)
+    return sqlite3.connect(SQLITE_DB)
 
 def init_subscribers_db():
-    conn = sqlite3.connect(SUBSCRIBERS_DB)
-    conn.execute("""CREATE TABLE IF NOT EXISTS subscribers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT UNIQUE NOT NULL,
-        source TEXT DEFAULT 'popup',
-        transition_category TEXT,
-        subscribed_at TEXT NOT NULL,
-        unsubscribed_at TEXT
-    )""")
+    conn = get_db()
+    if USE_POSTGRES:
+        conn.execute("""CREATE TABLE IF NOT EXISTS subscribers (
+            id SERIAL PRIMARY KEY,
+            email TEXT UNIQUE NOT NULL,
+            source TEXT DEFAULT 'popup',
+            transition_category TEXT,
+            subscribed_at TEXT NOT NULL,
+            unsubscribed_at TEXT
+        )""")
+    else:
+        conn.execute("""CREATE TABLE IF NOT EXISTS subscribers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            source TEXT DEFAULT 'popup',
+            transition_category TEXT,
+            subscribed_at TEXT NOT NULL,
+            unsubscribed_at TEXT
+        )""")
     conn.commit()
     conn.close()
 
@@ -324,23 +346,27 @@ def subscribe():
         return jsonify({"error": "Please enter a valid email address."}), 400
     source = data.get("source", "popup")
     category = data.get("transition_category")
+    param = "%s" if USE_POSTGRES else "?"
+    sql = f"INSERT INTO subscribers (email, source, transition_category, subscribed_at) VALUES ({param}, {param}, {param}, {param})"
     try:
-        conn = sqlite3.connect(SUBSCRIBERS_DB)
-        conn.execute(
-            "INSERT INTO subscribers (email, source, transition_category, subscribed_at) VALUES (?, ?, ?, ?)",
-            (email, source, category, datetime.now(timezone.utc).isoformat())
-        )
+        conn = get_db()
+        conn.execute(sql, (email, source, category, datetime.now(timezone.utc).isoformat()))
         conn.commit()
         conn.close()
         return jsonify({"ok": True, "message": "You're on the list!"})
-    except sqlite3.IntegrityError:
-        return jsonify({"ok": True, "message": "You're already on the list!"})
     except Exception as e:
+        if "UNIQUE" in str(e) or "unique" in str(e) or "duplicate key" in str(e):
+            try:
+                conn.rollback()
+            except Exception:
+                pass
+            conn.close()
+            return jsonify({"ok": True, "message": "You're already on the list!"})
         return jsonify({"error": "Something went wrong. Please try again."}), 500
 
 @app.route("/api/subscribers/count")
 def subscriber_count():
-    conn = sqlite3.connect(SUBSCRIBERS_DB)
+    conn = get_db()
     count = conn.execute("SELECT COUNT(*) FROM subscribers WHERE unsubscribed_at IS NULL").fetchone()[0]
     conn.close()
     return jsonify({"count": count})
