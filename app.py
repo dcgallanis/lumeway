@@ -678,6 +678,27 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
   <title>{{ post.get('title', 'Blog') }} — Lumeway Blog</title>
   <meta name="description" content="{{ post.get('excerpt', '') }}"/>
   <meta name="p:domain_verify" content="730a746e44038ebaf9f0330e062795d6"/>
+  <link rel="canonical" href="https://lumeway.co/blog/{{ post.get('slug', '') }}"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:site_name" content="Lumeway"/>
+  <meta property="og:title" content="{{ post.get('title', 'Blog') }} — Lumeway"/>
+  <meta property="og:description" content="{{ post.get('excerpt', '') }}"/>
+  <meta property="og:url" content="https://lumeway.co/blog/{{ post.get('slug', '') }}"/>
+  <meta name="twitter:card" content="summary"/>
+  <meta name="twitter:title" content="{{ post.get('title', 'Blog') }} — Lumeway"/>
+  <meta name="twitter:description" content="{{ post.get('excerpt', '') }}"/>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{ post.get('title', '') }}",
+    "description": "{{ post.get('excerpt', '') }}",
+    "datePublished": "{{ post.get('date', '') }}",
+    "author": {"@type": "Organization", "name": "Lumeway", "url": "https://lumeway.co"},
+    "publisher": {"@type": "Organization", "name": "Lumeway", "url": "https://lumeway.co"},
+    "mainEntityOfPage": "https://lumeway.co/blog/{{ post.get('slug', '') }}"
+  }
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
