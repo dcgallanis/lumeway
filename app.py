@@ -835,7 +835,7 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
       </a>
     </div>
     <div class="nav-right">
-      <a href="/chat" class="btn-ghost">Try it free</a>
+      <a href="/chat" target="_blank" class="btn-ghost">Try it free</a>
       <a href="/#waitlist" class="btn-primary">Join waitlist</a>
     </div>
   </nav>

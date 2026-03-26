@@ -91,6 +91,16 @@
       z-index: 0;
     }
 
+    .chat-layout {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      max-width: 1020px;
+      align-items: flex-start;
+      z-index: 1;
+      position: relative;
+    }
+
     .shell {
       width: 100%;
       max-width: 700px;
@@ -104,6 +114,43 @@
       position: relative;
       z-index: 1;
       animation: rise 0.55s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .chat-sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      animation: rise 0.55s cubic-bezier(0.22,1,0.36,1) 0.15s both;
+      z-index: 1;
+      position: relative;
+    }
+    .sidebar-card {
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .sidebar-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--navy);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-card p {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+    .sidebar-card .feature-icon {
+      font-size: 16px;
+    }
+    @media (max-width: 900px) {
+      .chat-sidebar { display: none; }
     }
 
     @keyframes rise {
@@ -604,6 +651,7 @@
 </head>
 <body>
 
+<div class="chat-layout">
 <div class="shell">
   <!-- Header -->
   <div class="header">
@@ -659,6 +707,22 @@
     <span class="footer-text">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor. &nbsp;·&nbsp; <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank">Pinterest</a> &nbsp;·&nbsp; <a href="https://www.etsy.com/shop/LumewayTemplates" rel="noopener" target="_blank">Etsy</a></span>
   </div>
 </div>
+
+<div class="chat-sidebar">
+  <div class="sidebar-card">
+    <h3><span class="feature-icon">&#x1F4CB;</span> Summary</h3>
+    <p>Tap the <strong>Summary</strong> button at the top of the chat at any time to get a clear recap of everything discussed so far — key steps, deadlines, and action items pulled from your conversation.</p>
+  </div>
+  <div class="sidebar-card">
+    <h3><span class="feature-icon">&#x2B07;</span> Checklist</h3>
+    <p>Tap <strong>Checklist</strong> to download a personalized to-do list based on your situation. It pulls action items from your conversation into a simple checklist you can save or print.</p>
+  </div>
+  <div class="sidebar-card">
+    <h3><span class="feature-icon">&#x1F4A1;</span> Tips</h3>
+    <p>Be as specific as you can — include your state, timeline, and what you've already done. The more context you share, the more tailored your guidance will be.</p>
+  </div>
+</div>
+</div><!-- end chat-layout -->
 
 <script>
   let history = [];
