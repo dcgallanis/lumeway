@@ -531,6 +531,45 @@ def faq():
 def templates():
     return send_from_directory(".", "templates.html")
 
+@app.route("/robots.txt")
+def robots_txt():
+    return Response("""User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://lumeway.co/sitemap.xml
+""", mimetype="text/plain")
+
+@app.route("/sitemap.xml")
+def sitemap_xml():
+    pages = [
+        ("https://lumeway.co/", "weekly", "1.0"),
+        ("https://lumeway.co/about", "monthly", "0.7"),
+        ("https://lumeway.co/blog", "daily", "0.8"),
+        ("https://lumeway.co/chat", "monthly", "0.9"),
+        ("https://lumeway.co/job-loss", "weekly", "0.9"),
+        ("https://lumeway.co/divorce", "weekly", "0.9"),
+        ("https://lumeway.co/loss-of-spouse", "weekly", "0.9"),
+        ("https://lumeway.co/relocation", "weekly", "0.9"),
+        ("https://lumeway.co/disability", "weekly", "0.9"),
+        ("https://lumeway.co/retirement", "weekly", "0.9"),
+        ("https://lumeway.co/templates", "weekly", "0.8"),
+        ("https://lumeway.co/faq", "monthly", "0.6"),
+        ("https://lumeway.co/privacy", "monthly", "0.3"),
+        ("https://lumeway.co/terms", "monthly", "0.3"),
+    ]
+    # Add blog posts dynamically
+    blog_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "blog-posts")
+    for f in globmod.glob(os.path.join(blog_dir, "*.html")) + globmod.glob(os.path.join(blog_dir, "*.md")):
+        slug = os.path.splitext(os.path.basename(f))[0]
+        pages.append((f"https://lumeway.co/blog/{slug}", "monthly", "0.7"))
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for url, freq, priority in pages:
+        xml += f"  <url><loc>{url}</loc><changefreq>{freq}</changefreq><priority>{priority}</priority></url>\n"
+    xml += "</urlset>"
+    return Response(xml, mimetype="application/xml")
+
 BLOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "blog-posts")
 
 def parse_html_post(filepath):
