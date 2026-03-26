@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, Response, render_template_string
+from flask import Flask, request, jsonify, send_from_directory, Response, render_template_string, redirect
 from flask_cors import CORS
 import anthropic
 import csv
@@ -495,9 +495,13 @@ def about():
 def privacy():
     return send_from_directory(".", "privacy.html")
 
+@app.route("/estate")
+def estate():
+    return send_from_directory(".", "estate.html")
+
 @app.route("/loss-of-spouse")
 def loss_of_spouse():
-    return send_from_directory(".", "loss-of-spouse.html")
+    return redirect("/estate", code=301)
 
 @app.route("/divorce")
 def divorce():
