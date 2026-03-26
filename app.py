@@ -487,6 +487,10 @@ def home():
 def chat_page():
     return send_from_directory(".", "index.html")
 
+@app.route("/emergency-kit")
+def emergency_kit():
+    return send_from_directory(".", "emergency-kit.html")
+
 @app.route("/about")
 def about():
     return send_from_directory(".", "about.html")
@@ -630,6 +634,7 @@ def sitemap_xml():
         ("https://lumeway.co/templates", "weekly", "0.8"),
         ("https://lumeway.co/faq", "monthly", "0.6"),
         ("https://lumeway.co/contact", "monthly", "0.6"),
+        ("https://lumeway.co/emergency-kit", "monthly", "0.8"),
         ("https://lumeway.co/privacy", "monthly", "0.3"),
         ("https://lumeway.co/terms", "monthly", "0.3"),
     ]
