@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QHWJDRDR9R"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QHWJDRDR9R');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us — Lumeway</title>
+  <meta name="description" content="Get in touch with the Lumeway team. Questions, feedback, or partnership inquiries — we'd love to hear from you."/>
+  <link rel="canonical" href="https://lumeway.co/contact"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="Lumeway"/>
+  <meta property="og:title" content="Contact Us — Lumeway"/>
+  <meta property="og:description" content="Get in touch with the Lumeway team. Questions, feedback, or partnership inquiries — we'd love to hear from you."/>
+  <meta property="og:url" content="https://lumeway.co/contact"/>
+  <meta name="twitter:card" content="summary"/>
+  <meta name="twitter:title" content="Contact Us — Lumeway"/>
+  <meta name="twitter:description" content="Get in touch with the Lumeway team. Questions, feedback, or partnership inquiries — we'd love to hear from you."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #1B2A38; --muted: #6E7D8A; --navy: #1B3A5C; --gold: #B8977E; --accent: #1B3A5C; --accent-light: #B8977E; --border: #E4DDD3; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 32px; height: 32px; background: var(--navy); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+    .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text); }
+    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost:hover { background: var(--navy); color: var(--cream); }
+    .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .nav-left { display: flex; align-items: center; gap: 28px; }
+    .nav-right { display: flex; gap: 12px; align-items: center; }
+    .nav-dropdown { position: relative; }
+    .nav-drop-btn { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
+    .nav-drop-btn:hover { color: var(--navy); }
+    .nav-drop-btn .chev { display: inline-block; transition: transform 0.2s ease; }
+    .nav-drop-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+    .nav-drop-menu { display: none; position: absolute; top: calc(100% + 8px); left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 200px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
+    .nav-drop-menu a { display: block; padding: 9px 12px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 7px; }
+    .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--cream); color: var(--navy); }
+    .nav-drop-menu .menu-div { height: 1px; background: var(--border); margin: 4px 6px; }
+    .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
+
+    .page { max-width: 580px; margin: 0 auto; padding: 120px 24px 64px; }
+    .page-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+    .page-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 52px); font-weight: 300; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .page-intro { font-size: 16px; font-weight: 300; line-height: 1.7; color: var(--muted); margin-bottom: 40px; }
+
+    .contact-form { display: flex; flex-direction: column; gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 13px; font-weight: 500; color: var(--text); }
+    .form-group input, .form-group textarea, .form-group select {
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 300;
+      padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px;
+      background: var(--warm-white); color: var(--text); outline: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--navy); }
+    .form-group textarea { resize: vertical; min-height: 140px; }
+    .form-group select { cursor: pointer; }
+    .form-submit {
+      display: inline-block; padding: 14px 32px; border: none; border-radius: 100px;
+      background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; align-self: flex-start;
+    }
+    .form-submit:hover { background: var(--accent-light); transform: translateY(-2px); }
+    .form-success { display: none; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: center; }
+    .form-success h2 { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--navy); margin-bottom: 8px; }
+    .form-success p { font-size: 15px; color: var(--muted); font-weight: 300; }
+
+    .contact-alt { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .contact-alt p { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.7; }
+    .contact-alt a { color: var(--navy); text-decoration: underline; }
+
+    footer { padding: 28px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 64px; }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--navy); }
+    .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; }
+    .footer-note a { color: var(--muted); text-decoration: none; }
+    .footer-note a:hover { color: var(--navy); }
+    @media (max-width: 580px) { nav { padding: 16px 20px; } .page { padding: 100px 20px 48px; } }
+  </style>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://lumeway.co/"},{"@type":"ListItem","position":2,"name":"Contact","item":"https://lumeway.co/contact"}]}
+  </script>
+</head>
+<body>
+  <nav>
+    <div class="nav-left">
+      <a href="/" class="nav-logo">
+        <div class="nav-logo-icon">L</div>
+        <span class="nav-logo-text">Lumeway</span>
+      </a>
+      <div class="nav-dropdown">
+        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">&#9662;</span></button>
+        <div class="nav-drop-menu">
+          <a href="/loss-of-spouse">Death &amp; Estate</a>
+          <a href="/divorce">Divorce &amp; Separation</a>
+          <a href="/job-loss">Job Loss &amp; Income Crisis</a>
+          <a href="/relocation">Moving &amp; Relocation</a>
+          <a href="/disability">Disability &amp; Benefits</a>
+          <a href="/retirement">Retirement</a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">&#9662;</span></button>
+        <div class="nav-drop-menu">
+          <a href="/faq">FAQ</a>
+          <a href="/templates">Templates</a>
+          <a href="/blog">Blog</a>
+          <div class="menu-div"></div>
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <a href="/chat" class="btn-ghost">Try it free</a>
+      <a href="/#waitlist" class="btn-primary">Join waitlist</a>
+    </div>
+  </nav>
+
+  <div class="page">
+    <p class="page-label">Get in touch</p>
+    <h1 class="page-title">Contact Us</h1>
+    <p class="page-intro">Have a question, feedback, or partnership inquiry? We'd love to hear from you.</p>
+
+    <form class="contact-form" id="contactForm" onsubmit="return submitContact(event)">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required placeholder="Your name"/>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required placeholder="you@example.com"/>
+      </div>
+      <div class="form-group">
+        <label for="subject">Subject</label>
+        <select id="subject" name="subject">
+          <option value="general">General Question</option>
+          <option value="feedback">Feedback</option>
+          <option value="partnership">Partnership Inquiry</option>
+          <option value="templates">Templates &amp; Products</option>
+          <option value="bug">Report an Issue</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" required placeholder="How can we help?"></textarea>
+      </div>
+      <button type="submit" class="form-submit">Send Message</button>
+    </form>
+
+    <div class="form-success" id="successMsg">
+      <h2>Message sent</h2>
+      <p>Thanks for reaching out. We'll get back to you at the email you provided.</p>
+    </div>
+
+    <div class="contact-alt">
+      <p>You can also email us directly at <a href="mailto:hello@lumeway.co">hello@lumeway.co</a></p>
+    </div>
+  </div>
+
+  <footer>
+    <span class="footer-logo">Lumeway</span>
+    <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. &nbsp;·&nbsp; <a href="/about">About</a> &nbsp;·&nbsp; <a href="/privacy">Privacy Policy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a> &nbsp;·&nbsp; <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank">Pinterest</a> &nbsp;·&nbsp; <a href="https://www.etsy.com/shop/LumewayTemplates" rel="noopener" target="_blank">Etsy</a></p>
+  </footer>
+
+  <script>
+  function submitContact(e) {
+    e.preventDefault();
+    var form = document.getElementById('contactForm');
+    var data = {
+      name: form.name.value,
+      email: form.email.value,
+      subject: form.subject.value,
+      message: form.message.value
+    };
+    fetch('/api/contact', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    }).then(function(r) { return r.json(); }).then(function(d) {
+      if (d.ok) {
+        form.style.display = 'none';
+        document.getElementById('successMsg').style.display = 'block';
+      }
+    }).catch(function() {
+      window.location = 'mailto:hello@lumeway.co?subject=' + encodeURIComponent(data.subject) + '&body=' + encodeURIComponent(data.message);
+    });
+    return false;
+  }
+  </script>
+</body>
+</html>

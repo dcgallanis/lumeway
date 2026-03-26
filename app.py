@@ -531,6 +531,37 @@ def faq():
 def templates():
     return send_from_directory(".", "templates.html")
 
+@app.route("/contact")
+def contact():
+    return send_from_directory(".", "contact.html")
+
+@app.route("/api/contact", methods=["POST"])
+def contact_form():
+    import smtplib
+    from email.mime.text import MIMEText
+    data = request.json or {}
+    name = data.get("name", "").strip()
+    email = data.get("email", "").strip()
+    subject = data.get("subject", "general")
+    message = data.get("message", "").strip()
+    if not name or not email or not message:
+        return jsonify({"error": "All fields are required."}), 400
+    # Store in database for backup
+    try:
+        conn = get_db()
+        param = "%s" if USE_POSTGRES else "?"
+        db_execute(conn, f"""CREATE TABLE IF NOT EXISTS contact_messages (
+            id {'SERIAL' if USE_POSTGRES else 'INTEGER'} PRIMARY KEY{'  AUTOINCREMENT' if not USE_POSTGRES else ''},
+            name TEXT, email TEXT, subject TEXT, message TEXT, created_at TEXT
+        )""")
+        db_execute(conn, f"INSERT INTO contact_messages (name, email, subject, message, created_at) VALUES ({param},{param},{param},{param},{param})",
+            (name, email, subject, message, datetime.now(timezone.utc).isoformat()))
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+    return jsonify({"ok": True})
+
 @app.route("/robots.txt")
 def robots_txt():
     return Response("""User-agent: *
@@ -556,6 +587,7 @@ def sitemap_xml():
         ("https://lumeway.co/retirement", "weekly", "0.9"),
         ("https://lumeway.co/templates", "weekly", "0.8"),
         ("https://lumeway.co/faq", "monthly", "0.6"),
+        ("https://lumeway.co/contact", "monthly", "0.6"),
         ("https://lumeway.co/privacy", "monthly", "0.3"),
         ("https://lumeway.co/terms", "monthly", "0.3"),
     ]
