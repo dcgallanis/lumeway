@@ -779,11 +779,30 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
     <div class="post-body">
       {{ post.get('body_html', '') | safe }}
     </div>
+    {% set category_links = {
+      'Job Loss': ('/job-loss', 'Job Loss & Income Crisis Guide'),
+      'Job Loss Worksheet': ('/job-loss', 'Job Loss & Income Crisis Guide'),
+      'Estate': ('/loss-of-spouse', 'Death & Estate Guide'),
+      'Death': ('/loss-of-spouse', 'Death & Estate Guide'),
+      'Divorce': ('/divorce', 'Divorce & Separation Guide'),
+      'Relocation': ('/relocation', 'Moving & Relocation Guide'),
+      'Moving': ('/relocation', 'Moving & Relocation Guide'),
+      'Disability': ('/disability', 'Disability & Benefits Guide'),
+      'Retirement': ('/retirement', 'Retirement Planning Guide')
+    } %}
+    {% set cat = post.get('category', '') %}
+    {% if cat in category_links %}
+    <div style="background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:28px;margin-top:48px;text-align:center">
+      <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:8px">Need a full step-by-step plan?</p>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Our {{ category_links[cat][1] }} walks you through timelines, deadlines, and resources.</p>
+      <a href="{{ category_links[cat][0] }}" style="display:inline-block;padding:12px 28px;background:var(--navy);color:var(--cream);border-radius:100px;font-size:14px;text-decoration:none">View the guide</a>
+    </div>
+    {% endif %}
     <a href="/blog" class="post-back">&larr; Back to all posts</a>
   </article>
   <footer>
     <span class="footer-logo">Lumeway</span>
-    <span class="footer-note">&copy; 2026 Lumeway. All rights reserved. <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></span>
+    <span class="footer-note">&copy; 2026 Lumeway. All rights reserved. | <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a> | <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank">Pinterest</a> &middot; <a href="https://www.etsy.com/shop/LumewayTemplates" rel="noopener" target="_blank">Etsy</a></span>
   </footer>
 </body>
 </html>"""
