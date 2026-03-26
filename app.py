@@ -828,7 +828,8 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
     .footer-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--navy)}
     .footer-note{font-size:12px;color:var(--muted);font-weight:300}
     .footer-note a{color:var(--muted)}
-    @media(max-width:580px){nav{padding:16px 20px}article{padding:100px 20px 48px}}
+    @media(max-width:768px){nav{padding:14px 20px}article{padding:85px 20px 48px}footer{padding:20px;flex-direction:column;text-align:center}}
+    @media(max-width:480px){nav{padding:12px 16px}.btn-ghost,.btn-primary{font-size:12px;padding:6px 14px}article{padding:75px 16px 36px}}
   </style>
 </head>
 <body>
