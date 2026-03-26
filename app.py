@@ -495,29 +495,63 @@ def about():
 def privacy():
     return send_from_directory(".", "privacy.html")
 
+# Category keywords that map transition pages to blog post categories
+TRANSITION_CATEGORIES = {
+    "loss-of-spouse": ["Estate", "Death", "Loss of Spouse", "Grief"],
+    "divorce": ["Divorce", "Separation"],
+    "job-loss": ["Job Loss", "Job Loss Worksheet", "Unemployment", "COBRA"],
+    "relocation": ["Relocation", "Moving"],
+    "disability": ["Disability", "Benefits"],
+    "retirement": ["Retirement"],
+}
+
+def inject_related_posts(html_file, categories):
+    """Read a transition page HTML and inject related blog post links before the footer."""
+    filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), html_file)
+    with open(filepath, "r") as f:
+        html = f.read()
+    posts = get_all_posts()
+    related = [p for p in posts if p.get("category", "") in categories][:4]
+    if not related:
+        return html
+    cards = ""
+    for p in related:
+        cards += f'''<a href="/blog/{p['slug']}" style="background:var(--warm-white,#FDFCFA);border:1px solid #E4DDD3;border-radius:12px;padding:24px;text-decoration:none;color:inherit;display:block;transition:transform 0.15s">
+          <span style="font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#B8977E">{p.get("category","")}</span>
+          <h3 style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:#1B3A5C;margin:8px 0">{p.get("title","Untitled")}</h3>
+          <p style="font-size:14px;color:#6E7D8A;font-weight:300;line-height:1.5">{p.get("excerpt","")[:120]}...</p>
+        </a>'''
+    section = f'''<div style="max-width:900px;margin:0 auto;padding:48px 24px 0">
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:#1B3A5C;text-align:center;margin-bottom:32px">Related Articles</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">{cards}</div>
+</div>'''
+    # Insert before footer
+    html = html.replace("<footer>", section + "\n<footer>", 1)
+    return html
+
 @app.route("/loss-of-spouse")
 def loss_of_spouse():
-    return send_from_directory(".", "loss-of-spouse.html")
+    return inject_related_posts("loss-of-spouse.html", TRANSITION_CATEGORIES["loss-of-spouse"])
 
 @app.route("/divorce")
 def divorce():
-    return send_from_directory(".", "divorce.html")
+    return inject_related_posts("divorce.html", TRANSITION_CATEGORIES["divorce"])
 
 @app.route("/job-loss")
 def job_loss():
-    return send_from_directory(".", "job-loss.html")
+    return inject_related_posts("job-loss.html", TRANSITION_CATEGORIES["job-loss"])
 
 @app.route("/relocation")
 def relocation():
-    return send_from_directory(".", "relocation.html")
+    return inject_related_posts("relocation.html", TRANSITION_CATEGORIES["relocation"])
 
 @app.route("/disability")
 def disability():
-    return send_from_directory(".", "disability.html")
+    return inject_related_posts("disability.html", TRANSITION_CATEGORIES["disability"])
 
 @app.route("/retirement")
 def retirement():
-    return send_from_directory(".", "retirement.html")
+    return inject_related_posts("retirement.html", TRANSITION_CATEGORIES["retirement"])
 
 @app.route("/research")
 def research():
