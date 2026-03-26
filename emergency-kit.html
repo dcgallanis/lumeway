@@ -223,6 +223,35 @@
   <p class="form-note">No spam. Unsubscribe anytime.</p>
 </section>
 
+<div id="downloadPanel" style="display:none">
+  <section style="max-width:640px;margin:0 auto;padding:48px 24px">
+    <div style="background:var(--warm-white);border:1px solid var(--border);border-radius:20px;padding:40px;text-align:center">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--navy);margin-bottom:8px">Your Emergency Kit</h2>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:28px">Click any guide to download the PDF.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;text-align:left">
+        <a href="/static/downloads/lumeway-free-checklist-job-loss.pdf" download style="display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all 0.15s;font-size:15px;font-weight:300">
+          <span style="font-size:22px">💼</span> Job Loss & Income Crisis Checklist
+        </a>
+        <a href="/static/downloads/lumeway-free-checklist-divorce.pdf" download style="display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all 0.15s;font-size:15px;font-weight:300">
+          <span style="font-size:22px">⚖️</span> Divorce & Separation Checklist
+        </a>
+        <a href="/static/downloads/lumeway-free-checklist-estate.pdf" download style="display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all 0.15s;font-size:15px;font-weight:300">
+          <span style="font-size:22px">🕊️</span> Death & Estate Checklist
+        </a>
+        <a href="/static/downloads/lumeway-free-checklist-relocation.pdf" download style="display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all 0.15s;font-size:15px;font-weight:300">
+          <span style="font-size:22px">🏠</span> Moving & Relocation Checklist
+        </a>
+        <a href="/static/downloads/lumeway-free-checklist-disability.pdf" download style="display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all 0.15s;font-size:15px;font-weight:300">
+          <span style="font-size:22px">🩺</span> Disability & Benefits Checklist
+        </a>
+        <a href="/static/downloads/lumeway-free-checklist-retirement.pdf" download style="display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all 0.15s;font-size:15px;font-weight:300">
+          <span style="font-size:22px">🌅</span> Retirement Planning Checklist
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+
 <div class="divider"></div>
 
 <section class="section">
@@ -294,6 +323,12 @@
 </footer>
 
 <script>
+function showDownloads() {
+  var panel = document.getElementById('downloadPanel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 function submitKit(e) {
   e.preventDefault();
   var form = e.target;
@@ -312,8 +347,9 @@ function submitKit(e) {
   .then(function(data) {
     if (data.ok) {
       msg.className = 'form-msg success';
-      msg.textContent = "You're on the list. We'll send the kit to your inbox.";
+      msg.innerHTML = "You're in. Your downloads are ready below.";
       form.querySelector('input[type="email"]').value = '';
+      showDownloads();
     } else {
       msg.className = 'form-msg error';
       msg.textContent = data.message || 'Something went wrong. Try again.';
