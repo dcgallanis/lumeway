@@ -32,6 +32,10 @@ fi
 
 echo ""
 echo "$count post(s) synced to blog-posts/"
-echo ""
-echo "To deploy, run:"
-echo "  git add blog-posts/ && git commit -m 'Add new blog posts' && git push"
+
+# Auto commit and push
+cd "$(dirname "$0")"
+git add blog-posts/
+git commit -m "Add $count new blog post(s) from cowork"
+git push origin HEAD:main
+echo "Deployed to main."

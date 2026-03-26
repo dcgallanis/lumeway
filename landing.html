@@ -151,8 +151,9 @@
     /* ── Mobile ── */
     @media (max-width: 768px) {
       nav { padding: 14px 20px; }
-      .nav-left { gap: 16px; }
-      .nav-dropdown { display: none; }
+      .nav-left { gap: 12px; }
+      .nav-right { display: none; }
+      .nav-drop-btn { font-size: 13px; }
       .hero { padding: 90px 20px 48px; min-height: auto; }
       .hero-title { font-size: clamp(36px, 8vw, 60px); }
       .hero-subtitle { font-size: 15px; }
@@ -169,7 +170,7 @@
     @media (max-width: 480px) {
       nav { padding: 12px 16px; }
       .nav-logo-text { font-size: 17px; }
-      .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; }
+      .nav-drop-btn { font-size: 12px; }
       .hero { padding: 80px 16px 36px; }
     }
   </style>
@@ -217,6 +218,7 @@
       <div class="nav-dropdown">
         <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">▾</span></button>
         <div class="nav-drop-menu">
+          <a href="/emergency-kit">Free Emergency Kit</a>
           <a href="/faq">FAQ</a>
           <a href="/blog">Blog</a>
           <div class="menu-div"></div>
