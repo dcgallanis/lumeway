@@ -475,6 +475,10 @@ manual review. These indicate either:
 - Potential guardrail weaknesses that need strengthening"""
 
 
+@app.route("/.well-known/<path:filename>")
+def well_known(filename):
+    return send_from_directory(".well-known", filename)
+
 @app.route("/")
 def home():
     return send_from_directory(".", "landing.html")
