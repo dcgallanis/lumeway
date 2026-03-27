@@ -5,3 +5,4 @@ gunicorn
 markdown
 psycopg2-binary
 python-dotenv
+stripe

@@ -11,12 +11,16 @@ import re
 import sqlite3
 from datetime import datetime, timezone
 from dotenv import load_dotenv
+import stripe
 import conversation_log
 
 load_dotenv()
 
 app = Flask(__name__, static_folder=".")
 CORS(app)
+
+stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+STRIPE_PK = os.environ.get("STRIPE_PUBLISHABLE_KEY", "pk_live_51TFe15F2xDmfC6kmDm4emI9w3eeL0OHv7TmfYWmjr4BXFa9q23TgaEWjjD4HMLJXNwaaWGZRovgKxMeoqAW2TDSz00lcV0duqv")
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 USE_POSTGRES = bool(DATABASE_URL)
@@ -576,6 +580,43 @@ def terms():
 @app.route("/faq")
 def faq():
     return send_from_directory(".", "faq.html")
+
+PRODUCTS = {
+    "master": {"name": "Life Transition Bundle", "price": 3600, "desc": "All 6 category bundles — 89+ documents"},
+    "job-loss": {"name": "Job Loss Survivor Kit", "price": 1800, "desc": "14 documents for job loss & income crisis"},
+    "estate": {"name": "Estate & Survivor Bundle", "price": 1800, "desc": "16 documents for death & estate"},
+    "divorce": {"name": "Divorce & Separation Bundle", "price": 1800, "desc": "14 documents for divorce & separation"},
+    "disability": {"name": "Disability & Benefits Bundle", "price": 1800, "desc": "15 documents for disability & benefits"},
+    "relocation": {"name": "Moving & Relocation Bundle", "price": 1500, "desc": "13 documents for moving & relocation"},
+    "retirement": {"name": "Retirement Planning Bundle", "price": 1800, "desc": "15 documents for retirement planning"},
+}
+
+@app.route("/api/create-checkout", methods=["POST"])
+def create_checkout():
+    data = request.get_json()
+    product_id = data.get("product_id")
+    if product_id not in PRODUCTS:
+        return jsonify({"error": "Invalid product"}), 400
+    product = PRODUCTS[product_id]
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {"name": product["name"], "description": product["desc"]},
+                    "unit_amount": product["price"],
+                },
+                "quantity": 1,
+            }],
+            mode="payment",
+            success_url=request.host_url + "templates?purchased=" + product_id,
+            cancel_url=request.host_url + "templates",
+            metadata={"product_id": product_id},
+        )
+        return jsonify({"url": session.url})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/templates")
 def templates():

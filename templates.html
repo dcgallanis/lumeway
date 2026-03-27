@@ -65,6 +65,20 @@
     .featured-includes li { font-size: 13.5px; color: var(--text); font-weight: 400; line-height: 1.6; list-style: none; padding-left: 20px; position: relative; }
     .featured-includes li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 600; }
     .badge-soon { display: inline-block; background: var(--cream); border: 1px solid var(--border); color: var(--muted); font-size: 12px; font-weight: 500; padding: 6px 16px; border-radius: 100px; }
+    .price { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 500; color: var(--navy); margin-bottom: 16px; }
+    .price span { font-size: 14px; font-weight: 300; color: var(--muted); font-family: 'DM Sans', sans-serif; }
+    .featured-price { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
+    .featured-price span { font-size: 15px; font-weight: 300; color: var(--muted); font-family: 'DM Sans', sans-serif; }
+    .featured-savings { font-size: 13px; color: var(--gold); font-weight: 500; margin-bottom: 20px; }
+    .btn-buy { display: inline-block; padding: 12px 28px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .btn-buy:hover { background: #244a6e; transform: translateY(-1px); }
+    .btn-buy:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-buy-outline { display: inline-block; padding: 10px 24px; border: 1px solid var(--navy); border-radius: 100px; background: transparent; color: var(--navy); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .btn-buy-outline:hover { background: var(--navy); color: var(--cream); }
+    .free-section { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; padding: 36px 40px; margin-top: 56px; text-align: center; }
+    .free-badge { display: inline-block; background: #2d6a4f; color: white; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; margin-bottom: 16px; }
+    .purchase-success { background: #2d6a4f; color: white; padding: 16px 24px; border-radius: 12px; text-align: center; margin-bottom: 32px; font-size: 15px; }
+    .purchase-success a { color: white; text-decoration: underline; }
 
     .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
     .product-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; padding: 28px; transition: box-shadow 0.2s, transform 0.2s; }
@@ -117,6 +131,7 @@
       <div class="nav-dropdown">
         <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">▾</span></button>
         <div class="nav-drop-menu">
+          <a href="/templates">Templates</a>
           <a href="/faq">FAQ</a>
           <a href="/blog">Blog</a>
           <div class="menu-div"></div>
@@ -140,103 +155,126 @@
   </div>
 
   <div class="section">
-    <div class="featured-card">
+    <div id="purchase-msg" class="purchase-success" style="display:none;"></div>
+
+    <div class="featured-card" id="master">
       <span class="featured-badge">Best Value</span>
-      <h2 class="featured-title">The Master Bundle</h2>
-      <p class="featured-desc">Everything Lumeway offers in one package. All six category bundles — covering every major life transition — at a fraction of the individual price.</p>
+      <h2 class="featured-title">Life Transition Bundle</h2>
+      <p class="featured-desc">Everything Lumeway offers in one package. All six category bundles — 89+ documents covering every major life transition.</p>
       <ul class="featured-includes">
-        <li>Job Loss &amp; Income Crisis Bundle</li>
-        <li>Death &amp; Estate Bundle</li>
-        <li>Divorce &amp; Separation Bundle</li>
-        <li>Disability &amp; Benefits Bundle</li>
-        <li>Moving &amp; Relocation Bundle</li>
-        <li>Retirement Planning Bundle</li>
+        <li>Job Loss &amp; Income Crisis (14 docs)</li>
+        <li>Death &amp; Estate (16 docs)</li>
+        <li>Divorce &amp; Separation (14 docs)</li>
+        <li>Disability &amp; Benefits (15 docs)</li>
+        <li>Moving &amp; Relocation (13 docs)</li>
+        <li>Retirement Planning (15 docs)</li>
+        <li>CBT Thought Record Worksheet</li>
+        <li>Values Clarification Worksheet</li>
       </ul>
-      <span class="badge-soon">Coming soon</span>
+      <div class="featured-price">$36 <span>one-time</span></div>
+      <div class="featured-savings">Save $71 vs. buying individually</div>
+      <button class="btn-buy" onclick="buyProduct('master')">Get the Bundle</button>
     </div>
 
     <h2 class="section-title">Category bundles</h2>
     <p class="section-subtitle">Focused planning tools for the transition you are navigating right now.</p>
 
     <div class="product-grid">
-      <div class="product-card">
+      <div class="product-card" id="job-loss">
         <div class="product-emoji">💼</div>
-        <h3 class="product-title">Job Loss &amp; Income Crisis</h3>
-        <p class="product-desc">Worksheets and checklists to help you stay organized through unemployment, COBRA, and financial stabilization.</p>
+        <h3 class="product-title">Job Loss Survivor Kit</h3>
+        <p class="product-desc">14 worksheets and checklists for unemployment, COBRA, and financial stabilization.</p>
         <ul class="product-items">
           <li>Severance review checklist</li>
           <li>Unemployment process guide</li>
           <li>COBRA vs. Marketplace comparison</li>
           <li>Budget restructuring worksheet</li>
-          <li>Benefits tracking spreadsheet</li>
+          <li>Job search tracker &amp; more</li>
         </ul>
-        <span class="badge-soon">Coming soon</span>
+        <div class="price">$18 <span>one-time</span></div>
+        <button class="btn-buy-outline" onclick="buyProduct('job-loss')">Buy now</button>
       </div>
-      <div class="product-card">
+      <div class="product-card" id="estate">
         <div class="product-emoji">🕊️</div>
-        <h3 class="product-title">Death &amp; Estate</h3>
-        <p class="product-desc">Step-by-step guidance for the hardest days — estate settlement, benefits claims, and next steps.</p>
+        <h3 class="product-title">Estate &amp; Survivor Bundle</h3>
+        <p class="product-desc">16 documents for estate settlement, benefits claims, and next steps.</p>
         <ul class="product-items">
-          <li>First 48 hours checklist</li>
-          <li>Death certificate tracker</li>
-          <li>Probate timeline guide</li>
+          <li>First 24 hours guide</li>
           <li>Survivor benefits worksheet</li>
+          <li>Executor guidance checklist</li>
           <li>Account notification letters</li>
+          <li>Digital accounts inventory &amp; more</li>
         </ul>
-        <span class="badge-soon">Coming soon</span>
+        <div class="price">$18 <span>one-time</span></div>
+        <button class="btn-buy-outline" onclick="buyProduct('estate')">Buy now</button>
       </div>
-      <div class="product-card">
+      <div class="product-card" id="divorce">
         <div class="product-emoji">⚖️</div>
-        <h3 class="product-title">Divorce &amp; Separation</h3>
-        <p class="product-desc">Organize finances, understand the process, and protect your interests.</p>
+        <h3 class="product-title">Divorce &amp; Separation Bundle</h3>
+        <p class="product-desc">14 documents to organize finances, track the process, and protect your interests.</p>
         <ul class="product-items">
-          <li>Pre-filing preparation checklist</li>
-          <li>Asset and debt inventory</li>
-          <li>QDRO reference guide</li>
+          <li>Financial disclosure worksheet</li>
+          <li>Asset &amp; debt inventory</li>
+          <li>Co-parenting worksheet</li>
           <li>Name change checklist</li>
-          <li>Co-parenting schedule template</li>
+          <li>Financial reset planner &amp; more</li>
         </ul>
-        <span class="badge-soon">Coming soon</span>
+        <div class="price">$18 <span>one-time</span></div>
+        <button class="btn-buy-outline" onclick="buyProduct('divorce')">Buy now</button>
       </div>
-      <div class="product-card">
+      <div class="product-card" id="disability">
         <div class="product-emoji">🩺</div>
-        <h3 class="product-title">Disability &amp; Benefits</h3>
-        <p class="product-desc">Navigate SSDI, SSI, and workplace accommodations with confidence.</p>
+        <h3 class="product-title">Disability &amp; Benefits Bundle</h3>
+        <p class="product-desc">15 documents for SSDI, SSI, and workplace accommodations.</p>
         <ul class="product-items">
           <li>SSDI application prep guide</li>
-          <li>Medical documentation checklist</li>
-          <li>Benefits comparison worksheet</li>
-          <li>Appeal letter templates</li>
-          <li>Accommodation request letter</li>
+          <li>Workplace accommodation request</li>
+          <li>Benefits tracking worksheet</li>
+          <li>Symptom journal</li>
+          <li>Appeal letter template &amp; more</li>
         </ul>
-        <span class="badge-soon">Coming soon</span>
+        <div class="price">$18 <span>one-time</span></div>
+        <button class="btn-buy-outline" onclick="buyProduct('disability')">Buy now</button>
       </div>
-      <div class="product-card">
+      <div class="product-card" id="relocation">
         <div class="product-emoji">🏠</div>
-        <h3 class="product-title">Moving &amp; Relocation</h3>
-        <p class="product-desc">A complete 90-day plan for everything that changes when you move states.</p>
+        <h3 class="product-title">Moving &amp; Relocation Bundle</h3>
+        <p class="product-desc">13 documents for everything that changes when you move.</p>
         <ul class="product-items">
-          <li>90-day relocation timeline</li>
           <li>Address change master checklist</li>
-          <li>State transfer requirements guide</li>
-          <li>School records transfer checklist</li>
-          <li>Moving expense tracker</li>
+          <li>Lease termination letter</li>
+          <li>Utility transfer checklist</li>
+          <li>School records transfer</li>
+          <li>Vehicle registration guide &amp; more</li>
         </ul>
-        <span class="badge-soon">Coming soon</span>
+        <div class="price">$15 <span>one-time</span></div>
+        <button class="btn-buy-outline" onclick="buyProduct('relocation')">Buy now</button>
       </div>
-      <div class="product-card">
+      <div class="product-card" id="retirement">
         <div class="product-emoji">🌅</div>
-        <h3 class="product-title">Retirement Planning</h3>
-        <p class="product-desc">Medicare, Social Security, and everything else you need to plan for retirement.</p>
+        <h3 class="product-title">Retirement Planning Bundle</h3>
+        <p class="product-desc">15 documents for Medicare, Social Security, and retirement planning.</p>
         <ul class="product-items">
-          <li>Retirement readiness scorecard</li>
-          <li>Medicare enrollment guide</li>
-          <li>Social Security timing worksheet</li>
-          <li>RMD planning calculator</li>
-          <li>Letter of instruction template</li>
+          <li>Social Security application guide</li>
+          <li>Medicare enrollment checklist</li>
+          <li>Pension comparison worksheet</li>
+          <li>RMD distribution planner</li>
+          <li>Legacy letter template &amp; more</li>
         </ul>
-        <span class="badge-soon">Coming soon</span>
+        <div class="price">$18 <span>one-time</span></div>
+        <button class="btn-buy-outline" onclick="buyProduct('retirement')">Buy now</button>
       </div>
+    </div>
+
+    <div class="free-section" id="emergency-kit">
+      <span class="free-badge">Free Resource</span>
+      <h2 class="section-title" style="margin-bottom:12px;">Life Transition Emergency Kit</h2>
+      <p class="section-subtitle" style="max-width:520px;margin:0 auto 24px;">A starter guide for anyone navigating a major life change. Enter your email to download instantly.</p>
+      <form id="kit-form" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;max-width:420px;margin:0 auto;">
+        <input type="email" id="kit-email" placeholder="Your email" required style="flex:1;min-width:200px;padding:10px 16px;border:1px solid var(--border);border-radius:100px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;" />
+        <button type="submit" class="btn-buy" style="padding:10px 24px;">Download free</button>
+      </form>
+      <p id="kit-msg" style="display:none;margin-top:12px;font-size:13px;color:#2d6a4f;"></p>
     </div>
 
     <div class="trust-bar">
@@ -282,6 +320,69 @@
       });
       document.addEventListener('click', function() { dropdowns.forEach(function(dd) { dd.classList.remove('open'); dd.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false'); }); });
     })();
+
+    // Show purchase success message
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var purchased = params.get('purchased');
+      if (purchased) {
+        var msg = document.getElementById('purchase-msg');
+        msg.textContent = 'Thank you for your purchase! Check your email for download instructions.';
+        msg.style.display = 'block';
+        window.history.replaceState({}, '', '/templates');
+        msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    })();
+
+    // Stripe checkout
+    function buyProduct(productId) {
+      var btn = event.target;
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+      fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_id: productId })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert('Something went wrong. Please try again.');
+          btn.disabled = false;
+          btn.textContent = productId === 'master' ? 'Get the Bundle' : 'Buy now';
+        }
+      })
+      .catch(function() {
+        alert('Something went wrong. Please try again.');
+        btn.disabled = false;
+        btn.textContent = productId === 'master' ? 'Get the Bundle' : 'Buy now';
+      });
+    }
+
+    // Emergency Kit download
+    document.getElementById('kit-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var email = document.getElementById('kit-email').value;
+      var msg = document.getElementById('kit-msg');
+      fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, source: 'emergency-kit' })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        msg.style.display = 'block';
+        msg.textContent = 'Downloading your Emergency Kit...';
+        setTimeout(function() { window.location.href = '/static/downloads/Life-Transition-Emergency-Kit.pdf'; }, 500);
+      })
+      .catch(function() {
+        msg.style.display = 'block';
+        msg.textContent = 'Something went wrong. Please try again.';
+        msg.style.color = '#c0392b';
+      });
+    });
   </script>
 </body>
 </html>
