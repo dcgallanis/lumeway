@@ -933,7 +933,15 @@ def purchase_success():
                 row = cur.fetchone()
                 conn.close()
                 if not row:
+                    print(f"No existing purchase found, fulfilling now...")
                     fulfill_purchase(session_data)
+                else:
+                    print(f"Purchase already exists in DB, token={row[0]}")
+                    # Resend email in case it failed before
+                    email = getattr(session_data.customer_details, 'email', None) or getattr(session_data, 'customer_email', None)
+                    if email:
+                        print(f"Resending purchase email to {email}")
+                        send_purchase_email(email, product_id, product.get("name", ""), row[0])
                 return render_template_string(PURCHASE_SUCCESS_HTML, product_name=product.get("name", "your templates"))
         except Exception as e:
             import traceback
