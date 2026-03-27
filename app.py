@@ -665,13 +665,55 @@ def faq():
     return send_from_directory(".", "faq.html")
 
 PRODUCTS = {
-    "master": {"name": "Life Transition Bundle", "price": 3600, "desc": "All 6 category bundles — 89+ documents"},
-    "job-loss": {"name": "Job Loss Survivor Kit", "price": 1800, "desc": "14 documents for job loss & income crisis"},
-    "estate": {"name": "Estate & Survivor Bundle", "price": 1800, "desc": "16 documents for death & estate"},
-    "divorce": {"name": "Divorce & Separation Bundle", "price": 1800, "desc": "14 documents for divorce & separation"},
-    "disability": {"name": "Disability & Benefits Bundle", "price": 1800, "desc": "15 documents for disability & benefits"},
-    "relocation": {"name": "Moving & Relocation Bundle", "price": 1500, "desc": "13 documents for moving & relocation"},
-    "retirement": {"name": "Retirement Planning Bundle", "price": 1800, "desc": "15 documents for retirement planning"},
+    "master": {"name": "Life Transition Bundle", "price": 3600, "desc": "All 6 category bundles — 89+ documents",
+        "headline": "Every Transition. Every Template. One Download.",
+        "emoji": "📦", "count": "89+",
+        "long_desc": "Everything Lumeway offers in one package. All six category bundles covering job loss, estate settlement, divorce, disability, relocation, and retirement — plus bonus wellness worksheets.",
+        "includes": ["Job Loss Survivor Kit (14 docs)", "Estate & Survivor Bundle (16 docs)", "Divorce & Separation Bundle (14 docs)", "Disability & Benefits Bundle (15 docs)", "Moving & Relocation Bundle (13 docs)", "Retirement Planning Bundle (15 docs)", "CBT Thought Record Worksheet", "Values Clarification Worksheet", "Grief Stages Psychoeducation Handout"],
+        "features": ["Editable .docx files — works in Word and Google Docs", "Step-by-step worksheets with plain-language instructions", "Information organizers to keep everything in one place", "First 24 Hours guides for each transition", "Professionally formatted and print-ready"],
+        "transition_page": None},
+    "job-loss": {"name": "Job Loss Survivor Kit", "price": 1800, "desc": "14 documents for job loss & income crisis",
+        "headline": "Lost Your Job. Know Your Next Move.",
+        "emoji": "💼", "count": "14",
+        "long_desc": "Worksheets, checklists, and letter templates to help you stay organized through unemployment, COBRA decisions, severance negotiations, and financial stabilization.",
+        "includes": ["Severance Response Letter", "Severance Counter-Offer Letter", "COBRA Election Letter", "Hardship Letter to Creditor", "General Authorization Letter", "401(k) Rollover Request Letter", "Professional Reference Request Letter", "LinkedIn Networking Message Template", "Unemployment Appeal Information Organizer", "Health Insurance Comparison Worksheet", "Job Search Tracker Worksheet", "Budget Reduction Worksheet", "Job Offer Evaluation Worksheet", "First 24 Hours After Losing Your Job"],
+        "features": ["Editable .docx files — works in Word and Google Docs", "Step-by-step worksheets with plain-language instructions", "Letter templates ready to customize and send", "Budget and job search tracking tools", "First 24 Hours action guide"],
+        "transition_page": "/job-loss"},
+    "estate": {"name": "Estate & Survivor Bundle", "price": 1800, "desc": "16 documents for death & estate",
+        "headline": "The Hardest Paperwork You'll Ever Do. We Made It Easier.",
+        "emoji": "🕊️", "count": "16",
+        "long_desc": "Step-by-step guidance for the hardest days — notification letters, benefits claims, estate settlement tools, and a complete first-steps guide.",
+        "includes": ["Survivor Benefits Information Organizer", "Employer Notification of Death Letter", "Estate Executor Introduction Letter", "Beneficiary Change Request", "Personal Affidavit Information Organizer", "Gift Letter Information Organizer", "Bank Death Notification Letter", "Credit Bureau Death Notification Letter", "Utility Account Transfer/Cancellation Letter", "Subscription & Membership Cancellation Letter", "Life Insurance Claim Cover Letter", "Digital Accounts & Passwords Inventory", "Vehicle Title Transfer Letter", "Safe Deposit Box Access Letter", "Obituary Writing Guide & Worksheet", "First 24 Hours After a Death"],
+        "features": ["Editable .docx files — works in Word and Google Docs", "Notification letter templates for banks, employers, and creditors", "Estate organization worksheets", "Digital accounts inventory", "First 24 Hours action guide"],
+        "transition_page": "/estate"},
+    "divorce": {"name": "Divorce & Separation Bundle", "price": 1800, "desc": "14 documents for divorce & separation",
+        "headline": "Starting Over Starts with Paperwork. We've Got You.",
+        "emoji": "⚖️", "count": "14",
+        "long_desc": "Organize finances, track the process, and protect your interests with financial disclosure tools, co-parenting worksheets, and notification letters.",
+        "includes": ["Divorce Financial Disclosure Information Organizer", "Parental Consent Permission Letter", "Co-Parenting Communication Planning Worksheet", "Asset & Property Inventory Worksheet", "Name Change Notification Letter", "Creditor Notification of Divorce Letter", "Retirement Account Division Information Request", "Joint Account Separation Request Letter", "Divorce Attorney Meeting Preparation Worksheet", "Child Support Modification Information Organizer", "School Notification of Custody Change Letter", "Insurance Removal Request Letter", "Post-Divorce Financial Reset Checklist", "First 24 Hours After Being Served Divorce Papers"],
+        "features": ["Editable .docx files — works in Word and Google Docs", "Financial disclosure and asset tracking worksheets", "Co-parenting communication tools", "Notification letters for creditors and institutions", "First 24 Hours action guide"],
+        "transition_page": "/divorce"},
+    "disability": {"name": "Disability & Benefits Bundle", "price": 1800, "desc": "15 documents for disability & benefits",
+        "headline": "Denied Once. Don't Give Up.",
+        "emoji": "🩺", "count": "15",
+        "long_desc": "Navigate SSDI, SSI, FMLA, and workplace accommodations with application organizers, appeal tools, and tracking worksheets.",
+        "includes": ["SSDI Appeal Information Organizer", "Beneficiary Change Request", "Medical Authorization Letter", "Caregiver Authorization Letter", "Benefits Appeal Follow-Up Tracking Worksheet", "FMLA Leave Request Letter", "Workplace Accommodation Request (ADA)", "SSDI Application Information Organizer", "Disability Insurance Claim Letter", "Return to Work Letter After Disability", "Disability Accommodation Follow-Up Letter", "Letter to Employer During FMLA Leave", "SSDI Timeline & Deadline Tracker", "Disability Daily Symptom Journal", "First 24 Hours After a Disability Diagnosis"],
+        "features": ["Editable .docx files — works in Word and Google Docs", "SSDI application and appeal organizers", "ADA workplace accommodation templates", "FMLA request and employer communication letters", "Daily symptom journal and timeline tracker"],
+        "transition_page": "/disability"},
+    "relocation": {"name": "Moving & Relocation Bundle", "price": 1500, "desc": "13 documents for moving & relocation",
+        "headline": "New State. New Address. Nothing Forgotten.",
+        "emoji": "🏠", "count": "13",
+        "long_desc": "A complete relocation toolkit — address change checklists, notification letters, transfer documents, and a step-by-step guide for everything that changes when you move.",
+        "includes": ["Relocation Address Change Master Checklist", "Proof of Residency Letter", "Landlord Reference Letter", "Early Lease Termination Letter", "Utility Transfer/Setup/Cancellation Letter", "Landlord Move-Out Notice Letter", "School Transfer Request Letter", "Employer Remote Work State Change Notification", "Vehicle Registration Transfer Checklist", "HOA Transfer Notification Letter", "Voter Registration Change Letter", "Pet Registration Transfer Checklist", "First 24 Hours After Deciding to Move"],
+        "features": ["Editable .docx files — works in Word and Google Docs", "Master address change checklist", "Notification letters for landlords, schools, and employers", "Vehicle and voter registration guides", "First 24 Hours action guide"],
+        "transition_page": "/relocation"},
+    "retirement": {"name": "Retirement Planning Bundle", "price": 1800, "desc": "15 documents for retirement planning",
+        "headline": "You Planned the Career. Now Plan the Exit.",
+        "emoji": "🌅", "count": "15",
+        "long_desc": "Medicare, Social Security, pension decisions, and everything else you need to plan for retirement — comparison worksheets, application organizers, and legacy planning tools.",
+        "includes": ["Social Security Application Information Organizer", "Employer Retirement Notification Letter", "Pension Benefit Election Comparison Worksheet", "RMD Distribution Request Letter", "Medicare Enrollment Checklist & Cover Letter", "Roth Conversion Decision Worksheet", "Retirement Account Beneficiary Update Letter", "Retiree Health Insurance Continuation Request", "Power of Attorney Preparation Checklist", "Letter of Instruction to Heirs", "Social Security Delay Strategy Worksheet", "Legacy Letter / Ethical Will", "Healthcare Bridge Cost Comparison Worksheet", "Medicare Plan Comparison Worksheet", "First 24 Hours After Deciding to Retire"],
+        "features": ["Editable .docx files — works in Word and Google Docs", "Medicare and Social Security planning tools", "Pension and retirement account comparison worksheets", "Legacy and estate preparation documents", "First 24 Hours action guide"],
+        "transition_page": "/retirement"},
 }
 
 import secrets
@@ -852,6 +894,129 @@ p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:24px}
 @app.route("/templates")
 def templates():
     return send_from_directory(".", "templates.html")
+
+@app.route("/templates/<product_id>")
+def template_detail(product_id):
+    if product_id not in PRODUCTS:
+        return redirect("/templates")
+    p = PRODUCTS[product_id]
+    price_display = f"${p['price'] // 100}" if p['price'] % 100 == 0 else f"${p['price'] / 100:.2f}"
+    includes_html = "".join(f"<li>{item}</li>" for item in p.get("includes", []))
+    features_html = "".join(f"<li>{item}</li>" for item in p.get("features", []))
+    transition_link = ""
+    if p.get("transition_page"):
+        transition_link = f'<a href="{p["transition_page"]}" class="btn-link">Learn more about this transition →</a>'
+    master_note = ""
+    if product_id != "master":
+        master_price = PRODUCTS["master"]["price"]
+        master_display = f"${master_price // 100}"
+        master_note = f'<div class="master-note"><p>This bundle is also included in the <a href="/templates/master">Life Transition Bundle</a> — all 89+ documents for just {master_display}.</p></div>'
+    return render_template_string(BUNDLE_DETAIL_HTML,
+        product_id=product_id, name=p["name"], price=price_display,
+        headline=p.get("headline", ""), emoji=p.get("emoji", ""),
+        count=p.get("count", ""), desc=p["desc"], long_desc=p.get("long_desc", ""),
+        includes_html=includes_html, features_html=features_html,
+        transition_link=transition_link, master_note=master_note)
+
+BUNDLE_DETAIL_HTML = """<!DOCTYPE html>
+<html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QHWJDRDR9R"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-QHWJDRDR9R');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{{ name }} — Lumeway</title>
+<meta name="description" content="{{ desc }}">
+<link rel="canonical" href="https://lumeway.co/templates/{{ product_id }}">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#F7F4EF;--warm-white:#FDFCFA;--text:#1B2A38;--muted:#6E7D8A;--navy:#1B3A5C;--gold:#B8977E;--border:#E4DDD3;--shadow:0 2px 40px rgba(27,58,92,0.09)}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,244,239,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-icon{width:32px;height:32px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500}
+.nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text)}
+.back{font-size:14px;color:var(--muted);text-decoration:none;transition:color 0.15s}
+.back:hover{color:var(--navy)}
+.hero{padding:120px 24px 48px;max-width:720px;margin:0 auto;text-align:center}
+.hero-emoji{font-size:48px;margin-bottom:16px}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,52px);font-weight:300;line-height:1.12;margin-bottom:16px}
+.hero-title em{font-style:italic;color:var(--gold)}
+.hero-subtitle{font-size:16px;color:var(--muted);font-weight:300;line-height:1.7;max-width:520px;margin:0 auto 32px}
+.price-block{display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:8px}
+.price-big{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:500;color:var(--navy)}
+.price-note{font-size:14px;color:var(--muted)}
+.count-badge{display:inline-block;background:var(--warm-white);border:1px solid var(--border);padding:4px 14px;border-radius:100px;font-size:13px;color:var(--muted);margin-bottom:24px}
+.btn-buy{display:inline-block;padding:14px 36px;border:none;border-radius:100px;background:var(--navy);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none}
+.btn-buy:hover{background:#244a6e;transform:translateY(-1px)}
+.btn-buy:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+.content{max-width:720px;margin:0 auto;padding:0 24px 64px}
+.section-card{background:var(--warm-white);border:1px solid var(--border);border-radius:20px;padding:32px 36px;margin-bottom:24px}
+.section-label{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-bottom:16px}
+.includes-list{list-style:none;padding:0}
+.includes-list li{font-size:14px;color:var(--text);line-height:1.6;padding:8px 0 8px 24px;position:relative;border-bottom:1px solid var(--border)}
+.includes-list li:last-child{border-bottom:none}
+.includes-list li::before{content:'✓';position:absolute;left:0;color:var(--gold);font-weight:600}
+.features-list{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.features-list li{font-size:13px;color:var(--muted);padding-left:20px;position:relative;line-height:1.6}
+.features-list li::before{content:'·';position:absolute;left:6px;color:var(--gold);font-weight:700;font-size:18px}
+.master-note{background:var(--navy);color:var(--cream);border-radius:16px;padding:20px 28px;margin-bottom:24px;text-align:center}
+.master-note p{font-size:14px;line-height:1.6}
+.master-note a{color:var(--gold);text-decoration:underline}
+.btn-link{display:inline-block;font-size:14px;color:var(--navy);text-decoration:none;margin-top:16px;font-weight:500}
+.btn-link:hover{text-decoration:underline}
+.cta-block{background:var(--navy);border-radius:24px;padding:40px;text-align:center;max-width:720px;margin:0 auto 64px}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--cream);margin-bottom:12px}
+.cta-sub{font-size:14px;color:rgba(247,244,239,0.6);margin-bottom:24px}
+.btn-cta{display:inline-block;padding:14px 32px;border-radius:100px;background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.2s}
+.btn-cta:hover{background:var(--gold);color:white}
+.disclaimer{font-size:11px;color:var(--muted);text-align:center;max-width:520px;margin:0 auto 48px;line-height:1.6}
+footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--navy)}
+.footer-note{font-size:12px;color:var(--muted);font-weight:300}
+.footer-note a{color:var(--muted);text-decoration:none}
+@media(max-width:640px){nav{padding:16px 20px}.section-card{padding:24px 20px}.features-list{grid-template-columns:1fr}.cta-block{margin:0 16px 64px;padding:32px 24px}}
+</style></head><body>
+<nav>
+<a href="/" class="nav-logo"><div class="nav-logo-icon">L</div><span class="nav-logo-text">Lumeway</span></a>
+<a href="/templates" class="back">← All Templates</a>
+</nav>
+<div class="hero">
+<div class="hero-emoji">{{ emoji }}</div>
+<h1 class="hero-title">{{ headline }}</h1>
+<p class="hero-subtitle">{{ long_desc }}</p>
+<div class="price-block"><span class="price-big">{{ price }}</span><span class="price-note">one-time purchase</span></div>
+<div class="count-badge">{{ count }} documents included</div><br>
+<button class="btn-buy" onclick="buyProduct('{{ product_id }}')">Buy Now — {{ price }}</button>
+</div>
+<div class="content">
+{{ master_note }}
+<div class="section-card">
+<div class="section-label">What's Included</div>
+<h2>{{ count }} Documents</h2>
+<ul class="includes-list">{{ includes_html }}</ul>
+</div>
+<div class="section-card">
+<div class="section-label">Features</div>
+<ul class="features-list">{{ features_html }}</ul>
+</div>
+{{ transition_link }}
+</div>
+<div class="disclaimer">These templates are organizational tools designed to help you prepare — not legal documents or substitutes for professional advice. Always consult a qualified professional for decisions specific to your situation.</div>
+<div class="cta-block">
+<div class="cta-title">Not sure where to start?</div>
+<p class="cta-sub">Lumeway's free Transition Navigator can help you understand what comes next.</p>
+<a href="/chat" target="_blank" class="btn-cta">Talk to Lumeway free →</a>
+</div>
+<footer>
+<div class="footer-logo">Lumeway</div>
+<p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. &middot; <a href="/about">About</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></p>
+</footer>
+<script>
+function buyProduct(productId){var btn=event.target;btn.disabled=true;btn.textContent='Processing...';fetch('/api/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product_id:productId})}).then(function(r){return r.json()}).then(function(data){if(data.url){window.location.href=data.url}else{alert('Something went wrong. Please try again.');btn.disabled=false;btn.textContent='Buy Now — {{ price }}';}}).catch(function(){alert('Something went wrong. Please try again.');btn.disabled=false;btn.textContent='Buy Now — {{ price }}';});}
+</script>
+</body></html>"""
 
 @app.route("/contact")
 def contact():
