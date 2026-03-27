@@ -670,12 +670,12 @@ PRODUCTS = {
         "emoji": "📦", "count": "89+",
         "long_desc": "Everything Lumeway offers in one package. All six category bundles covering job loss, estate settlement, divorce, disability, relocation, and retirement — plus bonus wellness worksheets.",
         "includes": [
-            ("Job Loss Survivor Kit (14 docs)", "Complete toolkit for severance, COBRA, unemployment, budgeting, and job search."),
-            ("Estate & Survivor Bundle (16 docs)", "Notification letters, benefits claims, estate settlement, and executor tools."),
-            ("Divorce & Separation Bundle (14 docs)", "Financial disclosure, co-parenting, asset inventory, and notification letters."),
-            ("Disability & Benefits Bundle (15 docs)", "SSDI application and appeal organizers, FMLA letters, and accommodation requests."),
-            ("Moving & Relocation Bundle (13 docs)", "Address change checklists, transfer documents, and notification letters for every step."),
-            ("Retirement Planning Bundle (15 docs)", "Medicare, Social Security, pension worksheets, and legacy planning tools."),
+            ("Job Loss Survivor Kit (14 docs)", "Complete toolkit for severance, COBRA, unemployment, budgeting, job search, and more."),
+            ("Estate & Survivor Bundle (16 docs)", "Notification letters, benefits claims, estate settlement, executor tools, and more."),
+            ("Divorce & Separation Bundle (14 docs)", "Financial disclosure, co-parenting, asset inventory, notification letters, and more."),
+            ("Disability & Benefits Bundle (15 docs)", "SSDI application and appeal organizers, FMLA letters, accommodation requests, and more."),
+            ("Moving & Relocation Bundle (13 docs)", "Address change checklists, transfer documents, notification letters, and more."),
+            ("Retirement Planning Bundle (15 docs)", "Medicare, Social Security, pension worksheets, legacy planning tools, and more."),
             ("CBT Thought Record Worksheet", "A cognitive behavioral therapy tool adapted for life transitions — helps you identify and reframe unhelpful thought patterns during stressful times."),
             ("Values Clarification Worksheet", "Guides you through identifying what matters most to you right now, so you can make decisions aligned with your priorities."),
             ("Grief Stages Psychoeducation Handout", "A plain-language overview of how grief shows up during major life changes — not just death, but any significant loss or transition."),
@@ -878,8 +878,17 @@ def stripe_webhook():
 
 def fulfill_purchase(session_data):
     """Record purchase and send download email."""
-    email = session_data.get("customer_details", {}).get("email") or session_data.get("customer_email")
-    product_id = session_data.get("metadata", {}).get("product_id")
+    # Handle both Stripe objects and dicts
+    if hasattr(session_data, 'customer_details'):
+        email = getattr(session_data.customer_details, 'email', None) or getattr(session_data, 'customer_email', None)
+        product_id = getattr(session_data.metadata, 'product_id', None) if hasattr(session_data, 'metadata') else None
+        session_id = getattr(session_data, 'id', None)
+        payment_intent = getattr(session_data, 'payment_intent', None)
+    else:
+        email = (session_data.get("customer_details") or {}).get("email") or session_data.get("customer_email")
+        product_id = (session_data.get("metadata") or {}).get("product_id")
+        session_id = session_data.get("id")
+        payment_intent = session_data.get("payment_intent")
     if not email or not product_id or product_id not in PRODUCTS:
         print(f"Cannot fulfill: email={email}, product_id={product_id}")
         return
@@ -893,13 +902,15 @@ def fulfill_purchase(session_data):
             """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (email, product_id, product["name"], product["price"],
-             session_data.get("id"), session_data.get("payment_intent"),
+             session_id, payment_intent,
              now, token, True if USE_POSTGRES else 1))
         conn.commit()
         conn.close()
+        print(f"Purchase recorded: {email} bought {product['name']}")
     except Exception as e:
         print(f"DB error recording purchase: {e}")
-    send_purchase_email(email, product_id, product["name"], token)
+    sent = send_purchase_email(email, product_id, product["name"], token)
+    print(f"Email {'sent' if sent else 'FAILED'} to {email} for {product['name']}")
 
 @app.route("/purchase-success")
 def purchase_success():
@@ -916,7 +927,7 @@ def purchase_success():
                 row = cur.fetchone()
                 conn.close()
                 if not row:
-                    fulfill_purchase(dict(session_data))
+                    fulfill_purchase(session_data)
                 return render_template_string(PURCHASE_SUCCESS_HTML, product_name=product.get("name", "your templates"))
         except Exception as e:
             print(f"Error retrieving session: {e}")
