@@ -939,6 +939,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:fl
 .back{font-size:14px;color:var(--muted);text-decoration:none;transition:color 0.15s}
 .back:hover{color:var(--navy)}
 .hero{padding:120px 24px 48px;max-width:720px;margin:0 auto;text-align:center}
+.hero-img{width:100%;max-width:480px;border-radius:16px;margin-bottom:24px;box-shadow:var(--shadow)}
 .hero-emoji{font-size:48px;margin-bottom:16px}
 .hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,52px);font-weight:300;line-height:1.12;margin-bottom:16px}
 .hero-title em{font-style:italic;color:var(--gold)}
@@ -983,7 +984,7 @@ footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-i
 <a href="/templates" class="back">← All Templates</a>
 </nav>
 <div class="hero">
-<div class="hero-emoji">{{ emoji }}</div>
+<img src="/static/images/bundles/{{ product_id }}.png" alt="{{ name }}" class="hero-img">
 <h1 class="hero-title">{{ headline }}</h1>
 <p class="hero-subtitle">{{ long_desc }}</p>
 <div class="price-block"><span class="price-big">{{ price }}</span><span class="price-note">one-time purchase</span></div>
@@ -991,17 +992,17 @@ footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-i
 <button class="btn-buy" onclick="buyProduct('{{ product_id }}')">Buy Now — {{ price }}</button>
 </div>
 <div class="content">
-{{ master_note }}
+{{ master_note|safe }}
 <div class="section-card">
 <div class="section-label">What's Included</div>
 <h2>{{ count }} Documents</h2>
-<ul class="includes-list">{{ includes_html }}</ul>
+<ul class="includes-list">{{ includes_html|safe }}</ul>
 </div>
 <div class="section-card">
 <div class="section-label">Features</div>
-<ul class="features-list">{{ features_html }}</ul>
+<ul class="features-list">{{ features_html|safe }}</ul>
 </div>
-{{ transition_link }}
+{{ transition_link|safe }}
 </div>
 <div class="disclaimer">These templates are organizational tools designed to help you prepare — not legal documents or substitutes for professional advice. Always consult a qualified professional for decisions specific to your situation.</div>
 <div class="cta-block">
