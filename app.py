@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from dotenv import load_dotenv
 import smtplib
 import stripe
+import threading
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import conversation_log
@@ -142,9 +143,13 @@ lumeway.co
     msg.attach(MIMEText(text, "plain"))
     msg.attach(MIMEText(html, "html"))
     try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
-            server.sendmail(GMAIL_USER, to_email, msg.as_string())
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+        server.sendmail(GMAIL_USER, to_email, msg.as_string())
+        server.quit()
         print(f"Purchase email sent to {to_email}")
         return True
     except Exception as e:
@@ -913,8 +918,9 @@ def fulfill_purchase(session_data):
         print(f"Purchase recorded: {email} bought {product['name']}")
     except Exception as e:
         print(f"DB error recording purchase: {e}")
-    sent = send_purchase_email(email, product_id, product["name"], token)
-    print(f"Email {'sent' if sent else 'FAILED'} to {email} for {product['name']}")
+    # Send email in background thread so it doesn't block the response
+    threading.Thread(target=send_purchase_email, args=(email, product_id, product["name"], token), daemon=True).start()
+    print(f"Email send initiated for {email}")
 
 @app.route("/purchase-success")
 def purchase_success():
@@ -941,7 +947,7 @@ def purchase_success():
                     email = getattr(session_data.customer_details, 'email', None) or getattr(session_data, 'customer_email', None)
                     if email:
                         print(f"Resending purchase email to {email}")
-                        send_purchase_email(email, product_id, product.get("name", ""), row[0])
+                        threading.Thread(target=send_purchase_email, args=(email, product_id, product.get("name", ""), row[0]), daemon=True).start()
                 return render_template_string(PURCHASE_SUCCESS_HTML, product_name=product.get("name", "your templates"))
         except Exception as e:
             import traceback
