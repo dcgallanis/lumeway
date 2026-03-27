@@ -669,49 +669,152 @@ PRODUCTS = {
         "headline": "Every Transition. Every Template. One Download.",
         "emoji": "📦", "count": "89+",
         "long_desc": "Everything Lumeway offers in one package. All six category bundles covering job loss, estate settlement, divorce, disability, relocation, and retirement — plus bonus wellness worksheets.",
-        "includes": ["Job Loss Survivor Kit (14 docs)", "Estate & Survivor Bundle (16 docs)", "Divorce & Separation Bundle (14 docs)", "Disability & Benefits Bundle (15 docs)", "Moving & Relocation Bundle (13 docs)", "Retirement Planning Bundle (15 docs)", "CBT Thought Record Worksheet", "Values Clarification Worksheet", "Grief Stages Psychoeducation Handout"],
+        "includes": [
+            ("Job Loss Survivor Kit (14 docs)", "Complete toolkit for severance, COBRA, unemployment, budgeting, and job search."),
+            ("Estate & Survivor Bundle (16 docs)", "Notification letters, benefits claims, estate settlement, and executor tools."),
+            ("Divorce & Separation Bundle (14 docs)", "Financial disclosure, co-parenting, asset inventory, and notification letters."),
+            ("Disability & Benefits Bundle (15 docs)", "SSDI application and appeal organizers, FMLA letters, and accommodation requests."),
+            ("Moving & Relocation Bundle (13 docs)", "Address change checklists, transfer documents, and notification letters for every step."),
+            ("Retirement Planning Bundle (15 docs)", "Medicare, Social Security, pension worksheets, and legacy planning tools."),
+            ("CBT Thought Record Worksheet", "A cognitive behavioral therapy tool adapted for life transitions — helps you identify and reframe unhelpful thought patterns during stressful times."),
+            ("Values Clarification Worksheet", "Guides you through identifying what matters most to you right now, so you can make decisions aligned with your priorities."),
+            ("Grief Stages Psychoeducation Handout", "A plain-language overview of how grief shows up during major life changes — not just death, but any significant loss or transition."),
+        ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Step-by-step worksheets with plain-language instructions", "Information organizers to keep everything in one place", "First 24 Hours guides for each transition", "Professionally formatted and print-ready"],
         "transition_page": None},
     "job-loss": {"name": "Job Loss Survivor Kit", "price": 1800, "desc": "14 documents for job loss & income crisis",
         "headline": "Lost Your Job. Know Your Next Move.",
         "emoji": "💼", "count": "14",
         "long_desc": "Worksheets, checklists, and letter templates to help you stay organized through unemployment, COBRA decisions, severance negotiations, and financial stabilization.",
-        "includes": ["Severance Response Letter", "Severance Counter-Offer Letter", "COBRA Election Letter", "Hardship Letter to Creditor", "General Authorization Letter", "401(k) Rollover Request Letter", "Professional Reference Request Letter", "LinkedIn Networking Message Template", "Unemployment Appeal Information Organizer", "Health Insurance Comparison Worksheet", "Job Search Tracker Worksheet", "Budget Reduction Worksheet", "Job Offer Evaluation Worksheet", "First 24 Hours After Losing Your Job"],
+        "includes": [
+            ("Severance Response Letter", "A professional letter template to acknowledge and respond to a severance offer, giving you time to review the terms."),
+            ("Severance Counter-Offer Letter", "A structured template for negotiating better severance terms — covers pay, benefits continuation, and non-compete clauses."),
+            ("COBRA Election Letter", "Helps you formally elect COBRA continuation coverage with your former employer's benefits administrator."),
+            ("Hardship Letter to Creditor", "A letter explaining your financial situation to creditors, requesting temporary payment adjustments or forbearance."),
+            ("General Authorization Letter", "Authorizes someone to act on your behalf for specific tasks — useful when you need help managing accounts or paperwork."),
+            ("401(k) Rollover Request Letter", "A letter to initiate rolling over your employer-sponsored retirement account to an IRA or new employer plan."),
+            ("Professional Reference Request Letter", "A polite, professional template for asking former colleagues or managers to serve as references."),
+            ("LinkedIn Networking Message Template", "Ready-to-customize messages for reconnecting with your professional network during a job search."),
+            ("Unemployment Appeal Information Organizer", "Helps you organize the facts, dates, and documents you need if your unemployment claim is denied and you need to appeal."),
+            ("Health Insurance Comparison Worksheet", "Side-by-side comparison tool for evaluating COBRA vs. Marketplace vs. spouse's plan — covers premiums, deductibles, and coverage."),
+            ("Job Search Tracker Worksheet", "Track applications, interviews, follow-ups, and networking contacts in one organized place."),
+            ("Budget Reduction Worksheet", "Helps you identify where to cut expenses and build a bare-bones budget to stretch your savings."),
+            ("Job Offer Evaluation Worksheet", "Compare multiple job offers across salary, benefits, commute, growth potential, and other factors that matter to you."),
+            ("First 24 Hours After Losing Your Job", "A step-by-step guide for the first day — what to do immediately, what can wait, and what to avoid."),
+        ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Step-by-step worksheets with plain-language instructions", "Letter templates ready to customize and send", "Budget and job search tracking tools", "First 24 Hours action guide"],
         "transition_page": "/job-loss"},
     "estate": {"name": "Estate & Survivor Bundle", "price": 1800, "desc": "16 documents for death & estate",
         "headline": "The Hardest Paperwork You'll Ever Do. We Made It Easier.",
         "emoji": "🕊️", "count": "16",
         "long_desc": "Step-by-step guidance for the hardest days — notification letters, benefits claims, estate settlement tools, and a complete first-steps guide.",
-        "includes": ["Survivor Benefits Information Organizer", "Employer Notification of Death Letter", "Estate Executor Introduction Letter", "Beneficiary Change Request", "Personal Affidavit Information Organizer", "Gift Letter Information Organizer", "Bank Death Notification Letter", "Credit Bureau Death Notification Letter", "Utility Account Transfer/Cancellation Letter", "Subscription & Membership Cancellation Letter", "Life Insurance Claim Cover Letter", "Digital Accounts & Passwords Inventory", "Vehicle Title Transfer Letter", "Safe Deposit Box Access Letter", "Obituary Writing Guide & Worksheet", "First 24 Hours After a Death"],
+        "includes": [
+            ("Survivor Benefits Information Organizer", "Helps you gather and organize the information needed to file for Social Security survivor benefits, pension benefits, and life insurance claims."),
+            ("Employer Notification of Death Letter", "A professional letter to notify the deceased's employer and begin the process of collecting final pay, benefits, and retirement accounts."),
+            ("Estate Executor Introduction Letter", "Introduces you as the executor or personal representative to banks, insurers, and other institutions that need to work with you."),
+            ("Beneficiary Change Request", "A template for updating beneficiary designations on accounts that need to be changed after a death."),
+            ("Personal Affidavit Information Organizer", "Helps you prepare the information needed for a small estate affidavit — often required to transfer assets without full probate."),
+            ("Gift Letter Information Organizer", "Organizes the details needed when documenting gifts from an estate, often required by mortgage lenders or the IRS."),
+            ("Bank Death Notification Letter", "Notifies the bank of a death and requests next steps for accessing or closing the deceased's accounts."),
+            ("Credit Bureau Death Notification Letter", "Notifies Equifax, Experian, and TransUnion to flag the deceased's credit file and help prevent identity theft."),
+            ("Utility Account Transfer/Cancellation Letter", "Transfer or cancel utility accounts — electricity, gas, water, internet — with a single professional letter."),
+            ("Subscription & Membership Cancellation Letter", "Cancel recurring subscriptions and memberships the deceased held — streaming, gym, magazines, and more."),
+            ("Life Insurance Claim Cover Letter", "A cover letter to accompany your life insurance claim, ensuring the insurer has everything they need to process it."),
+            ("Digital Accounts & Passwords Inventory", "A secure place to document all digital accounts — email, social media, financial, and subscription — for the estate."),
+            ("Vehicle Title Transfer Letter", "Initiates the process of transferring a vehicle title after a death, including what documents the DMV typically requires."),
+            ("Safe Deposit Box Access Letter", "A letter requesting access to the deceased's safe deposit box, including the documentation banks typically require."),
+            ("Obituary Writing Guide & Worksheet", "A step-by-step guide and fill-in worksheet that walks you through writing a meaningful obituary."),
+            ("First 24 Hours After a Death", "What to do immediately, what can wait, and who to call first — a calm, step-by-step guide for the hardest day."),
+        ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Notification letter templates for banks, employers, and creditors", "Estate organization worksheets", "Digital accounts inventory", "First 24 Hours action guide"],
         "transition_page": "/estate"},
     "divorce": {"name": "Divorce & Separation Bundle", "price": 1800, "desc": "14 documents for divorce & separation",
         "headline": "Starting Over Starts with Paperwork. We've Got You.",
         "emoji": "⚖️", "count": "14",
         "long_desc": "Organize finances, track the process, and protect your interests with financial disclosure tools, co-parenting worksheets, and notification letters.",
-        "includes": ["Divorce Financial Disclosure Information Organizer", "Parental Consent Permission Letter", "Co-Parenting Communication Planning Worksheet", "Asset & Property Inventory Worksheet", "Name Change Notification Letter", "Creditor Notification of Divorce Letter", "Retirement Account Division Information Request", "Joint Account Separation Request Letter", "Divorce Attorney Meeting Preparation Worksheet", "Child Support Modification Information Organizer", "School Notification of Custody Change Letter", "Insurance Removal Request Letter", "Post-Divorce Financial Reset Checklist", "First 24 Hours After Being Served Divorce Papers"],
+        "includes": [
+            ("Divorce Financial Disclosure Information Organizer", "Organizes income, expenses, assets, and debts into the format courts typically require for financial disclosure."),
+            ("Parental Consent Permission Letter", "A letter granting temporary permission for a child to travel, receive medical care, or participate in activities with the other parent or caregiver."),
+            ("Co-Parenting Communication Planning Worksheet", "Helps you establish ground rules, schedules, and communication boundaries with your co-parent."),
+            ("Asset & Property Inventory Worksheet", "A comprehensive list of everything you own and owe — real estate, vehicles, accounts, debts — organized for division."),
+            ("Name Change Notification Letter", "Notifies banks, employers, insurers, and government agencies of your legal name change after divorce."),
+            ("Creditor Notification of Divorce Letter", "Notifies creditors that joint accounts should be separated and you are no longer responsible for your ex-spouse's new debts."),
+            ("Retirement Account Division Information Request", "Requests the information needed to divide retirement accounts, including what's required for a QDRO."),
+            ("Joint Account Separation Request Letter", "A letter to your bank requesting that joint accounts be separated into individual accounts."),
+            ("Divorce Attorney Meeting Preparation Worksheet", "Helps you organize your questions, priorities, and key facts before your first meeting with a divorce attorney."),
+            ("Child Support Modification Information Organizer", "Organizes the information needed to request a modification to an existing child support order."),
+            ("School Notification of Custody Change Letter", "Notifies your child's school about custody arrangements, authorized pickup persons, and emergency contacts."),
+            ("Insurance Removal Request Letter", "Requests removal of your ex-spouse from your insurance policies — health, auto, or homeowner's."),
+            ("Post-Divorce Financial Reset Checklist", "A comprehensive checklist for rebuilding your financial life after divorce — new accounts, updated beneficiaries, credit building."),
+            ("First 24 Hours After Being Served Divorce Papers", "What to do, what not to do, and who to call — a calm guide for the day everything changes."),
+        ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Financial disclosure and asset tracking worksheets", "Co-parenting communication tools", "Notification letters for creditors and institutions", "First 24 Hours action guide"],
         "transition_page": "/divorce"},
     "disability": {"name": "Disability & Benefits Bundle", "price": 1800, "desc": "15 documents for disability & benefits",
         "headline": "Denied Once. Don't Give Up.",
         "emoji": "🩺", "count": "15",
         "long_desc": "Navigate SSDI, SSI, FMLA, and workplace accommodations with application organizers, appeal tools, and tracking worksheets.",
-        "includes": ["SSDI Appeal Information Organizer", "Beneficiary Change Request", "Medical Authorization Letter", "Caregiver Authorization Letter", "Benefits Appeal Follow-Up Tracking Worksheet", "FMLA Leave Request Letter", "Workplace Accommodation Request (ADA)", "SSDI Application Information Organizer", "Disability Insurance Claim Letter", "Return to Work Letter After Disability", "Disability Accommodation Follow-Up Letter", "Letter to Employer During FMLA Leave", "SSDI Timeline & Deadline Tracker", "Disability Daily Symptom Journal", "First 24 Hours After a Disability Diagnosis"],
+        "includes": [
+            ("SSDI Appeal Information Organizer", "Organizes your medical evidence, work history, and timeline for an SSDI reconsideration or hearing appeal."),
+            ("Beneficiary Change Request", "Update beneficiary designations on insurance policies and accounts after a disability changes your circumstances."),
+            ("Medical Authorization Letter", "Authorizes a specific person to access your medical records or communicate with healthcare providers on your behalf."),
+            ("Caregiver Authorization Letter", "Grants a caregiver legal authority to make day-to-day decisions about your care and handle routine tasks."),
+            ("Benefits Appeal Follow-Up Tracking Worksheet", "Track every step of your benefits appeal — dates, contacts, documents submitted, and next deadlines."),
+            ("FMLA Leave Request Letter", "A professional letter to your employer requesting protected leave under the Family and Medical Leave Act."),
+            ("Workplace Accommodation Request (ADA)", "A formal request for reasonable workplace accommodations under the Americans with Disabilities Act."),
+            ("SSDI Application Information Organizer", "Organizes everything you need for your initial SSDI application — medical providers, medications, work history, and daily limitations."),
+            ("Disability Insurance Claim Letter", "A cover letter for filing a private or employer-sponsored disability insurance claim with supporting documentation."),
+            ("Return to Work Letter After Disability", "Notifies your employer of your return, outlines any ongoing accommodations, and confirms your start date."),
+            ("Disability Accommodation Follow-Up Letter", "A follow-up letter if your initial accommodation request hasn't been addressed or needs adjustment."),
+            ("Letter to Employer During FMLA Leave", "Keeps your employer informed during your leave — status updates, expected return, or extension requests."),
+            ("SSDI Timeline & Deadline Tracker", "A visual tracker for every stage of the SSDI process — application, reconsideration, hearing, and appeals council."),
+            ("Disability Daily Symptom Journal", "Track symptoms, limitations, and good/bad days — builds the evidence record that supports your disability claim."),
+            ("First 24 Hours After a Disability Diagnosis", "What to do first, what to document, and who to contact — a practical guide for the day your life changes."),
+        ],
         "features": ["Editable .docx files — works in Word and Google Docs", "SSDI application and appeal organizers", "ADA workplace accommodation templates", "FMLA request and employer communication letters", "Daily symptom journal and timeline tracker"],
         "transition_page": "/disability"},
     "relocation": {"name": "Moving & Relocation Bundle", "price": 1500, "desc": "13 documents for moving & relocation",
         "headline": "New State. New Address. Nothing Forgotten.",
         "emoji": "🏠", "count": "13",
         "long_desc": "A complete relocation toolkit — address change checklists, notification letters, transfer documents, and a step-by-step guide for everything that changes when you move.",
-        "includes": ["Relocation Address Change Master Checklist", "Proof of Residency Letter", "Landlord Reference Letter", "Early Lease Termination Letter", "Utility Transfer/Setup/Cancellation Letter", "Landlord Move-Out Notice Letter", "School Transfer Request Letter", "Employer Remote Work State Change Notification", "Vehicle Registration Transfer Checklist", "HOA Transfer Notification Letter", "Voter Registration Change Letter", "Pet Registration Transfer Checklist", "First 24 Hours After Deciding to Move"],
+        "includes": [
+            ("Relocation Address Change Master Checklist", "Every account, service, and institution that needs your new address — organized by category so nothing falls through the cracks."),
+            ("Proof of Residency Letter", "A letter template to establish proof of residency at your new address — often needed for school enrollment, DMV, and voter registration."),
+            ("Landlord Reference Letter", "A professional reference request to your current landlord — helps when applying for a new rental."),
+            ("Early Lease Termination Letter", "A formal letter to request early termination of your current lease, citing your reason and proposed terms."),
+            ("Utility Transfer/Setup/Cancellation Letter", "One letter template that works for transferring, setting up, or cancelling utility services at your old and new addresses."),
+            ("Landlord Move-Out Notice Letter", "A formal notice to your landlord that you're moving out, including your expected move-out date and forwarding address."),
+            ("School Transfer Request Letter", "Requests transfer of your child's school records to a new school, including what documents to include."),
+            ("Employer Remote Work State Change Notification", "Notifies your employer that you're relocating to a new state — important for tax withholding and compliance."),
+            ("Vehicle Registration Transfer Checklist", "Step-by-step checklist for transferring your vehicle registration, title, and driver's license to a new state."),
+            ("HOA Transfer Notification Letter", "Notifies your HOA of the ownership transfer and requests final account settlement."),
+            ("Voter Registration Change Letter", "A letter to update your voter registration to your new address and state."),
+            ("Pet Registration Transfer Checklist", "Checklist for updating pet licenses, vet records, and registrations when moving to a new city or state."),
+            ("First 24 Hours After Deciding to Move", "A prioritized action plan for the day you decide to relocate — what to do first, what can wait, and what to research."),
+        ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Master address change checklist", "Notification letters for landlords, schools, and employers", "Vehicle and voter registration guides", "First 24 Hours action guide"],
         "transition_page": "/relocation"},
     "retirement": {"name": "Retirement Planning Bundle", "price": 1800, "desc": "15 documents for retirement planning",
         "headline": "You Planned the Career. Now Plan the Exit.",
         "emoji": "🌅", "count": "15",
         "long_desc": "Medicare, Social Security, pension decisions, and everything else you need to plan for retirement — comparison worksheets, application organizers, and legacy planning tools.",
-        "includes": ["Social Security Application Information Organizer", "Employer Retirement Notification Letter", "Pension Benefit Election Comparison Worksheet", "RMD Distribution Request Letter", "Medicare Enrollment Checklist & Cover Letter", "Roth Conversion Decision Worksheet", "Retirement Account Beneficiary Update Letter", "Retiree Health Insurance Continuation Request", "Power of Attorney Preparation Checklist", "Letter of Instruction to Heirs", "Social Security Delay Strategy Worksheet", "Legacy Letter / Ethical Will", "Healthcare Bridge Cost Comparison Worksheet", "Medicare Plan Comparison Worksheet", "First 24 Hours After Deciding to Retire"],
+        "includes": [
+            ("Social Security Application Information Organizer", "Organizes the documents and information you need to apply for Social Security benefits — work history, banking details, and dependent info."),
+            ("Employer Retirement Notification Letter", "A professional letter notifying your employer of your retirement date and requesting information about final pay and benefits."),
+            ("Pension Benefit Election Comparison Worksheet", "Compare pension payout options side-by-side — lump sum vs. annuity, single vs. joint life — so you can make an informed choice."),
+            ("RMD Distribution Request Letter", "A letter to your retirement account custodian requesting your required minimum distribution."),
+            ("Medicare Enrollment Checklist & Cover Letter", "A step-by-step checklist for Medicare enrollment plus a cover letter for submitting your application."),
+            ("Roth Conversion Decision Worksheet", "Helps you evaluate whether converting traditional retirement funds to a Roth IRA makes sense for your tax situation."),
+            ("Retirement Account Beneficiary Update Letter", "A letter to update the beneficiaries on your retirement accounts — important after any life change."),
+            ("Retiree Health Insurance Continuation Request", "Requests continuation of employer-sponsored health insurance into retirement, if your employer offers it."),
+            ("Power of Attorney Preparation Checklist", "Organizes what you need to discuss with an attorney when setting up financial and healthcare powers of attorney."),
+            ("Letter of Instruction to Heirs", "A personal letter to your family explaining where to find important documents, accounts, and your wishes — not a legal document, but invaluable."),
+            ("Social Security Delay Strategy Worksheet", "Helps you calculate the break-even point for delaying Social Security and decide when to start collecting."),
+            ("Legacy Letter / Ethical Will", "A guided template for writing a personal letter to your loved ones — your values, stories, and wishes beyond the legal will."),
+            ("Healthcare Bridge Cost Comparison Worksheet", "Compare healthcare options for the gap between retirement and Medicare eligibility — COBRA, marketplace, and retiree plans."),
+            ("Medicare Plan Comparison Worksheet", "Side-by-side comparison of Medicare Advantage vs. Medigap plans — premiums, coverage, and out-of-pocket costs."),
+            ("First 24 Hours After Deciding to Retire", "A prioritized guide for the day you decide to retire — who to notify, what to research, and what to start planning."),
+        ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Medicare and Social Security planning tools", "Pension and retirement account comparison worksheets", "Legacy and estate preparation documents", "First 24 Hours action guide"],
         "transition_page": "/retirement"},
 }
@@ -901,7 +1004,13 @@ def template_detail(product_id):
         return redirect("/templates")
     p = PRODUCTS[product_id]
     price_display = f"${p['price'] // 100}" if p['price'] % 100 == 0 else f"${p['price'] / 100:.2f}"
-    includes_html = "".join(f"<li>{item}</li>" for item in p.get("includes", []))
+    includes_html = ""
+    for i, item in enumerate(p.get("includes", [])):
+        if isinstance(item, tuple):
+            name, desc = item
+            includes_html += f'<div class="doc-item"><button class="doc-toggle" onclick="toggleDoc(this)" aria-expanded="false"><span class="doc-name">{name}</span><span class="doc-chev">+</span></button><div class="doc-desc">{desc}</div></div>'
+        else:
+            includes_html += f'<div class="doc-item"><div class="doc-name-only">{item}</div></div>'
     features_html = "".join(f"<li>{item}</li>" for item in p.get("features", []))
     transition_link = ""
     if p.get("transition_page"):
@@ -939,8 +1048,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:fl
 .back{font-size:14px;color:var(--muted);text-decoration:none;transition:color 0.15s}
 .back:hover{color:var(--navy)}
 .hero{padding:120px 24px 48px;max-width:720px;margin:0 auto;text-align:center}
-.hero-img{width:100%;max-width:480px;border-radius:16px;margin-bottom:24px;box-shadow:var(--shadow)}
-.hero-emoji{font-size:48px;margin-bottom:16px}
+.hero-subhead{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
 .hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,52px);font-weight:300;line-height:1.12;margin-bottom:16px}
 .hero-title em{font-style:italic;color:var(--gold)}
 .hero-subtitle{font-size:16px;color:var(--muted);font-weight:300;line-height:1.7;max-width:520px;margin:0 auto 32px}
@@ -955,10 +1063,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:fl
 .section-card{background:var(--warm-white);border:1px solid var(--border);border-radius:20px;padding:32px 36px;margin-bottom:24px}
 .section-label{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
 h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-bottom:16px}
-.includes-list{list-style:none;padding:0}
-.includes-list li{font-size:14px;color:var(--text);line-height:1.6;padding:8px 0 8px 24px;position:relative;border-bottom:1px solid var(--border)}
-.includes-list li:last-child{border-bottom:none}
-.includes-list li::before{content:'✓';position:absolute;left:0;color:var(--gold);font-weight:600}
+.doc-item{border-bottom:1px solid var(--border)}
+.doc-item:last-child{border-bottom:none}
+.doc-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 0;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left}
+.doc-toggle:hover .doc-name{color:var(--navy)}
+.doc-name{font-size:14px;color:var(--text);font-weight:400;line-height:1.5;padding-right:16px}
+.doc-name-only{font-size:14px;color:var(--text);padding:14px 0;padding-left:20px;position:relative}
+.doc-name-only::before{content:'✓';position:absolute;left:0;color:var(--gold);font-weight:600}
+.doc-chev{font-size:18px;color:var(--muted);transition:transform 0.2s;flex-shrink:0}
+.doc-desc{display:none;font-size:13px;color:var(--muted);line-height:1.7;padding:0 0 14px 0}
+.doc-item.open .doc-desc{display:block}
+.doc-item.open .doc-chev{transform:rotate(45deg)}
 .features-list{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .features-list li{font-size:13px;color:var(--muted);padding-left:20px;position:relative;line-height:1.6}
 .features-list li::before{content:'·';position:absolute;left:6px;color:var(--gold);font-weight:700;font-size:18px}
@@ -984,7 +1099,7 @@ footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-i
 <a href="/templates" class="back">← All Templates</a>
 </nav>
 <div class="hero">
-<img src="/static/images/bundles/{{ product_id }}.png" alt="{{ name }}" class="hero-img">
+<div class="hero-subhead">{{ name }}</div>
 <h1 class="hero-title">{{ headline }}</h1>
 <p class="hero-subtitle">{{ long_desc }}</p>
 <div class="price-block"><span class="price-big">{{ price }}</span><span class="price-note">one-time purchase</span></div>
@@ -996,7 +1111,7 @@ footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-i
 <div class="section-card">
 <div class="section-label">What's Included</div>
 <h2>{{ count }} Documents</h2>
-<ul class="includes-list">{{ includes_html|safe }}</ul>
+<div class="doc-list">{{ includes_html|safe }}</div>
 </div>
 <div class="section-card">
 <div class="section-label">Features</div>
@@ -1015,6 +1130,7 @@ footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-i
 <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. &middot; <a href="/about">About</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></p>
 </footer>
 <script>
+function toggleDoc(btn){var item=btn.parentElement;item.classList.toggle('open');btn.setAttribute('aria-expanded',item.classList.contains('open'));}
 function buyProduct(productId){var btn=event.target;btn.disabled=true;btn.textContent='Processing...';fetch('/api/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product_id:productId})}).then(function(r){return r.json()}).then(function(data){if(data.url){window.location.href=data.url}else{alert('Something went wrong. Please try again.');btn.disabled=false;btn.textContent='Buy Now — {{ price }}';}}).catch(function(){alert('Something went wrong. Please try again.');btn.disabled=false;btn.textContent='Buy Now — {{ price }}';});}
 </script>
 </body></html>"""
