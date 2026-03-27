@@ -966,21 +966,60 @@ PURCHASE_SUCCESS_HTML = """<!DOCTYPE html>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--cream:#F7F4EF;--text:#1B2A38;--navy:#1B3A5C;--gold:#B8977E;--muted:#6E7D8A;--border:#E4DDD3}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.card{background:white;border-radius:24px;padding:48px;max-width:480px;text-align:center;box-shadow:0 2px 40px rgba(27,58,92,0.09)}
-.check{width:64px;height:64px;background:#2d6a4f;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:28px;color:white}
-h1{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;margin-bottom:12px}
-p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:24px}
-.btn{display:inline-block;padding:12px 28px;background:var(--navy);color:var(--cream);border-radius:100px;text-decoration:none;font-size:14px;font-weight:500;transition:all 0.2s}
+:root{--cream:#F7F4EF;--warm-white:#FDFCFA;--text:#1B2A38;--navy:#1B3A5C;--gold:#B8977E;--muted:#6E7D8A;--border:#E4DDD3}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,244,239,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-icon{width:32px;height:32px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500}
+.nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text)}
+.back{font-size:14px;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--navy)}
+.wrap{max-width:560px;margin:0 auto;padding:120px 24px 64px;text-align:center}
+.check{width:72px;height:72px;background:#2d6a4f;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 28px;font-size:32px;color:white}
+h1{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;margin-bottom:8px}
+.product-name{font-size:14px;color:var(--gold);font-weight:500;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:32px}
+.steps{background:var(--warm-white);border:1px solid var(--border);border-radius:20px;padding:32px;text-align:left;margin-bottom:32px}
+.step{display:flex;gap:16px;margin-bottom:20px}
+.step:last-child{margin-bottom:0}
+.step-num{width:28px;height:28px;background:var(--navy);color:var(--cream);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;margin-top:2px}
+.step-text{font-size:14px;line-height:1.7;color:var(--text)}
+.step-text strong{font-weight:500}
+.step-text span{color:var(--muted);font-size:13px}
+.contact-box{background:var(--warm-white);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:32px;font-size:14px;color:var(--muted);line-height:1.7}
+.contact-box a{color:var(--navy);text-decoration:none;font-weight:500}
+.btn{display:inline-block;padding:12px 28px;background:var(--navy);color:var(--cream);border-radius:100px;text-decoration:none;font-size:14px;font-weight:500;transition:all 0.2s;margin:0 6px}
 .btn:hover{background:#244a6e}
+.btn-ghost{display:inline-block;padding:12px 28px;border:1px solid var(--border);color:var(--text);border-radius:100px;text-decoration:none;font-size:14px;transition:all 0.2s;margin:0 6px}
+.btn-ghost:hover{background:var(--navy);color:var(--cream)}
+footer{padding:28px 48px;border-top:1px solid var(--border);text-align:center}
+.footer-note{font-size:12px;color:var(--muted);font-weight:300}
+.footer-note a{color:var(--muted);text-decoration:none}
+@media(max-width:640px){nav{padding:16px 20px}.wrap{padding:100px 20px 48px}.steps{padding:24px 20px}}
 </style></head><body>
-<div class="card">
+<nav>
+<a href="/" class="nav-logo"><div class="nav-logo-icon">L</div><span class="nav-logo-text">Lumeway</span></a>
+<a href="/templates" class="back">← Templates</a>
+</nav>
+<div class="wrap">
 <div class="check">✓</div>
-<h1>Thank you!</h1>
-<p>Your purchase of <strong>{{ product_name }}</strong> is complete. Check your email for a link to download your templates.</p>
-<a href="/templates" class="btn">Back to Templates</a>
-</div></body></html>"""
+<h1>Thank you for your purchase!</h1>
+<div class="product-name">{{ product_name }}</div>
+<div class="steps">
+<div class="step"><div class="step-num">1</div><div class="step-text"><strong>Check your email</strong><br><span>We're sending a download link to the email you used at checkout. It should arrive within a few minutes.</span></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-text"><strong>Click the download link</strong><br><span>The email contains a unique link that takes you to your personal download page. This link does not expire.</span></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-text"><strong>Download your templates</strong><br><span>Your templates come as a .zip file containing editable .docx files. Open them in Microsoft Word or Google Docs.</span></div></div>
+</div>
+<div class="contact-box">
+Didn't receive an email? Check your spam folder first.<br>
+Still need help? Email us at <a href="mailto:hello@lumeway.co">hello@lumeway.co</a>
+</div>
+<a href="/templates" class="btn">Browse More Templates</a>
+<a href="/" class="btn-ghost">Back to Lumeway</a>
+</div>
+<footer>
+<p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. &middot; <a href="/about">About</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></p>
+</footer>
+</body></html>"""
 
 DOWNLOAD_PAGE_HTML = """<!DOCTYPE html>
 <html lang="en"><head>
@@ -1056,8 +1095,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:fl
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .nav-logo-icon{width:32px;height:32px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500}
 .nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text)}
-.back{font-size:14px;color:var(--muted);text-decoration:none;transition:color 0.15s}
-.back:hover{color:var(--navy)}
+.nav-left{display:flex;align-items:center;gap:28px}
+.nav-right{display:flex;gap:12px;align-items:center}
+.nav-dropdown{position:relative}
+.nav-drop-btn{background:none;border:none;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--muted);cursor:pointer;padding:6px 4px;transition:color 0.15s;display:flex;align-items:center;gap:4px}
+.nav-drop-btn:hover{color:var(--navy)}
+.nav-drop-btn .chev{display:inline-block;transition:transform 0.2s ease}
+.nav-drop-btn[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.nav-drop-menu{display:none;position:absolute;top:calc(100% + 8px);left:0;background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:6px;min-width:200px;box-shadow:0 8px 24px rgba(27,58,92,0.1);z-index:200}
+.nav-drop-menu a{display:block;padding:9px 12px;font-size:13.5px;color:var(--text);text-decoration:none;border-radius:7px}
+.nav-drop-menu a:hover{background:var(--cream);color:var(--navy)}
+.nav-drop-menu .menu-div{height:1px;background:var(--border);margin:4px 6px}
+.nav-dropdown:hover .nav-drop-menu,.nav-dropdown.open .nav-drop-menu{display:block}
+.btn-ghost-nav{padding:8px 20px;border:1px solid var(--border);border-radius:100px;background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;text-decoration:none;transition:all 0.2s}
+.btn-ghost-nav:hover{background:var(--navy);color:var(--cream)}
 .hero{padding:120px 24px 48px;max-width:720px;margin:0 auto;text-align:center}
 .hero-subhead{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
 .hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,52px);font-weight:300;line-height:1.12;margin-bottom:16px}
@@ -1106,8 +1157,14 @@ footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-i
 @media(max-width:640px){nav{padding:16px 20px}.section-card{padding:24px 20px}.features-list{grid-template-columns:1fr}.cta-block{margin:0 16px 64px;padding:32px 24px}}
 </style></head><body>
 <nav>
+<div class="nav-left">
 <a href="/" class="nav-logo"><div class="nav-logo-icon">L</div><span class="nav-logo-text">Lumeway</span></a>
-<a href="/templates" class="back">← All Templates</a>
+<div class="nav-dropdown"><button class="nav-drop-btn" aria-expanded="false">Get help with <span class="chev">▾</span></button>
+<div class="nav-drop-menu"><a href="/estate">Death &amp; Estate</a><a href="/divorce">Divorce &amp; Separation</a><a href="/job-loss">Job Loss &amp; Income Crisis</a><a href="/relocation">Moving &amp; Relocation</a><a href="/disability">Disability &amp; Benefits</a><a href="/retirement">Retirement</a></div></div>
+<div class="nav-dropdown"><button class="nav-drop-btn" aria-expanded="false">Explore <span class="chev">▾</span></button>
+<div class="nav-drop-menu"><a href="/templates">Templates</a><a href="/faq">FAQ</a><a href="/blog">Blog</a><div class="menu-div"></div><a href="/about">About</a><a href="/contact">Contact</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div></div>
+</div>
+<div class="nav-right"><a href="/chat" target="_blank" class="btn-ghost-nav">Try it free</a></div>
 </nav>
 <div class="hero">
 <div class="hero-subhead">{{ name }}</div>
@@ -1143,6 +1200,7 @@ footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-i
 <script>
 function toggleDoc(btn){var item=btn.parentElement;item.classList.toggle('open');btn.setAttribute('aria-expanded',item.classList.contains('open'));}
 function buyProduct(productId){var btn=event.target;btn.disabled=true;btn.textContent='Processing...';fetch('/api/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product_id:productId})}).then(function(r){return r.json()}).then(function(data){if(data.url){window.location.href=data.url}else{alert('Something went wrong. Please try again.');btn.disabled=false;btn.textContent='Buy Now — {{ price }}';}}).catch(function(){alert('Something went wrong. Please try again.');btn.disabled=false;btn.textContent='Buy Now — {{ price }}';});}
+(function(){var dds=document.querySelectorAll('.nav-dropdown');dds.forEach(function(dd){var btn=dd.querySelector('.nav-drop-btn');btn.addEventListener('click',function(e){e.stopPropagation();dds.forEach(function(o){if(o!==dd){o.classList.remove('open');o.querySelector('.nav-drop-btn').setAttribute('aria-expanded','false');}});dd.classList.toggle('open');btn.setAttribute('aria-expanded',dd.classList.contains('open'));});});document.addEventListener('click',function(){dds.forEach(function(dd){dd.classList.remove('open');dd.querySelector('.nav-drop-btn').setAttribute('aria-expanded','false');});});})();
 </script>
 </body></html>"""
 
