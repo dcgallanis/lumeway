@@ -867,12 +867,16 @@ def stripe_webhook():
     if webhook_secret:
         try:
             event = stripe.Webhook.construct_event(payload, sig, webhook_secret)
-        except (ValueError, stripe.error.SignatureVerificationError):
+        except (ValueError, stripe.error.SignatureVerificationError) as e:
+            print(f"Webhook signature verification failed: {e}")
             return "Invalid signature", 400
     else:
         event = json.loads(payload)
-    if event.get("type") == "checkout.session.completed":
-        session_data = event["data"]["object"]
+    # Stripe event objects use attribute access, not .get()
+    event_type = event["type"] if isinstance(event, dict) else event.type
+    if event_type == "checkout.session.completed":
+        session_data = event["data"]["object"] if isinstance(event, dict) else event.data.object
+        print(f"Webhook received: checkout.session.completed")
         fulfill_purchase(session_data)
     return "ok", 200
 
@@ -915,11 +919,13 @@ def fulfill_purchase(session_data):
 @app.route("/purchase-success")
 def purchase_success():
     session_id = request.args.get("session_id")
+    print(f"Purchase success page hit, session_id={session_id}")
     if session_id:
         try:
             session_data = stripe.checkout.Session.retrieve(session_id)
+            print(f"Session retrieved: payment_status={session_data.payment_status}, metadata={session_data.metadata}")
             if session_data.payment_status == "paid":
-                product_id = session_data.metadata.get("product_id", "")
+                product_id = session_data.metadata.get("product_id", "") if isinstance(session_data.metadata, dict) else getattr(session_data.metadata, "product_id", "")
                 product = PRODUCTS.get(product_id, {})
                 # Check if already fulfilled (webhook may have handled it)
                 conn = get_db()
@@ -930,7 +936,10 @@ def purchase_success():
                     fulfill_purchase(session_data)
                 return render_template_string(PURCHASE_SUCCESS_HTML, product_name=product.get("name", "your templates"))
         except Exception as e:
-            print(f"Error retrieving session: {e}")
+            import traceback
+            print(f"Error in purchase-success: {e}")
+            traceback.print_exc()
+    print("Purchase success: no valid session, redirecting to templates")
     return redirect("/templates")
 
 @app.route("/download/<token>")
