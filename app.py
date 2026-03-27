@@ -11,11 +11,9 @@ import re
 import sqlite3
 from datetime import datetime, timezone
 from dotenv import load_dotenv
-import smtplib
+import requests as http_requests
 import stripe
 import threading
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 import conversation_log
 
 load_dotenv()
@@ -96,34 +94,14 @@ def init_subscribers_db():
     conn.commit()
     conn.close()
 
-GMAIL_USER = os.environ.get("GMAIL_USER", "hello@lumeway.co")
-GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD")
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "re_17DAfkrF_3mB4pCdStfmYHiNQoeKrxaWe")
 
 def send_purchase_email(to_email, product_id, product_name, download_token):
-    """Send purchase confirmation with download link."""
-    if not GMAIL_APP_PASSWORD:
-        print(f"GMAIL_APP_PASSWORD not set, skipping email to {to_email}")
+    """Send purchase confirmation with download link via Resend."""
+    if not RESEND_API_KEY:
+        print(f"RESEND_API_KEY not set, skipping email to {to_email}")
         return False
     download_url = f"https://lumeway.co/download/{download_token}"
-    msg = MIMEMultipart("alternative")
-    msg["From"] = f"Lumeway <{GMAIL_USER}>"
-    msg["To"] = to_email
-    msg["Subject"] = f"Your {product_name} is ready"
-    text = f"""Hi there,
-
-Thank you for your purchase! Your {product_name} is ready to download.
-
-Download your templates here:
-{download_url}
-
-This link is unique to your purchase and does not expire.
-
-If you have any questions, just reply to this email.
-
-Warmly,
-The Lumeway Team
-lumeway.co
-"""
     html = f"""<!DOCTYPE html>
 <html><body style="font-family:system-ui,-apple-system,sans-serif;color:#1B2A38;max-width:560px;margin:0 auto;padding:32px 24px;">
 <div style="text-align:center;margin-bottom:32px;">
@@ -140,18 +118,22 @@ lumeway.co
 <p style="font-size:13px;color:#6E7D8A;">Warmly,<br>The Lumeway Team<br><a href="https://lumeway.co" style="color:#1B3A5C;">lumeway.co</a></p>
 <p style="font-size:11px;color:#999;margin-top:24px;">Lumeway provides organizational tools, not legal or financial advice. Always consult a qualified professional for decisions specific to your situation.</p>
 </body></html>"""
-    msg.attach(MIMEText(text, "plain"))
-    msg.attach(MIMEText(html, "html"))
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
-        server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
-        server.sendmail(GMAIL_USER, to_email, msg.as_string())
-        server.quit()
-        print(f"Purchase email sent to {to_email}")
-        return True
+        resp = http_requests.post("https://api.resend.com/emails", json={
+            "from": "Lumeway <onboarding@resend.dev>",
+            "to": [to_email],
+            "subject": f"Your {product_name} is ready",
+            "html": html,
+        }, headers={
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        }, timeout=10)
+        if resp.status_code == 200:
+            print(f"Purchase email sent to {to_email}")
+            return True
+        else:
+            print(f"Resend error ({resp.status_code}): {resp.text}")
+            return False
     except Exception as e:
         print(f"Failed to send email to {to_email}: {e}")
         return False
