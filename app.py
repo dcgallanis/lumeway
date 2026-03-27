@@ -11,7 +11,10 @@ import re
 import sqlite3
 from datetime import datetime, timezone
 from dotenv import load_dotenv
+import smtplib
 import stripe
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import conversation_log
 
 load_dotenv()
@@ -56,6 +59,18 @@ def init_subscribers_db():
             subscribed_at TEXT NOT NULL,
             unsubscribed_at TEXT
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS purchases (
+            id SERIAL PRIMARY KEY,
+            email TEXT NOT NULL,
+            product_id TEXT NOT NULL,
+            product_name TEXT NOT NULL,
+            amount_cents INTEGER NOT NULL,
+            stripe_session_id TEXT UNIQUE,
+            stripe_payment_intent TEXT,
+            purchased_at TEXT NOT NULL,
+            download_token TEXT,
+            fulfilled BOOLEAN DEFAULT FALSE
+        )""")
     else:
         db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,8 +80,76 @@ def init_subscribers_db():
             subscribed_at TEXT NOT NULL,
             unsubscribed_at TEXT
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS purchases (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL,
+            product_id TEXT NOT NULL,
+            product_name TEXT NOT NULL,
+            amount_cents INTEGER NOT NULL,
+            stripe_session_id TEXT UNIQUE,
+            stripe_payment_intent TEXT,
+            purchased_at TEXT NOT NULL,
+            download_token TEXT,
+            fulfilled INTEGER DEFAULT 0
+        )""")
     conn.commit()
     conn.close()
+
+GMAIL_USER = os.environ.get("GMAIL_USER", "hello@lumeway.co")
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD")
+
+def send_purchase_email(to_email, product_id, product_name, download_token):
+    """Send purchase confirmation with download link."""
+    if not GMAIL_APP_PASSWORD:
+        print(f"GMAIL_APP_PASSWORD not set, skipping email to {to_email}")
+        return False
+    download_url = f"https://lumeway.co/download/{download_token}"
+    msg = MIMEMultipart("alternative")
+    msg["From"] = f"Lumeway <{GMAIL_USER}>"
+    msg["To"] = to_email
+    msg["Subject"] = f"Your {product_name} is ready"
+    text = f"""Hi there,
+
+Thank you for your purchase! Your {product_name} is ready to download.
+
+Download your templates here:
+{download_url}
+
+This link is unique to your purchase and does not expire.
+
+If you have any questions, just reply to this email.
+
+Warmly,
+The Lumeway Team
+lumeway.co
+"""
+    html = f"""<!DOCTYPE html>
+<html><body style="font-family:system-ui,-apple-system,sans-serif;color:#1B2A38;max-width:560px;margin:0 auto;padding:32px 24px;">
+<div style="text-align:center;margin-bottom:32px;">
+  <span style="font-family:Georgia,serif;font-size:24px;color:#1B3A5C;font-weight:500;">Lumeway</span>
+</div>
+<p style="font-size:16px;line-height:1.6;">Hi there,</p>
+<p style="font-size:16px;line-height:1.6;">Thank you for your purchase! Your <strong>{product_name}</strong> is ready to download.</p>
+<div style="text-align:center;margin:32px 0;">
+  <a href="{download_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Download Your Templates</a>
+</div>
+<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">This link is unique to your purchase and does not expire.</p>
+<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">If you have any questions, just reply to this email.</p>
+<hr style="border:none;border-top:1px solid #E4DDD3;margin:32px 0;" />
+<p style="font-size:13px;color:#6E7D8A;">Warmly,<br>The Lumeway Team<br><a href="https://lumeway.co" style="color:#1B3A5C;">lumeway.co</a></p>
+<p style="font-size:11px;color:#999;margin-top:24px;">Lumeway provides organizational tools, not legal or financial advice. Always consult a qualified professional for decisions specific to your situation.</p>
+</body></html>"""
+    msg.attach(MIMEText(text, "plain"))
+    msg.attach(MIMEText(html, "html"))
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+            server.sendmail(GMAIL_USER, to_email, msg.as_string())
+        print(f"Purchase email sent to {to_email}")
+        return True
+    except Exception as e:
+        print(f"Failed to send email to {to_email}: {e}")
+        return False
 
 init_subscribers_db()
 
@@ -591,6 +674,18 @@ PRODUCTS = {
     "retirement": {"name": "Retirement Planning Bundle", "price": 1800, "desc": "15 documents for retirement planning"},
 }
 
+import secrets
+
+BUNDLE_FILES = {
+    "master": "Life-Transition-Master-Bundle.zip",
+    "job-loss": "Job-Loss-Survivor-Kit.zip",
+    "estate": "Estate-Survivor-Bundle.zip",
+    "divorce": "Divorce-Separation-Bundle.zip",
+    "disability": "Disability-Benefits-Bundle.zip",
+    "relocation": "Moving-Relocation-Bundle.zip",
+    "retirement": "Retirement-Planning-Bundle.zip",
+}
+
 @app.route("/api/create-checkout", methods=["POST"])
 def create_checkout():
     data = request.get_json()
@@ -601,6 +696,7 @@ def create_checkout():
     try:
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
+            customer_email=data.get("email"),
             line_items=[{
                 "price_data": {
                     "currency": "usd",
@@ -610,13 +706,148 @@ def create_checkout():
                 "quantity": 1,
             }],
             mode="payment",
-            success_url=request.host_url + "templates?purchased=" + product_id,
-            cancel_url=request.host_url + "templates",
+            success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=request.host_url + "templates#" + product_id,
             metadata={"product_id": product_id},
         )
         return jsonify({"url": session.url})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route("/webhook/stripe", methods=["POST"])
+def stripe_webhook():
+    payload = request.get_data()
+    sig = request.headers.get("Stripe-Signature")
+    webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET")
+    if webhook_secret:
+        try:
+            event = stripe.Webhook.construct_event(payload, sig, webhook_secret)
+        except (ValueError, stripe.error.SignatureVerificationError):
+            return "Invalid signature", 400
+    else:
+        event = json.loads(payload)
+    if event.get("type") == "checkout.session.completed":
+        session_data = event["data"]["object"]
+        fulfill_purchase(session_data)
+    return "ok", 200
+
+def fulfill_purchase(session_data):
+    """Record purchase and send download email."""
+    email = session_data.get("customer_details", {}).get("email") or session_data.get("customer_email")
+    product_id = session_data.get("metadata", {}).get("product_id")
+    if not email or not product_id or product_id not in PRODUCTS:
+        print(f"Cannot fulfill: email={email}, product_id={product_id}")
+        return
+    product = PRODUCTS[product_id]
+    token = secrets.token_urlsafe(32)
+    now = datetime.now(timezone.utc).isoformat()
+    try:
+        conn = get_db()
+        db_execute(conn, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+            """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (email, product_id, product["name"], product["price"],
+             session_data.get("id"), session_data.get("payment_intent"),
+             now, token, True if USE_POSTGRES else 1))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"DB error recording purchase: {e}")
+    send_purchase_email(email, product_id, product["name"], token)
+
+@app.route("/purchase-success")
+def purchase_success():
+    session_id = request.args.get("session_id")
+    if session_id:
+        try:
+            session_data = stripe.checkout.Session.retrieve(session_id)
+            if session_data.payment_status == "paid":
+                product_id = session_data.metadata.get("product_id", "")
+                product = PRODUCTS.get(product_id, {})
+                # Check if already fulfilled (webhook may have handled it)
+                conn = get_db()
+                cur = db_execute(conn, "SELECT download_token FROM purchases WHERE stripe_session_id = %s" if USE_POSTGRES else "SELECT download_token FROM purchases WHERE stripe_session_id = ?", (session_id,))
+                row = cur.fetchone()
+                conn.close()
+                if not row:
+                    fulfill_purchase(dict(session_data))
+                return render_template_string(PURCHASE_SUCCESS_HTML, product_name=product.get("name", "your templates"))
+        except Exception as e:
+            print(f"Error retrieving session: {e}")
+    return redirect("/templates")
+
+@app.route("/download/<token>")
+def download_page(token):
+    conn = get_db()
+    cur = db_execute(conn, "SELECT product_id, product_name, email FROM purchases WHERE download_token = %s" if USE_POSTGRES else "SELECT product_id, product_name, email FROM purchases WHERE download_token = ?", (token,))
+    row = cur.fetchone()
+    conn.close()
+    if not row:
+        return "Invalid or expired download link.", 404
+    product_id, product_name, email = row
+    filename = BUNDLE_FILES.get(product_id, "")
+    return render_template_string(DOWNLOAD_PAGE_HTML, product_name=product_name, product_id=product_id, filename=filename, token=token)
+
+@app.route("/download/<token>/file")
+def download_file_purchase(token):
+    conn = get_db()
+    cur = db_execute(conn, "SELECT product_id FROM purchases WHERE download_token = %s" if USE_POSTGRES else "SELECT product_id FROM purchases WHERE download_token = ?", (token,))
+    row = cur.fetchone()
+    conn.close()
+    if not row:
+        return "Invalid download link.", 404
+    product_id = row[0]
+    filename = BUNDLE_FILES.get(product_id)
+    if not filename:
+        return "File not found.", 404
+    return send_from_directory("static/bundles", filename, as_attachment=True)
+
+PURCHASE_SUCCESS_HTML = """<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Purchase Complete — Lumeway</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#F7F4EF;--text:#1B2A38;--navy:#1B3A5C;--gold:#B8977E;--muted:#6E7D8A;--border:#E4DDD3}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:white;border-radius:24px;padding:48px;max-width:480px;text-align:center;box-shadow:0 2px 40px rgba(27,58,92,0.09)}
+.check{width:64px;height:64px;background:#2d6a4f;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:28px;color:white}
+h1{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;margin-bottom:12px}
+p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:24px}
+.btn{display:inline-block;padding:12px 28px;background:var(--navy);color:var(--cream);border-radius:100px;text-decoration:none;font-size:14px;font-weight:500;transition:all 0.2s}
+.btn:hover{background:#244a6e}
+</style></head><body>
+<div class="card">
+<div class="check">✓</div>
+<h1>Thank you!</h1>
+<p>Your purchase of <strong>{{ product_name }}</strong> is complete. Check your email for a link to download your templates.</p>
+<a href="/templates" class="btn">Back to Templates</a>
+</div></body></html>"""
+
+DOWNLOAD_PAGE_HTML = """<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Download {{ product_name }} — Lumeway</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#F7F4EF;--text:#1B2A38;--navy:#1B3A5C;--gold:#B8977E;--muted:#6E7D8A;--border:#E4DDD3}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:white;border-radius:24px;padding:48px;max-width:480px;text-align:center;box-shadow:0 2px 40px rgba(27,58,92,0.09)}
+h1{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;margin-bottom:12px}
+p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:24px}
+.btn{display:inline-block;padding:14px 32px;background:var(--navy);color:var(--cream);border-radius:100px;text-decoration:none;font-size:15px;font-weight:500;transition:all 0.2s}
+.btn:hover{background:#244a6e;transform:translateY(-1px)}
+.note{font-size:12px;color:var(--muted);margin-top:24px}
+</style></head><body>
+<div class="card">
+<h1>{{ product_name }}</h1>
+<p>Your templates are ready to download.</p>
+<a href="/download/{{ token }}/file" class="btn">Download Templates</a>
+<p class="note">This link is unique to your purchase and does not expire.<br>Questions? Email <a href="mailto:hello@lumeway.co" style="color:var(--navy)">hello@lumeway.co</a></p>
+</div></body></html>"""
 
 @app.route("/templates")
 def templates():
