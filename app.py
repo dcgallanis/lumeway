@@ -120,7 +120,7 @@ def send_purchase_email(to_email, product_id, product_name, download_token):
 </body></html>"""
     try:
         resp = http_requests.post("https://api.resend.com/emails", json={
-            "from": "Lumeway <onboarding@resend.dev>",
+            "from": "Lumeway <hello@lumeway.co>",
             "to": [to_email],
             "subject": f"Your {product_name} is ready",
             "html": html,
