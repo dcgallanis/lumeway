@@ -1302,10 +1302,12 @@ def parse_html_post(filepath):
     desc_match = re.search(r'<meta\s+name="description"\s+content="([^"]*)"', raw)
     if desc_match:
         meta["excerpt"] = desc_match.group(1)
-    # Extract category from blog-category div
+    # Extract category from blog-category div or category-tag span
     cat_match = re.search(r'class="blog-category"[^>]*>(.*?)</div>', raw, re.DOTALL)
+    if not cat_match:
+        cat_match = re.search(r'class="category-tag"[^>]*>(.*?)</span>', raw, re.DOTALL)
     if cat_match:
-        meta["category"] = re.sub(r"<[^>]+>", "", cat_match.group(1)).strip()
+        meta["category"] = re.sub(r"<[^>]+>", "", cat_match.group(1)).strip().title()
     # Extract blog-content div (the actual post body)
     content_match = re.search(r'<div class="blog-content">(.*?)</div>\s*</article>', raw, re.DOTALL)
     if content_match:
@@ -1366,7 +1368,6 @@ def blog():
     with open(blog_html_path, "r") as f:
         html = f.read()
     html = html.replace('<div class="blog-grid">', '<div class="blog-grid">' + cards_html)
-    html = html.replace('<span class="blog-card-soon">Coming soon</span>', '')
     return html
 
 @app.route("/blog/<slug>")
