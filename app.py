@@ -165,6 +165,12 @@ YOUR TONE:
 - Never clinical, never preachy, never condescending.
 - Acknowledge that transitions are hard. Validate emotions. Then provide
   practical next steps.
+- BE CONCISE. Keep responses short and scannable. Use bullet points and
+  short sentences. Avoid long paragraphs. Most responses should be 3-6
+  sentences or a short bulleted list — not walls of text. Only go longer
+  when presenting a full roadmap for the first time.
+- Ask ONE question at a time. Don't stack multiple questions in one message.
+- Don't repeat information the user already told you.
 
 YOUR BOUNDARIES:
 - When someone asks you a question that requires legal, financial, or
@@ -546,7 +552,33 @@ QUARTERLY REVIEW: Flag conversations with 3+ boundary redirections for
 manual review. These indicate either:
 - Users who need more robust professional referral pathways
 - Gaps in the roadmap content that should be addressed
-- Potential guardrail weaknesses that need strengthening"""
+- Potential guardrail weaknesses that need strengthening
+
+QUICK-REPLY BUTTONS:
+When your message ends with a question that has a small set of clear answer
+options (2-6 choices), append a special tag on the LAST line of your response:
+
+[QUICK_REPLIES: Option A | Option B | Option C]
+
+Rules:
+- Use this whenever you ask a yes/no question, or present a short list of
+  choices the user can pick from.
+- Keep each option SHORT (1-6 words). These become clickable buttons.
+- Maximum 6 options. If there are more possibilities, omit the tag and let
+  the user type freely.
+- Always include an "Other" or "Something else" option when the choices
+  might not cover every situation.
+- Do NOT use this tag when asking open-ended questions (e.g., "What state
+  are you in?" or "Tell me more about your situation").
+- The tag must be on its own line at the very end of your message.
+
+Examples:
+- After asking "Have you filed for unemployment yet?":
+  [QUICK_REPLIES: Yes | No | Not sure]
+- After asking "Which transition are you navigating?":
+  [QUICK_REPLIES: Job Loss | Divorce | Death of a loved one | Disability | Relocation | Retirement]
+- After asking "Would you like to see the next steps?":
+  [QUICK_REPLIES: Yes, show me | Not yet]"""
 
 
 @app.route("/.well-known/<path:filename>")
@@ -975,7 +1007,7 @@ PURCHASE_SUCCESS_HTML = """<!DOCTYPE html>
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text)}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,244,239,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo-icon{width:32px;height:32px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500}
+.nav-logo-icon{width:32px;height:32px;object-fit:contain}
 .nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text)}
 .back{font-size:14px;color:var(--muted);text-decoration:none}
 .back:hover{color:var(--navy)}
@@ -1002,7 +1034,7 @@ footer{padding:28px 48px;border-top:1px solid var(--border);text-align:center}
 @media(max-width:640px){nav{padding:16px 20px}.wrap{padding:100px 20px 48px}.steps{padding:24px 20px}}
 </style></head><body>
 <nav>
-<a href="/" class="nav-logo"><div class="nav-logo-icon">L</div><span class="nav-logo-text">Lumeway</span></a>
+<a href="/" class="nav-logo"><img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" class="nav-logo-icon"><span class="nav-logo-text">Lumeway</span></a>
 <a href="/templates" class="back">← Templates</a>
 </nav>
 <div class="wrap">
@@ -1098,7 +1130,7 @@ BUNDLE_DETAIL_HTML = """<!DOCTYPE html>
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,244,239,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo-icon{width:32px;height:32px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500}
+.nav-logo-icon{width:32px;height:32px;object-fit:contain}
 .nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text)}
 .nav-left{display:flex;align-items:center;gap:28px}
 .nav-right{display:flex;gap:12px;align-items:center}
@@ -1156,14 +1188,14 @@ h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-
 .btn-cta:hover{background:var(--gold);color:white}
 .disclaimer{font-size:11px;color:var(--muted);text-align:center;max-width:520px;margin:0 auto 48px;line-height:1.6}
 footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.footer-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--navy)}
+.footer-logo{height:28px;object-fit:contain}
 .footer-note{font-size:12px;color:var(--muted);font-weight:300}
 .footer-note a{color:var(--muted);text-decoration:none}
 @media(max-width:640px){nav{padding:16px 20px}.section-card{padding:24px 20px}.features-list{grid-template-columns:1fr}.cta-block{margin:0 16px 64px;padding:32px 24px}}
 </style></head><body>
 <nav>
 <div class="nav-left">
-<a href="/" class="nav-logo"><div class="nav-logo-icon">L</div><span class="nav-logo-text">Lumeway</span></a>
+<a href="/" class="nav-logo"><img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" class="nav-logo-icon"><span class="nav-logo-text">Lumeway</span></a>
 <div class="nav-dropdown"><button class="nav-drop-btn" aria-expanded="false">Get help with <span class="chev">▾</span></button>
 <div class="nav-drop-menu"><a href="/estate">Death &amp; Estate</a><a href="/divorce">Divorce &amp; Separation</a><a href="/job-loss">Job Loss &amp; Income Crisis</a><a href="/relocation">Moving &amp; Relocation</a><a href="/disability">Disability &amp; Benefits</a><a href="/retirement">Retirement</a></div></div>
 <div class="nav-dropdown"><button class="nav-drop-btn" aria-expanded="false">Explore <span class="chev">▾</span></button>
@@ -1199,7 +1231,7 @@ footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-i
 <a href="/chat" target="_blank" class="btn-cta">Talk to Lumeway free →</a>
 </div>
 <footer>
-<div class="footer-logo">Lumeway</div>
+<img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo">
 <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. &middot; <a href="/about">About</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></p>
 </footer>
 <script>
@@ -1429,7 +1461,7 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
     body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.7;font-size:17px;font-weight:300}
     nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,244,239,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
     .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-    .nav-logo-icon{width:32px;height:32px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500}
+    .nav-logo-icon{width:32px;height:32px;object-fit:contain}
     .nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text)}
     .nav-left{display:flex;align-items:center;gap:28px}
     .nav-right{display:flex;gap:12px;align-items:center}
@@ -1462,7 +1494,7 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
     .post-back{display:inline-block;margin-top:48px;font-size:14px;color:var(--muted);text-decoration:none}
     .post-back:hover{color:var(--navy)}
     footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:64px}
-    .footer-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--navy)}
+    .footer-logo{height:28px;object-fit:contain}
     .footer-note{font-size:12px;color:var(--muted);font-weight:300}
     .footer-note a{color:var(--muted)}
     @media(max-width:768px){nav{padding:14px 20px}article{padding:85px 20px 48px}footer{padding:20px;flex-direction:column;text-align:center}}
@@ -1473,7 +1505,7 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
   <nav>
     <div class="nav-left">
       <a href="/" class="nav-logo">
-        <div class="nav-logo-icon">L</div>
+        <img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" class="nav-logo-icon">
         <span class="nav-logo-text">Lumeway</span>
       </a>
     </div>
@@ -1514,7 +1546,7 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
     <a href="/blog" class="post-back">&larr; Back to all posts</a>
   </article>
   <footer>
-    <span class="footer-logo">Lumeway</span>
+    <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo">
     <span class="footer-note">&copy; 2026 Lumeway. All rights reserved. | <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a> | <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank">Pinterest</a> &middot; <a href="https://www.etsy.com/shop/LumewayTemplates" rel="noopener" target="_blank">Etsy</a></span>
   </footer>
 </body>

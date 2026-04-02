@@ -172,17 +172,8 @@
     .logo-mark {
       width: 38px;
       height: 38px;
-      background: var(--navy);
-      border-radius: 11px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 19px;
-      color: var(--bg);
-      font-weight: 600;
+      object-fit: contain;
       flex-shrink: 0;
-      letter-spacing: -0.5px;
     }
 
     .header-info { flex: 1; }
@@ -647,6 +638,43 @@
       background: var(--border);
       flex-shrink: 0;
     }
+
+    /* ── Quick-reply buttons ── */
+    .quick-replies {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 8px;
+      padding-left: 38px;
+      animation: fade-up 0.3s ease both;
+    }
+
+    .quick-reply-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 7px 15px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.16s ease;
+      line-height: 1.35;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+
+    .quick-reply-btn:hover {
+      background: var(--surface);
+      border-color: var(--gold);
+      color: var(--navy);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .quick-reply-btn:active {
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -655,7 +683,7 @@
 <div class="shell">
   <!-- Header -->
   <div class="header">
-    <div class="logo-mark">L</div>
+    <img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" class="logo-mark">
     <div class="header-info">
       <h1>Lumeway</h1>
       <p>Your Transition Navigator</p>
@@ -663,6 +691,7 @@
     <div class="header-right">
       <button class="header-action" onclick="getSummary()">📋 Summary</button>
       <button class="header-action" onclick="downloadChecklist()">⬇ Checklist</button>
+      <button class="header-action" onclick="startOver()">↺ Start Over</button>
       <div class="status-dot"></div>
     </div>
   </div>
@@ -670,7 +699,7 @@
   <!-- Messages -->
   <div class="messages" id="messages">
     <div class="welcome" id="welcome">
-      <div class="welcome-emblem">🕯️</div>
+      <div class="welcome-emblem"><img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" style="width:36px;height:36px;object-fit:contain"></div>
       <h2>You don't have to figure this out alone.</h2>
       <p>Lumeway helps you understand the process and timeline for life's hardest transitions — with planning tools to keep you organized and a Transition Navigator to walk you through what comes next.</p>
       <p style="font-size:12px;color:var(--muted);line-height:1.5;margin-top:12px;max-width:480px;margin-left:auto;margin-right:auto">Lumeway is an AI-powered guide — not a lawyer, financial advisor, or licensed professional. The information provided is for general educational purposes only and should not be considered legal, financial, or medical advice. Always consult a qualified professional for decisions specific to your situation.</p>
@@ -843,7 +872,7 @@
     div.className = `message ${role}`;
 
     const avatarHTML = role === 'bot'
-      ? `<div class="avatar bot">L</div>`
+      ? `<div class="avatar bot"><img src="/static/logos/sun-mark-cream-transparent.png" alt="L" style="width:18px;height:18px;object-fit:contain"></div>`
       : `<div class="avatar user-av">You</div>`;
 
     const bubbleContent = role === 'bot'
@@ -873,7 +902,7 @@
     div.id = 'typing';
     div.className = 'typing-indicator';
     div.innerHTML = `
-      <div class="avatar bot">L</div>
+      <div class="avatar bot"><img src="/static/logos/sun-mark-cream-transparent.png" alt="L" style="width:18px;height:18px;object-fit:contain"></div>
       <div class="typing-bubble">
         <div class="dot"></div><div class="dot"></div><div class="dot"></div>
       </div>`;
@@ -895,6 +924,10 @@
     input.value = '';
     input.style.height = 'auto';
     isLoading = true;
+
+    // Remove any lingering quick-reply buttons
+    const oldReplies = document.querySelector('.quick-replies');
+    if (oldReplies) oldReplies.remove();
     document.getElementById('send-btn').disabled = true;
 
     addMessage('user', message);
@@ -914,7 +947,7 @@
       const msgs = document.getElementById('messages');
       const msgDiv = document.createElement('div');
       msgDiv.className = 'message bot';
-      msgDiv.innerHTML = `<div class="avatar bot">L</div><div class="bubble"></div>`;
+      msgDiv.innerHTML = `<div class="avatar bot"><img src="/static/logos/sun-mark-cream-transparent.png" alt="L" style="width:18px;height:18px;object-fit:contain"></div><div class="bubble"></div>`;
       msgs.appendChild(msgDiv);
 
       const reader = res.body.getReader();
@@ -945,6 +978,13 @@
             }
           }
         }
+      }
+
+      // After streaming completes, check for quick-reply buttons
+      const parsed = parseQuickReplies(fullText);
+      if (parsed.options) {
+        updateBubble(msgDiv, parsed.text);
+        renderQuickReplies(parsed.options, msgDiv);
       }
 
     } catch (err) {
@@ -1104,6 +1144,79 @@ ${tasks || '<p style="color:#8A8278;font-style:italic">No tasks found. Continue 
       a.click();
       URL.revokeObjectURL(url);
     }
+  }
+
+  // ── Quick-reply parsing ──
+  function parseQuickReplies(text) {
+    const match = text.match(/\[QUICK_REPLIES:\s*(.+?)\]\s*$/);
+    if (!match) return { text, options: null };
+    const options = match[1].split('|').map(o => o.trim()).filter(Boolean);
+    const cleaned = text.replace(/\[QUICK_REPLIES:\s*.+?\]\s*$/, '').trimEnd();
+    return { text: cleaned, options: options.length ? options : null };
+  }
+
+  function renderQuickReplies(options, afterElement) {
+    // Remove any existing quick-reply buttons
+    const old = document.querySelector('.quick-replies');
+    if (old) old.remove();
+
+    const container = document.createElement('div');
+    container.className = 'quick-replies';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'quick-reply-btn';
+      btn.textContent = opt;
+      btn.onclick = () => {
+        container.remove();
+        sendMessage(opt);
+      };
+      container.appendChild(btn);
+    });
+    afterElement.after(container);
+    const msgs = document.getElementById('messages');
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  // ── Start over ──
+  function startOver() {
+    if (history.length === 0) return;
+    if (!confirm('Start a new conversation? Your current chat will be cleared.')) return;
+
+    // End current session
+    if (sessionId) {
+      navigator.sendBeacon('/api/session/' + sessionId + '/end',
+        new Blob([JSON.stringify({})], { type: 'application/json' }));
+    }
+
+    // Reset state
+    history = [];
+    sessionId = null;
+    isLoading = false;
+    document.getElementById('send-btn').disabled = false;
+
+    // Remove quick replies
+    const qr = document.querySelector('.quick-replies');
+    if (qr) qr.remove();
+
+    // Restore welcome screen
+    const msgs = document.getElementById('messages');
+    msgs.innerHTML = `
+    <div class="welcome" id="welcome">
+      <div class="welcome-emblem"><img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" style="width:36px;height:36px;object-fit:contain"></div>
+      <h2>You don't have to figure this out alone.</h2>
+      <p>Lumeway helps you understand the process and timeline for life's hardest transitions — with planning tools to keep you organized and a Transition Navigator to walk you through what comes next.</p>
+      <p style="font-size:12px;color:var(--muted);line-height:1.5;margin-top:12px;max-width:480px;margin-left:auto;margin-right:auto">Lumeway is an AI-powered guide — not a lawyer, financial advisor, or licensed professional. The information provided is for general educational purposes only and should not be considered legal, financial, or medical advice. Always consult a qualified professional for decisions specific to your situation.</p>
+      <p class="starters-label">Where are you right now?</p>
+      <div class="starters">
+        <button class="starter-btn" onclick="sendStarter(this)">My spouse just passed away. I don't know where to start.</button>
+        <button class="starter-btn" onclick="sendStarter(this)">I just got laid off. What do I need to do right away?</button>
+        <button class="starter-btn" onclick="sendStarter(this)">I'm going through a divorce and feel completely overwhelmed.</button>
+        <button class="starter-btn" onclick="sendStarter(this)">I'm moving to a new state and need help with everything.</button>
+        <button class="starter-btn" onclick="sendStarter(this)">I'm applying for disability benefits and don't know where to begin.</button>
+        <button class="starter-btn" onclick="sendStarter(this)">I'm retiring soon and need help with Medicare and Social Security.</button>
+        <button class="starter-btn other" onclick="focusInput()">Something else is going on…</button>
+      </div>
+    </div>`;
   }
 
   // ── Session summary ──
