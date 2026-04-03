@@ -597,6 +597,10 @@ def chat_page():
 def emergency_kit():
     return send_from_directory(".", "emergency-kit.html")
 
+@app.route("/static/logos/<filename>")
+def logo_file(filename):
+    return send_from_directory("logos", filename)
+
 @app.route("/static/downloads/<filename>")
 def download_file(filename):
     return send_from_directory("static/downloads", filename, as_attachment=True)
