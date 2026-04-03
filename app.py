@@ -1058,7 +1058,10 @@ Still need help? Email us at <a href="mailto:hello@lumeway.co">hello@lumeway.co<
 <a href="/" class="btn-ghost">Back to Lumeway</a>
 </div>
 <footer>
-<p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. &middot; <a href="/about">About</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></p>
+<img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo">
+<p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</p>
+<p class="footer-note"><a href="/about">About</a> &middot; <a href="/privacy">Privacy Policy</a></p>
+<div class="footer-social"><a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a><a href="https://www.etsy.com/shop/Lumeway" rel="noopener" target="_blank" title="Etsy"><svg viewBox="0 0 24 24"><path d="M8.559 3.074c0-.295.177-.413.59-.413h5.373c1.06 0 1.947.413 2.596 1.652l.649 1.416h.944l-.236-4.778H4.139l.059 1.18c1.06 0 1.77.177 2.065.531.354.354.472 1.003.472 1.947v11.14c0 .944-.118 1.593-.472 1.947-.295.354-1.003.531-2.065.531l-.059 1.18h14.336l.708-5.132h-.944l-.944 1.77c-.649 1.18-1.534 1.652-2.655 1.652H9.149c-.413 0-.59-.118-.59-.413V12.69h3.009c.767 0 1.357.118 1.652.472.295.295.472.826.531 1.534h1.003V9.504h-1.003c-.059.708-.236 1.239-.531 1.534-.295.295-.885.472-1.652.472H8.559V3.074z"/></svg></a></div>
 </footer>
 </body></html>"""
 
@@ -1191,10 +1194,14 @@ h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-
 .btn-cta{display:inline-block;padding:14px 32px;border-radius:100px;background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.2s}
 .btn-cta:hover{background:var(--gold);color:white}
 .disclaimer{font-size:11px;color:var(--muted);text-align:center;max-width:520px;margin:0 auto 48px;line-height:1.6}
-footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.footer-logo{height:80px;object-fit:contain}
-.footer-note{font-size:12px;color:var(--muted);font-weight:300}
+footer{padding:40px 48px 28px;border-top:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.footer-logo{height:120px;object-fit:contain;margin-bottom:4px}
+.footer-note{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6}
 .footer-note a{color:var(--muted);text-decoration:none}
+.footer-social{display:flex;gap:16px;align-items:center}
+.footer-social a{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--border);border-radius:50%;color:var(--muted);text-decoration:none;transition:all 0.15s}
+.footer-social a:hover{border-color:var(--gold);color:var(--navy)}
+.footer-social svg{width:16px;height:16px;fill:currentColor}
 @media(max-width:640px){nav{padding:16px 20px}.section-card{padding:24px 20px}.features-list{grid-template-columns:1fr}.cta-block{margin:0 16px 64px;padding:32px 24px}}
 </style></head><body>
 <nav>
@@ -1236,7 +1243,9 @@ footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-i
 </div>
 <footer>
 <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo">
-<p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor for legal or financial decisions. &middot; <a href="/about">About</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></p>
+<p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</p>
+<p class="footer-note"><a href="/about">About</a> &middot; <a href="/privacy">Privacy Policy</a></p>
+<div class="footer-social"><a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a><a href="https://www.etsy.com/shop/Lumeway" rel="noopener" target="_blank" title="Etsy"><svg viewBox="0 0 24 24"><path d="M8.559 3.074c0-.295.177-.413.59-.413h5.373c1.06 0 1.947.413 2.596 1.652l.649 1.416h.944l-.236-4.778H4.139l.059 1.18c1.06 0 1.77.177 2.065.531.354.354.472 1.003.472 1.947v11.14c0 .944-.118 1.593-.472 1.947-.295.354-1.003.531-2.065.531l-.059 1.18h14.336l.708-5.132h-.944l-.944 1.77c-.649 1.18-1.534 1.652-2.655 1.652H9.149c-.413 0-.59-.118-.59-.413V12.69h3.009c.767 0 1.357.118 1.652.472.295.295.472.826.531 1.534h1.003V9.504h-1.003c-.059.708-.236 1.239-.531 1.534-.295.295-.885.472-1.652.472H8.559V3.074z"/></svg></a></div>
 </footer>
 <script>
 function toggleDoc(btn){var item=btn.parentElement;item.classList.toggle('open');btn.setAttribute('aria-expanded',item.classList.contains('open'));}
@@ -1551,7 +1560,9 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
   </article>
   <footer>
     <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo">
-    <span class="footer-note">&copy; 2026 Lumeway. All rights reserved. | <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a> | <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank">Pinterest</a> &middot; <a href="https://www.etsy.com/shop/LumewayTemplates" rel="noopener" target="_blank">Etsy</a></span>
+    <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</p>
+    <p class="footer-note"><a href="/about">About</a> &middot; <a href="/privacy">Privacy Policy</a></p>
+    <div class="footer-social"><a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a><a href="https://www.etsy.com/shop/Lumeway" rel="noopener" target="_blank" title="Etsy"><svg viewBox="0 0 24 24"><path d="M8.559 3.074c0-.295.177-.413.59-.413h5.373c1.06 0 1.947.413 2.596 1.652l.649 1.416h.944l-.236-4.778H4.139l.059 1.18c1.06 0 1.77.177 2.065.531.354.354.472 1.003.472 1.947v11.14c0 .944-.118 1.593-.472 1.947-.295.354-1.003.531-2.065.531l-.059 1.18h14.336l.708-5.132h-.944l-.944 1.77c-.649 1.18-1.534 1.652-2.655 1.652H9.149c-.413 0-.59-.118-.59-.413V12.69h3.009c.767 0 1.357.118 1.652.472.295.295.472.826.531 1.534h1.003V9.504h-1.003c-.059.708-.236 1.239-.531 1.534-.295.295-.885.472-1.652.472H8.559V3.074z"/></svg></a></div>
   </footer>
 </body>
 </html>"""
