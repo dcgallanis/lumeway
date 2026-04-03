@@ -1,0 +1,4 @@
+- [user_carol.md](user_carol.md) — Carol is Lumeway founder, prefers autonomous workflows
+- [reference_infrastructure.md](reference_infrastructure.md) — Railway, PostgreSQL, admin, blog pipeline, analytics details
+- [project_user_accounts.md](project_user_accounts.md) — User account system planned for ~April 1, 2026
+- [project_chat_page_sidebar.md](project_chat_page_sidebar.md) — Add sidebar to chat page explaining summary/checklist features

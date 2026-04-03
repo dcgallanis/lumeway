@@ -1192,7 +1192,7 @@ h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-
 .btn-cta:hover{background:var(--gold);color:white}
 .disclaimer{font-size:11px;color:var(--muted);text-align:center;max-width:520px;margin:0 auto 48px;line-height:1.6}
 footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.footer-logo{height:28px;object-fit:contain}
+.footer-logo{height:80px;object-fit:contain}
 .footer-note{font-size:12px;color:var(--muted);font-weight:300}
 .footer-note a{color:var(--muted);text-decoration:none}
 @media(max-width:640px){nav{padding:16px 20px}.section-card{padding:24px 20px}.features-list{grid-template-columns:1fr}.cta-block{margin:0 16px 64px;padding:32px 24px}}
@@ -1498,7 +1498,7 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
     .post-back{display:inline-block;margin-top:48px;font-size:14px;color:var(--muted);text-decoration:none}
     .post-back:hover{color:var(--navy)}
     footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:64px}
-    .footer-logo{height:28px;object-fit:contain}
+    .footer-logo{height:80px;object-fit:contain}
     .footer-note{font-size:12px;color:var(--muted);font-weight:300}
     .footer-note a{color:var(--muted)}
     @media(max-width:768px){nav{padding:14px 20px}article{padding:85px 20px 48px}footer{padding:20px;flex-direction:column;text-align:center}}
