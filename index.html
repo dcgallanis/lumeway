@@ -684,6 +684,21 @@
     .quick-reply-btn:active {
       transform: translateY(0);
     }
+
+    .save-prompt {
+      display: flex; align-items: center; gap: 10px; justify-content: center;
+      padding: 10px 16px; margin: 12px 20px; border-radius: 100px;
+      background: var(--surface2); border: 1px solid var(--border);
+      font-size: 13px; font-weight: 300; color: var(--text2);
+    }
+    .save-prompt a {
+      color: var(--navy); font-weight: 500; text-decoration: underline;
+    }
+    .save-prompt button {
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      font-size: 14px; padding: 0 2px; line-height: 1;
+    }
+    .save-prompt button:hover { color: var(--text); }
   </style>
 </head>
 <body>
@@ -701,6 +716,8 @@
       <button class="header-action" onclick="getSummary()">📋 Summary</button>
       <button class="header-action" onclick="downloadChecklist()">⬇ Checklist</button>
       <button class="header-action" onclick="startOver()">↺ Start Over</button>
+      <a href="/dashboard" class="header-action" id="dashLink" style="display:none;text-decoration:none">👤 Dashboard</a>
+      <a href="/login" class="header-action" id="loginLink" style="text-decoration:none">Log in</a>
       <div class="status-dot"></div>
     </div>
   </div>
@@ -767,6 +784,18 @@
   let history = [];
   let sessionId = null;
   let isLoading = false;
+  let isLoggedIn = false;
+  let messageCount = 0;
+  let savePromptShown = false;
+
+  // Check auth state
+  fetch('/api/auth/me').then(r => r.json()).then(data => {
+    isLoggedIn = data.logged_in;
+    if (isLoggedIn) {
+      document.getElementById('dashLink').style.display = '';
+      document.getElementById('loginLink').style.display = 'none';
+    }
+  }).catch(() => {});
 
   // ── Markdown renderer with streaming-safe incomplete token handling ──
   function renderMarkdown(text) {
@@ -1004,6 +1033,18 @@
     isLoading = false;
     document.getElementById('send-btn').disabled = false;
     input.focus();
+
+    // Show save-progress prompt after 3 messages if not logged in
+    messageCount++;
+    if (messageCount >= 3 && !isLoggedIn && !savePromptShown) {
+      savePromptShown = true;
+      const msgs = document.getElementById('messages');
+      const prompt = document.createElement('div');
+      prompt.className = 'save-prompt';
+      prompt.innerHTML = '<span>Want to save your progress?</span> <a href="/login" target="_blank">Create a free account</a> <button onclick="this.parentElement.remove()">✕</button>';
+      msgs.appendChild(prompt);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
   }
 
   function sendStarter(btn) {

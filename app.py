@@ -1,15 +1,18 @@
-from flask import Flask, request, jsonify, send_from_directory, Response, render_template_string, redirect
+from flask import Flask, request, jsonify, send_from_directory, Response, render_template_string, redirect, session as flask_session
 from flask_cors import CORS
 import anthropic
 import csv
 import glob as globmod
+import hashlib
 import io
 import json
 import markdown
 import os
+import random
 import re
+import secrets
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import requests as http_requests
 import stripe
@@ -19,6 +22,7 @@ import conversation_log
 load_dotenv()
 
 app = Flask(__name__, static_folder=".")
+app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 CORS(app)
 
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
@@ -70,6 +74,54 @@ def init_subscribers_db():
             download_token TEXT,
             fulfilled BOOLEAN DEFAULT FALSE
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            email TEXT UNIQUE NOT NULL,
+            display_name TEXT,
+            transition_type TEXT,
+            us_state TEXT,
+            created_at TEXT NOT NULL,
+            last_login_at TEXT
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS auth_codes (
+            id SERIAL PRIMARY KEY,
+            email TEXT NOT NULL,
+            code TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            expires_at TEXT NOT NULL,
+            used BOOLEAN DEFAULT FALSE
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS chat_sessions (
+            id TEXT PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            started_at TEXT NOT NULL,
+            ended_at TEXT,
+            transition_category TEXT,
+            user_state TEXT,
+            disclaimer_displayed BOOLEAN DEFAULT FALSE,
+            boundary_redirection_count INTEGER DEFAULT 0,
+            crisis_resources_provided BOOLEAN DEFAULT FALSE,
+            templates_mentioned TEXT DEFAULT '[]',
+            duration_seconds REAL,
+            flagged_for_review BOOLEAN DEFAULT FALSE
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS chat_messages (
+            id SERIAL PRIMARY KEY,
+            session_id TEXT NOT NULL,
+            role TEXT NOT NULL,
+            content TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS checklist_items (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            transition_type TEXT NOT NULL,
+            phase TEXT NOT NULL,
+            item_text TEXT NOT NULL,
+            is_completed BOOLEAN DEFAULT FALSE,
+            completed_at TEXT,
+            sort_order INTEGER DEFAULT 0
+        )""")
     else:
         db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -90,6 +142,54 @@ def init_subscribers_db():
             purchased_at TEXT NOT NULL,
             download_token TEXT,
             fulfilled INTEGER DEFAULT 0
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            display_name TEXT,
+            transition_type TEXT,
+            us_state TEXT,
+            created_at TEXT NOT NULL,
+            last_login_at TEXT
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS auth_codes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL,
+            code TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            expires_at TEXT NOT NULL,
+            used INTEGER DEFAULT 0
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS chat_sessions (
+            id TEXT PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            started_at TEXT NOT NULL,
+            ended_at TEXT,
+            transition_category TEXT,
+            user_state TEXT,
+            disclaimer_displayed INTEGER DEFAULT 0,
+            boundary_redirection_count INTEGER DEFAULT 0,
+            crisis_resources_provided INTEGER DEFAULT 0,
+            templates_mentioned TEXT DEFAULT '[]',
+            duration_seconds REAL,
+            flagged_for_review INTEGER DEFAULT 0
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS chat_messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id TEXT NOT NULL,
+            role TEXT NOT NULL,
+            content TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS checklist_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            transition_type TEXT NOT NULL,
+            phase TEXT NOT NULL,
+            item_text TEXT NOT NULL,
+            is_completed INTEGER DEFAULT 0,
+            completed_at TEXT,
+            sort_order INTEGER DEFAULT 0
         )""")
     conn.commit()
     conn.close()
@@ -145,6 +245,61 @@ client = anthropic.Anthropic(
 )
 
 conversation_log.init_db()
+
+# ── Auth helpers ──
+
+def get_current_user():
+    """Return user dict if logged in, else None."""
+    user_id = flask_session.get("user_id")
+    if not user_id:
+        return None
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state, created_at, last_login_at FROM users WHERE id = {param}", (user_id,))
+    row = cur.fetchone()
+    conn.close()
+    if row:
+        cols = ["id", "email", "display_name", "transition_type", "us_state", "created_at", "last_login_at"]
+        return dict(zip(cols, row))
+    return None
+
+def send_auth_code(to_email, code):
+    """Send login code via Resend."""
+    if not RESEND_API_KEY:
+        print(f"RESEND_API_KEY not set, skipping auth code to {to_email}")
+        return False
+    html = f"""<!DOCTYPE html>
+<html><body style="font-family:system-ui,-apple-system,sans-serif;color:#1B2A38;max-width:560px;margin:0 auto;padding:32px 24px;">
+<div style="text-align:center;margin-bottom:32px;">
+  <span style="font-family:Georgia,serif;font-size:24px;color:#1B3A5C;font-weight:500;">Lumeway</span>
+</div>
+<p style="font-size:16px;line-height:1.6;">Your login code is:</p>
+<div style="text-align:center;margin:24px 0;">
+  <span style="font-size:36px;font-weight:600;letter-spacing:8px;color:#1B3A5C;">{code}</span>
+</div>
+<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">This code expires in 10 minutes. If you didn't request this, you can ignore this email.</p>
+<hr style="border:none;border-top:1px solid #E4DDD3;margin:32px 0;" />
+<p style="font-size:13px;color:#6E7D8A;">Lumeway<br><a href="https://lumeway.co" style="color:#1B3A5C;">lumeway.co</a></p>
+</body></html>"""
+    try:
+        resp = http_requests.post("https://api.resend.com/emails", json={
+            "from": "Lumeway <hello@lumeway.co>",
+            "to": [to_email],
+            "subject": f"Your Lumeway login code: {code}",
+            "html": html,
+        }, headers={
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        }, timeout=10)
+        if resp.status_code == 200:
+            print(f"Auth code sent to {to_email}")
+            return True
+        else:
+            print(f"Resend error ({resp.status_code}): {resp.text}")
+            return False
+    except Exception as e:
+        print(f"Failed to send auth code to {to_email}: {e}")
+        return False
 
 SYSTEM_PROMPT = """You are Lumeway's Transition Navigator — a calm, knowledgeable guide that
 helps people understand the process and timeline of major life transitions.
@@ -1571,6 +1726,420 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
 def state_rules():
     return send_from_directory("data", "state-rules.json")
 
+# ── Auth routes ──
+
+@app.route("/login")
+def login_page():
+    if get_current_user():
+        return redirect("/dashboard")
+    return send_from_directory(".", "login.html")
+
+@app.route("/api/auth/send-code", methods=["POST"])
+def auth_send_code():
+    data = request.json or {}
+    email = (data.get("email") or "").strip().lower()
+    if not email or not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        return jsonify({"error": "Please enter a valid email address."}), 400
+
+    # Rate limit: max 5 codes per email per hour
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    one_hour_ago = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
+    cur = db_execute(conn, f"SELECT COUNT(*) FROM auth_codes WHERE email = {param} AND created_at > {param}", (email, one_hour_ago))
+    count = cur.fetchone()[0]
+    if count >= 5:
+        conn.close()
+        return jsonify({"error": "Too many attempts. Please try again later."}), 429
+
+    code = str(random.randint(100000, 999999))
+    now = datetime.now(timezone.utc).isoformat()
+    expires = (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
+    db_execute(conn, f"INSERT INTO auth_codes (email, code, created_at, expires_at) VALUES ({param}, {param}, {param}, {param})", (email, code, now, expires))
+    conn.commit()
+    conn.close()
+
+    if not send_auth_code(email, code):
+        return jsonify({"error": "Failed to send code. Please try again."}), 500
+
+    return jsonify({"ok": True, "message": "Code sent! Check your email."})
+
+@app.route("/api/auth/verify-code", methods=["POST"])
+def auth_verify_code():
+    data = request.json or {}
+    email = (data.get("email") or "").strip().lower()
+    code = (data.get("code") or "").strip()
+    claim_session_id = data.get("session_id")
+
+    if not email or not code:
+        return jsonify({"error": "Email and code are required."}), 400
+
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Find valid unused code
+    false_val = "FALSE" if USE_POSTGRES else "0"
+    cur = db_execute(conn, f"SELECT id FROM auth_codes WHERE email = {param} AND code = {param} AND used = {false_val} AND expires_at > {param} ORDER BY created_at DESC LIMIT 1", (email, code, now))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "Invalid or expired code. Please try again."}), 401
+
+    # Mark code as used
+    code_id = row[0]
+    true_val = "TRUE" if USE_POSTGRES else "1"
+    db_execute(conn, f"UPDATE auth_codes SET used = {true_val} WHERE id = {param}", (code_id,))
+
+    # Find or create user
+    cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state FROM users WHERE email = {param}", (email,))
+    user_row = cur.fetchone()
+    is_new = False
+    if user_row:
+        user_id = user_row[0]
+        db_execute(conn, f"UPDATE users SET last_login_at = {param} WHERE id = {param}", (now, user_id))
+    else:
+        is_new = True
+        db_execute(conn, f"INSERT INTO users (email, created_at, last_login_at) VALUES ({param}, {param}, {param})", (email, now, now))
+        cur = db_execute(conn, f"SELECT id FROM users WHERE email = {param}", (email,))
+        user_id = cur.fetchone()[0]
+
+    # Claim anonymous chat session if provided
+    if claim_session_id:
+        db_execute(conn, f"UPDATE chat_sessions SET user_id = {param} WHERE id = {param} AND user_id IS NULL", (user_id, claim_session_id))
+
+    conn.commit()
+    conn.close()
+
+    # Set session cookie
+    flask_session["user_id"] = user_id
+    flask_session.permanent = True
+    app.permanent_session_lifetime = timedelta(days=30)
+
+    return jsonify({"ok": True, "is_new": is_new, "user_id": user_id})
+
+@app.route("/api/auth/logout", methods=["POST"])
+def auth_logout():
+    flask_session.clear()
+    return jsonify({"ok": True})
+
+@app.route("/api/auth/me")
+def auth_me():
+    user = get_current_user()
+    if not user:
+        return jsonify({"logged_in": False})
+    return jsonify({"logged_in": True, "user": user})
+
+# ── Dashboard routes ──
+
+@app.route("/dashboard")
+def dashboard_page():
+    if not get_current_user():
+        return redirect("/login")
+    return send_from_directory(".", "dashboard.html")
+
+@app.route("/api/dashboard/data")
+def dashboard_data():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+
+    # Recent chat sessions
+    cur = db_execute(conn, f"""SELECT id, started_at, ended_at, transition_category, user_state
+        FROM chat_sessions WHERE user_id = {param} ORDER BY started_at DESC LIMIT 10""", (user["id"],))
+    sessions = []
+    for row in cur.fetchall():
+        sid = row[0]
+        # Get first user message as preview
+        msg_cur = db_execute(conn, f"SELECT content FROM chat_messages WHERE session_id = {param} AND role = 'user' ORDER BY created_at LIMIT 1", (sid,))
+        msg_row = msg_cur.fetchone()
+        preview = msg_row[0][:100] + "..." if msg_row and len(msg_row[0]) > 100 else (msg_row[0] if msg_row else "")
+        sessions.append({
+            "id": row[0], "started_at": row[1], "ended_at": row[2],
+            "transition_category": row[3], "user_state": row[4], "preview": preview
+        })
+
+    # Checklist stats
+    cur = db_execute(conn, f"SELECT COUNT(*) FROM checklist_items WHERE user_id = {param}", (user["id"],))
+    total_items = cur.fetchone()[0]
+    true_val = "TRUE" if USE_POSTGRES else "1"
+    cur = db_execute(conn, f"SELECT COUNT(*) FROM checklist_items WHERE user_id = {param} AND is_completed = {true_val}", (user["id"],))
+    completed_items = cur.fetchone()[0]
+
+    # Purchases
+    cur = db_execute(conn, f"SELECT product_id, product_name, purchased_at, download_token FROM purchases WHERE email = {param} ORDER BY purchased_at DESC", (user["email"],))
+    purchases = [{"product_id": r[0], "product_name": r[1], "purchased_at": r[2], "download_token": r[3]} for r in cur.fetchall()]
+
+    conn.close()
+    return jsonify({
+        "user": user,
+        "sessions": sessions,
+        "checklist": {"total": total_items, "completed": completed_items},
+        "purchases": purchases
+    })
+
+@app.route("/api/dashboard/history/<session_id>")
+def dashboard_history_detail(session_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    # Verify session belongs to user
+    cur = db_execute(conn, f"SELECT id FROM chat_sessions WHERE id = {param} AND user_id = {param}", (session_id, user["id"]))
+    if not cur.fetchone():
+        conn.close()
+        return jsonify({"error": "Session not found"}), 404
+    cur = db_execute(conn, f"SELECT role, content, created_at FROM chat_messages WHERE session_id = {param} ORDER BY created_at", (session_id,))
+    messages = [{"role": r[0], "content": r[1], "created_at": r[2]} for r in cur.fetchall()]
+    conn.close()
+    return jsonify({"messages": messages})
+
+# ── Checklist API ──
+
+@app.route("/api/checklist")
+def get_checklist():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id, transition_type, phase, item_text, is_completed, completed_at, sort_order FROM checklist_items WHERE user_id = {param} ORDER BY sort_order, id", (user["id"],))
+    items = [{"id": r[0], "transition_type": r[1], "phase": r[2], "item_text": r[3], "is_completed": bool(r[4]), "completed_at": r[5], "sort_order": r[6]} for r in cur.fetchall()]
+    conn.close()
+    return jsonify({"items": items})
+
+@app.route("/api/checklist/<int:item_id>/toggle", methods=["POST"])
+def toggle_checklist_item(item_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    true_val = "TRUE" if USE_POSTGRES else "1"
+    false_val = "FALSE" if USE_POSTGRES else "0"
+    cur = db_execute(conn, f"SELECT is_completed FROM checklist_items WHERE id = {param} AND user_id = {param}", (item_id, user["id"]))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "Item not found"}), 404
+    now = datetime.now(timezone.utc).isoformat()
+    if row[0]:
+        db_execute(conn, f"UPDATE checklist_items SET is_completed = {false_val}, completed_at = NULL WHERE id = {param}", (item_id,))
+    else:
+        db_execute(conn, f"UPDATE checklist_items SET is_completed = {true_val}, completed_at = {param} WHERE id = {param}", (now, item_id))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "is_completed": not bool(row[0])})
+
+@app.route("/api/checklist/init", methods=["POST"])
+def init_checklist():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    transition_type = data.get("transition_type", "").strip().lower()
+    if transition_type not in DEFAULT_CHECKLISTS:
+        return jsonify({"error": "Invalid transition type"}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    # Don't re-init if items already exist for this transition
+    cur = db_execute(conn, f"SELECT COUNT(*) FROM checklist_items WHERE user_id = {param} AND transition_type = {param}", (user["id"], transition_type))
+    if cur.fetchone()[0] > 0:
+        conn.close()
+        return jsonify({"ok": True, "message": "Checklist already exists"})
+    order = 0
+    for phase, items in DEFAULT_CHECKLISTS[transition_type].items():
+        for item_text in items:
+            db_execute(conn, f"INSERT INTO checklist_items (user_id, transition_type, phase, item_text, sort_order) VALUES ({param},{param},{param},{param},{param})", (user["id"], transition_type, phase, item_text, order))
+            order += 1
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "message": "Checklist created"})
+
+DEFAULT_CHECKLISTS = {
+    "estate": {
+        "First 24 Hours": [
+            "Obtain the death certificate (request 10+ certified copies)",
+            "Notify immediate family and close friends",
+            "Contact the funeral home or cremation service",
+            "Secure the deceased's home and property",
+            "Locate the will and any estate planning documents",
+        ],
+        "First Week": [
+            "Notify the deceased's employer and request final paycheck",
+            "Contact Social Security Administration (1-800-772-1213)",
+            "Notify banks and financial institutions",
+            "Contact life insurance companies to file claims",
+            "Notify the post office to forward mail",
+            "Contact utility companies about accounts",
+        ],
+        "First Month": [
+            "Meet with an estate attorney if needed",
+            "File for probate if required",
+            "Apply for survivor benefits (Social Security, VA, pension)",
+            "Transfer vehicle titles",
+            "Update property deeds if applicable",
+            "Notify credit agencies (Equifax, Experian, TransUnion)",
+            "Cancel subscriptions and memberships",
+        ],
+        "Ongoing": [
+            "File the deceased's final tax return",
+            "Distribute assets according to the will",
+            "Close remaining accounts",
+            "Keep records of all estate transactions",
+        ],
+    },
+    "divorce": {
+        "First 24 Hours": [
+            "Secure copies of all important financial documents",
+            "Open individual bank account if you don't have one",
+            "Document all shared assets and debts",
+            "Change passwords on personal accounts",
+            "Consult with a family law attorney",
+        ],
+        "First Week": [
+            "Gather tax returns from the last 3 years",
+            "List all joint accounts (bank, credit cards, investments)",
+            "Review and understand your household budget",
+            "Research local family law attorneys (consultations are often free)",
+            "Understand your state's divorce filing requirements",
+        ],
+        "First Month": [
+            "File for divorce or respond to petition if served",
+            "Request temporary orders if needed (custody, support, exclusive use)",
+            "Begin the asset and property inventory",
+            "Understand how retirement accounts will be divided (QDRO)",
+            "Set up mail forwarding if moving out",
+            "Update beneficiaries on insurance policies",
+        ],
+        "Ongoing": [
+            "Attend all court dates and mediation sessions",
+            "Keep detailed records of all expenses",
+            "Update your estate plan (will, power of attorney)",
+            "Establish credit in your own name",
+            "Update your name on documents if applicable",
+        ],
+    },
+    "job-loss": {
+        "First 24 Hours": [
+            "Review your severance agreement (don't sign immediately)",
+            "File for unemployment benefits",
+            "Understand your COBRA health insurance options",
+            "Secure copies of important work documents and contacts",
+            "Review your last paycheck for accuracy",
+        ],
+        "First Week": [
+            "Create a detailed budget based on reduced income",
+            "Review your 401(k) options (leave it, roll over, or cash out)",
+            "Update your resume and LinkedIn profile",
+            "Apply for any applicable state or local assistance programs",
+            "Contact creditors if you anticipate payment difficulties",
+        ],
+        "First Month": [
+            "Decide on COBRA vs. marketplace health insurance",
+            "Begin active job searching",
+            "Consider whether to roll over your 401(k) to an IRA",
+            "Cut non-essential expenses",
+            "File for any applicable tax credits or deductions",
+        ],
+        "Ongoing": [
+            "Maintain a record of all job applications",
+            "Network actively — attend events, reach out to contacts",
+            "Consider skills training or certifications",
+            "Monitor your unemployment benefits and renew if needed",
+        ],
+    },
+    "relocation": {
+        "First 24 Hours": [
+            "Research your new state's requirements (license, registration, voting)",
+            "Create a moving timeline and checklist",
+            "Get quotes from moving companies or plan a DIY move",
+            "Notify your landlord or list your home for sale",
+            "Research schools in the new area if applicable",
+        ],
+        "First Week": [
+            "Set up mail forwarding through USPS",
+            "Transfer or set up utilities at new address",
+            "Notify your employer and update payroll address",
+            "Transfer medical records and find new healthcare providers",
+            "Update address with banks and financial institutions",
+        ],
+        "First Month": [
+            "Get a new driver's license in your new state",
+            "Register your vehicle in the new state",
+            "Register to vote at your new address",
+            "Update your address with the IRS",
+            "Find new local services (doctor, dentist, vet, etc.)",
+        ],
+        "Ongoing": [
+            "Update all remaining subscriptions and accounts",
+            "File taxes correctly for the year you moved (may need to file in both states)",
+            "Explore your new community — join local groups",
+        ],
+    },
+    "disability": {
+        "First 24 Hours": [
+            "Request FMLA leave from your employer if applicable",
+            "Gather all medical records and documentation",
+            "Understand the difference between SSDI and SSI",
+            "Contact your employer about short-term disability benefits",
+            "Begin documenting your condition and limitations daily",
+        ],
+        "First Week": [
+            "Apply for Social Security disability benefits (online or by phone)",
+            "Review your employer's disability insurance policy",
+            "Contact your health insurance to understand coverage",
+            "Gather work history for the past 15 years",
+            "Identify all sources of income and benefits available to you",
+        ],
+        "First Month": [
+            "Follow up on your SSDI/SSI application status",
+            "Apply for any state disability programs",
+            "Create a budget based on reduced income",
+            "Look into Medicaid eligibility if applicable",
+            "Keep all medical appointments and document everything",
+        ],
+        "Ongoing": [
+            "Continue medical treatment and keep records",
+            "Prepare for a potential denial and appeal process",
+            "Consider working with a disability attorney if denied",
+            "Monitor your benefits and report any changes",
+        ],
+    },
+    "retirement": {
+        "First 24 Hours": [
+            "Create a retirement income plan (Social Security + pension + savings)",
+            "Understand your Medicare enrollment timeline",
+            "Review all retirement account balances (401k, IRA, pension)",
+            "Decide when to start Social Security benefits",
+            "Review your employer's retirement benefits package",
+        ],
+        "First Week": [
+            "Enroll in Medicare if you're 65+ (Parts A, B, D)",
+            "Compare Medicare Supplement vs. Medicare Advantage plans",
+            "Begin consolidating retirement accounts if needed",
+            "Create a detailed retirement budget",
+            "Review your estate plan and update beneficiaries",
+        ],
+        "First Month": [
+            "Apply for Social Security benefits (3 months before desired start)",
+            "Decide on pension payout options (lump sum vs. annuity)",
+            "Set up Required Minimum Distributions if 73+",
+            "Plan for healthcare costs in retirement",
+            "Consider long-term care insurance",
+        ],
+        "Ongoing": [
+            "Monitor your withdrawal rate and adjust as needed",
+            "Take Required Minimum Distributions on time",
+            "Review Medicare coverage during annual enrollment",
+            "Update your estate plan annually",
+            "Stay active in your community — retirement is a transition too",
+        ],
+    },
+}
+
 @app.route("/api/subscribe", methods=["POST"])
 def subscribe():
     data = request.json or {}
@@ -1834,6 +2403,18 @@ def chat():
 
         if not session_id:
             session_id = conversation_log.log_session_start()
+            # Also create a chat_sessions row for dashboard
+            now = datetime.now(timezone.utc).isoformat()
+            user = get_current_user()
+            user_id = user["id"] if user else None
+            try:
+                conn = get_db()
+                param = "%s" if USE_POSTGRES else "?"
+                db_execute(conn, f"INSERT INTO chat_sessions (id, user_id, started_at) VALUES ({param}, {param}, {param})", (session_id, user_id, now))
+                conn.commit()
+                conn.close()
+            except Exception as e:
+                print(f"Error creating chat_session: {e}")
 
         messages = history + [{"role": "user", "content": user_message}]
 
@@ -1863,6 +2444,18 @@ def chat():
             reply_lower = full_reply.lower()
             if "just so you know" in reply_lower and "transition navigator" in reply_lower:
                 conversation_log.update_session(session_id, disclaimer_displayed=1)
+
+            # Persist messages to chat_messages table
+            try:
+                now = datetime.now(timezone.utc).isoformat()
+                conn = get_db()
+                param = "%s" if USE_POSTGRES else "?"
+                db_execute(conn, f"INSERT INTO chat_messages (session_id, role, content, created_at) VALUES ({param},{param},{param},{param})", (session_id, "user", user_message, now))
+                db_execute(conn, f"INSERT INTO chat_messages (session_id, role, content, created_at) VALUES ({param},{param},{param},{param})", (session_id, "assistant", full_reply, now))
+                conn.commit()
+                conn.close()
+            except Exception as e:
+                print(f"Error saving chat messages: {e}")
 
             updated_history = messages + [{"role": "assistant", "content": full_reply}]
             yield f"data: [DONE]{json.dumps({'history': updated_history, 'session_id': session_id})}\n\n"

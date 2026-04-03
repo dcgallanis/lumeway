@@ -500,5 +500,6 @@
       reveals.forEach(function(el) { observer.observe(el); });
     })();
   </script>
+<script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>
 </body>
 </html>

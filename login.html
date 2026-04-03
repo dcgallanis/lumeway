@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Log In — Lumeway</title>
+  <meta name="description" content="Log in to your Lumeway account to access your dashboard, chat history, and transition checklist."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #1B2A38; --muted: #6E7D8A; --navy: #1B3A5C; --gold: #B8977E; --accent: #1B3A5C; --accent-light: #B8977E; --border: #E4DDD3; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+
+    .login-container { max-width: 420px; width: 100%; text-align: center; }
+    .login-logo { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 500; color: var(--navy); margin-bottom: 48px; }
+    .login-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; padding: 40px 32px; }
+    .login-card h1 { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; margin-bottom: 8px; }
+    .login-card p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
+
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .form-group input {
+      width: 100%; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 300;
+      padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px;
+      background: var(--cream); color: var(--text); outline: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus { border-color: var(--navy); }
+    .code-input { text-align: center; font-size: 24px !important; letter-spacing: 8px; font-weight: 500 !important; }
+
+    .login-btn {
+      width: 100%; padding: 14px; border: none; border-radius: 100px;
+      background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; margin-top: 8px;
+    }
+    .login-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
+    .login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .login-msg { font-size: 13px; margin-top: 12px; line-height: 1.5; }
+    .login-msg.error { color: #c0392b; }
+    .login-msg.success { color: #27ae60; }
+
+    .login-back { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--muted); cursor: pointer; text-decoration: underline; border: none; background: none; font-family: 'DM Sans', sans-serif; }
+    .login-back:hover { color: var(--navy); }
+
+    .login-footer { margin-top: 24px; font-size: 12px; color: var(--muted); font-weight: 300; }
+    .login-footer a { color: var(--navy); text-decoration: none; }
+
+    #step-code { display: none; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-logo">Lumeway</div>
+    <div class="login-card">
+      <div id="step-email">
+        <h1>Welcome</h1>
+        <p>Enter your email and we'll send you a login code. No password needed.</p>
+        <form onsubmit="return sendCode(event)">
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" id="email" placeholder="you@example.com" required autofocus />
+          </div>
+          <button type="submit" class="login-btn" id="sendBtn">Send login code</button>
+        </form>
+        <div class="login-msg" id="emailMsg"></div>
+      </div>
+
+      <div id="step-code">
+        <h1>Check your email</h1>
+        <p>We sent a 6-digit code to <strong id="codeEmail"></strong></p>
+        <form onsubmit="return verifyCode(event)">
+          <div class="form-group">
+            <label for="code">Login code</label>
+            <input type="text" id="code" class="code-input" placeholder="------" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" required autofocus />
+          </div>
+          <button type="submit" class="login-btn" id="verifyBtn">Log in</button>
+        </form>
+        <div class="login-msg" id="codeMsg"></div>
+        <button class="login-back" onclick="showEmailStep()">Use a different email</button>
+      </div>
+    </div>
+    <div class="login-footer">
+      <a href="/">Back to Lumeway</a>
+    </div>
+  </div>
+
+  <script>
+    var userEmail = '';
+
+    function showEmailStep() {
+      document.getElementById('step-email').style.display = 'block';
+      document.getElementById('step-code').style.display = 'none';
+      document.getElementById('emailMsg').textContent = '';
+    }
+
+    function sendCode(e) {
+      e.preventDefault();
+      var email = document.getElementById('email').value.trim();
+      if (!email) return false;
+      var btn = document.getElementById('sendBtn');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      document.getElementById('emailMsg').textContent = '';
+
+      fetch('/api/auth/send-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(res) {
+        if (res.ok && res.data.ok) {
+          userEmail = email;
+          document.getElementById('codeEmail').textContent = email;
+          document.getElementById('step-email').style.display = 'none';
+          document.getElementById('step-code').style.display = 'block';
+          document.getElementById('code').focus();
+        } else {
+          var msg = document.getElementById('emailMsg');
+          msg.className = 'login-msg error';
+          msg.textContent = res.data.error || 'Something went wrong.';
+        }
+        btn.disabled = false;
+        btn.textContent = 'Send login code';
+      })
+      .catch(function() {
+        document.getElementById('emailMsg').className = 'login-msg error';
+        document.getElementById('emailMsg').textContent = 'Something went wrong. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Send login code';
+      });
+      return false;
+    }
+
+    function verifyCode(e) {
+      e.preventDefault();
+      var code = document.getElementById('code').value.trim();
+      if (!code || code.length !== 6) return false;
+      var btn = document.getElementById('verifyBtn');
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+      document.getElementById('codeMsg').textContent = '';
+
+      // Pass current chat session_id so it can be claimed
+      var sessionId = null;
+      try { sessionId = window.opener && window.opener.sessionId; } catch(e) {}
+
+      fetch('/api/auth/verify-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, code: code, session_id: sessionId })
+      })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(res) {
+        if (res.ok && res.data.ok) {
+          window.location.href = '/dashboard';
+        } else {
+          var msg = document.getElementById('codeMsg');
+          msg.className = 'login-msg error';
+          msg.textContent = res.data.error || 'Invalid code.';
+          btn.disabled = false;
+          btn.textContent = 'Log in';
+        }
+      })
+      .catch(function() {
+        document.getElementById('codeMsg').className = 'login-msg error';
+        document.getElementById('codeMsg').textContent = 'Something went wrong. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Log in';
+      });
+      return false;
+    }
+  </script>
+</body>
+</html>
