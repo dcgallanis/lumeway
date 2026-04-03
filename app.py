@@ -1011,7 +1011,7 @@ PURCHASE_SUCCESS_HTML = """<!DOCTYPE html>
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text)}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,244,239,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo-icon{width:32px;height:32px;object-fit:contain}
+.nav-logo-icon{width:32px;height:32px;object-fit:cover;border-radius:50%}
 .nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text)}
 .back{font-size:14px;color:var(--muted);text-decoration:none}
 .back:hover{color:var(--navy)}
@@ -1038,7 +1038,7 @@ footer{padding:28px 48px;border-top:1px solid var(--border);text-align:center}
 @media(max-width:640px){nav{padding:16px 20px}.wrap{padding:100px 20px 48px}.steps{padding:24px 20px}}
 </style></head><body>
 <nav>
-<a href="/" class="nav-logo"><img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" class="nav-logo-icon"><span class="nav-logo-text">Lumeway</span></a>
+<a href="/" class="nav-logo"><img src="/static/logos/sun-mark-navy-circle.png" alt="Lumeway" class="nav-logo-icon"><span class="nav-logo-text">Lumeway</span></a>
 <a href="/templates" class="back">← Templates</a>
 </nav>
 <div class="wrap">
@@ -1134,7 +1134,7 @@ BUNDLE_DETAIL_HTML = """<!DOCTYPE html>
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,244,239,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo-icon{width:32px;height:32px;object-fit:contain}
+.nav-logo-icon{width:32px;height:32px;object-fit:cover;border-radius:50%}
 .nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text)}
 .nav-left{display:flex;align-items:center;gap:28px}
 .nav-right{display:flex;gap:12px;align-items:center}
@@ -1199,7 +1199,7 @@ footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-i
 </style></head><body>
 <nav>
 <div class="nav-left">
-<a href="/" class="nav-logo"><img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" class="nav-logo-icon"><span class="nav-logo-text">Lumeway</span></a>
+<a href="/" class="nav-logo"><img src="/static/logos/sun-mark-navy-circle.png" alt="Lumeway" class="nav-logo-icon"><span class="nav-logo-text">Lumeway</span></a>
 <div class="nav-dropdown"><button class="nav-drop-btn" aria-expanded="false">Get help with <span class="chev">▾</span></button>
 <div class="nav-drop-menu"><a href="/estate">Death &amp; Estate</a><a href="/divorce">Divorce &amp; Separation</a><a href="/job-loss">Job Loss &amp; Income Crisis</a><a href="/relocation">Moving &amp; Relocation</a><a href="/disability">Disability &amp; Benefits</a><a href="/retirement">Retirement</a></div></div>
 <div class="nav-dropdown"><button class="nav-drop-btn" aria-expanded="false">Explore <span class="chev">▾</span></button>
@@ -1465,7 +1465,7 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
     body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.7;font-size:17px;font-weight:300}
     nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,244,239,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
     .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-    .nav-logo-icon{width:32px;height:32px;object-fit:contain}
+    .nav-logo-icon{width:32px;height:32px;object-fit:cover;border-radius:50%}
     .nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text)}
     .nav-left{display:flex;align-items:center;gap:28px}
     .nav-right{display:flex;gap:12px;align-items:center}
@@ -1509,7 +1509,7 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
   <nav>
     <div class="nav-left">
       <a href="/" class="nav-logo">
-        <img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" class="nav-logo-icon">
+        <img src="/static/logos/sun-mark-navy-circle.png" alt="Lumeway" class="nav-logo-icon">
         <span class="nav-logo-text">Lumeway</span>
       </a>
     </div>
