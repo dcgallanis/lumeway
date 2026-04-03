@@ -166,6 +166,10 @@
       color: #b8a192;
     }
 
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
     @media (max-width: 600px) {
       h1 { font-size: 32px; }
       h2 { font-size: 24px; }
@@ -192,9 +196,9 @@
   </nav>
 
   <main>
-    <span class="category-tag">JOB LOSS</span>
-    <h1>The Documents You Should Save Before Your Last Day at Work</h1>
-    <p class="publish-date">Published March 30, 2026</p>
+    <span class="category-tag reveal">JOB LOSS</span>
+    <h1 class="reveal">The Documents You Should Save Before Your Last Day at Work</h1>
+    <p class="publish-date reveal">Published March 30, 2026</p>
     <div class="divider"></div>
 
     <p>You know your last day is coming. Maybe you got a formal notice, maybe it&rsquo;s a mutual agreement, maybe the writing is on the wall. Either way, once you lose access to your work email and company systems, you lose access to everything stored inside them.</p>
@@ -203,49 +207,49 @@
 
     <p>Here&rsquo;s what to save before you lose access.</p>
 
-    <h2>Your Pay and Compensation Records</h2>
+    <h2 class="reveal">Your Pay and Compensation Records</h2>
 
     <p>Download or screenshot your most recent pay stubs &mdash; at least the last three months. These prove your salary, tax withholdings, and deductions. You may need them for unemployment claims, loan applications, or negotiations with a future employer.</p>
 
     <p>If you have access to a total compensation summary or offer letter, save that too. It documents your base salary, bonus structure, stock grants, and any other compensation you were promised.</p>
 
-    <h2>Benefits and Insurance Details</h2>
+    <h2 class="reveal">Benefits and Insurance Details</h2>
 
     <p>Before you log out of your employer&rsquo;s benefits portal for the last time, save your current health insurance plan details &mdash; plan name, group number, member ID, and coverage summary. You&rsquo;ll need these to compare COBRA costs against marketplace options.</p>
 
     <p>Don&rsquo;t forget dental, vision, life insurance, and any disability coverage. Note the exact end date of your coverage. Some employers cut benefits on your last day. Others extend through the end of the month.</p>
 
-    <h2>Retirement Account Information</h2>
+    <h2 class="reveal">Retirement Account Information</h2>
 
     <p>Pull a current statement from your 401(k) or 403(b) provider. Note the account number, current balance, vesting schedule, and any employer match you&rsquo;re leaving behind. If you&rsquo;re not fully vested, know exactly how much you&rsquo;re walking away from &mdash; it may factor into a severance negotiation.</p>
 
     <p>If you have a pension, save any benefit estimate documents. These are harder to reconstruct later.</p>
 
-    <h2>Performance Reviews and Work Samples</h2>
+    <h2 class="reveal">Performance Reviews and Work Samples</h2>
 
     <p>Save copies of your performance reviews, especially the positive ones. They&rsquo;re useful for reference letters, LinkedIn endorsements, and interview preparation. Your employer is not required to share these after you leave.</p>
 
     <p>If your work is shareable &mdash; presentations, reports, project summaries &mdash; save examples to your personal drive. Anything with proprietary or confidential information should stay on company systems, but your own work product may be worth preserving for your portfolio.</p>
 
-    <h2>Contact Information</h2>
+    <h2 class="reveal">Contact Information</h2>
 
     <p>Export the contact details of colleagues, clients, mentors, and anyone you want to stay in touch with. Once your work email is deactivated, your address book goes with it. Move key contacts to your personal phone or email now.</p>
 
-    <h2>Company Policies That Affect You</h2>
+    <h2 class="reveal">Company Policies That Affect You</h2>
 
     <p>Check your employee handbook or HR portal for the non-compete clause, non-solicitation agreement, and severance policy. Screenshot these if you can. Knowing what you signed &mdash; and what your employer&rsquo;s standard severance terms look like &mdash; puts you in a stronger position.</p>
 
     <p>If you&rsquo;re trying to keep track of everything happening at once after a layoff, the <a href="https://www.etsy.com/listing/4469883118/job-loss-bundle-14-worksheets-layoff?ref=shop_home_active_2&dd=1&logging_key=0d75199dbf4f704c46e8a4423eef06c87de80809%3A4469883118">Job Loss &amp; Income Crisis Bundle</a> includes 14 worksheets &mdash; from severance response to COBRA election to job search tracking. It&rsquo;s a set of organizational tools designed to help you stay on top of deadlines and paperwork during a chaotic time.</p>
 
-    <h2>The Bottom Line</h2>
+    <h2 class="reveal">The Bottom Line</h2>
 
     <p>Your employer&rsquo;s systems belong to your employer. Your records belong to you &mdash; but only if you save them first. Spend 30 minutes before your last day pulling everything into a personal folder. It&rsquo;s one of the easiest things you can do to make the next chapter less stressful.</p>
 
-    <div class="cta-box">
+    <div class="cta-box reveal">
       <p>Free planning tools and our Transition Navigator are available at <a href="https://lumeway.co">lumeway.co</a> &mdash; general process guidance and timelines for job loss, divorce, estate planning, disability, relocation, and retirement.</p>
     </div>
 
-    <p class="disclaimer">This article is for general informational purposes only and does not constitute legal, financial, or professional advice. Every employment situation is different. Consult a licensed professional for guidance specific to your circumstances.</p>
+    <p class="disclaimer reveal">This article is for general informational purposes only and does not constitute legal, financial, or professional advice. Every employment situation is different. Consult a licensed professional for guidance specific to your circumstances.</p>
   </main>
 
   <footer>
@@ -253,5 +257,6 @@
     <div class="footer-tagline">When life changes, find your way through.</div>
     <p><a href="https://lumeway.co">lumeway.co</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/blog">Blog</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@lumeway.co">hello@lumeway.co</a></p>
   </footer>
+<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

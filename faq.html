@@ -78,6 +78,14 @@
     .footer-logo { height: 120px; object-fit: contain; margin-bottom: 4px; }
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; } .footer-social { display: flex; gap: 16px; align-items: center; } .footer-social a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; color: var(--muted); text-decoration: none; transition: all 0.15s ease; } .footer-social a:hover { border-color: var(--gold); color: var(--navy); background: var(--surface2, #EEE8DE); } .footer-social svg { width: 16px; height: 16px; fill: currentColor; }
     .footer-note a { color: var(--muted); }
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-stagger > .reveal:nth-child(2) { transition-delay: 0.12s; }
+    .reveal-stagger > .reveal:nth-child(3) { transition-delay: 0.24s; }
+    .reveal-stagger > .reveal:nth-child(4) { transition-delay: 0.36s; }
+    .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
+    .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
     @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } article { padding-top: 85px; } .cta-block { padding: 32px 24px; } footer { padding: 20px; flex-direction: column; text-align: center; } }
     @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } article { padding-top: 75px; } }
   </style>
@@ -123,11 +131,11 @@
     </div>
   </nav>
   <div class="page">
-    <p class="page-label">Support</p>
-    <h1 class="page-title">Frequently Asked Questions</h1>
-    <p class="page-intro">Navigating life transitions is hard enough without having to wonder whether your tools are trustworthy. Here are answers to the questions we hear most.</p>
+    <p class="page-label reveal">Support</p>
+    <h1 class="page-title reveal">Frequently Asked Questions</h1>
+    <p class="page-intro reveal">Navigating life transitions is hard enough without having to wonder whether your tools are trustworthy. Here are answers to the questions we hear most.</p>
 
-    <h2 class="faq-group-title">About Lumeway</h2>
+    <h2 class="faq-group-title reveal">About Lumeway</h2>
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-question" aria-expanded="false" aria-controls="faq-a1" id="faq-q1"><span>What is Lumeway?</span><span class="faq-icon" aria-hidden="true">+</span></button>
@@ -143,7 +151,7 @@
       </div>
     </div>
 
-    <h2 class="faq-group-title">Legal &amp; trust</h2>
+    <h2 class="faq-group-title reveal">Legal &amp; trust</h2>
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-question" aria-expanded="false" aria-controls="faq-a4" id="faq-q4"><span>Are the documents Lumeway provides legally valid?</span><span class="faq-icon" aria-hidden="true">+</span></button>
@@ -159,7 +167,7 @@
       </div>
     </div>
 
-    <h2 class="faq-group-title">Product &amp; pricing</h2>
+    <h2 class="faq-group-title reveal">Product &amp; pricing</h2>
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-question" aria-expanded="false" aria-controls="faq-a7" id="faq-q7"><span>What does the free version include?</span><span class="faq-icon" aria-hidden="true">+</span></button>
@@ -175,7 +183,7 @@
       </div>
     </div>
 
-    <h2 class="faq-group-title">Getting help</h2>
+    <h2 class="faq-group-title reveal">Getting help</h2>
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-question" aria-expanded="false" aria-controls="faq-a10" id="faq-q10"><span>What life transitions does Lumeway cover?</span><span class="faq-icon" aria-hidden="true">+</span></button>
@@ -258,5 +266,6 @@
       });
     });
   </script>
+<script>(function(){var r=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){r.forEach(function(e){e.classList.add('visible')});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('visible');o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

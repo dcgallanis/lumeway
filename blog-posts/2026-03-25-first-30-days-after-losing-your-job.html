@@ -289,6 +289,10 @@
             color: var(--warm-gray);
         }
 
+        .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
         @media (max-width: 640px) {
             h1 { font-size: 32px; }
             h2 { font-size: 24px; }
@@ -313,9 +317,9 @@
     </nav>
 
     <article class="blog-container">
-        <div class="blog-category">Job Loss</div>
-        <h1>What to Do in the First 30 Days After Losing Your Job</h1>
-        <div class="blog-date">Published April 6, 2026</div>
+        <div class="blog-category reveal">Job Loss</div>
+        <h1 class="reveal">What to Do in the First 30 Days After Losing Your Job</h1>
+        <div class="blog-date reveal">Published April 6, 2026</div>
         <div class="blog-divider"></div>
 
         <div class="blog-content">
@@ -323,7 +327,7 @@
 
             <p>This post breaks down the first 30 days after a layoff, week by week. It's not everything — every situation is different. But it's a starting point so nothing critical falls through the cracks.</p>
 
-            <h2>The First 24 Hours</h2>
+            <h2 class="reveal">The First 24 Hours</h2>
 
             <p>Before you do anything else, take a breath. The urge to react immediately is strong, but rushing leads to mistakes — especially with paperwork.</p>
 
@@ -339,7 +343,7 @@
                 <p>Lumeway's <em>First 24 Hours Guide: Losing Your Job</em> is a free-reference worksheet that walks through the most urgent actions in the first day after a layoff.</p>
             </div>
 
-            <h2>Week 1: The Urgent Paperwork</h2>
+            <h2 class="reveal">Week 1: The Urgent Paperwork</h2>
 
             <p>Your employer is required to send you a COBRA election notice within 14 days of your coverage ending. Once you receive it, you have 60 days to elect. That deadline is firm.</p>
 
@@ -349,7 +353,7 @@
 
             <p>If you have a 401(k) through your former employer, don't do anything with it yet. It's safe where it is for now. You'll want to understand your rollover options before moving anything.</p>
 
-            <h2>Week 2: Money and Insurance</h2>
+            <h2 class="reveal">Week 2: Money and Insurance</h2>
 
             <p>This is the week to make your insurance decision. You typically have three options.</p>
 
@@ -369,7 +373,7 @@
 
             <p>If you're falling behind on bills, reach out to creditors early. Most will work with you if you contact them before you miss a payment — not after.</p>
 
-            <h2>Weeks 3 and 4: Building Momentum</h2>
+            <h2 class="reveal">Weeks 3 and 4: Building Momentum</h2>
 
             <p>By now, the most urgent deadlines are handled. This is when you shift from defense to offense.</p>
 
@@ -385,7 +389,7 @@
                 <p>Lumeway's <em>Job Search Tracker Worksheet</em> gives you a structured way to track applications, contacts, and follow-ups in one place.</p>
             </div>
 
-            <h2>What to Do Next</h2>
+            <h2 class="reveal">What to Do Next</h2>
 
             <p>Here's a quick summary of your first 30 days.</p>
 
@@ -396,7 +400,7 @@
 
             <p>Every situation is different — these are general steps that apply to most people. For anything involving legal agreements, government benefits, or financial decisions, consult a licensed professional who can advise on your specific circumstances.</p>
 
-            <div class="cta-box">
+            <div class="cta-box reveal">
                 <h3>Stay organized through job loss</h3>
                 <p>The Job Loss &amp; Income Crisis Bundle includes 14 step-by-step worksheets covering severance, COBRA, budgeting, job search tracking, and more.</p>
                 <a href="https://www.etsy.com/shop/Lumeway" class="cta-button">View on Etsy</a>
@@ -404,7 +408,7 @@
 
             <p>Not sure where to start? Our free <a href="https://lumeway.co/chat">Transition Navigator</a> at lumeway.co walks you through the general timeline for job loss — step by step.</p>
 
-            <p class="disclaimer">This post is for informational purposes only and does not constitute legal, financial, or medical advice. Consult a licensed professional for guidance specific to your situation.</p>
+            <p class="disclaimer reveal">This post is for informational purposes only and does not constitute legal, financial, or medical advice. Consult a licensed professional for guidance specific to your situation.</p>
         </div>
     </article>
 
@@ -421,5 +425,6 @@
         <div class="footer-copy">&copy; 2026 Lumeway. All rights reserved.</div>
     </footer>
 
+<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

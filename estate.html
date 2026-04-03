@@ -118,6 +118,14 @@
     footer { padding: 40px 48px 28px; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
     .footer-logo { height: 120px; object-fit: contain; margin-bottom: 4px; }
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; } .footer-social { display: flex; gap: 16px; align-items: center; } .footer-social a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; color: var(--muted); text-decoration: none; transition: all 0.15s ease; } .footer-social a:hover { border-color: var(--gold); color: var(--navy); background: var(--surface2, #EEE8DE); } .footer-social svg { width: 16px; height: 16px; fill: currentColor; }
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-stagger > .reveal:nth-child(2) { transition-delay: 0.12s; }
+    .reveal-stagger > .reveal:nth-child(3) { transition-delay: 0.24s; }
+    .reveal-stagger > .reveal:nth-child(4) { transition-delay: 0.36s; }
+    .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
+    .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
     @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
     /* Chat Preview */
     .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
@@ -194,16 +202,16 @@
 </nav>
 
 <div class="hero">
-  <div class="hero-eyebrow">🕊️ Death &amp; Estate</div>
-  <h1 class="hero-title">What to Do When a Loved One Dies</h1>
-  <p class="hero-subtitle">Losing a spouse is one of life's most devastating experiences. In the weeks that follow, there are over 100 practical tasks that need attention — while you're also grieving. Lumeway helps you know what to do, in what order, one step at a time.</p>
-  <div class="hero-actions">
+  <div class="hero-eyebrow reveal">🕊️ Death &amp; Estate</div>
+  <h1 class="hero-title reveal">What to Do When a Loved One Dies</h1>
+  <p class="hero-subtitle reveal">Losing a spouse is one of life's most devastating experiences. In the weeks that follow, there are over 100 practical tasks that need attention — while you're also grieving. Lumeway helps you know what to do, in what order, one step at a time.</p>
+  <div class="hero-actions reveal">
     <a href="/chat" target="_blank" target="_blank" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
     <a href="/#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
   </div>
 </div>
 
-<div class="state-selector-section">
+<div class="state-selector-section reveal">
   <p class="state-selector-intro">See rules specific to your state:</p>
   <select id="stateSelect" class="state-select-input" aria-label="Select your state for local guidance">
     <option value="">Select your state →</option>
@@ -275,8 +283,8 @@
 <div class="section">
   <p class="section-label">What to expect</p>
   <h2 class="section-title">A timeline of what<br><em>needs to happen</em></h2>
-  <div class="timeline">
-    <div class="timeline-item">
+  <div class="timeline reveal-stagger">
+    <div class="timeline-item reveal">
       <div class="timeline-period">First 24–48 hours</div>
       <div class="timeline-content">
         <h3>Immediate needs</h3>
@@ -288,7 +296,7 @@
         </ul>
       </div>
     </div>
-    <div class="timeline-item">
+    <div class="timeline-item reveal">
       <div class="timeline-period">First 1–2 weeks</div>
       <div class="timeline-content">
         <h3>Notify key institutions</h3>
@@ -301,7 +309,7 @@
         </ul>
       </div>
     </div>
-    <div class="timeline-item">
+    <div class="timeline-item reveal">
       <div class="timeline-period">First month</div>
       <div class="timeline-content">
         <h3>Financial and legal steps</h3>

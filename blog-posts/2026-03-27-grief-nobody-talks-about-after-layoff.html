@@ -201,6 +201,10 @@
       margin-bottom: 16px;
     }
 
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
     @media (max-width: 600px) {
       h1 { font-size: 28px; }
       article h2 { font-size: 22px; }
@@ -228,9 +232,9 @@
   </nav>
 
   <main>
-    <span class="category-tag">JOB LOSS</span>
-    <h1>The Grief Nobody Talks About After a Layoff</h1>
-    <p class="publish-date">March 27, 2026</p>
+    <span class="category-tag reveal">JOB LOSS</span>
+    <h1 class="reveal">The Grief Nobody Talks About After a Layoff</h1>
+    <p class="publish-date reveal">March 27, 2026</p>
 
     <article>
       <p>Nobody sends flowers when you lose a job.</p>
@@ -241,7 +245,7 @@
 
       <p>Maybe. Eventually. But right now, it doesn&rsquo;t feel like the best anything.</p>
 
-      <h2>Job Loss Is a Real Loss</h2>
+      <h2 class="reveal">Job Loss Is a Real Loss</h2>
 
       <p>When you lose a job, you don&rsquo;t just lose income. You lose routine, identity, community, and purpose &mdash; sometimes all at once. That&rsquo;s not a career setback. That&rsquo;s a grief event.</p>
 
@@ -249,7 +253,7 @@
 
       <p>So the grief goes underground. It shows up as insomnia, irritability, scrolling job boards at 2 AM, snapping at your partner over dishes. It shows up as shame &mdash; the kind that makes you avoid friends because you don&rsquo;t want to answer &ldquo;how&rsquo;s work?&rdquo;</p>
 
-      <h2>The Shame Makes It Worse</h2>
+      <h2 class="reveal">The Shame Makes It Worse</h2>
 
       <p>In a culture that ties your worth to your work, job loss feels personal even when it isn&rsquo;t. Mass layoffs affect thousands of people for reasons that have nothing to do with performance &mdash; budget cuts, restructuring, a CEO&rsquo;s quarterly target. But the feeling in your chest doesn&rsquo;t care about context.</p>
 
@@ -257,7 +261,7 @@
 
       <p>You are not a project.</p>
 
-      <h2>What Actually Helps</h2>
+      <h2 class="reveal">What Actually Helps</h2>
 
       <p>First, name it. What you&rsquo;re feeling is grief. Saying that out loud &mdash; even just to yourself &mdash; can loosen the grip.</p>
 
@@ -267,7 +271,7 @@
 
       <p>Fourth, resist the pressure to &ldquo;stay positive&rdquo; on someone else&rsquo;s timeline. Positivity is great when it&rsquo;s real. Forced optimism is exhausting and counterproductive.</p>
 
-      <h2>One Small Step</h2>
+      <h2 class="reveal">One Small Step</h2>
 
       <p>If you&rsquo;re in the thick of it right now, here&rsquo;s the smallest useful thing you can do today: write down the three deadlines that matter most. COBRA election, unemployment filing, final paycheck timing. Put them on a calendar. Then close the laptop.</p>
 
@@ -285,7 +289,7 @@
 
       <div class="separator">&mdash;&mdash;&mdash;</div>
 
-      <p class="disclaimer">Disclaimer: This article is for general informational purposes only and does not constitute legal, financial, or medical advice. Consult a qualified professional for guidance specific to your situation. Lumeway products are organizational tools designed to help you prepare &mdash; not legal documents or substitutes for professional advice.</p>
+      <p class="disclaimer reveal">Disclaimer: This article is for general informational purposes only and does not constitute legal, financial, or medical advice. Consult a qualified professional for guidance specific to your situation. Lumeway products are organizational tools designed to help you prepare &mdash; not legal documents or substitutes for professional advice.</p>
     </article>
   </main>
 
@@ -300,5 +304,6 @@
     <p style="margin-top: 12px; font-size: 12px; color: #8d7768;">&copy; 2026 Lumeway. All rights reserved.</p>
   </footer>
 
+<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

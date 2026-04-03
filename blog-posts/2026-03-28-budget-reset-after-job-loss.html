@@ -201,6 +201,10 @@
       margin-bottom: 16px;
     }
 
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
     @media (max-width: 600px) {
       h1 { font-size: 28px; }
       article h2 { font-size: 22px; }
@@ -228,22 +232,22 @@
   </nav>
 
   <main>
-    <span class="category-tag">Job Loss</span>
-    <h1>How to Reset Your Budget After Losing Your Job</h1>
-    <p class="publish-date">March 28, 2026</p>
+    <span class="category-tag reveal">Job Loss</span>
+    <h1 class="reveal">How to Reset Your Budget After Losing Your Job</h1>
+    <p class="publish-date reveal">March 28, 2026</p>
 
     <article>
       <p>Losing a job changes your financial picture overnight. The paycheck you planned around is gone &mdash; but the bills aren&rsquo;t. Before panic sets in, there&rsquo;s one thing that helps more than anything else: knowing exactly where you stand.</p>
 
       <p>A budget reset isn&rsquo;t about deprivation. It&rsquo;s about buying yourself time &mdash; the time to job search without spiraling, the time to make decisions from a clear head instead of a panicked one.</p>
 
-      <h2>Start With What&rsquo;s Coming In</h2>
+      <h2 class="reveal">Start With What&rsquo;s Coming In</h2>
 
       <p>Before you cut anything, figure out what money you actually have. This includes your last paycheck, any severance, accrued PTO payout, unemployment benefits (if approved), and any side income. Add it up. That&rsquo;s your runway.</p>
 
       <p>If you haven&rsquo;t filed for unemployment yet, do it today. In most states, benefits typically replace 40&ndash;50% of your previous income. It&rsquo;s not everything, but it&rsquo;s a floor to build on.</p>
 
-      <h2>Sort Your Expenses Into Three Buckets</h2>
+      <h2 class="reveal">Sort Your Expenses Into Three Buckets</h2>
 
       <p>Pull your last two months of bank and credit card statements. Go line by line and sort every expense into one of three categories:</p>
 
@@ -255,7 +259,7 @@
 
       <p>Most people find they can cut 20&ndash;35% of their monthly spending just by pausing the reducible and deferrable categories. That savings extends your financial runway by weeks or months.</p>
 
-      <h2>Call Your Creditors Before You Miss a Payment</h2>
+      <h2 class="reveal">Call Your Creditors Before You Miss a Payment</h2>
 
       <p>This is the step most people skip &mdash; and it&rsquo;s the one that buys you the most breathing room. Credit card companies, lenders, and even landlords often have hardship programs. But you have to ask before you fall behind.</p>
 
@@ -265,7 +269,7 @@
         <p>Lumeway&rsquo;s <strong>Hardship Letter to Creditor</strong> gives you a starting point for that conversation &mdash; a step-by-step worksheet to organize what you need to say. Part of the <a href="https://www.etsy.com/listing/4469883118/job-loss-bundle-14-worksheets-layoff?ref=shop_home_active_2&dd=1&logging_key=0d75199dbf4f704c46e8a4423eef06c87de80809%3A4469883118">Job Loss &amp; Income Crisis bundle</a> on Etsy.</p>
       </div>
 
-      <h2>Set a Weekly Check-In</h2>
+      <h2 class="reveal">Set a Weekly Check-In</h2>
 
       <p>A budget only works if you look at it. Pick one day a week &mdash; Sunday evening works well &mdash; and spend 15 minutes reviewing what you spent, what&rsquo;s coming up, and whether anything needs adjusting.</p>
 
@@ -284,7 +288,7 @@
         <a href="https://lumeway.co">Visit lumeway.co</a>
       </div>
 
-      <p class="disclaimer">This article is for general informational purposes only and does not constitute financial, legal, or professional advice. Consult a licensed professional for guidance specific to your situation.</p>
+      <p class="disclaimer reveal">This article is for general informational purposes only and does not constitute financial, legal, or professional advice. Consult a licensed professional for guidance specific to your situation.</p>
     </article>
   </main>
 
@@ -302,5 +306,6 @@
     <p style="margin-top: 12px;">&copy; 2026 Lumeway. All rights reserved. &middot; <a href="mailto:hello@lumeway.co">hello@lumeway.co</a></p>
   </footer>
 
+<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

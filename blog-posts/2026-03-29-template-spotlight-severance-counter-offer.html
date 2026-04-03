@@ -166,6 +166,10 @@
       color: #b8a192;
     }
 
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
     @media (max-width: 600px) {
       h1 { font-size: 32px; }
       h2 { font-size: 24px; }
@@ -192,16 +196,16 @@
   </nav>
 
   <main>
-    <span class="category-tag">JOB LOSS</span>
-    <h1>Template Spotlight: Severance Counter-Offer Letter</h1>
-    <p class="publish-date">Published March 29, 2026</p>
+    <span class="category-tag reveal">JOB LOSS</span>
+    <h1 class="reveal">Template Spotlight: Severance Counter-Offer Letter</h1>
+    <p class="publish-date reveal">Published March 29, 2026</p>
     <div class="divider"></div>
 
     <p>You just got a severance offer. Your employer slid a packet across the table &mdash; or more likely, emailed you a PDF &mdash; and gave you a deadline to sign. The number they put in front of you feels final. It isn&rsquo;t.</p>
 
     <p>Most people don&rsquo;t know this, but severance is almost always negotiable. The first offer is a starting point, not the finish line. And how you respond in writing can make the difference between walking away with two weeks of pay or two months.</p>
 
-    <h2>Why This Worksheet Exists</h2>
+    <h2 class="reveal">Why This Worksheet Exists</h2>
 
     <p>When you&rsquo;re negotiating severance, emotions are running high. You might feel grateful to get anything at all. You might feel angry. You might feel too exhausted to push back. All of that is normal.</p>
 
@@ -209,7 +213,7 @@
 
     <p>This isn&rsquo;t about being combative. It&rsquo;s about being prepared.</p>
 
-    <h2>What You Can Actually Negotiate</h2>
+    <h2 class="reveal">What You Can Actually Negotiate</h2>
 
     <p>Most people think severance is just about the money. It&rsquo;s not. Here&rsquo;s what&rsquo;s typically on the table:</p>
 
@@ -223,7 +227,7 @@
 
     <p><strong>Reference letter or agreed-upon language.</strong> How your departure is described to future employers matters. You can negotiate the wording.</p>
 
-    <h2>How the Worksheet Helps You Prepare</h2>
+    <h2 class="reveal">How the Worksheet Helps You Prepare</h2>
 
     <p>The Severance Counter-Offer Letter worksheet gives you a guided format to draft your response. It helps you lay out what you&rsquo;re asking for, why you&rsquo;re asking for it, and how to keep the tone right. You fill in your specifics. The structure keeps your thinking organized.</p>
 
@@ -231,17 +235,17 @@
 
     <p>The Severance Counter-Offer Letter is part of the <a href="https://www.etsy.com/listing/4469883118/job-loss-bundle-14-worksheets-layoff?ref=shop_home_active_2&dd=1&logging_key=0d75199dbf4f704c46e8a4423eef06c87de80809%3A4469883118">Job Loss &amp; Income Crisis Bundle</a> &mdash; 14 worksheets covering severance, COBRA, unemployment, budgeting, job search, and more.</p>
 
-    <h2>One More Thing</h2>
+    <h2 class="reveal">One More Thing</h2>
 
     <p>Don&rsquo;t rush it. Most severance agreements give you at least 21 days to review &mdash; and if you&rsquo;re over 40, federal law typically requires a minimum 21-day consideration period. That time exists for a reason. Use it.</p>
 
     <p>If you&rsquo;re unsure whether to counter, talk to an employment attorney. Many offer free initial consultations specifically for severance review. The cost of a one-hour consultation is almost always worth it.</p>
 
-    <div class="cta-box">
+    <div class="cta-box reveal">
       <p>Free planning tools and our Transition Navigator are available at <a href="https://lumeway.co">lumeway.co</a> &mdash; general process guidance and timelines for job loss, divorce, estate planning, disability, relocation, and retirement.</p>
     </div>
 
-    <p class="disclaimer">This article is for general informational purposes only and does not constitute legal, financial, or professional advice. Every severance situation is different. Consult a licensed employment attorney for guidance specific to your circumstances.</p>
+    <p class="disclaimer reveal">This article is for general informational purposes only and does not constitute legal, financial, or professional advice. Every severance situation is different. Consult a licensed employment attorney for guidance specific to your circumstances.</p>
   </main>
 
   <footer>
@@ -249,5 +253,6 @@
     <div class="footer-tagline">When life changes, find your way through.</div>
     <p><a href="https://lumeway.co">lumeway.co</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/blog">Blog</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@lumeway.co">hello@lumeway.co</a></p>
   </footer>
+<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

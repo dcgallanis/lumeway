@@ -104,6 +104,14 @@
     .footer-logo { height: 120px; object-fit: contain; margin-bottom: 4px; }
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; } .footer-social { display: flex; gap: 16px; align-items: center; } .footer-social a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; color: var(--muted); text-decoration: none; transition: all 0.15s ease; } .footer-social a:hover { border-color: var(--gold); color: var(--navy); background: var(--surface2, #EEE8DE); } .footer-social svg { width: 16px; height: 16px; fill: currentColor; }
     .footer-note a { color: var(--muted); text-decoration: none; }
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-stagger > .reveal:nth-child(2) { transition-delay: 0.12s; }
+    .reveal-stagger > .reveal:nth-child(3) { transition-delay: 0.24s; }
+    .reveal-stagger > .reveal:nth-child(4) { transition-delay: 0.36s; }
+    .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
+    .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
     @media (max-width: 640px) { nav { padding: 16px 20px; } .featured-includes { grid-template-columns: 1fr; } .featured-card { padding: 28px 24px; } .cta-block { margin: 0 16px 64px; padding: 32px 24px; } }
   </style>
 <script type="application/ld+json">
@@ -149,15 +157,15 @@
   </nav>
 
   <div class="hero">
-    <div class="hero-eyebrow">Planning Templates</div>
-    <h1 class="hero-title">Get organized for<br><em>what comes next</em></h1>
-    <p class="hero-subtitle">Organizational tools for each life transition — checklists, planning worksheets, information organizers, and step-by-step guides. Stop creating from scratch.</p>
+    <div class="hero-eyebrow reveal">Planning Templates</div>
+    <h1 class="hero-title reveal">Get organized for<br><em>what comes next</em></h1>
+    <p class="hero-subtitle reveal">Organizational tools for each life transition — checklists, planning worksheets, information organizers, and step-by-step guides. Stop creating from scratch.</p>
   </div>
 
   <div class="section">
     <div id="purchase-msg" class="purchase-success" style="display:none;"></div>
 
-    <div class="featured-card" id="master">
+    <div class="featured-card reveal" id="master">
       <span class="featured-badge">Best Value</span>
       <h2 class="featured-title">Life Transition Bundle</h2>
       <p class="featured-desc">Everything Lumeway offers in one package. All six category bundles — 89+ documents covering every major life transition.</p>
@@ -176,11 +184,11 @@
       <a href="/templates/master" class="btn-buy" style="text-decoration:none;">View Bundle Details</a>
     </div>
 
-    <h2 class="section-title">Category bundles</h2>
-    <p class="section-subtitle">Focused planning tools for the transition you are navigating right now.</p>
+    <h2 class="section-title reveal">Category bundles</h2>
+    <p class="section-subtitle reveal">Focused planning tools for the transition you are navigating right now.</p>
 
-    <div class="product-grid">
-      <div class="product-card" id="job-loss">
+    <div class="product-grid reveal-stagger">
+      <div class="product-card reveal" id="job-loss">
         <div class="product-emoji">💼</div>
         <h3 class="product-title">Job Loss Survivor Kit</h3>
         <p class="product-desc">14 worksheets and checklists for unemployment, COBRA, and financial stabilization.</p>
@@ -194,7 +202,7 @@
         <div class="price">$18 <span>one-time</span></div>
         <a href="/templates/job-loss" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
       </div>
-      <div class="product-card" id="estate">
+      <div class="product-card reveal" id="estate">
         <div class="product-emoji">🕊️</div>
         <h3 class="product-title">Estate &amp; Survivor Bundle</h3>
         <p class="product-desc">16 documents for estate settlement, benefits claims, and next steps.</p>
@@ -208,7 +216,7 @@
         <div class="price">$18 <span>one-time</span></div>
         <a href="/templates/estate" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
       </div>
-      <div class="product-card" id="divorce">
+      <div class="product-card reveal" id="divorce">
         <div class="product-emoji">⚖️</div>
         <h3 class="product-title">Divorce &amp; Separation Bundle</h3>
         <p class="product-desc">14 documents to organize finances, track the process, and protect your interests.</p>
@@ -222,7 +230,7 @@
         <div class="price">$18 <span>one-time</span></div>
         <a href="/templates/divorce" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
       </div>
-      <div class="product-card" id="disability">
+      <div class="product-card reveal" id="disability">
         <div class="product-emoji">🩺</div>
         <h3 class="product-title">Disability &amp; Benefits Bundle</h3>
         <p class="product-desc">15 documents for SSDI, SSI, and workplace accommodations.</p>
@@ -236,7 +244,7 @@
         <div class="price">$18 <span>one-time</span></div>
         <a href="/templates/disability" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
       </div>
-      <div class="product-card" id="relocation">
+      <div class="product-card reveal" id="relocation">
         <div class="product-emoji">🏠</div>
         <h3 class="product-title">Moving &amp; Relocation Bundle</h3>
         <p class="product-desc">13 documents for everything that changes when you move.</p>
@@ -250,7 +258,7 @@
         <div class="price">$15 <span>one-time</span></div>
         <a href="/templates/relocation" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
       </div>
-      <div class="product-card" id="retirement">
+      <div class="product-card reveal" id="retirement">
         <div class="product-emoji">🌅</div>
         <h3 class="product-title">Retirement Planning Bundle</h3>
         <p class="product-desc">15 documents for Medicare, Social Security, and retirement planning.</p>
@@ -266,7 +274,7 @@
       </div>
     </div>
 
-    <div class="free-section" id="emergency-kit">
+    <div class="free-section reveal" id="emergency-kit">
       <span class="free-badge">Free Resource</span>
       <h2 class="section-title" style="margin-bottom:12px;">Life Transition Emergency Kit</h2>
       <p class="section-subtitle" style="max-width:520px;margin:0 auto 24px;">A starter guide for anyone navigating a major life change. Enter your email to download instantly.</p>
@@ -277,7 +285,7 @@
       <p id="kit-msg" style="display:none;margin-top:12px;font-size:13px;color:#2d6a4f;"></p>
     </div>
 
-    <div class="trust-bar">
+    <div class="trust-bar reveal">
       <div class="trust-item"><span class="trust-icon">✓</span> Professionally designed formats</div>
       <div class="trust-item"><span class="trust-icon">✓</span> Plain language</div>
       <div class="trust-item"><span class="trust-icon">✓</span> State-specific options</div>
@@ -285,17 +293,17 @@
     </div>
   </div>
 
-  <div class="cta-block">
+  <div class="cta-block reveal">
     <div class="cta-title">Not sure which bundle you need?</div>
     <p class="cta-subtitle">Tell Lumeway what you are going through and get personalized guidance — free.</p>
     <a href="/chat" target="_blank" class="btn-large">Start a conversation →</a>
   </div>
 
   <footer>
-    <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo">
-    <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</p>
-    <p class="footer-note"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a></p>
-    <div class="footer-social">
+    <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo reveal">
+    <p class="footer-note reveal">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</p>
+    <p class="footer-note reveal"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a></p>
+    <div class="footer-social reveal">
       <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a>
       <a href="https://www.etsy.com/shop/Lumeway" rel="noopener" target="_blank" title="Etsy"><svg viewBox="0 0 24 24"><path d="M8.559 3.074c0-.295.177-.413.59-.413h5.373c1.06 0 1.947.413 2.596 1.652l.649 1.416h.944l-.236-4.778H4.139l.059 1.18c1.06 0 1.77.177 2.065.531.354.354.472 1.003.472 1.947v11.14c0 .944-.118 1.593-.472 1.947-.295.354-1.003.531-2.065.531l-.059 1.18h14.336l.708-5.132h-.944l-.944 1.77c-.649 1.18-1.534 1.652-2.655 1.652H9.149c-.413 0-.59-.118-.59-.413V12.69h3.009c.767 0 1.357.118 1.652.472.295.295.472.826.531 1.534h1.003V9.504h-1.003c-.059.708-.236 1.239-.531 1.534-.295.295-.885.472-1.652.472H8.559V3.074z"/></svg></a>
     </div>
@@ -389,5 +397,8 @@
       });
     });
   </script>
+<script>
+(function(){var r=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){r.forEach(function(e){e.classList.add('visible')});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('visible');o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();
+</script>
 </body>
 </html>

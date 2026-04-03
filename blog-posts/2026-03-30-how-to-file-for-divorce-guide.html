@@ -176,6 +176,10 @@
       color: #b8a192;
     }
 
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
     @media (max-width: 600px) {
       h1 { font-size: 32px; }
       h2 { font-size: 24px; }
@@ -202,16 +206,16 @@
   </nav>
 
   <main>
-    <span class="category-tag">DIVORCE</span>
-    <h1>How to File for Divorce: A Step-by-Step Guide for Beginners</h1>
-    <p class="publish-date">Published March 30, 2026</p>
+    <span class="category-tag reveal">DIVORCE</span>
+    <h1 class="reveal">How to File for Divorce: A Step-by-Step Guide for Beginners</h1>
+    <p class="publish-date reveal">Published March 30, 2026</p>
     <div class="divider"></div>
 
     <p>Divorce feels like the worst thing happening to you right now. Maybe it is. Maybe it&rsquo;s also relief. Either way, you&rsquo;re facing paperwork, timelines, and rules that vary wildly depending on your state. The process is long, but it&rsquo;s manageable once you understand what&rsquo;s actually coming.</p>
 
     <p>Here&rsquo;s what you need to know.</p>
 
-    <h2>Before You File</h2>
+    <h2 class="reveal">Before You File</h2>
 
     <p>Filing for divorce is not a decision you make alone, even if you&rsquo;re making it alone. Understand the timeline in your state first. Some states require you to wait 30 days after filing. Others require 60 days or more. Some allow a joint petition that moves faster. Some require legal separation before divorce. The rules matter because they dictate how long this will take.</p>
 
@@ -231,7 +235,7 @@
 
     <p>Make copies of all of this. Not originals &mdash; keep the originals safe. Your attorney will request these, and having them ready will save you time and money in legal fees.</p>
 
-    <h2>The Filing Process</h2>
+    <h2 class="reveal">The Filing Process</h2>
 
     <p>Filing begins with a petition &mdash; a formal filing that says &ldquo;I want a divorce&rdquo; and outlines basic information (names, address, children, grounds for divorce). In many states, you can file a joint petition if you both agree. This is faster and cheaper. In other states, one person files and the other is served.</p>
 
@@ -239,7 +243,7 @@
 
     <p>Once the petition is filed and served, a waiting period begins. In most states, this is the mandatory cooling-off period. You cannot finalize the divorce until this period passes. Some states allow you to waive it if both people agree. Check your state&rsquo;s rules.</p>
 
-    <h2>Protecting Your Finances Now</h2>
+    <h2 class="reveal">Protecting Your Finances Now</h2>
 
     <p>The moment you file for divorce (or the moment you&rsquo;re served), your finances may be frozen by court order. Some states automatically freeze all major asset movements once a case is filed. This sounds bad, but it protects both of you. Neither person can secretly drain accounts or transfer assets.</p>
 
@@ -251,7 +255,7 @@
 
     <p>Request that creditors place a fraud alert on accounts if you&rsquo;re concerned about unauthorized charges. Freeze your credit at the three major bureaus (Experian, Equifax, TransUnion) if you believe your spouse might open accounts in your name. These are free.</p>
 
-    <h2>After You File: What Comes Next</h2>
+    <h2 class="reveal">After You File: What Comes Next</h2>
 
     <p>Once the case is filed, discovery begins. This is the legal term for &ldquo;information sharing.&rdquo; Both sides must provide financial documents, email correspondence, and anything else that could be relevant to the divorce. Your attorney will submit written requests (interrogatories), demands for documents, and possibly requests for depositions (recorded interviews).</p>
 
@@ -261,7 +265,7 @@
 
     <p>Timeline expectations: A straightforward, uncontested divorce in most states takes 3&ndash;6 months from filing to final order. A contested divorce with litigation can take 12&ndash;24 months. Complexity increases if you have children, significant assets, a business, or retirement accounts that require special division.</p>
 
-    <h2>Organizing Your Divorce Documents</h2>
+    <h2 class="reveal">Organizing Your Divorce Documents</h2>
 
     <p>Your attorney will give you documents to sign and deadlines to meet. This becomes a lot of paper very quickly. Create a filing system &mdash; digital or physical &mdash; where you can find everything. At minimum, organize by category:</p>
 
@@ -279,7 +283,7 @@
 
     <p>Your attorney will also benefit from your organization. The cleaner and more organized your documents are, the faster your attorney can work through them &mdash; which saves you money.</p>
 
-    <h2>The Real Timeline</h2>
+    <h2 class="reveal">The Real Timeline</h2>
 
     <p>Divorce is not fast, even when both people want it. Your state&rsquo;s mandatory waiting period alone means you&rsquo;re looking at at least 30&ndash;60 days minimum. If you have shared assets, a house, retirement accounts, or children, add months. If you can&rsquo;t agree on anything, add more months.</p>
 
@@ -287,13 +291,13 @@
 
     <p>Take the timeline seriously. Work with your attorney to understand the deadlines in your specific case. Mark them on your calendar. Missing a deadline can cost you thousands in legal fees or, worse, result in losing rights to assets or custody decisions.</p>
 
-    <h2>Starting from First 24 Hours</h2>
+    <h2 class="reveal">Starting from First 24 Hours</h2>
 
     <p>If you just got served divorce papers and you&rsquo;re panicking, here&rsquo;s what to do in the next 24 hours: breathe, find a safe space to stay if you need one, and contact a family law attorney. Don&rsquo;t sign anything. Don&rsquo;t delete any emails or documents. Don&rsquo;t move money around. Don&rsquo;t post about your divorce on social media.</p>
 
     <p>The <strong>First 24 Hours Guide: Being Served Divorce Papers</strong> is a checklist of immediate actions to take and questions to ask an attorney. It&rsquo;s not legal advice &mdash; it&rsquo;s a framework for what comes next.</p>
 
-    <h2>The Bottom Line</h2>
+    <h2 class="reveal">The Bottom Line</h2>
 
     <p>Filing for divorce is not complicated if you understand the steps. You need an attorney. You need to organize your finances. You need to be patient with the timeline. You need to stay organized through the process. That&rsquo;s it.</p>
 
@@ -301,11 +305,11 @@
 
     <p>You&rsquo;re going to get through this.</p>
 
-    <div class="cta-box">
+    <div class="cta-box reveal">
       <p>The Lumeway <a href="https://www.etsy.com/listing/4470518004/divorce-paperwork-starter-kit-10?ref=shop_home_active_6&dd=1&logging_key=8361142ea2ccbaee7229b4e3831acc8c6fb84b67%3A4470518004">Divorce &amp; Separation Bundle</a> includes organizational worksheets to help you prepare: the <strong>Divorce Attorney Preparation Checklist</strong> walks you through what to have ready for your first meeting with your attorney. The <strong>Joint Account Separation Request Letter</strong> provides language for contacting banks and creditors. The <strong>Post-Divorce Financial Reset Checklist</strong> covers the months after divorce is final &mdash; updating beneficiaries, reopening accounts, rebuilding credit. Planning tools and our free Transition Navigator are available at <a href="https://lumeway.co">lumeway.co</a> &mdash; general process guidance and timelines for divorce, job loss, estate planning, disability, relocation, and retirement.</p>
     </div>
 
-    <p class="disclaimer">This article is for general informational purposes only and does not constitute legal, financial, or professional advice. Every divorce is different. Consult a licensed family law attorney for guidance specific to your situation and your state. An attorney review is recommended before taking action on matters of property division, custody, or support.</p>
+    <p class="disclaimer reveal">This article is for general informational purposes only and does not constitute legal, financial, or professional advice. Every divorce is different. Consult a licensed family law attorney for guidance specific to your situation and your state. An attorney review is recommended before taking action on matters of property division, custody, or support.</p>
   </main>
 
   <footer>
@@ -313,5 +317,6 @@
     <div class="footer-tagline">When life changes, find your way through.</div>
     <p><a href="https://lumeway.co">lumeway.co</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/blog">Blog</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@lumeway.co">hello@lumeway.co</a></p>
   </footer>
+<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

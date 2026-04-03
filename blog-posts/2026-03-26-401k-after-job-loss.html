@@ -201,6 +201,10 @@
       margin-bottom: 16px;
     }
 
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
     @media (max-width: 600px) {
       h1 { font-size: 28px; }
       article h2 { font-size: 22px; }
@@ -228,22 +232,22 @@
   </nav>
 
   <main>
-    <span class="category-tag">JOB LOSS</span>
-    <h1>Lost Your Job? Don't Touch Your 401(k) Until You Read This</h1>
-    <p class="publish-date">March 26, 2026</p>
+    <span class="category-tag reveal">JOB LOSS</span>
+    <h1 class="reveal">Lost Your Job? Don't Touch Your 401(k) Until You Read This</h1>
+    <p class="publish-date reveal">March 26, 2026</p>
 
     <article>
       <p>You just lost your job. Bills are piling up. And sitting in your old employer's retirement account is a chunk of money that suddenly looks like a lifeline.</p>
 
       <p>Before you cash it out, stop. That decision could cost you thousands — and it's one you can't undo.</p>
 
-      <h2>The Penalty Most People Don't Think About</h2>
+      <h2 class="reveal">The Penalty Most People Don't Think About</h2>
 
       <p>If you withdraw from your 401(k) before age 59&frac12;, you'll typically owe a 10% early withdrawal penalty on top of federal and state income taxes. For a $50,000 withdrawal, that can mean losing $15,000 or more before the money even hits your bank account.</p>
 
       <p>The IRS doesn't care that you lost your job. The penalty applies regardless of your reason for withdrawing — with a few narrow exceptions.</p>
 
-      <h2>Your Four Options — Ranked</h2>
+      <h2 class="reveal">Your Four Options — Ranked</h2>
 
       <p>When you leave a job, you generally have four choices for your 401(k). Here's how most financial professionals rank them, from best to worst:</p>
 
@@ -255,7 +259,7 @@
 
       <p><strong>4. Cash it out.</strong> This is almost always the worst option. You'll lose a significant portion to taxes and penalties, and you'll be starting over on retirement savings at the worst possible time.</p>
 
-      <h2>The "Direct Rollover" Detail That Matters</h2>
+      <h2 class="reveal">The "Direct Rollover" Detail That Matters</h2>
 
       <p>If you decide to roll your 401(k) into an IRA, make sure it's a direct rollover — also called a trustee-to-trustee transfer. Your former employer sends the money directly to your new IRA provider.</p>
 
@@ -263,13 +267,13 @@
 
       <p>That 60-day clock is unforgiving.</p>
 
-      <h2>When Cashing Out Might Make Sense</h2>
+      <h2 class="reveal">When Cashing Out Might Make Sense</h2>
 
       <p>There are rare situations where accessing retirement funds early is the least bad option — like preventing eviction or keeping the lights on when every other avenue is exhausted. But even then, it's worth exploring alternatives first: emergency funds, hardship provisions in your plan, or a short-term personal loan.</p>
 
       <p>If you're considering it, talk to a financial professional before making the call. The math matters, and it's different for everyone.</p>
 
-      <h2>One Step You Can Take Today</h2>
+      <h2 class="reveal">One Step You Can Take Today</h2>
 
       <p>Before you do anything with your 401(k), find out what's in it. Log into your account, note the balance, and check whether your former employer's plan charges any fees. That information alone puts you in a better position to decide.</p>
 
@@ -285,7 +289,7 @@
 
       <div class="separator">———</div>
 
-      <p class="disclaimer">Disclaimer: This article is for general informational purposes only and does not constitute legal, financial, or tax advice. Consult a qualified professional for guidance specific to your situation. Lumeway products are organizational tools designed to help you prepare — not legal documents or substitutes for professional advice.</p>
+      <p class="disclaimer reveal">Disclaimer: This article is for general informational purposes only and does not constitute legal, financial, or tax advice. Consult a qualified professional for guidance specific to your situation. Lumeway products are organizational tools designed to help you prepare — not legal documents or substitutes for professional advice.</p>
     </article>
   </main>
 
@@ -300,5 +304,6 @@
     <p style="margin-top: 12px; font-size: 12px; color: #8d7768;">&copy; 2026 Lumeway. All rights reserved.</p>
   </footer>
 
+<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

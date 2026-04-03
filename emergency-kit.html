@@ -186,6 +186,14 @@
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; } .footer-social { display: flex; gap: 16px; align-items: center; } .footer-social a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; color: var(--muted); text-decoration: none; transition: all 0.15s ease; } .footer-social a:hover { border-color: var(--gold); color: var(--navy); background: var(--surface2, #EEE8DE); } .footer-social svg { width: 16px; height: 16px; fill: currentColor; }
     .footer-note a { color: var(--muted); }
 
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-stagger > .reveal:nth-child(2) { transition-delay: 0.12s; }
+    .reveal-stagger > .reveal:nth-child(3) { transition-delay: 0.24s; }
+    .reveal-stagger > .reveal:nth-child(4) { transition-delay: 0.36s; }
+    .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
+    .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
     @media (max-width: 600px) {
       nav { padding: 14px 20px; }
       .hero { padding: 100px 20px 48px; }
@@ -211,11 +219,11 @@
 </nav>
 
 <section class="hero">
-  <div class="hero-eyebrow">Free resource</div>
-  <h1 class="hero-title">The Life Transition<br><em>Emergency Kit</em></h1>
-  <p class="hero-subtitle">A free PDF covering the critical first steps for six major life transitions — what to do first, what can wait, and who to call.</p>
+  <div class="hero-eyebrow reveal">Free resource</div>
+  <h1 class="hero-title reveal">The Life Transition<br><em>Emergency Kit</em></h1>
+  <p class="hero-subtitle reveal">A free PDF covering the critical first steps for six major life transitions — what to do first, what can wait, and who to call.</p>
 
-  <form class="kit-form" id="kitForm" onsubmit="return submitKit(event)">
+  <form class="kit-form reveal" id="kitForm" onsubmit="return submitKit(event)">
     <input type="email" id="kitEmail" placeholder="Enter your email" required autocomplete="email" />
     <button type="submit" id="kitBtn">Get the free kit</button>
   </form>
@@ -255,36 +263,36 @@
 <div class="divider"></div>
 
 <section class="section">
-  <p class="section-label">What's inside</p>
-  <h2 class="section-title">Six transitions. <em>One guide.</em></h2>
+  <p class="section-label reveal">What's inside</p>
+  <h2 class="section-title reveal">Six transitions. <em>One guide.</em></h2>
 
-  <div class="kit-grid">
-    <div class="kit-item">
+  <div class="kit-grid reveal-stagger">
+    <div class="kit-item reveal">
       <div class="kit-icon">💼</div>
       <h3>Job Loss</h3>
       <p>File for unemployment, understand your COBRA timeline, review severance before signing, and protect your 401(k).</p>
     </div>
-    <div class="kit-item">
+    <div class="kit-item reveal">
       <div class="kit-icon">⚖️</div>
       <h3>Divorce</h3>
       <p>Secure financial records, understand temporary orders, protect shared accounts, and start building your support team.</p>
     </div>
-    <div class="kit-item">
+    <div class="kit-item reveal">
       <div class="kit-icon">🕊️</div>
       <h3>Death of a Loved One</h3>
       <p>Notify key parties, secure the estate, understand survivor benefits, and know which deadlines matter most.</p>
     </div>
-    <div class="kit-item">
+    <div class="kit-item reveal">
       <div class="kit-icon">🏠</div>
       <h3>Relocation</h3>
       <p>Transfer utilities, update your address everywhere that matters, handle lease and school logistics, and register to vote.</p>
     </div>
-    <div class="kit-item">
+    <div class="kit-item reveal">
       <div class="kit-icon">🩺</div>
       <h3>Disability</h3>
       <p>Understand SSDI vs. SSI, request FMLA, gather medical documentation, and start the application process.</p>
     </div>
-    <div class="kit-item">
+    <div class="kit-item reveal">
       <div class="kit-icon">🌅</div>
       <h3>Retirement</h3>
       <p>Navigate Medicare enrollment, plan Social Security timing, understand RMDs, and bridge the healthcare gap.</p>
@@ -293,8 +301,8 @@
 </section>
 
 <section class="who-section">
-  <p class="section-label">Who this is for</p>
-  <h2 class="section-title">You just found out. <em>Now what?</em></h2>
+  <p class="section-label reveal">Who this is for</p>
+  <h2 class="section-title reveal">You just found out. <em>Now what?</em></h2>
   <ul class="who-list">
     <li>You were just laid off and don't know what to handle first</li>
     <li>You were served divorce papers and feel paralyzed</li>
@@ -307,7 +315,7 @@
 
 <div class="divider"></div>
 
-<section class="bottom-cta">
+<section class="bottom-cta reveal">
   <h2>One PDF. Six transitions.<br>The steps that matter most.</h2>
   <p>Lumeway's Emergency Kit gives you clarity when everything feels urgent. It won't replace a lawyer or financial advisor — but it will help you understand what to do first.</p>
   <form class="kit-form" onsubmit="return submitKit(event)">
@@ -318,10 +326,10 @@
 </section>
 
 <footer>
-    <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo">
-    <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</p>
-    <p class="footer-note"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a></p>
-    <div class="footer-social">
+    <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo reveal">
+    <p class="footer-note reveal">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</p>
+    <p class="footer-note reveal"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a></p>
+    <div class="footer-social reveal">
       <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a>
       <a href="https://www.etsy.com/shop/Lumeway" rel="noopener" target="_blank" title="Etsy"><svg viewBox="0 0 24 24"><path d="M8.559 3.074c0-.295.177-.413.59-.413h5.373c1.06 0 1.947.413 2.596 1.652l.649 1.416h.944l-.236-4.778H4.139l.059 1.18c1.06 0 1.77.177 2.065.531.354.354.472 1.003.472 1.947v11.14c0 .944-.118 1.593-.472 1.947-.295.354-1.003.531-2.065.531l-.059 1.18h14.336l.708-5.132h-.944l-.944 1.77c-.649 1.18-1.534 1.652-2.655 1.652H9.149c-.413 0-.59-.118-.59-.413V12.69h3.009c.767 0 1.357.118 1.652.472.295.295.472.826.531 1.534h1.003V9.504h-1.003c-.059.708-.236 1.239-.531 1.534-.295.295-.885.472-1.652.472H8.559V3.074z"/></svg></a>
     </div>
@@ -371,5 +379,6 @@ function submitKit(e) {
   return false;
 }
 </script>
+<script>(function(){var r=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){r.forEach(function(e){e.classList.add('visible')});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('visible');o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

@@ -166,6 +166,10 @@
       color: #b8a192;
     }
 
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
     @media (max-width: 600px) {
       h1 { font-size: 32px; }
       h2 { font-size: 24px; }
@@ -192,9 +196,9 @@
   </nav>
 
   <main>
-    <span class="category-tag">RELOCATION</span>
-    <h1>Moving to a New State Checklist: What to Transfer and When</h1>
-    <p class="publish-date">Published March 30, 2026</p>
+    <span class="category-tag reveal">RELOCATION</span>
+    <h1 class="reveal">Moving to a New State Checklist: What to Transfer and When</h1>
+    <p class="publish-date reveal">Published March 30, 2026</p>
     <div class="divider"></div>
 
     <p>You&rsquo;re moving. The excitement of a new place is real, but so is the stack of logistics. Every state has different deadlines for driver&rsquo;s licenses, vehicle registration, voter registration, and a dozen other things most people don&rsquo;t think about until they&rsquo;ve already moved.</p>
@@ -203,7 +207,7 @@
 
     <p>Here&rsquo;s what to transfer and when &mdash; with the understanding that rules vary by state, and checking your new state&rsquo;s requirements before you move is always your safest bet.</p>
 
-    <h2>Government IDs and Registration (30&ndash;90 Days)</h2>
+    <h2 class="reveal">Government IDs and Registration (30&ndash;90 Days)</h2>
 
     <p>Most states give you 30 to 90 days after establishing residency to update your driver&rsquo;s license. You&rsquo;ll need your old license, proof of residency (a utility bill or lease works), and proof of identity. Some states charge a small fee, others don&rsquo;t. The sooner you do this, the less you have to worry about it.</p>
 
@@ -211,7 +215,7 @@
 
     <p>Voter registration deadlines vary widely. Some states allow same-day registration; others require registration 15 to 30 days before an election. Don&rsquo;t assume you can register when you get there. Update your registration in your new state as soon as you move, and unregister in your old state if your new state didn&rsquo;t do that automatically.</p>
 
-    <h2>Insurance (Before You Move)</h2>
+    <h2 class="reveal">Insurance (Before You Move)</h2>
 
     <p>Contact your auto insurance company before you move, not after. Insurance rates vary significantly by state and even by zip code. Your current policy likely won&rsquo;t cover you in your new state if you&rsquo;ve changed your address. Some insurers let you update your address online; others may drop you if they don&rsquo;t write policies in your new state.</p>
 
@@ -219,19 +223,19 @@
 
     <p>If you own a home, homeowner&rsquo;s insurance requirements change by state. Renters insurance is usually inexpensive and easy to transfer. Check with your provider to see if your policy travels with you or if you need a new one.</p>
 
-    <h2>Employment and Taxes (Immediately)</h2>
+    <h2 class="reveal">Employment and Taxes (Immediately)</h2>
 
     <p>If you&rsquo;re already employed or have accepted a job in your new state, notify your employer right away. They need to update your withholdings &mdash; tax rates, FICA, and possibly benefits deductions change from state to state. Missing this step can throw off your take-home pay and create headaches at tax time.</p>
 
     <p>Some states have income tax; others don&rsquo;t. Moving from a high-income-tax state to no income tax (or vice versa) can materially change your annual taxes. If you&rsquo;re self-employed or a freelancer, you may also need to register for a new state tax ID. Don&rsquo;t assume you have time to figure this out later. Do it before or immediately after your move.</p>
 
-    <h2>Schools and Educational Records</h2>
+    <h2 class="reveal">Schools and Educational Records</h2>
 
     <p>If you have school-age children, contact your new school district before your move if possible. Enrollment processes vary by district and grade level. Some fill up; others have rolling enrollment. You&rsquo;ll need your child&rsquo;s transcript, immunization records, and any special education documentation.</p>
 
     <p>Request these documents from your current school in writing and ask for expedited delivery. Don&rsquo;t wait until two weeks before school starts &mdash; by then the office is swamped. If you have older children with standardized test scores or AP records, save those too. They help your new school place them in the right classes.</p>
 
-    <h2>Utilities and Essential Services</h2>
+    <h2 class="reveal">Utilities and Essential Services</h2>
 
     <p>Set up utilities in your new state at least a week before you move in. Gas, electric, water, internet, and phone service need advance scheduling. Most companies take a few days to activate service.</p>
 
@@ -239,13 +243,13 @@
 
     <p>Update your address with your bank, credit card companies, and any financial institutions before you move. Statements, security codes, and fraud alerts need to reach you. A delayed security code when you&rsquo;re in a new state can be frustrating or worse.</p>
 
-    <h2>Pets (Breed and Licensing)</h2>
+    <h2 class="reveal">Pets (Breed and Licensing)</h2>
 
     <p>Some states and municipalities have breed-specific regulations or require different licenses for certain animals. Check your new city&rsquo;s pet rules before you move. Get your pet&rsquo;s current vet records and vaccination certificates, especially proof of rabies vaccination. You&rsquo;ll need these to register your pet and to establish care with a new veterinarian.</p>
 
     <p>Budget time to find a new vet before you move if possible. Ask your current vet for recommendations in your new area. Once you move, don&rsquo;t wait to get your pet established with a new doctor. You won&rsquo;t regret having one lined up if an emergency happens.</p>
 
-    <h2>The Things People Forget</h2>
+    <h2 class="reveal">The Things People Forget</h2>
 
     <p>Prescription refills. Call your pharmacy and doctor a week before you move. If you take ongoing medications, get refills in your current state and request records be transferred to a new pharmacy in your new state. Some controlled substances have additional restrictions when moving across state lines.</p>
 
@@ -257,15 +261,15 @@
 
     <p>If you&rsquo;re trying to stay organized during a move, the <a href="https://www.etsy.com/listing/4470521926/moving-relocation-bundle-13-worksheets?ref=shop_home_active_4&logging_key=de4e77149045f472fedd469715d2284daf6212df%3A4470521926">Relocation Bundle</a> includes worksheets designed to help you track deadlines, checklists for what to transfer, and organizational tools for managing the logistics. It&rsquo;s meant to make the move feel less chaotic.</p>
 
-    <h2>The Bottom Line</h2>
+    <h2 class="reveal">The Bottom Line</h2>
 
     <p>Moving to a new state is a significant life change. Rules, tax rates, and deadlines vary everywhere. In most states, you have 30 to 90 days to update your driver&rsquo;s license and vehicle registration. Insurance, employment, and school records need attention before or immediately after your move. Taking an afternoon to map out your state&rsquo;s specific requirements and building a checklist saves you from penalties, missed deadlines, and the stress of figuring it out later.</p>
 
-    <div class="cta-box">
+    <div class="cta-box reveal">
       <p>Free planning tools and our Transition Navigator are available at <a href="https://lumeway.co">lumeway.co</a> &mdash; general process guidance and timelines for job loss, divorce, estate planning, disability, relocation, and retirement.</p>
     </div>
 
-    <p class="disclaimer">This article is for general informational purposes only and does not constitute legal, financial, or professional advice. State requirements, deadlines, and regulations vary significantly. Check your new state&rsquo;s official government websites, speak with your employer, insurance provider, and any relevant professionals about requirements specific to your situation.</p>
+    <p class="disclaimer reveal">This article is for general informational purposes only and does not constitute legal, financial, or professional advice. State requirements, deadlines, and regulations vary significantly. Check your new state&rsquo;s official government websites, speak with your employer, insurance provider, and any relevant professionals about requirements specific to your situation.</p>
   </main>
 
   <footer>
@@ -273,5 +277,6 @@
     <div class="footer-tagline">When life changes, find your way through.</div>
     <p><a href="https://lumeway.co">lumeway.co</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/blog">Blog</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@lumeway.co">hello@lumeway.co</a></p>
   </footer>
+<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

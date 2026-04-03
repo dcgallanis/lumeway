@@ -289,6 +289,10 @@
             color: var(--warm-gray);
         }
 
+        .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
         @media (max-width: 640px) {
             h1 { font-size: 32px; }
             h2 { font-size: 24px; }
@@ -313,9 +317,9 @@
     </nav>
 
     <article class="blog-container">
-        <div class="blog-category">Job Loss</div>
-        <h1>The Complete Job Loss Checklist: Everything to Handle and When</h1>
-        <div class="blog-date">Published March 27, 2026</div>
+        <div class="blog-category reveal">Job Loss</div>
+        <h1 class="reveal">The Complete Job Loss Checklist: Everything to Handle and When</h1>
+        <div class="blog-date reveal">Published March 27, 2026</div>
         <div class="blog-divider"></div>
 
         <div class="blog-content">
@@ -325,7 +329,7 @@
 
             <p>This checklist breaks down what to handle and when &mdash; organized by urgency so you can focus on what matters most right now and get to the rest when you&rsquo;re ready.</p>
 
-            <h2>The First 24 Hours</h2>
+            <h2 class="reveal">The First 24 Hours</h2>
 
             <p>Before you do anything else, handle these. They&rsquo;re time-sensitive or they set the foundation for everything that follows.</p>
 
@@ -343,7 +347,7 @@
                 <p>Lumeway&rsquo;s <em>First 24 Hours Guide: Losing Your Job</em> walks you through exactly what to prioritize on day one &mdash; step by step. <a href="https://www.etsy.com/shop/lumeway">View on Etsy</a></p>
             </div>
 
-            <h2>The First Week</h2>
+            <h2 class="reveal">The First Week</h2>
 
             <p>Once you&rsquo;ve handled the immediate deadlines, the first week is about getting organized and understanding your options.</p>
 
@@ -361,7 +365,7 @@
                 <p>Lumeway&rsquo;s <em>Budget Reduction Worksheet</em> helps you map your new financial reality &mdash; income, expenses, and how long your savings will last. <a href="https://www.etsy.com/shop/lumeway">View on Etsy</a></p>
             </div>
 
-            <h2>The First Month</h2>
+            <h2 class="reveal">The First Month</h2>
 
             <p>By now you should have the urgent items handled. The first month is about building structure and making sure nothing falls through the cracks.</p>
 
@@ -379,7 +383,7 @@
                 <p>Lumeway&rsquo;s <em>Job Search Tracker Worksheet</em> keeps every application, contact, and follow-up organized in one place &mdash; so nothing gets lost. <a href="https://www.etsy.com/shop/lumeway">View on Etsy</a></p>
             </div>
 
-            <h2>Things People Forget</h2>
+            <h2 class="reveal">Things People Forget</h2>
 
             <p>Even with a checklist, some things slip through. These are the items people most commonly miss in the first 30 days after a layoff.</p>
 
@@ -393,19 +397,19 @@
 
             <p><strong>Your emotional health.</strong> Job loss is one of the top five most stressful life events. If you&rsquo;re feeling stuck, anxious, or overwhelmed, that&rsquo;s not weakness &mdash; that&rsquo;s a normal response to a hard situation. Reach out to someone you trust.</p>
 
-            <h2>What to Do Right Now</h2>
+            <h2 class="reveal">What to Do Right Now</h2>
 
             <p>Pick one section from this checklist and start there. You don&rsquo;t have to do everything today. You just need to start with the items that have the shortest deadlines and work forward.</p>
 
             <p>If you&rsquo;re not sure where to begin, the free <a href="https://lumeway.co/chat">Transition Navigator</a> at lumeway.co can walk you through the general job loss timeline &mdash; what to handle first, what can wait, and where to find help.</p>
 
-            <div class="cta-box">
+            <div class="cta-box reveal">
                 <h3>Stay organized through job loss</h3>
                 <p>The Job Loss &amp; Income Crisis Bundle includes 14 step-by-step worksheets covering severance, COBRA, budgeting, job search tracking, and more.</p>
                 <a href="https://www.etsy.com/shop/lumeway" class="cta-button">View on Etsy</a>
             </div>
 
-            <p class="disclaimer">This post is for informational purposes only and does not constitute legal, financial, or medical advice. Consult a licensed professional for guidance specific to your situation.</p>
+            <p class="disclaimer reveal">This post is for informational purposes only and does not constitute legal, financial, or medical advice. Consult a licensed professional for guidance specific to your situation.</p>
         </div>
     </article>
 
@@ -422,5 +426,6 @@
         <div class="footer-copy">&copy; 2026 Lumeway. All rights reserved.</div>
     </footer>
 
+<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

@@ -51,6 +51,14 @@
     .footer-logo { height: 120px; object-fit: contain; margin-bottom: 4px; }
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; } .footer-social { display: flex; gap: 16px; align-items: center; } .footer-social a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; color: var(--muted); text-decoration: none; transition: all 0.15s ease; } .footer-social a:hover { border-color: var(--gold); color: var(--navy); background: var(--surface2, #EEE8DE); } .footer-social svg { width: 16px; height: 16px; fill: currentColor; }
     .footer-note a { color: var(--muted); }
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-stagger > .reveal:nth-child(2) { transition-delay: 0.12s; }
+    .reveal-stagger > .reveal:nth-child(3) { transition-delay: 0.24s; }
+    .reveal-stagger > .reveal:nth-child(4) { transition-delay: 0.36s; }
+    .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
+    .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
     @media (max-width: 580px) { nav { padding: 16px 20px; } .values-grid { grid-template-columns: 1fr; } .cta-block { padding: 32px 24px; } }
   </style>
 </head>
@@ -91,43 +99,43 @@
     </div>
   </nav>
   <div class="page">
-    <p class="page-label">Coming Soon</p>
-    <h1 class="page-title">Notary services,<br><em>without the hassle</em></h1>
-    <div class="prose">
+    <p class="page-label reveal">Coming Soon</p>
+    <h1 class="page-title reveal">Notary services,<br><em>without the hassle</em></h1>
+    <div class="prose reveal">
       <p>During a life transition, the last thing you need is to spend hours tracking down a notary. Estate documents, powers of attorney, affidavits, divorce filings — many of the most important papers require notarization, often on tight deadlines.</p>
       <p>Lumeway is building <strong>remote online notarization</strong> directly into the transition experience — so you can get documents notarized from home, on your schedule, by a commissioned notary who understands what you are going through.</p>
     </div>
     <div class="divider"></div>
-    <div class="values-grid">
-      <div class="value-card">
+    <div class="values-grid reveal-stagger">
+      <div class="value-card reveal">
         <div class="value-title">Remote online notarization</div>
         <p class="value-desc">Get documents notarized via secure video call from anywhere. No driving, no waiting rooms, no appointments weeks away.</p>
       </div>
-      <div class="value-card">
+      <div class="value-card reveal">
         <div class="value-title">Same-day availability</div>
         <p class="value-desc">When deadlines are tight, you should not have to wait. We are building scheduling that gets you notarized the same day you need it.</p>
       </div>
-      <div class="value-card">
+      <div class="value-card reveal">
         <div class="value-title">Bundled with templates</div>
         <p class="value-desc">Lumeway templates are designed to be notary-ready. Fill out your documents, then get them notarized — all in one place.</p>
       </div>
-      <div class="value-card">
+      <div class="value-card reveal">
         <div class="value-title">Affordable flat-rate pricing</div>
         <p class="value-desc">Simple, transparent pricing with no hidden fees. Know exactly what you will pay before you book.</p>
       </div>
     </div>
     <div class="notice"><strong>We are working on it.</strong> We are partnering with commissioned notaries to bring this service to you. Join the waitlist below to be the first to know when notary services launch.</div>
-    <div class="cta-block">
+    <div class="cta-block reveal">
       <div class="cta-title">Be the first to know</div>
       <p class="cta-subtitle">Join the waitlist and we will notify you when notary services are available.</p>
       <a href="/#waitlist" class="btn-large">Join the waitlist →</a>
     </div>
   </div>
   <footer>
-    <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo">
-    <p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</p>
-    <p class="footer-note"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a></p>
-    <div class="footer-social">
+    <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo reveal">
+    <p class="footer-note reveal">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</p>
+    <p class="footer-note reveal"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a></p>
+    <div class="footer-social reveal">
       <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a>
       <a href="https://www.etsy.com/shop/Lumeway" rel="noopener" target="_blank" title="Etsy"><svg viewBox="0 0 24 24"><path d="M8.559 3.074c0-.295.177-.413.59-.413h5.373c1.06 0 1.947.413 2.596 1.652l.649 1.416h.944l-.236-4.778H4.139l.059 1.18c1.06 0 1.77.177 2.065.531.354.354.472 1.003.472 1.947v11.14c0 .944-.118 1.593-.472 1.947-.295.354-1.003.531-2.065.531l-.059 1.18h14.336l.708-5.132h-.944l-.944 1.77c-.649 1.18-1.534 1.652-2.655 1.652H9.149c-.413 0-.59-.118-.59-.413V12.69h3.009c.767 0 1.357.118 1.652.472.295.295.472.826.531 1.534h1.003V9.504h-1.003c-.059.708-.236 1.239-.531 1.534-.295.295-.885.472-1.652.472H8.559V3.074z"/></svg></a>
     </div>
@@ -158,5 +166,6 @@
       document.addEventListener('click', function() { dropdowns.forEach(function(dd) { dd.classList.remove('open'); dd.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false'); }); });
     })();
   </script>
+<script>(function(){var r=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){r.forEach(function(e){e.classList.add('visible')});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('visible');o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

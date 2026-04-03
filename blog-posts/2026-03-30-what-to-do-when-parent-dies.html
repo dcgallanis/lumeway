@@ -183,6 +183,10 @@
       color: #b8a192;
     }
 
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
     @media (max-width: 600px) {
       h1 { font-size: 32px; }
       h2 { font-size: 24px; }
@@ -209,9 +213,9 @@
   </nav>
 
   <main>
-    <span class="category-tag">ESTATE</span>
-    <h1>The Complete Checklist: What to Do When a Parent Dies</h1>
-    <p class="publish-date">Published March 30, 2026</p>
+    <span class="category-tag reveal">ESTATE</span>
+    <h1 class="reveal">The Complete Checklist: What to Do When a Parent Dies</h1>
+    <p class="publish-date reveal">Published March 30, 2026</p>
     <div class="divider"></div>
 
     <p>You&rsquo;re told your parent has died. In that moment, everything stops. You&rsquo;re numb. People start calling, arriving at your door, asking &ldquo;what do you need.&rdquo; And you don&rsquo;t know. Because nobody tells you what comes next.</p>
@@ -220,7 +224,7 @@
 
     <p>This checklist walks you through the first 90 days. Not the grief. The paperwork.</p>
 
-    <h2>The First 24&ndash;48 Hours</h2>
+    <h2 class="reveal">The First 24&ndash;48 Hours</h2>
 
     <p>Right now, your job is triage. You can&rsquo;t handle everything at once. These are the critical first steps.</p>
 
@@ -240,7 +244,7 @@
 
     <p>Look for a will, trust, power of attorney, or advance directive. Check a safe, safe deposit box, attorney&rsquo;s office, or desk drawer. If you can&rsquo;t find it, the probate court in your parent&rsquo;s county may have it on file. Don&rsquo;t delay &mdash; you&rsquo;ll need this document for almost everything that comes next.</p>
 
-    <h2>The First Week</h2>
+    <h2 class="reveal">The First Week</h2>
 
     <p>Once you&rsquo;ve stabilized the immediate situation, move to notifications and preparation.</p>
 
@@ -262,7 +266,7 @@
 
     <p>If there&rsquo;s a guardian named in the will, contact them immediately. If not, you or another family member may need to petition the court. This requires a lawyer and should not be delayed.</p>
 
-    <h2>The First 30 Days</h2>
+    <h2 class="reveal">The First 30 Days</h2>
 
     <p>This is where the administrative load gets heavy. You&rsquo;re waiting for the death certificate, contacting institutions, and beginning the legal process.</p>
 
@@ -298,7 +302,7 @@
 
     <p>Your parent may have had unclaimed bank accounts, utility deposits, insurance refunds, or pension benefits. Check <strong>unclaimed.org</strong> (the National Association of Unclaimed Property Administrators) to search all 50 states and the federal government. It costs nothing and takes 10 minutes.</p>
 
-    <h2>30&ndash;90 Days</h2>
+    <h2 class="reveal">30&ndash;90 Days</h2>
 
     <p>By this point, the initial shock has worn off. You&rsquo;re in the long work of closing out a life.</p>
 
@@ -333,7 +337,7 @@
 
     <p>Keep a spreadsheet of all accounts, death certificate copies sent, responses received, and outstanding tasks. Probate and account closures take time. You&rsquo;ll send multiple certified copies to different institutions. Some will respond in weeks. Others will take months. Track everything.</p>
 
-    <h2>When You Need Extra Support</h2>
+    <h2 class="reveal">When You Need Extra Support</h2>
 
     <p>Managing an estate is exhausting &mdash; emotionally and logistically. You&rsquo;re making decisions about your parent&rsquo;s assets while processing the loss. It&rsquo;s reasonable to want help.</p>
 
@@ -341,7 +345,7 @@
 
     <p>If you need more than worksheets &mdash; if you need someone to actually make calls and manage deadlines &mdash; consider working with an estate attorney, probate specialist, or professional executor service. The cost varies widely ($2,000&ndash;$10,000+), but for complex estates or when family conflict is involved, the clarity and protection are worth it.</p>
 
-    <h2>The Bottom Line</h2>
+    <h2 class="reveal">The Bottom Line</h2>
 
     <p>Losing a parent is one of the hardest things you&rsquo;ll experience. And then, almost immediately, you&rsquo;re faced with a to-do list so long and so unfamiliar that it feels impossible.</p>
 
@@ -349,11 +353,11 @@
 
     <p>You don&rsquo;t have to do this alone. Whether that means asking family to help, hiring a lawyer, or using organizational tools to keep yourself on track &mdash; find the support that works for you.</p>
 
-    <div class="cta-box">
+    <div class="cta-box reveal">
       <p>Free planning tools and our Transition Navigator are available at <a href="https://lumeway.co">lumeway.co</a> &mdash; general process guidance and timelines for job loss, divorce, estate planning, disability, relocation, and retirement.</p>
     </div>
 
-    <p class="disclaimer">This article is for general informational purposes only and does not constitute legal, financial, or professional advice. Estate administration requirements vary significantly by state, the size and complexity of the estate, and family circumstances. Consult a licensed estate attorney, financial advisor, or tax professional for guidance specific to your situation.</p>
+    <p class="disclaimer reveal">This article is for general informational purposes only and does not constitute legal, financial, or professional advice. Estate administration requirements vary significantly by state, the size and complexity of the estate, and family circumstances. Consult a licensed estate attorney, financial advisor, or tax professional for guidance specific to your situation.</p>
   </main>
 
   <footer>
@@ -361,5 +365,6 @@
     <div class="footer-tagline">When life changes, find your way through.</div>
     <p><a href="https://lumeway.co">lumeway.co</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/blog">Blog</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@lumeway.co">hello@lumeway.co</a></p>
   </footer>
+<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

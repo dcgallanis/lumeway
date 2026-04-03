@@ -62,16 +62,24 @@
     .draft-actions { display: flex; gap: 10px; }
     .copy-btn { padding: 10px 24px; border-radius: 100px; background: var(--text); color: var(--cream); border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; }
     .close-btn { padding: 10px 24px; border-radius: 100px; background: transparent; color: var(--text); border: 1px solid var(--border); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; }
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-stagger > .reveal:nth-child(2) { transition-delay: 0.12s; }
+    .reveal-stagger > .reveal:nth-child(3) { transition-delay: 0.24s; }
+    .reveal-stagger > .reveal:nth-child(4) { transition-delay: 0.36s; }
+    .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
+    .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
   </style>
 </head>
 <body>
 <div class="container">
-  <div class="header">
+  <div class="header reveal">
     <h1>Lumeway <em>Research Agent</em></h1>
     <p>Find real conversations where people need help — and where Lumeway can make a difference.</p>
   </div>
 
-  <div class="controls">
+  <div class="controls reveal">
     <div class="controls-row">
       <button class="topic-btn active" data-topic="loss of spouse widow widower">🕊️ Loss of spouse</button>
       <button class="topic-btn" data-topic="divorce separation">⚖️ Divorce</button>
@@ -234,5 +242,6 @@ async function draftReply(index) {
     document.getElementById('draftModal').classList.remove('open');
   }
 </script>
+<script>(function(){var r=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){r.forEach(function(e){e.classList.add('visible')});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('visible');o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>
