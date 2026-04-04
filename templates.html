@@ -55,7 +55,6 @@
     .hero-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; max-width: 560px; margin: 0 auto; }
 
     .section-featured { width: 100%; padding: 48px 5%; background: var(--warm-white); }
-    .section-grid { width: 100%; padding: 48px 5%; background: var(--cream); }
     .section-free { width: 100%; padding: 48px 5%; background: var(--warm-white); }
     .section-title { font-family: 'Libre Baskerville', serif; font-size: clamp(28px, 4vw, 40px); font-weight: 300; text-align: center; margin-bottom: 12px; }
     .section-subtitle { font-size: 15px; color: var(--muted); font-weight: 300; text-align: center; margin-bottom: 40px; }
@@ -86,17 +85,21 @@
     .purchase-success { background: #2d6a4f; color: white; padding: 16px 24px; border-radius: 12px; text-align: center; margin-bottom: 32px; font-size: 15px; }
     .purchase-success a { color: white; text-decoration: underline; }
 
-    .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-    .product-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: box-shadow 0.25s, transform 0.25s; }
-    .product-card:hover { box-shadow: 0 8px 32px rgba(27,58,92,0.12); transform: translateY(-4px); }
-    .product-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
-    .product-body { padding: 24px 28px 28px; }
-    .product-emoji { font-size: 28px; margin-bottom: 12px; }
-    .product-title { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
-    .product-desc { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 16px; }
-    .product-items { margin: 0 0 20px 0; padding: 0; }
-    .product-items li { font-size: 12.5px; color: var(--text); font-weight: 300; line-height: 1.6; list-style: none; padding-left: 16px; position: relative; margin-bottom: 4px; }
-    .product-items li::before { content: '·'; position: absolute; left: 4px; color: var(--gold); font-weight: 700; }
+    .bundle-section { width: 100%; padding: 64px 5%; }
+    .bundle-section:nth-child(odd) { background: var(--cream); }
+    .bundle-section:nth-child(even) { background: var(--warm-white); }
+    .bundle-row { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .bundle-row-reverse { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .bundle-row-reverse .bundle-image { order: 2; }
+    .bundle-row-reverse .bundle-content { order: 1; }
+    .bundle-image img { width: 100%; border-radius: 20px; }
+    .bundle-name { font-family: 'Libre Baskerville', serif; font-size: 28px; font-weight: 400; margin-bottom: 12px; color: var(--navy); }
+    .bundle-desc { font-size: 15px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 20px; }
+    .bundle-items { list-style: none; padding: 0; margin-bottom: 24px; }
+    .bundle-items li { font-size: 13.5px; color: var(--text); line-height: 1.6; padding-left: 20px; position: relative; margin-bottom: 4px; }
+    .bundle-items li::before { content: '\2713'; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
+    .bundle-price { font-family: 'Libre Baskerville', serif; font-size: 28px; font-weight: 500; color: var(--navy); margin-bottom: 16px; }
+    .bundle-price span { font-size: 14px; font-weight: 300; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; }
 
     .trust-bar { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; width: 100%; padding: 40px 5%; margin-top: 0; background: var(--cream); }
     .trust-item { font-size: 13px; color: var(--muted); font-weight: 400; display: flex; align-items: center; gap: 6px; }
@@ -120,7 +123,7 @@
     .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
     .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-    @media (max-width: 768px) { .featured-card { flex-direction: column; gap: 24px; } .featured-preview { padding: 20px; } }
+    @media (max-width: 768px) { .featured-card { flex-direction: column; gap: 24px; } .featured-preview { padding: 20px; } .bundle-row, .bundle-row-reverse { grid-template-columns: 1fr; gap: 32px; } .bundle-row-reverse .bundle-image { order: 0; } .bundle-row-reverse .bundle-content { order: 0; } }
     @media (max-width: 640px) { nav { padding: 16px 20px; } .featured-includes { grid-template-columns: 1fr; } .cta-block { padding: 32px 5%; } }
   </style>
 <script type="application/ld+json">
@@ -148,6 +151,7 @@
       <div class="nav-dropdown">
         <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">▾</span></button>
         <div class="nav-drop-menu">
+          <a href="/features">Features</a>
           <a href="/templates">Shop</a>
           <a href="/faq">FAQ</a>
           <a href="/blog">Blog</a>
@@ -177,7 +181,7 @@
   <div class="section-featured">
     <div class="featured-card reveal" id="master">
       <div class="featured-preview">
-        <img src="/static/web-designs/all-bundle.svg" alt="Life Transition Bundle preview">
+        <img src="/static/web-designs/master.svg" alt="Life Transition Bundle preview">
       </div>
       <div class="featured-details">
         <span class="featured-badge">Best Value</span>
@@ -199,114 +203,11 @@
     </div>
   </div>
 
-  <div class="section-grid">
-    <h2 class="section-title reveal">Category bundles</h2>
-    <p class="section-subtitle reveal">Focused planning tools for the transition you are navigating right now.</p>
-
-    <div class="product-grid reveal-stagger">
-      <div class="product-card reveal" id="job-loss">
-        <img src="/static/web-designs/jobloss.svg" alt="Job Loss Survivor Kit" class="product-img">
-        <div class="product-body">
-          <h3 class="product-title">Job Loss Survivor Kit</h3>
-          <p class="product-desc">Lost your job. Know your next move. 14 worksheets for unemployment, COBRA, severance, and financial stabilization.</p>
-          <ul class="product-items">
-            <li>Severance response &amp; negotiation letters</li>
-            <li>COBRA election organizer</li>
-            <li>Health insurance comparison worksheet</li>
-            <li>Budget reduction worksheet</li>
-            <li>Job search tracker &amp; more</li>
-          </ul>
-          <div class="price">$18 <span>one-time</span></div>
-          <a href="/templates/job-loss" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
-        </div>
-      </div>
-      <div class="product-card reveal" id="estate">
-        <img src="/static/web-designs/Estate.svg" alt="Estate & Survivor Bundle" class="product-img">
-        <div class="product-body">
-          <h3 class="product-title">Estate &amp; Survivor Bundle</h3>
-          <p class="product-desc">The to-do list nobody warns you about. 16 documents for estate settlement, benefits claims, and notification letters.</p>
-          <ul class="product-items">
-            <li>First 24 hours guide</li>
-            <li>Survivor benefits organizer</li>
-            <li>Executor introduction letter</li>
-            <li>Bank &amp; credit bureau notifications</li>
-            <li>Digital accounts inventory &amp; more</li>
-          </ul>
-          <div class="price">$18 <span>one-time</span></div>
-          <a href="/templates/estate" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
-        </div>
-      </div>
-      <div class="product-card reveal" id="divorce">
-        <img src="/static/web-designs/divorce.svg" alt="Divorce & Separation Bundle" class="product-img">
-        <div class="product-body">
-          <h3 class="product-title">Divorce &amp; Separation Bundle</h3>
-          <p class="product-desc">Before you file. Get organized. 14 documents for finances, co-parenting, and protecting your interests.</p>
-          <ul class="product-items">
-            <li>Financial disclosure organizer</li>
-            <li>Asset &amp; property inventory</li>
-            <li>Co-parenting planning worksheet</li>
-            <li>Attorney meeting prep worksheet</li>
-            <li>Post-divorce financial reset &amp; more</li>
-          </ul>
-          <div class="price">$18 <span>one-time</span></div>
-          <a href="/templates/divorce" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
-        </div>
-      </div>
-      <div class="product-card reveal" id="disability">
-        <img src="/static/web-designs/disability.svg" alt="Disability & Benefits Bundle" class="product-img">
-        <div class="product-body">
-          <h3 class="product-title">Disability &amp; Benefits Bundle</h3>
-          <p class="product-desc">The system is complicated. Your paperwork doesn't have to be. 15 documents for SSDI, FMLA, and workplace accommodations.</p>
-          <ul class="product-items">
-            <li>SSDI application &amp; appeal organizers</li>
-            <li>Workplace accommodation request (ADA)</li>
-            <li>FMLA leave request letter</li>
-            <li>Daily symptom journal</li>
-            <li>Timeline &amp; deadline tracker &amp; more</li>
-          </ul>
-          <div class="price">$18 <span>one-time</span></div>
-          <a href="/templates/disability" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
-        </div>
-      </div>
-      <div class="product-card reveal" id="relocation">
-        <img src="/static/web-designs/relocation.svg" alt="Moving & Relocation Bundle" class="product-img">
-        <div class="product-body">
-          <h3 class="product-title">Moving &amp; Relocation Bundle</h3>
-          <p class="product-desc">New state. New address. Nothing forgotten. 13 documents for everything that changes when you move.</p>
-          <ul class="product-items">
-            <li>Address change master checklist</li>
-            <li>Early lease termination letter</li>
-            <li>Utility transfer tracker</li>
-            <li>School transfer request</li>
-            <li>Vehicle registration checklist &amp; more</li>
-          </ul>
-          <div class="price">$15 <span>one-time</span></div>
-          <a href="/templates/relocation" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
-        </div>
-      </div>
-      <div class="product-card reveal" id="retirement">
-        <img src="/static/web-designs/retirement.svg" alt="Retirement Planning Bundle" class="product-img">
-        <div class="product-body">
-          <h3 class="product-title">Retirement Planning Bundle</h3>
-          <p class="product-desc">You planned the career. Now plan the exit. 15 documents for Medicare, Social Security, and legacy planning.</p>
-          <ul class="product-items">
-            <li>Social Security application organizer</li>
-            <li>Medicare enrollment checklist</li>
-            <li>Pension comparison worksheet</li>
-            <li>RMD distribution request letter</li>
-            <li>Legacy letter &amp; more</li>
-          </ul>
-          <div class="price">$18 <span>one-time</span></div>
-          <a href="/templates/retirement" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
   <div class="section-free" id="emergency-kit">
     <div style="max-width:600px;margin:0 auto;text-align:center;">
-      <span class="free-badge">Free Resource</span>
+      <div style="display:inline-block;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">FREE RESOURCES</div>
+      <br>
+      <span class="free-badge">Free Download</span>
       <h2 class="section-title" style="margin-bottom:12px;">Life Transition Emergency Kit</h2>
       <p class="section-subtitle" style="max-width:520px;margin:0 auto 24px;">A starter guide for anyone navigating a major life change. Enter your email to download instantly.</p>
       <form id="kit-form" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;max-width:420px;margin:0 auto;">
@@ -316,6 +217,137 @@
       <p id="kit-msg" style="display:none;margin-top:12px;font-size:13px;color:#2d6a4f;"></p>
     </div>
   </div>
+
+  <div style="width:100%;padding:48px 5% 0;text-align:center;">
+    <h2 class="section-title reveal">Category bundles</h2>
+    <p class="section-subtitle reveal">Focused planning tools for the transition you are navigating right now.</p>
+  </div>
+
+  <section class="bundle-section" id="job-loss" style="background:var(--cream);">
+    <div class="bundle-row reveal">
+      <div class="bundle-image">
+        <img src="/static/web-designs/jobloss.svg" alt="Job Loss Survivor Kit">
+      </div>
+      <div class="bundle-content">
+        <h3 class="bundle-name">Job Loss Survivor Kit</h3>
+        <p class="bundle-desc">Lost your job. Know your next move. 14 worksheets for unemployment, COBRA, severance, and financial stabilization.</p>
+        <ul class="bundle-items">
+          <li>Severance response &amp; negotiation letters</li>
+          <li>COBRA election organizer</li>
+          <li>Health insurance comparison worksheet</li>
+          <li>Budget reduction worksheet</li>
+          <li>Job search tracker &amp; more</li>
+        </ul>
+        <div class="bundle-price">$18 <span>one-time</span></div>
+        <a href="/templates/job-loss" class="btn-buy" style="text-decoration:none;">View Details</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bundle-section" id="estate" style="background:var(--warm-white);">
+    <div class="bundle-row-reverse reveal">
+      <div class="bundle-image">
+        <img src="/static/web-designs/Estate.svg" alt="Estate &amp; Survivor Bundle">
+      </div>
+      <div class="bundle-content">
+        <h3 class="bundle-name">Estate &amp; Survivor Bundle</h3>
+        <p class="bundle-desc">The to-do list nobody warns you about. 16 documents for estate settlement, benefits claims, and notification letters.</p>
+        <ul class="bundle-items">
+          <li>First 24 hours guide</li>
+          <li>Survivor benefits organizer</li>
+          <li>Executor introduction letter</li>
+          <li>Bank &amp; credit bureau notifications</li>
+          <li>Digital accounts inventory &amp; more</li>
+        </ul>
+        <div class="bundle-price">$18 <span>one-time</span></div>
+        <a href="/templates/estate" class="btn-buy" style="text-decoration:none;">View Details</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bundle-section" id="divorce" style="background:var(--cream);">
+    <div class="bundle-row reveal">
+      <div class="bundle-image">
+        <img src="/static/web-designs/divorce.svg" alt="Divorce &amp; Separation Bundle">
+      </div>
+      <div class="bundle-content">
+        <h3 class="bundle-name">Divorce &amp; Separation Bundle</h3>
+        <p class="bundle-desc">Before you file. Get organized. 14 documents for finances, co-parenting, and protecting your interests.</p>
+        <ul class="bundle-items">
+          <li>Financial disclosure organizer</li>
+          <li>Asset &amp; property inventory</li>
+          <li>Co-parenting planning worksheet</li>
+          <li>Attorney meeting prep worksheet</li>
+          <li>Post-divorce financial reset &amp; more</li>
+        </ul>
+        <div class="bundle-price">$18 <span>one-time</span></div>
+        <a href="/templates/divorce" class="btn-buy" style="text-decoration:none;">View Details</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bundle-section" id="disability" style="background:var(--warm-white);">
+    <div class="bundle-row-reverse reveal">
+      <div class="bundle-image">
+        <img src="/static/web-designs/disability.svg" alt="Disability &amp; Benefits Bundle">
+      </div>
+      <div class="bundle-content">
+        <h3 class="bundle-name">Disability &amp; Benefits Bundle</h3>
+        <p class="bundle-desc">The system is complicated. Your paperwork doesn't have to be. 15 documents for SSDI, FMLA, and workplace accommodations.</p>
+        <ul class="bundle-items">
+          <li>SSDI application &amp; appeal organizers</li>
+          <li>Workplace accommodation request (ADA)</li>
+          <li>FMLA leave request letter</li>
+          <li>Daily symptom journal</li>
+          <li>Timeline &amp; deadline tracker &amp; more</li>
+        </ul>
+        <div class="bundle-price">$18 <span>one-time</span></div>
+        <a href="/templates/disability" class="btn-buy" style="text-decoration:none;">View Details</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bundle-section" id="relocation" style="background:var(--cream);">
+    <div class="bundle-row reveal">
+      <div class="bundle-image">
+        <img src="/static/web-designs/relocation.svg" alt="Moving &amp; Relocation Bundle">
+      </div>
+      <div class="bundle-content">
+        <h3 class="bundle-name">Moving &amp; Relocation Bundle</h3>
+        <p class="bundle-desc">New state. New address. Nothing forgotten. 13 documents for everything that changes when you move.</p>
+        <ul class="bundle-items">
+          <li>Address change master checklist</li>
+          <li>Early lease termination letter</li>
+          <li>Utility transfer tracker</li>
+          <li>School transfer request</li>
+          <li>Vehicle registration checklist &amp; more</li>
+        </ul>
+        <div class="bundle-price">$15 <span>one-time</span></div>
+        <a href="/templates/relocation" class="btn-buy" style="text-decoration:none;">View Details</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bundle-section" id="retirement" style="background:var(--warm-white);">
+    <div class="bundle-row-reverse reveal">
+      <div class="bundle-image">
+        <img src="/static/web-designs/retirement.svg" alt="Retirement Planning Bundle">
+      </div>
+      <div class="bundle-content">
+        <h3 class="bundle-name">Retirement Planning Bundle</h3>
+        <p class="bundle-desc">You planned the career. Now plan the exit. 15 documents for Medicare, Social Security, and legacy planning.</p>
+        <ul class="bundle-items">
+          <li>Social Security application organizer</li>
+          <li>Medicare enrollment checklist</li>
+          <li>Pension comparison worksheet</li>
+          <li>RMD distribution request letter</li>
+          <li>Legacy letter &amp; more</li>
+        </ul>
+        <div class="bundle-price">$18 <span>one-time</span></div>
+        <a href="/templates/retirement" class="btn-buy" style="text-decoration:none;">View Details</a>
+      </div>
+    </div>
+  </section>
 
   <div class="trust-bar reveal">
     <div class="trust-item"><span class="trust-icon">✓</span> Professionally designed formats</div>
