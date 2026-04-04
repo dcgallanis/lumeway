@@ -98,12 +98,13 @@
     /* ── Hero — Full Width with bleed image ── */
     .hero {
       width: 100%;
-      min-height: 100vh;
+      height: 100vh;
+      min-height: 600px;
       position: relative;
       display: grid;
       grid-template-columns: 1fr 1fr;
       align-items: center;
-      padding: 100px 5% 80px;
+      padding: 80px 5% 0;
       gap: 0;
       overflow: hidden;
     }
@@ -156,16 +157,16 @@
       content: '';
       position: absolute;
       top: 0; left: 0; bottom: 0;
-      width: 120px;
-      background: linear-gradient(to right, var(--cream), transparent);
+      width: 180px;
+      background: linear-gradient(to right, var(--cream) 0%, rgba(250,247,242,0.6) 40%, transparent 100%);
       z-index: 1;
     }
     .hero-image::after {
       content: '';
       position: absolute;
       left: 0; right: 0; bottom: 0;
-      height: 80px;
-      background: linear-gradient(to top, var(--cream), transparent);
+      height: 100px;
+      background: linear-gradient(to top, var(--cream) 0%, rgba(250,247,242,0.4) 40%, transparent 100%);
       z-index: 1;
     }
 
@@ -175,7 +176,14 @@
       padding: 100px 5%;
       background: var(--warm-white);
     }
-    .checklist-header { max-width: 600px; margin-bottom: 40px; }
+    .checklist-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+    .checklist-left {}
+    .checklist-header { margin-bottom: 32px; }
     .checklist-title {
       font-family: 'Libre Baskerville', serif;
       font-size: clamp(28px, 3.5vw, 46px);
@@ -260,6 +268,18 @@
     }
     .checklist-bottom-note a { color: var(--terracotta); text-decoration: none; font-weight: 500; }
     .checklist-bottom-note a:hover { text-decoration: underline; }
+    .checklist-features { display: flex; flex-direction: column; gap: 24px; margin-top: 28px; }
+    .checklist-feature { display: flex; gap: 14px; align-items: flex-start; }
+    .checklist-feature-icon {
+      flex-shrink: 0; width: 40px; height: 40px;
+      border-radius: 10px; background: var(--blush-light);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .checklist-feature-icon .sun-icon svg { width: 18px; height: 18px; stroke: var(--terracotta); }
+    .checklist-feature-title { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+    .checklist-feature-desc { font-size: 13.5px; color: var(--muted); line-height: 1.6; }
+    .checklist-cta { margin-top: 32px; }
+    .checklist-cta .btn-large { font-size: 14px; padding: 12px 28px; }
 
     /* ── Transitions — Full Bleed ── */
     .transitions-section {
@@ -506,7 +526,7 @@
     .signup-section {
       width: 100%;
       padding: 100px 5%;
-      background: var(--blush-light);
+      background: var(--cream);
     }
     .signup-inner { max-width: 580px; margin: 0 auto; text-align: center; }
     .signup-title {
@@ -599,6 +619,7 @@
       .friend-image img { max-width: 500px; margin: 0 auto; display: block; }
       .transitions-grid { grid-template-columns: repeat(2, 1fr); }
       .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .checklist-layout { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
       nav { padding: 14px 20px; }
@@ -756,44 +777,80 @@
 
   <!-- ═══ Checklist Section ═══ -->
   <section class="checklist-section">
-    <div class="checklist-header">
-      <div class="section-label reveal">Lumeway Checklist</div>
-      <h2 class="checklist-title reveal">Your step-by-step guide,<br><em>already written for you</em></h2>
-      <p class="checklist-subtitle reveal">Every transition comes with a personalized checklist — ordered by urgency, with deadlines that actually matter.</p>
-    </div>
-    <div class="checklist-tabs reveal">
-      <button class="checklist-tab active" onclick="showChecklist('jobloss')">Job Loss</button>
-      <button class="checklist-tab" onclick="showChecklist('estate')">Death &amp; Estate</button>
-      <button class="checklist-tab" onclick="showChecklist('relocation')">Moving &amp; Relocation</button>
-    </div>
-    <div class="checklist-card reveal" id="checklistCard">
-      <div class="checklist-card-header">
-        <div class="checklist-card-title-area">
-          <span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-          <div>
-            <div class="checklist-card-name" id="checklistName">Job Loss Checklist</div>
-            <div class="checklist-card-sub">Lumeway &middot; Step-by-step guide</div>
+    <div class="checklist-layout">
+      <!-- Left: description -->
+      <div class="checklist-left">
+        <div class="checklist-header">
+          <div class="section-label reveal">How Lumeway Works</div>
+          <h2 class="checklist-title reveal">Your step-by-step guide,<br><em>already written for you</em></h2>
+          <p class="checklist-subtitle reveal">Tell Lumeway what you're going through — and get a personalized checklist, organized by urgency, with deadlines that actually matter.</p>
+        </div>
+        <div class="checklist-features reveal-stagger">
+          <div class="checklist-feature reveal">
+            <div class="checklist-feature-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
+            <div>
+              <div class="checklist-feature-title">Chat that actually helps</div>
+              <p class="checklist-feature-desc">Describe your situation in your own words. Lumeway asks the right questions, then builds a plan with exactly what to do and when.</p>
+            </div>
+          </div>
+          <div class="checklist-feature reveal">
+            <div class="checklist-feature-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
+            <div>
+              <div class="checklist-feature-title">Your personal dashboard</div>
+              <p class="checklist-feature-desc">Track deadlines, save documents you'll need, manage goals, and see everything on a calendar — all in one place, always up to date.</p>
+            </div>
+          </div>
+          <div class="checklist-feature reveal">
+            <div class="checklist-feature-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
+            <div>
+              <div class="checklist-feature-title">Knows who to call and what to bring</div>
+              <p class="checklist-feature-desc">Every deadline includes the documents you'll need and exactly who to contact — no more guessing or Googling at 2am.</p>
+            </div>
           </div>
         </div>
-        <div class="checklist-card-count">
-          <div class="checklist-card-count-num" id="checklistCount">0/6</div>
-          <div class="checklist-card-count-label">completed</div>
+        <div class="checklist-cta reveal">
+          <a href="/chat" target="_blank" class="btn-large btn-large-primary">Try it free &rarr;</a>
+          <a href="/features" class="btn-large btn-large-secondary" style="margin-left:8px">See all features</a>
         </div>
       </div>
-      <div id="checklistItems">
-        <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">File for unemployment benefits</span></div><span class="checklist-tag tag-urgent">Urgent — within 7 days</span></div>
-        <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Notify your health insurance provider</span></div><span class="checklist-tag tag-soon">Within 30 days</span></div>
-        <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Update your resume and LinkedIn profile</span></div><span class="checklist-tag tag-info">This week</span></div>
-        <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Review your severance agreement</span></div><span class="checklist-tag tag-urgent">Before signing</span></div>
-        <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Set up a job search tracking system</span></div><span class="checklist-tag tag-info">Organize</span></div>
-        <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Explore COBRA or marketplace health plans</span></div><span class="checklist-tag tag-soon">Benefits</span></div>
-      </div>
-      <div class="checklist-footer">
-        <span class="checklist-footer-note"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span> Lumeway generates a full personalized checklist based on your specific situation</span>
-        <a href="/chat" target="_blank" class="checklist-footer-btn">Get my full checklist &rarr;</a>
+
+      <!-- Right: interactive checklist card -->
+      <div class="checklist-right">
+        <div class="checklist-tabs reveal">
+          <button class="checklist-tab active" onclick="showChecklist('jobloss')">Job Loss</button>
+          <button class="checklist-tab" onclick="showChecklist('estate')">Death &amp; Estate</button>
+          <button class="checklist-tab" onclick="showChecklist('relocation')">Moving</button>
+        </div>
+        <div class="checklist-card reveal" id="checklistCard">
+          <div class="checklist-card-header">
+            <div class="checklist-card-title-area">
+              <span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
+              <div>
+                <div class="checklist-card-name" id="checklistName">Job Loss Checklist</div>
+                <div class="checklist-card-sub">Lumeway &middot; Step-by-step guide</div>
+              </div>
+            </div>
+            <div class="checklist-card-count">
+              <div class="checklist-card-count-num" id="checklistCount">0/6</div>
+              <div class="checklist-card-count-label">completed</div>
+            </div>
+          </div>
+          <div id="checklistItems">
+            <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">File for unemployment benefits</span></div><span class="checklist-tag tag-urgent">Urgent — within 7 days</span></div>
+            <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Notify your health insurance provider</span></div><span class="checklist-tag tag-soon">Within 30 days</span></div>
+            <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Update your resume and LinkedIn profile</span></div><span class="checklist-tag tag-info">This week</span></div>
+            <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Review your severance agreement</span></div><span class="checklist-tag tag-urgent">Before signing</span></div>
+            <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Set up a job search tracking system</span></div><span class="checklist-tag tag-info">Organize</span></div>
+            <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Explore COBRA or marketplace health plans</span></div><span class="checklist-tag tag-soon">Benefits</span></div>
+          </div>
+          <div class="checklist-footer">
+            <span class="checklist-footer-note"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span> Personalized to your situation</span>
+            <a href="/chat" target="_blank" class="checklist-footer-btn">Get my checklist &rarr;</a>
+          </div>
+        </div>
+        <p class="checklist-bottom-note reveal">Available as a printable worksheet or Google Doc. &nbsp;<a href="/templates">Browse worksheets &rarr;</a></p>
       </div>
     </div>
-    <p class="checklist-bottom-note reveal">Available as a printable worksheet, Google Doc, or interactive guide. &nbsp;<a href="/templates">Browse all worksheets &rarr;</a></p>
   </section>
 
   <!-- ═══ "Like a friend" section ═══ -->
@@ -905,7 +962,7 @@
       <div class="promise-icon reveal">
         <span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
       </div>
-      <p class="promise-quote reveal">"When life changes, no one should have to face the paperwork alone."</p>
+      <p class="promise-quote reveal">"When life changes, find your way through."</p>
       <p class="promise-attribution reveal">The Lumeway Promise</p>
       <div class="promise-features reveal">
         <div class="promise-pill"><svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> Step-by-Step Worksheets</div>
