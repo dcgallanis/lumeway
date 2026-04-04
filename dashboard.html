@@ -45,15 +45,21 @@
     .card-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400; margin-bottom: 8px; }
     .card-empty { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.6; }
 
+    /* Overview layout: sidebar with progress */
+    .overview-layout { display: grid; grid-template-columns: 1fr 200px; gap: 20px; margin-bottom: 24px; }
+    .overview-main { display: flex; flex-direction: column; gap: 20px; }
+    .overview-sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .progress-compact { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; }
+
     /* Progress ring */
     .progress-row { display: flex; align-items: center; gap: 20px; }
-    .progress-ring { width: 72px; height: 72px; position: relative; flex-shrink: 0; }
+    .progress-ring { width: 72px; height: 72px; position: relative; flex-shrink: 0; margin: 0 auto; }
     .progress-ring svg { transform: rotate(-90deg); }
     .progress-ring circle { fill: none; stroke-width: 6; }
     .progress-ring .bg { stroke: var(--border); }
     .progress-ring .fill { stroke: var(--green); stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
     .progress-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 500; color: var(--navy); }
-    .progress-info { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.6; }
+    .progress-info { font-size: 12px; font-weight: 300; color: var(--muted); line-height: 1.5; margin-top: 8px; }
     .progress-info strong { color: var(--text); font-weight: 500; }
 
     /* Checklist */
@@ -80,10 +86,11 @@
     .init-btn:hover { background: var(--accent-light); }
 
     /* Goals */
-    .goal-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .goal-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .goal-item:last-child { border-bottom: none; }
+    .goal-item.done .check-box { background: var(--green); border-color: var(--green); }
     .goal-item.done .goal-text { text-decoration: line-through; color: var(--muted); }
-    .goal-text { font-size: 14px; font-weight: 300; line-height: 1.5; flex: 1; }
+    .goal-text { font-size: 14px; font-weight: 300; line-height: 1.5; flex: 1; cursor: pointer; }
     .goal-date { font-size: 11px; color: var(--muted); white-space: nowrap; margin-top: 2px; }
     .goal-add { display: flex; gap: 8px; margin-top: 12px; }
     .goal-input { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); color: var(--text); outline: none; }
@@ -194,6 +201,30 @@
     .upcoming-date { font-size: 12px; color: var(--muted); white-space: nowrap; }
     .upcoming-overdue { color: var(--red); font-weight: 500; }
 
+    /* Delete/action buttons for items */
+    .item-actions { display: flex; gap: 4px; flex-shrink: 0; margin-left: auto; }
+    .item-del { background: none; border: none; color: var(--muted); font-size: 14px; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: all 0.15s; line-height: 1; }
+    .item-del:hover { color: var(--red); background: rgba(212,117,107,0.1); }
+    .item-edit { background: none; border: none; color: var(--muted); font-size: 11px; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: all 0.15s; }
+    .item-edit:hover { color: var(--navy); background: rgba(27,58,92,0.06); }
+
+    /* Calendar layout with sidebar */
+    .cal-layout { display: grid; grid-template-columns: 1fr 280px; gap: 20px; }
+    .cal-sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .cal-sidebar-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+    .cal-sidebar-title { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 400; color: var(--navy); margin-bottom: 10px; }
+    .cal-event-list-item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .cal-event-list-item:last-child { border-bottom: none; }
+    .cal-event-list-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 3px; flex-shrink: 0; }
+    .cal-event-list-info { flex: 1; }
+    .cal-event-list-name { font-weight: 400; font-size: 13px; }
+    .cal-event-list-date { font-size: 11px; color: var(--muted); }
+
+    /* View toggle for calendar */
+    .view-toggle { display: flex; gap: 4px; }
+    .view-toggle-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-family: 'DM Sans', sans-serif; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+    .view-toggle-btn.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+
     /* Loading */
     .loading { text-align: center; padding: 48px; color: var(--muted); font-size: 15px; font-weight: 300; }
 
@@ -201,6 +232,8 @@
     @media (max-width: 900px) {
       .checklist-cols { grid-template-columns: 1fr; }
       .dash-grid-3 { grid-template-columns: 1fr; }
+      .cal-layout { grid-template-columns: 1fr; }
+      .overview-layout { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
       nav { padding: 14px 20px; }
@@ -365,29 +398,22 @@
       // ═══════════════════════════════
       html += '<div class="tab-panel active" id="panel-overview">';
       html += '<div class="quick-actions">';
-      html += '  <a href="/chat" target="_blank" class="quick-btn">\uD83D\uDCAC Continue chatting</a>';
+      var lastSession = sessions.length > 0 ? sessions[0] : null;
+      var chatUrl = lastSession ? '/chat?session=' + lastSession.id : '/chat';
+      var chatLabel = lastSession ? 'Continue chatting' : 'Start chatting';
+      html += '  <a href="' + chatUrl + '" target="_blank" class="quick-btn">\uD83D\uDCAC ' + chatLabel + '</a>';
       if (prog.total > 0) html += '  <button class="quick-btn" onclick="switchTab(\'checklist\')">\u2713 My checklist</button>';
       html += '  <button class="quick-btn" onclick="switchTab(\'calendar\')">\uD83D\uDCC5 Calendar</button>';
       html += '  <button class="quick-btn" onclick="switchTab(\'notes\')">\uD83D\uDCDD Add a note</button>';
       html += '</div>';
 
-      html += '<div class="dash-grid">';
-
-      // Progress card
-      html += '<div class="dash-card">';
-      html += '  <div class="card-label">Progress</div>';
-      if (prog.total > 0) {
-        html += progressRingHTML('progress', prog);
-      } else {
-        html += '  <p class="card-empty">Start a checklist to track your progress.</p>';
-        html += '  <button class="quick-btn" style="margin-top:12px" onclick="switchTab(\'checklist\')">Create checklist</button>';
-      }
-      html += '</div>';
+      html += '<div class="overview-layout">';
+      html += '<div class="overview-main">';
 
       // Upcoming deadlines card
       html += '<div class="dash-card">';
       html += '  <div class="card-label">Upcoming Deadlines</div>';
-      var upcomingDeadlines = deadlines.filter(function(d) { return !d.is_completed; }).slice(0, 5);
+      var upcomingDeadlines = deadlines.filter(function(d) { return !d.is_completed; }).sort(function(a,b) { return a.deadline_date.localeCompare(b.deadline_date); }).slice(0, 5);
       if (upcomingDeadlines.length > 0) {
         upcomingDeadlines.forEach(function(d) {
           var days = daysUntil(d.deadline_date);
@@ -395,16 +421,18 @@
           var label = days < 0 ? (Math.abs(days) + 'd overdue') : days === 0 ? 'Today' : days + 'd left';
           html += '<div class="upcoming-item">';
           html += '  <div class="upcoming-title">' + d.title + '</div>';
-          html += '  <div class="upcoming-date' + cls + '">' + label + '</div>';
+          html += '  <div style="display:flex;align-items:center;gap:6px">';
+          html += '    <div class="upcoming-date' + cls + '">' + label + '</div>';
+          html += '    <button class="item-del" onclick="event.stopPropagation();deleteDeadline(' + d.id + ')" title="Delete">&times;</button>';
+          html += '  </div>';
           html += '</div>';
         });
-        html += '<div style="margin-top:10px"><a href="#" onclick="switchTab(\'calendar\');return false" style="font-size:13px;color:var(--navy)">View all in calendar →</a></div>';
+        html += '<div style="margin-top:10px"><a href="#" onclick="switchTab(\'calendar\');return false" style="font-size:13px;color:var(--navy)">View all in calendar \u2192</a></div>';
       } else {
         html += '<p class="card-empty">No upcoming deadlines.</p>';
-        html += '<div style="margin-top:8px"><a href="#" onclick="switchTab(\'calendar\');return false" style="font-size:13px;color:var(--navy)">Set up deadlines →</a></div>';
+        html += '<div style="margin-top:8px"><a href="#" onclick="switchTab(\'calendar\');return false" style="font-size:13px;color:var(--navy)">Set up deadlines \u2192</a></div>';
       }
       html += '</div>';
-      html += '</div>'; // dash-grid
 
       // Weekly & Monthly Goals
       var weeklyGoals = goals.filter(function(g) { return g.timeframe === 'weekly'; });
@@ -418,10 +446,11 @@
       if (weeklyGoals.length > 0) {
         weeklyGoals.forEach(function(g) {
           var doneClass = g.is_completed ? ' done' : '';
-          html += '<div class="goal-item' + doneClass + '" onclick="toggleGoal(' + g.id + ', this)">';
-          html += '  <div class="check-box"></div>';
-          html += '  <div class="goal-text">' + g.title + '</div>';
+          html += '<div class="goal-item' + doneClass + '">';
+          html += '  <div class="check-box" onclick="toggleGoal(' + g.id + ', this.parentElement)"></div>';
+          html += '  <div class="goal-text" onclick="toggleGoal(' + g.id + ', this.parentElement)">' + g.title + '</div>';
           if (g.target_date) html += '  <div class="goal-date">' + formatShortDate(g.target_date) + '</div>';
+          html += '  <button class="item-del" onclick="deleteGoal(' + g.id + ')" title="Delete">&times;</button>';
           html += '</div>';
         });
       } else {
@@ -439,10 +468,11 @@
       if (monthlyGoals.length > 0) {
         monthlyGoals.forEach(function(g) {
           var doneClass = g.is_completed ? ' done' : '';
-          html += '<div class="goal-item' + doneClass + '" onclick="toggleGoal(' + g.id + ', this)">';
-          html += '  <div class="check-box"></div>';
-          html += '  <div class="goal-text">' + g.title + '</div>';
+          html += '<div class="goal-item' + doneClass + '">';
+          html += '  <div class="check-box" onclick="toggleGoal(' + g.id + ', this.parentElement)"></div>';
+          html += '  <div class="goal-text" onclick="toggleGoal(' + g.id + ', this.parentElement)">' + g.title + '</div>';
           if (g.target_date) html += '  <div class="goal-date">' + formatShortDate(g.target_date) + '</div>';
+          html += '  <button class="item-del" onclick="deleteGoal(' + g.id + ')" title="Delete">&times;</button>';
           html += '</div>';
         });
       } else {
@@ -466,7 +496,8 @@
           var label = days < 0 ? (Math.abs(days) + ' days ago') : days === 0 ? 'Today' : 'in ' + days + ' days';
           html += '<div class="date-item">';
           html += '  <div class="date-info"><div class="date-title">' + d.title + '</div>';
-          html += '  <div class="date-when">' + formatShortDate(d.deadline_date) + ' — ' + label + '</div></div>';
+          html += '  <div class="date-when">' + formatShortDate(d.deadline_date) + ' \u2014 ' + label + '</div></div>';
+          html += '  <button class="item-del" onclick="deleteDeadline(' + d.id + ')" title="Delete">&times;</button>';
           html += '</div>';
         });
       } else {
@@ -479,6 +510,37 @@
       html += '  <button class="init-btn" onclick="addImportantDate()">Add</button>';
       html += '</div>';
       html += '</div>';
+
+      html += '</div>'; // overview-main
+
+      // Sidebar with progress ring
+      html += '<div class="overview-sidebar">';
+      html += '<div class="progress-compact">';
+      html += '  <div class="card-label">Progress</div>';
+      if (prog.total > 0) {
+        var circumference = 2 * Math.PI * 30;
+        var offset = circumference - (prog.pct / 100) * circumference;
+        html += '  <div class="progress-ring" id="progressRing">';
+        html += '    <svg width="72" height="72"><circle class="bg" cx="36" cy="36" r="30"/><circle class="fill" id="progressFill" cx="36" cy="36" r="30" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"/></svg>';
+        html += '    <div class="progress-pct" id="progressPct">' + prog.pct + '%</div>';
+        html += '  </div>';
+        html += '  <div class="progress-info" id="progressInfo"><strong>' + prog.completed + '/' + prog.total + '</strong> tasks</div>';
+      } else {
+        html += '  <p class="card-empty" style="font-size:12px">No tasks yet</p>';
+      }
+      html += '</div>';
+
+      // Quick links sidebar
+      html += '<div class="progress-compact">';
+      html += '  <div class="card-label">Quick Links</div>';
+      html += '  <div style="display:flex;flex-direction:column;gap:6px;text-align:left">';
+      html += '    <a href="#" onclick="switchTab(\'documents\');return false" style="font-size:12px;color:var(--navy);text-decoration:none">\uD83D\uDCC4 Documents to gather</a>';
+      html += '    <a href="#" onclick="switchTab(\'notes\');return false" style="font-size:12px;color:var(--navy);text-decoration:none">\uD83D\uDCDD My notes</a>';
+      html += '    <a href="#" onclick="switchTab(\'history\');return false" style="font-size:12px;color:var(--navy);text-decoration:none">\uD83D\uDCEC Chat history</a>';
+      html += '  </div>';
+      html += '</div>';
+      html += '</div>'; // overview-sidebar
+      html += '</div>'; // overview-layout
 
       html += '</div>'; // panel-overview
 
@@ -563,31 +625,91 @@
       // Auto-calculate at top
       html += '<div class="calc-section">';
       html += '  <div class="calc-title">Auto-calculate deadlines</div>';
-      html += '  <p class="card-empty" style="margin-bottom:12px">Enter a key date and we\'ll calculate your deadlines automatically.</p>';
+      html += '  <p class="card-empty" style="margin-bottom:12px">Select your transition type and enter the key date. We\'ll generate a full timeline of deadlines with docs needed and who to contact.</p>';
       html += '  <div class="calc-row">';
-      html += '    <select class="init-select" id="calcTransition">';
+      html += '    <select class="init-select" id="calcTransition" onchange="updateCalcLabel()">';
       html += '      <option value="">Choose transition...</option>';
-      html += '      <option value="retirement">Retirement date</option>';
-      html += '      <option value="job-loss">Last day of work</option>';
-      html += '      <option value="estate">Date of passing</option>';
-      html += '      <option value="divorce">Date served / filing date</option>';
-      html += '      <option value="relocation">Moving day</option>';
-      html += '      <option value="disability">Diagnosis / disability start date</option>';
+      html += '      <option value="retirement">Retirement</option>';
+      html += '      <option value="job-loss">Job Loss</option>';
+      html += '      <option value="estate">Death &amp; Estate</option>';
+      html += '      <option value="divorce">Divorce</option>';
+      html += '      <option value="relocation">Relocation</option>';
+      html += '      <option value="disability">Disability</option>';
       html += '    </select>';
-      html += '    <input type="date" class="calc-input" id="calcDate">';
-      html += '    <button class="init-btn" onclick="calculateDeadlines()">Calculate</button>';
+      html += '    <div style="display:flex;flex-direction:column;gap:2px">';
+      html += '      <label id="calcDateLabel" style="font-size:11px;color:var(--muted)">Key date</label>';
+      html += '      <input type="date" class="calc-input" id="calcDate">';
+      html += '    </div>';
+      html += '    <button class="init-btn" onclick="calculateDeadlines()">Calculate deadlines</button>';
       html += '  </div>';
       html += '</div>';
 
-      // Month calendar
+      // Calendar layout: main + sidebar
+      html += '<div class="cal-layout">';
+
+      // Main calendar area
+      html += '<div>';
       html += '<div class="dash-card">';
       html += '  <div class="cal-nav">';
       html += '    <button class="cal-btn" onclick="changeMonth(-1)">&larr;</button>';
-      html += '    <div class="cal-month" id="calMonthLabel"></div>';
+      html += '    <div style="display:flex;align-items:center;gap:12px">';
+      html += '      <div class="cal-month" id="calMonthLabel"></div>';
+      html += '      <div class="view-toggle">';
+      html += '        <button class="view-toggle-btn active" id="monthViewBtn" onclick="setCalView(\'month\')">Month</button>';
+      html += '        <button class="view-toggle-btn" id="dayViewBtn" onclick="setCalView(\'day\')">Day</button>';
+      html += '      </div>';
+      html += '    </div>';
       html += '    <button class="cal-btn" onclick="changeMonth(1)">&rarr;</button>';
       html += '  </div>';
       html += '  <div id="calGrid"></div>';
+      html += '  <div id="dayViewPanel" style="display:none"></div>';
       html += '</div>';
+      html += '</div>';
+
+      // Calendar sidebar
+      html += '<div class="cal-sidebar">';
+
+      // Add event form
+      html += '<div class="cal-sidebar-card">';
+      html += '  <div class="cal-sidebar-title">Add to calendar</div>';
+      html += '  <input class="goal-input" id="calEventTitle" placeholder="Event title" style="width:100%;margin-bottom:8px">';
+      html += '  <input type="date" class="calc-input" id="calEventDate" style="width:100%;margin-bottom:8px">';
+      html += '  <input class="goal-input" id="calEventNote" placeholder="Details (optional)" style="width:100%;margin-bottom:8px">';
+      html += '  <select class="init-select" id="calEventType" style="width:100%;margin-bottom:8px">';
+      html += '    <option value="important">Important Date</option>';
+      html += '    <option value="deadline">Deadline</option>';
+      html += '    <option value="goal">Goal</option>';
+      html += '  </select>';
+      html += '  <button class="init-btn" style="width:100%" onclick="addCalEvent()">Add event</button>';
+      html += '</div>';
+
+      // Upcoming events list
+      html += '<div class="cal-sidebar-card">';
+      html += '  <div class="cal-sidebar-title">Upcoming events</div>';
+      var allEvents = deadlines.concat(goals.filter(function(g) { return g.target_date; }).map(function(g) { return { title: g.title, deadline_date: g.target_date, source: 'goal', is_completed: g.is_completed, id: g.id }; }));
+      allEvents.sort(function(a, b) { return (a.deadline_date || '').localeCompare(b.deadline_date || ''); });
+      var upcomingEvents = allEvents.filter(function(e) { return !e.is_completed && daysUntil(e.deadline_date) >= 0; }).slice(0, 8);
+      if (upcomingEvents.length > 0) {
+        upcomingEvents.forEach(function(e) {
+          var type = e.source === 'manual' ? 'important' : e.source === 'goal' ? 'goal' : 'deadline';
+          var color = type === 'deadline' ? 'var(--red)' : type === 'goal' ? 'var(--gold)' : 'var(--navy)';
+          html += '<div class="cal-event-list-item">';
+          html += '  <div class="cal-event-list-dot" style="background:' + color + '"></div>';
+          html += '  <div class="cal-event-list-info">';
+          html += '    <div class="cal-event-list-name">' + e.title + '</div>';
+          html += '    <div class="cal-event-list-date">' + formatShortDate(e.deadline_date) + '</div>';
+          html += '  </div>';
+          var delFn = e.source === 'goal' ? 'deleteGoal' : 'deleteDeadline';
+          html += '  <button class="item-del" onclick="' + delFn + '(' + e.id + ')" title="Delete">&times;</button>';
+          html += '</div>';
+        });
+      } else {
+        html += '<p class="card-empty" style="font-size:12px">No upcoming events</p>';
+      }
+      html += '</div>';
+
+      html += '</div>'; // cal-sidebar
+      html += '</div>'; // cal-layout
 
       html += '</div>'; // panel-calendar
 
@@ -595,6 +717,14 @@
       // ── DOCUMENTS TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-documents">';
+      html += '<div class="dash-card" style="margin-bottom:20px">';
+      html += '  <div class="card-label">Add a Document</div>';
+      html += '  <div class="date-add">';
+      html += '    <input class="goal-input" id="addDocName" placeholder="Document name (e.g. Birth certificate)" style="flex:2">';
+      html += '    <input class="goal-input" id="addDocDesc" placeholder="Description (optional)" style="flex:2">';
+      html += '    <button class="init-btn" onclick="addDocument()">Add</button>';
+      html += '  </div>';
+      html += '</div>';
       html += '<div class="dash-card">';
       html += '  <div class="card-label">Documents & Info to Gather</div>';
       if (documents.length > 0) {
@@ -602,15 +732,20 @@
         html += '<p style="font-size:13px;color:var(--muted);margin-bottom:14px">' + gatheredCount + ' of ' + documents.length + ' gathered</p>';
         documents.forEach(function(d) {
           var cls = d.is_gathered ? ' gathered' : '';
-          html += '<div class="doc-item' + cls + '" onclick="toggleDocument(' + d.id + ', this)">';
-          html += '  <div class="check-box"></div>';
-          html += '  <div><div class="doc-name">' + d.document_name + '</div>';
-          if (d.description) html += '  <div class="doc-desc">' + d.description + '</div>';
+          html += '<div class="doc-item' + cls + '">';
+          html += '  <div class="check-box" onclick="toggleDocument(' + d.id + ', this.parentElement)"></div>';
+          html += '  <div style="flex:1" onclick="toggleDocument(' + d.id + ', this.parentElement)">';
+          html += '    <div class="doc-name">' + d.document_name + '</div>';
+          if (d.description) html += '    <div class="doc-desc">' + d.description + '</div>';
+          html += '  </div>';
+          html += '  <div class="item-actions">';
+          html += '    <button class="item-edit" onclick="event.stopPropagation();editDocument(' + d.id + ',\'' + d.document_name.replace(/'/g, "\\'") + '\',\'' + (d.description || '').replace(/'/g, "\\'") + '\')" title="Edit">Edit</button>';
+          html += '    <button class="item-del" onclick="event.stopPropagation();deleteDocument(' + d.id + ')" title="Delete">&times;</button>';
           html += '  </div>';
           html += '</div>';
         });
       } else {
-        html += '<p class="card-empty">No documents to gather yet. Start a conversation with the Navigator and we\'ll identify what you need based on your specific situation.</p>';
+        html += '<p class="card-empty">No documents to gather yet. Add your own above or start a conversation with the Navigator and we\'ll identify what you need.</p>';
         html += '<a href="/chat" target="_blank" class="quick-btn" style="margin-top:12px">\uD83D\uDCAC Talk to the Navigator</a>';
       }
       html += '</div>';
@@ -790,9 +925,18 @@
         evts.forEach(function(ev) {
           h += '<div class="day-event">';
           h += '  <div class="day-dot ' + ev.type + '"></div>';
-          h += '  <div>';
+          h += '  <div style="flex:1">';
           h += '    <div class="day-event-title">' + ev.title + '</div>';
-          if (ev.note) h += '    <div class="day-event-note">' + ev.note + '</div>';
+          if (ev.note) {
+            // Split note into readable sections if it contains Docs: and Contact:
+            var noteHtml = ev.note.replace(/Docs:/g, '<br><strong style="color:var(--navy);font-size:11px">DOCS NEEDED:</strong>').replace(/Contact:/g, '<br><strong style="color:var(--navy);font-size:11px">CONTACT:</strong>');
+            h += '    <div class="day-event-note" style="white-space:pre-wrap;line-height:1.5">' + noteHtml + '</div>';
+          }
+          h += '  </div>';
+          var delFn = ev.type === 'goal' ? 'deleteGoal' : 'deleteDeadline';
+          h += '  <div class="item-actions" style="margin-top:2px">';
+          h += '    <button class="item-edit" onclick="editEventNote(' + ev.id + ',\'' + ev.type + '\')" title="Edit details">Edit</button>';
+          h += '    <button class="item-del" onclick="' + delFn + '(' + ev.id + ');closeDayView()" title="Delete">&times;</button>';
           h += '  </div>';
           h += '</div>';
         });
@@ -805,6 +949,19 @@
 
     function closeDayView() {
       document.getElementById('dayModal').classList.remove('open');
+    }
+
+    function editEventNote(id, type) {
+      var newNote = prompt('Edit details/notes for this event:');
+      if (newNote === null) return;
+      var url = type === 'goal' ? '/api/goals/' + id : '/api/deadlines/' + id;
+      fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note: newNote })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) { if (data.ok) { closeDayView(); loadDashboard(); } });
     }
 
     // ── Important dates ──
@@ -829,14 +986,21 @@
       var prog = getProgress();
       var circumference = 2 * Math.PI * 30;
       var offset = circumference - (prog.pct / 100) * circumference;
-      ['progress', 'cl'].forEach(function(prefix) {
-        var fill = document.getElementById(prefix + 'Fill');
-        var pct = document.getElementById(prefix + 'Pct');
-        var info = document.getElementById(prefix + 'Info');
-        if (fill) fill.setAttribute('stroke-dashoffset', offset);
-        if (pct) pct.textContent = prog.pct + '%';
-        if (info) info.innerHTML = '<strong>' + prog.completed + ' of ' + prog.total + '</strong> tasks completed';
-      });
+      // Update sidebar progress ring
+      var fill = document.getElementById('progressFill');
+      var pct = document.getElementById('progressPct');
+      var info = document.getElementById('progressInfo');
+      if (fill) fill.setAttribute('stroke-dashoffset', offset);
+      if (pct) pct.textContent = prog.pct + '%';
+      if (info) info.innerHTML = '<strong>' + prog.completed + '/' + prog.total + '</strong> tasks';
+      // Update checklist tab progress
+      var clFill = document.getElementById('clFill');
+      var clPct = document.getElementById('clPct');
+      var clInfo = document.getElementById('clInfo');
+      if (clFill) clFill.setAttribute('stroke-dashoffset', offset);
+      if (clPct) clPct.textContent = prog.pct + '%';
+      if (clInfo) clInfo.innerHTML = '<strong>' + prog.completed + ' of ' + prog.total + '</strong> tasks completed';
+      // Update tab badge
       var clTab = document.querySelector('[data-tab="checklist"]');
       if (clTab) {
         var badge = clTab.querySelector('.tab-badge');
@@ -900,7 +1064,6 @@
       .then(function(data) {
         if (data.ok) {
           el.classList.toggle('done');
-          // Update local data
           (dashData.goals || []).forEach(function(g) {
             if (g.id === goalId) g.is_completed = data.is_completed;
           });
@@ -908,11 +1071,25 @@
       });
     }
 
+    function deleteGoal(goalId) {
+      if (!confirm('Delete this goal?')) return;
+      fetch('/api/goals/' + goalId, { method: 'DELETE' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) { if (data.ok) loadDashboard(); });
+    }
+
     // ── Deadline actions ──
+    function deleteDeadline(deadlineId) {
+      if (!confirm('Delete this item?')) return;
+      fetch('/api/deadlines/' + deadlineId, { method: 'DELETE' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) { if (data.ok) loadDashboard(); });
+    }
+
     function calculateDeadlines() {
       var type = document.getElementById('calcTransition').value;
       var date = document.getElementById('calcDate').value;
-      if (!type || !date) return;
+      if (!type || !date) { alert('Please select a transition type and enter a date.'); return; }
       fetch('/api/deadlines/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -927,6 +1104,98 @@
       });
     }
 
+    function updateCalcLabel() {
+      var sel = document.getElementById('calcTransition');
+      var label = document.getElementById('calcDateLabel');
+      if (!label) return;
+      var labels = {
+        'retirement': 'Your retirement date',
+        'job-loss': 'Your last day of work',
+        'estate': 'Date of passing',
+        'divorce': 'Date served or filing date',
+        'relocation': 'Your moving day',
+        'disability': 'Diagnosis or disability start date'
+      };
+      label.textContent = labels[sel.value] || 'Key date';
+    }
+
+    // ── Calendar view toggle ──
+    var calView = 'month';
+
+    function setCalView(view) {
+      calView = view;
+      var monthBtn = document.getElementById('monthViewBtn');
+      var dayBtn = document.getElementById('dayViewBtn');
+      var grid = document.getElementById('calGrid');
+      var dayPanel = document.getElementById('dayViewPanel');
+      if (monthBtn) monthBtn.classList.toggle('active', view === 'month');
+      if (dayBtn) dayBtn.classList.toggle('active', view === 'day');
+      if (view === 'month') {
+        if (grid) grid.style.display = '';
+        if (dayPanel) dayPanel.style.display = 'none';
+      } else {
+        if (grid) grid.style.display = 'none';
+        if (dayPanel) { dayPanel.style.display = ''; renderDayViewPanel(); }
+      }
+    }
+
+    function renderDayViewPanel() {
+      var panel = document.getElementById('dayViewPanel');
+      if (!panel) return;
+      var today = new Date();
+      var dateStr = today.toISOString().split('T')[0];
+      var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      var h = '<div style="text-align:center;margin-bottom:16px">';
+      h += '<div style="font-family:Cormorant Garamond,serif;font-size:22px;font-weight:400">' + dayNames[today.getDay()] + ', ' + months[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear() + '</div>';
+      h += '</div>';
+
+      buildEventMap();
+      var evts = calEvents[dateStr] || [];
+      if (evts.length > 0) {
+        evts.forEach(function(ev) {
+          var color = ev.type === 'deadline' ? 'var(--red)' : ev.type === 'goal' ? 'var(--gold)' : 'var(--navy)';
+          h += '<div style="display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)">';
+          h += '  <div style="width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0;background:' + color + '"></div>';
+          h += '  <div style="flex:1">';
+          h += '    <div style="font-size:14px;font-weight:400">' + ev.title + '</div>';
+          if (ev.note) h += '    <div style="font-size:12px;color:var(--muted);margin-top:2px;white-space:pre-wrap">' + ev.note + '</div>';
+          h += '  </div>';
+          var delFn = ev.type === 'goal' ? 'deleteGoal' : 'deleteDeadline';
+          h += '  <button class="item-del" onclick="' + delFn + '(' + ev.id + ')">&times;</button>';
+          h += '</div>';
+        });
+      } else {
+        h += '<p class="day-empty">Nothing scheduled for today.</p>';
+      }
+      panel.innerHTML = h;
+    }
+
+    // ── Add calendar event ──
+    function addCalEvent() {
+      var title = document.getElementById('calEventTitle').value.trim();
+      var date = document.getElementById('calEventDate').value;
+      var note = document.getElementById('calEventNote').value.trim();
+      var type = document.getElementById('calEventType').value;
+      if (!title || !date) { alert('Please enter a title and date.'); return; }
+
+      if (type === 'goal') {
+        fetch('/api/goals', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: title, timeframe: 'monthly', target_date: date })
+        }).then(function(r) { return r.json(); })
+        .then(function(data) { if (data.ok) loadDashboard(); });
+      } else {
+        fetch('/api/deadlines', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: title, deadline_date: date, note: note, transition_type: null })
+        }).then(function(r) { return r.json(); })
+        .then(function(data) { if (data.ok) loadDashboard(); });
+      }
+    }
+
     // ── Document actions ──
     function toggleDocument(docId, el) {
       fetch('/api/documents-needed/' + docId + '/toggle', { method: 'POST' })
@@ -934,7 +1203,6 @@
       .then(function(data) {
         if (data.ok) {
           el.classList.toggle('gathered');
-          // Update badge
           (dashData.documents_needed || []).forEach(function(d) {
             if (d.id === docId) d.is_gathered = data.is_gathered;
           });
@@ -946,6 +1214,40 @@
           }
         }
       });
+    }
+
+    function addDocument() {
+      var name = document.getElementById('addDocName').value.trim();
+      var desc = document.getElementById('addDocDesc').value.trim();
+      if (!name) return;
+      fetch('/api/documents-needed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ document_name: name, description: desc })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) { if (data.ok) { currentTab = 'documents'; loadDashboard(); } });
+    }
+
+    function deleteDocument(docId) {
+      if (!confirm('Delete this document?')) return;
+      fetch('/api/documents-needed/' + docId, { method: 'DELETE' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) { if (data.ok) { currentTab = 'documents'; loadDashboard(); } });
+    }
+
+    function editDocument(docId, name, desc) {
+      var newName = prompt('Document name:', name);
+      if (newName === null) return;
+      var newDesc = prompt('Description:', desc);
+      if (newDesc === null) newDesc = desc;
+      fetch('/api/documents-needed/' + docId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ document_name: newName, description: newDesc })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) { if (data.ok) { currentTab = 'documents'; loadDashboard(); } });
     }
 
     // ── Note actions ──

@@ -736,11 +736,8 @@
       <p>Your Transition Navigator</p>
     </div>
     <div class="header-right">
-      <button class="header-action" onclick="getSummary()">📋 Summary</button>
-      <button class="header-action" onclick="downloadChecklist()">⬇ Checklist</button>
-      <button class="header-action" onclick="startOver()">↺ Start Over</button>
-      <button class="header-action" id="saveToDashBtn" style="display:none" onclick="saveToDashboard()">💾 Save to Dashboard</button>
-      <a href="/dashboard" target="_blank" class="header-action" id="dashLink" style="display:none;text-decoration:none">👤 Dashboard</a>
+      <button class="header-action" id="saveToDashBtn" style="display:none" onclick="saveToDashboard()" title="Save dates, documents, goals & deadlines to your dashboard">💾 Save</button>
+      <a href="/dashboard" target="_blank" class="header-action" id="dashLink" style="display:none;text-decoration:none">Dashboard</a>
       <a href="/login" class="header-action" id="loginLink" style="text-decoration:none">Log in</a>
       <div class="status-dot"></div>
     </div>
@@ -789,6 +786,13 @@
 </div>
 
 <div class="chat-sidebar">
+  <div class="sidebar-card" style="padding:14px 20px;">
+    <button class="header-action" onclick="startOver()" style="width:100%;text-align:center;padding:8px 14px;font-size:12.5px">↺ Start over</button>
+  </div>
+  <div class="sidebar-card" id="save-explain-card" style="display:none">
+    <h3><span class="feature-icon">&#x1F4BE;</span> Save to Dashboard</h3>
+    <p>Clicking <strong>Save</strong> extracts your dates, deadlines, documents to gather, and goals from this conversation and saves them to your personal dashboard.</p>
+  </div>
   <div class="sidebar-card" id="docs-card">
     <h3><span class="feature-icon">&#x1F4C4;</span> Documents that may help you <span class="sidebar-count" id="docs-count" style="display:none">0</span></h3>
     <p class="doc-list-empty" id="docs-empty">As we talk, I'll note any worksheets, checklists, or letters that could help with your situation.</p>
@@ -797,6 +801,10 @@
   <div class="sidebar-card">
     <h3><span class="feature-icon">&#x1F4A1;</span> Tips</h3>
     <p>Be as specific as you can — include your state, timeline, and what you've already done. The more context you share, the more tailored your guidance will be.</p>
+  </div>
+  <div class="sidebar-card" style="padding:14px 20px;">
+    <button class="header-action" onclick="getSummary()" style="width:100%;text-align:center;padding:8px 14px;font-size:12.5px;margin-bottom:8px">📋 Get summary</button>
+    <button class="header-action" onclick="downloadChecklist()" style="width:100%;text-align:center;padding:8px 14px;font-size:12.5px">⬇ Download checklist</button>
   </div>
 </div>
 </div><!-- end chat-layout -->
@@ -818,8 +826,31 @@
       document.getElementById('dashLink').style.display = '';
       document.getElementById('saveToDashBtn').style.display = '';
       document.getElementById('loginLink').style.display = 'none';
+      document.getElementById('save-explain-card').style.display = '';
+      // Resume session if ?session= param present
+      const params = new URLSearchParams(window.location.search);
+      const resumeId = params.get('session');
+      if (resumeId) resumeSession(resumeId);
     }
   }).catch(() => {});
+
+  // Resume an existing chat session
+  async function resumeSession(sid) {
+    try {
+      const res = await fetch('/api/dashboard/history/' + sid);
+      const data = await res.json();
+      if (data.messages && data.messages.length > 0) {
+        sessionId = sid;
+        const welcome = document.getElementById('welcome');
+        if (welcome) welcome.remove();
+        data.messages.forEach(m => {
+          const role = m.role === 'user' ? 'user' : 'bot';
+          addMessage(role, m.content);
+          history.push({ role: m.role, content: m.content });
+        });
+      }
+    } catch(e) {}
+  }
 
   // ── Markdown renderer with streaming-safe incomplete token handling ──
   function renderMarkdown(text) {

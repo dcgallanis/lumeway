@@ -2611,6 +2611,41 @@ def toggle_deadline(deadline_id):
     conn.close()
     return jsonify({"ok": True, "is_completed": not bool(row[0])})
 
+@app.route("/api/deadlines/<int:deadline_id>", methods=["DELETE"])
+def delete_deadline(deadline_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"DELETE FROM user_deadlines WHERE id = {param} AND user_id = {param}", (deadline_id, user["id"]))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/deadlines/<int:deadline_id>", methods=["PUT"])
+def update_deadline(deadline_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    updates = []
+    values = []
+    for field in ["title", "deadline_date", "note"]:
+        if field in data:
+            updates.append(f"{field} = {param}")
+            values.append(data[field])
+    if not updates:
+        conn.close()
+        return jsonify({"error": "No fields to update"}), 400
+    values.extend([deadline_id, user["id"]])
+    db_execute(conn, f"UPDATE user_deadlines SET {', '.join(updates)} WHERE id = {param} AND user_id = {param}", tuple(values))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
 
 # ── Documents Needed API ──
 
@@ -2645,6 +2680,58 @@ def toggle_document_needed(doc_id):
     conn.commit()
     conn.close()
     return jsonify({"ok": True, "is_gathered": not bool(row[0])})
+
+@app.route("/api/documents-needed", methods=["POST"])
+def add_document_needed():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    name = data.get("document_name", "").strip()
+    if not name:
+        return jsonify({"error": "Document name required"}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"INSERT INTO user_documents_needed (user_id, transition_type, document_name, description) VALUES ({param},{param},{param},{param})",
+        (user["id"], data.get("transition_type"), name, data.get("description", "")))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/documents-needed/<int:doc_id>", methods=["DELETE"])
+def delete_document_needed(doc_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"DELETE FROM user_documents_needed WHERE id = {param} AND user_id = {param}", (doc_id, user["id"]))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/documents-needed/<int:doc_id>", methods=["PUT"])
+def update_document_needed(doc_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    updates = []
+    values = []
+    for field in ["document_name", "description"]:
+        if field in data:
+            updates.append(f"{field} = {param}")
+            values.append(data[field])
+    if not updates:
+        conn.close()
+        return jsonify({"error": "No fields to update"}), 400
+    values.extend([doc_id, user["id"]])
+    db_execute(conn, f"UPDATE user_documents_needed SET {', '.join(updates)} WHERE id = {param} AND user_id = {param}", tuple(values))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
 
 
 # ── Goals API ──
@@ -2700,62 +2787,97 @@ def toggle_goal(goal_id):
     conn.close()
     return jsonify({"ok": True, "is_completed": not bool(row[0])})
 
+@app.route("/api/goals/<int:goal_id>", methods=["DELETE"])
+def delete_goal(goal_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"DELETE FROM user_goals WHERE id = {param} AND user_id = {param}", (goal_id, user["id"]))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/goals/<int:goal_id>", methods=["PUT"])
+def update_goal(goal_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    updates = []
+    values = []
+    for field in ["title", "timeframe", "target_date"]:
+        if field in data:
+            updates.append(f"{field} = {param}")
+            values.append(data[field])
+    if not updates:
+        conn.close()
+        return jsonify({"error": "No fields to update"}), 400
+    values.extend([goal_id, user["id"]])
+    db_execute(conn, f"UPDATE user_goals SET {', '.join(updates)} WHERE id = {param} AND user_id = {param}", tuple(values))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
 
 # ── Auto-calculate deadlines from key date ──
 
 DEADLINE_TEMPLATES = {
     "retirement": [
-        {"title": "Apply for Social Security", "days_before": 90, "note": "Apply 3 months before desired start date"},
-        {"title": "Enroll in Medicare Part A & B", "days_before": 90, "note": "Initial enrollment starts 3 months before turning 65"},
-        {"title": "Choose Medicare Part D plan", "days_before": 60, "note": "Drug coverage — compare plans before enrollment"},
-        {"title": "Submit employer retirement notification", "days_before": 60, "note": "Give employer adequate notice"},
-        {"title": "Decide pension payout option", "days_before": 45, "note": "Lump sum vs annuity — get advice before choosing"},
-        {"title": "Roll over or consolidate 401(k)", "days_before": 30, "note": "Decide before your last day of work"},
-        {"title": "Set up retirement income withdrawals", "days_before": 14, "note": "Ensure income starts when paychecks stop"},
-        {"title": "Final day — confirm benefits end dates", "days_before": 0, "note": "Verify health insurance continuation, final paycheck"},
-        {"title": "Start Required Minimum Distributions if 73+", "days_before": -30, "note": "RMDs must begin by April 1 after turning 73"},
+        {"title": "Apply for Social Security", "days_before": 90, "note": "Apply 3 months before desired start date. Docs: Social Security card, birth certificate, W-2 or self-employment tax return. Contact: SSA at 1-800-772-1213 or ssa.gov"},
+        {"title": "Enroll in Medicare Part A & B", "days_before": 90, "note": "Initial enrollment starts 3 months before turning 65. Docs: Social Security card, proof of citizenship or residency. Contact: SSA at 1-800-772-1213 or medicare.gov"},
+        {"title": "Choose Medicare Part D plan", "days_before": 60, "note": "Drug coverage — compare plans at medicare.gov/plan-compare. Docs: current prescription list. Contact: 1-800-MEDICARE (1-800-633-4227)"},
+        {"title": "Submit employer retirement notification", "days_before": 60, "note": "Give employer adequate notice. Docs: written resignation letter with retirement date. Contact: your HR department"},
+        {"title": "Decide pension payout option", "days_before": 45, "note": "Lump sum vs annuity — get advice before choosing. Docs: pension plan summary, spousal consent form if married. Contact: your pension plan administrator or a fee-only financial advisor"},
+        {"title": "Roll over or consolidate 401(k)", "days_before": 30, "note": "Decide before your last day of work. Docs: most recent 401(k) statement, new IRA account number. Contact: your 401(k) plan provider and receiving IRA custodian"},
+        {"title": "Set up retirement income withdrawals", "days_before": 14, "note": "Ensure income starts when paychecks stop. Docs: bank routing/account numbers for direct deposit. Contact: your IRA or brokerage custodian"},
+        {"title": "Final day — confirm benefits end dates", "days_before": 0, "note": "Verify health insurance continuation, final paycheck. Docs: benefits summary, COBRA election notice. Contact: HR department"},
+        {"title": "Start Required Minimum Distributions if 73+", "days_before": -30, "note": "RMDs must begin by April 1 after turning 73. Docs: account statements for all retirement accounts. Contact: each account custodian (Fidelity, Vanguard, etc.)"},
     ],
     "job-loss": [
-        {"title": "File for unemployment benefits", "days_before": -1, "note": "File immediately — benefits start from filing date"},
-        {"title": "Review severance agreement", "days_before": -7, "note": "Don't sign before consulting an attorney if possible"},
-        {"title": "Decide on COBRA or marketplace insurance", "days_before": -14, "note": "You have 60 days but don't wait"},
-        {"title": "Roll over 401(k) to IRA", "days_before": -30, "note": "Avoid penalties — roll over, don't cash out"},
-        {"title": "COBRA election deadline", "days_before": -60, "note": "60-day window from loss of coverage"},
-        {"title": "Apply for marketplace insurance", "days_before": -60, "note": "Special enrollment period lasts 60 days"},
+        {"title": "File for unemployment benefits", "days_before": -1, "note": "File immediately — benefits start from filing date. Docs: Social Security number, driver's license, last employer info (name, address, dates), W-2 or pay stubs. Contact: your state's unemployment office website"},
+        {"title": "Review severance agreement", "days_before": -7, "note": "Don't sign before consulting an attorney if possible. Docs: severance offer letter, employment contract, any non-compete agreements. Contact: an employment attorney (many offer free consultations)"},
+        {"title": "Decide on COBRA or marketplace insurance", "days_before": -14, "note": "You have 60 days but don't wait. Docs: COBRA election notice from employer, current prescription list, doctor info. Contact: healthcare.gov or your state exchange for marketplace; former employer's HR for COBRA"},
+        {"title": "Roll over 401(k) to IRA", "days_before": -30, "note": "Avoid penalties — roll over, don't cash out. Docs: most recent 401(k) statement, new IRA account info. Contact: your 401(k) plan provider"},
+        {"title": "COBRA election deadline", "days_before": -60, "note": "60-day window from loss of coverage. Docs: COBRA election form, first premium payment. Contact: your former employer's benefits administrator"},
+        {"title": "Apply for marketplace insurance", "days_before": -60, "note": "Special enrollment period lasts 60 days. Docs: proof of job loss (termination letter), income estimate, Social Security numbers for household. Contact: healthcare.gov or 1-800-318-2596"},
     ],
     "estate": [
-        {"title": "Obtain certified death certificates (10+)", "days_before": -3, "note": "You'll need many copies for banks, insurance, etc."},
-        {"title": "Notify Social Security Administration", "days_before": -7, "note": "Call 1-800-772-1213"},
-        {"title": "File life insurance claims", "days_before": -14, "note": "Gather policy numbers and death certificate"},
-        {"title": "Notify banks and financial institutions", "days_before": -14, "note": "Freeze joint accounts if needed"},
-        {"title": "File for probate if required", "days_before": -30, "note": "Consult an estate attorney"},
-        {"title": "Apply for survivor benefits", "days_before": -30, "note": "Social Security, VA, pension"},
-        {"title": "File final tax return for deceased", "days_before": -365, "note": "Due by April 15 of following year"},
+        {"title": "Obtain certified death certificates (10+)", "days_before": -3, "note": "You'll need many copies for banks, insurance, etc. Docs: deceased's ID, your ID proving relationship. Contact: funeral home (they usually order these) or county vital records office"},
+        {"title": "Notify Social Security Administration", "days_before": -7, "note": "Docs: death certificate, deceased's Social Security number. Contact: SSA at 1-800-772-1213 (funeral home may also notify them)"},
+        {"title": "File life insurance claims", "days_before": -14, "note": "Docs: death certificate, policy numbers, claimant ID, beneficiary designation forms. Contact: each life insurance company's claims department"},
+        {"title": "Notify banks and financial institutions", "days_before": -14, "note": "Freeze joint accounts if needed. Docs: death certificate, your ID, Letters Testamentary or court appointment. Contact: each bank/brokerage branch or their estate services department"},
+        {"title": "File for probate if required", "days_before": -30, "note": "Docs: original will, death certificate, petition for probate, list of assets and heirs. Contact: an estate/probate attorney in the deceased's county of residence"},
+        {"title": "Apply for survivor benefits", "days_before": -30, "note": "Docs: death certificate, marriage certificate, deceased's Social Security number, your birth certificate. Contact: SSA at 1-800-772-1213 for Social Security; VA at 1-800-827-1000 for veterans benefits"},
+        {"title": "File final tax return for deceased", "days_before": -365, "note": "Due by April 15 of following year. Docs: W-2s, 1099s, prior year tax returns, Social Security number. Contact: a CPA or tax preparer experienced with estate returns"},
     ],
     "divorce": [
-        {"title": "Secure copies of all financial documents", "days_before": -3, "note": "Tax returns, bank statements, investment accounts"},
-        {"title": "Consult with a family law attorney", "days_before": -7, "note": "Many offer free initial consultations"},
-        {"title": "File for divorce or respond to petition", "days_before": -30, "note": "Response deadlines vary by state — check yours"},
-        {"title": "Request temporary orders if needed", "days_before": -30, "note": "Custody, support, exclusive use of home"},
-        {"title": "Complete asset and property inventory", "days_before": -45, "note": "Document everything — real estate, vehicles, accounts"},
-        {"title": "Update beneficiaries on all accounts", "days_before": -60, "note": "Insurance, retirement, bank accounts"},
+        {"title": "Secure copies of all financial documents", "days_before": -3, "note": "Docs needed: last 3 years of tax returns, bank/investment statements, mortgage statements, credit card statements, pay stubs, retirement account statements. Store copies in a safe place outside the home."},
+        {"title": "Consult with a family law attorney", "days_before": -7, "note": "Many offer free initial consultations. Docs: financial documents gathered above, prenuptial agreement if any, timeline of marriage. Contact: your state bar association's lawyer referral service"},
+        {"title": "File for divorce or respond to petition", "days_before": -30, "note": "Response deadlines vary by state — check yours. Docs: petition/complaint for divorce, filing fee, marriage certificate. Contact: your county courthouse clerk's office or your attorney"},
+        {"title": "Request temporary orders if needed", "days_before": -30, "note": "Custody, support, exclusive use of home. Docs: financial affidavit, proposed parenting plan. Contact: your attorney or county family court clerk"},
+        {"title": "Complete asset and property inventory", "days_before": -45, "note": "Document everything — real estate, vehicles, accounts. Docs: property deeds, vehicle titles, account statements, appraisals. Contact: your attorney; may need a property appraiser"},
+        {"title": "Update beneficiaries on all accounts", "days_before": -60, "note": "Docs: beneficiary change forms for each account. Contact: each insurance company, 401(k)/IRA provider, bank, and investment firm individually"},
     ],
     "relocation": [
-        {"title": "Give landlord written notice", "days_before": 60, "note": "Check your lease for required notice period"},
-        {"title": "Book moving company or reserve truck", "days_before": 45, "note": "Prices go up closer to move date"},
-        {"title": "Set up mail forwarding through USPS", "days_before": 14, "note": "Start 2 weeks before move"},
-        {"title": "Transfer or set up utilities at new address", "days_before": 7, "note": "Electric, gas, water, internet"},
-        {"title": "Get new driver's license", "days_before": -30, "note": "Most states require within 30-90 days"},
-        {"title": "Register vehicle in new state", "days_before": -30, "note": "Check your state's deadline"},
-        {"title": "Register to vote at new address", "days_before": -30, "note": "Update before next election"},
+        {"title": "Give landlord written notice", "days_before": 60, "note": "Check your lease for required notice period. Docs: written notice letter (keep a copy), lease agreement. Contact: your landlord or property management company"},
+        {"title": "Book moving company or reserve truck", "days_before": 45, "note": "Prices go up closer to move date. Docs: home inventory list, get 3+ quotes in writing. Contact: licensed movers (check FMCSA for interstate) or U-Haul/Penske/Budget for DIY"},
+        {"title": "Set up mail forwarding through USPS", "days_before": 14, "note": "Start 2 weeks before move. Docs: current and new address, payment method. Contact: usps.com/move or your local post office"},
+        {"title": "Transfer or set up utilities at new address", "days_before": 7, "note": "Electric, gas, water, internet. Docs: new address, lease or purchase agreement, ID. Contact: each utility provider at new address; cancel old ones"},
+        {"title": "Get new driver's license", "days_before": -30, "note": "Most states require within 30-90 days. Docs: current license, proof of new address (lease/utility bill), Social Security card, birth certificate. Contact: new state's DMV"},
+        {"title": "Register vehicle in new state", "days_before": -30, "note": "Check your state's deadline. Docs: current title, current registration, proof of insurance in new state, emissions test if required. Contact: new state's DMV"},
+        {"title": "Register to vote at new address", "days_before": -30, "note": "Update before next election. Docs: driver's license or Social Security number. Contact: vote.gov or your county elections office"},
     ],
     "disability": [
-        {"title": "Request FMLA leave from employer", "days_before": -3, "note": "You're entitled to 12 weeks unpaid leave"},
-        {"title": "Apply for SSDI or SSI", "days_before": -14, "note": "Apply as soon as possible — processing takes months"},
-        {"title": "File short-term disability claim", "days_before": -7, "note": "Through your employer's insurance"},
-        {"title": "Gather medical records", "days_before": -14, "note": "Complete records strengthen your application"},
-        {"title": "SSDI initial decision expected", "days_before": -150, "note": "Average wait is 3-5 months"},
-        {"title": "File appeal if denied", "days_before": -210, "note": "You have 60 days to appeal a denial"},
+        {"title": "Request FMLA leave from employer", "days_before": -3, "note": "You're entitled to 12 weeks unpaid leave. Docs: FMLA request form, medical certification from your doctor. Contact: your HR department; doctor for certification form"},
+        {"title": "Apply for SSDI or SSI", "days_before": -14, "note": "Apply as soon as possible — processing takes months. Docs: Social Security card, birth certificate, medical records, doctor contact info, work history (last 15 years), W-2s/tax returns. Contact: SSA at 1-800-772-1213 or apply at ssa.gov"},
+        {"title": "File short-term disability claim", "days_before": -7, "note": "Through your employer's insurance. Docs: claim form, attending physician's statement, proof of employment. Contact: your employer's disability insurance carrier (check with HR)"},
+        {"title": "Gather medical records", "days_before": -14, "note": "Complete records strengthen your application. Docs: treatment records, test results, prescriptions, doctor's notes on functional limitations. Contact: each doctor, hospital, and specialist you've seen"},
+        {"title": "SSDI initial decision expected", "days_before": -150, "note": "Average wait is 3-5 months. Contact: SSA at 1-800-772-1213 to check status, or check online at ssa.gov/myaccount"},
+        {"title": "File appeal if denied", "days_before": -210, "note": "You have 60 days to appeal a denial. Docs: denial letter, additional medical evidence, attorney representation recommended. Contact: a disability attorney (most work on contingency) or your local Legal Aid"},
     ],
 }
 
