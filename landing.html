@@ -250,7 +250,7 @@
     </div>
     <div class="nav-right">
       <a href="/chat" target="_blank" class="btn-ghost">Try it free</a>
-      <a href="#waitlist" class="btn-primary">Join waitlist</a>
+      <a href="/templates" class="btn-primary">Shop</a>
     </div>
   </nav>
 
@@ -260,7 +260,7 @@
     <p class="hero-subtitle reveal">Lumeway guides you through life's hardest transitions — from paperwork and deadlines to knowing who to call and what to do first.</p>
     <div class="hero-actions reveal">
       <a href="/chat" target="_blank" class="btn-large btn-large-primary">Try Lumeway free →</a>
-      <a href="#waitlist" class="btn-large btn-large-secondary">Join the waitlist</a>
+      <a href="/templates" class="btn-large btn-large-secondary">Browse worksheets</a>
     </div>
     <div class="transitions-strip reveal">
       <a href="/estate" class="transition-pill">Death &amp; Estate</a>
@@ -335,16 +335,16 @@
     </div>
   </div>
 
-  <section class="waitlist-section" id="waitlist">
+  <section class="waitlist-section" id="signup">
     <div class="waitlist-inner">
-      <p class="waitlist-label reveal">Early access</p>
-      <h2 class="waitlist-title reveal">Be the first to know<br>when we launch</h2>
-      <p class="waitlist-subtitle reveal">We're letting in a small group of early users. Join the waitlist and get access before anyone else.</p>
-      <form id="waitlistForm" class="waitlist-form reveal">
-        <input type="email" id="waitlistEmail" class="waitlist-input" placeholder="Enter your email" required aria-label="Email address" />
-        <button type="submit" class="waitlist-btn">Join the waitlist →</button>
+      <p class="waitlist-label reveal">Stay in the loop</p>
+      <h2 class="waitlist-title reveal">Get free guides &amp;<br>new worksheets first</h2>
+      <p class="waitlist-subtitle reveal">Sign up for practical checklists, planning tools, and honest advice for life's hardest transitions — delivered to your inbox.</p>
+      <form id="signupForm" class="waitlist-form reveal">
+        <input type="email" id="signupEmail" class="waitlist-input" placeholder="Enter your email" required aria-label="Email address" />
+        <button type="submit" class="waitlist-btn">Sign up free →</button>
       </form>
-      <p id="waitlistMsg" class="waitlist-msg" hidden></p>
+      <p id="signupMsg" class="waitlist-msg" hidden></p>
     </div>
   </section>
 
@@ -353,10 +353,10 @@
       <button class="popup-close" aria-label="Close" onclick="document.getElementById('emailPopup').style.display='none';localStorage.setItem('lumeway_popup_dismissed',Date.now())">&times;</button>
       <p class="popup-label">Stay in the loop</p>
       <h2 class="popup-title">Get early access to Lumeway</h2>
-      <p class="popup-desc">Join our waitlist for planning tools, step-by-step checklists, and a free Transition Navigator.</p>
+      <p class="popup-desc">Get free planning tools, step-by-step checklists, and new worksheets delivered to your inbox.</p>
       <form id="popupForm" class="popup-form">
         <input type="email" id="popupEmail" class="popup-input" placeholder="Enter your email" required aria-label="Email address" />
-        <button type="submit" class="popup-btn">Join the waitlist →</button>
+        <button type="submit" class="popup-btn">Sign up free →</button>
       </form>
       <p id="popupMsg" class="popup-msg" hidden></p>
       <button class="popup-dismiss" id="popupDismiss" onclick="document.getElementById('emailPopup').style.display='none';localStorage.setItem('lumeway_popup_dismissed',Date.now())">No thanks</button>
@@ -423,25 +423,25 @@
             localStorage.setItem('lumeway_subscribed', Date.now());
             if (onSuccess) onSuccess();
           } else {
-            btn.textContent = 'Join the waitlist →';
+            btn.textContent = 'Sign up free →';
             btn.disabled = false;
           }
         })
         .catch(function() {
           msgEl.hidden = false;
           msgEl.textContent = 'Something went wrong. Please try again.';
-          btn.textContent = 'Join the waitlist →';
+          btn.textContent = 'Sign up free →';
           btn.disabled = false;
         });
       });
     }
 
-    // Inline waitlist form
+    // Inline signup form
     handleSubscribe(
-      document.getElementById('waitlistForm'),
-      document.getElementById('waitlistEmail'),
-      document.getElementById('waitlistMsg'),
-      'waitlist_inline'
+      document.getElementById('signupForm'),
+      document.getElementById('signupEmail'),
+      document.getElementById('signupMsg'),
+      'signup_inline'
     );
 
     // Popup
@@ -473,8 +473,8 @@
       setTimeout(showPopup, 4000);
     })();
 
-    // Allow #waitlist links to trigger popup if already at bottom
-    document.querySelectorAll('a[href="#waitlist"]').forEach(function(a) {
+    // Allow #signup links to trigger popup if already at bottom
+    document.querySelectorAll('a[href="#signup"]').forEach(function(a) {
       a.addEventListener('click', function(e) {
         if (localStorage.getItem('lumeway_subscribed')) return;
         e.preventDefault();

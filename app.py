@@ -128,6 +128,42 @@ def init_subscribers_db():
             idea TEXT NOT NULL,
             created_at TEXT NOT NULL
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_notes (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            content TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_deadlines (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            transition_type TEXT,
+            title TEXT NOT NULL,
+            deadline_date TEXT NOT NULL,
+            note TEXT,
+            is_completed BOOLEAN DEFAULT FALSE,
+            source TEXT DEFAULT 'manual',
+            created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_documents_needed (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            transition_type TEXT,
+            document_name TEXT NOT NULL,
+            description TEXT,
+            is_gathered BOOLEAN DEFAULT FALSE,
+            created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_goals (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            title TEXT NOT NULL,
+            timeframe TEXT NOT NULL,
+            target_date TEXT,
+            is_completed BOOLEAN DEFAULT FALSE,
+            created_at TEXT NOT NULL
+        )""")
     else:
         db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -201,6 +237,42 @@ def init_subscribers_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             session_id TEXT,
             idea TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_notes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            content TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_deadlines (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            transition_type TEXT,
+            title TEXT NOT NULL,
+            deadline_date TEXT NOT NULL,
+            note TEXT,
+            is_completed INTEGER DEFAULT 0,
+            source TEXT DEFAULT 'manual',
+            created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_documents_needed (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            transition_type TEXT,
+            document_name TEXT NOT NULL,
+            description TEXT,
+            is_gathered INTEGER DEFAULT 0,
+            created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_goals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            title TEXT NOT NULL,
+            timeframe TEXT NOT NULL,
+            target_date TEXT,
+            is_completed INTEGER DEFAULT 0,
             created_at TEXT NOT NULL
         )""")
     conn.commit()
@@ -1009,10 +1081,10 @@ def faq():
     return send_from_directory(".", "faq.html")
 
 PRODUCTS = {
-    "master": {"name": "Life Transition Bundle", "price": 3600, "desc": "All 6 category bundles — 89+ documents",
+    "master": {"name": "Life Transition Bundle", "price": 3600, "desc": "All 6 category bundles — 90 documents",
         "headline": "Every Transition. Every Template. One Download.",
-        "emoji": "📦", "count": "89+",
-        "long_desc": "Everything Lumeway offers in one package. All six category bundles covering job loss, estate settlement, divorce, disability, relocation, and retirement — plus bonus wellness worksheets.",
+        "emoji": "📦", "count": "90",
+        "long_desc": "Everything Lumeway offers in one package. All six category bundles covering job loss, estate settlement, divorce, disability, relocation, and retirement — 90 documents plus bonus wellness worksheets.",
         "includes": [
             ("Job Loss Survivor Kit (14 docs)", "Complete toolkit for severance, COBRA, unemployment, budgeting, job search, and more."),
             ("Estate & Survivor Bundle (16 docs)", "Notification letters, benefits claims, estate settlement, executor tools, and more."),
@@ -1032,8 +1104,8 @@ PRODUCTS = {
         "long_desc": "Worksheets, checklists, and letter templates to help you stay organized through unemployment, COBRA decisions, severance negotiations, and financial stabilization.",
         "includes": [
             ("Severance Response Letter", "A professional letter template to acknowledge and respond to a severance offer, giving you time to review the terms."),
-            ("Severance Counter-Offer Letter", "A structured template for negotiating better severance terms — covers pay, benefits continuation, and non-compete clauses."),
-            ("COBRA Election Letter", "Helps you formally elect COBRA continuation coverage with your former employer's benefits administrator."),
+            ("Severance Negotiation / Counter-Offer Letter", "A structured template for negotiating better severance terms — covers pay, benefits continuation, and non-compete clauses."),
+            ("COBRA Election — Information Organizer", "Helps you formally elect COBRA continuation coverage with your former employer's benefits administrator."),
             ("Hardship Letter to Creditor", "A letter explaining your financial situation to creditors, requesting temporary payment adjustments or forbearance."),
             ("General Authorization Letter", "Authorizes someone to act on your behalf for specific tasks — useful when you need help managing accounts or paperwork."),
             ("401(k) Rollover Request Letter", "A letter to initiate rolling over your employer-sponsored retirement account to an IRA or new employer plan."),
@@ -1044,74 +1116,74 @@ PRODUCTS = {
             ("Job Search Tracker Worksheet", "Track applications, interviews, follow-ups, and networking contacts in one organized place."),
             ("Budget Reduction Worksheet", "Helps you identify where to cut expenses and build a bare-bones budget to stretch your savings."),
             ("Job Offer Evaluation Worksheet", "Compare multiple job offers across salary, benefits, commute, growth potential, and other factors that matter to you."),
-            ("First 24 Hours After Losing Your Job", "A step-by-step guide for the first day — what to do immediately, what can wait, and what to avoid."),
+            ("What to Do in the First 24 Hours After Losing Your Job", "A step-by-step guide for the first day — what to do immediately, what can wait, and what to avoid."),
         ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Step-by-step worksheets with plain-language instructions", "Letter templates ready to customize and send", "Budget and job search tracking tools", "First 24 Hours action guide"],
         "transition_page": "/job-loss"},
     "estate": {"name": "Estate & Survivor Bundle", "price": 1800, "desc": "16 documents for death & estate",
-        "headline": "The Hardest Paperwork You'll Ever Do. We Made It Easier.",
+        "headline": "The To-Do List Nobody Warns You About.",
         "emoji": "🕊️", "count": "16",
         "long_desc": "Step-by-step guidance for the hardest days — notification letters, benefits claims, estate settlement tools, and a complete first-steps guide.",
         "includes": [
             ("Survivor Benefits Information Organizer", "Helps you gather and organize the information needed to file for Social Security survivor benefits, pension benefits, and life insurance claims."),
             ("Employer Notification of Death Letter", "A professional letter to notify the deceased's employer and begin the process of collecting final pay, benefits, and retirement accounts."),
             ("Estate Executor Introduction Letter", "Introduces you as the executor or personal representative to banks, insurers, and other institutions that need to work with you."),
-            ("Beneficiary Change Request", "A template for updating beneficiary designations on accounts that need to be changed after a death."),
+            ("Beneficiary Change — Preparation Worksheet", "A template for updating beneficiary designations on accounts that need to be changed after a death."),
             ("Personal Affidavit Information Organizer", "Helps you prepare the information needed for a small estate affidavit — often required to transfer assets without full probate."),
-            ("Gift Letter Information Organizer", "Organizes the details needed when documenting gifts from an estate, often required by mortgage lenders or the IRS."),
-            ("Bank Death Notification Letter", "Notifies the bank of a death and requests next steps for accessing or closing the deceased's accounts."),
+            ("Gift Letter — Information Organizer", "Organizes the details needed when documenting gifts from an estate, often required by mortgage lenders or the IRS."),
+            ("Bank / Financial Institution Death Notification Letter", "Notifies the bank of a death and requests next steps for accessing or closing the deceased's accounts."),
             ("Credit Bureau Death Notification Letter", "Notifies Equifax, Experian, and TransUnion to flag the deceased's credit file and help prevent identity theft."),
             ("Utility Account Transfer/Cancellation Letter", "Transfer or cancel utility accounts — electricity, gas, water, internet — with a single professional letter."),
             ("Subscription & Membership Cancellation Letter", "Cancel recurring subscriptions and memberships the deceased held — streaming, gym, magazines, and more."),
-            ("Life Insurance Claim Cover Letter", "A cover letter to accompany your life insurance claim, ensuring the insurer has everything they need to process it."),
+            ("Life Insurance Claim — Preparation Checklist", "A cover letter to accompany your life insurance claim, ensuring the insurer has everything they need to process it."),
             ("Digital Accounts & Passwords Inventory", "A secure place to document all digital accounts — email, social media, financial, and subscription — for the estate."),
             ("Vehicle Title Transfer Letter", "Initiates the process of transferring a vehicle title after a death, including what documents the DMV typically requires."),
             ("Safe Deposit Box Access Letter", "A letter requesting access to the deceased's safe deposit box, including the documentation banks typically require."),
             ("Obituary Writing Guide & Worksheet", "A step-by-step guide and fill-in worksheet that walks you through writing a meaningful obituary."),
-            ("First 24 Hours After a Death", "What to do immediately, what can wait, and who to call first — a calm, step-by-step guide for the hardest day."),
+            ("What to Do in the First 24 Hours After a Death", "What to do immediately, what can wait, and who to call first — a calm, step-by-step guide for the hardest day."),
         ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Notification letter templates for banks, employers, and creditors", "Estate organization worksheets", "Digital accounts inventory", "First 24 Hours action guide"],
         "transition_page": "/estate"},
     "divorce": {"name": "Divorce & Separation Bundle", "price": 1800, "desc": "14 documents for divorce & separation",
-        "headline": "Starting Over Starts with Paperwork. We've Got You.",
+        "headline": "Before You File. Get Organized.",
         "emoji": "⚖️", "count": "14",
         "long_desc": "Organize finances, track the process, and protect your interests with financial disclosure tools, co-parenting worksheets, and notification letters.",
         "includes": [
             ("Divorce Financial Disclosure Information Organizer", "Organizes income, expenses, assets, and debts into the format courts typically require for financial disclosure."),
-            ("Parental Consent Permission Letter", "A letter granting temporary permission for a child to travel, receive medical care, or participate in activities with the other parent or caregiver."),
+            ("Parental Consent / Permission Letter Template", "A letter granting temporary permission for a child to travel, receive medical care, or participate in activities with the other parent or caregiver."),
             ("Co-Parenting Communication Planning Worksheet", "Helps you establish ground rules, schedules, and communication boundaries with your co-parent."),
             ("Asset & Property Inventory Worksheet", "A comprehensive list of everything you own and owe — real estate, vehicles, accounts, debts — organized for division."),
-            ("Name Change Notification Letter", "Notifies banks, employers, insurers, and government agencies of your legal name change after divorce."),
+            ("Name Change Notification", "Notifies banks, employers, insurers, and government agencies of your legal name change after divorce."),
             ("Creditor Notification of Divorce Letter", "Notifies creditors that joint accounts should be separated and you are no longer responsible for your ex-spouse's new debts."),
             ("Retirement Account Division Information Request", "Requests the information needed to divide retirement accounts, including what's required for a QDRO."),
             ("Joint Account Separation Request Letter", "A letter to your bank requesting that joint accounts be separated into individual accounts."),
-            ("Divorce Attorney Meeting Preparation Worksheet", "Helps you organize your questions, priorities, and key facts before your first meeting with a divorce attorney."),
+            ("Divorce Attorney Meeting — Preparation Worksheet", "Helps you organize your questions, priorities, and key facts before your first meeting with a divorce attorney."),
             ("Child Support Modification Information Organizer", "Organizes the information needed to request a modification to an existing child support order."),
             ("School Notification of Custody Change Letter", "Notifies your child's school about custody arrangements, authorized pickup persons, and emergency contacts."),
-            ("Insurance Removal Request Letter", "Requests removal of your ex-spouse from your insurance policies — health, auto, or homeowner's."),
-            ("Post-Divorce Financial Reset Checklist", "A comprehensive checklist for rebuilding your financial life after divorce — new accounts, updated beneficiaries, credit building."),
-            ("First 24 Hours After Being Served Divorce Papers", "What to do, what not to do, and who to call — a calm guide for the day everything changes."),
+            ("Insurance Removal Request – Template Letter", "Requests removal of your ex-spouse from your insurance policies — health, auto, or homeowner's."),
+            ("Post-Divorce Financial Reset – Checklist", "A comprehensive checklist for rebuilding your financial life after divorce — new accounts, updated beneficiaries, credit building."),
+            ("What to Do in the First 24 Hours After Being Served Divorce Papers", "What to do, what not to do, and who to call — a calm guide for the day everything changes."),
         ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Financial disclosure and asset tracking worksheets", "Co-parenting communication tools", "Notification letters for creditors and institutions", "First 24 Hours action guide"],
         "transition_page": "/divorce"},
     "disability": {"name": "Disability & Benefits Bundle", "price": 1800, "desc": "15 documents for disability & benefits",
-        "headline": "Denied Once. Don't Give Up.",
+        "headline": "The System Is Complicated. Your Paperwork Doesn't Have to Be.",
         "emoji": "🩺", "count": "15",
         "long_desc": "Navigate SSDI, SSI, FMLA, and workplace accommodations with application organizers, appeal tools, and tracking worksheets.",
         "includes": [
             ("SSDI Appeal Information Organizer", "Organizes your medical evidence, work history, and timeline for an SSDI reconsideration or hearing appeal."),
-            ("Beneficiary Change Request", "Update beneficiary designations on insurance policies and accounts after a disability changes your circumstances."),
+            ("Beneficiary Review After Diagnosis", "Update beneficiary designations on insurance policies and accounts after a disability changes your circumstances."),
             ("Medical Authorization Letter", "Authorizes a specific person to access your medical records or communicate with healthcare providers on your behalf."),
             ("Caregiver Authorization Letter", "Grants a caregiver legal authority to make day-to-day decisions about your care and handle routine tasks."),
             ("Benefits Appeal Follow-Up Tracking Worksheet", "Track every step of your benefits appeal — dates, contacts, documents submitted, and next deadlines."),
             ("FMLA Leave Request Letter", "A professional letter to your employer requesting protected leave under the Family and Medical Leave Act."),
             ("Workplace Accommodation Request (ADA)", "A formal request for reasonable workplace accommodations under the Americans with Disabilities Act."),
             ("SSDI Application Information Organizer", "Organizes everything you need for your initial SSDI application — medical providers, medications, work history, and daily limitations."),
-            ("Disability Insurance Claim Letter", "A cover letter for filing a private or employer-sponsored disability insurance claim with supporting documentation."),
+            ("Disability Insurance Claim Preparation", "A cover letter for filing a private or employer-sponsored disability insurance claim with supporting documentation."),
             ("Return to Work Letter After Disability", "Notifies your employer of your return, outlines any ongoing accommodations, and confirms your start date."),
             ("Disability Accommodation Follow-Up Letter", "A follow-up letter if your initial accommodation request hasn't been addressed or needs adjustment."),
             ("Letter to Employer During FMLA Leave", "Keeps your employer informed during your leave — status updates, expected return, or extension requests."),
-            ("SSDI Timeline & Deadline Tracker", "A visual tracker for every stage of the SSDI process — application, reconsideration, hearing, and appeals council."),
+            ("SSDI Timeline and Deadline Tracker", "A visual tracker for every stage of the SSDI process — application, reconsideration, hearing, and appeals council."),
             ("Disability Daily Symptom Journal", "Track symptoms, limitations, and good/bad days — builds the evidence record that supports your disability claim."),
             ("First 24 Hours After a Disability Diagnosis", "What to do first, what to document, and who to contact — a practical guide for the day your life changes."),
         ],
@@ -1126,15 +1198,15 @@ PRODUCTS = {
             ("Proof of Residency Letter", "A letter template to establish proof of residency at your new address — often needed for school enrollment, DMV, and voter registration."),
             ("Landlord Reference Letter", "A professional reference request to your current landlord — helps when applying for a new rental."),
             ("Early Lease Termination Letter", "A formal letter to request early termination of your current lease, citing your reason and proposed terms."),
-            ("Utility Transfer/Setup/Cancellation Letter", "One letter template that works for transferring, setting up, or cancelling utility services at your old and new addresses."),
+            ("Utility Transfer — Setup & Cancellation Tracker", "One letter template that works for transferring, setting up, or cancelling utility services at your old and new addresses."),
             ("Landlord Move-Out Notice Letter", "A formal notice to your landlord that you're moving out, including your expected move-out date and forwarding address."),
             ("School Transfer Request Letter", "Requests transfer of your child's school records to a new school, including what documents to include."),
-            ("Employer Remote Work State Change Notification", "Notifies your employer that you're relocating to a new state — important for tax withholding and compliance."),
+            ("Employer Remote Work / State Change Notification", "Notifies your employer that you're relocating to a new state — important for tax withholding and compliance."),
             ("Vehicle Registration Transfer Checklist", "Step-by-step checklist for transferring your vehicle registration, title, and driver's license to a new state."),
             ("HOA Transfer Notification Letter", "Notifies your HOA of the ownership transfer and requests final account settlement."),
-            ("Voter Registration Change Letter", "A letter to update your voter registration to your new address and state."),
+            ("Post-Move Government Updates Checklist", "A letter to update your voter registration to your new address and state."),
             ("Pet Registration Transfer Checklist", "Checklist for updating pet licenses, vet records, and registrations when moving to a new city or state."),
-            ("First 24 Hours After Deciding to Move", "A prioritized action plan for the day you decide to relocate — what to do first, what can wait, and what to research."),
+            ("What to Do in the First 24 Hours After Deciding to Move", "A prioritized action plan for the day you decide to relocate — what to do first, what can wait, and what to research."),
         ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Master address change checklist", "Notification letters for landlords, schools, and employers", "Vehicle and voter registration guides", "First 24 Hours action guide"],
         "transition_page": "/relocation"},
@@ -1146,18 +1218,18 @@ PRODUCTS = {
             ("Social Security Application Information Organizer", "Organizes the documents and information you need to apply for Social Security benefits — work history, banking details, and dependent info."),
             ("Employer Retirement Notification Letter", "A professional letter notifying your employer of your retirement date and requesting information about final pay and benefits."),
             ("Pension Benefit Election Comparison Worksheet", "Compare pension payout options side-by-side — lump sum vs. annuity, single vs. joint life — so you can make an informed choice."),
-            ("RMD Distribution Request Letter", "A letter to your retirement account custodian requesting your required minimum distribution."),
+            ("Required Minimum Distribution (RMD) Request Letter", "A letter to your retirement account custodian requesting your required minimum distribution."),
             ("Medicare Enrollment Checklist & Cover Letter", "A step-by-step checklist for Medicare enrollment plus a cover letter for submitting your application."),
-            ("Roth Conversion Decision Worksheet", "Helps you evaluate whether converting traditional retirement funds to a Roth IRA makes sense for your tax situation."),
+            ("Roth Conversion — Decision Worksheet", "Helps you evaluate whether converting traditional retirement funds to a Roth IRA makes sense for your tax situation."),
             ("Retirement Account Beneficiary Update Letter", "A letter to update the beneficiaries on your retirement accounts — important after any life change."),
             ("Retiree Health Insurance Continuation Request", "Requests continuation of employer-sponsored health insurance into retirement, if your employer offers it."),
             ("Power of Attorney Preparation Checklist", "Organizes what you need to discuss with an attorney when setting up financial and healthcare powers of attorney."),
             ("Letter of Instruction to Heirs", "A personal letter to your family explaining where to find important documents, accounts, and your wishes — not a legal document, but invaluable."),
             ("Social Security Delay Strategy Worksheet", "Helps you calculate the break-even point for delaying Social Security and decide when to start collecting."),
             ("Legacy Letter / Ethical Will", "A guided template for writing a personal letter to your loved ones — your values, stories, and wishes beyond the legal will."),
-            ("Healthcare Bridge Cost Comparison Worksheet", "Compare healthcare options for the gap between retirement and Medicare eligibility — COBRA, marketplace, and retiree plans."),
+            ("Healthcare Bridge Cost Comparison (Pre-Medicare)", "Compare healthcare options for the gap between retirement and Medicare eligibility — COBRA, marketplace, and retiree plans."),
             ("Medicare Plan Comparison Worksheet", "Side-by-side comparison of Medicare Advantage vs. Medigap plans — premiums, coverage, and out-of-pocket costs."),
-            ("First 24 Hours After Deciding to Retire", "A prioritized guide for the day you decide to retire — who to notify, what to research, and what to start planning."),
+            ("What to Do in the First 24 Hours After Deciding to Retire", "A prioritized guide for the day you decide to retire — who to notify, what to research, and what to start planning."),
         ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Medicare and Social Security planning tools", "Pension and retirement account comparison worksheets", "Legacy and estate preparation documents", "First 24 Hours action guide"],
         "transition_page": "/retirement"},
@@ -1845,7 +1917,7 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
     </div>
     <div class="nav-right">
       <a href="/chat" target="_blank" class="btn-ghost">Try it free</a>
-      <a href="/#waitlist" class="btn-primary">Join waitlist</a>
+      <a href="/templates" class="btn-primary">Shop</a>
     </div>
   </nav>
   <article>
@@ -2037,12 +2109,32 @@ def dashboard_data():
     cur = db_execute(conn, f"SELECT product_id, product_name, purchased_at, download_token FROM purchases WHERE email = {param} ORDER BY purchased_at DESC", (user["email"],))
     purchases = [{"product_id": r[0], "product_name": r[1], "purchased_at": r[2], "download_token": r[3]} for r in cur.fetchall()]
 
+    # Goals
+    cur = db_execute(conn, f"SELECT id, title, timeframe, target_date, is_completed, created_at FROM user_goals WHERE user_id = {param} ORDER BY target_date", (user["id"],))
+    goals = [{"id": r[0], "title": r[1], "timeframe": r[2], "target_date": r[3], "is_completed": bool(r[4]), "created_at": r[5]} for r in cur.fetchall()]
+
+    # Deadlines
+    cur = db_execute(conn, f"SELECT id, transition_type, title, deadline_date, note, is_completed, source FROM user_deadlines WHERE user_id = {param} ORDER BY deadline_date", (user["id"],))
+    deadlines = [{"id": r[0], "transition_type": r[1], "title": r[2], "deadline_date": r[3], "note": r[4], "is_completed": bool(r[5]), "source": r[6]} for r in cur.fetchall()]
+
+    # Documents needed
+    cur = db_execute(conn, f"SELECT id, transition_type, document_name, description, is_gathered FROM user_documents_needed WHERE user_id = {param} ORDER BY id", (user["id"],))
+    documents_needed = [{"id": r[0], "transition_type": r[1], "document_name": r[2], "description": r[3], "is_gathered": bool(r[4])} for r in cur.fetchall()]
+
+    # Notes
+    cur = db_execute(conn, f"SELECT id, content, created_at, updated_at FROM user_notes WHERE user_id = {param} ORDER BY created_at DESC", (user["id"],))
+    notes = [{"id": r[0], "content": r[1], "created_at": r[2], "updated_at": r[3]} for r in cur.fetchall()]
+
     conn.close()
     return jsonify({
         "user": user,
         "sessions": sessions,
         "checklist": {"total": total_items, "completed": completed_items},
-        "purchases": purchases
+        "purchases": purchases,
+        "goals": goals,
+        "deadlines": deadlines,
+        "documents_needed": documents_needed,
+        "notes": notes
     })
 
 @app.route("/api/dashboard/history/<session_id>")
@@ -2305,6 +2397,396 @@ DEFAULT_CHECKLISTS = {
         ],
     },
 }
+
+# ── Personalized checklist from chat ──
+
+@app.route("/api/checklist/init-from-chat", methods=["POST"])
+def init_checklist_from_chat():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    history = data.get("history", [])
+    transition_type = data.get("transition_type", "general").strip().lower()
+    if not history:
+        return jsonify({"error": "No conversation to analyze"}), 400
+    try:
+        import json as _json
+        response = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=3000,
+            system="""You are extracting a personalized action plan from a Lumeway conversation. Return ONLY valid JSON.
+
+Based on what was actually discussed, create a checklist of tasks the user needs to do. Also extract:
+- Documents/info they need to gather (specific items like SS card, insurance policy numbers, etc.)
+- Deadlines mentioned or implied
+- Weekly and monthly goals
+
+Use this exact structure:
+{
+  "transition_type": "estate|divorce|job-loss|relocation|disability|retirement",
+  "tasks": [
+    {"phase": "This Week", "items": ["Specific task from conversation"]},
+    {"phase": "This Month", "items": ["Another specific task"]},
+    {"phase": "Ongoing", "items": ["Long-term task"]}
+  ],
+  "documents_needed": [
+    {"name": "Social Security card", "description": "Needed for benefits application"},
+    {"name": "Insurance policy number", "description": "For COBRA election"}
+  ],
+  "deadlines": [
+    {"title": "File for unemployment", "days_from_now": 7, "note": "Don't wait — benefits start from filing date"},
+    {"title": "COBRA election deadline", "days_from_now": 60, "note": "60-day window from job loss"}
+  ],
+  "goals": [
+    {"title": "Set up emergency budget", "timeframe": "weekly"},
+    {"title": "Complete benefits applications", "timeframe": "monthly"}
+  ]
+}
+
+Make tasks SPECIFIC to what was discussed — not generic. If they mentioned kids, include kid-related tasks. If they mentioned a specific state, include state-specific items. If they mentioned specific concerns, address those directly.""",
+            messages=[{"role": "user", "content": "Extract a personalized action plan from this conversation:\n\n" + _json.dumps(history[-20:])}]
+        )
+        text = response.content[0].text.strip()
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+        plan = _json.loads(text)
+
+        conn = get_db()
+        param = "%s" if USE_POSTGRES else "?"
+        true_val = "TRUE" if USE_POSTGRES else "1"
+        now = datetime.now(timezone.utc).isoformat()
+        t_type = plan.get("transition_type", transition_type)
+
+        # Save checklist items
+        order = 0
+        for phase_group in plan.get("tasks", []):
+            phase = phase_group.get("phase", "General")
+            for item_text in phase_group.get("items", []):
+                db_execute(conn, f"INSERT INTO checklist_items (user_id, transition_type, phase, item_text, sort_order) VALUES ({param},{param},{param},{param},{param})",
+                    (user["id"], t_type, phase, item_text, order))
+                order += 1
+
+        # Save documents needed
+        for doc in plan.get("documents_needed", []):
+            db_execute(conn, f"INSERT INTO user_documents_needed (user_id, transition_type, document_name, description, created_at) VALUES ({param},{param},{param},{param},{param})",
+                (user["id"], t_type, doc.get("name", ""), doc.get("description", ""), now))
+
+        # Save deadlines
+        for dl in plan.get("deadlines", []):
+            days = dl.get("days_from_now", 30)
+            deadline_date = (datetime.now(timezone.utc) + timedelta(days=days)).strftime("%Y-%m-%d")
+            db_execute(conn, f"INSERT INTO user_deadlines (user_id, transition_type, title, deadline_date, note, source, created_at) VALUES ({param},{param},{param},{param},{param},{param},{param})",
+                (user["id"], t_type, dl.get("title", ""), deadline_date, dl.get("note", ""), "chat", now))
+
+        # Save goals
+        for goal in plan.get("goals", []):
+            target = None
+            if goal.get("timeframe") == "weekly":
+                target = (datetime.now(timezone.utc) + timedelta(days=7)).strftime("%Y-%m-%d")
+            elif goal.get("timeframe") == "monthly":
+                target = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%d")
+            db_execute(conn, f"INSERT INTO user_goals (user_id, title, timeframe, target_date, created_at) VALUES ({param},{param},{param},{param},{param})",
+                (user["id"], goal.get("title", ""), goal.get("timeframe", "weekly"), target, now))
+
+        conn.commit()
+        conn.close()
+        return jsonify({"ok": True, "plan": plan})
+    except Exception as e:
+        print(f"Personalized checklist error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+# ── Notes API ──
+
+@app.route("/api/notes")
+def get_notes():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id, content, created_at, updated_at FROM user_notes WHERE user_id = {param} ORDER BY created_at DESC", (user["id"],))
+    notes = [{"id": r[0], "content": r[1], "created_at": r[2], "updated_at": r[3]} for r in cur.fetchall()]
+    conn.close()
+    return jsonify({"notes": notes})
+
+@app.route("/api/notes", methods=["POST"])
+def save_note():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    content = data.get("content", "").strip()
+    if not content:
+        return jsonify({"error": "Empty note"}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+    db_execute(conn, f"INSERT INTO user_notes (user_id, content, created_at) VALUES ({param},{param},{param})", (user["id"], content, now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/notes/<int:note_id>", methods=["PUT"])
+def update_note(note_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    content = data.get("content", "").strip()
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+    db_execute(conn, f"UPDATE user_notes SET content = {param}, updated_at = {param} WHERE id = {param} AND user_id = {param}", (content, now, note_id, user["id"]))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/notes/<int:note_id>", methods=["DELETE"])
+def delete_note(note_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"DELETE FROM user_notes WHERE id = {param} AND user_id = {param}", (note_id, user["id"]))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
+# ── Deadlines API ──
+
+@app.route("/api/deadlines")
+def get_deadlines():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id, transition_type, title, deadline_date, note, is_completed, source, created_at FROM user_deadlines WHERE user_id = {param} ORDER BY deadline_date", (user["id"],))
+    deadlines = [{"id": r[0], "transition_type": r[1], "title": r[2], "deadline_date": r[3], "note": r[4], "is_completed": bool(r[5]), "source": r[6], "created_at": r[7]} for r in cur.fetchall()]
+    conn.close()
+    return jsonify({"deadlines": deadlines})
+
+@app.route("/api/deadlines", methods=["POST"])
+def add_deadline():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    title = data.get("title", "").strip()
+    deadline_date = data.get("deadline_date", "").strip()
+    if not title or not deadline_date:
+        return jsonify({"error": "Title and date required"}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+    db_execute(conn, f"INSERT INTO user_deadlines (user_id, transition_type, title, deadline_date, note, source, created_at) VALUES ({param},{param},{param},{param},{param},{param},{param})",
+        (user["id"], data.get("transition_type"), title, deadline_date, data.get("note", ""), "manual", now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/deadlines/<int:deadline_id>/toggle", methods=["POST"])
+def toggle_deadline(deadline_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    true_val = "TRUE" if USE_POSTGRES else "1"
+    false_val = "FALSE" if USE_POSTGRES else "0"
+    cur = db_execute(conn, f"SELECT is_completed FROM user_deadlines WHERE id = {param} AND user_id = {param}", (deadline_id, user["id"]))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "Not found"}), 404
+    new_val = false_val if row[0] else true_val
+    db_execute(conn, f"UPDATE user_deadlines SET is_completed = {new_val} WHERE id = {param}", (deadline_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "is_completed": not bool(row[0])})
+
+
+# ── Documents Needed API ──
+
+@app.route("/api/documents-needed")
+def get_documents_needed():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id, transition_type, document_name, description, is_gathered FROM user_documents_needed WHERE user_id = {param} ORDER BY id", (user["id"],))
+    docs = [{"id": r[0], "transition_type": r[1], "document_name": r[2], "description": r[3], "is_gathered": bool(r[4])} for r in cur.fetchall()]
+    conn.close()
+    return jsonify({"documents": docs})
+
+@app.route("/api/documents-needed/<int:doc_id>/toggle", methods=["POST"])
+def toggle_document_needed(doc_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    true_val = "TRUE" if USE_POSTGRES else "1"
+    false_val = "FALSE" if USE_POSTGRES else "0"
+    cur = db_execute(conn, f"SELECT is_gathered FROM user_documents_needed WHERE id = {param} AND user_id = {param}", (doc_id, user["id"]))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "Not found"}), 404
+    new_val = false_val if row[0] else true_val
+    db_execute(conn, f"UPDATE user_documents_needed SET is_gathered = {new_val} WHERE id = {param}", (doc_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "is_gathered": not bool(row[0])})
+
+
+# ── Goals API ──
+
+@app.route("/api/goals")
+def get_goals():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id, title, timeframe, target_date, is_completed, created_at FROM user_goals WHERE user_id = {param} ORDER BY target_date", (user["id"],))
+    goals = [{"id": r[0], "title": r[1], "timeframe": r[2], "target_date": r[3], "is_completed": bool(r[4]), "created_at": r[5]} for r in cur.fetchall()]
+    conn.close()
+    return jsonify({"goals": goals})
+
+@app.route("/api/goals", methods=["POST"])
+def add_goal():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    title = data.get("title", "").strip()
+    timeframe = data.get("timeframe", "weekly").strip()
+    if not title:
+        return jsonify({"error": "Title required"}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+    db_execute(conn, f"INSERT INTO user_goals (user_id, title, timeframe, target_date, created_at) VALUES ({param},{param},{param},{param},{param})",
+        (user["id"], title, timeframe, data.get("target_date"), now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/goals/<int:goal_id>/toggle", methods=["POST"])
+def toggle_goal(goal_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    true_val = "TRUE" if USE_POSTGRES else "1"
+    false_val = "FALSE" if USE_POSTGRES else "0"
+    cur = db_execute(conn, f"SELECT is_completed FROM user_goals WHERE id = {param} AND user_id = {param}", (goal_id, user["id"]))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "Not found"}), 404
+    new_val = false_val if row[0] else true_val
+    db_execute(conn, f"UPDATE user_goals SET is_completed = {new_val} WHERE id = {param}", (goal_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "is_completed": not bool(row[0])})
+
+
+# ── Auto-calculate deadlines from key date ──
+
+DEADLINE_TEMPLATES = {
+    "retirement": [
+        {"title": "Apply for Social Security", "days_before": 90, "note": "Apply 3 months before desired start date"},
+        {"title": "Enroll in Medicare Part A & B", "days_before": 90, "note": "Initial enrollment starts 3 months before turning 65"},
+        {"title": "Choose Medicare Part D plan", "days_before": 60, "note": "Drug coverage — compare plans before enrollment"},
+        {"title": "Submit employer retirement notification", "days_before": 60, "note": "Give employer adequate notice"},
+        {"title": "Decide pension payout option", "days_before": 45, "note": "Lump sum vs annuity — get advice before choosing"},
+        {"title": "Roll over or consolidate 401(k)", "days_before": 30, "note": "Decide before your last day of work"},
+        {"title": "Set up retirement income withdrawals", "days_before": 14, "note": "Ensure income starts when paychecks stop"},
+        {"title": "Final day — confirm benefits end dates", "days_before": 0, "note": "Verify health insurance continuation, final paycheck"},
+        {"title": "Start Required Minimum Distributions if 73+", "days_before": -30, "note": "RMDs must begin by April 1 after turning 73"},
+    ],
+    "job-loss": [
+        {"title": "File for unemployment benefits", "days_before": -1, "note": "File immediately — benefits start from filing date"},
+        {"title": "Review severance agreement", "days_before": -7, "note": "Don't sign before consulting an attorney if possible"},
+        {"title": "Decide on COBRA or marketplace insurance", "days_before": -14, "note": "You have 60 days but don't wait"},
+        {"title": "Roll over 401(k) to IRA", "days_before": -30, "note": "Avoid penalties — roll over, don't cash out"},
+        {"title": "COBRA election deadline", "days_before": -60, "note": "60-day window from loss of coverage"},
+        {"title": "Apply for marketplace insurance", "days_before": -60, "note": "Special enrollment period lasts 60 days"},
+    ],
+    "estate": [
+        {"title": "Obtain certified death certificates (10+)", "days_before": -3, "note": "You'll need many copies for banks, insurance, etc."},
+        {"title": "Notify Social Security Administration", "days_before": -7, "note": "Call 1-800-772-1213"},
+        {"title": "File life insurance claims", "days_before": -14, "note": "Gather policy numbers and death certificate"},
+        {"title": "Notify banks and financial institutions", "days_before": -14, "note": "Freeze joint accounts if needed"},
+        {"title": "File for probate if required", "days_before": -30, "note": "Consult an estate attorney"},
+        {"title": "Apply for survivor benefits", "days_before": -30, "note": "Social Security, VA, pension"},
+        {"title": "File final tax return for deceased", "days_before": -365, "note": "Due by April 15 of following year"},
+    ],
+    "divorce": [
+        {"title": "Secure copies of all financial documents", "days_before": -3, "note": "Tax returns, bank statements, investment accounts"},
+        {"title": "Consult with a family law attorney", "days_before": -7, "note": "Many offer free initial consultations"},
+        {"title": "File for divorce or respond to petition", "days_before": -30, "note": "Response deadlines vary by state — check yours"},
+        {"title": "Request temporary orders if needed", "days_before": -30, "note": "Custody, support, exclusive use of home"},
+        {"title": "Complete asset and property inventory", "days_before": -45, "note": "Document everything — real estate, vehicles, accounts"},
+        {"title": "Update beneficiaries on all accounts", "days_before": -60, "note": "Insurance, retirement, bank accounts"},
+    ],
+    "relocation": [
+        {"title": "Give landlord written notice", "days_before": 60, "note": "Check your lease for required notice period"},
+        {"title": "Book moving company or reserve truck", "days_before": 45, "note": "Prices go up closer to move date"},
+        {"title": "Set up mail forwarding through USPS", "days_before": 14, "note": "Start 2 weeks before move"},
+        {"title": "Transfer or set up utilities at new address", "days_before": 7, "note": "Electric, gas, water, internet"},
+        {"title": "Get new driver's license", "days_before": -30, "note": "Most states require within 30-90 days"},
+        {"title": "Register vehicle in new state", "days_before": -30, "note": "Check your state's deadline"},
+        {"title": "Register to vote at new address", "days_before": -30, "note": "Update before next election"},
+    ],
+    "disability": [
+        {"title": "Request FMLA leave from employer", "days_before": -3, "note": "You're entitled to 12 weeks unpaid leave"},
+        {"title": "Apply for SSDI or SSI", "days_before": -14, "note": "Apply as soon as possible — processing takes months"},
+        {"title": "File short-term disability claim", "days_before": -7, "note": "Through your employer's insurance"},
+        {"title": "Gather medical records", "days_before": -14, "note": "Complete records strengthen your application"},
+        {"title": "SSDI initial decision expected", "days_before": -150, "note": "Average wait is 3-5 months"},
+        {"title": "File appeal if denied", "days_before": -210, "note": "You have 60 days to appeal a denial"},
+    ],
+}
+
+@app.route("/api/deadlines/calculate", methods=["POST"])
+def calculate_deadlines():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    transition_type = data.get("transition_type", "").strip().lower()
+    key_date = data.get("key_date", "").strip()  # YYYY-MM-DD
+    if not transition_type or not key_date or transition_type not in DEADLINE_TEMPLATES:
+        return jsonify({"error": "Valid transition type and date required"}), 400
+    try:
+        base = datetime.strptime(key_date, "%Y-%m-%d")
+        conn = get_db()
+        param = "%s" if USE_POSTGRES else "?"
+        now = datetime.now(timezone.utc).isoformat()
+        deadlines_created = []
+        for tmpl in DEADLINE_TEMPLATES[transition_type]:
+            # days_before > 0 means before the key date, < 0 means after
+            dl_date = (base - timedelta(days=tmpl["days_before"])).strftime("%Y-%m-%d")
+            db_execute(conn, f"INSERT INTO user_deadlines (user_id, transition_type, title, deadline_date, note, source, created_at) VALUES ({param},{param},{param},{param},{param},{param},{param})",
+                (user["id"], transition_type, tmpl["title"], dl_date, tmpl["note"], "calculated", now))
+            deadlines_created.append({"title": tmpl["title"], "deadline_date": dl_date, "note": tmpl["note"]})
+        conn.commit()
+        conn.close()
+        return jsonify({"ok": True, "deadlines": deadlines_created})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route("/api/subscribe", methods=["POST"])
 def subscribe():

@@ -739,7 +739,8 @@
       <button class="header-action" onclick="getSummary()">📋 Summary</button>
       <button class="header-action" onclick="downloadChecklist()">⬇ Checklist</button>
       <button class="header-action" onclick="startOver()">↺ Start Over</button>
-      <a href="/dashboard" class="header-action" id="dashLink" style="display:none;text-decoration:none">👤 Dashboard</a>
+      <button class="header-action" id="saveToDashBtn" style="display:none" onclick="saveToDashboard()">💾 Save to Dashboard</button>
+      <a href="/dashboard" target="_blank" class="header-action" id="dashLink" style="display:none;text-decoration:none">👤 Dashboard</a>
       <a href="/login" class="header-action" id="loginLink" style="text-decoration:none">Log in</a>
       <div class="status-dot"></div>
     </div>
@@ -789,7 +790,7 @@
 
 <div class="chat-sidebar">
   <div class="sidebar-card" id="docs-card">
-    <h3><span class="feature-icon">&#x1F4C4;</span> Documents you may need <span class="sidebar-count" id="docs-count" style="display:none">0</span></h3>
+    <h3><span class="feature-icon">&#x1F4C4;</span> Documents that may help you <span class="sidebar-count" id="docs-count" style="display:none">0</span></h3>
     <p class="doc-list-empty" id="docs-empty">As we talk, I'll note any worksheets, checklists, or letters that could help with your situation.</p>
     <ul class="doc-list" id="docs-list"></ul>
   </div>
@@ -815,6 +816,7 @@
     isLoggedIn = data.logged_in;
     if (isLoggedIn) {
       document.getElementById('dashLink').style.display = '';
+      document.getElementById('saveToDashBtn').style.display = '';
       document.getElementById('loginLink').style.display = 'none';
     }
   }).catch(() => {});
@@ -1209,7 +1211,7 @@ ${tasks || '<p style="color:#8A8278;font-style:italic">No tasks found. Continue 
 ${data.suggestedDocs && data.suggestedDocs.length ? `
 <div style="margin-top:28px;border:1px solid #E2D8CB;border-radius:10px;overflow:hidden;break-inside:avoid;">
   <div style="background:#F6F2EC;padding:10px 16px;border-bottom:1px solid #E2D8CB;">
-    <strong style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:#1B3A5C;">Documents You May Need</strong>
+    <strong style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:#1B3A5C;">Documents That May Help You</strong>
     <span style="font-size:11px;color:#8A8278;margin-left:8px;">Based on your conversation</span>
   </div>
   <ul style="list-style:none;padding:8px 16px;margin:0;">
@@ -1320,6 +1322,42 @@ ${data.suggestedDocs && data.suggestedDocs.length ? `
     afterElement.after(container);
     const msgs = document.getElementById('messages');
     msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  // ── Save to Dashboard ──
+  async function saveToDashboard() {
+    if (history.length < 2) {
+      alert('Have a conversation first, then save your personalized plan to the dashboard.');
+      return;
+    }
+    var btn = document.getElementById('saveToDashBtn');
+    btn.textContent = '⏳ Saving...';
+    btn.disabled = true;
+    try {
+      var res = await fetch('/api/checklist/init-from-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ history: history })
+      });
+      var data = await res.json();
+      if (data.ok) {
+        btn.textContent = '✓ Saved!';
+        setTimeout(function() {
+          btn.textContent = '💾 Save to Dashboard';
+          btn.disabled = false;
+        }, 2000);
+        // Open dashboard in new tab
+        window.open('/dashboard', '_blank');
+      } else {
+        btn.textContent = '💾 Save to Dashboard';
+        btn.disabled = false;
+        alert(data.error || 'Something went wrong.');
+      }
+    } catch(e) {
+      btn.textContent = '💾 Save to Dashboard';
+      btn.disabled = false;
+      alert('Failed to save. Please try again.');
+    }
   }
 
   // ── Start over ──

@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #1B2A38; --muted: #6E7D8A; --navy: #1B3A5C; --gold: #B8977E; --accent: #1B3A5C; --accent-light: #B8977E; --border: #E4DDD3; --green: #7DB896; }
+    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #1B2A38; --muted: #6E7D8A; --navy: #1B3A5C; --gold: #B8977E; --accent: #1B3A5C; --accent-light: #B8977E; --border: #E4DDD3; --green: #7DB896; --red: #D4756B; }
     body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
 
     /* Nav */
@@ -22,7 +22,7 @@
     .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
 
     /* Dashboard layout */
-    .dash { max-width: 900px; margin: 0 auto; padding: 100px 24px 64px; }
+    .dash { max-width: 1100px; margin: 0 auto; padding: 100px 24px 64px; }
     .dash-header { margin-bottom: 32px; }
     .dash-greeting { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 5vw, 44px); font-weight: 300; line-height: 1.15; margin-bottom: 8px; }
     .dash-sub { font-size: 15px; font-weight: 300; color: var(--muted); }
@@ -37,7 +37,8 @@
     .tab-panel.active { display: block; }
 
     /* Cards */
-    .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+    .dash-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 24px; }
     .dash-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
     .dash-card-full { grid-column: 1 / -1; }
     .card-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
@@ -56,23 +57,78 @@
     .progress-info strong { color: var(--text); font-weight: 500; }
 
     /* Checklist */
-    .checklist-phases { display: flex; flex-direction: column; gap: 20px; }
-    .phase-title { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .check-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
-    .check-item:last-child { border-bottom: none; }
+    .checklist-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .checklist-category { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+    .category-header { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; color: var(--navy); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .phase-title { font-size: 12px; font-weight: 500; color: var(--gold); margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .check-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; cursor: pointer; }
     .check-box { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 6px; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
     .check-item.done .check-box { background: var(--green); border-color: var(--green); }
     .check-item.done .check-box::after { content: '\2713'; color: white; font-size: 12px; font-weight: 600; }
     .check-item.done .check-text { text-decoration: line-through; color: var(--muted); }
-    .check-text { font-size: 14px; font-weight: 300; line-height: 1.5; }
+    .check-text { font-size: 13px; font-weight: 300; line-height: 1.5; }
+
+    /* Single column checklist when only one category */
+    .checklist-single { max-width: 640px; }
 
     /* Checklist init */
-    .init-checklist { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .init-checklist { margin-top: 20px; padding: 20px 24px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; }
     .init-label { font-size: 13px; font-weight: 400; color: var(--text); margin-bottom: 10px; }
     .init-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .init-select { font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); color: var(--text); }
     .init-btn { padding: 10px 20px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
     .init-btn:hover { background: var(--accent-light); }
+
+    /* Goals */
+    .goal-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .goal-item:last-child { border-bottom: none; }
+    .goal-item.done .goal-text { text-decoration: line-through; color: var(--muted); }
+    .goal-text { font-size: 14px; font-weight: 300; line-height: 1.5; flex: 1; }
+    .goal-date { font-size: 11px; color: var(--muted); white-space: nowrap; margin-top: 2px; }
+    .goal-add { display: flex; gap: 8px; margin-top: 12px; }
+    .goal-input { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); color: var(--text); outline: none; }
+    .goal-input:focus { border-color: var(--gold); }
+
+    /* Calendar */
+    .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .cal-month { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; }
+    .cal-btn { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 14px; color: var(--text); transition: all 0.15s; }
+    .cal-btn:hover { background: var(--cream); border-color: var(--gold); }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .cal-header { text-align: center; font-size: 11px; font-weight: 500; color: var(--muted); padding: 6px 0; text-transform: uppercase; letter-spacing: 0.05em; }
+    .cal-day { min-height: 80px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 8px; padding: 6px; font-size: 12px; position: relative; transition: all 0.15s; }
+    .cal-day:hover { border-color: var(--gold); }
+    .cal-day.today { border-color: var(--navy); border-width: 2px; }
+    .cal-day.other-month { opacity: 0.35; }
+    .cal-day-num { font-weight: 500; color: var(--navy); margin-bottom: 4px; }
+    .cal-event { font-size: 10px; padding: 2px 4px; border-radius: 4px; margin-bottom: 2px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+    .cal-event.deadline { background: rgba(212,117,107,0.15); color: var(--red); }
+    .cal-event.goal { background: rgba(184,151,126,0.15); color: var(--gold); }
+    .cal-event.completed { opacity: 0.4; text-decoration: line-through; }
+
+    /* Deadline calculator */
+    .calc-section { margin-top: 20px; padding: 20px 24px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; }
+    .calc-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 400; margin-bottom: 12px; }
+    .calc-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .calc-input { font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); color: var(--text); }
+
+    /* Documents needed */
+    .doc-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .doc-item:last-child { border-bottom: none; }
+    .doc-item.gathered .doc-name { text-decoration: line-through; color: var(--muted); }
+    .doc-name { font-size: 14px; font-weight: 400; }
+    .doc-desc { font-size: 12px; font-weight: 300; color: var(--muted); margin-top: 2px; }
+
+    /* Notes */
+    .note-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 10px; }
+    .note-content { font-size: 14px; font-weight: 300; line-height: 1.6; white-space: pre-wrap; }
+    .note-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+    .note-date { font-size: 11px; color: var(--muted); }
+    .note-actions { display: flex; gap: 8px; }
+    .note-action { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; padding: 2px 6px; }
+    .note-action:hover { color: var(--navy); }
+    .note-textarea { width: 100%; min-height: 100px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 300; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--cream); color: var(--text); resize: vertical; outline: none; line-height: 1.6; }
+    .note-textarea:focus { border-color: var(--gold); }
 
     /* Chat history */
     .session-list { display: flex; flex-direction: column; gap: 8px; }
@@ -89,6 +145,11 @@
     .purchase-date { font-size: 12px; color: var(--muted); }
     .purchase-dl { font-size: 13px; color: var(--navy); text-decoration: underline; }
 
+    /* Quick actions */
+    .quick-actions { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .quick-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: 1px solid var(--border); border-radius: 100px; background: var(--warm-white); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400; text-decoration: none; transition: all 0.15s; cursor: pointer; }
+    .quick-btn:hover { border-color: var(--gold); background: var(--cream); transform: translateY(-1px); }
+
     /* Conversation detail modal */
     .conv-modal { display: none; position: fixed; inset: 0; background: rgba(27,42,56,0.5); z-index: 200; padding: 24px; overflow-y: auto; }
     .conv-modal.open { display: flex; align-items: flex-start; justify-content: center; padding-top: 80px; }
@@ -100,22 +161,30 @@
     .conv-msg.user { background: var(--navy); color: var(--cream); margin-left: auto; border-bottom-right-radius: 4px; }
     .conv-msg.assistant { background: var(--warm-white); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
 
-    /* Quick actions on overview */
-    .quick-actions { display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; }
-    .quick-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: 1px solid var(--border); border-radius: 100px; background: var(--warm-white); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400; text-decoration: none; transition: all 0.15s; cursor: pointer; }
-    .quick-btn:hover { border-color: var(--gold); background: var(--cream); transform: translateY(-1px); }
+    /* Upcoming deadlines (compact) */
+    .upcoming-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .upcoming-item:last-child { border-bottom: none; }
+    .upcoming-title { font-size: 13px; font-weight: 400; }
+    .upcoming-date { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .upcoming-overdue { color: var(--red); font-weight: 500; }
 
     /* Loading */
     .loading { text-align: center; padding: 48px; color: var(--muted); font-size: 15px; font-weight: 300; }
 
     /* Responsive */
+    @media (max-width: 900px) {
+      .checklist-cols { grid-template-columns: 1fr; }
+      .dash-grid-3 { grid-template-columns: 1fr; }
+    }
     @media (max-width: 768px) {
       nav { padding: 14px 20px; }
       .nav-right { gap: 8px; }
       .dash { padding: 85px 16px 48px; }
       .dash-grid { grid-template-columns: 1fr; }
       .dash-tabs { overflow-x: auto; }
-      .dash-tab { padding: 12px 16px; white-space: nowrap; }
+      .dash-tab { padding: 12px 14px; white-space: nowrap; font-size: 13px; }
+      .cal-day { min-height: 60px; }
+      .cal-event { font-size: 9px; }
     }
   </style>
 </head>
@@ -147,11 +216,26 @@
     var dashData = null;
     var checklistItems = [];
     var currentTab = 'overview';
+    var calMonth = new Date().getMonth();
+    var calYear = new Date().getFullYear();
 
     function formatDate(iso) {
       if (!iso) return '';
       var d = new Date(iso);
       return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function formatShortDate(iso) {
+      if (!iso) return '';
+      var d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function daysUntil(dateStr) {
+      var target = new Date(dateStr + 'T00:00:00');
+      var today = new Date();
+      today.setHours(0,0,0,0);
+      return Math.ceil((target - today) / (1000 * 60 * 60 * 24));
     }
 
     function logout() {
@@ -190,13 +274,29 @@
       return { total: total, completed: completed, pct: pct };
     }
 
+    function progressRingHTML(id, prog) {
+      var circumference = 2 * Math.PI * 30;
+      var offset = circumference - (prog.pct / 100) * circumference;
+      var h = '';
+      h += '<div class="progress-row">';
+      h += '  <div class="progress-ring" id="' + id + 'Ring">';
+      h += '    <svg width="72" height="72"><circle class="bg" cx="36" cy="36" r="30"/><circle class="fill" id="' + id + 'Fill" cx="36" cy="36" r="30" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"/></svg>';
+      h += '    <div class="progress-pct" id="' + id + 'Pct">' + prog.pct + '%</div>';
+      h += '  </div>';
+      h += '  <div class="progress-info" id="' + id + 'Info"><strong>' + prog.completed + ' of ' + prog.total + '</strong> tasks completed</div>';
+      h += '</div>';
+      return h;
+    }
+
     function renderDashboard() {
       var u = dashData.user;
       var sessions = dashData.sessions || [];
       var purchases = dashData.purchases || [];
+      var goals = dashData.goals || [];
+      var deadlines = dashData.deadlines || [];
+      var documents = dashData.documents_needed || [];
+      var notes = dashData.notes || [];
       var prog = getProgress();
-      var circumference = 2 * Math.PI * 30;
-      var offset = circumference - (prog.pct / 100) * circumference;
       var name = u.display_name || u.email.split('@')[0];
 
       var html = '';
@@ -211,6 +311,13 @@
       html += '  <button class="dash-tab" data-tab="checklist" onclick="switchTab(\'checklist\')">Checklist';
       if (prog.total > 0) html += ' <span class="tab-badge">' + prog.completed + '/' + prog.total + '</span>';
       html += '</button>';
+      html += '  <button class="dash-tab" data-tab="calendar" onclick="switchTab(\'calendar\')">Calendar';
+      if (deadlines.length > 0) html += ' <span class="tab-badge">' + deadlines.filter(function(d){return !d.is_completed;}).length + '</span>';
+      html += '</button>';
+      html += '  <button class="dash-tab" data-tab="documents" onclick="switchTab(\'documents\')">Documents';
+      if (documents.length > 0) html += ' <span class="tab-badge">' + documents.filter(function(d){return !d.is_gathered;}).length + '</span>';
+      html += '</button>';
+      html += '  <button class="dash-tab" data-tab="notes" onclick="switchTab(\'notes\')">Notes</button>';
       html += '  <button class="dash-tab" data-tab="history" onclick="switchTab(\'history\')">History';
       if (sessions.length > 0) html += ' <span class="tab-badge">' + sessions.length + '</span>';
       html += '</button>';
@@ -219,121 +326,264 @@
       }
       html += '</div>';
 
-      // ── Overview tab ──
+      // ═══════════════════════════════
+      // ── OVERVIEW TAB ──
+      // ═══════════════════════════════
       html += '<div class="tab-panel active" id="panel-overview">';
       html += '<div class="quick-actions">';
       html += '  <a href="/chat" target="_blank" class="quick-btn">\uD83D\uDCAC Continue chatting</a>';
       if (prog.total > 0) html += '  <button class="quick-btn" onclick="switchTab(\'checklist\')">\u2713 My checklist</button>';
-      if (sessions.length > 0) html += '  <button class="quick-btn" onclick="switchTab(\'history\')">\uD83D\uDCCB Chat history</button>';
+      html += '  <button class="quick-btn" onclick="switchTab(\'calendar\')">\uD83D\uDCC5 Calendar</button>';
+      html += '  <button class="quick-btn" onclick="switchTab(\'notes\')">\uD83D\uDCDD Add a note</button>';
       html += '</div>';
 
       html += '<div class="dash-grid">';
+
       // Progress card
       html += '<div class="dash-card">';
       html += '  <div class="card-label">Progress</div>';
       if (prog.total > 0) {
-        html += '  <div class="progress-row">';
-        html += '    <div class="progress-ring" id="progressRing">';
-        html += '      <svg width="72" height="72"><circle class="bg" cx="36" cy="36" r="30"/><circle class="fill" id="progressFill" cx="36" cy="36" r="30" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"/></svg>';
-        html += '      <div class="progress-pct" id="progressPct">' + prog.pct + '%</div>';
-        html += '    </div>';
-        html += '    <div class="progress-info" id="progressInfo"><strong>' + prog.completed + ' of ' + prog.total + '</strong> tasks completed</div>';
-        html += '  </div>';
+        html += progressRingHTML('progress', prog);
       } else {
         html += '  <p class="card-empty">Start a checklist to track your progress.</p>';
         html += '  <button class="quick-btn" style="margin-top:12px" onclick="switchTab(\'checklist\')">Create checklist</button>';
       }
       html += '</div>';
 
-      // Sessions card
+      // Upcoming deadlines card
       html += '<div class="dash-card">';
-      html += '  <div class="card-label">Conversations</div>';
-      if (sessions.length > 0) {
-        html += '  <div class="card-title">' + sessions.length + ' session' + (sessions.length !== 1 ? 's' : '') + '</div>';
-        html += '  <p class="card-empty" style="margin-top:4px"><a href="#" onclick="switchTab(\'history\');return false" style="color:var(--navy)">View chat history</a></p>';
+      html += '  <div class="card-label">Upcoming Deadlines</div>';
+      var upcomingDeadlines = deadlines.filter(function(d) { return !d.is_completed; }).slice(0, 5);
+      if (upcomingDeadlines.length > 0) {
+        upcomingDeadlines.forEach(function(d) {
+          var days = daysUntil(d.deadline_date);
+          var cls = days < 0 ? ' upcoming-overdue' : '';
+          var label = days < 0 ? (Math.abs(days) + 'd overdue') : days === 0 ? 'Today' : days + 'd left';
+          html += '<div class="upcoming-item">';
+          html += '  <div class="upcoming-title">' + d.title + '</div>';
+          html += '  <div class="upcoming-date' + cls + '">' + label + '</div>';
+          html += '</div>';
+        });
+        html += '<div style="margin-top:10px"><a href="#" onclick="switchTab(\'calendar\');return false" style="font-size:13px;color:var(--navy)">View all in calendar →</a></div>';
       } else {
-        html += '  <p class="card-empty">No conversations yet. <a href="/chat" target="_blank" style="color:var(--navy)">Start one</a>.</p>';
+        html += '<p class="card-empty">No upcoming deadlines.</p>';
+        html += '<div style="margin-top:8px"><a href="#" onclick="switchTab(\'calendar\');return false" style="font-size:13px;color:var(--navy)">Set up deadlines →</a></div>';
       }
       html += '</div>';
       html += '</div>'; // dash-grid
+
+      // Weekly & Monthly Goals
+      var weeklyGoals = goals.filter(function(g) { return g.timeframe === 'weekly'; });
+      var monthlyGoals = goals.filter(function(g) { return g.timeframe === 'monthly'; });
+
+      html += '<div class="dash-grid">';
+
+      // Weekly goals
+      html += '<div class="dash-card">';
+      html += '  <div class="card-label">Weekly Goals</div>';
+      if (weeklyGoals.length > 0) {
+        weeklyGoals.forEach(function(g) {
+          var doneClass = g.is_completed ? ' done' : '';
+          html += '<div class="goal-item' + doneClass + '" onclick="toggleGoal(' + g.id + ', this)">';
+          html += '  <div class="check-box"></div>';
+          html += '  <div class="goal-text">' + g.title + '</div>';
+          if (g.target_date) html += '  <div class="goal-date">' + formatShortDate(g.target_date) + '</div>';
+          html += '</div>';
+        });
+      } else {
+        html += '<p class="card-empty">No weekly goals yet.</p>';
+      }
+      html += '<div class="goal-add">';
+      html += '  <input class="goal-input" id="weeklyGoalInput" placeholder="Add a weekly goal..." onkeydown="if(event.key===\'Enter\')addGoal(\'weekly\')">';
+      html += '  <button class="init-btn" onclick="addGoal(\'weekly\')">Add</button>';
+      html += '</div>';
+      html += '</div>';
+
+      // Monthly goals
+      html += '<div class="dash-card">';
+      html += '  <div class="card-label">Monthly Goals</div>';
+      if (monthlyGoals.length > 0) {
+        monthlyGoals.forEach(function(g) {
+          var doneClass = g.is_completed ? ' done' : '';
+          html += '<div class="goal-item' + doneClass + '" onclick="toggleGoal(' + g.id + ', this)">';
+          html += '  <div class="check-box"></div>';
+          html += '  <div class="goal-text">' + g.title + '</div>';
+          if (g.target_date) html += '  <div class="goal-date">' + formatShortDate(g.target_date) + '</div>';
+          html += '</div>';
+        });
+      } else {
+        html += '<p class="card-empty">No monthly goals yet.</p>';
+      }
+      html += '<div class="goal-add">';
+      html += '  <input class="goal-input" id="monthlyGoalInput" placeholder="Add a monthly goal..." onkeydown="if(event.key===\'Enter\')addGoal(\'monthly\')">';
+      html += '  <button class="init-btn" onclick="addGoal(\'monthly\')">Add</button>';
+      html += '</div>';
+      html += '</div>';
+
+      html += '</div>'; // dash-grid
       html += '</div>'; // panel-overview
 
-      // ── Checklist tab ──
+      // ═══════════════════════════════
+      // ── CHECKLIST TAB ──
+      // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-checklist">';
       if (checklistItems.length > 0) {
-        // Progress at top of checklist
+        // Progress at top
         html += '<div class="dash-card" style="margin-bottom:20px">';
-        html += '  <div class="progress-row">';
-        html += '    <div class="progress-ring" id="clProgressRing">';
-        html += '      <svg width="72" height="72"><circle class="bg" cx="36" cy="36" r="30"/><circle class="fill" id="clProgressFill" cx="36" cy="36" r="30" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"/></svg>';
-        html += '      <div class="progress-pct" id="clProgressPct">' + prog.pct + '%</div>';
-        html += '    </div>';
-        html += '    <div class="progress-info" id="clProgressInfo"><strong>' + prog.completed + ' of ' + prog.total + '</strong> tasks completed</div>';
-        html += '  </div>';
+        html += progressRingHTML('cl', prog);
         html += '</div>';
 
-        // Checklist items
-        html += '<div class="dash-card" style="margin-bottom:20px">';
-        var phases = {};
-        var phaseOrder = [];
+        // Group by transition_type, then by phase
+        var categories = {};
+        var catOrder = [];
         checklistItems.forEach(function(item) {
-          if (!phases[item.phase]) { phases[item.phase] = []; phaseOrder.push(item.phase); }
-          phases[item.phase].push(item);
+          if (!categories[item.transition_type]) { categories[item.transition_type] = {}; catOrder.push(item.transition_type); }
+          if (!categories[item.transition_type][item.phase]) categories[item.transition_type][item.phase] = [];
+          categories[item.transition_type][item.phase].push(item);
         });
-        html += '<div class="checklist-phases">';
-        phaseOrder.forEach(function(phase) {
-          html += '<div><div class="phase-title">' + phase + '</div>';
-          phases[phase].forEach(function(item) {
-            var doneClass = item.is_completed ? ' done' : '';
-            html += '<div class="check-item' + doneClass + '" data-id="' + item.id + '" onclick="toggleItem(' + item.id + ', this)">';
-            html += '  <div class="check-box"></div>';
-            html += '  <div class="check-text">' + item.item_text + '</div>';
-            html += '</div>';
+
+        var catLabels = { 'estate': 'Death & Estate', 'divorce': 'Divorce & Separation', 'job-loss': 'Job Loss & Income Crisis', 'relocation': 'Moving & Relocation', 'disability': 'Disability & Benefits', 'retirement': 'Retirement' };
+
+        // Use 2 columns if multiple categories, single if just one
+        if (catOrder.length > 1) {
+          html += '<div class="checklist-cols">';
+        }
+
+        catOrder.forEach(function(cat) {
+          var label = catLabels[cat] || cat;
+          html += '<div class="checklist-category' + (catOrder.length === 1 ? ' checklist-single' : '') + '">';
+          html += '<div class="category-header">' + label + '</div>';
+          var phases = categories[cat];
+          var phaseOrder = Object.keys(phases);
+          phaseOrder.forEach(function(phase) {
+            html += '<div class="phase-title">' + phase + '</div>';
+            phases[phase].forEach(function(item) {
+              var doneClass = item.is_completed ? ' done' : '';
+              html += '<div class="check-item' + doneClass + '" onclick="toggleItem(' + item.id + ', this)">';
+              html += '  <div class="check-box"></div>';
+              html += '  <div class="check-text">' + item.item_text + '</div>';
+              html += '</div>';
+            });
           });
           html += '</div>';
         });
-        html += '</div>';
 
-        // Add another transition
-        html += '<div class="init-checklist">';
-        html += '  <div class="init-label">Add another transition checklist:</div>';
-        html += '  <div class="init-row">';
-        html += '    <select class="init-select" id="transitionSelect">';
-        html += '      <option value="">Choose a transition...</option>';
-        html += '      <option value="estate">Death & Estate</option>';
-        html += '      <option value="divorce">Divorce & Separation</option>';
-        html += '      <option value="job-loss">Job Loss & Income Crisis</option>';
-        html += '      <option value="relocation">Moving & Relocation</option>';
-        html += '      <option value="disability">Disability & Benefits</option>';
-        html += '      <option value="retirement">Retirement</option>';
-        html += '    </select>';
-        html += '    <button class="init-btn" onclick="initChecklist()">Add</button>';
-        html += '  </div>';
-        html += '</div>';
-        html += '</div>';
+        if (catOrder.length > 1) {
+          html += '</div>'; // checklist-cols
+        }
       } else {
         html += '<div class="dash-card">';
         html += '  <div class="card-label">My Checklist</div>';
         html += '  <p class="card-empty">Create a checklist to stay organized through your transition.</p>';
-        html += '  <div class="init-checklist" style="border-top:none;padding-top:0">';
-        html += '    <div class="init-row">';
-        html += '      <select class="init-select" id="transitionSelect">';
-        html += '        <option value="">Choose your transition...</option>';
-        html += '        <option value="estate">Death & Estate</option>';
-        html += '        <option value="divorce">Divorce & Separation</option>';
-        html += '        <option value="job-loss">Job Loss & Income Crisis</option>';
-        html += '        <option value="relocation">Moving & Relocation</option>';
-        html += '        <option value="disability">Disability & Benefits</option>';
-        html += '        <option value="retirement">Retirement</option>';
-        html += '      </select>';
-        html += '      <button class="init-btn" onclick="initChecklist()">Create checklist</button>';
-        html += '    </div>';
-        html += '  </div>';
         html += '</div>';
       }
+
+      // Add checklist selector (always visible)
+      html += '<div class="init-checklist">';
+      html += '  <div class="init-label">Add a transition checklist:</div>';
+      html += '  <div class="init-row">';
+      html += '    <select class="init-select" id="transitionSelect">';
+      html += '      <option value="">Choose a transition...</option>';
+      html += '      <option value="estate">Death & Estate</option>';
+      html += '      <option value="divorce">Divorce & Separation</option>';
+      html += '      <option value="job-loss">Job Loss & Income Crisis</option>';
+      html += '      <option value="relocation">Moving & Relocation</option>';
+      html += '      <option value="disability">Disability & Benefits</option>';
+      html += '      <option value="retirement">Retirement</option>';
+      html += '    </select>';
+      html += '    <button class="init-btn" onclick="initChecklist()">Add checklist</button>';
+      html += '  </div>';
+      html += '</div>';
       html += '</div>'; // panel-checklist
 
-      // ── History tab ──
+      // ═══════════════════════════════
+      // ── CALENDAR TAB ──
+      // ═══════════════════════════════
+      html += '<div class="tab-panel" id="panel-calendar">';
+      html += '<div class="dash-card">';
+      html += '  <div class="cal-nav">';
+      html += '    <button class="cal-btn" onclick="changeMonth(-1)">&larr;</button>';
+      html += '    <div class="cal-month" id="calMonthLabel"></div>';
+      html += '    <button class="cal-btn" onclick="changeMonth(1)">&rarr;</button>';
+      html += '  </div>';
+      html += '  <div id="calGrid"></div>';
+      html += '</div>';
+
+      // Deadline calculator
+      html += '<div class="calc-section">';
+      html += '  <div class="calc-title">Auto-calculate deadlines</div>';
+      html += '  <p class="card-empty" style="margin-bottom:12px">Enter a key date and we\'ll calculate your deadlines automatically.</p>';
+      html += '  <div class="calc-row">';
+      html += '    <select class="init-select" id="calcTransition">';
+      html += '      <option value="">Choose transition...</option>';
+      html += '      <option value="retirement">Retirement date</option>';
+      html += '      <option value="job-loss">Last day of work</option>';
+      html += '      <option value="estate">Date of passing</option>';
+      html += '      <option value="divorce">Date served / filing date</option>';
+      html += '      <option value="relocation">Moving day</option>';
+      html += '      <option value="disability">Diagnosis / disability start date</option>';
+      html += '    </select>';
+      html += '    <input type="date" class="calc-input" id="calcDate">';
+      html += '    <button class="init-btn" onclick="calculateDeadlines()">Calculate</button>';
+      html += '  </div>';
+      html += '</div>';
+
+      html += '</div>'; // panel-calendar
+
+      // ═══════════════════════════════
+      // ── DOCUMENTS TAB ──
+      // ═══════════════════════════════
+      html += '<div class="tab-panel" id="panel-documents">';
+      html += '<div class="dash-card">';
+      html += '  <div class="card-label">Documents & Info to Gather</div>';
+      if (documents.length > 0) {
+        var gatheredCount = documents.filter(function(d) { return d.is_gathered; }).length;
+        html += '<p style="font-size:13px;color:var(--muted);margin-bottom:14px">' + gatheredCount + ' of ' + documents.length + ' gathered</p>';
+        documents.forEach(function(d) {
+          var cls = d.is_gathered ? ' gathered' : '';
+          html += '<div class="doc-item' + cls + '" onclick="toggleDocument(' + d.id + ', this)">';
+          html += '  <div class="check-box"></div>';
+          html += '  <div><div class="doc-name">' + d.document_name + '</div>';
+          if (d.description) html += '  <div class="doc-desc">' + d.description + '</div>';
+          html += '  </div>';
+          html += '</div>';
+        });
+      } else {
+        html += '<p class="card-empty">No documents to gather yet. Start a conversation with the Navigator and we\'ll identify what you need based on your specific situation.</p>';
+        html += '<a href="/chat" target="_blank" class="quick-btn" style="margin-top:12px">\uD83D\uDCAC Talk to the Navigator</a>';
+      }
+      html += '</div>';
+      html += '</div>'; // panel-documents
+
+      // ═══════════════════════════════
+      // ── NOTES TAB ──
+      // ═══════════════════════════════
+      html += '<div class="tab-panel" id="panel-notes">';
+      html += '<div class="dash-card" style="margin-bottom:20px">';
+      html += '  <div class="card-label">Add a Note</div>';
+      html += '  <textarea class="note-textarea" id="newNoteText" placeholder="Write down questions, reminders, phone numbers, or anything you want to remember..."></textarea>';
+      html += '  <div style="margin-top:10px;text-align:right"><button class="init-btn" onclick="saveNote()">Save note</button></div>';
+      html += '</div>';
+
+      if (notes.length > 0) {
+        notes.forEach(function(n) {
+          html += '<div class="note-card" id="note-' + n.id + '">';
+          html += '  <div class="note-content">' + n.content.replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</div>';
+          html += '  <div class="note-meta">';
+          html += '    <div class="note-date">' + formatDate(n.created_at) + (n.updated_at ? ' (edited)' : '') + '</div>';
+          html += '    <div class="note-actions">';
+          html += '      <button class="note-action" onclick="editNote(' + n.id + ')">Edit</button>';
+          html += '      <button class="note-action" onclick="deleteNote(' + n.id + ')">Delete</button>';
+          html += '    </div>';
+          html += '  </div>';
+          html += '</div>';
+        });
+      }
+      html += '</div>'; // panel-notes
+
+      // ═══════════════════════════════
+      // ── HISTORY TAB ──
+      // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-history">';
       if (sessions.length > 0) {
         html += '<div class="dash-card">';
@@ -354,7 +604,9 @@
       }
       html += '</div>'; // panel-history
 
-      // ── Purchases tab ──
+      // ═══════════════════════════════
+      // ── PURCHASES TAB ──
+      // ═══════════════════════════════
       if (purchases.length > 0) {
         html += '<div class="tab-panel" id="panel-purchases">';
         html += '<div class="dash-card">';
@@ -370,26 +622,106 @@
 
       document.getElementById('dashContent').innerHTML = html;
 
-      // Restore active tab if we re-rendered
+      // Restore active tab
       if (currentTab !== 'overview') switchTab(currentTab);
+
+      // Render calendar
+      renderCalendar();
     }
 
+    // ── Calendar ──
+    function renderCalendar() {
+      var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      var label = document.getElementById('calMonthLabel');
+      if (label) label.textContent = months[calMonth] + ' ' + calYear;
+
+      var grid = document.getElementById('calGrid');
+      if (!grid) return;
+
+      var deadlines = dashData.deadlines || [];
+      var goals = dashData.goals || [];
+
+      var firstDay = new Date(calYear, calMonth, 1);
+      var lastDay = new Date(calYear, calMonth + 1, 0);
+      var startDay = firstDay.getDay(); // 0=Sun
+      var daysInMonth = lastDay.getDate();
+
+      var today = new Date();
+      today.setHours(0,0,0,0);
+      var todayStr = today.toISOString().split('T')[0];
+
+      // Build event map by date
+      var events = {};
+      deadlines.forEach(function(d) {
+        if (!events[d.deadline_date]) events[d.deadline_date] = [];
+        events[d.deadline_date].push({ type: 'deadline', title: d.title, completed: d.is_completed, id: d.id });
+      });
+      goals.forEach(function(g) {
+        if (g.target_date) {
+          if (!events[g.target_date]) events[g.target_date] = [];
+          events[g.target_date].push({ type: 'goal', title: g.title, completed: g.is_completed, id: g.id });
+        }
+      });
+
+      var h = '';
+      var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      days.forEach(function(d) { h += '<div class="cal-header">' + d + '</div>'; });
+
+      // Previous month days
+      var prevMonth = new Date(calYear, calMonth, 0);
+      for (var i = startDay - 1; i >= 0; i--) {
+        var day = prevMonth.getDate() - i;
+        h += '<div class="cal-day other-month"><div class="cal-day-num">' + day + '</div></div>';
+      }
+
+      // Current month days
+      for (var d = 1; d <= daysInMonth; d++) {
+        var dateStr = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+        var isToday = dateStr === todayStr;
+        h += '<div class="cal-day' + (isToday ? ' today' : '') + '">';
+        h += '<div class="cal-day-num">' + d + '</div>';
+        if (events[dateStr]) {
+          events[dateStr].slice(0, 3).forEach(function(ev) {
+            var cls = ev.type + (ev.completed ? ' completed' : '');
+            h += '<div class="cal-event ' + cls + '" title="' + ev.title.replace(/"/g, '&quot;') + '">' + ev.title + '</div>';
+          });
+          if (events[dateStr].length > 3) {
+            h += '<div class="cal-event" style="color:var(--muted)">+' + (events[dateStr].length - 3) + ' more</div>';
+          }
+        }
+        h += '</div>';
+      }
+
+      // Next month days
+      var totalCells = startDay + daysInMonth;
+      var remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+      for (var i = 1; i <= remaining; i++) {
+        h += '<div class="cal-day other-month"><div class="cal-day-num">' + i + '</div></div>';
+      }
+
+      grid.innerHTML = h;
+    }
+
+    function changeMonth(dir) {
+      calMonth += dir;
+      if (calMonth > 11) { calMonth = 0; calYear++; }
+      if (calMonth < 0) { calMonth = 11; calYear--; }
+      renderCalendar();
+    }
+
+    // ── Progress updates ──
     function updateProgressUI() {
       var prog = getProgress();
       var circumference = 2 * Math.PI * 30;
       var offset = circumference - (prog.pct / 100) * circumference;
-
-      // Update all progress ring instances
-      ['', 'cl'].forEach(function(prefix) {
-        var fill = document.getElementById(prefix + 'ProgressFill');
-        var pct = document.getElementById(prefix + 'ProgressPct');
-        var info = document.getElementById(prefix + 'ProgressInfo');
+      ['progress', 'cl'].forEach(function(prefix) {
+        var fill = document.getElementById(prefix + 'Fill');
+        var pct = document.getElementById(prefix + 'Pct');
+        var info = document.getElementById(prefix + 'Info');
         if (fill) fill.setAttribute('stroke-dashoffset', offset);
         if (pct) pct.textContent = prog.pct + '%';
         if (info) info.innerHTML = '<strong>' + prog.completed + ' of ' + prog.total + '</strong> tasks completed';
       });
-
-      // Update tab badge
       var clTab = document.querySelector('[data-tab="checklist"]');
       if (clTab) {
         var badge = clTab.querySelector('.tab-badge');
@@ -397,6 +729,7 @@
       }
     }
 
+    // ── Checklist actions ──
     function toggleItem(itemId, el) {
       fetch('/api/checklist/' + itemId + '/toggle', { method: 'POST' })
       .then(function(r) { return r.json(); })
@@ -429,6 +762,138 @@
       });
     }
 
+    // ── Goal actions ──
+    function addGoal(timeframe) {
+      var inputId = timeframe === 'weekly' ? 'weeklyGoalInput' : 'monthlyGoalInput';
+      var input = document.getElementById(inputId);
+      var title = input.value.trim();
+      if (!title) return;
+      fetch('/api/goals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: title, timeframe: timeframe })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) loadDashboard();
+      });
+    }
+
+    function toggleGoal(goalId, el) {
+      fetch('/api/goals/' + goalId + '/toggle', { method: 'POST' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          el.classList.toggle('done');
+          // Update local data
+          (dashData.goals || []).forEach(function(g) {
+            if (g.id === goalId) g.is_completed = data.is_completed;
+          });
+        }
+      });
+    }
+
+    // ── Deadline actions ──
+    function calculateDeadlines() {
+      var type = document.getElementById('calcTransition').value;
+      var date = document.getElementById('calcDate').value;
+      if (!type || !date) return;
+      fetch('/api/deadlines/calculate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transition_type: type, key_date: date })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          currentTab = 'calendar';
+          loadDashboard();
+        }
+      });
+    }
+
+    // ── Document actions ──
+    function toggleDocument(docId, el) {
+      fetch('/api/documents-needed/' + docId + '/toggle', { method: 'POST' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          el.classList.toggle('gathered');
+          // Update badge
+          (dashData.documents_needed || []).forEach(function(d) {
+            if (d.id === docId) d.is_gathered = data.is_gathered;
+          });
+          var docsTab = document.querySelector('[data-tab="documents"]');
+          if (docsTab) {
+            var badge = docsTab.querySelector('.tab-badge');
+            var remaining = (dashData.documents_needed || []).filter(function(d) { return !d.is_gathered; }).length;
+            if (badge) badge.textContent = remaining;
+          }
+        }
+      });
+    }
+
+    // ── Note actions ──
+    function saveNote() {
+      var textarea = document.getElementById('newNoteText');
+      var content = textarea.value.trim();
+      if (!content) return;
+      fetch('/api/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: content })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          currentTab = 'notes';
+          loadDashboard();
+        }
+      });
+    }
+
+    function editNote(noteId) {
+      var card = document.getElementById('note-' + noteId);
+      var contentEl = card.querySelector('.note-content');
+      var currentText = contentEl.innerHTML.replace(/<br>/g, '\n').replace(/&lt;/g, '<');
+      var h = '<textarea class="note-textarea" id="editNote-' + noteId + '" style="min-height:80px">' + currentText + '</textarea>';
+      h += '<div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end">';
+      h += '  <button class="btn-ghost" style="font-size:12px;padding:6px 14px" onclick="loadDashboard()">Cancel</button>';
+      h += '  <button class="init-btn" style="font-size:12px;padding:6px 14px" onclick="updateNote(' + noteId + ')">Save</button>';
+      h += '</div>';
+      card.innerHTML = h;
+    }
+
+    function updateNote(noteId) {
+      var textarea = document.getElementById('editNote-' + noteId);
+      var content = textarea.value.trim();
+      fetch('/api/notes/' + noteId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: content })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          currentTab = 'notes';
+          loadDashboard();
+        }
+      });
+    }
+
+    function deleteNote(noteId) {
+      if (!confirm('Delete this note?')) return;
+      fetch('/api/notes/' + noteId, { method: 'DELETE' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          currentTab = 'notes';
+          loadDashboard();
+        }
+      });
+    }
+
+    // ── Conversation modal ──
     function openConv(sessionId) {
       document.getElementById('convMessages').innerHTML = '<div class="loading">Loading conversation...</div>';
       document.getElementById('convModal').classList.add('open');

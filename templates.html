@@ -11,16 +11,16 @@
   </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Planning Templates — Lumeway</title>
-  <meta name="description" content="Organizational worksheets, checklists, and planning tools for life transitions — job loss, divorce, estate planning, disability, relocation, and retirement."/>
+  <title>Shop Worksheets — Lumeway</title>
+  <meta name="description" content="Step-by-step worksheets, checklists, and planning tools for life transitions — job loss, divorce, estate, disability, relocation, and retirement. Instant download."/>
   <link rel="canonical" href="https://lumeway.co/templates"/>
   <meta property="og:type" content="website"/>
   <meta property="og:site_name" content="Lumeway"/>
-  <meta property="og:title" content="Templates — Lumeway"/>
+  <meta property="og:title" content="Shop Worksheets — Lumeway"/>
   <meta property="og:description" content="Organizational worksheets, checklists, and planning tools for life transitions — job loss, divorce, estate planning, disability, relocation, and retirement."/>
   <meta property="og:url" content="https://lumeway.co/templates"/>
   <meta name="twitter:card" content="summary"/>
-  <meta name="twitter:title" content="Templates — Lumeway"/>
+  <meta name="twitter:title" content="Shop Worksheets — Lumeway"/>
   <meta name="twitter:description" content="Organizational worksheets, checklists, and planning tools for life transitions — job loss, divorce, estate planning, disability, relocation, and retirement."/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
@@ -81,8 +81,10 @@
     .purchase-success a { color: white; text-decoration: underline; }
 
     .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-    .product-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; padding: 28px; transition: box-shadow 0.2s, transform 0.2s; }
+    .product-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; }
     .product-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+    .product-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+    .product-body { padding: 24px 28px 28px; }
     .product-emoji { font-size: 28px; margin-bottom: 12px; }
     .product-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
     .product-desc { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 16px; }
@@ -152,15 +154,15 @@
     </div>
     <div class="nav-right">
       <a href="/chat" target="_blank" class="btn-ghost">Try it free</a>
-      <a href="/#waitlist" class="btn-primary">Join waitlist</a>
+      <a href="/templates" class="btn-primary">Shop</a>
       <a href="/login" class="btn-ghost" id="navAccount">Log in</a>
     </div>
   </nav>
 
   <div class="hero">
-    <div class="hero-eyebrow reveal">Planning Templates</div>
+    <div class="hero-eyebrow reveal">Shop Worksheets</div>
     <h1 class="hero-title reveal">Get organized for<br><em>what comes next</em></h1>
-    <p class="hero-subtitle reveal">Organizational tools for each life transition — checklists, planning worksheets, information organizers, and step-by-step guides. Stop creating from scratch.</p>
+    <p class="hero-subtitle reveal">Step-by-step worksheets, checklists, and planning tools for life's hardest transitions. Instant download. Works in Word and Google Docs.</p>
   </div>
 
   <div class="section">
@@ -169,7 +171,7 @@
     <div class="featured-card reveal" id="master">
       <span class="featured-badge">Best Value</span>
       <h2 class="featured-title">Life Transition Bundle</h2>
-      <p class="featured-desc">Everything Lumeway offers in one package. All six category bundles — 89+ documents covering every major life transition.</p>
+      <p class="featured-desc">Everything Lumeway offers in one package. All six category bundles — 90 documents covering every major life transition.</p>
       <ul class="featured-includes">
         <li>Job Loss &amp; Income Crisis (14 docs)</li>
         <li>Death &amp; Estate (16 docs)</li>
@@ -177,8 +179,7 @@
         <li>Disability &amp; Benefits (15 docs)</li>
         <li>Moving &amp; Relocation (13 docs)</li>
         <li>Retirement Planning (15 docs)</li>
-        <li>CBT Thought Record Worksheet</li>
-        <li>Values Clarification Worksheet</li>
+        <li>3 bonus wellness worksheets</li>
       </ul>
       <div class="featured-price">$36 <span>one-time</span></div>
       <div class="featured-savings">Save $71 vs. buying individually</div>
@@ -190,88 +191,100 @@
 
     <div class="product-grid reveal-stagger">
       <div class="product-card reveal" id="job-loss">
-        <div class="product-emoji">💼</div>
-        <h3 class="product-title">Job Loss Survivor Kit</h3>
-        <p class="product-desc">14 worksheets and checklists for unemployment, COBRA, and financial stabilization.</p>
-        <ul class="product-items">
-          <li>Severance review checklist</li>
-          <li>Unemployment process guide</li>
-          <li>COBRA vs. Marketplace comparison</li>
-          <li>Budget restructuring worksheet</li>
-          <li>Job search tracker &amp; more</li>
-        </ul>
-        <div class="price">$18 <span>one-time</span></div>
-        <a href="/templates/job-loss" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
+        <img src="/static/images/bundles/job-loss.png" alt="Job Loss Survivor Kit" class="product-img">
+        <div class="product-body">
+          <h3 class="product-title">Job Loss Survivor Kit</h3>
+          <p class="product-desc">Lost your job. Know your next move. 14 worksheets for unemployment, COBRA, severance, and financial stabilization.</p>
+          <ul class="product-items">
+            <li>Severance response &amp; negotiation letters</li>
+            <li>COBRA election organizer</li>
+            <li>Health insurance comparison worksheet</li>
+            <li>Budget reduction worksheet</li>
+            <li>Job search tracker &amp; more</li>
+          </ul>
+          <div class="price">$18 <span>one-time</span></div>
+          <a href="/templates/job-loss" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
+        </div>
       </div>
       <div class="product-card reveal" id="estate">
-        <div class="product-emoji">🕊️</div>
-        <h3 class="product-title">Estate &amp; Survivor Bundle</h3>
-        <p class="product-desc">16 documents for estate settlement, benefits claims, and next steps.</p>
-        <ul class="product-items">
-          <li>First 24 hours guide</li>
-          <li>Survivor benefits worksheet</li>
-          <li>Executor guidance checklist</li>
-          <li>Account notification letters</li>
-          <li>Digital accounts inventory &amp; more</li>
-        </ul>
-        <div class="price">$18 <span>one-time</span></div>
-        <a href="/templates/estate" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
+        <img src="/static/images/bundles/estate.png" alt="Estate & Survivor Bundle" class="product-img">
+        <div class="product-body">
+          <h3 class="product-title">Estate &amp; Survivor Bundle</h3>
+          <p class="product-desc">The to-do list nobody warns you about. 16 documents for estate settlement, benefits claims, and notification letters.</p>
+          <ul class="product-items">
+            <li>First 24 hours guide</li>
+            <li>Survivor benefits organizer</li>
+            <li>Executor introduction letter</li>
+            <li>Bank &amp; credit bureau notifications</li>
+            <li>Digital accounts inventory &amp; more</li>
+          </ul>
+          <div class="price">$18 <span>one-time</span></div>
+          <a href="/templates/estate" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
+        </div>
       </div>
       <div class="product-card reveal" id="divorce">
-        <div class="product-emoji">⚖️</div>
-        <h3 class="product-title">Divorce &amp; Separation Bundle</h3>
-        <p class="product-desc">14 documents to organize finances, track the process, and protect your interests.</p>
-        <ul class="product-items">
-          <li>Financial disclosure worksheet</li>
-          <li>Asset &amp; debt inventory</li>
-          <li>Co-parenting worksheet</li>
-          <li>Name change checklist</li>
-          <li>Financial reset planner &amp; more</li>
-        </ul>
-        <div class="price">$18 <span>one-time</span></div>
-        <a href="/templates/divorce" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
+        <img src="/static/images/bundles/divorce.png" alt="Divorce & Separation Bundle" class="product-img">
+        <div class="product-body">
+          <h3 class="product-title">Divorce &amp; Separation Bundle</h3>
+          <p class="product-desc">Before you file. Get organized. 14 documents for finances, co-parenting, and protecting your interests.</p>
+          <ul class="product-items">
+            <li>Financial disclosure organizer</li>
+            <li>Asset &amp; property inventory</li>
+            <li>Co-parenting planning worksheet</li>
+            <li>Attorney meeting prep worksheet</li>
+            <li>Post-divorce financial reset &amp; more</li>
+          </ul>
+          <div class="price">$18 <span>one-time</span></div>
+          <a href="/templates/divorce" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
+        </div>
       </div>
       <div class="product-card reveal" id="disability">
-        <div class="product-emoji">🩺</div>
-        <h3 class="product-title">Disability &amp; Benefits Bundle</h3>
-        <p class="product-desc">15 documents for SSDI, SSI, and workplace accommodations.</p>
-        <ul class="product-items">
-          <li>SSDI application prep guide</li>
-          <li>Workplace accommodation request</li>
-          <li>Benefits tracking worksheet</li>
-          <li>Symptom journal</li>
-          <li>Appeal letter template &amp; more</li>
-        </ul>
-        <div class="price">$18 <span>one-time</span></div>
-        <a href="/templates/disability" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
+        <img src="/static/images/bundles/disability.png" alt="Disability & Benefits Bundle" class="product-img">
+        <div class="product-body">
+          <h3 class="product-title">Disability &amp; Benefits Bundle</h3>
+          <p class="product-desc">The system is complicated. Your paperwork doesn't have to be. 15 documents for SSDI, FMLA, and workplace accommodations.</p>
+          <ul class="product-items">
+            <li>SSDI application &amp; appeal organizers</li>
+            <li>Workplace accommodation request (ADA)</li>
+            <li>FMLA leave request letter</li>
+            <li>Daily symptom journal</li>
+            <li>Timeline &amp; deadline tracker &amp; more</li>
+          </ul>
+          <div class="price">$18 <span>one-time</span></div>
+          <a href="/templates/disability" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
+        </div>
       </div>
       <div class="product-card reveal" id="relocation">
-        <div class="product-emoji">🏠</div>
-        <h3 class="product-title">Moving &amp; Relocation Bundle</h3>
-        <p class="product-desc">13 documents for everything that changes when you move.</p>
-        <ul class="product-items">
-          <li>Address change master checklist</li>
-          <li>Lease termination letter</li>
-          <li>Utility transfer checklist</li>
-          <li>School records transfer</li>
-          <li>Vehicle registration guide &amp; more</li>
-        </ul>
-        <div class="price">$15 <span>one-time</span></div>
-        <a href="/templates/relocation" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
+        <img src="/static/images/bundles/relocation.png" alt="Moving & Relocation Bundle" class="product-img">
+        <div class="product-body">
+          <h3 class="product-title">Moving &amp; Relocation Bundle</h3>
+          <p class="product-desc">New state. New address. Nothing forgotten. 13 documents for everything that changes when you move.</p>
+          <ul class="product-items">
+            <li>Address change master checklist</li>
+            <li>Early lease termination letter</li>
+            <li>Utility transfer tracker</li>
+            <li>School transfer request</li>
+            <li>Vehicle registration checklist &amp; more</li>
+          </ul>
+          <div class="price">$15 <span>one-time</span></div>
+          <a href="/templates/relocation" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
+        </div>
       </div>
       <div class="product-card reveal" id="retirement">
-        <div class="product-emoji">🌅</div>
-        <h3 class="product-title">Retirement Planning Bundle</h3>
-        <p class="product-desc">15 documents for Medicare, Social Security, and retirement planning.</p>
-        <ul class="product-items">
-          <li>Social Security application guide</li>
-          <li>Medicare enrollment checklist</li>
-          <li>Pension comparison worksheet</li>
-          <li>RMD distribution planner</li>
-          <li>Legacy letter template &amp; more</li>
-        </ul>
-        <div class="price">$18 <span>one-time</span></div>
-        <a href="/templates/retirement" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
+        <img src="/static/images/bundles/retirement.png" alt="Retirement Planning Bundle" class="product-img">
+        <div class="product-body">
+          <h3 class="product-title">Retirement Planning Bundle</h3>
+          <p class="product-desc">You planned the career. Now plan the exit. 15 documents for Medicare, Social Security, and legacy planning.</p>
+          <ul class="product-items">
+            <li>Social Security application organizer</li>
+            <li>Medicare enrollment checklist</li>
+            <li>Pension comparison worksheet</li>
+            <li>RMD distribution request letter</li>
+            <li>Legacy letter &amp; more</li>
+          </ul>
+          <div class="price">$18 <span>one-time</span></div>
+          <a href="/templates/retirement" class="btn-buy-outline" style="text-decoration:none;">View Details</a>
+        </div>
       </div>
     </div>
 
