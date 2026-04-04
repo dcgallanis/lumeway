@@ -95,17 +95,19 @@
     .mobile-menu a:hover { color: var(--terracotta); }
     .mobile-menu .mobile-cta { margin-top: 24px; display: block; text-align: center; padding: 14px 24px; background: var(--terracotta); color: #fff; border-radius: 10px; font-size: 15px; font-weight: 500; text-decoration: none; border: none; }
 
-    /* ── Hero — Full Width ── */
+    /* ── Hero — Full Width with bleed image ── */
     .hero {
       width: 100%;
       min-height: 100vh;
+      position: relative;
       display: grid;
       grid-template-columns: 1fr 1fr;
       align-items: center;
       padding: 100px 5% 80px;
-      gap: 40px;
+      gap: 0;
+      overflow: hidden;
     }
-    .hero-content { max-width: 580px; justify-self: end; padding-right: 40px; }
+    .hero-content { max-width: 540px; justify-self: end; padding-right: 60px; position: relative; z-index: 2; }
     .hero-eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
       background: var(--blush-light); border: 1px solid var(--blush);
@@ -127,19 +129,137 @@
       line-height: 1.8; margin-bottom: 40px;
     }
     .hero-actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+    .hero-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 32px; }
+    .hero-pill { padding: 6px 14px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; font-size: 12px; color: var(--muted); text-decoration: none; transition: all 0.15s; }
+    .hero-pill:hover { border-color: var(--terracotta); color: var(--navy); }
     .btn-large { padding: 15px 34px; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.22s; display: inline-flex; align-items: center; gap: 8px; }
     .btn-large-primary { background: var(--terracotta); color: #fff; border: 1.5px solid var(--terracotta); }
     .btn-large-primary:hover { background: var(--terra-light); border-color: var(--terra-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(196,112,78,0.25); }
     .btn-large-secondary { background: transparent; color: var(--terracotta); border: 1.5px solid var(--terracotta); }
     .btn-large-secondary:hover { background: var(--blush-light); transform: translateY(-2px); }
 
-    .hero-image { justify-self: start; }
-    .hero-image img {
-      width: 100%; max-width: 620px;
-      border-radius: 24px;
-      object-fit: cover; aspect-ratio: 4/3;
-      box-shadow: 0 20px 60px rgba(44,74,94,0.12);
+    .hero-image {
+      position: relative;
+      justify-self: stretch;
+      align-self: stretch;
+      overflow: hidden;
+      margin-right: -5%;
+      border-radius: 24px 0 0 24px;
     }
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .hero-image::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 120px;
+      background: linear-gradient(to right, var(--cream), transparent);
+      z-index: 1;
+    }
+    .hero-image::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 80px;
+      background: linear-gradient(to top, var(--cream), transparent);
+      z-index: 1;
+    }
+
+    /* ── Checklist Section ── */
+    .checklist-section {
+      width: 100%;
+      padding: 100px 5%;
+      background: var(--warm-white);
+    }
+    .checklist-header { max-width: 600px; margin-bottom: 40px; }
+    .checklist-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: clamp(28px, 3.5vw, 46px);
+      font-weight: 400; line-height: 1.2;
+      color: var(--navy); margin-bottom: 16px;
+    }
+    .checklist-title em { font-style: italic; color: var(--terracotta); }
+    .checklist-subtitle { font-size: 16px; color: var(--muted); line-height: 1.7; }
+    .checklist-tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+    .checklist-tab {
+      padding: 8px 20px; border-radius: 100px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13.5px; font-weight: 500;
+      cursor: pointer; border: 1.5px solid var(--border);
+      background: transparent; color: var(--muted);
+      transition: all 0.18s;
+    }
+    .checklist-tab:hover { border-color: var(--terracotta); color: var(--navy); }
+    .checklist-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+    .checklist-card {
+      background: var(--warm-white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      max-width: 820px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(44,74,94,0.06);
+    }
+    .checklist-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 28px;
+      background: var(--cream);
+      border-bottom: 1px solid var(--border);
+    }
+    .checklist-card-title-area { display: flex; align-items: center; gap: 12px; }
+    .checklist-card-title-area .sun-icon svg { width: 20px; height: 20px; stroke: var(--terracotta); }
+    .checklist-card-name { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 700; color: var(--navy); }
+    .checklist-card-sub { font-size: 12px; color: var(--muted); }
+    .checklist-card-count { text-align: right; }
+    .checklist-card-count-num { font-family: 'Libre Baskerville', serif; font-size: 24px; font-weight: 700; color: var(--navy); }
+    .checklist-card-count-label { font-size: 11px; color: var(--muted); }
+    .checklist-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.12s;
+    }
+    .checklist-item:last-child { border-bottom: none; }
+    .checklist-item:hover { background: rgba(250,247,242,0.5); }
+    .checklist-item-left { display: flex; align-items: center; gap: 14px; }
+    .checklist-circle {
+      width: 20px; height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .checklist-item-text { font-size: 14.5px; color: var(--text); }
+    .checklist-tag {
+      font-size: 11px; font-weight: 500;
+      padding: 4px 12px; border-radius: 100px;
+      white-space: nowrap;
+    }
+    .tag-urgent { background: rgba(196,112,78,0.12); color: var(--terracotta); }
+    .tag-soon { background: rgba(184,151,126,0.15); color: #8B6914; }
+    .tag-info { background: var(--sky-light); color: var(--navy); }
+    .checklist-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 28px;
+      background: var(--cream);
+      border-top: 1px solid var(--border);
+    }
+    .checklist-footer-note { font-size: 13px; color: var(--muted); }
+    .checklist-footer-note .sun-icon svg { width: 12px; height: 12px; stroke: var(--terracotta); vertical-align: -1px; }
+    .checklist-footer-btn {
+      padding: 10px 22px; border-radius: 8px;
+      background: var(--terracotta); color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13.5px; font-weight: 500;
+      text-decoration: none; transition: all 0.18s; border: none; cursor: pointer;
+    }
+    .checklist-footer-btn:hover { background: var(--terra-light); }
+    .checklist-bottom-note {
+      text-align: center; margin-top: 20px;
+      font-size: 13px; color: var(--muted);
+    }
+    .checklist-bottom-note a { color: var(--terracotta); text-decoration: none; font-weight: 500; }
+    .checklist-bottom-note a:hover { text-decoration: underline; }
 
     /* ── Transitions — Full Bleed ── */
     .transitions-section {
@@ -471,8 +591,9 @@
       .hero-content { max-width: 100%; justify-self: center; padding-right: 0; }
       .hero-subtitle { margin-left: auto; margin-right: auto; max-width: 500px; }
       .hero-actions { justify-content: center; }
-      .hero-image { order: -1; justify-self: center; }
-      .hero-image img { max-width: 480px; }
+      .hero-pills { justify-content: center; }
+      .hero-image { order: -1; margin-right: 0; border-radius: 20px; max-height: 400px; }
+      .hero-image::before { width: 60px; }
       .friend-grid { grid-template-columns: 1fr; gap: 40px; }
       .friend-image { order: -1; }
       .friend-image img { max-width: 500px; margin: 0 auto; display: block; }
@@ -486,7 +607,12 @@
       .hamburger { display: block; }
       .hero { padding: 100px 20px 48px; min-height: auto; gap: 32px; }
       .hero-title { font-size: clamp(32px, 7vw, 48px); }
-      .hero-image img { max-width: 340px; }
+      .hero-image { max-height: 300px; border-radius: 16px; margin-right: 0; }
+      .hero-image::before { display: none; }
+      .checklist-section { padding: 60px 20px; }
+      .checklist-item { padding: 14px 20px; }
+      .checklist-card-header, .checklist-footer { padding: 16px 20px; }
+      .checklist-footer { flex-direction: column; gap: 12px; text-align: center; }
       .hero-actions { flex-direction: column; width: 100%; max-width: 320px; margin: 0 auto; }
       .btn-large { width: 100%; justify-content: center; }
       .transitions-section, .how-section, .friend-section, .products-section, .promise-section, .signup-section { padding-left: 20px; padding-right: 20px; }
@@ -571,8 +697,16 @@
         <a href="/chat" target="_blank" class="btn-large btn-large-primary">Try Lumeway free &rarr;</a>
         <a href="/templates" class="btn-large btn-large-secondary">Browse worksheets</a>
       </div>
+      <div class="hero-pills reveal">
+        <a href="/estate" class="hero-pill">Death &amp; Estate</a>
+        <a href="/divorce" class="hero-pill">Divorce</a>
+        <a href="/job-loss" class="hero-pill">Job Loss</a>
+        <a href="/relocation" class="hero-pill">Moving</a>
+        <a href="/disability" class="hero-pill">Disability</a>
+        <a href="/retirement" class="hero-pill">Retirement</a>
+      </div>
     </div>
-    <div class="hero-image reveal">
+    <div class="hero-image">
       <img src="/static/images/heroimage.jpg" alt="Planners and journal on a marble desk with coffee and rose gold pen" />
     </div>
   </section>
@@ -618,6 +752,48 @@
         <p class="transition-desc">Social Security timing, Medicare enrollment, and financial planning.</p>
       </a>
     </div>
+  </section>
+
+  <!-- ═══ Checklist Section ═══ -->
+  <section class="checklist-section">
+    <div class="checklist-header">
+      <div class="section-label reveal">Lumeway Checklist</div>
+      <h2 class="checklist-title reveal">Your step-by-step guide,<br><em>already written for you</em></h2>
+      <p class="checklist-subtitle reveal">Every transition comes with a personalized checklist — ordered by urgency, with deadlines that actually matter.</p>
+    </div>
+    <div class="checklist-tabs reveal">
+      <button class="checklist-tab active" onclick="showChecklist('jobloss')">Job Loss</button>
+      <button class="checklist-tab" onclick="showChecklist('estate')">Death &amp; Estate</button>
+      <button class="checklist-tab" onclick="showChecklist('relocation')">Moving &amp; Relocation</button>
+    </div>
+    <div class="checklist-card reveal" id="checklistCard">
+      <div class="checklist-card-header">
+        <div class="checklist-card-title-area">
+          <span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
+          <div>
+            <div class="checklist-card-name" id="checklistName">Job Loss Checklist</div>
+            <div class="checklist-card-sub">Lumeway &middot; Step-by-step guide</div>
+          </div>
+        </div>
+        <div class="checklist-card-count">
+          <div class="checklist-card-count-num" id="checklistCount">0/6</div>
+          <div class="checklist-card-count-label">completed</div>
+        </div>
+      </div>
+      <div id="checklistItems">
+        <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">File for unemployment benefits</span></div><span class="checklist-tag tag-urgent">Urgent — within 7 days</span></div>
+        <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Notify your health insurance provider</span></div><span class="checklist-tag tag-soon">Within 30 days</span></div>
+        <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Update your resume and LinkedIn profile</span></div><span class="checklist-tag tag-info">This week</span></div>
+        <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Review your severance agreement</span></div><span class="checklist-tag tag-urgent">Before signing</span></div>
+        <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Set up a job search tracking system</span></div><span class="checklist-tag tag-info">Organize</span></div>
+        <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Explore COBRA or marketplace health plans</span></div><span class="checklist-tag tag-soon">Benefits</span></div>
+      </div>
+      <div class="checklist-footer">
+        <span class="checklist-footer-note"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span> Lumeway generates a full personalized checklist based on your specific situation</span>
+        <a href="/chat" target="_blank" class="checklist-footer-btn">Get my full checklist &rarr;</a>
+      </div>
+    </div>
+    <p class="checklist-bottom-note reveal">Available as a printable worksheet, Google Doc, or interactive guide. &nbsp;<a href="/templates">Browse all worksheets &rarr;</a></p>
   </section>
 
   <!-- ═══ "Like a friend" section ═══ -->
@@ -860,6 +1036,57 @@
     document.querySelectorAll('a[href="#signup"]').forEach(function(a) {
       a.addEventListener('click', function(e) { if (localStorage.getItem('lumeway_subscribed')) return; e.preventDefault(); showPopup(); });
     });
+
+    // Checklist tabs
+    var checklistData = {
+      jobloss: {
+        name: 'Job Loss Checklist', count: '0/6',
+        items: [
+          { text: 'File for unemployment benefits', tag: 'Urgent \u2014 within 7 days', type: 'urgent' },
+          { text: 'Notify your health insurance provider', tag: 'Within 30 days', type: 'soon' },
+          { text: 'Update your resume and LinkedIn profile', tag: 'This week', type: 'info' },
+          { text: 'Review your severance agreement', tag: 'Before signing', type: 'urgent' },
+          { text: 'Set up a job search tracking system', tag: 'Organize', type: 'info' },
+          { text: 'Explore COBRA or marketplace health plans', tag: 'Benefits', type: 'soon' }
+        ]
+      },
+      estate: {
+        name: 'Death & Estate Checklist', count: '0/8',
+        items: [
+          { text: 'Obtain certified death certificates (10+ copies)', tag: 'Urgent \u2014 first 48 hrs', type: 'urgent' },
+          { text: 'Notify Social Security Administration', tag: 'Within 7 days', type: 'urgent' },
+          { text: 'Contact life insurance companies', tag: 'Within 30 days', type: 'soon' },
+          { text: 'Secure the home and change locks if needed', tag: 'Immediately', type: 'urgent' },
+          { text: 'Locate the will and contact the executor', tag: 'This week', type: 'info' },
+          { text: 'Notify banks and credit card companies', tag: 'Within 30 days', type: 'soon' },
+          { text: 'File for survivor benefits (SSA, VA, pension)', tag: 'Benefits', type: 'soon' },
+          { text: 'Cancel subscriptions and memberships', tag: 'When ready', type: 'info' }
+        ]
+      },
+      relocation: {
+        name: 'Moving & Relocation Checklist', count: '0/6',
+        items: [
+          { text: 'Submit change of address with USPS', tag: '2 weeks before', type: 'soon' },
+          { text: 'Transfer utilities to new address', tag: '1 week before', type: 'urgent' },
+          { text: 'Update driver\'s license and vehicle registration', tag: 'Within 30 days', type: 'soon' },
+          { text: 'Register to vote in your new district', tag: 'After moving', type: 'info' },
+          { text: 'Update address with banks and insurance', tag: 'Moving week', type: 'urgent' },
+          { text: 'Find new doctors, dentist, and pharmacy', tag: 'First month', type: 'info' }
+        ]
+      }
+    };
+    function showChecklist(type) {
+      var data = checklistData[type];
+      document.getElementById('checklistName').textContent = data.name;
+      document.getElementById('checklistCount').textContent = data.count;
+      var html = '';
+      data.items.forEach(function(item) {
+        html += '<div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">' + item.text + '</span></div><span class="checklist-tag tag-' + item.type + '">' + item.tag + '</span></div>';
+      });
+      document.getElementById('checklistItems').innerHTML = html;
+      document.querySelectorAll('.checklist-tab').forEach(function(t) { t.classList.remove('active'); });
+      event.target.classList.add('active');
+    }
 
     // Scroll reveal
     (function() {
