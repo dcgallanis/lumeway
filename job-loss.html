@@ -49,7 +49,9 @@
     .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--cream); color: var(--navy); }
     .nav-drop-menu .menu-div { height: 1px; background: var(--border); margin: 4px 6px; }
     .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
-    .hero { padding: 120px 24px 56px; max-width: 800px; margin: 0 auto; }
+    .hero { width: 100%; display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 120px 5% 60px; gap: 0; min-height: 520px; }
+    .hero-content { max-width: 560px; justify-self: end; padding-right: 60px; }
+    .hero-visual { display: flex; align-items: center; justify-content: center; align-self: stretch; border-radius: 24px; margin-left: 20px; font-size: 120px; line-height: 1; }
     .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
     .hero-title { font-family: 'Libre Baskerville', serif; font-size: clamp(40px, 7vw, 72px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 24px; }
     .hero-title em { font-style: italic; color: var(--accent-light); }
@@ -62,8 +64,10 @@
     .btn-large-secondary:hover { border-color: var(--navy); color: var(--navy); transform: translateY(-2px); }
     .btn-large-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--navy); }
     .btn-large-outline:hover { background: var(--navy); color: var(--cream); transform: translateY(-2px); }
-    .section { padding: 48px 24px; max-width: 900px; margin: 0 auto; }
-    .section-divider { width: 1px; height: 32px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
+    .section { width: 100%; padding: 64px 5%; }
+    .section:nth-of-type(odd) { background: var(--cream); }
+    .section:nth-of-type(even) { background: var(--warm-white); }
+    .section-divider { display: none; }
     .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
     .section-title { font-family: 'Libre Baskerville', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.15; margin-bottom: 36px; }
     .section-title em { font-style: italic; color: var(--accent-light); }
@@ -89,10 +93,12 @@
     .resource-title { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
     .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
     .resource-link { font-size: 12px; color: var(--accent); margin-top: 8px; display: block; }
-    .cta-section { padding: 48px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
-    .cta-title { font-family: 'Libre Baskerville', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
+    .cta-section { width: 100%; padding: 80px 5%; text-align: center; background: var(--navy); }
+    .cta-title { font-family: 'Libre Baskerville', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; color: var(--cream); }
     .cta-title em { font-style: italic; color: var(--accent-light); }
-    .cta-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
+    .cta-section .btn-large-outline { color: var(--cream); border-color: var(--cream); }
+    .cta-section .btn-large-outline:hover { background: var(--cream); color: var(--navy); }
+    .cta-subtitle { font-size: 17px; color: rgba(250,247,242,0.7); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
     .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
     footer { padding: 40px 48px 28px; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
     .footer-logo { height: 120px; object-fit: contain; margin-bottom: 4px; }
@@ -105,9 +111,9 @@
     .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
     .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-    @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
+    @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero { grid-template-columns: 1fr; padding: 100px 5% 40px; min-height: auto; } .hero-content { max-width: 100%; padding-right: 0; justify-self: start; } .hero-visual { display: none; } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
     /* Chat Preview */
-    .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
+    .chat-preview-wrap { max-width: 680px; }
     .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
     .cp-msg { display: flex; gap: 10px; margin-bottom: 16px; }
     .cp-msg:last-child { margin-bottom: 0; }
@@ -137,7 +143,7 @@
     .faq-answer-inner a { color: var(--navy); text-decoration: underline; text-underline-offset: 2px; }
     .faq-answer-inner a:hover { color: var(--gold); }
     /* State Selector */
-    .state-selector-section { padding: 0 24px 48px; max-width: 800px; margin: 0 auto; }
+    .state-selector-section { width: 100%; padding: 0 5% 48px; }
     .state-selector-intro { font-size: 13px; color: var(--muted); font-weight: 300; margin-bottom: 12px; }
     .state-select-input { padding: 11px 40px 11px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--warm-white); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E7D8A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; min-width: 220px; }
     .state-select-input:focus { outline: 2px solid var(--navy); outline-offset: 2px; }
@@ -191,12 +197,17 @@
 </nav>
 
 <div class="hero">
-  <div class="hero-eyebrow reveal">💼 Job Loss &amp; Income Crisis</div>
-  <h1 class="hero-title reveal">Job Loss &amp; Income Crisis Guide</h1>
-  <p class="hero-subtitle reveal">Losing a job is disorienting — but there are steps you can take right now to protect your income, your benefits, and your future. Lumeway helps you know exactly what to do first.</p>
-  <div class="hero-actions reveal">
-    <a href="/chat" target="_blank" target="_blank" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
-    <a href="/templates" class="btn-large btn-large-secondary">Browse worksheets</a>
+  <div class="hero-content">
+    <div class="hero-eyebrow reveal">💼 Job Loss &amp; Income Crisis</div>
+    <h1 class="hero-title reveal">Job Loss &amp; Income Crisis Guide</h1>
+    <p class="hero-subtitle reveal">Losing a job is disorienting — but there are steps you can take right now to protect your income, your benefits, and your future. Lumeway helps you know exactly what to do first.</p>
+    <div class="hero-actions reveal">
+      <a href="/chat" target="_blank" target="_blank" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+      <a href="/templates" class="btn-large btn-large-secondary">Browse worksheets</a>
+    </div>
+  </div>
+  <div class="hero-visual" style="background: linear-gradient(135deg, #4A5E2C 0%, #6B8F5E 50%, #8AAF7E 100%);">
+    <span>💼</span>
   </div>
 </div>
 

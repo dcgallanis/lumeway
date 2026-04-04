@@ -1528,19 +1528,19 @@ BUNDLE_DETAIL_HTML = """<!DOCTYPE html>
 <title>{{ name }} — Lumeway</title>
 <meta name="description" content="{{ desc }}">
 <link rel="canonical" href="https://lumeway.co/templates/{{ product_id }}">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--cream:#F7F4EF;--warm-white:#FDFCFA;--text:#1B2A38;--muted:#6E7D8A;--navy:#1B3A5C;--gold:#B8977E;--border:#E4DDD3;--shadow:0 2px 40px rgba(27,58,92,0.09)}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased}
+:root{--cream:#FAF7F2;--warm-white:#FDFCFA;--text:#2C3E50;--muted:#6B7B8D;--navy:#2C4A5E;--gold:#B8977E;--accent:#C4704E;--accent-light:#D4896C;--border:#E8E0D6;--shadow:0 2px 40px rgba(27,58,92,0.09)}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,244,239,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo-icon{width:32px;height:32px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500}
-.nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text)}
+.sun-icon{display:inline-flex}.sun-icon svg{stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round}
+.nav-logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--navy)}
 .nav-left{display:flex;align-items:center;gap:28px}
 .nav-right{display:flex;gap:12px;align-items:center}
 .nav-dropdown{position:relative}
-.nav-drop-btn{background:none;border:none;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--muted);cursor:pointer;padding:6px 4px;transition:color 0.15s;display:flex;align-items:center;gap:4px}
+.nav-drop-btn{background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--muted);cursor:pointer;padding:6px 4px;transition:color 0.15s;display:flex;align-items:center;gap:4px}
 .nav-drop-btn:hover{color:var(--navy)}
 .nav-drop-btn .chev{display:inline-block;transition:transform 0.2s ease}
 .nav-drop-btn[aria-expanded="true"] .chev{transform:rotate(180deg)}
@@ -1549,27 +1549,27 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:fl
 .nav-drop-menu a:hover{background:var(--cream);color:var(--navy)}
 .nav-drop-menu .menu-div{height:1px;background:var(--border);margin:4px 6px}
 .nav-dropdown:hover .nav-drop-menu,.nav-dropdown.open .nav-drop-menu{display:block}
-.btn-ghost-nav{padding:8px 20px;border:1px solid var(--border);border-radius:100px;background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;text-decoration:none;transition:all 0.2s}
+.btn-ghost-nav{padding:8px 20px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;text-decoration:none;transition:all 0.2s}
 .btn-ghost-nav:hover{background:var(--navy);color:var(--cream)}
 .hero{padding:120px 24px 48px;max-width:720px;margin:0 auto;text-align:center}
-.hero-subhead{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
-.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,52px);font-weight:300;line-height:1.12;margin-bottom:16px}
+.hero-subhead{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.hero-title{font-family:'Libre Baskerville',serif;font-size:clamp(32px,5vw,52px);font-weight:300;line-height:1.12;margin-bottom:16px}
 .hero-title em{font-style:italic;color:var(--gold)}
 .hero-subtitle{font-size:16px;color:var(--muted);font-weight:300;line-height:1.7;max-width:520px;margin:0 auto 32px}
 .price-block{display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:8px}
-.price-big{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:500;color:var(--navy)}
+.price-big{font-family:'Libre Baskerville',serif;font-size:42px;font-weight:500;color:var(--navy)}
 .price-note{font-size:14px;color:var(--muted)}
-.count-badge{display:inline-block;background:var(--warm-white);border:1px solid var(--border);padding:4px 14px;border-radius:100px;font-size:13px;color:var(--muted);margin-bottom:24px}
-.btn-buy{display:inline-block;padding:14px 36px;border:none;border-radius:100px;background:var(--navy);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none}
-.btn-buy:hover{background:#244a6e;transform:translateY(-1px)}
+.count-badge{display:inline-block;background:var(--warm-white);border:1px solid var(--border);padding:4px 14px;border-radius:8px;font-size:13px;color:var(--muted);margin-bottom:24px}
+.btn-buy{display:inline-block;padding:14px 36px;border:none;border-radius:8px;background:var(--accent);color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none}
+.btn-buy:hover{background:var(--accent-light);transform:translateY(-1px)}
 .btn-buy:disabled{opacity:0.6;cursor:not-allowed;transform:none}
 .content{max-width:720px;margin:0 auto;padding:0 24px 64px}
 .section-card{background:var(--warm-white);border:1px solid var(--border);border-radius:20px;padding:32px 36px;margin-bottom:24px}
 .section-label{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
-h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-bottom:16px}
+h2{font-family:'Libre Baskerville',serif;font-size:28px;font-weight:400;margin-bottom:16px}
 .doc-item{border-bottom:1px solid var(--border)}
 .doc-item:last-child{border-bottom:none}
-.doc-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 0;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left}
+.doc-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 0;background:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;text-align:left}
 .doc-toggle:hover .doc-name{color:var(--navy)}
 .doc-name{font-size:14px;color:var(--text);font-weight:400;line-height:1.5;padding-right:16px}
 .doc-name-only{font-size:14px;color:var(--text);padding:14px 0;padding-left:20px;position:relative}
@@ -1587,9 +1587,9 @@ h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-
 .btn-link{display:inline-block;font-size:14px;color:var(--navy);text-decoration:none;margin-top:16px;font-weight:500}
 .btn-link:hover{text-decoration:underline}
 .cta-block{background:var(--navy);border-radius:24px;padding:40px;text-align:center;max-width:720px;margin:0 auto 64px}
-.cta-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--cream);margin-bottom:12px}
+.cta-title{font-family:'Libre Baskerville',serif;font-size:32px;font-weight:300;color:var(--cream);margin-bottom:12px}
 .cta-sub{font-size:14px;color:rgba(247,244,239,0.6);margin-bottom:24px}
-.btn-cta{display:inline-block;padding:14px 32px;border-radius:100px;background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.2s}
+.btn-cta{display:inline-block;padding:14px 32px;border-radius:8px;background:var(--cream);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.2s}
 .btn-cta:hover{background:var(--gold);color:white}
 .disclaimer{font-size:11px;color:var(--muted);text-align:center;max-width:520px;margin:0 auto 48px;line-height:1.6}
 footer{padding:40px 48px 28px;border-top:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
@@ -1604,13 +1604,13 @@ footer{padding:40px 48px 28px;border-top:1px solid var(--border);display:flex;fl
 </style></head><body>
 <nav>
 <div class="nav-left">
-<a href="/" class="nav-logo"><div class="nav-logo-icon">L</div><span class="nav-logo-text">Lumeway</span></a>
+<a href="/" class="nav-logo"><span class="sun-icon" style="color:var(--accent)"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span><span class="nav-logo-text">Lumeway</span></a>
 <div class="nav-dropdown"><button class="nav-drop-btn" aria-expanded="false">Get help with <span class="chev">▾</span></button>
 <div class="nav-drop-menu"><a href="/estate">Death &amp; Estate</a><a href="/divorce">Divorce &amp; Separation</a><a href="/job-loss">Job Loss &amp; Income Crisis</a><a href="/relocation">Moving &amp; Relocation</a><a href="/disability">Disability &amp; Benefits</a><a href="/retirement">Retirement</a></div></div>
 <div class="nav-dropdown"><button class="nav-drop-btn" aria-expanded="false">Explore <span class="chev">▾</span></button>
 <div class="nav-drop-menu"><a href="/templates">Templates</a><a href="/faq">FAQ</a><a href="/blog">Blog</a><div class="menu-div"></div><a href="/about">About</a><a href="/contact">Contact</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div></div>
 </div>
-<div class="nav-right"><a href="/chat" target="_blank" class="btn-ghost-nav">Try it free</a></div>
+<div class="nav-right"><a href="/chat" target="_blank" class="btn-ghost-nav">Try it free</a><a href="/templates" class="btn-primary" style="padding:8px 20px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;text-decoration:none">Shop</a></div>
 </nav>
 <div class="hero">
 <div class="hero-subhead">{{ name }}</div>
@@ -1641,7 +1641,7 @@ footer{padding:40px 48px 28px;border-top:1px solid var(--border);display:flex;fl
 </div>
 <footer>
 <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo">
-<p class="footer-note">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</p>
+<p class="footer-note">Lumeway is a guidance tool, not a licensed professional. Always consult a qualified advisor.</p>
 <p class="footer-note"><a href="/about">About</a> &middot; <a href="/privacy">Privacy Policy</a></p>
 <div class="footer-social"><a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a><a href="https://www.etsy.com/shop/Lumeway" rel="noopener" target="_blank" title="Etsy"><svg viewBox="0 0 24 24"><path d="M8.559 3.074c0-.295.177-.413.59-.413h5.373c1.06 0 1.947.413 2.596 1.652l.649 1.416h.944l-.236-4.778H4.139l.059 1.18c1.06 0 1.77.177 2.065.531.354.354.472 1.003.472 1.947v11.14c0 .944-.118 1.593-.472 1.947-.295.354-1.003.531-2.065.531l-.059 1.18h14.336l.708-5.132h-.944l-.944 1.77c-.649 1.18-1.534 1.652-2.655 1.652H9.149c-.413 0-.59-.118-.59-.413V12.69h3.009c.767 0 1.357.118 1.652.472.295.295.472.826.531 1.534h1.003V9.504h-1.003c-.059.708-.236 1.239-.531 1.534-.295.295-.885.472-1.652.472H8.559V3.074z"/></svg></a></div>
 </footer>
