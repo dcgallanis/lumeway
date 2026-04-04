@@ -1226,20 +1226,16 @@ ${data.suggestedDocs && data.suggestedDocs.length ? `
 </body>
 </html>`;
 
-    // Open in new tab; fall back to blob download if popups are blocked
-    const w = window.open('', '_blank');
-    if (w) {
-      w.document.write(html);
-      w.document.close();
-    } else {
-      const blob = new Blob([html], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'lumeway-checklist.html';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
+    // Download as clean HTML file (user can open and print to PDF)
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lumeway-checklist.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   // ── Document suggestion parsing ──

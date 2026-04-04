@@ -23,14 +23,18 @@
 
     /* Dashboard layout */
     .dash { max-width: 900px; margin: 0 auto; padding: 100px 24px 64px; }
-    .dash-header { margin-bottom: 40px; }
+    .dash-header { margin-bottom: 32px; }
     .dash-greeting { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 5vw, 44px); font-weight: 300; line-height: 1.15; margin-bottom: 8px; }
     .dash-sub { font-size: 15px; font-weight: 300; color: var(--muted); }
 
-    /* Quick actions */
-    .quick-actions { display: flex; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; }
-    .quick-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: 1px solid var(--border); border-radius: 100px; background: var(--warm-white); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400; text-decoration: none; transition: all 0.15s; cursor: pointer; }
-    .quick-btn:hover { border-color: var(--gold); background: var(--cream); transform: translateY(-1px); }
+    /* Tabs */
+    .dash-tabs { display: flex; gap: 4px; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
+    .dash-tab { padding: 12px 24px; background: none; border: none; border-bottom: 2px solid transparent; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+    .dash-tab:hover { color: var(--text); }
+    .dash-tab.active { color: var(--navy); border-bottom-color: var(--navy); font-weight: 500; }
+    .dash-tab .tab-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--gold); color: white; font-size: 10px; font-weight: 600; min-width: 18px; height: 18px; border-radius: 9px; margin-left: 6px; padding: 0 5px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
 
     /* Cards */
     .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
@@ -58,9 +62,17 @@
     .check-item:last-child { border-bottom: none; }
     .check-box { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 6px; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
     .check-item.done .check-box { background: var(--green); border-color: var(--green); }
-    .check-item.done .check-box::after { content: '✓'; color: white; font-size: 12px; font-weight: 600; }
+    .check-item.done .check-box::after { content: '\2713'; color: white; font-size: 12px; font-weight: 600; }
     .check-item.done .check-text { text-decoration: line-through; color: var(--muted); }
     .check-text { font-size: 14px; font-weight: 300; line-height: 1.5; }
+
+    /* Checklist init */
+    .init-checklist { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .init-label { font-size: 13px; font-weight: 400; color: var(--text); margin-bottom: 10px; }
+    .init-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .init-select { font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); color: var(--text); }
+    .init-btn { padding: 10px 20px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .init-btn:hover { background: var(--accent-light); }
 
     /* Chat history */
     .session-list { display: flex; flex-direction: column; gap: 8px; }
@@ -88,11 +100,10 @@
     .conv-msg.user { background: var(--navy); color: var(--cream); margin-left: auto; border-bottom-right-radius: 4px; }
     .conv-msg.assistant { background: var(--warm-white); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
 
-    /* Checklist init */
-    .init-checklist { margin-top: 16px; }
-    .init-select { font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); color: var(--text); margin-right: 8px; }
-    .init-btn { padding: 10px 20px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
-    .init-btn:hover { background: var(--accent-light); }
+    /* Quick actions on overview */
+    .quick-actions { display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; }
+    .quick-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: 1px solid var(--border); border-radius: 100px; background: var(--warm-white); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400; text-decoration: none; transition: all 0.15s; cursor: pointer; }
+    .quick-btn:hover { border-color: var(--gold); background: var(--cream); transform: translateY(-1px); }
 
     /* Loading */
     .loading { text-align: center; padding: 48px; color: var(--muted); font-size: 15px; font-weight: 300; }
@@ -103,6 +114,8 @@
       .nav-right { gap: 8px; }
       .dash { padding: 85px 16px 48px; }
       .dash-grid { grid-template-columns: 1fr; }
+      .dash-tabs { overflow-x: auto; }
+      .dash-tab { padding: 12px 16px; white-space: nowrap; }
     }
   </style>
 </head>
@@ -133,6 +146,7 @@
   <script>
     var dashData = null;
     var checklistItems = [];
+    var currentTab = 'overview';
 
     function formatDate(iso) {
       if (!iso) return '';
@@ -143,6 +157,16 @@
     function logout() {
       fetch('/api/auth/logout', { method: 'POST' }).then(function() {
         window.location.href = '/';
+      });
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.dash-tab').forEach(function(t) {
+        t.classList.toggle('active', t.dataset.tab === tab);
+      });
+      document.querySelectorAll('.tab-panel').forEach(function(p) {
+        p.classList.toggle('active', p.id === 'panel-' + tab);
       });
     }
 
@@ -159,15 +183,20 @@
       });
     }
 
+    function getProgress() {
+      var total = checklistItems.length;
+      var completed = checklistItems.filter(function(i) { return i.is_completed; }).length;
+      var pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+      return { total: total, completed: completed, pct: pct };
+    }
+
     function renderDashboard() {
       var u = dashData.user;
       var sessions = dashData.sessions || [];
-      var cl = dashData.checklist || { total: 0, completed: 0 };
       var purchases = dashData.purchases || [];
-      var pct = cl.total > 0 ? Math.round((cl.completed / cl.total) * 100) : 0;
+      var prog = getProgress();
       var circumference = 2 * Math.PI * 30;
-      var offset = circumference - (pct / 100) * circumference;
-
+      var offset = circumference - (prog.pct / 100) * circumference;
       var name = u.display_name || u.email.split('@')[0];
 
       var html = '';
@@ -176,27 +205,43 @@
       html += '  <p class="dash-sub">' + u.email + '</p>';
       html += '</div>';
 
+      // Tabs
+      html += '<div class="dash-tabs">';
+      html += '  <button class="dash-tab active" data-tab="overview" onclick="switchTab(\'overview\')">Overview</button>';
+      html += '  <button class="dash-tab" data-tab="checklist" onclick="switchTab(\'checklist\')">Checklist';
+      if (prog.total > 0) html += ' <span class="tab-badge">' + prog.completed + '/' + prog.total + '</span>';
+      html += '</button>';
+      html += '  <button class="dash-tab" data-tab="history" onclick="switchTab(\'history\')">History';
+      if (sessions.length > 0) html += ' <span class="tab-badge">' + sessions.length + '</span>';
+      html += '</button>';
+      if (purchases.length > 0) {
+        html += '  <button class="dash-tab" data-tab="purchases" onclick="switchTab(\'purchases\')">Purchases</button>';
+      }
+      html += '</div>';
+
+      // ── Overview tab ──
+      html += '<div class="tab-panel active" id="panel-overview">';
       html += '<div class="quick-actions">';
-      html += '  <a href="/chat" target="_blank" class="quick-btn">💬 Continue chatting</a>';
-      html += '  <a href="#checklist" class="quick-btn" onclick="scrollToChecklist()">✓ My checklist</a>';
-      if (sessions.length > 0) html += '  <a href="#history" class="quick-btn" onclick="scrollToHistory()">📋 Chat history</a>';
+      html += '  <a href="/chat" target="_blank" class="quick-btn">\uD83D\uDCAC Continue chatting</a>';
+      if (prog.total > 0) html += '  <button class="quick-btn" onclick="switchTab(\'checklist\')">\u2713 My checklist</button>';
+      if (sessions.length > 0) html += '  <button class="quick-btn" onclick="switchTab(\'history\')">\uD83D\uDCCB Chat history</button>';
       html += '</div>';
 
       html += '<div class="dash-grid">';
-
       // Progress card
       html += '<div class="dash-card">';
       html += '  <div class="card-label">Progress</div>';
-      if (cl.total > 0) {
+      if (prog.total > 0) {
         html += '  <div class="progress-row">';
-        html += '    <div class="progress-ring">';
-        html += '      <svg width="72" height="72"><circle class="bg" cx="36" cy="36" r="30"/><circle class="fill" cx="36" cy="36" r="30" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"/></svg>';
-        html += '      <div class="progress-pct">' + pct + '%</div>';
+        html += '    <div class="progress-ring" id="progressRing">';
+        html += '      <svg width="72" height="72"><circle class="bg" cx="36" cy="36" r="30"/><circle class="fill" id="progressFill" cx="36" cy="36" r="30" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"/></svg>';
+        html += '      <div class="progress-pct" id="progressPct">' + prog.pct + '%</div>';
         html += '    </div>';
-        html += '    <div class="progress-info"><strong>' + cl.completed + ' of ' + cl.total + '</strong> tasks completed</div>';
+        html += '    <div class="progress-info" id="progressInfo"><strong>' + prog.completed + ' of ' + prog.total + '</strong> tasks completed</div>';
         html += '  </div>';
       } else {
-        html += '  <p class="card-empty">Start a checklist below to track your progress.</p>';
+        html += '  <p class="card-empty">Start a checklist to track your progress.</p>';
+        html += '  <button class="quick-btn" style="margin-top:12px" onclick="switchTab(\'checklist\')">Create checklist</button>';
       }
       html += '</div>';
 
@@ -205,29 +250,42 @@
       html += '  <div class="card-label">Conversations</div>';
       if (sessions.length > 0) {
         html += '  <div class="card-title">' + sessions.length + ' session' + (sessions.length !== 1 ? 's' : '') + '</div>';
-        html += '  <p class="card-empty">Scroll down to view your chat history.</p>';
+        html += '  <p class="card-empty" style="margin-top:4px"><a href="#" onclick="switchTab(\'history\');return false" style="color:var(--navy)">View chat history</a></p>';
       } else {
         html += '  <p class="card-empty">No conversations yet. <a href="/chat" target="_blank" style="color:var(--navy)">Start one</a>.</p>';
       }
       html += '</div>';
+      html += '</div>'; // dash-grid
+      html += '</div>'; // panel-overview
 
-      html += '</div>';
-
-      // Checklist section
-      html += '<div class="dash-card dash-card-full" id="checklist" style="margin-bottom:20px">';
-      html += '  <div class="card-label">My Checklist</div>';
+      // ── Checklist tab ──
+      html += '<div class="tab-panel" id="panel-checklist">';
       if (checklistItems.length > 0) {
+        // Progress at top of checklist
+        html += '<div class="dash-card" style="margin-bottom:20px">';
+        html += '  <div class="progress-row">';
+        html += '    <div class="progress-ring" id="clProgressRing">';
+        html += '      <svg width="72" height="72"><circle class="bg" cx="36" cy="36" r="30"/><circle class="fill" id="clProgressFill" cx="36" cy="36" r="30" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"/></svg>';
+        html += '      <div class="progress-pct" id="clProgressPct">' + prog.pct + '%</div>';
+        html += '    </div>';
+        html += '    <div class="progress-info" id="clProgressInfo"><strong>' + prog.completed + ' of ' + prog.total + '</strong> tasks completed</div>';
+        html += '  </div>';
+        html += '</div>';
+
+        // Checklist items
+        html += '<div class="dash-card" style="margin-bottom:20px">';
         var phases = {};
+        var phaseOrder = [];
         checklistItems.forEach(function(item) {
-          if (!phases[item.phase]) phases[item.phase] = [];
+          if (!phases[item.phase]) { phases[item.phase] = []; phaseOrder.push(item.phase); }
           phases[item.phase].push(item);
         });
         html += '<div class="checklist-phases">';
-        Object.keys(phases).forEach(function(phase) {
+        phaseOrder.forEach(function(phase) {
           html += '<div><div class="phase-title">' + phase + '</div>';
           phases[phase].forEach(function(item) {
             var doneClass = item.is_completed ? ' done' : '';
-            html += '<div class="check-item' + doneClass + '" onclick="toggleItem(' + item.id + ', this)">';
+            html += '<div class="check-item' + doneClass + '" data-id="' + item.id + '" onclick="toggleItem(' + item.id + ', this)">';
             html += '  <div class="check-box"></div>';
             html += '  <div class="check-text">' + item.item_text + '</div>';
             html += '</div>';
@@ -235,27 +293,50 @@
           html += '</div>';
         });
         html += '</div>';
-      } else {
-        html += '<p class="card-empty">Create a checklist to stay organized through your transition.</p>';
+
+        // Add another transition
         html += '<div class="init-checklist">';
-        html += '  <select class="init-select" id="transitionSelect">';
-        html += '    <option value="">Choose your transition...</option>';
-        html += '    <option value="estate">Death & Estate</option>';
-        html += '    <option value="divorce">Divorce & Separation</option>';
-        html += '    <option value="job-loss">Job Loss & Income Crisis</option>';
-        html += '    <option value="relocation">Moving & Relocation</option>';
-        html += '    <option value="disability">Disability & Benefits</option>';
-        html += '    <option value="retirement">Retirement</option>';
-        html += '  </select>';
-        html += '  <button class="init-btn" onclick="initChecklist()">Create checklist</button>';
+        html += '  <div class="init-label">Add another transition checklist:</div>';
+        html += '  <div class="init-row">';
+        html += '    <select class="init-select" id="transitionSelect">';
+        html += '      <option value="">Choose a transition...</option>';
+        html += '      <option value="estate">Death & Estate</option>';
+        html += '      <option value="divorce">Divorce & Separation</option>';
+        html += '      <option value="job-loss">Job Loss & Income Crisis</option>';
+        html += '      <option value="relocation">Moving & Relocation</option>';
+        html += '      <option value="disability">Disability & Benefits</option>';
+        html += '      <option value="retirement">Retirement</option>';
+        html += '    </select>';
+        html += '    <button class="init-btn" onclick="initChecklist()">Add</button>';
+        html += '  </div>';
+        html += '</div>';
+        html += '</div>';
+      } else {
+        html += '<div class="dash-card">';
+        html += '  <div class="card-label">My Checklist</div>';
+        html += '  <p class="card-empty">Create a checklist to stay organized through your transition.</p>';
+        html += '  <div class="init-checklist" style="border-top:none;padding-top:0">';
+        html += '    <div class="init-row">';
+        html += '      <select class="init-select" id="transitionSelect">';
+        html += '        <option value="">Choose your transition...</option>';
+        html += '        <option value="estate">Death & Estate</option>';
+        html += '        <option value="divorce">Divorce & Separation</option>';
+        html += '        <option value="job-loss">Job Loss & Income Crisis</option>';
+        html += '        <option value="relocation">Moving & Relocation</option>';
+        html += '        <option value="disability">Disability & Benefits</option>';
+        html += '        <option value="retirement">Retirement</option>';
+        html += '      </select>';
+        html += '      <button class="init-btn" onclick="initChecklist()">Create checklist</button>';
+        html += '    </div>';
+        html += '  </div>';
         html += '</div>';
       }
-      html += '</div>';
+      html += '</div>'; // panel-checklist
 
-      // Chat history
+      // ── History tab ──
+      html += '<div class="tab-panel" id="panel-history">';
       if (sessions.length > 0) {
-        html += '<div class="dash-card dash-card-full" id="history" style="margin-bottom:20px">';
-        html += '  <div class="card-label">Chat History</div>';
+        html += '<div class="dash-card">';
         html += '  <div class="session-list">';
         sessions.forEach(function(s) {
           var cat = s.transition_category ? '<span class="session-cat">' + s.transition_category + '</span>' : '';
@@ -266,12 +347,17 @@
         });
         html += '  </div>';
         html += '</div>';
+      } else {
+        html += '<div class="dash-card">';
+        html += '  <p class="card-empty">No conversations yet. <a href="/chat" target="_blank" style="color:var(--navy)">Start one</a> to see your history here.</p>';
+        html += '</div>';
       }
+      html += '</div>'; // panel-history
 
-      // Purchases
+      // ── Purchases tab ──
       if (purchases.length > 0) {
-        html += '<div class="dash-card dash-card-full" style="margin-bottom:20px">';
-        html += '  <div class="card-label">My Purchases</div>';
+        html += '<div class="tab-panel" id="panel-purchases">';
+        html += '<div class="dash-card">';
         purchases.forEach(function(p) {
           html += '<div class="purchase-item">';
           html += '  <div><div class="purchase-name">' + p.product_name + '</div><div class="purchase-date">' + formatDate(p.purchased_at) + '</div></div>';
@@ -279,9 +365,36 @@
           html += '</div>';
         });
         html += '</div>';
+        html += '</div>'; // panel-purchases
       }
 
       document.getElementById('dashContent').innerHTML = html;
+
+      // Restore active tab if we re-rendered
+      if (currentTab !== 'overview') switchTab(currentTab);
+    }
+
+    function updateProgressUI() {
+      var prog = getProgress();
+      var circumference = 2 * Math.PI * 30;
+      var offset = circumference - (prog.pct / 100) * circumference;
+
+      // Update all progress ring instances
+      ['', 'cl'].forEach(function(prefix) {
+        var fill = document.getElementById(prefix + 'ProgressFill');
+        var pct = document.getElementById(prefix + 'ProgressPct');
+        var info = document.getElementById(prefix + 'ProgressInfo');
+        if (fill) fill.setAttribute('stroke-dashoffset', offset);
+        if (pct) pct.textContent = prog.pct + '%';
+        if (info) info.innerHTML = '<strong>' + prog.completed + ' of ' + prog.total + '</strong> tasks completed';
+      });
+
+      // Update tab badge
+      var clTab = document.querySelector('[data-tab="checklist"]');
+      if (clTab) {
+        var badge = clTab.querySelector('.tab-badge');
+        if (badge) badge.textContent = prog.completed + '/' + prog.total;
+      }
     }
 
     function toggleItem(itemId, el) {
@@ -290,16 +403,17 @@
       .then(function(data) {
         if (data.ok) {
           el.classList.toggle('done');
-          // Update local data for progress recalc
           checklistItems.forEach(function(item) {
             if (item.id === itemId) item.is_completed = data.is_completed;
           });
+          updateProgressUI();
         }
       });
     }
 
     function initChecklist() {
-      var type = document.getElementById('transitionSelect').value;
+      var sel = document.getElementById('transitionSelect');
+      var type = sel.value;
       if (!type) return;
       fetch('/api/checklist/init', {
         method: 'POST',
@@ -308,7 +422,10 @@
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        if (data.ok) loadDashboard();
+        if (data.ok) {
+          currentTab = 'checklist';
+          loadDashboard();
+        }
       });
     }
 
@@ -330,9 +447,6 @@
     function closeConv() {
       document.getElementById('convModal').classList.remove('open');
     }
-
-    function scrollToChecklist() { document.getElementById('checklist').scrollIntoView({ behavior: 'smooth' }); }
-    function scrollToHistory() { var el = document.getElementById('history'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }
 
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeConv(); });
 
