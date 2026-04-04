@@ -556,10 +556,11 @@
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-checklist">';
       if (checklistItems.length > 0) {
-        // Progress at top
-        html += '<div class="dash-card" style="margin-bottom:20px">';
-        html += progressRingHTML('cl', prog);
-        html += '</div>';
+        // Checklist layout: items on left, progress sidebar on right
+        html += '<div style="display:grid;grid-template-columns:1fr 200px;gap:20px;align-items:start;">';
+
+        // Left: checklist items
+        html += '<div>';
 
         // Group by transition_type, then by phase
         var categories = {};
@@ -599,6 +600,15 @@
         if (catOrder.length > 1) {
           html += '</div>'; // checklist-cols
         }
+
+        html += '</div>'; // end left
+
+        // Right: progress sidebar
+        html += '<div class="progress-compact" style="position:sticky;top:80px;">';
+        html += progressRingHTML('cl', prog);
+        html += '</div>';
+
+        html += '</div>'; // end grid layout
       } else {
         html += '<div class="dash-card">';
         html += '  <div class="card-label">My Checklist</div>';

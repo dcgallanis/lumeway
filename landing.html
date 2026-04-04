@@ -130,9 +130,13 @@
       line-height: 1.8; margin-bottom: 40px;
     }
     .hero-actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
-    .hero-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 32px; }
-    .hero-pill { padding: 6px 14px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; font-size: 12px; color: var(--muted); text-decoration: none; transition: all 0.15s; }
-    .hero-pill:hover { border-color: var(--terracotta); color: var(--navy); }
+    .hero-features { margin-top: 40px; display: flex; flex-direction: column; gap: 12px; }
+    .hero-feature-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .hero-feature-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; transition: all 0.15s; }
+    .hero-feature-item:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .hero-feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .hero-feature-name { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+    .hero-feature-desc { font-size: 11.5px; color: var(--muted); line-height: 1.4; font-weight: 300; }
     .btn-large { padding: 15px 34px; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.22s; display: inline-flex; align-items: center; gap: 8px; }
     .btn-large-primary { background: var(--terracotta); color: #fff; border: 1.5px solid var(--terracotta); }
     .btn-large-primary:hover { background: var(--terra-light); border-color: var(--terra-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(196,112,78,0.25); }
@@ -611,7 +615,7 @@
       .hero-content { max-width: 100%; justify-self: center; padding-right: 0; }
       .hero-subtitle { margin-left: auto; margin-right: auto; max-width: 500px; }
       .hero-actions { justify-content: center; }
-      .hero-pills { justify-content: center; }
+      .hero-feature-row { grid-template-columns: repeat(3, 1fr); }
       .hero-image { order: -1; margin-right: 0; border-radius: 20px; max-height: 400px; }
       .hero-image::before { width: 60px; }
       .friend-grid { grid-template-columns: 1fr; gap: 40px; }
@@ -635,11 +639,11 @@
       .checklist-card-header, .checklist-footer { padding: 16px 20px; }
       .checklist-footer { flex-direction: column; gap: 12px; text-align: center; }
       .hero-actions { flex-direction: column; width: 100%; max-width: 320px; margin: 0 auto; }
+      .hero-feature-row { grid-template-columns: 1fr; }
       .btn-large { width: 100%; justify-content: center; }
-      .transitions-section, .how-section, .friend-section, .products-section, .promise-section, .signup-section { padding-left: 20px; padding-right: 20px; }
+      .transitions-section, .friend-section, .products-section, .promise-section, .signup-section { padding-left: 20px; padding-right: 20px; }
       .transitions-grid, .products-grid { grid-template-columns: 1fr; }
       .transitions-header { flex-direction: column; align-items: flex-start; }
-      .steps-grid { grid-template-columns: 1fr; }
       footer { padding: 32px 20px 24px; }
     }
     @media (max-width: 480px) {
@@ -719,13 +723,53 @@
         <a href="/chat" target="_blank" class="btn-large btn-large-primary">Try Lumeway free &rarr;</a>
         <a href="/templates" class="btn-large btn-large-secondary">Browse worksheets</a>
       </div>
-      <div class="hero-pills reveal">
-        <a href="/estate" class="hero-pill">Death &amp; Estate</a>
-        <a href="/divorce" class="hero-pill">Divorce</a>
-        <a href="/job-loss" class="hero-pill">Job Loss</a>
-        <a href="/relocation" class="hero-pill">Moving</a>
-        <a href="/disability" class="hero-pill">Disability</a>
-        <a href="/retirement" class="hero-pill">Retirement</a>
+      <div class="hero-features reveal">
+        <div class="hero-feature-row">
+          <div class="hero-feature-item">
+            <span class="hero-feature-icon">💬</span>
+            <div>
+              <div class="hero-feature-name">Guided Conversations</div>
+              <div class="hero-feature-desc">Talk through your situation and get a personalized action plan</div>
+            </div>
+          </div>
+          <div class="hero-feature-item">
+            <span class="hero-feature-icon">📋</span>
+            <div>
+              <div class="hero-feature-name">Smart Checklists</div>
+              <div class="hero-feature-desc">Every task, deadline, and document — organized by priority</div>
+            </div>
+          </div>
+          <div class="hero-feature-item">
+            <span class="hero-feature-icon">📊</span>
+            <div>
+              <div class="hero-feature-name">Personal Dashboard</div>
+              <div class="hero-feature-desc">Track your progress, deadlines, and goals in one place</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-feature-row">
+          <div class="hero-feature-item">
+            <span class="hero-feature-icon">📅</span>
+            <div>
+              <div class="hero-feature-name">Deadline Calendar</div>
+              <div class="hero-feature-desc">Never miss a filing window or important date</div>
+            </div>
+          </div>
+          <div class="hero-feature-item">
+            <span class="hero-feature-icon">📄</span>
+            <div>
+              <div class="hero-feature-name">Letter Templates</div>
+              <div class="hero-feature-desc">Pre-written letters for banks, agencies, and employers</div>
+            </div>
+          </div>
+          <div class="hero-feature-item">
+            <span class="hero-feature-icon">🗺️</span>
+            <div>
+              <div class="hero-feature-name">State-Specific Info</div>
+              <div class="hero-feature-desc">Timelines and resources tailored to your state</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="hero-image">
@@ -739,6 +783,7 @@
       <div>
         <div class="section-label">Who we help</div>
         <h2 class="section-title">Every major life transition,<br><em>handled with care</em></h2>
+        <p style="font-size:16px;color:var(--muted);font-weight:300;line-height:1.7;max-width:640px;margin-top:16px;">We've gathered state-specific resources, timelines, and step-by-step guides for each transition. Learn more about what you're going through — and let Lumeway walk you through it.</p>
       </div>
       <a href="/templates" class="browse-link">Browse all guides &rarr;</a>
     </div>
@@ -891,30 +936,7 @@
     </div>
   </section>
 
-  <!-- ═══ How it Works ═══ -->
-  <section class="how-section">
-    <div class="how-header">
-      <div class="section-label reveal">How it works</div>
-      <h2 class="section-title reveal">Calm in the chaos</h2>
-    </div>
-    <div class="steps-grid reveal-stagger">
-      <div class="step reveal">
-        <div class="step-number">01</div>
-        <div class="step-title">Tell us what's happening</div>
-        <p class="step-desc">No forms, no intake paperwork. Just tell Lumeway what you're going through in your own words.</p>
-      </div>
-      <div class="step reveal">
-        <div class="step-number">02</div>
-        <div class="step-title">Get a clear plan</div>
-        <p class="step-desc">Lumeway maps out exactly what needs to happen — in the right order, with deadlines that matter.</p>
-      </div>
-      <div class="step reveal">
-        <div class="step-number">03</div>
-        <div class="step-title">Take it one step at a time</div>
-        <p class="step-desc">Work through tasks together. Lumeway drafts letters, explains forms, and knows when to bring in a professional.</p>
-      </div>
-    </div>
-  </section>
+  <!-- How it Works section removed -->
 
   <!-- ═══ Products ═══ -->
   <!-- ═══ Free Resources ═══ -->
