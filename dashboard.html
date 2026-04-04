@@ -94,23 +94,49 @@
     .cal-month { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; }
     .cal-btn { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 14px; color: var(--text); transition: all 0.15s; }
     .cal-btn:hover { background: var(--cream); border-color: var(--gold); }
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-    .cal-header { text-align: center; font-size: 11px; font-weight: 500; color: var(--muted); padding: 6px 0; text-transform: uppercase; letter-spacing: 0.05em; }
-    .cal-day { min-height: 80px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 8px; padding: 6px; font-size: 12px; position: relative; transition: all 0.15s; }
-    .cal-day:hover { border-color: var(--gold); }
-    .cal-day.today { border-color: var(--navy); border-width: 2px; }
-    .cal-day.other-month { opacity: 0.35; }
-    .cal-day-num { font-weight: 500; color: var(--navy); margin-bottom: 4px; }
-    .cal-event { font-size: 10px; padding: 2px 4px; border-radius: 4px; margin-bottom: 2px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .cal-header { text-align: center; font-size: 11px; font-weight: 500; color: var(--muted); padding: 8px 0; text-transform: uppercase; letter-spacing: 0.05em; }
+    .cal-day { min-height: 90px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 8px; padding: 8px; font-size: 12px; position: relative; transition: all 0.15s; cursor: pointer; }
+    .cal-day:hover { border-color: var(--gold); background: var(--cream); }
+    .cal-day.today { border-color: var(--navy); border-width: 2px; background: rgba(27,58,92,0.03); }
+    .cal-day.other-month { opacity: 0.3; }
+    .cal-day-num { font-weight: 500; color: var(--navy); margin-bottom: 4px; font-size: 13px; }
+    .cal-event { font-size: 10px; padding: 3px 5px; border-radius: 4px; margin-bottom: 3px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .cal-event.deadline { background: rgba(212,117,107,0.15); color: var(--red); }
     .cal-event.goal { background: rgba(184,151,126,0.15); color: var(--gold); }
     .cal-event.completed { opacity: 0.4; text-decoration: line-through; }
+    .cal-event.important { background: rgba(27,58,92,0.1); color: var(--navy); }
+
+    /* Day view modal */
+    .day-modal { display: none; position: fixed; inset: 0; background: rgba(27,42,56,0.5); z-index: 200; padding: 24px; overflow-y: auto; }
+    .day-modal.open { display: flex; align-items: flex-start; justify-content: center; padding-top: 100px; }
+    .day-box { background: var(--cream); border-radius: 20px; max-width: 480px; width: 100%; padding: 32px; }
+    .day-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400; margin-bottom: 20px; }
+    .day-event { display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .day-event:last-child { border-bottom: none; }
+    .day-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+    .day-dot.deadline { background: var(--red); }
+    .day-dot.goal { background: var(--gold); }
+    .day-dot.important { background: var(--navy); }
+    .day-event-title { font-size: 14px; font-weight: 400; }
+    .day-event-note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .day-empty { font-size: 14px; color: var(--muted); font-weight: 300; }
 
     /* Deadline calculator */
-    .calc-section { margin-top: 20px; padding: 20px 24px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; }
+    .calc-section { margin-bottom: 20px; padding: 20px 24px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; }
     .calc-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 400; margin-bottom: 12px; }
     .calc-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     .calc-input { font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); color: var(--text); }
+
+    /* Important dates */
+    .date-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .date-item:last-child { border-bottom: none; }
+    .date-info { flex: 1; }
+    .date-title { font-size: 14px; font-weight: 400; }
+    .date-when { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .date-add { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .date-add input { font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); color: var(--text); outline: none; }
+    .date-add input:focus { border-color: var(--gold); }
 
     /* Documents needed */
     .doc-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
@@ -202,6 +228,14 @@
 
   <div class="dash" id="dashContent">
     <div class="loading" id="loadingState">Loading your dashboard...</div>
+  </div>
+
+  <div class="day-modal" id="dayModal" onclick="if(event.target===this)closeDayView()">
+    <div class="day-box">
+      <button class="conv-close" onclick="closeDayView()">&times;</button>
+      <h2 class="day-title" id="dayTitle"></h2>
+      <div id="dayEvents"></div>
+    </div>
   </div>
 
   <div class="conv-modal" id="convModal" onclick="if(event.target===this)closeConv()">
@@ -421,6 +455,31 @@
       html += '</div>';
 
       html += '</div>'; // dash-grid
+
+      // Important dates section
+      html += '<div class="dash-card" style="margin-bottom:24px">';
+      html += '  <div class="card-label">Important Dates</div>';
+      var importantDates = deadlines.filter(function(d) { return d.source === 'manual'; });
+      if (importantDates.length > 0) {
+        importantDates.forEach(function(d) {
+          var days = daysUntil(d.deadline_date);
+          var label = days < 0 ? (Math.abs(days) + ' days ago') : days === 0 ? 'Today' : 'in ' + days + ' days';
+          html += '<div class="date-item">';
+          html += '  <div class="date-info"><div class="date-title">' + d.title + '</div>';
+          html += '  <div class="date-when">' + formatShortDate(d.deadline_date) + ' — ' + label + '</div></div>';
+          html += '</div>';
+        });
+      } else {
+        html += '<p class="card-empty">Add important dates and they\'ll show up on your calendar automatically.</p>';
+      }
+      html += '<div class="date-add">';
+      html += '  <input class="goal-input" id="dateTitleInput" placeholder="What\'s the date for?" style="flex:2">';
+      html += '  <input type="date" class="calc-input" id="dateValueInput" style="flex:1">';
+      html += '  <input class="goal-input" id="dateNoteInput" placeholder="Note (optional)" style="flex:2">';
+      html += '  <button class="init-btn" onclick="addImportantDate()">Add</button>';
+      html += '</div>';
+      html += '</div>';
+
       html += '</div>'; // panel-overview
 
       // ═══════════════════════════════
@@ -500,16 +559,8 @@
       // ── CALENDAR TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-calendar">';
-      html += '<div class="dash-card">';
-      html += '  <div class="cal-nav">';
-      html += '    <button class="cal-btn" onclick="changeMonth(-1)">&larr;</button>';
-      html += '    <div class="cal-month" id="calMonthLabel"></div>';
-      html += '    <button class="cal-btn" onclick="changeMonth(1)">&rarr;</button>';
-      html += '  </div>';
-      html += '  <div id="calGrid"></div>';
-      html += '</div>';
 
-      // Deadline calculator
+      // Auto-calculate at top
       html += '<div class="calc-section">';
       html += '  <div class="calc-title">Auto-calculate deadlines</div>';
       html += '  <p class="card-empty" style="margin-bottom:12px">Enter a key date and we\'ll calculate your deadlines automatically.</p>';
@@ -526,6 +577,16 @@
       html += '    <input type="date" class="calc-input" id="calcDate">';
       html += '    <button class="init-btn" onclick="calculateDeadlines()">Calculate</button>';
       html += '  </div>';
+      html += '</div>';
+
+      // Month calendar
+      html += '<div class="dash-card">';
+      html += '  <div class="cal-nav">';
+      html += '    <button class="cal-btn" onclick="changeMonth(-1)">&larr;</button>';
+      html += '    <div class="cal-month" id="calMonthLabel"></div>';
+      html += '    <button class="cal-btn" onclick="changeMonth(1)">&rarr;</button>';
+      html += '  </div>';
+      html += '  <div id="calGrid"></div>';
       html += '</div>';
 
       html += '</div>'; // panel-calendar
@@ -630,6 +691,26 @@
     }
 
     // ── Calendar ──
+    // Global events map for day view
+    var calEvents = {};
+
+    function buildEventMap() {
+      calEvents = {};
+      var deadlines = dashData.deadlines || [];
+      var goals = dashData.goals || [];
+      deadlines.forEach(function(d) {
+        if (!calEvents[d.deadline_date]) calEvents[d.deadline_date] = [];
+        var type = d.source === 'manual' ? 'important' : 'deadline';
+        calEvents[d.deadline_date].push({ type: type, title: d.title, note: d.note || '', completed: d.is_completed, id: d.id });
+      });
+      goals.forEach(function(g) {
+        if (g.target_date) {
+          if (!calEvents[g.target_date]) calEvents[g.target_date] = [];
+          calEvents[g.target_date].push({ type: 'goal', title: g.title, note: '', completed: g.is_completed, id: g.id });
+        }
+      });
+    }
+
     function renderCalendar() {
       var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
       var label = document.getElementById('calMonthLabel');
@@ -638,34 +719,20 @@
       var grid = document.getElementById('calGrid');
       if (!grid) return;
 
-      var deadlines = dashData.deadlines || [];
-      var goals = dashData.goals || [];
+      buildEventMap();
 
       var firstDay = new Date(calYear, calMonth, 1);
       var lastDay = new Date(calYear, calMonth + 1, 0);
-      var startDay = firstDay.getDay(); // 0=Sun
+      var startDay = firstDay.getDay();
       var daysInMonth = lastDay.getDate();
 
       var today = new Date();
       today.setHours(0,0,0,0);
       var todayStr = today.toISOString().split('T')[0];
 
-      // Build event map by date
-      var events = {};
-      deadlines.forEach(function(d) {
-        if (!events[d.deadline_date]) events[d.deadline_date] = [];
-        events[d.deadline_date].push({ type: 'deadline', title: d.title, completed: d.is_completed, id: d.id });
-      });
-      goals.forEach(function(g) {
-        if (g.target_date) {
-          if (!events[g.target_date]) events[g.target_date] = [];
-          events[g.target_date].push({ type: 'goal', title: g.title, completed: g.is_completed, id: g.id });
-        }
-      });
-
       var h = '';
-      var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      days.forEach(function(d) { h += '<div class="cal-header">' + d + '</div>'; });
+      var dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      dayNames.forEach(function(d) { h += '<div class="cal-header">' + d + '</div>'; });
 
       // Previous month days
       var prevMonth = new Date(calYear, calMonth, 0);
@@ -678,15 +745,15 @@
       for (var d = 1; d <= daysInMonth; d++) {
         var dateStr = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
         var isToday = dateStr === todayStr;
-        h += '<div class="cal-day' + (isToday ? ' today' : '') + '">';
+        h += '<div class="cal-day' + (isToday ? ' today' : '') + '" onclick="openDayView(\'' + dateStr + '\')">';
         h += '<div class="cal-day-num">' + d + '</div>';
-        if (events[dateStr]) {
-          events[dateStr].slice(0, 3).forEach(function(ev) {
+        if (calEvents[dateStr]) {
+          calEvents[dateStr].slice(0, 3).forEach(function(ev) {
             var cls = ev.type + (ev.completed ? ' completed' : '');
             h += '<div class="cal-event ' + cls + '" title="' + ev.title.replace(/"/g, '&quot;') + '">' + ev.title + '</div>';
           });
-          if (events[dateStr].length > 3) {
-            h += '<div class="cal-event" style="color:var(--muted)">+' + (events[dateStr].length - 3) + ' more</div>';
+          if (calEvents[dateStr].length > 3) {
+            h += '<div class="cal-event" style="color:var(--muted);background:none">+' + (calEvents[dateStr].length - 3) + ' more</div>';
           }
         }
         h += '</div>';
@@ -707,6 +774,54 @@
       if (calMonth > 11) { calMonth = 0; calYear++; }
       if (calMonth < 0) { calMonth = 11; calYear--; }
       renderCalendar();
+    }
+
+    // ── Day view ──
+    function openDayView(dateStr) {
+      var d = new Date(dateStr + 'T00:00:00');
+      var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      document.getElementById('dayTitle').textContent = dayNames[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+
+      var eventsDiv = document.getElementById('dayEvents');
+      var evts = calEvents[dateStr] || [];
+      var h = '';
+      if (evts.length > 0) {
+        evts.forEach(function(ev) {
+          h += '<div class="day-event">';
+          h += '  <div class="day-dot ' + ev.type + '"></div>';
+          h += '  <div>';
+          h += '    <div class="day-event-title">' + ev.title + '</div>';
+          if (ev.note) h += '    <div class="day-event-note">' + ev.note + '</div>';
+          h += '  </div>';
+          h += '</div>';
+        });
+      } else {
+        h = '<p class="day-empty">Nothing scheduled for this day.</p>';
+      }
+      eventsDiv.innerHTML = h;
+      document.getElementById('dayModal').classList.add('open');
+    }
+
+    function closeDayView() {
+      document.getElementById('dayModal').classList.remove('open');
+    }
+
+    // ── Important dates ──
+    function addImportantDate() {
+      var title = document.getElementById('dateTitleInput').value.trim();
+      var date = document.getElementById('dateValueInput').value;
+      var note = document.getElementById('dateNoteInput').value.trim();
+      if (!title || !date) return;
+      fetch('/api/deadlines', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: title, deadline_date: date, note: note, transition_type: null })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) loadDashboard();
+      });
     }
 
     // ── Progress updates ──
@@ -913,7 +1028,7 @@
       document.getElementById('convModal').classList.remove('open');
     }
 
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeConv(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeConv(); closeDayView(); } });
 
     loadDashboard();
   </script>
