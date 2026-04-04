@@ -22,175 +22,404 @@
   <meta name="twitter:card" content="summary"/>
   <meta name="twitter:title" content="Lumeway — Your Transition Navigator"/>
   <meta name="twitter:description" content="Lumeway helps you navigate life's hardest transitions — job loss, divorce, death, disability, relocation, and retirement. Free AI-powered step-by-step guidance."/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --cream:       #F7F4EF;
+      --cream:       #FAF7F2;
       --warm-white:  #FDFCFA;
-      --text:        #1B2A38;
-      --muted:       #6E7D8A;
-      --navy:        #1B3A5C;
+      --blush:       #F2E6DF;
+      --blush-light: #F9F1EC;
+      --sage:        #D4DFD0;
+      --sage-light:  #E8EFE5;
+      --sky:         #D6E2ED;
+      --sky-light:   #E8EFF5;
+      --terracotta:  #C4704E;
+      --terra-light: #D4896C;
+      --navy:        #2C4A5E;
+      --navy-deep:   #1B3A4E;
+      --text:        #2C3E50;
+      --muted:       #6B7B8D;
       --gold:        #B8977E;
-      --gold-light:  #D4BA9E;
-      --border:      #E4DDD3;
-      --shadow:      0 2px 40px rgba(27,58,92,0.09);
+      --border:      #E8E0D6;
+      --shadow:      0 4px 40px rgba(44,74,94,0.08);
     }
     html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
     /* ── Nav ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 16px 48px;
+      padding: 14px 48px;
       display: flex; align-items: center; justify-content: space-between;
-      background: rgba(247,244,239,0.88); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
+      background: rgba(250,247,242,0.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(232,224,214,0.6);
     }
-    .nav-left { display: flex; align-items: center; gap: 28px; }
+    .nav-left { display: flex; align-items: center; gap: 32px; }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .nav-logo-icon { width: 30px; height: 30px; background: var(--navy); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 500; }
-    .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text); }
+    .nav-logo-img { height: 28px; }
+    .nav-logo-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--navy); letter-spacing: 0.08em; text-transform: uppercase; }
+    .nav-links { display: flex; align-items: center; gap: 8px; }
     .nav-right { display: flex; gap: 10px; align-items: center; }
-    .btn-ghost { padding: 7px 18px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13.5px; cursor: pointer; text-decoration: none; transition: all 0.18s; }
+
+    /* Nav buttons */
+    .nav-link { font-size: 14px; color: var(--muted); text-decoration: none; padding: 6px 12px; transition: color 0.15s; font-weight: 400; }
+    .nav-link:hover { color: var(--navy); }
+    .btn-ghost { padding: 8px 20px; border: 1.5px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13.5px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.18s; }
     .btn-ghost:hover { background: var(--navy); color: var(--cream); border-color: var(--navy); }
-    .btn-primary { padding: 7px 18px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 13.5px; cursor: pointer; text-decoration: none; transition: all 0.18s; }
-    .btn-primary:hover { background: var(--gold); }
+    .btn-primary { padding: 8px 22px; border: 1.5px solid var(--terracotta); border-radius: 8px; background: var(--terracotta); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13.5px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.18s; }
+    .btn-primary:hover { background: var(--terra-light); border-color: var(--terra-light); }
 
     /* Dropdown */
     .nav-dropdown { position: relative; }
-    .nav-drop-btn { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
+    .nav-drop-btn { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 12px; transition: color 0.15s; display: flex; align-items: center; gap: 5px; font-weight: 400; }
     .nav-drop-btn:hover { color: var(--navy); }
-    .nav-drop-btn .chev { display: inline-block; transition: transform 0.2s ease; }
+    .nav-drop-btn .chev { display: inline-block; font-size: 10px; transition: transform 0.2s ease; }
     .nav-drop-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
-    .nav-drop-menu { display: none; position: absolute; top: calc(100% + 8px); left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 200px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
-    .nav-drop-menu a { display: block; padding: 9px 12px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 7px; }
-    .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--cream); color: var(--navy); }
+    .nav-drop-menu { display: none; position: absolute; top: calc(100% + 8px); left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 210px; box-shadow: 0 12px 32px rgba(44,74,94,0.1); z-index: 200; }
+    .nav-drop-menu a { display: block; padding: 9px 14px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 8px; transition: background 0.12s; }
+    .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--blush-light); color: var(--navy); }
     .nav-drop-menu .menu-div { height: 1px; background: var(--border); margin: 4px 6px; }
     .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
 
+    /* Hamburger */
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--navy); margin: 5px 0; border-radius: 2px; transition: all 0.3s; }
+
+    /* Mobile menu */
+    .mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--warm-white); z-index: 150; padding: 20px 24px; flex-direction: column; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+    .mobile-menu-close { background: none; border: none; font-size: 28px; color: var(--navy); cursor: pointer; padding: 8px; }
+    .mobile-menu a { display: block; font-size: 16px; color: var(--text); text-decoration: none; padding: 14px 0; border-bottom: 1px solid var(--border); font-weight: 400; }
+    .mobile-menu a:hover { color: var(--terracotta); }
+    .mobile-menu .mobile-cta { margin-top: 24px; display: block; text-align: center; padding: 14px 24px; background: var(--terracotta); color: #fff; border-radius: 10px; font-size: 15px; font-weight: 500; text-decoration: none; }
+
     /* ── Hero ── */
-    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 24px 64px; text-align: center; }
-    .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 5px 14px; font-size: 11.5px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
-    .hero-eyebrow::before { content: ''; width: 6px; height: 6px; background: #7C9A6A; border-radius: 50%; }
-    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(44px, 8vw, 88px); font-weight: 300; line-height: 1.06; letter-spacing: -0.02em; color: var(--text); max-width: 780px; margin-bottom: 20px; }
-    .hero-title em { font-style: italic; color: var(--gold); }
-    .hero-subtitle { font-size: 17px; font-weight: 300; color: var(--muted); max-width: 500px; line-height: 1.75; margin-bottom: 36px; }
-    .hero-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
-    .btn-large { padding: 13px 30px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.22s; display: inline-flex; align-items: center; gap: 8px; }
-    .btn-large-primary { background: var(--navy); color: var(--cream); border: 1.5px solid var(--navy); }
-    .btn-large-primary:hover { background: var(--gold); border-color: var(--gold); transform: translateY(-2px); }
-    .btn-large-secondary { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
-    .btn-large-secondary:hover { border-color: var(--navy); color: var(--navy); transform: translateY(-2px); }
-    .transitions-strip { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; margin-top: 44px; }
-    .transition-pill { padding: 5px 13px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; font-size: 12.5px; color: var(--muted); text-decoration: none; transition: all 0.15s; }
-    .transition-pill:hover { border-color: var(--gold); color: var(--navy); background: var(--warm-white); }
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 120px 48px 80px;
+      max-width: 1340px;
+      margin: 0 auto;
+      gap: 60px;
+    }
+    .hero-content { max-width: 560px; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--blush-light); border: 1px solid var(--blush);
+      border-radius: 100px; padding: 6px 16px;
+      font-size: 12px; font-weight: 500; color: var(--terracotta);
+      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 28px;
+    }
+    .hero-eyebrow svg { width: 14px; height: 14px; fill: var(--terracotta); }
+    .hero-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: clamp(38px, 4.5vw, 62px);
+      font-weight: 400; line-height: 1.15;
+      color: var(--navy);
+      margin-bottom: 24px;
+    }
+    .hero-title em { font-style: italic; color: var(--terracotta); }
+    .hero-subtitle {
+      font-size: 16px; font-weight: 400; color: var(--muted);
+      max-width: 460px; line-height: 1.8; margin-bottom: 36px;
+    }
+    .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .btn-large { padding: 14px 32px; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.22s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-large-primary { background: var(--terracotta); color: #fff; border: 1.5px solid var(--terracotta); }
+    .btn-large-primary:hover { background: var(--terra-light); border-color: var(--terra-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(196,112,78,0.25); }
+    .btn-large-secondary { background: transparent; color: var(--terracotta); border: 1.5px solid var(--terracotta); }
+    .btn-large-secondary:hover { background: var(--blush-light); transform: translateY(-2px); }
 
-    /* ── Sections ── */
-    .section-divider { width: 1px; height: 32px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
-    .section { padding: 48px 24px; max-width: 1100px; margin: 0 auto; }
-    .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; text-align: center; }
-    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 5vw, 52px); font-weight: 300; line-height: 1.15; text-align: center; margin-bottom: 40px; }
-    .section-title em { font-style: italic; color: var(--gold); }
+    .hero-image {
+      position: relative;
+      display: flex; justify-content: center; align-items: center;
+    }
+    .hero-image img {
+      width: 100%; max-width: 580px;
+      border-radius: 24px;
+      object-fit: cover;
+      box-shadow: 0 20px 60px rgba(44,74,94,0.12);
+    }
 
-    /* Steps grid */
-    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2px; background: var(--border); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
-    .step { background: var(--warm-white); padding: 32px 28px; }
-    .step-number { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 300; color: var(--border); line-height: 1; margin-bottom: 16px; }
-    .step-title { font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 500; margin-bottom: 8px; color: var(--navy); }
-    .step-desc { font-size: 13.5px; color: var(--muted); line-height: 1.7; font-weight: 300; }
+    /* ── Transitions Section ── */
+    .transitions-section {
+      padding: 80px 48px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .transitions-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .transitions-header-left { max-width: 700px; }
+    .section-label {
+      display: inline-block;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--terracotta);
+      background: var(--blush-light); border: 1px solid var(--blush);
+      padding: 5px 14px; border-radius: 100px;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: clamp(30px, 4vw, 48px);
+      font-weight: 400; line-height: 1.2;
+      color: var(--navy);
+    }
+    .section-title em { font-style: italic; color: var(--terracotta); }
+    .browse-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 500; color: var(--navy);
+      text-decoration: none; padding: 10px 24px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      transition: all 0.18s;
+    }
+    .browse-link:hover { border-color: var(--navy); background: var(--warm-white); }
 
-    /* Transitions grid */
-    .transitions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 12px; }
-    .transition-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.22s; cursor: pointer; text-decoration: none; display: block; }
-    .transition-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--gold-light); }
-    .transition-icon { font-size: 26px; margin-bottom: 12px; }
-    .transition-name { font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 500; margin-bottom: 6px; color: var(--navy); }
-    .transition-desc { font-size: 13px; color: var(--muted); line-height: 1.7; font-weight: 300; }
+    .transitions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .transition-card {
+      padding: 32px 28px;
+      border-radius: 16px;
+      transition: all 0.25s;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      border: 1px solid transparent;
+    }
+    .transition-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .transition-card .sun-icon { margin-bottom: 16px; opacity: 0.5; }
+    .transition-card .sun-icon svg { width: 24px; height: 24px; }
+    .transition-name {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 20px; font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--navy);
+    }
+    .transition-desc { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 400; }
 
-    /* Waitlist */
-    .waitlist-section { padding: 56px 24px; background: var(--navy); }
-    .waitlist-inner { max-width: 580px; margin: 0 auto; text-align: center; }
-    .waitlist-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
-    .waitlist-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 5vw, 52px); font-weight: 300; color: var(--cream); line-height: 1.15; margin-bottom: 14px; }
-    .waitlist-subtitle { font-size: 15px; color: rgba(247,244,239,0.6); font-weight: 300; line-height: 1.7; margin-bottom: 32px; }
-    .waitlist-form { display: flex; gap: 10px; max-width: 440px; margin: 0 auto; }
-    .waitlist-input { flex: 1; padding: 14px 18px; border: 1px solid rgba(247,244,239,0.2); border-radius: 100px; background: rgba(247,244,239,0.08); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s; }
-    .waitlist-input::placeholder { color: rgba(247,244,239,0.4); }
-    .waitlist-input:focus { border-color: var(--gold); }
-    .waitlist-btn { padding: 14px 28px; border: none; border-radius: 100px; background: var(--cream); color: var(--navy); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-    .waitlist-btn:hover { background: var(--gold); color: white; transform: translateY(-1px); }
-    .waitlist-msg { margin-top: 16px; font-size: 14px; color: var(--gold); font-weight: 400; }
+    /* Card color variants */
+    .card-blush { background: var(--blush-light); }
+    .card-blush:hover { border-color: var(--blush); }
+    .card-blush .sun-icon svg { fill: var(--terracotta); }
+    .card-sage { background: var(--sage-light); }
+    .card-sage:hover { border-color: var(--sage); }
+    .card-sage .sun-icon svg { fill: #6B8F5E; }
+    .card-sky { background: var(--sky-light); }
+    .card-sky:hover { border-color: var(--sky); }
+    .card-sky .sun-icon svg { fill: var(--navy); }
 
+    /* ── How it Works ── */
+    .how-section {
+      padding: 80px 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .how-header { text-align: center; margin-bottom: 56px; }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .step { background: var(--warm-white); padding: 36px 32px; }
+    .step-number {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 44px; font-weight: 400;
+      color: var(--blush);
+      line-height: 1; margin-bottom: 18px;
+    }
+    .step-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 19px; font-weight: 700;
+      margin-bottom: 10px; color: var(--navy);
+    }
+    .step-desc { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 400; }
+
+    /* ── Promise Band ── */
+    .promise-section {
+      position: relative;
+      padding: 100px 48px;
+      background: var(--navy-deep);
+      overflow: hidden;
+    }
+    .promise-bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .promise-bg-circle.tl { width: 400px; height: 400px; top: -100px; left: -100px; }
+    .promise-bg-circle.br { width: 500px; height: 500px; bottom: -150px; right: -100px; }
+    .promise-inner {
+      position: relative; z-index: 1;
+      max-width: 800px; margin: 0 auto; text-align: center;
+    }
+    .promise-icon { margin-bottom: 24px; }
+    .promise-icon svg { width: 32px; height: 32px; fill: var(--blush); opacity: 0.6; }
+    .promise-quote {
+      font-family: 'Libre Baskerville', serif;
+      font-size: clamp(24px, 3.5vw, 40px);
+      font-weight: 400; line-height: 1.4;
+      color: var(--blush-light);
+      margin-bottom: 20px;
+    }
+    .promise-attribution {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--terracotta);
+      margin-bottom: 40px;
+    }
+    .promise-features {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    }
+    .promise-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 100px;
+      font-size: 13px; color: rgba(250,247,242,0.85);
+      font-weight: 400;
+    }
+    .promise-pill svg { width: 14px; height: 14px; fill: rgba(250,247,242,0.6); }
+
+    /* ── Signup Section ── */
+    .signup-section {
+      padding: 80px 48px;
+      background: var(--cream);
+    }
+    .signup-inner {
+      max-width: 580px; margin: 0 auto; text-align: center;
+    }
+    .signup-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 400; color: var(--navy);
+      line-height: 1.25; margin-bottom: 14px;
+    }
+    .signup-subtitle {
+      font-size: 15px; color: var(--muted); font-weight: 400;
+      line-height: 1.7; margin-bottom: 32px;
+    }
+    .signup-form { display: flex; gap: 10px; max-width: 440px; margin: 0 auto; }
+    .signup-input {
+      flex: 1; padding: 14px 20px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      background: var(--warm-white); color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px;
+      outline: none; transition: border-color 0.2s;
+    }
+    .signup-input::placeholder { color: #B0A99F; }
+    .signup-input:focus { border-color: var(--terracotta); }
+    .signup-btn {
+      padding: 14px 28px; border: none; border-radius: 10px;
+      background: var(--terracotta); color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .signup-btn:hover { background: var(--terra-light); transform: translateY(-1px); }
+    .signup-msg { margin-top: 16px; font-size: 14px; color: var(--terracotta); font-weight: 400; }
+
+    /* ── Popup ── */
     .popup-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(27,42,56,0.55); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; }
-    .popup-card { background: var(--warm-white); border-radius: 24px; padding: 48px 40px; max-width: 440px; width: 100%; position: relative; box-shadow: 0 24px 64px rgba(27,58,92,0.18); text-align: center; }
+    .popup-card { background: var(--warm-white); border-radius: 20px; padding: 48px 40px; max-width: 440px; width: 100%; position: relative; box-shadow: 0 24px 64px rgba(44,74,94,0.18); text-align: center; }
     .popup-close { position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 28px; color: var(--muted); cursor: pointer; padding: 8px 12px; line-height: 1; transition: color 0.15s; z-index: 1; }
     .popup-close:hover { color: var(--text); }
-    .popup-dismiss { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--muted); cursor: pointer; margin-top: 16px; padding: 4px; text-decoration: underline; text-underline-offset: 2px; }
+    .popup-dismiss { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; color: var(--muted); cursor: pointer; margin-top: 16px; padding: 4px; text-decoration: underline; text-underline-offset: 2px; }
     .popup-dismiss:hover { color: var(--text); }
-    .popup-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
-    .popup-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; line-height: 1.2; margin-bottom: 12px; color: var(--text); }
-    .popup-desc { font-size: 15px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 28px; }
+    .popup-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 12px; }
+    .popup-title { font-family: 'Libre Baskerville', serif; font-size: 28px; font-weight: 400; line-height: 1.2; margin-bottom: 12px; color: var(--navy); }
+    .popup-desc { font-size: 15px; color: var(--muted); font-weight: 400; line-height: 1.7; margin-bottom: 28px; }
     .popup-form { display: flex; flex-direction: column; gap: 10px; }
-    .popup-input { padding: 14px 18px; border: 1px solid var(--border); border-radius: 100px; background: var(--cream); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s; }
-    .popup-input::placeholder { color: var(--muted); }
-    .popup-input:focus { border-color: var(--gold); }
-    .popup-btn { padding: 14px 28px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-    .popup-btn:hover { background: var(--gold); transform: translateY(-1px); }
-    .popup-msg { margin-top: 12px; font-size: 14px; color: var(--navy); font-weight: 400; }
-    @media (max-width: 520px) { .waitlist-form { flex-direction: column; } .popup-card { padding: 36px 24px; } }
-    .tally-embed { background: #fff; border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; overflow: hidden; min-height: 200px; }
+    .popup-input { padding: 14px 20px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--cream); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s; }
+    .popup-input::placeholder { color: #B0A99F; }
+    .popup-input:focus { border-color: var(--terracotta); }
+    .popup-btn { padding: 14px 28px; border: none; border-radius: 10px; background: var(--terracotta); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .popup-btn:hover { background: var(--terra-light); transform: translateY(-1px); }
+    .popup-msg { margin-top: 12px; font-size: 14px; color: var(--terracotta); font-weight: 400; }
+    @media (max-width: 520px) { .signup-form { flex-direction: column; } .popup-card { padding: 36px 24px; } }
 
     /* Footer */
-    footer { padding: 40px 48px 28px; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
-    .footer-logo { height: 120px; object-fit: contain; margin-bottom: 4px; }
-    .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; } .footer-social { display: flex; gap: 16px; align-items: center; } .footer-social a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; color: var(--muted); text-decoration: none; transition: all 0.15s ease; } .footer-social a:hover { border-color: var(--gold); color: var(--navy); background: var(--surface2, #EEE8DE); } .footer-social svg { width: 16px; height: 16px; fill: currentColor; }
+    footer {
+      padding: 48px 48px 32px;
+      border-top: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      align-items: center; gap: 16px; text-align: center;
+      background: var(--cream);
+    }
+    .footer-logo { height: 100px; object-fit: contain; margin-bottom: 4px; }
+    .footer-note { font-size: 12px; color: var(--muted); font-weight: 400; line-height: 1.6; }
     .footer-note a { color: var(--muted); text-decoration: none; }
     .footer-note a:hover { color: var(--navy); }
+    .footer-social { display: flex; gap: 14px; align-items: center; }
+    .footer-social a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; color: var(--muted); text-decoration: none; transition: all 0.15s ease; }
+    .footer-social a:hover { border-color: var(--terracotta); color: var(--terracotta); background: var(--blush-light); }
+    .footer-social svg { width: 16px; height: 16px; fill: currentColor; }
 
-    /* ── Scroll animations ── */
+    /* ── Scroll Animations ── */
     .reveal {
       opacity: 0;
-      transform: translateY(32px);
+      transform: translateY(28px);
       transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
     }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .reveal-stagger > .reveal:nth-child(2) { transition-delay: 0.12s; }
-    .reveal-stagger > .reveal:nth-child(3) { transition-delay: 0.24s; }
-    .reveal-stagger > .reveal:nth-child(4) { transition-delay: 0.36s; }
-    .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
-    .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-stagger > .reveal:nth-child(2) { transition-delay: 0.1s; }
+    .reveal-stagger > .reveal:nth-child(3) { transition-delay: 0.2s; }
+    .reveal-stagger > .reveal:nth-child(4) { transition-delay: 0.3s; }
+    .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.4s; }
+    .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.5s; }
     @media (prefers-reduced-motion: reduce) {
       .reveal { opacity: 1; transform: none; transition: none; }
     }
 
-    /* ── Mobile ── */
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; gap: 40px; padding: 120px 32px 60px; text-align: center; }
+      .hero-content { max-width: 100%; margin: 0 auto; }
+      .hero-subtitle { margin-left: auto; margin-right: auto; }
+      .hero-actions { justify-content: center; }
+      .hero-image { order: -1; }
+      .hero-image img { max-width: 440px; }
+      .transitions-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 768px) {
       nav { padding: 14px 20px; }
-      .nav-left { gap: 12px; }
+      .nav-links { display: none; }
       .nav-right { display: none; }
-      .nav-drop-btn { font-size: 13px; }
-      .hero { padding: 90px 20px 48px; min-height: auto; }
-      .hero-title { font-size: clamp(36px, 8vw, 60px); }
+      .hamburger { display: block; }
+      .hero { padding: 100px 20px 48px; min-height: auto; }
+      .hero-title { font-size: clamp(32px, 7vw, 48px); }
       .hero-subtitle { font-size: 15px; }
-      .hero-actions { flex-direction: column; width: 100%; max-width: 320px; }
+      .hero-image img { max-width: 340px; }
+      .hero-actions { flex-direction: column; width: 100%; max-width: 320px; margin: 0 auto; }
       .btn-large { width: 100%; justify-content: center; }
-      .transitions-strip { gap: 5px; }
-      .transition-pill { font-size: 11px; padding: 4px 10px; }
-      .section { padding: 36px 20px; }
-      .section-title { font-size: clamp(28px, 5vw, 40px); }
+      .transitions-section { padding: 60px 20px; }
+      .transitions-header { flex-direction: column; align-items: flex-start; }
+      .transitions-grid { grid-template-columns: 1fr; }
+      .how-section { padding: 60px 20px; }
       .steps-grid { grid-template-columns: 1fr; }
-      .transition-grid { grid-template-columns: 1fr; }
-      footer { padding: 20px; flex-direction: column; text-align: center; gap: 8px; }
+      .promise-section { padding: 64px 20px; }
+      .signup-section { padding: 60px 20px; }
+      footer { padding: 32px 20px 24px; }
     }
     @media (max-width: 480px) {
       nav { padding: 12px 16px; }
-      .nav-logo-text { font-size: 17px; }
-      .nav-drop-btn { font-size: 12px; }
-      .hero { padding: 80px 16px 36px; }
+      .hero { padding: 90px 16px 36px; }
+      .hero-title { font-size: clamp(28px, 7vw, 38px); }
     }
   </style>
   <script type="application/ld+json">
@@ -217,67 +446,126 @@
 </head>
 <body>
 
+  <!-- Nav -->
   <nav>
     <div class="nav-left">
       <a href="/" class="nav-logo">
-        <div class="nav-logo-icon">L</div>
+        <img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="" class="nav-logo-img">
         <span class="nav-logo-text">Lumeway</span>
       </a>
-      <div class="nav-dropdown">
-        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">▾</span></button>
-        <div class="nav-drop-menu">
-          <a href="/estate">Death &amp; Estate</a>
-          <a href="/divorce">Divorce &amp; Separation</a>
-          <a href="/job-loss">Job Loss &amp; Income Crisis</a>
-          <a href="/relocation">Moving &amp; Relocation</a>
-          <a href="/disability">Disability &amp; Benefits</a>
-          <a href="/retirement">Retirement</a>
+      <div class="nav-links">
+        <div class="nav-dropdown">
+          <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">&#9662;</span></button>
+          <div class="nav-drop-menu">
+            <a href="/estate">Death &amp; Estate</a>
+            <a href="/divorce">Divorce &amp; Separation</a>
+            <a href="/job-loss">Job Loss &amp; Income Crisis</a>
+            <a href="/relocation">Moving &amp; Relocation</a>
+            <a href="/disability">Disability &amp; Benefits</a>
+            <a href="/retirement">Retirement</a>
+          </div>
         </div>
-      </div>
-      <div class="nav-dropdown">
-        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">▾</span></button>
-        <div class="nav-drop-menu">
-          <a href="/templates">Shop</a>
-          <a href="/faq">FAQ</a>
-          <a href="/blog">Blog</a>
-          <div class="menu-div"></div>
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/terms">Terms</a>
-        </div>
+        <a href="/templates" class="nav-link">Explore</a>
       </div>
     </div>
     <div class="nav-right">
-      <a href="/chat" target="_blank" class="btn-ghost">Try it free</a>
-      <a href="/templates" class="btn-primary">Shop</a>
-      <a href="/login" class="btn-ghost" id="navAccount">Log in</a>
+      <a href="/login" class="nav-link" id="navAccount">Log in</a>
+      <a href="/templates" class="btn-ghost">Shop</a>
+      <a href="/chat" target="_blank" class="btn-primary">Try it free</a>
     </div>
+    <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 
-  <section class="hero">
-    <div class="hero-eyebrow reveal">Now in early access</div>
-    <h1 class="hero-title reveal">When life changes,<br><em>find your way through</em></h1>
-    <p class="hero-subtitle reveal">Lumeway guides you through life's hardest transitions — from paperwork and deadlines to knowing who to call and what to do first.</p>
-    <div class="hero-actions reveal">
-      <a href="/chat" target="_blank" class="btn-large btn-large-primary">Try Lumeway free →</a>
-      <a href="/templates" class="btn-large btn-large-secondary">Browse worksheets</a>
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+      <a href="/" class="nav-logo">
+        <img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="" class="nav-logo-img">
+        <span class="nav-logo-text">Lumeway</span>
+      </a>
+      <button class="mobile-menu-close" onclick="document.getElementById('mobileMenu').classList.remove('open')" aria-label="Close">&times;</button>
     </div>
-    <div class="transitions-strip reveal">
-      <a href="/estate" class="transition-pill">Death &amp; Estate</a>
-      <a href="/divorce" class="transition-pill">Divorce &amp; Separation</a>
-      <a href="/job-loss" class="transition-pill">Job Loss &amp; Income Crisis</a>
-      <a href="/relocation" class="transition-pill">Moving &amp; Relocation</a>
-      <a href="/disability" class="transition-pill">Disability &amp; Benefits</a>
-      <a href="/retirement" class="transition-pill">Retirement</a>
+    <a href="/estate">Death &amp; Estate</a>
+    <a href="/divorce">Divorce &amp; Separation</a>
+    <a href="/job-loss">Job Loss</a>
+    <a href="/relocation">Moving &amp; Relocation</a>
+    <a href="/disability">Disability &amp; Benefits</a>
+    <a href="/retirement">Retirement</a>
+    <a href="/templates">Explore</a>
+    <a href="/login">Log in</a>
+    <a href="/chat" target="_blank" class="mobile-cta">Try it free</a>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow reveal">
+        <svg viewBox="0 0 24 24"><path d="M12 2L14.09 8.26L20.18 8.63L15.54 12.74L16.91 18.77L12 15.77L7.09 18.77L8.46 12.74L3.82 8.63L9.91 8.26L12 2Z"/></svg>
+        Now in Early Access
+      </div>
+      <h1 class="hero-title reveal">When life changes,<br><em>find your way through</em></h1>
+      <p class="hero-subtitle reveal">Lumeway guides you through life's hardest transitions — from paperwork and deadlines to knowing who to call and what to do first.</p>
+      <div class="hero-actions reveal">
+        <a href="/chat" target="_blank" class="btn-large btn-large-primary">Try Lumeway free &rarr;</a>
+        <a href="/templates" class="btn-large btn-large-secondary">Browse worksheets</a>
+      </div>
+    </div>
+    <div class="hero-image reveal">
+      <img src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=800&q=80&auto=format" alt="Planning journal with goals written out, tea cup, and soft styling" />
     </div>
   </section>
 
-  <div class="section-divider"></div>
+  <!-- Transitions -->
+  <section class="transitions-section">
+    <div class="transitions-header reveal">
+      <div class="transitions-header-left">
+        <div class="section-label">Who we help</div>
+        <h2 class="section-title">Every major life transition,<br><em>handled with care</em></h2>
+      </div>
+      <a href="/templates" class="browse-link">Browse all guides &rarr;</a>
+    </div>
+    <div class="transitions-grid reveal-stagger">
+      <a href="/estate" class="transition-card card-blush reveal">
+        <div class="sun-icon"><svg viewBox="0 0 24 24"><path d="M12 2L14.09 8.26L20.18 8.63L15.54 12.74L16.91 18.77L12 15.77L7.09 18.77L8.46 12.74L3.82 8.63L9.91 8.26L12 2Z"/></svg></div>
+        <div class="transition-name">Death &amp; Estate</div>
+        <p class="transition-desc">From death certificates to survivor benefits — every step, in order.</p>
+      </a>
+      <a href="/divorce" class="transition-card card-sage reveal">
+        <div class="sun-icon"><svg viewBox="0 0 24 24"><path d="M12 2L14.09 8.26L20.18 8.63L15.54 12.74L16.91 18.77L12 15.77L7.09 18.77L8.46 12.74L3.82 8.63L9.91 8.26L12 2Z"/></svg></div>
+        <div class="transition-name">Divorce &amp; Separation</div>
+        <p class="transition-desc">Asset division, custody, and new accounts — handled with clarity.</p>
+      </a>
+      <a href="/job-loss" class="transition-card card-sky reveal">
+        <div class="sun-icon"><svg viewBox="0 0 24 24"><path d="M12 2L14.09 8.26L20.18 8.63L15.54 12.74L16.91 18.77L12 15.77L7.09 18.77L8.46 12.74L3.82 8.63L9.91 8.26L12 2Z"/></svg></div>
+        <div class="transition-name">Job Loss</div>
+        <p class="transition-desc">File for unemployment, update your resume, protect your benefits.</p>
+      </a>
+      <a href="/relocation" class="transition-card card-blush reveal">
+        <div class="sun-icon"><svg viewBox="0 0 24 24"><path d="M12 2L14.09 8.26L20.18 8.63L15.54 12.74L16.91 18.77L12 15.77L7.09 18.77L8.46 12.74L3.82 8.63L9.91 8.26L12 2Z"/></svg></div>
+        <div class="transition-name">Moving &amp; Relocation</div>
+        <p class="transition-desc">Coordinate every moving part — licenses, utilities, registrations.</p>
+      </a>
+      <a href="/disability" class="transition-card card-sage reveal">
+        <div class="sun-icon"><svg viewBox="0 0 24 24"><path d="M12 2L14.09 8.26L20.18 8.63L15.54 12.74L16.91 18.77L12 15.77L7.09 18.77L8.46 12.74L3.82 8.63L9.91 8.26L12 2Z"/></svg></div>
+        <div class="transition-name">Disability &amp; Benefits</div>
+        <p class="transition-desc">SSDI and insurance claims made manageable, from application to appeal.</p>
+      </a>
+      <a href="/retirement" class="transition-card card-sky reveal">
+        <div class="sun-icon"><svg viewBox="0 0 24 24"><path d="M12 2L14.09 8.26L20.18 8.63L15.54 12.74L16.91 18.77L12 15.77L7.09 18.77L8.46 12.74L3.82 8.63L9.91 8.26L12 2Z"/></svg></div>
+        <div class="transition-name">Retirement</div>
+        <p class="transition-desc">Social Security timing, Medicare enrollment, and financial planning.</p>
+      </a>
+    </div>
+  </section>
 
-  <div class="section">
-    <p class="section-label reveal">How it works</p>
-    <h2 class="section-title reveal">Calm in the chaos</h2>
+  <!-- How it Works -->
+  <section class="how-section">
+    <div class="how-header">
+      <div class="section-label reveal">How it works</div>
+      <h2 class="section-title reveal">Calm in the chaos</h2>
+    </div>
     <div class="steps-grid reveal-stagger">
       <div class="step reveal">
         <div class="step-number">01</div>
@@ -295,60 +583,42 @@
         <p class="step-desc">Work through tasks together. Lumeway drafts letters, explains forms, and knows when to bring in a professional.</p>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="section-divider"></div>
-
-  <div class="section">
-    <p class="section-label reveal">Who we help</p>
-    <h2 class="section-title reveal">Every major life transition,<br><em>handled with care</em></h2>
-    <div class="transitions-grid reveal-stagger">
-      <a href="/estate" class="transition-card reveal">
-        <div class="transition-icon">🕊️</div>
-        <div class="transition-name">Death &amp; Estate</div>
-        <p class="transition-desc">From death certificates to survivor benefits, we help you navigate every step.</p>
-      </a>
-      <a href="/divorce" class="transition-card reveal">
-        <div class="transition-icon">⚖️</div>
-        <div class="transition-name">Divorce &amp; Separation</div>
-        <p class="transition-desc">From asset division to new accounts, we help you protect yourself and move forward.</p>
-      </a>
-      <a href="/job-loss" class="transition-card reveal">
-        <div class="transition-icon">💼</div>
-        <div class="transition-name">Job Loss &amp; Income Crisis</div>
-        <p class="transition-desc">File for unemployment, review severance, and protect your benefits immediately.</p>
-      </a>
-      <a href="/relocation" class="transition-card reveal">
-        <div class="transition-icon">📦</div>
-        <div class="transition-name">Moving &amp; Relocation</div>
-        <p class="transition-desc">Coordinate every moving part — licenses, utilities, registrations, and more.</p>
-      </a>
-      <a href="/disability" class="transition-card reveal">
-        <div class="transition-icon">🩺</div>
-        <div class="transition-name">Disability &amp; Benefits</div>
-        <p class="transition-desc">SSDI and insurance claims made manageable, from application to appeal.</p>
-      </a>
-      <a href="/retirement" class="transition-card reveal">
-        <div class="transition-icon">🌅</div>
-        <div class="transition-name">Retirement</div>
-        <p class="transition-desc">Social Security timing, Medicare enrollment, and financial planning guidance.</p>
-      </a>
-    </div>
-  </div>
-
-  <section class="waitlist-section" id="signup">
-    <div class="waitlist-inner">
-      <p class="waitlist-label reveal">Stay in the loop</p>
-      <h2 class="waitlist-title reveal">Get free guides &amp;<br>new worksheets first</h2>
-      <p class="waitlist-subtitle reveal">Sign up for practical checklists, planning tools, and honest advice for life's hardest transitions — delivered to your inbox.</p>
-      <form id="signupForm" class="waitlist-form reveal">
-        <input type="email" id="signupEmail" class="waitlist-input" placeholder="Enter your email" required aria-label="Email address" />
-        <button type="submit" class="waitlist-btn">Sign up free →</button>
-      </form>
-      <p id="signupMsg" class="waitlist-msg" hidden></p>
+  <!-- Promise Band -->
+  <section class="promise-section">
+    <div class="promise-bg-circle tl"></div>
+    <div class="promise-bg-circle br"></div>
+    <div class="promise-inner">
+      <div class="promise-icon reveal">
+        <svg viewBox="0 0 24 24"><path d="M12 2L14.09 8.26L20.18 8.63L15.54 12.74L16.91 18.77L12 15.77L7.09 18.77L8.46 12.74L3.82 8.63L9.91 8.26L12 2Z"/></svg>
+      </div>
+      <p class="promise-quote reveal">"When life changes, no one should have to face the paperwork alone."</p>
+      <p class="promise-attribution reveal">The Lumeway Promise</p>
+      <div class="promise-features reveal">
+        <div class="promise-pill"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> Step-by-Step Worksheets</div>
+        <div class="promise-pill"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> Instant Download</div>
+        <div class="promise-pill"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> Google Docs Ready</div>
+        <div class="promise-pill"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> AI-Powered Guidance</div>
+      </div>
     </div>
   </section>
 
+  <!-- Signup -->
+  <section class="signup-section" id="signup">
+    <div class="signup-inner">
+      <div class="section-label reveal">Stay in the loop</div>
+      <h2 class="signup-title reveal">Get free guides &amp;<br>new worksheets first</h2>
+      <p class="signup-subtitle reveal">Sign up for practical checklists, planning tools, and honest advice for life's hardest transitions — delivered to your inbox.</p>
+      <form id="signupForm" class="signup-form reveal">
+        <input type="email" id="signupEmail" class="signup-input" placeholder="Enter your email" required aria-label="Email address" />
+        <button type="submit" class="signup-btn">Sign up free &rarr;</button>
+      </form>
+      <p id="signupMsg" class="signup-msg" hidden></p>
+    </div>
+  </section>
+
+  <!-- Email Popup -->
   <div id="emailPopup" class="popup-overlay" style="display:none" onclick="if(event.target===this){this.style.display='none';localStorage.setItem('lumeway_popup_dismissed',Date.now())}">
     <div class="popup-card">
       <button class="popup-close" aria-label="Close" onclick="document.getElementById('emailPopup').style.display='none';localStorage.setItem('lumeway_popup_dismissed',Date.now())">&times;</button>
@@ -357,24 +627,27 @@
       <p class="popup-desc">Get free planning tools, step-by-step checklists, and new worksheets delivered to your inbox.</p>
       <form id="popupForm" class="popup-form">
         <input type="email" id="popupEmail" class="popup-input" placeholder="Enter your email" required aria-label="Email address" />
-        <button type="submit" class="popup-btn">Sign up free →</button>
+        <button type="submit" class="popup-btn">Sign up free &rarr;</button>
       </form>
       <p id="popupMsg" class="popup-msg" hidden></p>
       <button class="popup-dismiss" id="popupDismiss" onclick="document.getElementById('emailPopup').style.display='none';localStorage.setItem('lumeway_popup_dismissed',Date.now())">No thanks</button>
     </div>
   </div>
 
+  <!-- Footer -->
   <footer>
     <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo reveal">
     <p class="footer-note reveal">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</p>
-    <p class="footer-note reveal"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a></p>
+    <p class="footer-note reveal"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a> &nbsp;&middot;&nbsp; <a href="/terms">Terms</a></p>
     <div class="footer-social reveal">
       <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a>
       <a href="https://www.etsy.com/shop/Lumeway" rel="noopener" target="_blank" title="Etsy"><svg viewBox="0 0 24 24"><path d="M8.559 3.074c0-.295.177-.413.59-.413h5.373c1.06 0 1.947.413 2.596 1.652l.649 1.416h.944l-.236-4.778H4.139l.059 1.18c1.06 0 1.77.177 2.065.531.354.354.472 1.003.472 1.947v11.14c0 .944-.118 1.593-.472 1.947-.295.354-1.003.531-2.065.531l-.059 1.18h14.336l.708-5.132h-.944l-.944 1.77c-.649 1.18-1.534 1.652-2.655 1.652H9.149c-.413 0-.59-.118-.59-.413V12.69h3.009c.767 0 1.357.118 1.652.472.295.295.472.826.531 1.534h1.003V9.504h-1.003c-.059.708-.236 1.239-.531 1.534-.295.295-.885.472-1.652.472H8.559V3.074z"/></svg></a>
     </div>
   </footer>
 
+  <!-- Scripts -->
   <script>
+    // Dropdown nav
     (function() {
       var dropdowns = document.querySelectorAll('.nav-dropdown');
       dropdowns.forEach(function(dd) {
@@ -401,7 +674,7 @@
     })();
   </script>
   <script>
-    // Email subscribe handler (shared by inline form and popup)
+    // Email subscribe handler
     function handleSubscribe(form, emailInput, msgEl, source, onSuccess) {
       form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -424,20 +697,19 @@
             localStorage.setItem('lumeway_subscribed', Date.now());
             if (onSuccess) onSuccess();
           } else {
-            btn.textContent = 'Sign up free →';
+            btn.textContent = 'Sign up free \u2192';
             btn.disabled = false;
           }
         })
         .catch(function() {
           msgEl.hidden = false;
           msgEl.textContent = 'Something went wrong. Please try again.';
-          btn.textContent = 'Sign up free →';
+          btn.textContent = 'Sign up free \u2192';
           btn.disabled = false;
         });
       });
     }
 
-    // Inline signup form
     handleSubscribe(
       document.getElementById('signupForm'),
       document.getElementById('signupEmail'),
@@ -474,7 +746,6 @@
       setTimeout(showPopup, 4000);
     })();
 
-    // Allow #signup links to trigger popup if already at bottom
     document.querySelectorAll('a[href="#signup"]').forEach(function(a) {
       a.addEventListener('click', function(e) {
         if (localStorage.getItem('lumeway_subscribed')) return;
@@ -483,7 +754,7 @@
       });
     });
 
-    // Scroll reveal animations
+    // Scroll reveal
     (function() {
       var reveals = document.querySelectorAll('.reveal');
       if (!('IntersectionObserver' in window)) {
@@ -497,10 +768,10 @@
             observer.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.15 });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
       reveals.forEach(function(el) { observer.observe(el); });
     })();
   </script>
-<script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>
+  <script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>
 </body>
 </html>
