@@ -149,6 +149,29 @@
     .sidebar-card .feature-icon {
       font-size: 16px;
     }
+    .doc-list { list-style: none; padding: 0; margin: 0; }
+    .doc-list li {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+      font-size: 13px; color: var(--text); font-weight: 300;
+      animation: docSlide 0.3s ease both;
+    }
+    .doc-list li:last-child { border-bottom: none; }
+    .doc-list li .doc-icon { color: var(--gold); font-size: 14px; flex-shrink: 0; }
+    .doc-list li .doc-name { flex: 1; line-height: 1.4; }
+    .doc-list-empty {
+      font-size: 12px; color: var(--text2); font-style: italic;
+      line-height: 1.5; font-weight: 300;
+    }
+    .sidebar-count {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--gold); color: white; font-size: 11px; font-weight: 500;
+      width: 20px; height: 20px; border-radius: 50%; margin-left: auto;
+    }
+    @keyframes docSlide {
+      from { opacity: 0; transform: translateX(-8px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
     @media (max-width: 900px) {
       .chat-sidebar { display: none; }
     }
@@ -765,13 +788,10 @@
 </div>
 
 <div class="chat-sidebar">
-  <div class="sidebar-card">
-    <h3><span class="feature-icon">&#x1F4CB;</span> Summary</h3>
-    <p>Tap the <strong>Summary</strong> button at the top of the chat at any time to get a clear recap of everything discussed so far — key steps, deadlines, and action items pulled from your conversation.</p>
-  </div>
-  <div class="sidebar-card">
-    <h3><span class="feature-icon">&#x2B07;</span> Checklist</h3>
-    <p>Tap <strong>Checklist</strong> to download a personalized to-do list based on your situation. It pulls action items from your conversation into a simple checklist you can save or print.</p>
+  <div class="sidebar-card" id="docs-card">
+    <h3><span class="feature-icon">&#x1F4C4;</span> Documents you may need <span class="sidebar-count" id="docs-count" style="display:none">0</span></h3>
+    <p class="doc-list-empty" id="docs-empty">As we talk, I'll note any worksheets, checklists, or letters that could help with your situation.</p>
+    <ul class="doc-list" id="docs-list"></ul>
   </div>
   <div class="sidebar-card">
     <h3><span class="feature-icon">&#x1F4A1;</span> Tips</h3>
@@ -787,6 +807,8 @@
   let isLoggedIn = false;
   let messageCount = 0;
   let savePromptShown = false;
+  let suggestedDocs = [];
+  let templateIdeas = [];
 
   // Check auth state
   fetch('/api/auth/me').then(r => r.json()).then(data => {
@@ -799,6 +821,10 @@
 
   // ── Markdown renderer with streaming-safe incomplete token handling ──
   function renderMarkdown(text) {
+    // Strip special tags so they never flash in the bubble
+    text = text.replace(/\[DOCS:\s*.+?\]\s*/g, '');
+    text = text.replace(/\[TEMPLATE_IDEA:\s*.+?\]\s*/g, '');
+
     // Escape HTML first
     let html = text
       .replace(/&/g, '&amp;')
@@ -1018,10 +1044,13 @@
         }
       }
 
-      // After streaming completes, check for quick-reply buttons
-      const parsed = parseQuickReplies(fullText);
+      // After streaming completes, parse special tags and clean display
+      let cleanedText = parseDocSuggestions(fullText);
+      cleanedText = parseTemplateIdea(cleanedText);
+      const parsed = parseQuickReplies(cleanedText);
+      // Always update bubble with cleaned text (tags stripped)
+      updateBubble(msgDiv, parsed.text);
       if (parsed.options) {
-        updateBubble(msgDiv, parsed.text);
         renderQuickReplies(parsed.options, msgDiv);
       }
 
@@ -1094,10 +1123,14 @@
       const res = await fetch('/api/export', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ history })
+        body: JSON.stringify({ history, suggested_docs: suggestedDocs })
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
+      // Merge sidebar docs into checklist data
+      if (suggestedDocs.length > 0) {
+        data.suggestedDocs = suggestedDocs;
+      }
       openChecklistWindow(data);
     } catch (e) {
       alert('Could not generate checklist. Please try again.');
@@ -1173,6 +1206,19 @@
 </div>
 ${data.situation ? `<div class="situation"><strong>Your Situation</strong>${data.situation}</div>` : ''}
 ${tasks || '<p style="color:#8A8278;font-style:italic">No tasks found. Continue your conversation to build out your checklist.</p>'}
+${data.suggestedDocs && data.suggestedDocs.length ? `
+<div style="margin-top:28px;border:1px solid #E2D8CB;border-radius:10px;overflow:hidden;break-inside:avoid;">
+  <div style="background:#F6F2EC;padding:10px 16px;border-bottom:1px solid #E2D8CB;">
+    <strong style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:#1B3A5C;">Documents You May Need</strong>
+    <span style="font-size:11px;color:#8A8278;margin-left:8px;">Based on your conversation</span>
+  </div>
+  <ul style="list-style:none;padding:8px 16px;margin:0;">
+    ${data.suggestedDocs.map(d => `<li style="padding:7px 0;border-bottom:1px solid #F0EBE3;font-size:13px;color:#4A5A6A;display:flex;align-items:center;gap:8px;"><span style="color:#B8977E;font-weight:600;">&#x2713;</span> ${d}</li>`).join('')}
+  </ul>
+  <div style="padding:8px 16px;background:#F6F2EC;border-top:1px solid #E2D8CB;font-size:11px;color:#8A8278;">
+    Browse all templates at lumeway.co/templates
+  </div>
+</div>` : ''}
 <div class="footer">
   <span>Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</span>
   <span>lumeway.co</span>
@@ -1194,6 +1240,59 @@ ${tasks || '<p style="color:#8A8278;font-style:italic">No tasks found. Continue 
       a.click();
       URL.revokeObjectURL(url);
     }
+  }
+
+  // ── Document suggestion parsing ──
+  function parseDocSuggestions(text) {
+    const match = text.match(/\[DOCS:\s*(.+?)\]\s*/);
+    if (!match) return text;
+    const docs = match[1].split('|').map(d => d.trim()).filter(Boolean);
+    docs.forEach(doc => {
+      if (!suggestedDocs.includes(doc)) {
+        suggestedDocs.push(doc);
+      }
+    });
+    updateDocsSidebar();
+    return text.replace(/\[DOCS:\s*.+?\]\s*/g, '').trimEnd();
+  }
+
+  function parseTemplateIdea(text) {
+    const match = text.match(/\[TEMPLATE_IDEA:\s*(.+?)\]\s*/);
+    if (!match) return text;
+    const idea = match[1].trim();
+    if (idea && !templateIdeas.includes(idea)) {
+      templateIdeas.push(idea);
+      // Fire and forget — send to server for Carol to review
+      if (sessionId) {
+        fetch('/api/template-idea', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: sessionId, idea: idea })
+        }).catch(() => {});
+      }
+    }
+    return text.replace(/\[TEMPLATE_IDEA:\s*.+?\]\s*/g, '').trimEnd();
+  }
+
+  function updateDocsSidebar() {
+    const list = document.getElementById('docs-list');
+    const empty = document.getElementById('docs-empty');
+    const count = document.getElementById('docs-count');
+    if (!list) return;
+    list.innerHTML = '';
+    if (suggestedDocs.length === 0) {
+      empty.style.display = '';
+      count.style.display = 'none';
+      return;
+    }
+    empty.style.display = 'none';
+    count.style.display = '';
+    count.textContent = suggestedDocs.length;
+    suggestedDocs.forEach(doc => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="doc-icon">&#x2713;</span><span class="doc-name">${doc}</span>`;
+      list.appendChild(li);
+    });
   }
 
   // ── Quick-reply parsing ──
@@ -1242,7 +1341,10 @@ ${tasks || '<p style="color:#8A8278;font-style:italic">No tasks found. Continue 
     history = [];
     sessionId = null;
     isLoading = false;
+    suggestedDocs = [];
+    templateIdeas = [];
     document.getElementById('send-btn').disabled = false;
+    updateDocsSidebar();
 
     // Remove quick replies
     const qr = document.querySelector('.quick-replies');

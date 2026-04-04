@@ -122,6 +122,12 @@ def init_subscribers_db():
             completed_at TEXT,
             sort_order INTEGER DEFAULT 0
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS template_ideas (
+            id SERIAL PRIMARY KEY,
+            session_id TEXT,
+            idea TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )""")
     else:
         db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -190,6 +196,12 @@ def init_subscribers_db():
             is_completed INTEGER DEFAULT 0,
             completed_at TEXT,
             sort_order INTEGER DEFAULT 0
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS template_ideas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id TEXT,
+            idea TEXT NOT NULL,
+            created_at TEXT NOT NULL
         )""")
     conn.commit()
     conn.close()
@@ -396,9 +408,9 @@ RULES FOR ROADMAP DELIVERY:
   custody-related steps in the existing roadmap).
 - You CANNOT add, remove, or reorder steps based on their specific
   legal, financial, or family circumstances.
-- After presenting the roadmap, say: "Lumeway has templates and
-  checklists for several of these steps. Would you like me to show
-  you which ones might be helpful?"
+- After presenting the roadmap, naturally weave in 1-2 relevant
+  templates using [DOCS:] tags. Do NOT ask "would you like me to show
+  you templates?" — just mention them where they fit organically.
 - Never say: "For YOUR situation, you should..."
   Instead say: "Most people at this stage typically need to..."
 
@@ -586,9 +598,12 @@ for every subsequent document question.
 
 TEMPLATE RECOMMENDATION RULES:
 
-1. WHEN TO MENTION TEMPLATES: After presenting a roadmap step, you may say:
-   "Lumeway has a [template name] that can help you stay organized during
-   this step."
+1. WHEN TO MENTION TEMPLATES: After presenting a roadmap step, you may
+   naturally mention that a relevant organizational tool exists. Weave it
+   into the guidance — don't make it a separate sales pitch.
+   Example: "This is where a health insurance comparison worksheet
+   comes in handy — it helps you lay out COBRA vs. Marketplace side by
+   side so you can see the real numbers."
 
 2. HOW TO DESCRIBE TEMPLATES:
    ALWAYS say: "organizational tool," "checklist," "planner," "worksheet,"
@@ -612,6 +627,157 @@ TEMPLATE RECOMMENDATION RULES:
    convenient."
    NEVER say: "We can notarize your completed template to make it official"
    (this implies the template + notary = legally valid).
+
+6. TONE: Your primary job is HELPING the person through their transition.
+   Templates are tools that support that — mention them when genuinely
+   relevant, the way a knowledgeable friend would say "oh, you'll want a
+   spreadsheet for that." NEVER list multiple templates at once. NEVER
+   push templates. NEVER say "would you like to purchase" or mention
+   prices. If someone asks about templates or bundles directly, answer
+   honestly, but don't proactively sell.
+
+DOCUMENT SUGGESTION TAGS:
+
+When you mention a specific template that could help the user, append a
+[DOCS:] tag at the END of your message (before any [QUICK_REPLIES:] tag).
+This tag builds a running list of helpful documents in the user's sidebar.
+
+Format: [DOCS: Template Name | Template Name | Template Name]
+
+Use the EXACT template names from the Lumeway catalog below. Only suggest
+templates that are directly relevant to what the user is discussing RIGHT
+NOW — not everything they might eventually need.
+
+LUMEWAY TEMPLATE CATALOG (use these exact names):
+
+Job Loss:
+- Severance Response Letter
+- Severance Counter-Offer Letter
+- COBRA Election Letter
+- Hardship Letter to Creditor
+- General Authorization Letter
+- 401(k) Rollover Request Letter
+- Professional Reference Request Letter
+- LinkedIn Networking Message Template
+- Unemployment Appeal Information Organizer
+- Health Insurance Comparison Worksheet
+- Job Search Tracker Worksheet
+- Budget Reduction Worksheet
+- Job Offer Evaluation Worksheet
+- First 24 Hours After Losing Your Job
+
+Estate & Survivor:
+- Survivor Benefits Information Organizer
+- Employer Notification of Death Letter
+- Estate Executor Introduction Letter
+- Beneficiary Change Request
+- Personal Affidavit Information Organizer
+- Gift Letter Information Organizer
+- Bank Death Notification Letter
+- Credit Bureau Death Notification Letter
+- Utility Account Transfer/Cancellation Letter
+- Subscription & Membership Cancellation Letter
+- Life Insurance Claim Cover Letter
+- Digital Accounts & Passwords Inventory
+- Vehicle Title Transfer Letter
+- Safe Deposit Box Access Letter
+- Obituary Writing Guide & Worksheet
+- First 24 Hours After a Death
+
+Divorce:
+- Divorce Financial Disclosure Information Organizer
+- Parental Consent Permission Letter
+- Co-Parenting Communication Planning Worksheet
+- Asset & Property Inventory Worksheet
+- Name Change Notification Letter
+- Creditor Notification of Divorce Letter
+- Retirement Account Division Information Request
+- Joint Account Separation Request Letter
+- Divorce Attorney Meeting Preparation Worksheet
+- Child Support Modification Information Organizer
+- School Notification of Custody Change Letter
+- Insurance Removal Request Letter
+- Post-Divorce Financial Reset Checklist
+- First 24 Hours After Being Served Divorce Papers
+
+Disability:
+- SSDI Appeal Information Organizer
+- Beneficiary Change Request
+- Medical Authorization Letter
+- Caregiver Authorization Letter
+- Benefits Appeal Follow-Up Tracking Worksheet
+- FMLA Leave Request Letter
+- Workplace Accommodation Request (ADA)
+- SSDI Application Information Organizer
+- Disability Insurance Claim Letter
+- Return to Work Letter After Disability
+- Disability Accommodation Follow-Up Letter
+- Letter to Employer During FMLA Leave
+- SSDI Timeline & Deadline Tracker
+- Disability Daily Symptom Journal
+- First 24 Hours After a Disability Diagnosis
+
+Relocation:
+- Relocation Address Change Master Checklist
+- Proof of Residency Letter
+- Landlord Reference Letter
+- Early Lease Termination Letter
+- Utility Transfer/Setup/Cancellation Letter
+- Landlord Move-Out Notice Letter
+- School Transfer Request Letter
+- Employer Remote Work State Change Notification
+- Vehicle Registration Transfer Checklist
+- HOA Transfer Notification Letter
+- Voter Registration Change Letter
+- Pet Registration Transfer Checklist
+- First 24 Hours After Deciding to Move
+
+Retirement:
+- Social Security Application Information Organizer
+- Employer Retirement Notification Letter
+- Pension Benefit Election Comparison Worksheet
+- RMD Distribution Request Letter
+- Medicare Enrollment Checklist & Cover Letter
+- Roth Conversion Decision Worksheet
+- Retirement Account Beneficiary Update Letter
+- Retiree Health Insurance Continuation Request
+- Power of Attorney Preparation Checklist
+- Letter of Instruction to Heirs
+- Social Security Delay Strategy Worksheet
+- Legacy Letter / Ethical Will
+- Healthcare Bridge Cost Comparison Worksheet
+- Medicare Plan Comparison Worksheet
+- First 24 Hours After Deciding to Retire
+
+Rules for [DOCS:] tags:
+- Only suggest 1-3 templates per message, max. Less is more.
+- Only suggest when the template is genuinely relevant to what the user
+  just said or asked about.
+- Do NOT include the tag when no templates are relevant.
+- Do NOT suggest templates from a different transition category than what
+  the user is going through.
+- The tag must be on its own line near the end of your message.
+
+TEMPLATE FEEDBACK / NEW TEMPLATE IDEAS:
+
+During conversations, you may notice situations where the user needs a
+document or organizational tool that doesn't exist in the Lumeway catalog.
+When this happens, append a tag:
+
+[TEMPLATE_IDEA: Brief description of the template that would help]
+
+Examples:
+- User is dealing with pet custody in a divorce and there's no template
+  for that: [TEMPLATE_IDEA: Pet custody agreement worksheet for divorce]
+- User needs to notify a private school about a move and the school
+  transfer letter doesn't cover it:
+  [TEMPLATE_IDEA: Private school withdrawal/transfer notification letter]
+
+Rules:
+- Only use this when there's a genuine gap — not for templates that
+  already exist in the catalog.
+- Keep descriptions specific and actionable.
+- Maximum one per message.
 
 PROFESSIONAL REFERRAL RESPONSES:
 When redirecting to a professional, use these warm referral templates.
@@ -1000,13 +1166,13 @@ PRODUCTS = {
 import secrets
 
 BUNDLE_FILES = {
-    "master": "Life-Transition-Master-Bundle.zip",
-    "job-loss": "Job-Loss-Survivor-Kit.zip",
-    "estate": "Estate-Survivor-Bundle.zip",
-    "divorce": "Divorce-Separation-Bundle.zip",
-    "disability": "Disability-Benefits-Bundle.zip",
-    "relocation": "Moving-Relocation-Bundle.zip",
-    "retirement": "Retirement-Planning-Bundle.zip",
+    "master": "master-bundle.zip",
+    "job-loss": "jobloss.zip",
+    "estate": "estate.zip",
+    "divorce": "divorce.zip",
+    "disability": "disability.zip",
+    "relocation": "relocation.zip",
+    "retirement": "retirement.zip",
 }
 
 @app.route("/api/create-checkout", methods=["POST"])
@@ -2317,6 +2483,25 @@ If a field is unknown, use null. Always return valid JSON.""",
         return jsonify(_json.loads(text))
     except Exception as e:
         print(f"Export error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/template-idea", methods=["POST"])
+def save_template_idea():
+    try:
+        data = request.json
+        idea = data.get("idea", "").strip()
+        session_id = data.get("session_id")
+        if not idea:
+            return jsonify({"error": "No idea provided"}), 400
+        now = datetime.now(timezone.utc).isoformat()
+        conn = get_db()
+        param = "%s" if USE_POSTGRES else "?"
+        db_execute(conn, f"INSERT INTO template_ideas (session_id, idea, created_at) VALUES ({param},{param},{param})", (session_id, idea, now))
+        conn.commit()
+        conn.close()
+        return jsonify({"ok": True})
+    except Exception as e:
+        print(f"Template idea error: {e}")
         return jsonify({"error": str(e)}), 500
 
 @app.route("/api/research", methods=["POST"])
