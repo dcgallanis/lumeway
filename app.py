@@ -1865,58 +1865,59 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://lumeway.co/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://lumeway.co/blog"},{"@type":"ListItem","position":3,"name":"{{ post.get('title', '') }}","item":"https://lumeway.co/blog/{{ post.get('slug', '') }}"}]}
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--cream:#F7F4EF;--warm-white:#FDFCFA;--text:#1B2A38;--muted:#6E7D8A;--navy:#1B3A5C;--gold:#B8977E;--border:#E4DDD3}
-    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.7;font-size:17px;font-weight:300}
-    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,244,239,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+    :root{--cream:#FAF7F2;--warm-white:#FDFCFA;--text:#2C3E50;--muted:#6B7B8D;--navy:#2C4A5E;--gold:#B8977E;--accent:#C4704E;--accent-light:#D4896C;--border:#E8E0D6}
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.7;font-size:17px;font-weight:300}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(250,247,242,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
     .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-    .nav-logo-icon{width:32px;height:32px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500}
-    .nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text)}
+    .sun-icon{display:flex;align-items:center}
+    .nav-logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:0.08em}
     .nav-left{display:flex;align-items:center;gap:28px}
     .nav-right{display:flex;gap:12px;align-items:center}
-    .btn-ghost{padding:8px 20px;border:1px solid var(--border);border-radius:100px;background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;text-decoration:none;transition:all 0.2s}
-    .btn-ghost:hover{background:var(--navy);color:var(--cream)}
-    .btn-primary{padding:8px 20px;border:none;border-radius:100px;background:var(--navy);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:14px;text-decoration:none;transition:all 0.2s}
-    article{max-width:720px;margin:0 auto;padding:120px 24px 64px}
+    .btn-ghost{padding:8px 20px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;text-decoration:none;transition:all 0.2s}
+    .btn-ghost:hover{background:var(--accent);color:white}
+    .btn-primary{padding:8px 20px;border:none;border-radius:8px;background:var(--accent);color:white;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;text-decoration:none;transition:all 0.2s}
+    .post-wrapper{padding:0 5%}
+    article{max-width:720px;margin:0 auto;padding:120px 0 64px}
     .post-meta{margin-bottom:32px}
     .post-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:var(--warm-white);border:1px solid var(--border);padding:3px 10px;border-radius:100px;margin-bottom:16px}
-    .post-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,48px);font-weight:300;line-height:1.15;letter-spacing:-0.02em;margin-bottom:12px}
+    .post-title{font-family:'Libre Baskerville',serif;font-size:clamp(28px,4vw,42px);font-weight:400;line-height:1.2;letter-spacing:-0.02em;margin-bottom:12px}
     .post-date{font-size:13px;color:var(--muted)}
     .post-divider{width:60px;height:2px;background:var(--gold);margin-bottom:40px}
     .post-body{font-size:16px;line-height:1.85;font-weight:300;color:var(--text)}
-    .post-body h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin:48px 0 20px;color:var(--navy);line-height:1.3}
+    .post-body h2{font-family:'Libre Baskerville',serif;font-size:24px;font-weight:400;margin:48px 0 20px;color:var(--navy);line-height:1.3}
     .post-body h3{font-size:18px;font-weight:500;margin:28px 0 12px;color:var(--text)}
     .post-body p{margin-bottom:18px}
     .post-body ul,.post-body ol{margin:0 0 20px 24px}
     .post-body li{margin-bottom:8px;line-height:1.7}
     .post-body strong{font-weight:500}
-    .post-body a{color:var(--navy);text-decoration:underline;text-decoration-color:var(--border);text-underline-offset:3px}
-    .post-body a:hover{text-decoration-color:var(--navy)}
+    .post-body a{color:var(--accent);text-decoration:underline;text-decoration-color:var(--border);text-underline-offset:3px}
+    .post-body a:hover{text-decoration-color:var(--accent)}
     .post-body .template-callout{background:var(--warm-white);border-left:3px solid var(--gold);padding:20px 24px;margin:28px 0;border-radius:0 8px 8px 0}
     .post-body .template-callout p{font-size:15px;color:var(--muted);margin-bottom:0}
     .post-body .cta-box{background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:32px;margin:40px 0;text-align:center}
-    .post-body .cta-box h3{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--navy);margin-bottom:12px}
+    .post-body .cta-box h3{font-family:'Libre Baskerville',serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:12px}
     .post-body .cta-box p{font-size:15px;color:var(--muted);margin-bottom:20px}
-    .post-body .cta-button{display:inline-block;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--cream);background:var(--navy);padding:14px 32px;border-radius:28px;text-decoration:none;transition:background 0.2s}
-    .post-body .cta-button:hover{background:var(--gold);color:white}
+    .post-body .cta-button{display:inline-block;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:white;background:var(--accent);padding:14px 32px;border-radius:8px;text-decoration:none;transition:background 0.2s}
+    .post-body .cta-button:hover{background:var(--accent-light);color:white}
     .post-body .disclaimer{font-size:13px;font-style:italic;color:var(--muted);border-top:1px solid var(--border);padding-top:32px;margin-top:48px;line-height:1.6}
     .post-back{display:inline-block;margin-top:48px;font-size:14px;color:var(--muted);text-decoration:none}
-    .post-back:hover{color:var(--navy)}
+    .post-back:hover{color:var(--accent)}
     footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:64px}
     .footer-logo{height:80px;object-fit:contain}
     .footer-note{font-size:12px;color:var(--muted);font-weight:300}
     .footer-note a{color:var(--muted)}
-    @media(max-width:768px){nav{padding:14px 20px}article{padding:85px 20px 48px}footer{padding:20px;flex-direction:column;text-align:center}}
-    @media(max-width:480px){nav{padding:12px 16px}.btn-ghost,.btn-primary{font-size:12px;padding:6px 14px}article{padding:75px 16px 36px}}
+    @media(max-width:768px){nav{padding:14px 20px}article{padding:85px 0 48px}footer{padding:20px;flex-direction:column;text-align:center}}
+    @media(max-width:480px){nav{padding:12px 16px}.btn-ghost,.btn-primary{font-size:12px;padding:6px 14px}article{padding:75px 0 36px}}
   </style>
 </head>
 <body>
   <nav>
     <div class="nav-left">
       <a href="/" class="nav-logo">
-        <div class="nav-logo-icon">L</div>
+        <span class="sun-icon" style="color:var(--accent)"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
         <span class="nav-logo-text">Lumeway</span>
       </a>
     </div>
@@ -1925,6 +1926,7 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
       <a href="/templates" class="btn-primary">Shop</a>
     </div>
   </nav>
+  <div class="post-wrapper">
   <article>
     <div class="post-meta">
       <span class="post-tag">{{ post.get('category', 'General') }}</span>
