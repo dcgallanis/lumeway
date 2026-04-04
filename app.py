@@ -21,7 +21,7 @@ import conversation_log
 
 load_dotenv()
 
-app = Flask(__name__, static_folder=".")
+app = Flask(__name__, static_folder=".", static_url_path="/static")
 app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 CORS(app)
 
