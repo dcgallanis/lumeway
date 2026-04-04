@@ -5,22 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Log In — Lumeway</title>
   <meta name="description" content="Log in to your Lumeway account to access your dashboard, chat history, and transition checklist."/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #1B2A38; --muted: #6E7D8A; --navy: #1B3A5C; --gold: #B8977E; --accent: #1B3A5C; --accent-light: #B8977E; --border: #E4DDD3; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    :root { --cream: #FAF7F2; --warm-white: #FDFCFA; --text: #2C3E50; --muted: #6B7B8D; --navy: #2C4A5E; --gold: #B8977E; --accent: #C4704E; --accent-light: #D4896C; --border: #E8E0D6; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
 
     .login-container { max-width: 420px; width: 100%; text-align: center; }
-    .login-logo { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 500; color: var(--navy); margin-bottom: 48px; }
+    .login-logo { font-family: 'Libre Baskerville', serif; font-size: 28px; font-weight: 500; color: var(--navy); margin-bottom: 48px; }
     .login-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; padding: 40px 32px; }
-    .login-card h1 { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; margin-bottom: 8px; }
+    .login-card h1 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 300; margin-bottom: 8px; }
     .login-card p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
 
     .form-group { margin-bottom: 16px; text-align: left; }
     .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
     .form-group input {
-      width: 100%; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 300;
+      width: 100%; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 300;
       padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px;
       background: var(--cream); color: var(--text); outline: none; transition: border-color 0.2s;
     }
@@ -28,8 +28,8 @@
     .code-input { text-align: center; font-size: 24px !important; letter-spacing: 8px; font-weight: 500 !important; }
 
     .login-btn {
-      width: 100%; padding: 14px; border: none; border-radius: 100px;
-      background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif;
+      width: 100%; padding: 14px; border: none; border-radius: 8px;
+      background: var(--accent); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; margin-top: 8px;
     }
     .login-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
@@ -39,7 +39,7 @@
     .login-msg.error { color: #c0392b; }
     .login-msg.success { color: #27ae60; }
 
-    .login-back { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--muted); cursor: pointer; text-decoration: underline; border: none; background: none; font-family: 'DM Sans', sans-serif; }
+    .login-back { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--muted); cursor: pointer; text-decoration: underline; border: none; background: none; font-family: 'Plus Jakarta Sans', sans-serif; }
     .login-back:hover { color: var(--navy); }
 
     .login-footer { margin-top: 24px; font-size: 12px; color: var(--muted); font-weight: 300; }

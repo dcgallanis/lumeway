@@ -22,22 +22,22 @@
   <meta name="twitter:card" content="summary"/>
   <meta name="twitter:title" content="Shop Worksheets — Lumeway"/>
   <meta name="twitter:description" content="Organizational worksheets, checklists, and planning tools for life transitions — job loss, divorce, estate planning, disability, relocation, and retirement."/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --text: #1B2A38; --muted: #6E7D8A; --navy: #1B3A5C; --gold: #B8977E; --accent: #1B3A5C; --accent-light: #B8977E; --border: #E4DDD3; --shadow: 0 2px 40px rgba(27,58,92,0.09); }
-    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
+    :root { --cream: #FAF7F2; --warm-white: #FDFCFA; --text: #2C3E50; --muted: #6B7B8D; --navy: #2C4A5E; --gold: #B8977E; --accent: #C4704E; --accent-light: #D4896C; --border: #E8E0D6; --shadow: 0 2px 40px rgba(27,58,92,0.09); }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .nav-logo-icon { width: 32px; height: 32px; background: var(--navy); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
-    .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text); }
-    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 100px; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .nav-logo-icon { width: 32px; height: 32px; background: var(--navy); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--cream); font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 500; }
+    .nav-logo-text { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 500; color: var(--text); }
+    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
     .btn-ghost:hover { background: var(--navy); color: var(--cream); }
-    .btn-primary { padding: 8px 20px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .btn-primary { padding: 8px 20px; border: none; border-radius: 8px; background: var(--accent); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
     .nav-left { display: flex; align-items: center; gap: 28px; }
     .nav-right { display: flex; gap: 12px; align-items: center; }
     .nav-dropdown { position: relative; }
-    .nav-drop-btn { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
+    .nav-drop-btn { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
     .nav-drop-btn:hover { color: var(--navy); }
     .nav-drop-btn .chev { display: inline-block; transition: transform 0.2s ease; }
     .nav-drop-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
@@ -49,31 +49,31 @@
 
     .hero { padding: 120px 24px 56px; max-width: 800px; margin: 0 auto; text-align: center; }
     .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
-    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 6vw, 64px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 20px; }
+    .hero-title { font-family: 'Libre Baskerville', serif; font-size: clamp(36px, 6vw, 64px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 20px; }
     .hero-title em { font-style: italic; color: var(--accent-light); }
     .hero-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; max-width: 560px; margin: 0 auto; }
 
     .section { max-width: 900px; margin: 0 auto; padding: 0 24px 64px; }
-    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 4vw, 40px); font-weight: 300; text-align: center; margin-bottom: 12px; }
+    .section-title { font-family: 'Libre Baskerville', serif; font-size: clamp(28px, 4vw, 40px); font-weight: 300; text-align: center; margin-bottom: 12px; }
     .section-subtitle { font-size: 15px; color: var(--muted); font-weight: 300; text-align: center; margin-bottom: 40px; }
 
     .featured-card { background: var(--warm-white); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 0 20px 20px 0; padding: 36px 40px; margin-bottom: 56px; box-shadow: var(--shadow); }
     .featured-badge { display: inline-block; background: var(--navy); color: var(--cream); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; margin-bottom: 16px; }
-    .featured-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
+    .featured-title { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
     .featured-desc { font-size: 15px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 20px; }
     .featured-includes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; margin-bottom: 24px; }
     .featured-includes li { font-size: 13.5px; color: var(--text); font-weight: 400; line-height: 1.6; list-style: none; padding-left: 20px; position: relative; }
     .featured-includes li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 600; }
     .badge-soon { display: inline-block; background: var(--cream); border: 1px solid var(--border); color: var(--muted); font-size: 12px; font-weight: 500; padding: 6px 16px; border-radius: 100px; }
-    .price { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 500; color: var(--navy); margin-bottom: 16px; }
-    .price span { font-size: 14px; font-weight: 300; color: var(--muted); font-family: 'DM Sans', sans-serif; }
-    .featured-price { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
-    .featured-price span { font-size: 15px; font-weight: 300; color: var(--muted); font-family: 'DM Sans', sans-serif; }
+    .price { font-family: 'Libre Baskerville', serif; font-size: 28px; font-weight: 500; color: var(--navy); margin-bottom: 16px; }
+    .price span { font-size: 14px; font-weight: 300; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; }
+    .featured-price { font-family: 'Libre Baskerville', serif; font-size: 36px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
+    .featured-price span { font-size: 15px; font-weight: 300; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; }
     .featured-savings { font-size: 13px; color: var(--gold); font-weight: 500; margin-bottom: 20px; }
-    .btn-buy { display: inline-block; padding: 12px 28px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .btn-buy { display: inline-block; padding: 12px 28px; border: none; border-radius: 100px; background: var(--navy); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-decoration: none; }
     .btn-buy:hover { background: #244a6e; transform: translateY(-1px); }
     .btn-buy:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .btn-buy-outline { display: inline-block; padding: 10px 24px; border: 1px solid var(--navy); border-radius: 100px; background: transparent; color: var(--navy); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .btn-buy-outline { display: inline-block; padding: 10px 24px; border: 1px solid var(--navy); border-radius: 100px; background: transparent; color: var(--navy); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-decoration: none; }
     .btn-buy-outline:hover { background: var(--navy); color: var(--cream); }
     .free-section { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; padding: 36px 40px; margin-top: 56px; text-align: center; }
     .free-badge { display: inline-block; background: #2d6a4f; color: white; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; margin-bottom: 16px; }
@@ -86,7 +86,7 @@
     .product-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
     .product-body { padding: 24px 28px 28px; }
     .product-emoji { font-size: 28px; margin-bottom: 12px; }
-    .product-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
+    .product-title { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
     .product-desc { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 16px; }
     .product-items { margin: 0 0 20px 0; padding: 0; }
     .product-items li { font-size: 12.5px; color: var(--text); font-weight: 300; line-height: 1.6; list-style: none; padding-left: 16px; position: relative; margin-bottom: 4px; }
@@ -97,9 +97,9 @@
     .trust-icon { font-size: 16px; }
 
     .cta-block { background: var(--navy); border-radius: 24px; padding: 40px; text-align: center; max-width: 900px; margin: 0 auto 64px; }
-    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: var(--cream); margin-bottom: 12px; }
+    .cta-title { font-family: 'Libre Baskerville', serif; font-size: 36px; font-weight: 300; color: var(--cream); margin-bottom: 12px; }
     .cta-subtitle { font-size: 15px; color: rgba(247,244,239,0.6); font-weight: 300; margin-bottom: 28px; }
-    .btn-large { display: inline-block; padding: 14px 32px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; text-decoration: none; background: var(--cream); color: var(--text); transition: all 0.2s; }
+    .btn-large { display: inline-block; padding: 14px 32px; border-radius: 100px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; text-decoration: none; background: var(--cream); color: var(--text); transition: all 0.2s; }
     .btn-large:hover { background: var(--accent-light); color: white; transform: translateY(-2px); }
 
     footer { padding: 40px 48px 28px; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
@@ -124,8 +124,8 @@
   <nav>
     <div class="nav-left">
       <a href="/" class="nav-logo">
-        <div class="nav-logo-icon">L</div>
-        <span class="nav-logo-text">Lumeway</span>
+        <span style="color:#C4704E"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
+        <span class="nav-logo-text" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#2C4A5E">Lumeway</span>
       </a>
       <div class="nav-dropdown">
         <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">▾</span></button>
@@ -293,7 +293,7 @@
       <h2 class="section-title" style="margin-bottom:12px;">Life Transition Emergency Kit</h2>
       <p class="section-subtitle" style="max-width:520px;margin:0 auto 24px;">A starter guide for anyone navigating a major life change. Enter your email to download instantly.</p>
       <form id="kit-form" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;max-width:420px;margin:0 auto;">
-        <input type="email" id="kit-email" placeholder="Your email" required style="flex:1;min-width:200px;padding:10px 16px;border:1px solid var(--border);border-radius:100px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;" />
+        <input type="email" id="kit-email" placeholder="Your email" required style="flex:1;min-width:200px;padding:10px 16px;border:1px solid var(--border);border-radius:100px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;" />
         <button type="submit" class="btn-buy" style="padding:10px 24px;">Download free</button>
       </form>
       <p id="kit-msg" style="display:none;margin-top:12px;font-size:13px;color:#2d6a4f;"></p>
@@ -315,7 +315,7 @@
 
   <footer>
     <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo reveal">
-    <p class="footer-note reveal">Lumeway is an AI guide, not a licensed professional. Always consult a qualified advisor.</p>
+    <p class="footer-note reveal">Lumeway is a guidance tool, not a licensed professional. Always consult a qualified advisor.</p>
     <p class="footer-note reveal"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a></p>
     <div class="footer-social reveal">
       <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a>

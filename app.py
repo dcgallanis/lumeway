@@ -1040,6 +1040,11 @@ def inject_related_posts(html_file, categories):
     html = html.replace("<footer>", section + "\n<footer>", 1)
     return html
 
+@app.route("/features")
+def features():
+    with open("features.html") as f:
+        return f.read()
+
 @app.route("/estate")
 def estate():
     return inject_related_posts("estate.html", TRANSITION_CATEGORIES["loss-of-spouse"])
