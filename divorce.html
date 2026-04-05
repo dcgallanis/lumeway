@@ -91,7 +91,7 @@
     .timeline-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
     /* FAQ split layout */
     .faq-section { width: 100%; padding: 80px 5%; background: var(--cream); }
-    .faq-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
+    .faq-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 56px; align-items: start; }
     .faq-sidebar { position: sticky; top: 100px; align-self: start; }
     .faq-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
     .faq-sidebar h2 em { font-style: italic; color: var(--accent-light); }
@@ -99,12 +99,15 @@
     .faq-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
     /* Action section split layout */
     .action-section { width: 100%; padding: 80px 5%; background: var(--warm-white); }
-    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .action-grid { display: flex; gap: 60px; align-items: center; max-width: 1100px; margin: 0 auto; }
+    .action-preview { flex: 1; min-width: 0; }
+    .action-ctas { flex: 0 1 380px; }
     .action-ctas h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 16px; }
     .action-ctas h2 em { font-style: italic; color: var(--accent-light); }
     .action-ctas .section-label { margin-bottom: 12px; }
     .action-ctas p { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 32px; }
     .action-ctas .cta-buttons { display: flex; flex-direction: column; gap: 12px; }
+    .action-ctas .cta-buttons .btn-large { white-space: nowrap; text-align: center; width: fit-content; }
 
     /* Deadlines & Resources two-column layout */
     .dr-section { width: 100%; padding: 80px 5%; }
@@ -116,20 +119,17 @@
     .dr-col-icon.resources { background: #EDF4F8; }
     .dr-col-title { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 500; color: var(--text); }
     .deadline-list { display: flex; flex-direction: column; gap: 12px; }
-    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; display: flex; gap: 16px; align-items: flex-start; transition: box-shadow 0.2s; }
-    .deadline-card:hover { box-shadow: var(--shadow); }
-    .deadline-badge { flex-shrink: 0; min-width: 52px; padding: 6px 10px; border-radius: 8px; background: #FDF0ED; text-align: center; }
-    .deadline-days { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 600; color: #C0392B; line-height: 1.1; }
-    .deadline-unit { font-size: 10px; color: #C0392B; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
-    .deadline-info { flex: 1; min-width: 0; }
-    .deadline-title { font-weight: 500; font-size: 14px; margin-bottom: 4px; color: var(--text); }
+    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; }
+    .deadline-card + .deadline-card { margin-top: 10px; }
+    .deadline-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+    .deadline-days { font-family: 'Libre Baskerville', serif; font-size: 15px; font-weight: 600; color: #C0392B; }
+    .deadline-title { font-weight: 500; font-size: 14px; color: var(--text); }
     .deadline-desc { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
     .resource-list { display: flex; flex-direction: column; gap: 12px; }
-    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; transition: all 0.2s; text-decoration: none; display: flex; gap: 14px; align-items: flex-start; }
+    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; transition: all 0.2s; text-decoration: none; display: block; }
     .resource-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent-light); }
-    .resource-icon { font-size: 20px; flex-shrink: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: #EDF4F8; border-radius: 10px; }
-    .resource-body { flex: 1; min-width: 0; }
-    .resource-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .resource-card + .resource-card { margin-top: 10px; }
+    .resource-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
     .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
     .resource-link { font-size: 12px; color: var(--accent); margin-top: 4px; display: inline-block; }
     .cta-section { padding: 80px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
@@ -148,7 +148,7 @@
     .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
     .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-    @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } .dr-columns { grid-template-columns: 1fr; gap: 40px; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
+    @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout { grid-template-columns: 1fr; } .action-grid { flex-direction: column; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } .dr-columns { grid-template-columns: 1fr; gap: 40px; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
     /* Chat Preview */
     .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
     .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
@@ -211,11 +211,12 @@
         <a href="/retirement">Retirement</a>
       </div>
     </div>
+    <a href="/features" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--muted);text-decoration:none;padding:6px 4px;transition:color 0.15s;" onmouseover="this.style.color='var(--navy)'" onmouseout="this.style.color='var(--muted)'">Features</a>
+
     <div class="nav-dropdown">
       <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">▾</span></button>
       <div class="nav-drop-menu">
-        <a href="/features">Features</a>
-        <a href="/templates">Shop</a>
+          <a href="/templates">Shop</a>
           <a href="/faq">FAQ</a>
         <a href="/blog">Blog</a>
         <div class="menu-div"></div>
@@ -385,28 +386,28 @@
       </div>
       <div class="deadline-list">
         <div class="deadline-card">
-          <div class="deadline-badge"><div class="deadline-days">30</div><div class="deadline-unit">days</div></div>
-          <div class="deadline-info"><div class="deadline-title">Temporary restraining order on assets</div><p class="deadline-desc">Some states issue automatic asset freezes upon filing; others require a separate motion. Missing this can allow a spouse to drain accounts or hide assets.</p></div>
+          <div class="deadline-header"><span class="deadline-days">30 days</span><span class="deadline-title">Temporary restraining order on assets</span></div>
+          <p class="deadline-desc">Some states issue automatic asset freezes upon filing; others require a separate motion. Missing this can allow a spouse to drain accounts or hide assets.</p>
         </div>
         <div class="deadline-card">
-          <div class="deadline-badge"><div class="deadline-days">60</div><div class="deadline-unit">days</div></div>
-          <div class="deadline-info"><div class="deadline-title">COBRA health insurance</div><p class="deadline-desc">If you lose coverage through your spouse's employer, you have 60 days to elect COBRA continuation. After that, the window closes permanently.</p></div>
+          <div class="deadline-header"><span class="deadline-days">60 days</span><span class="deadline-title">COBRA health insurance</span></div>
+          <p class="deadline-desc">If you lose coverage through your spouse's employer, you have 60 days to elect COBRA continuation. After that, the window closes permanently.</p>
         </div>
         <div class="deadline-card">
-          <div class="deadline-badge"><div class="deadline-days">90</div><div class="deadline-unit">days</div></div>
-          <div class="deadline-info"><div class="deadline-title">QDRO for retirement accounts</div><p class="deadline-desc">A Qualified Domestic Relations Order should be filed with or shortly after the divorce decree. Delays can complicate retirement account division significantly.</p></div>
+          <div class="deadline-header"><span class="deadline-days">90 days</span><span class="deadline-title">QDRO for retirement accounts</span></div>
+          <p class="deadline-desc">A Qualified Domestic Relations Order should be filed with or shortly after the divorce decree. Delays can complicate retirement account division significantly.</p>
         </div>
         <div class="deadline-card">
-          <div class="deadline-badge"><div class="deadline-days" style="font-size:12px;">Varies</div></div>
-          <div class="deadline-info"><div class="deadline-title">Residency requirement</div><p class="deadline-desc">Most states require 6 months to 1 year of residency before you can file. Check your state's requirement before beginning the process.</p></div>
+          <div class="deadline-header"><span class="deadline-days">Varies</span><span class="deadline-title">Residency requirement</span></div>
+          <p class="deadline-desc">Most states require 6 months to 1 year of residency before you can file. Check your state's requirement before beginning the process.</p>
         </div>
         <div class="deadline-card">
-          <div class="deadline-badge"><div class="deadline-days" style="font-size:11px;">Tax yr</div></div>
-          <div class="deadline-info"><div class="deadline-title">Filing status change</div><p class="deadline-desc">Your tax filing status is based on your marital status as of December 31. The year your divorce is finalized, you'll file as single or head of household.</p></div>
+          <div class="deadline-header"><span class="deadline-days">Tax yr</span><span class="deadline-title">Filing status change</span></div>
+          <p class="deadline-desc">Your tax filing status is based on your marital status as of December 31. The year your divorce is finalized, you'll file as single or head of household.</p>
         </div>
         <div class="deadline-card">
-          <div class="deadline-badge"><div class="deadline-days" style="font-size:11px;">ASAP</div></div>
-          <div class="deadline-info"><div class="deadline-title">Update beneficiaries</div><p class="deadline-desc">Retirement accounts, life insurance, and transfer-on-death designations may still name your ex-spouse. Update these as soon as the divorce is final.</p></div>
+          <div class="deadline-header"><span class="deadline-days">ASAP</span><span class="deadline-title">Update beneficiaries</span></div>
+          <p class="deadline-desc">Retirement accounts, life insurance, and transfer-on-death designations may still name your ex-spouse. Update these as soon as the divorce is final.</p>
         </div>
       </div>
     </div>
@@ -417,20 +418,24 @@
       </div>
       <div class="resource-list">
         <a href="https://www.lawhelp.org" target="_blank" class="resource-card">
-          <div class="resource-icon">🏛️</div>
-          <div class="resource-body"><div class="resource-title">LawHelp.org</div><p class="resource-desc">Find free and low-cost legal aid in your state for divorce, custody, and family law matters.</p><span class="resource-link">lawhelp.org →</span></div>
+          <div class="resource-title">🏛️ LawHelp.org</div>
+          <p class="resource-desc">Find free and low-cost legal aid in your state for divorce, custody, and family law matters.</p>
+          <span class="resource-link">lawhelp.org →</span>
         </a>
         <a href="https://www.womenslaw.org" target="_blank" class="resource-card">
-          <div class="resource-icon">🛡️</div>
-          <div class="resource-body"><div class="resource-title">WomensLaw.org</div><p class="resource-desc">Legal resources and safety planning for anyone experiencing domestic violence during separation.</p><span class="resource-link">womenslaw.org →</span></div>
+          <div class="resource-title">🛡️ WomensLaw.org</div>
+          <p class="resource-desc">Legal resources and safety planning for anyone experiencing domestic violence during separation.</p>
+          <span class="resource-link">womenslaw.org →</span>
         </a>
         <a href="https://www.ourfamilywizard.com" target="_blank" class="resource-card">
-          <div class="resource-icon">👨‍👩‍👧</div>
-          <div class="resource-body"><div class="resource-title">OurFamilyWizard</div><p class="resource-desc">Co-parenting communication platform for managing custody schedules, expenses, and messaging.</p><span class="resource-link">ourfamilywizard.com →</span></div>
+          <div class="resource-title">👨‍👩‍👧 OurFamilyWizard</div>
+          <p class="resource-desc">Co-parenting communication platform for managing custody schedules, expenses, and messaging.</p>
+          <span class="resource-link">ourfamilywizard.com →</span>
         </a>
         <a href="https://www.divorce.com" target="_blank" class="resource-card">
-          <div class="resource-icon">📋</div>
-          <div class="resource-body"><div class="resource-title">Divorce.com</div><p class="resource-desc">State-specific divorce filing guides, forms, and requirements.</p><span class="resource-link">divorce.com →</span></div>
+          <div class="resource-title">📋 Divorce.com</div>
+          <p class="resource-desc">State-specific divorce filing guides, forms, and requirements.</p>
+          <span class="resource-link">divorce.com →</span>
         </a>
       </div>
     </div>
