@@ -2167,6 +2167,22 @@ def auth_me():
 # ── Dashboard routes ──
 
 
+@app.route("/api/account/settings", methods=["POST"])
+def update_account_settings():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    display_name = data.get("display_name", "").strip()[:100]
+    us_state = data.get("us_state", "").strip()[:5]
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"UPDATE users SET display_name = {param}, us_state = {param} WHERE id = {param}",
+               (display_name or None, us_state or None, user["id"]))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
 @app.route("/dashboard")
 def dashboard_page():
     if not get_current_user():
