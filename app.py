@@ -3227,7 +3227,8 @@ def chat():
             ) as stream:
                 for text in stream.text_stream:
                     full_reply += text
-                    yield f"data: {text.replace(chr(10), '\\n')}\n\n"
+                    newline = chr(10)
+                    yield f"data: {text.replace(newline, chr(92) + 'n')}\n\n"
 
             if boundary_cat:
                 summary = full_reply[:300] if len(full_reply) > 300 else full_reply
