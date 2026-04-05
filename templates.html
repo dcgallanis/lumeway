@@ -33,8 +33,11 @@
     .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
     .btn-ghost:hover { background: var(--navy); color: var(--cream); }
     .btn-primary { padding: 8px 20px; border: none; border-radius: 8px; background: var(--accent); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
-    .nav-left { display: flex; align-items: center; gap: 28px; }
-    .nav-right { display: flex; gap: 12px; align-items: center; }
+    .nav-left { display: flex; align-items: center; gap: 36px; }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-right { display: flex; gap: 10px; align-items: center; }
+    .nav-link { font-size: 14px; color: var(--muted); text-decoration: none; padding: 6px 12px; transition: color 0.15s; font-weight: 400; }
+    .nav-link:hover { color: var(--navy); }
     .nav-dropdown { position: relative; }
     .nav-drop-btn { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
     .nav-drop-btn:hover { color: var(--navy); }
@@ -141,37 +144,26 @@
         <span class="sun-icon" style="color:var(--accent)"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
         <span class="nav-logo-text" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--navy)">Lumeway</span>
       </a>
-      <div class="nav-dropdown">
-        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">▾</span></button>
-        <div class="nav-drop-menu">
-          <a href="/estate">Death &amp; Estate</a>
-          <a href="/divorce">Divorce &amp; Separation</a>
-          <a href="/job-loss">Job Loss &amp; Income Crisis</a>
-          <a href="/relocation">Moving &amp; Relocation</a>
-          <a href="/disability">Disability &amp; Benefits</a>
-          <a href="/retirement">Retirement</a>
+      <div class="nav-links">
+        <div class="nav-dropdown">
+          <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">▾</span></button>
+          <div class="nav-drop-menu">
+            <a href="/estate">Death &amp; Estate</a>
+            <a href="/divorce">Divorce &amp; Separation</a>
+            <a href="/job-loss">Job Loss &amp; Income Crisis</a>
+            <a href="/relocation">Moving &amp; Relocation</a>
+            <a href="/disability">Disability &amp; Benefits</a>
+            <a href="/retirement">Retirement</a>
+          </div>
         </div>
-      </div>
-      <div class="nav-dropdown">
-        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">▾</span></button>
-        <div class="nav-drop-menu">
-          <a href="/features">Features</a>
-          <a href="/templates">Shop</a>
-          <a href="/faq">FAQ</a>
-          <a href="/blog">Blog</a>
-          <div class="menu-div"></div>
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/terms">Terms</a>
-        </div>
+        <a href="/features" class="nav-link">Features</a>
+        <a href="/templates" class="nav-link">Explore</a>
       </div>
     </div>
     <div class="nav-right">
-      <a href="/chat" target="_blank" class="btn-ghost">Try it free</a>
-      <a href="/templates" class="btn-primary">Shop</a>
-      <a href="/cart" class="btn-ghost" style="position:relative;" title="Cart">🛒 <span id="cart-count" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--accent);color:white;font-size:10px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;"></span></a>
-      <a href="/login" class="btn-ghost" id="navAccount">Log in</a>
+      <a href="/login" class="nav-link" id="navAccount">Log in</a>
+      <a href="/templates" class="btn-ghost">Shop</a>
+      <a href="/chat" target="_blank" class="btn-primary">Try it free</a>
     </div>
   </nav>
 
