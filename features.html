@@ -177,13 +177,56 @@
     .feature-screenshot {
       background: var(--blush-light);
       border-radius: 20px;
-      padding: 40px;
+      padding: 0;
       min-height: 400px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--muted);
       font-size: 14px;
+      overflow: hidden;
+    }
+    .feature-screenshot video,
+    .feature-screenshot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+    }
+
+    /* Blurred preview with overlay */
+    .screenshot-preview {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .screenshot-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+      filter: blur(2px);
+    }
+    .screenshot-preview.light-blur img {
+      filter: blur(1px);
+    }
+    .screenshot-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(44, 62, 80, 0.18);
+      border-radius: 20px;
+    }
+    .screenshot-overlay span {
+      background: rgba(255,255,255,0.92);
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 24px;
+      border-radius: 100px;
+      letter-spacing: 0.02em;
     }
 
     /* ── CTA Section ── */
@@ -343,7 +386,7 @@
     <div class="feature-grid">
       <div class="feature-content reveal">
         <h2 class="feature-title">Tell us what's happening — in your own words</h2>
-        <p class="feature-desc">No forms. No intake paperwork. Just describe your situation and Lumeway builds a personalized plan. It asks the right follow-up questions, drafts letters, explains forms, and knows when you need a professional.</p>
+        <p class="feature-desc">No forms. No intake paperwork. Just describe your situation and Lumeway builds a personalized plan. It asks the right follow-up questions, provides letter templates, explains forms, and knows when you need a professional.</p>
         <div class="feature-list reveal-stagger">
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
@@ -363,14 +406,23 @@
           </div>
         </div>
       </div>
-      <div class="feature-screenshot reveal">Chat screenshot</div>
+      <div class="feature-screenshot reveal">
+        <video autoplay loop muted playsinline style="border-radius:20px; box-shadow: 0 8px 32px rgba(44,74,94,0.12);">
+          <source src="/static/web-designs/chatclip960.mp4" type="video/mp4">
+        </video>
+      </div>
     </div>
   </section>
 
   <!-- 3. Dashboard Feature — screenshot LEFT, text RIGHT -->
   <section class="feature-section bg-cream">
     <div class="feature-grid reverse">
-      <div class="feature-screenshot reveal">Dashboard screenshot</div>
+      <div class="feature-screenshot reveal">
+        <div class="screenshot-preview">
+          <img src="/static/images/individual-template-screenshots/jobloss/14. First_24_Hours_After_Losing_Your_Job-1.png" alt="Dashboard preview" loading="lazy">
+          <div class="screenshot-overlay"><span>Dashboard preview coming soon</span></div>
+        </div>
+      </div>
       <div class="feature-content reveal">
         <h2 class="feature-title">Your personal command center</h2>
         <p class="feature-desc">Track everything in one place. Your dashboard keeps deadlines, documents, goals, and calendar events organized so nothing falls through the cracks.</p>
@@ -421,14 +473,24 @@
           </div>
         </div>
       </div>
-      <div class="feature-screenshot reveal">Checklist screenshot</div>
+      <div class="feature-screenshot reveal">
+        <div class="screenshot-preview">
+          <img src="/static/images/individual-template-screenshots/estate/16. First_24_Hours_After_a_Death-1.png" alt="Checklist preview" loading="lazy">
+          <div class="screenshot-overlay"><span>Preview coming soon</span></div>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- 5. Calendar Feature — screenshot LEFT, text RIGHT -->
   <section class="feature-section bg-cream">
     <div class="feature-grid reverse">
-      <div class="feature-screenshot reveal">Calendar screenshot</div>
+      <div class="feature-screenshot reveal">
+        <div class="screenshot-preview">
+          <img src="/static/images/individual-template-screenshots/retirement/15. First_24_Hours_After_Deciding_to_Retire-1.png" alt="Calendar preview" loading="lazy">
+          <div class="screenshot-overlay"><span>Preview coming soon</span></div>
+        </div>
+      </div>
       <div class="feature-content reveal">
         <h2 class="feature-title">Never miss a deadline again</h2>
         <p class="feature-desc">Important dates auto-populate on your calendar. Switch between month and day views, add your own events, and see everything at a glance.</p>
@@ -479,7 +541,11 @@
           </div>
         </div>
       </div>
-      <div class="feature-screenshot reveal">Worksheets screenshot</div>
+      <div class="feature-screenshot reveal">
+        <div class="screenshot-preview light-blur">
+          <img src="/static/images/individual-template-screenshots/jobloss/1. Severance_Response_Letter-1.png" alt="Worksheets preview" loading="lazy">
+        </div>
+      </div>
     </div>
   </section>
 
