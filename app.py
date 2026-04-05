@@ -974,6 +974,10 @@ Examples:
   [QUICK_REPLIES: Yes, show me | Not yet]"""
 
 
+@app.route("/templates/individual")
+def individual_templates():
+    return send_from_directory(".", "individual-templates.html")
+
 @app.route("/.well-known/<path:filename>")
 def well_known(filename):
     return send_from_directory(".well-known", filename)
@@ -1485,6 +1489,71 @@ p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:24px}
 <a href="/download/{{ token }}/file" class="btn">Download Templates</a>
 <p class="note">This link is unique to your purchase and does not expire.<br>Questions? Email <a href="mailto:hello@lumeway.co" style="color:var(--navy)">hello@lumeway.co</a></p>
 </div></body></html>"""
+
+@app.route("/cart")
+def cart_page():
+    return send_from_directory(".", "cart.html")
+
+@app.route("/api/cart", methods=["GET"])
+def get_cart():
+    cart = flask_session.get("cart", [])
+    return jsonify({"items": cart})
+
+@app.route("/api/cart/add", methods=["POST"])
+def add_to_cart():
+    data = request.get_json()
+    product_id = data.get("product_id")
+    name = data.get("name")
+    price = data.get("price")
+    item_type = data.get("type")  # "bundle" or "individual"
+    if not product_id or not name or price is None or item_type not in ("bundle", "individual"):
+        return jsonify({"error": "Missing or invalid fields"}), 400
+    cart = flask_session.get("cart", [])
+    # Prevent duplicates
+    for item in cart:
+        if item["product_id"] == product_id:
+            return jsonify({"items": cart, "message": "Already in cart"})
+    cart.append({"product_id": product_id, "name": name, "price": price, "type": item_type})
+    flask_session["cart"] = cart
+    return jsonify({"items": cart})
+
+@app.route("/api/cart/remove", methods=["POST"])
+def remove_from_cart():
+    data = request.get_json()
+    product_id = data.get("product_id")
+    cart = flask_session.get("cart", [])
+    cart = [item for item in cart if item["product_id"] != product_id]
+    flask_session["cart"] = cart
+    return jsonify({"items": cart})
+
+@app.route("/api/cart/checkout", methods=["POST"])
+def cart_checkout():
+    cart = flask_session.get("cart", [])
+    if not cart:
+        return jsonify({"error": "Cart is empty"}), 400
+    line_items = []
+    for item in cart:
+        line_items.append({
+            "price_data": {
+                "currency": "usd",
+                "product_data": {"name": item["name"]},
+                "unit_amount": int(item["price"] * 100),
+            },
+            "quantity": 1,
+        })
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=line_items,
+            mode="payment",
+            success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=request.host_url + "cart",
+            metadata={"product_ids": ",".join(item["product_id"] for item in cart)},
+        )
+        flask_session["cart"] = []
+        return jsonify({"url": session.url})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/templates")
 def templates():
