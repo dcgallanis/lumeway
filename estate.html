@@ -24,7 +24,7 @@
   <meta name="twitter:description" content="A step-by-step guide for what to do after losing a spouse. Deadlines, resources, and compassionate guidance from Lumeway."/>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How many death certificates do I need?","acceptedAnswer":{"@type":"Answer","text":"You'll typically need 10–15 certified copies. Banks, insurance companies, government agencies, and financial institutions each require their own original certified copy."}},{"@type":"Question","name":"Do I need a lawyer for probate?","acceptedAnswer":{"@type":"Answer","text":"It depends on the complexity of the estate. If there's a valid will, no disputes, and the estate falls below your state's small estate threshold, you may be able to handle it yourself. For larger or contested estates, an attorney is strongly recommended."}},{"@type":"Question","name":"When should I apply for survivor benefits?","acceptedAnswer":{"@type":"Answer","text":"As soon as possible. Social Security survivor benefits don't back-pay more than 6 months, so every month you wait beyond that is money you can't recover."}},{"@type":"Question","name":"What bills should I pay first?","acceptedAnswer":{"@type":"Answer","text":"Prioritize housing (mortgage or rent), utilities, and insurance premiums. Hold off on debts that were solely in your spouse's name until you understand the estate's obligations — you may not be personally responsible."}},{"@type":"Question","name":"Can creditors come after me for my spouse's debts?","acceptedAnswer":{"@type":"Answer","text":"Generally, you're only responsible for joint debts. In community property states, the rules are more complex. If creditors are contacting you, consult an estate attorney before paying anything."}},{"@type":"Question","name":"What's the difference between probate and non-probate assets?","acceptedAnswer":{"@type":"Answer","text":"Probate assets are those owned solely by the deceased with no beneficiary designation. Non-probate assets — like joint bank accounts, life insurance with a named beneficiary, and retirement accounts — pass directly to the beneficiary and skip probate entirely."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How many death certificates do I need and where do I get them?","acceptedAnswer":{"@type":"Answer","text":"Order 10–15 certified copies from your county vital records office or through the funeral home. Each costs $5–$25 depending on the state. You'll need separate originals for each bank account, insurance policy, Social Security, the DMV, and the probate court."}},{"@type":"Question","name":"Do I need a lawyer for probate?","acceptedAnswer":{"@type":"Answer","text":"Not always. If the estate is small (threshold between $25,000 and $150,000), there's a valid will, and no one is contesting it, you can handle it yourself. For larger estates, hire a probate attorney — most charge $3,000–$7,000 for straightforward cases."}},{"@type":"Question","name":"When should I apply for survivor benefits?","acceptedAnswer":{"@type":"Answer","text":"Apply within the first month if possible. Social Security survivor benefits don't back-pay more than 6 months. Call SSA at 1-800-772-1213. You'll need the death certificate, both Social Security numbers, and your marriage certificate."}},{"@type":"Question","name":"What bills should I pay first?","acceptedAnswer":{"@type":"Answer","text":"Prioritize: (1) housing, (2) utilities and phone, (3) insurance premiums, (4) joint debts. Do not pay debts solely in your spouse's name until you understand the estate's obligations — you may not be personally responsible."}},{"@type":"Question","name":"Can creditors come after me for my spouse's debts?","acceptedAnswer":{"@type":"Answer","text":"Generally, you're only responsible for joint debts and co-signed debts. In the 9 community property states (AZ, CA, ID, LA, NV, NM, TX, WA, WI), rules are more complex. Consult an estate attorney before paying anything."}},{"@type":"Question","name":"What's the difference between probate and non-probate assets?","acceptedAnswer":{"@type":"Answer","text":"Probate assets go through court (6–18 months). Non-probate assets skip court entirely: joint bank accounts, life insurance with a named beneficiary, retirement accounts with beneficiaries, and property held in a trust."}}]}
   </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -94,7 +94,7 @@
     .timeline-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
     /* FAQ split layout */
     .faq-section { width: 100%; padding: 80px 5%; background: var(--cream); }
-    .faq-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 56px; align-items: start; }
+    .faq-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
     .faq-sidebar { position: sticky; top: 100px; align-self: start; }
     .faq-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
     .faq-sidebar h2 em { font-style: italic; color: var(--accent-light); }
@@ -102,41 +102,13 @@
     .faq-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
     /* Action section split layout */
     .action-section { width: 100%; padding: 80px 5%; background: var(--warm-white); }
-    .action-grid { display: flex; gap: 60px; align-items: center; max-width: 1100px; margin: 0 auto; }
-    .action-preview { flex: 1; min-width: 0; }
-    .action-ctas { flex: 0 1 380px; }
+    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
     .action-ctas h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 16px; }
     .action-ctas h2 em { font-style: italic; color: var(--accent-light); }
     .action-ctas .section-label { margin-bottom: 12px; }
     .action-ctas p { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 32px; }
     .action-ctas .cta-buttons { display: flex; flex-direction: column; gap: 12px; }
-    .action-ctas .cta-buttons .btn-large { white-space: nowrap; text-align: center; width: fit-content; }
 
-    /* Deadlines & Resources two-column layout */
-    .dr-section { width: 100%; padding: 80px 5%; }
-    .dr-header { text-align: center; max-width: 640px; margin: 0 auto 48px; }
-    .dr-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-    .dr-col-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-    .dr-col-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-    .dr-col-icon.deadlines { background: #FDF0ED; }
-    .dr-col-icon.resources { background: #EDF4F8; }
-    .dr-col-title { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 500; color: var(--text); }
-
-    .deadline-list { display: flex; flex-direction: column; gap: 12px; }
-    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; }
-    .deadline-card + .deadline-card { margin-top: 10px; }
-    .deadline-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
-    .deadline-days { font-family: 'Libre Baskerville', serif; font-size: 15px; font-weight: 600; color: #C0392B; }
-    .deadline-title { font-weight: 500; font-size: 14px; color: var(--text); }
-    .deadline-desc { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
-
-    .resource-list { display: flex; flex-direction: column; gap: 12px; }
-    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; transition: all 0.2s; text-decoration: none; display: block; }
-    .resource-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent-light); }
-    .resource-card + .resource-card { margin-top: 10px; }
-    .resource-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
-    .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
-    .resource-link { font-size: 12px; color: var(--accent); margin-top: 4px; display: inline-block; }
 
     /* State Selector */
     .state-selector-section { padding: 0 24px 48px; max-width: 800px; margin: 0 auto; }
@@ -151,6 +123,25 @@
     .state-disclaimer { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 20px; line-height: 1.6; }
     .state-fallback-card { margin-top: 20px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; max-width: 680px; }
     .state-fallback-card p { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 20px; }
+
+
+    /* Deadlines */
+    .deadlines-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; max-width: 800px; }
+    .deadline-row { display: flex; gap: 20px; align-items: flex-start; padding: 20px 28px; border-bottom: 1px solid var(--border); }
+    .deadline-row:last-child { border-bottom: none; }
+    .deadline-time { font-family: 'Libre Baskerville', serif; font-size: 14px; font-weight: 600; color: #C0392B; white-space: nowrap; min-width: 80px; padding-top: 2px; }
+    .deadline-detail { flex: 1; min-width: 0; }
+    .deadline-name { font-weight: 500; font-size: 14px; color: var(--text); margin-bottom: 3px; }
+    .deadline-note { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+
+    /* Resources grid */
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .resource-square { background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 24px; text-decoration: none; display: flex; flex-direction: column; transition: all 0.2s; text-align: center; }
+    .resource-square:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
+    .resource-sq-icon { font-size: 28px; margin-bottom: 12px; }
+    .resource-sq-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .resource-sq-desc { font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 300; flex: 1; }
+    .resource-sq-link { font-size: 11px; color: var(--accent); margin-top: 10px; }
 
     .cta-section { padding: 80px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
     .cta-title { font-family: 'Libre Baskerville', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
@@ -169,7 +160,7 @@
     .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
     .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-    @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout { grid-template-columns: 1fr; } .action-grid { flex-direction: column; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } .dr-columns { grid-template-columns: 1fr; gap: 40px; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
+    @media (max-width: 768px) { .resources-grid { grid-template-columns: 1fr 1fr; } nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { .resources-grid { grid-template-columns: 1fr; } nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
     /* Chat Preview */
     .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
     .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
@@ -222,12 +213,11 @@
         <a href="/retirement">Retirement</a>
       </div>
     </div>
-    <a href="/features" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--muted);text-decoration:none;padding:6px 4px;transition:color 0.15s;" onmouseover="this.style.color='var(--navy)'" onmouseout="this.style.color='var(--muted)'">Features</a>
-
     <div class="nav-dropdown">
       <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">▾</span></button>
       <div class="nav-drop-menu">
-          <a href="/templates">Shop</a>
+        <a href="/features">Features</a>
+        <a href="/templates">Shop</a>
           <a href="/faq">FAQ</a>
         <a href="/blog">Blog</a>
         <div class="menu-div"></div>
@@ -395,77 +385,91 @@
 
 <div class="section-divider"></div>
 
-<section class="dr-section">
-  <div class="dr-header">
-    <p class="section-label">Deadlines & resources</p>
-    <h2 class="section-title">What to know <em>right now</em></h2>
+<section class="section">
+  <p class="section-label">Critical deadlines</p>
+  <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
+  <div class="deadlines-box">
+    <div class="deadline-row">
+      <span class="deadline-time">60 days</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">COBRA health insurance</div>
+        <p class="deadline-note">You have 60 days from loss of coverage to elect COBRA continuation coverage. Missing this window means losing access entirely.</p>
+      </div>
+    </div>
+    <div class="deadline-row">
+      <span class="deadline-time">6 months</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Social Security survivor benefits</div>
+        <p class="deadline-note">Benefits don't back-pay more than 6 months. Apply as soon as possible.</p>
+      </div>
+    </div>
+    <div class="deadline-row">
+      <span class="deadline-time">9 months</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Estate tax return</div>
+        <p class="deadline-note">Federal estate tax return (Form 706) is due 9 months after date of death if the estate exceeds the exemption threshold.</p>
+      </div>
+    </div>
+    <div class="deadline-row">
+      <span class="deadline-time">2 years</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">File as qualifying widow(er)</div>
+        <p class="deadline-note">You can file taxes at the married filing jointly rate for 2 years after your spouse's death if you have a dependent child.</p>
+      </div>
+    </div>
+    <div class="deadline-row">
+      <span class="deadline-time">Varies</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Probate filing</div>
+        <p class="deadline-note">Most states require the will to be filed with probate court within 30-90 days of death.</p>
+      </div>
+    </div>
+    <div class="deadline-row">
+      <span class="deadline-time">ASAP</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Update beneficiaries</div>
+        <p class="deadline-note">Outdated beneficiaries on retirement accounts and life insurance can cause serious problems. Do this soon.</p>
+      </div>
+    </div>
   </div>
-  <div class="dr-columns">
-    <div class="dr-col">
-      <div class="dr-col-header">
-        <div class="dr-col-icon deadlines">&#9200;</div>
-        <div class="dr-col-title">Critical deadlines</div>
-      </div>
-      <div class="deadline-list">
-        <div class="deadline-card">
-          <div class="deadline-header"><span class="deadline-days">60 days</span><span class="deadline-title">COBRA health insurance</span></div>
-          <p class="deadline-desc">You have 60 days from loss of coverage to elect COBRA continuation coverage. Missing this window means losing access entirely.</p>
-        </div>
-        <div class="deadline-card">
-          <div class="deadline-header"><span class="deadline-days">6 months</span><span class="deadline-title">Social Security survivor benefits</span></div>
-          <p class="deadline-desc">Benefits don't back-pay more than 6 months. Apply as soon as possible.</p>
-        </div>
-        <div class="deadline-card">
-          <div class="deadline-header"><span class="deadline-days">9 months</span><span class="deadline-title">Estate tax return</span></div>
-          <p class="deadline-desc">Federal estate tax return (Form 706) is due 9 months after date of death if the estate exceeds the exemption threshold.</p>
-        </div>
-        <div class="deadline-card">
-          <div class="deadline-header"><span class="deadline-days">2 years</span><span class="deadline-title">File as qualifying widow(er)</span></div>
-          <p class="deadline-desc">You can file taxes at the married filing jointly rate for 2 years after your spouse's death if you have a dependent child.</p>
-        </div>
-        <div class="deadline-card">
-          <div class="deadline-header"><span class="deadline-days">Varies</span><span class="deadline-title">Probate filing</span></div>
-          <p class="deadline-desc">Most states require the will to be filed with probate court within 30-90 days of death.</p>
-        </div>
-        <div class="deadline-card">
-          <div class="deadline-header"><span class="deadline-days">ASAP</span><span class="deadline-title">Update beneficiaries</span></div>
-          <p class="deadline-desc">Outdated beneficiaries on retirement accounts and life insurance can cause serious problems. Do this soon.</p>
-        </div>
-      </div>
-    </div>
-    <div class="dr-col">
-      <div class="dr-col-header">
-        <div class="dr-col-icon resources">&#128218;</div>
-        <div class="dr-col-title">Trusted resources</div>
-      </div>
-      <div class="resource-list">
-        <a href="https://www.ssa.gov/survivors" target="_blank" class="resource-card">
-          <div class="resource-title">&#127963;&#65039; Social Security Survivors</div>
-          <p class="resource-desc">Apply for survivor benefits and find your local SSA office.</p>
-          <span class="resource-link">ssa.gov/survivors &rarr;</span>
-        </a>
-        <a href="https://www.usa.gov/survivor-benefits" target="_blank" class="resource-card">
-          <div class="resource-title">&#127482;&#127480; USA.gov Survivor Benefits</div>
-          <p class="resource-desc">Official guide to all federal survivor benefits including veterans and federal employees.</p>
-          <span class="resource-link">usa.gov/survivor-benefits &rarr;</span>
-        </a>
-        <a href="https://www.modernwidowsclub.com" target="_blank" class="resource-card">
-          <div class="resource-title">&#129309; Modern Widows Club</div>
-          <p class="resource-desc">Community, resources, and peer support for widows navigating life after loss.</p>
-          <span class="resource-link">modernwidowsclub.com &rarr;</span>
-        </a>
-        <a href="https://www.griefshare.org" target="_blank" class="resource-card">
-          <div class="resource-title">&#128153; GriefShare</div>
-          <p class="resource-desc">Find grief support groups near you. Over 15,000 groups worldwide.</p>
-          <span class="resource-link">griefshare.org &rarr;</span>
-        </a>
-        <a href="https://www.benefits.gov" target="_blank" rel="noopener noreferrer" class="resource-card">
-          <div class="resource-title">&#128269; Benefits.gov</div>
-          <p class="resource-desc">Federal screening tool to find all government benefit programs you may qualify for.</p>
-          <span class="resource-link">benefits.gov &rarr;</span>
-        </a>
-      </div>
-    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="section" style="background:var(--warm-white)">
+  <p class="section-label">Trusted resources</p>
+  <h2 class="section-title">Where to go <em>for help</em></h2>
+  <div class="resources-grid">
+    <a href="https://www.ssa.gov/survivors" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">&#127963;&#65039;</div>
+      <div class="resource-sq-title">Social Security Survivors</div>
+      <p class="resource-sq-desc">Apply for survivor benefits and find your local SSA office.</p>
+      <span class="resource-sq-link">ssa.gov/survivors &rarr;</span>
+    </a>
+    <a href="https://www.usa.gov/survivor-benefits" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">&#127482;&#127480;</div>
+      <div class="resource-sq-title">USA.gov Survivor Benefits</div>
+      <p class="resource-sq-desc">Official guide to all federal survivor benefits including veterans and federal employees.</p>
+      <span class="resource-sq-link">usa.gov/survivor-benefits &rarr;</span>
+    </a>
+    <a href="https://www.modernwidowsclub.com" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">&#129309;</div>
+      <div class="resource-sq-title">Modern Widows Club</div>
+      <p class="resource-sq-desc">Community, resources, and peer support for widows navigating life after loss.</p>
+      <span class="resource-sq-link">modernwidowsclub.com &rarr;</span>
+    </a>
+    <a href="https://www.griefshare.org" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">&#128153;</div>
+      <div class="resource-sq-title">GriefShare</div>
+      <p class="resource-sq-desc">Find grief support groups near you. Over 15,000 groups worldwide.</p>
+      <span class="resource-sq-link">griefshare.org &rarr;</span>
+    </a>
+    <a href="https://www.benefits.gov" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">&#128269;</div>
+      <div class="resource-sq-title">Benefits.gov</div>
+      <p class="resource-sq-desc">Federal screening tool to find all government benefit programs you may qualify for.</p>
+      <span class="resource-sq-link">benefits.gov &rarr;</span>
+    </a>
   </div>
 </section>
 
@@ -508,28 +512,28 @@
     </div>
   <div class="faq-list">
     <div class="faq-item">
-      <button class="faq-question" aria-expanded="false" aria-controls="los-a1" id="los-q1"><span>How many death certificates do I need?</span><span class="faq-icon" aria-hidden="true">+</span></button>
-      <div class="faq-answer" id="los-a1" role="region" aria-labelledby="los-q1"><div class="faq-answer-inner">You'll typically need 10–15 certified copies. Banks, insurance companies, government agencies, and financial institutions each require their own original certified copy. <a href="/chat" target="_blank" target="_blank">Lumeway can help you track which institutions need one →</a></div></div>
+      <button class="faq-question" aria-expanded="false" aria-controls="los-a1" id="los-q1"><span>How many death certificates do I need and where do I get them?</span><span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-answer" id="los-a1" role="region" aria-labelledby="los-q1"><div class="faq-answer-inner">Order 10–15 certified copies from your county vital records office or through the funeral home. Each costs $5–$25 depending on the state. You'll need separate originals for: each bank account, each insurance policy, Social Security, the DMV, the mortgage company, and the probate court. Photocopies are not accepted. If you run out, you can order more later, but it takes 2–6 weeks. <a href="/chat" target="_blank">Lumeway can help you track which institutions need one →</a></div></div>
     </div>
     <div class="faq-item">
       <button class="faq-question" aria-expanded="false" aria-controls="los-a2" id="los-q2"><span>Do I need a lawyer for probate?</span><span class="faq-icon" aria-hidden="true">+</span></button>
-      <div class="faq-answer" id="los-a2" role="region" aria-labelledby="los-q2"><div class="faq-answer-inner">It depends on the complexity of the estate. If there's a valid will, no disputes, and the estate falls below your state's small estate threshold, you may be able to handle it yourself. For larger or contested estates, an attorney is strongly recommended.</div></div>
+      <div class="faq-answer" id="los-a2" role="region" aria-labelledby="los-q2"><div class="faq-answer-inner">Not always. If the estate is small (most states have a threshold between $25,000 and $150,000), there's a valid will, and no one is contesting it, you can often handle it yourself with the probate court's self-help forms. For larger estates, contested wills, or situations involving real estate in multiple states, hire a probate attorney. Most charge $3,000–$7,000 for straightforward cases or 2–5% of the estate value for complex ones.</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-question" aria-expanded="false" aria-controls="los-a3" id="los-q3"><span>When should I apply for survivor benefits?</span><span class="faq-icon" aria-hidden="true">+</span></button>
-      <div class="faq-answer" id="los-a3" role="region" aria-labelledby="los-q3"><div class="faq-answer-inner">As soon as possible. Social Security survivor benefits don't back-pay more than 6 months, so every month you wait beyond that is money you can't recover. <a href="/chat" target="_blank" target="_blank">Try Lumeway's free Transition Navigator for deadline guidance →</a></div></div>
+      <div class="faq-answer" id="los-a3" role="region" aria-labelledby="los-q3"><div class="faq-answer-inner">Apply within the first month if possible. Social Security survivor benefits don't back-pay more than 6 months, so every month you delay beyond that is lost money. Call SSA at 1-800-772-1213 or visit your local office. You'll need: the death certificate, your Social Security number, your spouse's Social Security number, and your marriage certificate. If you're over 60 (or 50 and disabled), you're likely eligible. <a href="/chat" target="_blank">Lumeway can walk you through the application →</a></div></div>
     </div>
     <div class="faq-item">
       <button class="faq-question" aria-expanded="false" aria-controls="los-a4" id="los-q4"><span>What bills should I pay first?</span><span class="faq-icon" aria-hidden="true">+</span></button>
-      <div class="faq-answer" id="los-a4" role="region" aria-labelledby="los-q4"><div class="faq-answer-inner">Prioritize housing (mortgage or rent), utilities, and insurance premiums. Hold off on debts that were solely in your spouse's name until you understand the estate's obligations — you may not be personally responsible.</div></div>
+      <div class="faq-answer" id="los-a4" role="region" aria-labelledby="los-q4"><div class="faq-answer-inner">Prioritize in this order: (1) housing — mortgage or rent, (2) utilities and phone, (3) insurance premiums (health, home, auto), (4) any joint debts like credit cards in both names. Do not pay debts that were solely in your spouse's name until you understand the estate's obligations — you may not be personally responsible. Don't let collectors pressure you. If money is tight, contact each creditor to explain the situation — most will pause collections temporarily.</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-question" aria-expanded="false" aria-controls="los-a5" id="los-q5"><span>Can creditors come after me for my spouse's debts?</span><span class="faq-icon" aria-hidden="true">+</span></button>
-      <div class="faq-answer" id="los-a5" role="region" aria-labelledby="los-q5"><div class="faq-answer-inner">Generally, you're only responsible for joint debts. In community property states, the rules are more complex. If creditors are contacting you, consult an estate attorney before paying anything.</div></div>
+      <div class="faq-answer" id="los-a5" role="region" aria-labelledby="los-q5"><div class="faq-answer-inner">Generally, you're only responsible for joint debts (accounts in both names) and debts where you co-signed. In the 9 community property states (AZ, CA, ID, LA, NV, NM, TX, WA, WI), you may be responsible for debts incurred during the marriage even if they're in your spouse's name only. Important: debt collectors cannot legally force you to pay from your own funds for your spouse's individual debts. Consult an estate attorney before paying anything you're unsure about.</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-question" aria-expanded="false" aria-controls="los-a6" id="los-q6"><span>What's the difference between probate and non-probate assets?</span><span class="faq-icon" aria-hidden="true">+</span></button>
-      <div class="faq-answer" id="los-a6" role="region" aria-labelledby="los-q6"><div class="faq-answer-inner">Probate assets are those owned solely by the deceased with no beneficiary designation. Non-probate assets — like joint bank accounts, life insurance with a named beneficiary, and retirement accounts — pass directly to the beneficiary and skip probate entirely.</div></div>
+      <div class="faq-answer" id="los-a6" role="region" aria-labelledby="los-q6"><div class="faq-answer-inner">Probate assets are anything owned solely by the deceased with no beneficiary or joint owner — these go through court and can take 6–18 months. Non-probate assets skip court entirely and transfer directly: joint bank accounts (immediately accessible), life insurance with a named beneficiary (paid in 2–8 weeks), retirement accounts with beneficiaries, and property held in a trust. Check every account's beneficiary designation — this determines who gets what regardless of what the will says.</div></div>
     </div>
   </div>
   </div>
