@@ -7,6 +7,13 @@
       "runtimeArgs": ["app.py"],
       "port": 5000,
       "autoPort": true
+    },
+    {
+      "name": "static-server",
+      "runtimeExecutable": "/opt/homebrew/bin/node",
+      "runtimeArgs": ["-e", "require('http').createServer((q,r)=>{require('fs').readFile('.'+q.url.split('?')[0],(e,d)=>{if(e){r.writeHead(404);r.end()}else{r.writeHead(200,{'Content-Type':'text/html'});r.end(d)}});}).listen(8765)"],
+      "port": 8765,
+      "autoPort": true
     }
   ]
 }

@@ -51,8 +51,6 @@
     .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
 
     .hero { width: 100%; padding: 140px 5% 60px; text-align: center; }
-    .hero-content { max-width: 720px; margin: 0 auto; }
-    .hero-visual { display: none; }
     .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
     .hero-title { font-family: 'Libre Baskerville', serif; font-size: clamp(40px, 7vw, 72px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 24px; }
     .hero-title em { font-style: italic; color: var(--accent-light); }
@@ -67,9 +65,7 @@
     .btn-large-outline:hover { background: var(--navy); color: var(--cream); transform: translateY(-2px); }
 
     .section { width: 100%; padding: 64px 5%; }
-    .section:nth-of-type(odd) { background: var(--cream); }
-    .section:nth-of-type(even) { background: var(--warm-white); }
-    .section-divider { display: none; }
+    .section-divider { width: 1px; height: 32px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
     .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
     .section-title { font-family: 'Libre Baskerville', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.15; margin-bottom: 36px; }
     .section-title em { font-style: italic; color: var(--accent-light); }
@@ -126,7 +122,7 @@
     .resource-link { font-size: 12px; color: var(--accent); margin-top: 8px; display: block; }
 
     /* State Selector */
-    .state-selector-section { width: 100%; padding: 0 5% 48px; }
+    .state-selector-section { padding: 0 24px 48px; max-width: 800px; margin: 0 auto; }
     .state-selector-intro { font-size: 13px; color: var(--muted); font-weight: 300; margin-bottom: 12px; }
     .state-select-input { padding: 11px 40px 11px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--warm-white); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E7D8A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; min-width: 220px; }
     .state-select-input:focus { outline: 2px solid var(--navy); outline-offset: 2px; }
@@ -139,12 +135,10 @@
     .state-fallback-card { margin-top: 20px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; max-width: 680px; }
     .state-fallback-card p { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 20px; }
 
-    .cta-section { width: 100%; padding: 80px 5%; text-align: center; background: var(--navy); }
-    .cta-title { font-family: 'Libre Baskerville', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; color: var(--cream); }
+    .cta-section { padding: 48px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
+    .cta-title { font-family: 'Libre Baskerville', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
     .cta-title em { font-style: italic; color: var(--accent-light); }
-    .cta-section .btn-large-outline { color: var(--cream); border-color: var(--cream); }
-    .cta-section .btn-large-outline:hover { background: var(--cream); color: var(--navy); }
-    .cta-subtitle { font-size: 17px; color: rgba(250,247,242,0.7); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
+    .cta-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
     .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
     footer { padding: 40px 48px 28px; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
@@ -158,9 +152,9 @@
     .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
     .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-    @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero { grid-template-columns: 1fr; padding: 100px 5% 40px; min-height: auto; } .hero-content { max-width: 100%; padding-right: 0; justify-self: start; } .hero-visual { display: none; } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
+    @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
     /* Chat Preview */
-    .chat-preview-wrap { max-width: 680px; }
+    .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
     .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
     .cp-msg { display: flex; gap: 10px; margin-bottom: 16px; }
     .cp-msg:last-child { margin-bottom: 0; }
@@ -236,14 +230,12 @@
 </nav>
 
 <div class="hero">
-  <div class="hero-content">
-    <div class="hero-eyebrow reveal">🕊️ Death &amp; Estate</div>
-    <h1 class="hero-title reveal">What to Do When a Loved One Dies</h1>
-    <p class="hero-subtitle reveal">Losing a spouse is one of life's most devastating experiences. In the weeks that follow, there are over 100 practical tasks that need attention — while you're also grieving. Lumeway helps you know what to do, in what order, one step at a time.</p>
-    <div class="hero-actions reveal">
-      <a href="/chat" target="_blank" target="_blank" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
-      <a href="/templates" class="btn-large btn-large-secondary">Browse worksheets</a>
-    </div>
+  <div class="hero-eyebrow reveal">🕊️ Death &amp; Estate</div>
+  <h1 class="hero-title reveal">What to Do When a Loved One Dies</h1>
+  <p class="hero-subtitle reveal">Losing a spouse is one of life's most devastating experiences. In the weeks that follow, there are over 100 practical tasks that need attention — while you're also grieving. Lumeway helps you know what to do, in what order, one step at a time.</p>
+  <div class="hero-actions reveal">
+    <a href="/chat" target="_blank" target="_blank" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+    <a href="/templates" class="btn-large btn-large-secondary">Browse worksheets</a>
   </div>
 </div>
 
@@ -325,7 +317,7 @@
     </div>
     <div class="timeline-phases">
       <div class="timeline reveal-stagger">
-<div class="timeline-item reveal">
+    <div class="timeline-item reveal">
       <div class="timeline-period">First 24–48 hours</div>
       <div class="timeline-content">
         <h3>Immediate needs</h3>
@@ -335,10 +327,8 @@
           <li>Contact a funeral home to begin arrangements</li>
           <li>Locate your spouse's will if one exists</li>
         </ul>
-            </div>
+      </div>
     </div>
-  </div>
-</section>
     <div class="timeline-item reveal">
       <div class="timeline-period">First 1–2 weeks</div>
       <div class="timeline-content">
@@ -378,8 +368,10 @@
         </ul>
       </div>
     </div>
+      </div>
+    </div>
   </div>
-</div>
+</section>
 
 <div class="section-divider"></div>
 
@@ -466,13 +458,13 @@
     <div class="action-preview">
       <div class="chat-preview-wrap">
         <div class="chat-preview">
-      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">My husband passed away two weeks ago. I'm overwhelmed and don't know what to do first.</div></div>
+<div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">My husband passed away two weeks ago. I'm overwhelmed and don't know what to do first.</div></div>
       <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">I'm so sorry for your loss. You don't have to figure everything out at once — let's take it one step at a time together. Can I ask, what state are you in?</div></div>
       <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">California.</div></div>
       <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">Thank you. In California, the will needs to be filed with probate court within 30 days. But the very first thing — have you been able to get certified copies of the death certificate? You'll need about 10–15 copies for insurance, banks, and government agencies.</div></div>
       <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">I got 5 copies. Is that enough?</div></div>
       <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">You'll likely want more — I'd recommend at least 10. You can order additional copies from the county recorder's office. Would you like me to walk you through what to do next?</div></div>
-    </div>
+        </div>
       </div>
     </div>
     <div class="action-ctas">
@@ -496,12 +488,11 @@
       <h2>Frequently asked<br><em>questions</em></h2>
       <p>Quick answers to help you understand what to expect and what to prioritize.</p>
     </div>
-    <div class="faq-list">
+  <div class="faq-list">
     <div class="faq-item">
       <button class="faq-question" aria-expanded="false" aria-controls="los-a1" id="los-q1"><span>How many death certificates do I need?</span><span class="faq-icon" aria-hidden="true">+</span></button>
       <div class="faq-answer" id="los-a1" role="region" aria-labelledby="los-q1"><div class="faq-answer-inner">You'll typically need 10–15 certified copies. Banks, insurance companies, government agencies, and financial institutions each require their own original certified copy. <a href="/chat" target="_blank" target="_blank">Lumeway can help you track which institutions need one →</a></div></div>
-  </div>
-</section>
+    </div>
     <div class="faq-item">
       <button class="faq-question" aria-expanded="false" aria-controls="los-a2" id="los-q2"><span>Do I need a lawyer for probate?</span><span class="faq-icon" aria-hidden="true">+</span></button>
       <div class="faq-answer" id="los-a2" role="region" aria-labelledby="los-q2"><div class="faq-answer-inner">It depends on the complexity of the estate. If there's a valid will, no disputes, and the estate falls below your state's small estate threshold, you may be able to handle it yourself. For larger or contested estates, an attorney is strongly recommended.</div></div>
@@ -523,14 +514,15 @@
       <div class="faq-answer" id="los-a6" role="region" aria-labelledby="los-q6"><div class="faq-answer-inner">Probate assets are those owned solely by the deceased with no beneficiary designation. Non-probate assets — like joint bank accounts, life insurance with a named beneficiary, and retirement accounts — pass directly to the beneficiary and skip probate entirely.</div></div>
     </div>
   </div>
-</div>
+  </div>
+</section>
 
 <div class="cta-section">
   <h2 class="cta-title">You don't have to do<br>this <em>alone</em></h2>
   <p class="cta-subtitle">Lumeway walks alongside you through every step — from the first phone calls to the longer-term decisions ahead.</p>
   <div class="cta-actions">
     <a href="/chat" target="_blank" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
-    <a href="/templates#estate" class="btn-large btn-large-outline">Get the Estate &amp; Survivor Bundle — $18</a>
+    <a href="/templates#estate" class="btn-large btn-large-outline">Get the Estate &amp; Survivor Bundle — $16</a>
   </div>
 </div>
 
@@ -540,7 +532,6 @@
     <p class="footer-note"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a></p>
     <div class="footer-social">
       <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a>
-      <a href="https://www.etsy.com/shop/Lumeway" rel="noopener" target="_blank" title="Etsy"><svg viewBox="0 0 24 24"><path d="M8.559 3.074c0-.295.177-.413.59-.413h5.373c1.06 0 1.947.413 2.596 1.652l.649 1.416h.944l-.236-4.778H4.139l.059 1.18c1.06 0 1.77.177 2.065.531.354.354.472 1.003.472 1.947v11.14c0 .944-.118 1.593-.472 1.947-.295.354-1.003.531-2.065.531l-.059 1.18h14.336l.708-5.132h-.944l-.944 1.77c-.649 1.18-1.534 1.652-2.655 1.652H9.149c-.413 0-.59-.118-.59-.413V12.69h3.009c.767 0 1.357.118 1.652.472.295.295.472.826.531 1.534h1.003V9.504h-1.003c-.059.708-.236 1.239-.531 1.534-.295.295-.885.472-1.652.472H8.559V3.074z"/></svg></a>
     </div>
   </footer>
 
