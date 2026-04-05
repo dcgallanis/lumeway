@@ -164,6 +164,16 @@ def init_subscribers_db():
             is_completed BOOLEAN DEFAULT FALSE,
             created_at TEXT NOT NULL
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_activity_log (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            action_type TEXT NOT NULL,
+            contact_name TEXT,
+            organization TEXT,
+            description TEXT NOT NULL,
+            date TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )""")
     else:
         db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -273,6 +283,16 @@ def init_subscribers_db():
             timeframe TEXT NOT NULL,
             target_date TEXT,
             is_completed INTEGER DEFAULT 0,
+            created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_activity_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            action_type TEXT NOT NULL,
+            contact_name TEXT,
+            organization TEXT,
+            description TEXT NOT NULL,
+            date TEXT NOT NULL,
             created_at TEXT NOT NULL
         )""")
     conn.commit()
@@ -2895,6 +2915,54 @@ def update_goal(goal_id):
         return jsonify({"error": "No fields to update"}), 400
     values.extend([goal_id, user["id"]])
     db_execute(conn, f"UPDATE user_goals SET {', '.join(updates)} WHERE id = {param} AND user_id = {param}", tuple(values))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
+# ── Activity Log API ──
+
+@app.route("/api/activity-log")
+def get_activity_log():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id, action_type, contact_name, organization, description, date, created_at FROM user_activity_log WHERE user_id = {param} ORDER BY date DESC, created_at DESC", (user["id"],))
+    entries = [{"id": r[0], "action_type": r[1], "contact_name": r[2], "organization": r[3], "description": r[4], "date": r[5], "created_at": r[6]} for r in cur.fetchall()]
+    conn.close()
+    return jsonify({"entries": entries})
+
+@app.route("/api/activity-log", methods=["POST"])
+def add_activity_log():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    action_type = data.get("action_type", "").strip()
+    description = data.get("description", "").strip()
+    date = data.get("date", "").strip()
+    if not action_type or not description or not date:
+        return jsonify({"error": "action_type, description, and date are required"}), 400
+    contact_name = data.get("contact_name", "").strip() or None
+    organization = data.get("organization", "").strip() or None
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+    db_execute(conn, f"INSERT INTO user_activity_log (user_id, action_type, contact_name, organization, description, date, created_at) VALUES ({param},{param},{param},{param},{param},{param},{param})", (user["id"], action_type, contact_name, organization, description, date, now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/activity-log/<int:entry_id>", methods=["DELETE"])
+def delete_activity_log(entry_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"DELETE FROM user_activity_log WHERE id = {param} AND user_id = {param}", (entry_id, user["id"]))
     conn.commit()
     conn.close()
     return jsonify({"ok": True})

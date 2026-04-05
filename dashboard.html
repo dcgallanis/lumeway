@@ -230,6 +230,19 @@
     .view-toggle-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--muted); cursor: pointer; transition: all 0.15s; }
     .view-toggle-btn.active { background: var(--accent); color: var(--cream); border-color: var(--accent); }
 
+    /* Activity Log */
+    .activity-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 12px; }
+    .activity-icon { font-size: 20px; flex-shrink: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--cream); border-radius: 8px; }
+    .activity-body { flex: 1; }
+    .activity-desc { font-size: 14px; font-weight: 400; line-height: 1.5; }
+    .activity-meta { font-size: 12px; color: var(--muted); margin-top: 4px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .activity-meta span { display: inline-flex; align-items: center; gap: 3px; }
+    .activity-date { font-size: 11px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+    .activity-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 20px; }
+    .activity-form select, .activity-form input, .activity-form textarea { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); color: var(--text); outline: none; }
+    .activity-form select:focus, .activity-form input:focus, .activity-form textarea:focus { border-color: var(--accent); }
+    .activity-form textarea { min-height: 60px; resize: vertical; }
+
     /* Loading */
     .loading { text-align: center; padding: 48px; color: var(--muted); font-size: 15px; font-weight: 300; }
 
@@ -289,6 +302,7 @@
   <script>
     var dashData = null;
     var checklistItems = [];
+    var activityLog = [];
     var currentTab = 'overview';
     var calMonth = new Date().getMonth();
     var calYear = new Date().getFullYear();
@@ -331,10 +345,12 @@
     function loadDashboard() {
       Promise.all([
         fetch('/api/dashboard/data').then(function(r) { return r.json(); }),
-        fetch('/api/checklist').then(function(r) { return r.json(); })
+        fetch('/api/checklist').then(function(r) { return r.json(); }),
+        fetch('/api/activity-log').then(function(r) { return r.json(); })
       ]).then(function(results) {
         dashData = results[0];
         checklistItems = results[1].items || [];
+        activityLog = results[2].entries || [];
         renderDashboard();
       }).catch(function(err) {
         document.getElementById('loadingState').textContent = 'Failed to load dashboard. Please refresh.';
@@ -392,6 +408,9 @@
       if (documents.length > 0) html += ' <span class="tab-badge">' + documents.filter(function(d){return !d.is_gathered;}).length + '</span>';
       html += '</button>';
       html += '  <button class="dash-tab" data-tab="notes" onclick="switchTab(\'notes\')">Notes</button>';
+      html += '  <button class="dash-tab" data-tab="activity" onclick="switchTab(\'activity\')">Activity Log';
+      if (activityLog.length > 0) html += ' <span class="tab-badge">' + activityLog.length + '</span>';
+      html += '</button>';
       html += '  <button class="dash-tab" data-tab="history" onclick="switchTab(\'history\')">History';
       if (sessions.length > 0) html += ' <span class="tab-badge">' + sessions.length + '</span>';
       html += '</button>';
@@ -546,6 +565,69 @@
       html += '    <a href="#" onclick="switchTab(\'history\');return false" style="font-size:12px;color:var(--navy);text-decoration:none">\uD83D\uDCEC Chat history</a>';
       html += '  </div>';
       html += '</div>';
+
+      // Quick Resources (based on user's checklist transition types)
+      if (checklistItems.length > 0) {
+        var transitionTypes = {};
+        checklistItems.forEach(function(item) { transitionTypes[item.transition_type] = true; });
+        var resourceMap = {
+          'job-loss': [
+            { label: 'File for unemployment', url: 'https://www.careeronestop.org/LocalHelp/UnemploymentBenefits/find-unemployment-benefits.aspx' },
+            { label: 'Find health coverage', url: 'https://www.healthcare.gov' },
+            { label: 'Resume builder', url: 'https://www.careeronestop.org/toolkit/resumes/resume-guide.aspx' }
+          ],
+          'job_loss': [
+            { label: 'File for unemployment', url: 'https://www.careeronestop.org/LocalHelp/UnemploymentBenefits/find-unemployment-benefits.aspx' },
+            { label: 'Find health coverage', url: 'https://www.healthcare.gov' },
+            { label: 'Resume builder', url: 'https://www.careeronestop.org/toolkit/resumes/resume-guide.aspx' }
+          ],
+          'estate': [
+            { label: 'Social Security survivor benefits', url: 'https://www.ssa.gov/benefits/survivors/' },
+            { label: 'IRS estate tax info', url: 'https://www.irs.gov/businesses/small-businesses-self-employed/estate-tax' },
+            { label: 'Find a probate attorney', url: 'https://www.findlaw.com/estate/probate/' }
+          ],
+          'divorce': [
+            { label: 'Child support calculator', url: 'https://www.alllaw.com/calculators/childsupport' },
+            { label: 'Legal aid near you', url: 'https://www.lsc.gov/about-lsc/what-legal-aid/get-legal-help' },
+            { label: 'Credit report check', url: 'https://www.annualcreditreport.com' }
+          ],
+          'disability': [
+            { label: 'Apply for SSDI', url: 'https://www.ssa.gov/disability/' },
+            { label: 'State disability office', url: 'https://www.dol.gov/general/topic/disability' },
+            { label: 'ADA resources', url: 'https://www.ada.gov' }
+          ],
+          'relocation': [
+            { label: 'USPS mail forwarding', url: 'https://moversguide.usps.com' },
+            { label: 'DMV by state', url: 'https://www.usa.gov/motor-vehicle-services' },
+            { label: 'Update voter registration', url: 'https://vote.gov' }
+          ],
+          'retirement': [
+            { label: 'Social Security benefits', url: 'https://www.ssa.gov/benefits/retirement/' },
+            { label: 'Medicare enrollment', url: 'https://www.medicare.gov' },
+            { label: 'Retirement savings calculator', url: 'https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator' }
+          ]
+        };
+        var resourceLinks = [];
+        Object.keys(transitionTypes).forEach(function(tt) {
+          if (resourceMap[tt]) {
+            resourceMap[tt].forEach(function(r) {
+              var isDuplicate = resourceLinks.some(function(existing) { return existing.url === r.url; });
+              if (!isDuplicate) resourceLinks.push(r);
+            });
+          }
+        });
+        if (resourceLinks.length > 0) {
+          html += '<div class="progress-compact">';
+          html += '  <div class="card-label">Quick Resources</div>';
+          html += '  <div style="display:flex;flex-direction:column;gap:6px;text-align:left">';
+          resourceLinks.forEach(function(r) {
+            html += '    <a href="' + r.url + '" target="_blank" style="font-size:12px;color:var(--navy);text-decoration:none">\uD83D\uDD17 ' + r.label + '</a>';
+          });
+          html += '  </div>';
+          html += '</div>';
+        }
+      }
+
       html += '</div>'; // overview-sidebar
       html += '</div>'; // overview-layout
 
@@ -790,6 +872,80 @@
         });
       }
       html += '</div>'; // panel-notes
+
+      // ═══════════════════════════════
+      // ── ACTIVITY LOG TAB ──
+      // ═══════════════════════════════
+      html += '<div class="tab-panel" id="panel-activity">';
+
+      // Add activity form
+      html += '<div class="dash-card" style="margin-bottom:20px">';
+      html += '  <div class="card-label">Log an Activity</div>';
+      html += '  <div class="activity-form">';
+      html += '    <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px">';
+      html += '      <label style="font-size:11px;color:var(--muted)">Type</label>';
+      html += '      <select id="activityType">';
+      html += '        <option value="phone_call">Phone Call</option>';
+      html += '        <option value="form_submitted">Form Submitted</option>';
+      html += '        <option value="appointment">Appointment</option>';
+      html += '        <option value="email_sent">Email Sent</option>';
+      html += '        <option value="document_filed">Document Filed</option>';
+      html += '        <option value="other">Other</option>';
+      html += '      </select>';
+      html += '    </div>';
+      html += '    <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px">';
+      html += '      <label style="font-size:11px;color:var(--muted)">Contact Name</label>';
+      html += '      <input id="activityContact" placeholder="Who you dealt with (optional)">';
+      html += '    </div>';
+      html += '    <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px">';
+      html += '      <label style="font-size:11px;color:var(--muted)">Organization</label>';
+      html += '      <input id="activityOrg" placeholder="Company/agency (optional)">';
+      html += '    </div>';
+      html += '    <div style="display:flex;flex-direction:column;gap:4px;flex:2;min-width:200px">';
+      html += '      <label style="font-size:11px;color:var(--muted)">Description</label>';
+      html += '      <textarea id="activityDesc" placeholder="What happened..." style="min-height:40px"></textarea>';
+      html += '    </div>';
+      html += '    <div style="display:flex;flex-direction:column;gap:4px;min-width:140px">';
+      html += '      <label style="font-size:11px;color:var(--muted)">Date</label>';
+      html += '      <input type="date" id="activityDate" value="' + new Date().toISOString().split('T')[0] + '">';
+      html += '    </div>';
+      html += '    <div style="display:flex;flex-direction:column;gap:4px;justify-content:flex-end">';
+      html += '      <button class="init-btn" onclick="addActivityLog()">Add</button>';
+      html += '    </div>';
+      html += '  </div>';
+      html += '</div>';
+
+      // Activity log entries
+      if (activityLog.length > 0) {
+        var activityIcons = { phone_call: '\uD83D\uDCDE', form_submitted: '\uD83D\uDCCB', appointment: '\uD83D\uDCC5', email_sent: '\u2709\uFE0F', document_filed: '\uD83D\uDCC4', other: '\u2022' };
+        var activityLabels = { phone_call: 'Phone Call', form_submitted: 'Form Submitted', appointment: 'Appointment', email_sent: 'Email Sent', document_filed: 'Document Filed', other: 'Other' };
+        activityLog.forEach(function(entry) {
+          var icon = activityIcons[entry.action_type] || '\u2022';
+          var typeLabel = activityLabels[entry.action_type] || entry.action_type;
+          html += '<div class="activity-card">';
+          html += '  <div class="activity-icon">' + icon + '</div>';
+          html += '  <div class="activity-body">';
+          html += '    <div class="activity-desc">' + entry.description.replace(/</g, '&lt;') + '</div>';
+          html += '    <div class="activity-meta">';
+          html += '      <span style="color:var(--gold);font-weight:500">' + typeLabel + '</span>';
+          if (entry.contact_name) html += '      <span>\uD83D\uDC64 ' + entry.contact_name.replace(/</g, '&lt;') + '</span>';
+          if (entry.organization) html += '      <span>\uD83C\uDFE2 ' + entry.organization.replace(/</g, '&lt;') + '</span>';
+          html += '    </div>';
+          html += '  </div>';
+          html += '  <div class="activity-date">' + formatShortDate(entry.date) + '</div>';
+          html += '  <div class="item-actions">';
+          html += '    <button class="item-edit" onclick="editActivityLog(' + entry.id + ')" title="Edit">Edit</button>';
+          html += '    <button class="item-del" onclick="deleteActivityLog(' + entry.id + ')" title="Delete">&times;</button>';
+          html += '  </div>';
+          html += '</div>';
+        });
+      } else {
+        html += '<div class="dash-card">';
+        html += '  <p class="card-empty">No activity logged yet. Record phone calls, form submissions, appointments, and other actions you\'ve taken during your transition.</p>';
+        html += '</div>';
+      }
+
+      html += '</div>'; // panel-activity
 
       // ═══════════════════════════════
       // ── HISTORY TAB ──
@@ -1304,6 +1460,64 @@
       .then(function(data) {
         if (data.ok) {
           currentTab = 'notes';
+          loadDashboard();
+        }
+      });
+    }
+
+    // ── Activity Log actions ──
+    function addActivityLog() {
+      var actionType = document.getElementById('activityType').value;
+      var contact = document.getElementById('activityContact').value.trim();
+      var org = document.getElementById('activityOrg').value.trim();
+      var desc = document.getElementById('activityDesc').value.trim();
+      var date = document.getElementById('activityDate').value;
+      if (!desc || !date) { alert('Please enter a description and date.'); return; }
+      fetch('/api/activity-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action_type: actionType, contact_name: contact, organization: org, description: desc, date: date })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          currentTab = 'activity';
+          loadDashboard();
+        }
+      });
+    }
+
+    function deleteActivityLog(entryId) {
+      if (!confirm('Delete this activity log entry?')) return;
+      fetch('/api/activity-log/' + entryId, { method: 'DELETE' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          currentTab = 'activity';
+          loadDashboard();
+        }
+      });
+    }
+
+    function editActivityLog(entryId) {
+      var entry = activityLog.filter(function(e) { return e.id === entryId; })[0];
+      if (!entry) return;
+      var newDesc = prompt('Edit description:', entry.description);
+      if (newDesc === null) return;
+      // Delete and re-add with updated description (simple edit approach)
+      fetch('/api/activity-log/' + entryId, { method: 'DELETE' })
+      .then(function(r) { return r.json(); })
+      .then(function() {
+        return fetch('/api/activity-log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action_type: entry.action_type, contact_name: entry.contact_name || '', organization: entry.organization || '', description: newDesc, date: entry.date })
+        });
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          currentTab = 'activity';
           loadDashboard();
         }
       });
