@@ -62,40 +62,43 @@
     .btn-large-secondary:hover { border-color: var(--navy); color: var(--navy); transform: translateY(-2px); }
     .btn-large-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--navy); }
     .btn-large-outline:hover { background: var(--navy); color: var(--cream); transform: translateY(-2px); }
-    .section { width: 100%; padding: 64px 5%; }
+    .section { width: 100%; padding: 80px 5%; }
     .section-divider { width: 1px; height: 32px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
     .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
     .section-title { font-family: 'Libre Baskerville', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.15; margin-bottom: 36px; }
     .section-title em { font-style: italic; color: var(--accent-light); }
-    .timeline { display: flex; flex-direction: column; gap: 2px; }
-    .timeline-item { display: grid; grid-template-columns: 140px 1fr; background: var(--warm-white); border: 1px solid var(--border); }
-    .timeline-item:first-child { border-radius: 16px 16px 0 0; }
-    .timeline-item:last-child { border-radius: 0 0 16px 16px; }
-    .timeline-period { background: var(--navy); color: var(--cream); padding: 24px 20px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; font-weight: 500; line-height: 1.4; }
-    .timeline-content { padding: 24px 28px; }
-    .timeline-content h3 { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+    .timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+    .timeline::before { content: ''; position: absolute; left: 19px; top: 24px; bottom: 24px; width: 2px; background: linear-gradient(to bottom, var(--navy), var(--gold)); border-radius: 1px; }
+    .timeline-item { display: grid; grid-template-columns: 40px 1fr; gap: 0; position: relative; padding-bottom: 32px; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-step { display: flex; flex-direction: column; align-items: center; padding-top: 2px; position: relative; z-index: 1; }
+    .timeline-dot { width: 40px; height: 40px; border-radius: 50%; background: var(--navy); color: var(--cream); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; font-family: 'Libre Baskerville', serif; flex-shrink: 0; }
+
+    .timeline-period { display: inline-block; background: var(--navy); color: var(--cream); padding: 5px 14px; border-radius: 100px; font-size: 12px; font-weight: 500; letter-spacing: 0.03em; margin-bottom: 10px; }
+    .timeline-content { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; margin-left: 16px; }
+    .timeline-content h3 { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 500; margin-bottom: 10px; color: var(--text); }
     .timeline-content ul { list-style: none; }
     .timeline-content ul li { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.7; padding-left: 16px; position: relative; }
-    .timeline-content ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent-light); }
+    .timeline-content ul li::before { content: '\2192'; position: absolute; left: 0; color: var(--accent-light); }
 
     /* Timeline split layout */
-    .timeline-section { width: 100%; padding: 64px 5%; }
-    .timeline-layout { display: grid; grid-template-columns: 300px 1fr; gap: 48px; align-items: start; }
+    .timeline-section { width: 100%; padding: 80px 5% 64px; }
+    .timeline-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
     .timeline-sidebar { position: sticky; top: 100px; align-self: start; }
     .timeline-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
     .timeline-sidebar h2 em { font-style: italic; color: var(--accent-light); }
     .timeline-sidebar .section-label { margin-bottom: 12px; }
     .timeline-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
     /* FAQ split layout */
-    .faq-section { width: 100%; padding: 64px 5%; background: var(--cream); }
-    .faq-layout { display: grid; grid-template-columns: 300px 1fr; gap: 48px; align-items: start; }
+    .faq-section { width: 100%; padding: 80px 5%; background: var(--cream); }
+    .faq-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
     .faq-sidebar { position: sticky; top: 100px; align-self: start; }
     .faq-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
     .faq-sidebar h2 em { font-style: italic; color: var(--accent-light); }
     .faq-sidebar .section-label { margin-bottom: 12px; }
     .faq-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
     /* Action section split layout */
-    .action-section { width: 100%; padding: 64px 5%; background: var(--warm-white); }
+    .action-section { width: 100%; padding: 80px 5%; background: var(--warm-white); }
     .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
     .action-ctas h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 16px; }
     .action-ctas h2 em { font-style: italic; color: var(--accent-light); }
@@ -103,19 +106,33 @@
     .action-ctas p { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 32px; }
     .action-ctas .cta-buttons { display: flex; flex-direction: column; gap: 12px; }
 
-    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; border-top: 3px solid #C0392B; }
-    .deadline-days { font-family: 'Libre Baskerville', serif; font-size: 36px; font-weight: 300; color: #C0392B; line-height: 1; margin-bottom: 8px; }
-    .deadline-title { font-weight: 500; font-size: 15px; margin-bottom: 6px; }
-    .deadline-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
-    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.2s; text-decoration: none; display: block; }
-    .resource-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
-    .resource-icon { font-size: 24px; margin-bottom: 12px; }
-    .resource-title { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-    .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
-    .resource-link { font-size: 12px; color: var(--accent); margin-top: 8px; display: block; }
-    .cta-section { padding: 48px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
+    /* Deadlines & Resources two-column layout */
+    .dr-section { width: 100%; padding: 80px 5%; }
+    .dr-header { text-align: center; max-width: 640px; margin: 0 auto 48px; }
+    .dr-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+    .dr-col-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+    .dr-col-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .dr-col-icon.deadlines { background: #FDF0ED; }
+    .dr-col-icon.resources { background: #EDF4F8; }
+    .dr-col-title { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 500; color: var(--text); }
+    .deadline-list { display: flex; flex-direction: column; gap: 12px; }
+    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; display: flex; gap: 16px; align-items: flex-start; transition: box-shadow 0.2s; }
+    .deadline-card:hover { box-shadow: var(--shadow); }
+    .deadline-badge { flex-shrink: 0; min-width: 52px; padding: 6px 10px; border-radius: 8px; background: #FDF0ED; text-align: center; }
+    .deadline-days { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 600; color: #C0392B; line-height: 1.1; }
+    .deadline-unit { font-size: 10px; color: #C0392B; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
+    .deadline-info { flex: 1; min-width: 0; }
+    .deadline-title { font-weight: 500; font-size: 14px; margin-bottom: 4px; color: var(--text); }
+    .deadline-desc { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+    .resource-list { display: flex; flex-direction: column; gap: 12px; }
+    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; transition: all 0.2s; text-decoration: none; display: flex; gap: 14px; align-items: flex-start; }
+    .resource-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent-light); }
+    .resource-icon { font-size: 20px; flex-shrink: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: #EDF4F8; border-radius: 10px; }
+    .resource-body { flex: 1; min-width: 0; }
+    .resource-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+    .resource-link { font-size: 12px; color: var(--accent); margin-top: 4px; display: inline-block; }
+    .cta-section { padding: 80px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
     .cta-title { font-family: 'Libre Baskerville', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
     .cta-title em { font-style: italic; color: var(--accent-light); }
     .cta-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
@@ -131,7 +148,7 @@
     .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
     .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-    @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
+    @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } .dr-columns { grid-template-columns: 1fr; gap: 40px; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
     /* Chat Preview */
     .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
     .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
@@ -148,10 +165,9 @@
     .cp-anim .cp-msg.cp-visible { opacity: 1; transform: translateY(0); }
     .chat-preview-cta { text-align: center; margin-top: 24px; }
     /* FAQ Accordion */
-    .faq-list { display: flex; flex-direction: column; gap: 2px; }
-    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; }
-    .faq-item:first-child { border-radius: 16px 16px 0 0; }
-    .faq-item:last-child { border-radius: 0 0 16px 16px; }
+    .faq-list { display: flex; flex-direction: column; gap: 8px; }
+    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; border-radius: 14px; }
+
     .faq-question { width: 100%; text-align: left; background: none; border: none; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; }
     .faq-question > span:first-child { flex: 1; min-width: 0; }
     .faq-question:hover { background: rgba(27,58,92,0.03); }
@@ -306,8 +322,10 @@
     <div class="timeline-phases">
       <div class="timeline reveal-stagger">
     <div class="timeline-item reveal">
-      <div class="timeline-period">Immediately</div>
-      <div class="timeline-content"><h3>Document everything</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">1</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">Immediately</div>
+        <h3>Document everything</h3><ul>
         <li>Ask your doctor to thoroughly document your condition, functional limitations, and prognosis</li>
         <li>Understand your employer's short-term disability process (if currently employed)</li>
         <li>Request FMLA leave if you're still working — this protects your job for up to 12 weeks</li>
@@ -315,8 +333,10 @@
       </ul></div>
     </div>
     <div class="timeline-item reveal">
-      <div class="timeline-period">First 1–2 weeks</div>
-      <div class="timeline-content"><h3>File your claims</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">2</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">First 1–2 weeks</div>
+        <h3>File your claims</h3><ul>
         <li>File for employer short-term disability (if applicable)</li>
         <li>Apply for SSDI through Social Security (ssa.gov or your local SSA office)</li>
         <li>Check if your state has its own disability program (CA, HI, NJ, NY, RI, and WA do)</li>
@@ -324,8 +344,10 @@
       </ul></div>
     </div>
     <div class="timeline-item reveal">
-      <div class="timeline-period">First 1–3 months</div>
-      <div class="timeline-content"><h3>Follow up and prepare</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">3</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">First 1–3 months</div>
+        <h3>Follow up and prepare</h3><ul>
         <li>Check SSDI application status regularly (ssa.gov or 1-800-772-1213)</li>
         <li>Continue all medical treatment and keep detailed records of appointments</li>
         <li>Attend any consultative exams SSA schedules — missing one can result in automatic denial</li>
@@ -333,8 +355,10 @@
       </ul></div>
     </div>
     <div class="timeline-item reveal">
-      <div class="timeline-period">3–12 months</div>
-      <div class="timeline-content"><h3>Appeals and long-term planning</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">4</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">3–12 months</div>
+        <h3>Appeals and long-term planning</h3><ul>
         <li>If denied SSDI, file your appeal within 60 days — do not miss this deadline</li>
         <li>Consider hiring a disability attorney for appeals (most work on contingency — no upfront cost)</li>
         <li>Explore vocational rehabilitation services through your state</li>
@@ -348,42 +372,70 @@
 
 <div class="section-divider"></div>
 
-<div class="section">
-  <p class="section-label">Critical deadlines</p>
-  <h2 class="section-title">Don't miss these<br><em>time-sensitive steps</em></h2>
-  <div class="deadlines-grid">
-    <div class="deadline-card">
-      <div class="deadline-days">~30 days</div>
-      <div class="deadline-title">Employer short-term disability filing</div>
-      <p class="deadline-desc">Most employer STD policies require filing within 30 days of disability onset. Check your specific policy — missing this deadline can forfeit your benefits.</p>
+<section class="dr-section">
+  <div class="dr-header">
+    <p class="section-label">Deadlines &amp; resources</p>
+    <h2 class="section-title">What to know <em>right now</em></h2>
+  </div>
+  <div class="dr-columns">
+    <div class="dr-col">
+      <div class="dr-col-header">
+        <div class="dr-col-icon deadlines">&#9200;</div>
+        <div class="dr-col-title">Critical deadlines</div>
+      </div>
+      <div class="deadline-list">
+        <div class="deadline-card">
+          <div class="deadline-badge"><div class="deadline-days" style="font-size:11px;">~30 days</div></div>
+          <div class="deadline-info"><div class="deadline-title">Employer short-term disability filing</div><p class="deadline-desc">Most employer STD policies require filing within 30 days of disability onset. Check your specific policy — missing this deadline can forfeit your benefits.</p></div>
+        </div>
+        <div class="deadline-card">
+          <div class="deadline-badge"><div class="deadline-days">12</div><div class="deadline-unit">weeks</div></div>
+          <div class="deadline-info"><div class="deadline-title">FMLA job protection</div><p class="deadline-desc">FMLA protects your job for 12 weeks. After that, your employer is not legally required to hold your position. Plan accordingly and understand your company's policy.</p></div>
+        </div>
+        <div class="deadline-card">
+          <div class="deadline-badge"><div class="deadline-days">5</div><div class="deadline-unit">months</div></div>
+          <div class="deadline-info"><div class="deadline-title">SSDI waiting period</div><p class="deadline-desc">Even if approved, SSDI benefits don't begin until 5 full months after your disability onset date. Plan your finances for this gap.</p></div>
+        </div>
+        <div class="deadline-card">
+          <div class="deadline-badge"><div class="deadline-days">60</div><div class="deadline-unit">days</div></div>
+          <div class="deadline-info"><div class="deadline-title">SSDI appeal after denial</div><p class="deadline-desc">If your SSDI application is denied, you have exactly 60 days from the denial date to request reconsideration. Missing this means starting the entire application over.</p></div>
+        </div>
+        <div class="deadline-card">
+          <div class="deadline-badge"><div class="deadline-days">24</div><div class="deadline-unit">months</div></div>
+          <div class="deadline-info"><div class="deadline-title">Medicare eligibility</div><p class="deadline-desc">Medicare coverage begins 24 months after your SSDI benefits start (not 24 months after approval — after benefits start, which is after the 5-month waiting period). That's a 29-month gap from onset to Medicare.</p></div>
+        </div>
+        <div class="deadline-card">
+          <div class="deadline-badge"><div class="deadline-days" style="font-size:10px;">Ongoing</div></div>
+          <div class="deadline-info"><div class="deadline-title">Medical documentation</div><p class="deadline-desc">There's no single deadline, but consistent, ongoing medical documentation is the single most important factor in SSDI approval. Every gap in treatment weakens your case.</p></div>
+        </div>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">12 weeks</div>
-      <div class="deadline-title">FMLA job protection</div>
-      <p class="deadline-desc">FMLA protects your job for 12 weeks. After that, your employer is not legally required to hold your position. Plan accordingly and understand your company's policy.</p>
-    </div>
-    <div class="deadline-card">
-      <div class="deadline-days">5 months</div>
-      <div class="deadline-title">SSDI waiting period</div>
-      <p class="deadline-desc">Even if approved, SSDI benefits don't begin until 5 full months after your disability onset date. Plan your finances for this gap.</p>
-    </div>
-    <div class="deadline-card">
-      <div class="deadline-days">60 days</div>
-      <div class="deadline-title">SSDI appeal after denial</div>
-      <p class="deadline-desc">If your SSDI application is denied, you have exactly 60 days from the denial date to request reconsideration. Missing this means starting the entire application over.</p>
-    </div>
-    <div class="deadline-card">
-      <div class="deadline-days">24 months</div>
-      <div class="deadline-title">Medicare eligibility</div>
-      <p class="deadline-desc">Medicare coverage begins 24 months after your SSDI benefits start (not 24 months after approval — after benefits start, which is after the 5-month waiting period). That's a 29-month gap from onset to Medicare.</p>
-    </div>
-    <div class="deadline-card">
-      <div class="deadline-days">Ongoing</div>
-      <div class="deadline-title">Medical documentation</div>
-      <p class="deadline-desc">There's no single deadline, but consistent, ongoing medical documentation is the single most important factor in SSDI approval. Every gap in treatment weakens your case.</p>
+    <div class="dr-col">
+      <div class="dr-col-header">
+        <div class="dr-col-icon resources">&#128218;</div>
+        <div class="dr-col-title">Trusted resources</div>
+      </div>
+      <div class="resource-list">
+        <a href="https://www.ssa.gov/disability" target="_blank" class="resource-card">
+          <div class="resource-icon">🏛️</div>
+          <div class="resource-body"><div class="resource-title">SSA.gov Disability</div><p class="resource-desc">Apply for SSDI online, check application status, and find your local Social Security office.</p><span class="resource-link">ssa.gov/disability →</span></div>
+        </a>
+        <a href="https://www.ndrn.org" target="_blank" class="resource-card">
+          <div class="resource-icon">⚖️</div>
+          <div class="resource-body"><div class="resource-title">Disability Rights Network</div><p class="resource-desc">National network of legal advocacy organizations for people with disabilities — free legal help by state.</p><span class="resource-link">ndrn.org →</span></div>
+        </a>
+        <a href="https://askjan.org" target="_blank" class="resource-card">
+          <div class="resource-icon">💼</div>
+          <div class="resource-body"><div class="resource-title">Job Accommodation Network (JAN)</div><p class="resource-desc">Free expert guidance on workplace accommodations for people with disabilities.</p><span class="resource-link">askjan.org →</span></div>
+        </a>
+        <a href="https://www.benefits.gov" target="_blank" class="resource-card">
+          <div class="resource-icon">🔍</div>
+          <div class="resource-body"><div class="resource-title">Benefits.gov</div><p class="resource-desc">Federal screening tool to find all government benefit programs you may qualify for.</p><span class="resource-link">benefits.gov →</span></div>
+        </a>
+      </div>
     </div>
   </div>
-</div>
+</section>
 
 <div class="section-divider"></div>
 
@@ -412,39 +464,6 @@
     </div>
   </div>
 </section>
-
-<div class="section-divider"></div>
-
-<div class="section">
-  <p class="section-label">National resources</p>
-  <h2 class="section-title">Trusted organizations<br><em>that can help</em></h2>
-  <div class="resources-grid">
-    <a href="https://www.ssa.gov/disability" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">🏛️</div>
-      <div class="resource-title">SSA.gov Disability</div>
-      <p class="resource-desc">Apply for SSDI online, check application status, and find your local Social Security office.</p>
-      <span class="resource-link">ssa.gov/disability →</span>
-    </a>
-    <a href="https://www.ndrn.org" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">⚖️</div>
-      <div class="resource-title">Disability Rights Network</div>
-      <p class="resource-desc">National network of legal advocacy organizations for people with disabilities — free legal help by state.</p>
-      <span class="resource-link">ndrn.org →</span>
-    </a>
-    <a href="https://askjan.org" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">💼</div>
-      <div class="resource-title">Job Accommodation Network (JAN)</div>
-      <p class="resource-desc">Free expert guidance on workplace accommodations for people with disabilities.</p>
-      <span class="resource-link">askjan.org →</span>
-    </a>
-    <a href="https://www.benefits.gov" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">🔍</div>
-      <div class="resource-title">Benefits.gov</div>
-      <p class="resource-desc">Federal screening tool to find all government benefit programs you may qualify for.</p>
-      <span class="resource-link">benefits.gov →</span>
-    </a>
-  </div>
-</div>
 
 <div class="section-divider"></div>
 

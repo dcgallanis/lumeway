@@ -423,15 +423,8 @@
       // ── OVERVIEW TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel active" id="panel-overview">';
-      html += '<div class="quick-actions">';
       var lastSession = sessions.length > 0 ? sessions[0] : null;
       var chatUrl = lastSession ? '/chat?session=' + lastSession.id : '/chat';
-      var chatLabel = lastSession ? 'Continue chatting' : 'Start chatting';
-      html += '  <a href="' + chatUrl + '" target="_blank" class="quick-btn">\uD83D\uDCAC ' + chatLabel + '</a>';
-      if (prog.total > 0) html += '  <button class="quick-btn" onclick="switchTab(\'checklist\')">\u2713 My checklist</button>';
-      html += '  <button class="quick-btn" onclick="switchTab(\'calendar\')">\uD83D\uDCC5 Calendar</button>';
-      html += '  <button class="quick-btn" onclick="switchTab(\'notes\')">\uD83D\uDCDD Add a note</button>';
-      html += '</div>';
 
       html += '<div class="overview-layout">';
       html += '<div class="overview-main">';
@@ -560,8 +553,9 @@
       html += '<div class="progress-compact">';
       html += '  <div class="card-label">Quick Links</div>';
       html += '  <div style="display:flex;flex-direction:column;gap:6px;text-align:left">';
-      html += '    <a href="#" onclick="switchTab(\'documents\');return false" style="font-size:12px;color:var(--navy);text-decoration:none">\uD83D\uDCC4 Documents to gather</a>';
-      html += '    <a href="#" onclick="switchTab(\'notes\');return false" style="font-size:12px;color:var(--navy);text-decoration:none">\uD83D\uDCDD My notes</a>';
+      html += '    <a href="' + chatUrl + '" target="_blank" style="font-size:12px;color:var(--navy);text-decoration:none">\uD83D\uDCAC Continue chatting</a>';
+      html += '    <a href="#" onclick="switchTab(\'notes\');return false" style="font-size:12px;color:var(--navy);text-decoration:none">\uD83D\uDCDD Add a note</a>';
+      html += '    <a href="#" onclick="switchTab(\'activity\');return false" style="font-size:12px;color:var(--navy);text-decoration:none">\uD83D\uDCCB Log activity</a>';
       html += '    <a href="#" onclick="switchTab(\'history\');return false" style="font-size:12px;color:var(--navy);text-decoration:none">\uD83D\uDCEC Chat history</a>';
       html += '  </div>';
       html += '</div>';
