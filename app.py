@@ -1,6 +1,8 @@
-from flask import Flask, request, jsonify, send_from_directory, Response, render_template_string, redirect, session as flask_session
+from flask import Flask, request, jsonify, send_from_directory, send_file, Response, render_template_string, redirect, session as flask_session
 from flask_cors import CORS
 import anthropic
+from collections import defaultdict
+from cryptography.fernet import Fernet
 import csv
 import glob as globmod
 import hashlib
@@ -12,6 +14,7 @@ import random
 import re
 import secrets
 import sqlite3
+import time as time_module
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import requests as http_requests
@@ -22,9 +25,92 @@ import conversation_log
 
 load_dotenv()
 
+
+def validate_file_type(file_stream, filename):
+    """Validate file type by magic bytes, not just extension."""
+    header = file_stream.read(8)
+    file_stream.seek(0)
+
+    ext = os.path.splitext(filename)[1].lower()
+
+    # Magic byte signatures
+    signatures = {
+        '.pdf': [b'%PDF'],
+        '.jpg': [b'\xff\xd8\xff'],
+        '.jpeg': [b'\xff\xd8\xff'],
+        '.png': [b'\x89PNG'],
+        '.gif': [b'GIF87a', b'GIF89a'],
+        '.doc': [b'\xd0\xcf\x11\xe0'],  # OLE2 compound document
+        '.docx': [b'PK\x03\x04'],  # ZIP-based (Office Open XML)
+        '.xlsx': [b'PK\x03\x04'],  # ZIP-based
+        '.xls': [b'\xd0\xcf\x11\xe0'],  # OLE2
+        '.csv': None,  # Text-based, skip magic byte check
+        '.txt': None,  # Text-based, skip magic byte check
+    }
+
+    if ext not in signatures:
+        return False
+
+    expected = signatures[ext]
+    if expected is None:
+        return True  # Text-based formats, can't validate by magic bytes
+
+    for sig in expected:
+        if header[:len(sig)] == sig:
+            return True
+
+    return False
+
+
+def get_encryption_key():
+    """Get or create file encryption key. In production, use a KMS."""
+    key_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".file_encryption_key")
+    if os.path.exists(key_path):
+        with open(key_path, "rb") as f:
+            return f.read()
+    key = Fernet.generate_key()
+    with open(key_path, "wb") as f:
+        f.write(key)
+    return key
+
+FILE_ENCRYPTION_KEY = get_encryption_key()
+file_cipher = Fernet(FILE_ENCRYPTION_KEY)
+
+
+upload_rate_limit = defaultdict(list)
+
+def check_upload_rate(user_id, max_uploads=20, window=3600):
+    """Allow max_uploads per window (seconds). Returns True if allowed."""
+    now = time_module.time()
+    upload_rate_limit[user_id] = [t for t in upload_rate_limit[user_id] if now - t < window]
+    if len(upload_rate_limit[user_id]) >= max_uploads:
+        return False
+    upload_rate_limit[user_id].append(now)
+    return True
+
+
 app = Flask(__name__, static_folder=".", static_url_path="/static")
 app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
+app.permanent_session_lifetime = timedelta(hours=24)
 CORS(app)
+
+
+@app.before_request
+def force_https():
+    if request.headers.get('X-Forwarded-Proto') == 'http' and not request.host.startswith('localhost') and not request.host.startswith('127.'):
+        return redirect(request.url.replace('http://', 'https://'), code=301)
+
+
+@app.after_request
+def set_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=()'
+    if request.is_secure:
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    return response
 
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 STRIPE_PK = os.environ.get("STRIPE_PUBLISHABLE_KEY", "pk_live_51TFe15F2xDmfC6kmDm4emI9w3eeL0OHv7TmfYWmjr4BXFa9q23TgaEWjjD4HMLJXNwaaWGZRovgKxMeoqAW2TDSz00lcV0duqv")
@@ -2170,7 +2256,6 @@ def auth_verify_code():
     # Set session cookie
     flask_session["user_id"] = user_id
     flask_session.permanent = True
-    app.permanent_session_lifetime = timedelta(days=30)
 
     return jsonify({"ok": True, "is_new": is_new, "user_id": user_id})
 
@@ -3015,6 +3100,9 @@ def upload_file():
     if not user:
         return jsonify({"error": "Not logged in"}), 401
 
+    if not check_upload_rate(user["id"]):
+        return jsonify({"error": "Upload limit reached. Please try again later."}), 429
+
     if 'file' not in request.files:
         return jsonify({"error": "No file provided"}), 400
 
@@ -3036,6 +3124,10 @@ def upload_file():
     if ext not in allowed_ext:
         return jsonify({"error": "File type not allowed."}), 400
 
+    # Validate file magic bytes
+    if not validate_file_type(f, f.filename):
+        return jsonify({"error": "File content doesn't match its extension."}), 400
+
     category = request.form.get('category', 'other')
 
     # Store with unique name
@@ -3043,7 +3135,12 @@ def upload_file():
     user_dir = os.path.join("uploads", str(user["id"]))
     os.makedirs(user_dir, exist_ok=True)
     filepath = os.path.join(user_dir, stored_name)
-    f.save(filepath)
+
+    # Encrypt and save
+    file_data = f.read()
+    encrypted_data = file_cipher.encrypt(file_data)
+    with open(filepath, "wb") as out:
+        out.write(encrypted_data)
 
     # Save to DB
     now = datetime.utcnow().isoformat()
@@ -3088,13 +3185,19 @@ def download_user_file(file_id):
         return jsonify({"error": "Not logged in"}), 401
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    cur = db_execute(conn, f"SELECT original_name, stored_name FROM user_files WHERE id = {param} AND user_id = {param}", (file_id, user["id"]))
+    cur = db_execute(conn, f"SELECT original_name, stored_name, content_type FROM user_files WHERE id = {param} AND user_id = {param}", (file_id, user["id"]))
     row = cur.fetchone()
     conn.close()
     if not row:
         return jsonify({"error": "File not found"}), 404
-    user_dir = os.path.join("uploads", str(user["id"]))
-    return send_from_directory(user_dir, row[1], as_attachment=True, download_name=row[0])
+    filepath = os.path.join("uploads", str(user["id"]), row[1])
+    if not os.path.exists(filepath):
+        return jsonify({"error": "File not found on disk"}), 404
+    with open(filepath, "rb") as ef:
+        encrypted_data = ef.read()
+    decrypted_data = file_cipher.decrypt(encrypted_data)
+    from io import BytesIO
+    return send_file(BytesIO(decrypted_data), as_attachment=True, download_name=row[0], mimetype=row[2] if '/' in str(row[2]) else 'application/octet-stream')
 
 
 @app.route("/api/files/<int:file_id>", methods=["DELETE"])
