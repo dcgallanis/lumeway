@@ -709,13 +709,13 @@
       t.categories.forEach(function(cat) {
         html += '<div class="guide-category">';
         html += '  <div class="guide-cat-header">' + cat.name + '</div>';
-        if (cat.risk) html += '<div class="guide-cat-risk ' + cat.risk + '">Content risk: ' + cat.risk + '</div>';
+        // Risk levels hidden from users — internal use only
 
         cat.tasks.forEach(function(task) {
           html += '<div class="guide-task" id="guide-' + task.id + '">';
           html += '  <div class="guide-task-header" onclick="toggleGuideTask(\'' + task.id + '\')">';
           html += '    <span class="guide-task-title">' + task.title + '</span>';
-          if (task.risk) html += '<span class="guide-task-risk ' + task.risk + '">' + task.risk + '</span>';
+          // Risk badges hidden — internal use only
           html += '    <span class="guide-chevron">\u25BE</span>';
           html += '  </div>';
           html += '  <div class="guide-task-body">';
