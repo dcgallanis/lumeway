@@ -3082,7 +3082,7 @@ def list_files():
 
 
 @app.route("/api/files/<int:file_id>/download")
-def download_file(file_id):
+def download_user_file(file_id):
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not logged in"}), 401
