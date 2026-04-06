@@ -21,6 +21,12 @@ import requests as http_requests
 import stripe
 import threading
 import uuid
+try:
+    import boto3
+    from botocore.exceptions import ClientError
+    HAS_BOTO3 = True
+except ImportError:
+    HAS_BOTO3 = False
 import conversation_log
 
 load_dotenv()
@@ -75,6 +81,90 @@ def get_encryption_key():
 
 FILE_ENCRYPTION_KEY = get_encryption_key()
 file_cipher = Fernet(FILE_ENCRYPTION_KEY)
+
+
+# ── File Storage Layer (S3 with local fallback) ──
+
+S3_BUCKET = os.environ.get("S3_BUCKET")
+S3_REGION = os.environ.get("S3_REGION", "us-east-1")
+USE_S3 = bool(S3_BUCKET and HAS_BOTO3)
+
+if USE_S3:
+    s3_client = boto3.client(
+        "s3",
+        region_name=S3_REGION,
+        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+    )
+    print(f"[Storage] Using S3 bucket: {S3_BUCKET}")
+else:
+    s3_client = None
+    print("[Storage] Using local disk (set S3_BUCKET to enable S3)")
+
+
+def storage_save(user_id, stored_name, encrypted_data):
+    """Save encrypted file to S3 or local disk."""
+    s3_key = f"user-files/{user_id}/{stored_name}"
+    if USE_S3:
+        s3_client.put_object(
+            Bucket=S3_BUCKET, Key=s3_key, Body=encrypted_data,
+            ServerSideEncryption="AES256",
+            Metadata={"user_id": str(user_id)},
+        )
+    else:
+        user_dir = os.path.join("uploads", str(user_id))
+        os.makedirs(user_dir, exist_ok=True)
+        with open(os.path.join(user_dir, stored_name), "wb") as out:
+            out.write(encrypted_data)
+
+
+def storage_load(user_id, stored_name):
+    """Load encrypted file from S3 or local disk. Returns bytes or None."""
+    s3_key = f"user-files/{user_id}/{stored_name}"
+    if USE_S3:
+        try:
+            resp = s3_client.get_object(Bucket=S3_BUCKET, Key=s3_key)
+            return resp["Body"].read()
+        except ClientError:
+            return None
+    else:
+        filepath = os.path.join("uploads", str(user_id), stored_name)
+        if not os.path.exists(filepath):
+            return None
+        with open(filepath, "rb") as f:
+            return f.read()
+
+
+def storage_delete(user_id, stored_name):
+    """Delete file from S3 or local disk."""
+    s3_key = f"user-files/{user_id}/{stored_name}"
+    if USE_S3:
+        try:
+            s3_client.delete_object(Bucket=S3_BUCKET, Key=s3_key)
+        except ClientError:
+            pass
+    else:
+        filepath = os.path.join("uploads", str(user_id), stored_name)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+
+
+def audit_log(user_id, action, resource_type=None, resource_id=None, detail=None):
+    """Log a security-relevant action."""
+    try:
+        conn = get_db()
+        param = "%s" if USE_POSTGRES else "?"
+        ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown")
+        if "," in ip:
+            ip = ip.split(",")[0].strip()
+        now = datetime.utcnow().isoformat()
+        db_execute(conn, f"""INSERT INTO audit_log (user_id, action, resource_type, resource_id, detail, ip_address, created_at)
+            VALUES ({param},{param},{param},{param},{param},{param},{param})""",
+            (user_id, action, resource_type, resource_id, detail, ip, now))
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass  # Don't let audit logging failures break the app
 
 
 upload_rate_limit = defaultdict(list)
@@ -271,6 +361,16 @@ def init_subscribers_db():
             content_type TEXT,
             uploaded_at TEXT NOT NULL
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS audit_log (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            action TEXT NOT NULL,
+            resource_type TEXT,
+            resource_id TEXT,
+            detail TEXT,
+            ip_address TEXT,
+            created_at TEXT NOT NULL
+        )""")
     else:
         db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -401,6 +501,16 @@ def init_subscribers_db():
             file_size INTEGER,
             content_type TEXT,
             uploaded_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS audit_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            action TEXT NOT NULL,
+            resource_type TEXT,
+            resource_id TEXT,
+            detail TEXT,
+            ip_address TEXT,
+            created_at TEXT NOT NULL
         )""")
     conn.commit()
     conn.close()
@@ -2257,6 +2367,8 @@ def auth_verify_code():
     flask_session["user_id"] = user_id
     flask_session.permanent = True
 
+    audit_log(user_id, "login", "user", str(user_id), email)
+
     return jsonify({"ok": True, "is_new": is_new, "user_id": user_id})
 
 @app.route("/api/auth/logout", methods=["POST"])
@@ -2288,6 +2400,7 @@ def update_account_settings():
                (display_name or None, us_state or None, user["id"]))
     conn.commit()
     conn.close()
+    audit_log(user["id"], "settings_update", "user", str(user["id"]), f"name={display_name}, state={us_state}")
     return jsonify({"ok": True})
 
 @app.route("/dashboard")
@@ -3132,15 +3245,11 @@ def upload_file():
 
     # Store with unique name
     stored_name = f"{uuid.uuid4().hex}{ext}"
-    user_dir = os.path.join("uploads", str(user["id"]))
-    os.makedirs(user_dir, exist_ok=True)
-    filepath = os.path.join(user_dir, stored_name)
 
-    # Encrypt and save
+    # Encrypt and save to storage (S3 or local)
     file_data = f.read()
     encrypted_data = file_cipher.encrypt(file_data)
-    with open(filepath, "wb") as out:
-        out.write(encrypted_data)
+    storage_save(user["id"], stored_name, encrypted_data)
 
     # Save to DB
     now = datetime.utcnow().isoformat()
@@ -3158,6 +3267,8 @@ def upload_file():
         cur = db_execute(conn, "SELECT last_insert_rowid()")
     file_id = cur.fetchone()[0]
     conn.close()
+
+    audit_log(user["id"], "file_upload", "file", str(file_id), f"{f.filename} ({category}, {size} bytes)")
 
     return jsonify({"ok": True, "file": {
         "id": file_id, "original_name": f.filename, "category": category,
@@ -3190,14 +3301,12 @@ def download_user_file(file_id):
     conn.close()
     if not row:
         return jsonify({"error": "File not found"}), 404
-    filepath = os.path.join("uploads", str(user["id"]), row[1])
-    if not os.path.exists(filepath):
-        return jsonify({"error": "File not found on disk"}), 404
-    with open(filepath, "rb") as ef:
-        encrypted_data = ef.read()
+    encrypted_data = storage_load(user["id"], row[1])
+    if encrypted_data is None:
+        return jsonify({"error": "File not found in storage"}), 404
     decrypted_data = file_cipher.decrypt(encrypted_data)
-    from io import BytesIO
-    return send_file(BytesIO(decrypted_data), as_attachment=True, download_name=row[0], mimetype=row[2] if '/' in str(row[2]) else 'application/octet-stream')
+    audit_log(user["id"], "file_download", "file", str(file_id), row[0])
+    return send_file(io.BytesIO(decrypted_data), as_attachment=True, download_name=row[0], mimetype=row[2] if '/' in str(row[2]) else 'application/octet-stream')
 
 
 @app.route("/api/files/<int:file_id>", methods=["DELETE"])
@@ -3212,13 +3321,12 @@ def delete_file(file_id):
     if not row:
         conn.close()
         return jsonify({"error": "File not found"}), 404
-    # Delete file from disk
-    filepath = os.path.join("uploads", str(user["id"]), row[0])
-    if os.path.exists(filepath):
-        os.remove(filepath)
+    # Delete file from storage (S3 or local)
+    storage_delete(user["id"], row[0])
     db_execute(conn, f"DELETE FROM user_files WHERE id = {param} AND user_id = {param}", (file_id, user["id"]))
     conn.commit()
     conn.close()
+    audit_log(user["id"], "file_delete", "file", str(file_id))
     return jsonify({"ok": True})
 
 
