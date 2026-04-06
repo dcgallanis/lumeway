@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 import requests as http_requests
 import stripe
 import threading
+import uuid
 import conversation_log
 
 load_dotenv()
@@ -174,6 +175,16 @@ def init_subscribers_db():
             date TEXT NOT NULL,
             created_at TEXT NOT NULL
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_files (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            original_name TEXT NOT NULL,
+            stored_name TEXT NOT NULL,
+            category TEXT DEFAULT 'other',
+            file_size INTEGER,
+            content_type TEXT,
+            uploaded_at TEXT NOT NULL
+        )""")
     else:
         db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -295,6 +306,16 @@ def init_subscribers_db():
             date TEXT NOT NULL,
             created_at TEXT NOT NULL
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_files (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            original_name TEXT NOT NULL,
+            stored_name TEXT NOT NULL,
+            category TEXT DEFAULT 'other',
+            file_size INTEGER,
+            content_type TEXT,
+            uploaded_at TEXT NOT NULL
+        )""")
     conn.commit()
     conn.close()
 
@@ -343,6 +364,7 @@ def send_purchase_email(to_email, product_id, product_name, download_token):
         return False
 
 init_subscribers_db()
+os.makedirs("uploads", exist_ok=True)
 
 client = anthropic.Anthropic(
     api_key=os.environ.get("ANTHROPIC_API_KEY")
@@ -2980,6 +3002,118 @@ def delete_activity_log(entry_id):
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
     db_execute(conn, f"DELETE FROM user_activity_log WHERE id = {param} AND user_id = {param}", (entry_id, user["id"]))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
+# ── File upload / storage ──
+
+@app.route("/api/files/upload", methods=["POST"])
+def upload_file():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+
+    if 'file' not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    f = request.files['file']
+    if f.filename == '':
+        return jsonify({"error": "No file selected"}), 400
+
+    # 10MB limit
+    MAX_SIZE = 10 * 1024 * 1024
+    f.seek(0, 2)
+    size = f.tell()
+    f.seek(0)
+    if size > MAX_SIZE:
+        return jsonify({"error": "File too large. Maximum size is 10MB."}), 400
+
+    # Allowed types
+    allowed_ext = {'.pdf', '.doc', '.docx', '.txt', '.jpg', '.jpeg', '.png', '.gif', '.xlsx', '.xls', '.csv'}
+    ext = os.path.splitext(f.filename)[1].lower()
+    if ext not in allowed_ext:
+        return jsonify({"error": "File type not allowed."}), 400
+
+    category = request.form.get('category', 'other')
+
+    # Store with unique name
+    stored_name = f"{uuid.uuid4().hex}{ext}"
+    user_dir = os.path.join("uploads", str(user["id"]))
+    os.makedirs(user_dir, exist_ok=True)
+    filepath = os.path.join(user_dir, stored_name)
+    f.save(filepath)
+
+    # Save to DB
+    now = datetime.utcnow().isoformat()
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"""INSERT INTO user_files (user_id, original_name, stored_name, category, file_size, content_type, uploaded_at)
+        VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param})""",
+        (user["id"], f.filename, stored_name, category, size, f.content_type, now))
+    conn.commit()
+
+    # Get the inserted ID
+    if USE_POSTGRES:
+        cur = db_execute(conn, "SELECT lastval()")
+    else:
+        cur = db_execute(conn, "SELECT last_insert_rowid()")
+    file_id = cur.fetchone()[0]
+    conn.close()
+
+    return jsonify({"ok": True, "file": {
+        "id": file_id, "original_name": f.filename, "category": category,
+        "file_size": size, "content_type": f.content_type, "uploaded_at": now
+    }})
+
+
+@app.route("/api/files")
+def list_files():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id, original_name, stored_name, category, file_size, content_type, uploaded_at FROM user_files WHERE user_id = {param} ORDER BY uploaded_at DESC", (user["id"],))
+    files = [{"id": r[0], "original_name": r[1], "category": r[3], "file_size": r[4], "content_type": r[5], "uploaded_at": r[6]} for r in cur.fetchall()]
+    conn.close()
+    return jsonify({"files": files})
+
+
+@app.route("/api/files/<int:file_id>/download")
+def download_file(file_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT original_name, stored_name FROM user_files WHERE id = {param} AND user_id = {param}", (file_id, user["id"]))
+    row = cur.fetchone()
+    conn.close()
+    if not row:
+        return jsonify({"error": "File not found"}), 404
+    user_dir = os.path.join("uploads", str(user["id"]))
+    return send_from_directory(user_dir, row[1], as_attachment=True, download_name=row[0])
+
+
+@app.route("/api/files/<int:file_id>", methods=["DELETE"])
+def delete_file(file_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT stored_name FROM user_files WHERE id = {param} AND user_id = {param}", (file_id, user["id"]))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "File not found"}), 404
+    # Delete file from disk
+    filepath = os.path.join("uploads", str(user["id"]), row[0])
+    if os.path.exists(filepath):
+        os.remove(filepath)
+    db_execute(conn, f"DELETE FROM user_files WHERE id = {param} AND user_id = {param}", (file_id, user["id"]))
     conn.commit()
     conn.close()
     return jsonify({"ok": True})
