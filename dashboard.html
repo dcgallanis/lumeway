@@ -243,6 +243,47 @@
     .activity-form select:focus, .activity-form input:focus, .activity-form textarea:focus { border-color: var(--accent); }
     .activity-form textarea { min-height: 60px; resize: vertical; }
 
+    /* Guide content library */
+    .guide-nav { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .guide-nav-btn { padding: 8px 18px; border: 1px solid var(--border); border-radius: 100px; background: var(--warm-white); color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+    .guide-nav-btn:hover { border-color: var(--gold); color: var(--text); }
+    .guide-nav-btn.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    .guide-category { margin-bottom: 24px; }
+    .guide-cat-header { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 400; color: var(--navy); margin-bottom: 4px; }
+    .guide-cat-risk { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; }
+    .guide-cat-risk.low { color: var(--green); }
+    .guide-cat-risk.medium { color: var(--gold); }
+    .guide-cat-risk.high { color: var(--red); }
+    .guide-task { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+    .guide-task-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; cursor: pointer; transition: background 0.15s; }
+    .guide-task-header:hover { background: var(--cream); }
+    .guide-task-title { font-size: 15px; font-weight: 500; color: var(--text); flex: 1; }
+    .guide-task-risk { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; margin-right: 12px; flex-shrink: 0; }
+    .guide-task-risk.low { background: rgba(107,143,94,0.12); color: var(--green); }
+    .guide-task-risk.medium { background: rgba(184,151,126,0.2); color: #8B6914; }
+    .guide-task-risk.high { background: rgba(196,112,78,0.12); color: var(--red); }
+    .guide-chevron { font-size: 14px; color: var(--muted); transition: transform 0.2s; flex-shrink: 0; }
+    .guide-task.open .guide-chevron { transform: rotate(180deg); }
+    .guide-task-body { display: none; padding: 0 20px 20px; }
+    .guide-task.open .guide-task-body { display: block; }
+    .guide-what { font-size: 14px; font-weight: 300; line-height: 1.7; color: var(--text); margin-bottom: 8px; }
+    .guide-why { font-size: 14px; font-weight: 400; line-height: 1.7; color: var(--navy); background: rgba(44,74,94,0.04); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+    .guide-section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin: 16px 0 8px; }
+    .guide-steps { list-style: none; counter-reset: steps; padding: 0; }
+    .guide-steps li { counter-increment: steps; font-size: 14px; font-weight: 300; line-height: 1.7; padding: 8px 0 8px 32px; border-bottom: 1px solid var(--border); position: relative; }
+    .guide-steps li:last-child { border-bottom: none; }
+    .guide-steps li::before { content: counter(steps); position: absolute; left: 0; top: 8px; width: 22px; height: 22px; background: var(--cream); border: 1px solid var(--border); border-radius: 50%; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; color: var(--navy); }
+    .guide-terms { display: grid; gap: 8px; }
+    .guide-term { background: var(--cream); border-radius: 8px; padding: 10px 14px; }
+    .guide-term strong { font-size: 13px; font-weight: 600; color: var(--navy); }
+    .guide-term span { font-size: 13px; font-weight: 300; color: var(--text); display: block; margin-top: 2px; line-height: 1.5; }
+    .guide-contact { font-size: 13px; font-weight: 300; line-height: 1.7; color: var(--text); }
+    .guide-contact a { color: var(--accent); }
+    .guide-mistakes li { list-style: disc; margin-left: 16px; font-size: 13px; font-weight: 300; line-height: 1.7; padding: 4px 0; }
+    .guide-cross { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+    .guide-cross-tag { font-size: 11px; padding: 3px 10px; border-radius: 100px; background: rgba(44,74,94,0.06); color: var(--navy); }
+    .guide-disclaimer { font-size: 12px; font-weight: 300; line-height: 1.6; color: var(--muted); background: var(--cream); border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 12px 16px; margin-top: 16px; }
+
     /* Loading */
     .loading { text-align: center; padding: 48px; color: var(--muted); font-size: 15px; font-weight: 300; }
 
@@ -340,6 +381,401 @@
       document.querySelectorAll('.tab-panel').forEach(function(p) {
         p.classList.toggle('active', p.id === 'panel-' + tab);
       });
+    }
+
+    // ═══════════════════════════════
+    // ── GUIDES CONTENT LIBRARY ──
+    // ═══════════════════════════════
+    var guideLibrary = {
+      'job-loss': {
+        label: 'Job Loss & Income Crisis',
+        categories: [
+          { name: 'Insurance Changes', risk: 'medium', tasks: [
+            { id: 'jl-1-1', title: 'Evaluate COBRA vs. Marketplace vs. Spouse\'s Plan', risk: 'medium',
+              crossRef: ['Estate & Survivor', 'Disability & Benefits'],
+              what: 'Comparing three health insurance routes after losing employer coverage \u2014 federal COBRA continuation, ACA marketplace plans, or coverage through a spouse/partner\'s employer.',
+              why: 'You have 60 days from job loss to elect COBRA, and marketplace open enrollment windows are limited. Missing either deadline locks you out for months. Choosing wrong costs $400\u2013$800/month more than necessary.',
+              steps: [
+                'Understand COBRA eligibility. You qualify if your former employer had 20+ employees. Your employer sends the COBRA election notice within 14 days of termination. You have 60 days to elect.',
+                'Calculate COBRA cost. Premiums are 102% of what the employer paid (100% + 2% admin fee). Typically $600\u2013$1,200/month individual, $1,400\u2013$2,200 family.',
+                'Check spouse\'s employer plan. Adding you counts as a qualifying life event \u2014 no waiting period. Usually cheaper than COBRA.',
+                'Research Healthcare.gov marketplace plans. Enter your income and household size. You likely qualify for subsidies if income drops below 400% of federal poverty level (~$63,000/year single).',
+                'Compare deductibles, not just premiums. Add annual premium + deductible + copays for your likely healthcare use. Lower premium does not mean lower total cost.',
+                'Check prescription coverage. Verify the marketplace plan\'s formulary covers your medications. COBRA keeps your old formulary.',
+                'Pick your coverage date. COBRA starts the day after employer coverage ends. Marketplace starts first of the month after enrollment. Buy short-term insurance ($50\u2013$200/month) for any gap.',
+                'Document your election. Keep a dated copy of your COBRA election form and confirmation emails.'
+              ],
+              terms: [
+                { term: 'COBRA', def: 'Consolidated Omnibus Budget Reconciliation Act. Federal law letting you buy employer health coverage for 18 months after job loss at full cost.' },
+                { term: 'Qualifying Life Event', def: 'Job loss or loss of employer coverage. Lets you enroll in marketplace plans outside annual open enrollment.' },
+                { term: 'Subsidies (Tax Credits)', def: 'Government money that reduces marketplace premiums if income is below 400% of federal poverty level.' },
+                { term: 'Formulary', def: 'List of medications covered by the insurance plan and their copay tier.' },
+                { term: 'Deductible', def: 'Amount you pay out-of-pocket before insurance starts paying.' }
+              ],
+              contacts: 'Former employer HR/benefits for COBRA notice and cost \u2022 Healthcare.gov: 1-800-318-2596 \u2022 State insurance commissioner for COBRA disputes',
+              mistakes: [
+                'Missing the 60-day COBRA election deadline and losing the option entirely.',
+                'Not comparing marketplace plans \u2014 marketplace + subsidy is often half the cost of COBRA.',
+                'Picking the cheapest plan without checking the deductible \u2014 Bronze plans have $9,100 deductibles.',
+                'Not reporting severance income to marketplace \u2014 this affects your subsidy amount.'
+              ]
+            },
+            { id: 'jl-1-2', title: 'Transfer Prescriptions and Ongoing Care', risk: 'low',
+              crossRef: ['Disability & Benefits'],
+              what: 'Making sure your medications and ongoing doctor visits don\'t lapse when your insurance changes.',
+              why: 'A 30-day gap in medication (ADHD, diabetes, antidepressants) can trigger health crises. Transferring before coverage ends prevents ER visits and refill delays.',
+              steps: [
+                'List all active prescriptions \u2014 name, dose, frequency, refills remaining, pharmacy.',
+                'Refill early before coverage ends. Call pharmacy 7 days before your last day. Get 30\u201390 day supply at current copays.',
+                'Get copies of recent test results from your doctor to avoid repeating tests with a new provider.',
+                'Transfer prescription records to your new pharmacy. Verify refill counts.',
+                'Update your doctor\'s office with your new insurance card number and effective date.',
+                'Schedule preventive visits (physicals, dental, eye exams) before old coverage ends \u2014 covered at 100%.',
+                'Request specialist referrals for your new insurance if needed.',
+                'Get a treatment summary letter from your therapist/psychiatrist if applicable.'
+              ],
+              terms: [
+                { term: 'Formulary Tier', def: 'Classification of medications by cost: Tier 1 (generic, ~$10), Tier 2 (brand-name, ~$35), Tier 3 (specialty, ~$100+).' },
+                { term: 'Prior Authorization', def: 'Insurance approval required before the pharmacy fills the prescription. May take 3\u20135 days.' }
+              ],
+              contacts: 'Your current pharmacy for refills/transfers \u2022 Your doctor\'s office for records and referrals \u2022 New insurance website for in-network provider lists',
+              mistakes: [
+                'Letting prescriptions lapse during coverage transition.',
+                'Not checking if your new plan covers the same drugs or requires different tiers.',
+                'Forgetting to schedule preventive visits before old coverage ends.',
+                'Not getting a treatment summary for mental health continuity.'
+              ]
+            },
+            { id: 'jl-1-3', title: 'Understand Mini-COBRA (State Continuation)', risk: 'medium',
+              what: 'Many states have continuation coverage laws for employers too small for federal COBRA (under 20 employees).',
+              why: 'If your employer had fewer than 20 employees, federal COBRA doesn\'t apply \u2014 but your state may have its own version with different rules and timelines.',
+              steps: [
+                'Determine your employer\'s size \u2014 federal COBRA applies to 20+ employees.',
+                'If under 20, research your state\'s continuation coverage law.',
+                'Note the election period and coverage duration (varies by state \u2014 some offer only 3\u20136 months).',
+                'Compare state continuation with marketplace options \u2014 marketplace may be cheaper with subsidies.'
+              ],
+              terms: [
+                { term: 'Mini-COBRA', def: 'Informal name for state-level health insurance continuation laws covering smaller employers.' }
+              ],
+              contacts: 'Your state\'s Department of Insurance',
+              mistakes: [
+                'Assuming you have no continuation options because your employer was small.',
+                'Not checking both state continuation AND marketplace to compare costs.'
+              ]
+            }
+          ]},
+          { name: 'Financial Stabilization', risk: 'high', tasks: [
+            { id: 'jl-2-1', title: 'Emergency Budget Reset', risk: 'high',
+              what: 'Recalculating your monthly budget based on reduced or zero income.',
+              why: 'Most people have 3\u20136 months of expenses saved at best. Knowing exactly where you stand financially is the first step to making that money last.',
+              steps: [
+                'Calculate total liquid savings (checking, savings, accessible investments \u2014 NOT retirement accounts).',
+                'List all fixed monthly expenses (rent/mortgage, utilities, insurance, minimum debt payments, subscriptions).',
+                'Identify expenses you can cut or pause immediately (streaming, gym, dining out, subscriptions).',
+                'Calculate your monthly "burn rate" \u2014 how much you need to survive each month.',
+                'Divide savings by burn rate = how many months you can sustain.',
+                'If less than 3 months, prioritize income replacement (unemployment + temp work) immediately.'
+              ],
+              terms: [
+                { term: 'Burn Rate', def: 'Your monthly minimum spend to cover essential expenses.' },
+                { term: 'Liquid Savings', def: 'Cash and investments you can access quickly without penalties (not retirement accounts).' }
+              ],
+              contacts: 'Your bank for hardship programs \u2022 Credit card companies for hardship rate reductions \u2022 Utility companies for payment plans',
+              mistakes: [
+                'Not cutting expenses fast enough after job loss.',
+                'Using credit cards to maintain pre-job-loss lifestyle.',
+                'Cashing out 401(k) early (10% penalty + income tax).',
+                'Not calling creditors about hardship programs \u2014 most will work with you.'
+              ]
+            },
+            { id: 'jl-2-2', title: '401(k) and Retirement Account Decisions', risk: 'high',
+              what: 'Deciding what to do with your employer-sponsored retirement account after separation.',
+              why: 'You have four options, each with different tax and penalty implications. Making the wrong choice can cost you thousands in unnecessary taxes and penalties.',
+              steps: [
+                'Get your 401(k) balance and vesting status from your plan administrator.',
+                'Understand your four options: leave it, roll to new employer\'s plan, roll to an IRA, or cash out.',
+                'If rolling over, request a direct rollover (trustee-to-trustee) to avoid mandatory 20% withholding.',
+                'Check for outstanding 401(k) loans \u2014 typically must be repaid within 60 days of separation or they become a taxable distribution.',
+                'If you have company stock, research "net unrealized appreciation" (NUA) before rolling over.',
+                'Never cash out unless you have absolutely no other option \u2014 you lose 10% penalty + income tax.'
+              ],
+              terms: [
+                { term: 'Vesting', def: 'The portion of employer contributions you\'re entitled to keep. You always own 100% of your own contributions.' },
+                { term: 'Direct Rollover', def: 'Funds transfer directly from one retirement account to another without you touching the money. No taxes or penalties.' },
+                { term: 'Indirect Rollover', def: 'The plan sends you a check. You have 60 days to deposit it in another retirement account or it becomes taxable. Plan withholds 20%.' }
+              ],
+              contacts: 'Your plan administrator (number on your 401(k) statement) \u2022 A brokerage for opening an IRA (Fidelity, Schwab, Vanguard)',
+              mistakes: [
+                'Cashing out (10% early withdrawal penalty if under 59\u00BD + income tax on full amount).',
+                'Doing an indirect rollover and missing the 60-day window.',
+                'Not checking your vesting schedule \u2014 you may not own all the employer match.'
+              ]
+            },
+            { id: 'jl-2-3', title: 'Severance Package Review', risk: 'high',
+              crossRef: ['Divorce & Separation'],
+              what: 'Understanding and potentially negotiating your severance offer before signing.',
+              why: 'Severance agreements are legally binding contracts. Once signed, you typically waive your right to sue. You may be able to negotiate better terms.',
+              steps: [
+                'Read the entire agreement before signing \u2014 don\'t rush.',
+                'Note the severance amount (typically 1\u20132 weeks per year of service, but varies widely).',
+                'Check for a non-compete clause \u2014 what does it restrict, for how long, in what geography?',
+                'Check for a non-disparagement clause \u2014 can you leave honest reviews?',
+                'Note the deadline to sign. If you\'re over 40, federal law gives you 21 days to consider + 7 days to revoke (ADEA/OWBPA).',
+                'Consider negotiating: extended health benefits, outplacement services, reference letter, non-compete modifications.',
+                'Have an employment attorney review before signing \u2014 especially if the package includes a waiver of legal claims.'
+              ],
+              terms: [
+                { term: 'ADEA/OWBPA', def: 'If you\'re 40+, your employer must give you 21 days to consider a severance agreement and 7 days to revoke after signing.' },
+                { term: 'Non-Compete', def: 'A clause restricting you from working for competitors for a specified time and geography. Enforceability varies by state.' },
+                { term: 'Release of Claims', def: 'You agree not to sue your employer. Standard in severance agreements.' }
+              ],
+              contacts: 'An employment attorney (many offer free initial consultations for severance review)',
+              mistakes: [
+                'Signing too quickly without reading everything.',
+                'Not negotiating \u2014 most employers expect some back-and-forth.',
+                'Not asking for COBRA premium coverage as part of the package.'
+              ]
+            },
+            { id: 'jl-2-4', title: 'Apply for Government Assistance Programs', risk: 'medium',
+              what: 'Identifying and applying for all benefits programs you may now qualify for.',
+              why: 'Many people don\'t realize they qualify for assistance after a sudden income drop. These programs exist for exactly this situation.',
+              steps: [
+                'File for unemployment insurance in week 1 \u2014 there\'s often a waiting week before benefits start.',
+                'Check SNAP (food assistance) eligibility at your state\'s SNAP office or benefits.gov.',
+                'Check utility assistance eligibility (LIHEAP \u2014 Low Income Home Energy Assistance Program).',
+                'If you have children, check for free/reduced school meals and CHIP (Children\'s Health Insurance Program).',
+                'Visit 211.org or call 211 for local emergency assistance resources.'
+              ],
+              contacts: 'Your state unemployment office \u2022 Local SNAP office \u2022 211.org or call 211 \u2022 Benefits.gov',
+              mistakes: [
+                'Waiting too long to file for unemployment (benefits don\'t start until you file).',
+                'Being embarrassed to apply for assistance \u2014 these programs are for this exact situation.',
+                'Not reporting all qualifying dependents.'
+              ]
+            }
+          ]},
+          { name: 'Unemployment Benefits', risk: 'high', tasks: [
+            { id: 'jl-3-1', title: 'File Your Initial Claim', risk: 'high',
+              what: 'Applying for unemployment insurance benefits through your state.',
+              why: 'Benefits typically replace 40\u201350% of previous wages, up to a state maximum. Most states provide up to 26 weeks. Filing in week 1 is critical.',
+              steps: [
+                'Gather: Social Security number, driver\'s license, last employer info, dates of employment, reason for separation, bank account for direct deposit.',
+                'File online at your state\'s unemployment website (fastest) or by phone.',
+                'Complete all weekly/biweekly certifications \u2014 you must certify you\'re actively looking for work.',
+                'Document all job search activities (most states require 3+ contacts per week).',
+                'Respond promptly to any requests for information from the unemployment office.'
+              ],
+              terms: [
+                { term: 'Base Period', def: 'The 12-month period used to calculate your benefit amount (typically first four of last five completed calendar quarters).' },
+                { term: 'Waiting Week', def: 'Most states require a one-week waiting period after filing before benefits begin.' },
+                { term: 'Weekly Certification', def: 'Regular confirmation that you\'re still unemployed and actively seeking work.' }
+              ],
+              contacts: 'Your state\'s unemployment insurance office (search "[state] unemployment" for website)',
+              mistakes: [
+                'Not filing immediately (you lose the waiting week).',
+                'Missing weekly certifications (claim gets suspended).',
+                'Not keeping detailed job search records.',
+                'Working part-time without reporting it (fraud risk).'
+              ]
+            },
+            { id: 'jl-3-2', title: 'Appeal a Denied Claim', risk: 'high',
+              what: 'Contesting an unemployment benefits denial.',
+              why: 'Initial denials are common. Many denials are overturned on appeal, especially when there\'s a dispute about whether you were fired for cause or laid off.',
+              steps: [
+                'Read the denial letter carefully \u2014 it states the reason and appeal deadline (typically 10\u201330 days).',
+                'File your appeal in writing before the deadline.',
+                'Gather evidence: termination letter, emails, performance reviews, documentation supporting your case.',
+                'Prepare a clear written statement explaining why you disagree with the denial.',
+                'Attend the hearing (usually by phone) \u2014 your former employer may also participate.',
+                'Consider legal aid if your case is complex \u2014 many legal aid organizations offer free help.'
+              ],
+              contacts: 'Your state\'s unemployment appeals board \u2022 Local legal aid organization',
+              mistakes: [
+                'Missing the appeal deadline.',
+                'Not attending the hearing.',
+                'Not preparing evidence.',
+                'Assuming a denial is final \u2014 many are overturned on appeal.'
+              ]
+            }
+          ]},
+          { name: 'Job Search', risk: 'low', tasks: [
+            { id: 'jl-5-1', title: 'Update Resume and LinkedIn', risk: 'low',
+              what: 'Refreshing your professional materials for the current job market.',
+              why: 'A resume from even 2 years ago may not reflect current hiring patterns (AI screening, skills-based hiring). Updating now is critical.',
+              steps: [
+                'Update LinkedIn headline and "Open to Work" settings.',
+                'Quantify accomplishments (\u201Cincreased revenue by 15%,\u201D \u201Cmanaged team of 12\u201D).',
+                'Tailor your resume for each application using keywords from the job description.',
+                'Get your resume reviewed \u2014 many state workforce centers offer free reviews.',
+                'Activate your network \u2014 let people know you\'re looking.'
+              ],
+              contacts: 'State workforce development center \u2022 CareerOneStop.org for local resources',
+              mistakes: [
+                'Sending the same generic resume to every application.',
+                'Not using your network \u2014 most jobs are filled through referrals.',
+                'Applying only online.'
+              ]
+            },
+            { id: 'jl-5-2', title: 'Access Free Job Training and Career Services', risk: 'low',
+              what: 'Taking advantage of publicly funded career development resources.',
+              steps: [
+                'Visit your local American Job Center (careeronestop.org to find locations).',
+                'Check if you qualify for WIOA (Workforce Innovation and Opportunity Act) training funds.',
+                'Explore state-specific retraining programs (many states have tech bootcamp partnerships).',
+                'Consider certifications that can increase your marketability quickly.'
+              ],
+              contacts: 'Local American Job Center \u2022 State workforce agency \u2022 Community colleges',
+              mistakes: [
+                'Not knowing these free services exist.',
+                'Paying for expensive bootcamps when free options are available.'
+              ]
+            }
+          ]},
+          { name: 'Emotional & Mental Health', risk: 'low', tasks: [
+            { id: 'jl-6-1', title: 'Build a Support System', risk: 'low',
+              what: 'Addressing the emotional impact of job loss.',
+              why: 'Job loss is ranked as one of the top 10 most stressful life events. It affects identity, routine, social connections, and self-worth.',
+              steps: [
+                'Acknowledge the grief \u2014 it\'s normal to feel angry, scared, or ashamed.',
+                'Maintain a daily routine (wake time, exercise, structured job search hours).',
+                'Tell people \u2014 isolation makes everything harder.',
+                'Check if your former employer offers an EAP (Employee Assistance Program) \u2014 many continue for 30\u201390 days post-termination.',
+                'If stress becomes overwhelming, contact SAMHSA helpline (1-800-662-4357) or 988 Suicide and Crisis Lifeline.'
+              ],
+              contacts: 'Former employer for EAP access \u2022 Local support groups \u2022 988 Lifeline (call or text 988)',
+              mistakes: [
+                'Isolating yourself.',
+                'Not using EAP benefits that are still available.',
+                'Treating job search as 24/7 \u2014 burnout is real.'
+              ]
+            }
+          ]}
+        ]
+      }
+    };
+    // More transitions will be added here as content is loaded
+
+    var activeGuideTransition = null;
+
+    function initGuides() {
+      var nav = document.getElementById('guideTransitionNav');
+      var content = document.getElementById('guideContent');
+      if (!nav || !content) return;
+
+      // Build transition nav pills
+      var html = '';
+      var transitionKeys = Object.keys(guideLibrary);
+      transitionKeys.forEach(function(key) {
+        var t = guideLibrary[key];
+        var isActive = activeGuideTransition === key || (!activeGuideTransition && key === transitionKeys[0]);
+        html += '<button class="guide-nav-btn' + (isActive ? ' active' : '') + '" onclick="switchGuideTransition(\'' + key + '\')">' + t.label + '</button>';
+      });
+      // Coming soon pills for transitions not yet loaded
+      var planned = [
+        { key: 'estate', label: 'Death & Estate' },
+        { key: 'divorce', label: 'Divorce & Separation' },
+        { key: 'disability', label: 'Disability & Benefits' },
+        { key: 'relocation', label: 'Moving & Relocation' },
+        { key: 'retirement', label: 'Retirement Planning' }
+      ];
+      planned.forEach(function(p) {
+        if (!guideLibrary[p.key]) {
+          html += '<button class="guide-nav-btn" style="opacity:0.5;cursor:default" title="Coming soon">' + p.label + '</button>';
+        }
+      });
+      nav.innerHTML = html;
+
+      // Set active
+      if (!activeGuideTransition) activeGuideTransition = transitionKeys[0];
+      renderGuideTransition(activeGuideTransition);
+    }
+
+    function switchGuideTransition(key) {
+      if (!guideLibrary[key]) return;
+      activeGuideTransition = key;
+      document.querySelectorAll('.guide-nav-btn').forEach(function(b) {
+        b.classList.toggle('active', b.textContent === guideLibrary[key].label);
+      });
+      renderGuideTransition(key);
+    }
+
+    function renderGuideTransition(key) {
+      var t = guideLibrary[key];
+      var content = document.getElementById('guideContent');
+      if (!t || !content) return;
+
+      var html = '';
+      t.categories.forEach(function(cat) {
+        html += '<div class="guide-category">';
+        html += '  <div class="guide-cat-header">' + cat.name + '</div>';
+        if (cat.risk) html += '<div class="guide-cat-risk ' + cat.risk + '">Content risk: ' + cat.risk + '</div>';
+
+        cat.tasks.forEach(function(task) {
+          html += '<div class="guide-task" id="guide-' + task.id + '">';
+          html += '  <div class="guide-task-header" onclick="toggleGuideTask(\'' + task.id + '\')">';
+          html += '    <span class="guide-task-title">' + task.title + '</span>';
+          if (task.risk) html += '<span class="guide-task-risk ' + task.risk + '">' + task.risk + '</span>';
+          html += '    <span class="guide-chevron">\u25BE</span>';
+          html += '  </div>';
+          html += '  <div class="guide-task-body">';
+
+          // What + Why
+          if (task.what) html += '<div class="guide-what">' + task.what + '</div>';
+          if (task.why) html += '<div class="guide-why">' + task.why + '</div>';
+
+          // Steps
+          if (task.steps && task.steps.length > 0) {
+            html += '<div class="guide-section-label">Steps</div>';
+            html += '<ol class="guide-steps">';
+            task.steps.forEach(function(s) { html += '<li>' + s + '</li>'; });
+            html += '</ol>';
+          }
+
+          // Terms
+          if (task.terms && task.terms.length > 0) {
+            html += '<div class="guide-section-label">Key Terms</div>';
+            html += '<div class="guide-terms">';
+            task.terms.forEach(function(t) {
+              html += '<div class="guide-term"><strong>' + t.term + '</strong> <span>' + t.def + '</span></div>';
+            });
+            html += '</div>';
+          }
+
+          // Contacts
+          if (task.contacts) {
+            html += '<div class="guide-section-label">Who to Contact</div>';
+            html += '<div class="guide-contact">' + task.contacts + '</div>';
+          }
+
+          // Mistakes
+          if (task.mistakes && task.mistakes.length > 0) {
+            html += '<div class="guide-section-label">Common Mistakes</div>';
+            html += '<ul class="guide-mistakes">';
+            task.mistakes.forEach(function(m) { html += '<li>' + m + '</li>'; });
+            html += '</ul>';
+          }
+
+          // Cross-references
+          if (task.crossRef && task.crossRef.length > 0) {
+            html += '<div class="guide-cross">';
+            task.crossRef.forEach(function(cr) { html += '<span class="guide-cross-tag">Also relevant: ' + cr + '</span>'; });
+            html += '</div>';
+          }
+
+          html += '  </div>'; // task-body
+          html += '</div>'; // guide-task
+        });
+
+        html += '</div>'; // guide-category
+      });
+
+      content.innerHTML = html;
+    }
+
+    function toggleGuideTask(id) {
+      var el = document.getElementById('guide-' + id);
+      if (el) el.classList.toggle('open');
     }
 
     function saveSettings(e) {
@@ -511,6 +947,7 @@
       if (documents.length > 0) html += ' <span class="tab-badge">' + documents.filter(function(d){return !d.is_gathered;}).length + '</span>';
       html += '</button>';
       html += '  <button class="dash-tab" data-tab="notes" onclick="switchTab(\'notes\')">Notes</button>';
+      html += '  <button class="dash-tab" data-tab="guides" onclick="switchTab(\'guides\')">Guides</button>';
       html += '  <button class="dash-tab" data-tab="activity" onclick="switchTab(\'activity\')">Activity Log';
       if (activityLog.length > 0) html += ' <span class="tab-badge">' + activityLog.length + '</span>';
       html += '</button>';
@@ -912,6 +1349,12 @@
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-documents">';
 
+      // Security trust banner
+      html += '<div style="display:flex;align-items:center;gap:10px;background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:14px 20px;margin-bottom:16px">';
+      html += '  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+      html += '  <p style="font-size:13px;color:var(--muted);margin:0"><strong style="color:var(--text)">Your files are secure.</strong> All documents are encrypted at rest and in transit. Only you can access your files. <a href="/privacy" style="color:var(--navy)">Learn more</a></p>';
+      html += '</div>';
+
       // My Files upload section
       html += '<div class="dash-card" style="margin-bottom:20px">';
       html += '  <div class="card-label">My Files</div>';
@@ -1110,6 +1553,21 @@
       }
 
       // ═══════════════════════════════
+      // ── GUIDES TAB ──
+      // ═══════════════════════════════
+      html += '<div class="tab-panel" id="panel-guides">';
+      html += '<div style="margin-bottom:20px">';
+      html += '  <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Transition Guides</h2>';
+      html += '  <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Step-by-step guidance for every part of your transition. Click any task to expand the full walkthrough.</p>';
+      html += '</div>';
+      html += '<div class="guide-nav" id="guideTransitionNav"></div>';
+      html += '<div class="guide-disclaimer" style="margin-bottom:20px">';
+      html += '  This content provides general process information for educational and organizational purposes. It is not legal, financial, or medical advice. For guidance specific to your situation, consult a qualified professional. <a href="/privacy" style="color:var(--navy)">Privacy Policy</a>';
+      html += '</div>';
+      html += '<div id="guideContent"></div>';
+      html += '</div>'; // panel-guides
+
+      // ═══════════════════════════════
       // ── SETTINGS TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-settings">';
@@ -1151,6 +1609,9 @@
 
       // Render calendar
       renderCalendar();
+
+      // Init guides
+      initGuides();
     }
 
     // ── Calendar ──
