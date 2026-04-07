@@ -11,26 +11,29 @@
   </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Individual Worksheets — Lumeway</title>
-  <meta name="description" content="Browse and purchase individual Lumeway worksheets — letters, checklists, and planning tools for life transitions. $3 each, instant download."/>
+  <title>Individual Templates — Lumeway</title>
+  <meta name="description" content="Browse and buy individual worksheets, checklists, and planning tools for life transitions. $3 each — job loss, divorce, estate, disability, relocation, and retirement."/>
   <link rel="canonical" href="https://lumeway.co/templates/individual"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="Lumeway"/>
+  <meta property="og:title" content="Individual Templates — Lumeway"/>
+  <meta property="og:description" content="Browse and buy individual worksheets, checklists, and planning tools for life transitions. $3 each."/>
+  <meta property="og:url" content="https://lumeway.co/templates/individual"/>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --cream: #FAF7F2; --warm-white: #FDFCFA; --text: #2C3E50; --muted: #6B7B8D; --navy: #2C4A5E; --gold: #B8977E; --accent: #C4704E; --accent-light: #D4896C; --border: #E8E0D6; --shadow: 0 2px 40px rgba(27,58,92,0.09); }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
 
+    /* Nav */
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .nav-logo-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy); }
     .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
     .btn-ghost:hover { background: var(--navy); color: var(--cream); }
     .btn-primary { padding: 8px 20px; border: none; border-radius: 8px; background: var(--accent); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
-    .nav-left { display: flex; align-items: center; gap: 36px; }
-    .nav-links { display: flex; align-items: center; gap: 6px; }
-    .nav-right { display: flex; gap: 10px; align-items: center; }
-    .nav-link { font-size: 14px; color: var(--muted); text-decoration: none; padding: 6px 12px; transition: color 0.15s; font-weight: 400; }
-    .nav-link:hover { color: var(--navy); }
+    .nav-left { display: flex; align-items: center; gap: 28px; }
+    .nav-right { display: flex; gap: 12px; align-items: center; }
     .nav-dropdown { position: relative; }
     .nav-drop-btn { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
     .nav-drop-btn:hover { color: var(--navy); }
@@ -43,56 +46,78 @@
     .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
     .sun-icon { display: inline-flex; } .sun-icon svg { stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; }
 
-    .hero { padding: 120px 5% 40px; text-align: center; }
-    .hero-title { font-family: 'Libre Baskerville', serif; font-size: clamp(28px, 5vw, 48px); font-weight: 300; line-height: 1.15; margin-bottom: 14px; }
+    /* Hero */
+    .hero { padding: 120px 5% 56px; width: 100%; text-align: center; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
+    .hero-title { font-family: 'Libre Baskerville', serif; font-size: clamp(36px, 6vw, 56px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 20px; }
     .hero-title em { font-style: italic; color: var(--accent-light); }
-    .hero-subtitle { font-size: 16px; color: var(--muted); font-weight: 300; line-height: 1.7; max-width: 560px; margin: 0 auto; }
+    .hero-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; max-width: 600px; margin: 0 auto; }
 
-    .category-nav { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 0 5% 40px; }
-    .cat-pill { padding: 8px 18px; border: 1px solid var(--border); border-radius: 100px; background: var(--warm-white); color: var(--muted); font-size: 13px; font-weight: 500; text-decoration: none; transition: all 0.2s; }
-    .cat-pill:hover, .cat-pill.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
-
-    .category-section { padding: 48px 5%; scroll-margin-top: 80px; }
+    /* Category sections */
+    .category-section { width: 100%; padding: 56px 5% 48px; }
     .category-section:nth-child(odd) { background: var(--cream); }
     .category-section:nth-child(even) { background: var(--warm-white); }
-    .category-header { text-align: center; margin-bottom: 36px; }
-    .category-title { font-family: 'Libre Baskerville', serif; font-size: 28px; font-weight: 400; color: var(--navy); margin-bottom: 8px; }
-    .category-count { font-size: 13px; color: var(--muted); font-weight: 400; }
-    .category-bundle-link { display: inline-block; margin-top: 8px; font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 500; border-bottom: 1px solid var(--accent); padding-bottom: 1px; }
-    .category-bundle-link:hover { color: var(--accent-light); }
+    .category-header { text-align: center; margin-bottom: 40px; }
+    .category-title { font-family: 'Libre Baskerville', serif; font-size: clamp(24px, 3.5vw, 36px); font-weight: 400; color: var(--navy); margin-bottom: 8px; }
+    .category-count { font-size: 14px; color: var(--muted); font-weight: 400; }
+    .bundle-link { display: inline-block; margin-top: 8px; font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 500; border-bottom: 1px solid var(--accent); padding-bottom: 1px; }
+    .bundle-link:hover { color: var(--accent-light); border-color: var(--accent-light); }
 
-    .template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 28px; max-width: 1200px; margin: 0 auto; }
+    /* Template grid */
+    .template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; max-width: 1100px; margin: 0 auto; }
     .template-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
-    .template-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(27,58,92,0.1); }
-    .template-card img { width: 100%; aspect-ratio: 8.5/11; object-fit: cover; object-position: top; display: block; border-bottom: 1px solid var(--border); }
+    .template-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+    .template-card-img { width: 100%; height: 300px; overflow: hidden; background: var(--cream); display: flex; align-items: flex-start; justify-content: center; }
+    .template-card-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
     .template-card-body { padding: 18px 20px 22px; }
     .template-card-name { font-family: 'Libre Baskerville', serif; font-size: 15px; font-weight: 400; color: var(--navy); margin-bottom: 6px; line-height: 1.4; }
-    .template-card-desc { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.5; margin-bottom: 14px; }
+    .template-card-desc { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.5; margin-bottom: 14px; min-height: 40px; }
     .template-card-footer { display: flex; align-items: center; justify-content: space-between; }
     .template-card-price { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 500; color: var(--navy); }
-    .btn-add { padding: 8px 18px; border: none; border-radius: 8px; background: var(--accent); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-    .btn-add:hover { background: var(--accent-light); transform: translateY(-1px); }
-    .btn-add:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-add-cart { padding: 8px 18px; border: none; border-radius: 8px; background: var(--accent); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-add-cart:hover { background: var(--accent-light); transform: translateY(-1px); }
+    .btn-add-cart:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-    .cart-toast { position: fixed; top: 80px; right: 24px; background: #2d6a4f; color: white; padding: 14px 24px; border-radius: 12px; font-size: 14px; z-index: 9999; box-shadow: 0 4px 20px rgba(0,0,0,0.15); transform: translateX(120%); transition: transform 0.3s ease; }
-    .cart-toast.show { transform: translateX(0); }
+    /* Sticky category nav */
+    .category-nav { position: sticky; top: 68px; z-index: 50; background: rgba(247,244,239,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); padding: 12px 5%; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    .category-nav a { font-size: 13px; color: var(--muted); text-decoration: none; padding: 6px 14px; border-radius: 100px; border: 1px solid var(--border); transition: all 0.15s; font-weight: 500; }
+    .category-nav a:hover, .category-nav a.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
 
-    .back-to-bundles { text-align: center; padding: 48px 5%; }
-    .back-to-bundles a { display: inline-block; padding: 14px 32px; border-radius: 8px; background: var(--navy); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; text-decoration: none; transition: all 0.2s; }
-    .back-to-bundles a:hover { background: var(--accent-light); transform: translateY(-2px); }
+    /* Trust bar */
+    .trust-bar { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; width: 100%; padding: 40px 5%; background: var(--cream); }
+    .trust-item { font-size: 13px; color: var(--muted); font-weight: 400; display: flex; align-items: center; gap: 6px; }
+    .trust-icon { font-size: 16px; }
 
+    /* CTA */
+    .cta-block { background: var(--navy); padding: 56px 5%; text-align: center; width: 100%; }
+    .cta-title { font-family: 'Libre Baskerville', serif; font-size: 36px; font-weight: 300; color: var(--cream); margin-bottom: 12px; }
+    .cta-subtitle { font-size: 15px; color: rgba(247,244,239,0.6); font-weight: 300; margin-bottom: 28px; }
+    .btn-large { display: inline-block; padding: 14px 32px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; text-decoration: none; background: var(--cream); color: var(--text); transition: all 0.2s; }
+    .btn-large:hover { background: var(--accent-light); color: white; transform: translateY(-2px); }
+
+    /* Footer */
     footer { padding: 40px 48px 28px; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
     .footer-logo { height: 120px; object-fit: contain; margin-bottom: 4px; }
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; }
     .footer-note a { color: var(--muted); text-decoration: none; }
     .footer-social { display: flex; gap: 16px; align-items: center; }
     .footer-social a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; color: var(--muted); text-decoration: none; transition: all 0.15s ease; }
-    .footer-social a:hover { border-color: var(--gold); color: var(--navy); }
+    .footer-social a:hover { border-color: var(--gold); color: var(--navy); background: #EEE8DE; }
     .footer-social svg { width: 16px; height: 16px; fill: currentColor; }
 
-    @media (max-width: 768px) { .template-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; } }
-    @media (max-width: 640px) { nav { padding: 16px 20px; } .template-grid { grid-template-columns: 1fr 1fr; gap: 14px; } .template-card-body { padding: 14px 14px 16px; } }
-    @media (max-width: 480px) { .template-grid { grid-template-columns: 1fr; } }
+    /* Reveal animation */
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+    /* Responsive */
+    @media (max-width: 900px) { .template-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      .template-grid { grid-template-columns: 1fr; gap: 20px; max-width: 400px; }
+      .category-nav { gap: 6px; }
+      .category-nav a { font-size: 12px; padding: 5px 10px; }
+    }
   </style>
 </head>
 <body>
@@ -113,11 +138,10 @@
           <a href="/retirement">Retirement</a>
         </div>
       </div>
-      <a href="/features" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--muted);text-decoration:none;padding:6px 4px;transition:color 0.15s;" onmouseover="this.style.color='var(--navy)'" onmouseout="this.style.color='var(--muted)'">Features</a>
-
       <div class="nav-dropdown">
         <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">&#9662;</span></button>
         <div class="nav-drop-menu">
+          <a href="/features">Features</a>
           <a href="/templates">Shop</a>
           <a href="/faq">FAQ</a>
           <a href="/blog">Blog</a>
@@ -130,39 +154,1122 @@
       </div>
     </div>
     <div class="nav-right">
+      <a href="/chat" target="_blank" class="btn-ghost">Try it free</a>
+      <a href="/templates" class="btn-primary">Shop</a>
       <a href="/login" class="btn-ghost" id="navAccount">Log in</a>
-      <a href="/templates" class="btn-ghost">Shop</a>
-      <a href="/chat" target="_blank" class="btn-primary">Try it free</a>
-      <a href="/cart" class="btn-ghost" title="Cart" style="font-size:18px;">&#128722;</a>
     </div>
   </nav>
 
+  <!-- Hero -->
   <div class="hero">
-    <h1 class="hero-title">Individual <em>worksheets</em></h1>
-    <p class="hero-subtitle">Pick only the worksheets you need. $3 each, instant download.</p>
+    <div class="hero-eyebrow">
+      <span class="sun-icon" style="color:var(--gold)"><svg viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
+      $3 each
+    </div>
+    <h1 class="hero-title">Individual <em>Templates</em></h1>
+    <p class="hero-subtitle">Don't need the whole bundle? Pick just the worksheets, letters, and checklists you need — $3 each, instant download.</p>
+    <p style="margin-top:16px;"><a href="/templates" style="font-size:14px;color:var(--accent);text-decoration:none;font-weight:500;">&#8592; Back to bundles</a></p>
   </div>
 
+  <!-- Sticky category nav -->
   <div class="category-nav">
-    <a href="#job-loss" class="cat-pill">Job Loss</a>
-    <a href="#estate" class="cat-pill">Death &amp; Estate</a>
-    <a href="#divorce" class="cat-pill">Divorce</a>
-    <a href="#disability" class="cat-pill">Disability</a>
-    <a href="#relocation" class="cat-pill">Relocation</a>
-    <a href="#retirement" class="cat-pill">Retirement</a>
-    <a href="#bonus" class="cat-pill">Bonus Wellness</a>
+    <a href="#jobloss">Job Loss</a>
+    <a href="#estate">Death &amp; Estate</a>
+    <a href="#divorce">Divorce</a>
+    <a href="#disability">Disability</a>
+    <a href="#relocation">Relocation</a>
+    <a href="#retirement">Retirement</a>
+    <a href="#wellness">Bonus Wellness</a>
   </div>
 
-  <div id="template-sections"></div>
+  <!-- JOB LOSS -->
+  <section class="category-section" id="jobloss">
+    <div class="category-header reveal">
+      <h2 class="category-title">Job Loss &amp; Income Crisis</h2>
+      <div class="category-count">14 templates</div>
+      <a href="/templates/job-loss" class="bundle-link">Save with the full bundle — $16</a>
+    </div>
+    <div class="template-grid reveal">
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/1. Severance_Response_Letter-1.png" alt="Severance Response Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Severance Response Letter</div>
+          <div class="template-card-desc">Professionally respond to a severance offer with confidence.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-severance-response-letter', 'Severance Response Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/2. Severance_CounterOffer_Letter-1.png" alt="Severance Counter-Offer Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Severance Counter-Offer Letter</div>
+          <div class="template-card-desc">Negotiate better severance terms with a structured counter-offer.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-severance-counteroffer-letter', 'Severance Counter-Offer Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/3. COBRA_Election_Letter-1.png" alt="COBRA Election Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">COBRA Election Letter</div>
+          <div class="template-card-desc">Formally elect COBRA health insurance continuation coverage.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-cobra-election-letter', 'COBRA Election Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/4. Hardship_Letter_to_Creditor-1.png" alt="Hardship Letter to Creditor" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Hardship Letter to Creditor</div>
+          <div class="template-card-desc">Request payment relief or modified terms from creditors.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-hardship-letter-to-creditor', 'Hardship Letter to Creditor', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/5. General_Authorization_Letter-1.png" alt="General Authorization Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">General Authorization Letter</div>
+          <div class="template-card-desc">Authorize someone to act on your behalf for specific matters.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-general-authorization-letter', 'General Authorization Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/6. 401k_Rollover_Request_Letter-1.png" alt="401k Rollover Request Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">401k Rollover Request Letter</div>
+          <div class="template-card-desc">Request a rollover of your 401k to a new retirement account.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-401k-rollover-request-letter', '401k Rollover Request Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/7. Professional_Reference_Request_Letter-1.png" alt="Professional Reference Request Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Professional Reference Request Letter</div>
+          <div class="template-card-desc">Ask former colleagues for a professional reference.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-professional-reference-request-letter', 'Professional Reference Request Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/8. LinkedIn_Networking_Message_Template-1.png" alt="LinkedIn Networking Message Template" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">LinkedIn Networking Message Template</div>
+          <div class="template-card-desc">Reach out to your network with polished LinkedIn messages.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-linkedin-networking-message-template', 'LinkedIn Networking Message Template', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/9. Unemployment_Appeal_Information_Organizer-1.png" alt="Unemployment Appeal Information Organizer" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Unemployment Appeal Information Organizer</div>
+          <div class="template-card-desc">Organize all documents and details for an unemployment appeal.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-unemployment-appeal-information-organizer', 'Unemployment Appeal Information Organizer', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/10. Health_Insurance_Comparison_Worksheet-1.png" alt="Health Insurance Comparison Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Health Insurance Comparison Worksheet</div>
+          <div class="template-card-desc">Compare health insurance plans side by side to find the best fit.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-health-insurance-comparison-worksheet', 'Health Insurance Comparison Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/11. Job_Search_Tracker_Worksheet-1.png" alt="Job Search Tracker Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Job Search Tracker Worksheet</div>
+          <div class="template-card-desc">Track applications, interviews, and follow-ups in one place.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-job-search-tracker-worksheet', 'Job Search Tracker Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/12. Budget_Reduction_Worksheet-1.png" alt="Budget Reduction Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Budget Reduction Worksheet</div>
+          <div class="template-card-desc">Identify expenses to cut and create a lean emergency budget.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-budget-reduction-worksheet', 'Budget Reduction Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/13. Job_Offer_Evaluation_Worksheet-1.png" alt="Job Offer Evaluation Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Job Offer Evaluation Worksheet</div>
+          <div class="template-card-desc">Evaluate and compare job offers across salary, benefits, and fit.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-job-offer-evaluation-worksheet', 'Job Offer Evaluation Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/jobloss/14. First_24_Hours_After_Losing_Your_Job-1.png" alt="First 24 Hours After Losing Your Job" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">First 24 Hours After Losing Your Job</div>
+          <div class="template-card-desc">Step-by-step guide for the critical first day after job loss.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-first-24-hours-after-losing-your-job', 'First 24 Hours After Losing Your Job', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <div class="back-to-bundles">
-    <a href="/templates">&#8592; Back to bundles</a>
+  <!-- DEATH & ESTATE -->
+  <section class="category-section" id="estate">
+    <div class="category-header reveal">
+      <h2 class="category-title">Death &amp; Estate</h2>
+      <div class="category-count">16 templates</div>
+      <a href="/templates/estate" class="bundle-link">Save with the full bundle — $16</a>
+    </div>
+    <div class="template-grid reveal">
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/1. Survivor_Benefits_Information_Organizer-1.png" alt="Survivor Benefits Information Organizer" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Survivor Benefits Information Organizer</div>
+          <div class="template-card-desc">Organize survivor benefit claims and required documentation.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-survivor-benefits-information-organizer', 'Survivor Benefits Information Organizer', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/2. Employer_Notification_of_Death_Letter-1.png" alt="Employer Notification of Death Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Employer Notification of Death Letter</div>
+          <div class="template-card-desc">Notify an employer of a death and request final pay and benefits.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-employer-notification-of-death-letter', 'Employer Notification of Death Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/3. Estate_Executor_Introduction_Letter-1.png" alt="Estate Executor Introduction Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Estate Executor Introduction Letter</div>
+          <div class="template-card-desc">Introduce yourself as executor to banks, insurers, and institutions.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-estate-executor-introduction-letter', 'Estate Executor Introduction Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/4. Beneficiary_Change_Request-1.png" alt="Beneficiary Change Request" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Beneficiary Change Request</div>
+          <div class="template-card-desc">Request a beneficiary change on accounts and policies.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-beneficiary-change-request', 'Beneficiary Change Request', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/5. Personal_Affidavit_Information_Organizer-1.png" alt="Personal Affidavit Information Organizer" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Personal Affidavit Information Organizer</div>
+          <div class="template-card-desc">Gather information needed for a personal affidavit filing.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-personal-affidavit-information-organizer', 'Personal Affidavit Information Organizer', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/6. Gift_Letter_Information_Organizer-1.png" alt="Gift Letter Information Organizer" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Gift Letter Information Organizer</div>
+          <div class="template-card-desc">Document gift details for tax and estate planning purposes.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-gift-letter-information-organizer', 'Gift Letter Information Organizer', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/7. Bank_Death_Notification_Letter-1.png" alt="Bank Death Notification Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Bank Death Notification Letter</div>
+          <div class="template-card-desc">Notify banks of a death and request account information.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-bank-death-notification-letter', 'Bank Death Notification Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/8. Credit_Bureau_Death_Notification_Letter-1.png" alt="Credit Bureau Death Notification Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Credit Bureau Death Notification Letter</div>
+          <div class="template-card-desc">Notify credit bureaus to prevent identity theft after a death.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-credit-bureau-death-notification-letter', 'Credit Bureau Death Notification Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/9. Utility_Account_Transfer_Cancellation_Letter-1.png" alt="Utility Account Transfer/Cancellation Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Utility Account Transfer/Cancellation Letter</div>
+          <div class="template-card-desc">Transfer or cancel utility accounts after a death.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-utility-account-transfer-cancellation-letter', 'Utility Account Transfer/Cancellation Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/10. Subscription_Membership_Cancellation_Letter-1.png" alt="Subscription/Membership Cancellation Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Subscription/Membership Cancellation Letter</div>
+          <div class="template-card-desc">Cancel subscriptions and memberships on behalf of the deceased.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-subscription-membership-cancellation-letter', 'Subscription/Membership Cancellation Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/11. Life_Insurance_Claim_Preparation_Checklist-1.png" alt="Life Insurance Claim Preparation Checklist" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Life Insurance Claim Preparation Checklist</div>
+          <div class="template-card-desc">Prepare everything needed to file a life insurance claim.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-life-insurance-claim-preparation-checklist', 'Life Insurance Claim Preparation Checklist', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/12. Digital_Accounts_and_Passwords_Inventory-1.png" alt="Digital Accounts and Passwords Inventory" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Digital Accounts and Passwords Inventory</div>
+          <div class="template-card-desc">Inventory all digital accounts, logins, and access details.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-digital-accounts-and-passwords-inventory', 'Digital Accounts and Passwords Inventory', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/13. Vehicle_Title_Transfer_Letter-1.png" alt="Vehicle Title Transfer Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Vehicle Title Transfer Letter</div>
+          <div class="template-card-desc">Request a vehicle title transfer after a death.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-vehicle-title-transfer-letter', 'Vehicle Title Transfer Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/14. Safe_Deposit_Box_Access_Letter-1.png" alt="Safe Deposit Box Access Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Safe Deposit Box Access Letter</div>
+          <div class="template-card-desc">Request access to a safe deposit box as an authorized party.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-safe-deposit-box-access-letter', 'Safe Deposit Box Access Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/15. Obituary_Writing_Guide_and_Worksheet-1.png" alt="Obituary Writing Guide and Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Obituary Writing Guide and Worksheet</div>
+          <div class="template-card-desc">Write a meaningful obituary with a guided worksheet.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-obituary-writing-guide-and-worksheet', 'Obituary Writing Guide and Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/estate/16. First_24_Hours_After_a_Death-1.png" alt="First 24 Hours After a Death" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">First 24 Hours After a Death</div>
+          <div class="template-card-desc">Step-by-step guide for the critical first day after a death.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-first-24-hours-after-a-death', 'First 24 Hours After a Death', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIVORCE -->
+  <section class="category-section" id="divorce">
+    <div class="category-header reveal">
+      <h2 class="category-title">Divorce &amp; Separation</h2>
+      <div class="category-count">14 templates</div>
+      <a href="/templates/divorce" class="bundle-link">Save with the full bundle — $16</a>
+    </div>
+    <div class="template-grid reveal">
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/1. Divorce_Financial_Disclosure_Information_Organizer-1.png" alt="Divorce Financial Disclosure Information Organizer" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Divorce Financial Disclosure Organizer</div>
+          <div class="template-card-desc">Organize financial records required for divorce disclosure.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-divorce-financial-disclosure-organizer', 'Divorce Financial Disclosure Organizer', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/2. Parental_Consent_Permission_Letter-1.png" alt="Parental Consent Permission Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Parental Consent Permission Letter</div>
+          <div class="template-card-desc">Grant parental consent for travel, medical care, or activities.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-parental-consent-permission-letter', 'Parental Consent Permission Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/3. CoParenting_Communication_Planning_Worksheet-1.png" alt="Co-Parenting Communication Planning Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Co-Parenting Communication Worksheet</div>
+          <div class="template-card-desc">Plan communication boundaries and schedules with your co-parent.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-coparenting-communication-worksheet', 'Co-Parenting Communication Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/4. Asset_Property_Inventory_Worksheet-1.png" alt="Asset &amp; Property Inventory Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Asset &amp; Property Inventory Worksheet</div>
+          <div class="template-card-desc">Inventory all marital assets and property for equitable division.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-asset-property-inventory-worksheet', 'Asset & Property Inventory Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/5. Name_Change_Notification_Letter-1.png" alt="Name Change Notification Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Name Change Notification Letter</div>
+          <div class="template-card-desc">Notify institutions of a legal name change after divorce.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-name-change-notification-letter', 'Name Change Notification Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/6. Creditor_Notification_of_Divorce_Letter-1.png" alt="Creditor Notification of Divorce Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Creditor Notification of Divorce Letter</div>
+          <div class="template-card-desc">Notify creditors of your divorce and update account responsibility.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-creditor-notification-of-divorce-letter', 'Creditor Notification of Divorce Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/7. Retirement_Account_Division_Information_Request_Letter-1.png" alt="Retirement Account Division Request Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Retirement Account Division Request Letter</div>
+          <div class="template-card-desc">Request information about dividing retirement accounts in divorce.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-retirement-account-division-request-letter', 'Retirement Account Division Request Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/8. Joint_Account_Separation_Request_Letter-1.png" alt="Joint Account Separation Request Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Joint Account Separation Request Letter</div>
+          <div class="template-card-desc">Request separation of joint bank and financial accounts.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-joint-account-separation-request-letter', 'Joint Account Separation Request Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/9. Divorce_Attorney_Meeting_Preparation_Worksheet-1.png" alt="Divorce Attorney Meeting Preparation Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Divorce Attorney Meeting Prep Worksheet</div>
+          <div class="template-card-desc">Prepare questions, documents, and goals for your attorney meeting.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-divorce-attorney-meeting-prep-worksheet', 'Divorce Attorney Meeting Prep Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/10. Child_Support_Modification_Information_Organizer-1.png" alt="Child Support Modification Information Organizer" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Child Support Modification Organizer</div>
+          <div class="template-card-desc">Organize information needed to request a child support modification.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-child-support-modification-organizer', 'Child Support Modification Organizer', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/11. School_Notification_of_Custody_Change_Letter-1.png" alt="School Notification of Custody Change Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">School Notification of Custody Change Letter</div>
+          <div class="template-card-desc">Notify your child's school of custody and contact changes.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-school-notification-of-custody-change-letter', 'School Notification of Custody Change Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/12. Insurance_Removal_Request_Letter-1.png" alt="Insurance Removal Request Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Insurance Removal Request Letter</div>
+          <div class="template-card-desc">Request removal of a spouse from insurance policies.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-insurance-removal-request-letter', 'Insurance Removal Request Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/13. PostDivorce_Financial_Reset_Checklist-1.png" alt="Post-Divorce Financial Reset Checklist" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Post-Divorce Financial Reset Checklist</div>
+          <div class="template-card-desc">Reset your finances after divorce with a comprehensive checklist.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-post-divorce-financial-reset-checklist', 'Post-Divorce Financial Reset Checklist', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/divorce/14. First_24_Hours_After_Being_Served_Divorce_Papers-1.png" alt="First 24 Hours After Being Served Divorce Papers" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">First 24 Hours After Being Served</div>
+          <div class="template-card-desc">What to do immediately after being served divorce papers.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-first-24-hours-after-being-served', 'First 24 Hours After Being Served', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DISABILITY -->
+  <section class="category-section" id="disability">
+    <div class="category-header reveal">
+      <h2 class="category-title">Disability &amp; Benefits</h2>
+      <div class="category-count">15 templates</div>
+      <a href="/templates/disability" class="bundle-link">Save with the full bundle — $16</a>
+    </div>
+    <div class="template-grid reveal">
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/1. SSDI_Appeal_Information_Organizer-1.png" alt="SSDI Appeal Information Organizer" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">SSDI Appeal Information Organizer</div>
+          <div class="template-card-desc">Organize evidence and documentation for an SSDI appeal.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-ssdi-appeal-information-organizer', 'SSDI Appeal Information Organizer', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/2. Beneficiary_Review_After_Diagnosis_Checklist-1.png" alt="Beneficiary Review After Diagnosis Checklist" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Beneficiary Review After Diagnosis Checklist</div>
+          <div class="template-card-desc">Review and update all beneficiary designations after a diagnosis.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-beneficiary-review-after-diagnosis-checklist', 'Beneficiary Review After Diagnosis Checklist', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/3. Medical_Authorization_Letter-1.png" alt="Medical Authorization Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Medical Authorization Letter</div>
+          <div class="template-card-desc">Authorize someone to access your medical records or make decisions.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-medical-authorization-letter', 'Medical Authorization Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/4. Caregiver_Authorization_Letter-1.png" alt="Caregiver Authorization Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Caregiver Authorization Letter</div>
+          <div class="template-card-desc">Authorize a caregiver to make decisions on your behalf.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-caregiver-authorization-letter', 'Caregiver Authorization Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/5. Benefits_Appeal_FollowUp_Tracking_Worksheet-1.png" alt="Benefits Appeal Follow-Up Tracking Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Benefits Appeal Follow-Up Tracker</div>
+          <div class="template-card-desc">Track appeal submissions, deadlines, and follow-up actions.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-benefits-appeal-followup-tracker', 'Benefits Appeal Follow-Up Tracker', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/6. FMLA_Leave_Request_Letter-1.png" alt="FMLA Leave Request Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">FMLA Leave Request Letter</div>
+          <div class="template-card-desc">Formally request FMLA leave from your employer.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-fmla-leave-request-letter', 'FMLA Leave Request Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/7. Workplace_Accommodation_Request_ADA-1.png" alt="Workplace Accommodation Request (ADA)" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Workplace Accommodation Request (ADA)</div>
+          <div class="template-card-desc">Request reasonable workplace accommodations under the ADA.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-workplace-accommodation-request-ada', 'Workplace Accommodation Request (ADA)', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/8. SSDI_Application_Information_Organizer-1.png" alt="SSDI Application Information Organizer" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">SSDI Application Information Organizer</div>
+          <div class="template-card-desc">Organize all information needed for your SSDI application.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-ssdi-application-information-organizer', 'SSDI Application Information Organizer', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/9. Disability_Insurance_Claim_Preparation_Checklist-1.png" alt="Disability Insurance Claim Preparation Checklist" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Disability Insurance Claim Prep Checklist</div>
+          <div class="template-card-desc">Prepare documentation needed to file a disability insurance claim.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-disability-insurance-claim-prep-checklist', 'Disability Insurance Claim Prep Checklist', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/10. Return_to_Work_Letter_After_Disability-1.png" alt="Return to Work Letter After Disability" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Return to Work Letter After Disability</div>
+          <div class="template-card-desc">Notify your employer of your return to work after disability leave.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-return-to-work-letter-after-disability', 'Return to Work Letter After Disability', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/11. Disability_Accommodation_FollowUp_Letter-1.png" alt="Disability Accommodation Follow-Up Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Disability Accommodation Follow-Up Letter</div>
+          <div class="template-card-desc">Follow up on a workplace accommodation request.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-disability-accommodation-followup-letter', 'Disability Accommodation Follow-Up Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/12. Letter_to_Employer_During_FMLA_Leave-1.png" alt="Letter to Employer During FMLA Leave" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Letter to Employer During FMLA Leave</div>
+          <div class="template-card-desc">Communicate with your employer while on FMLA leave.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-letter-to-employer-during-fmla-leave', 'Letter to Employer During FMLA Leave', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/13_SSDI_Timeline_and_Deadline_Tracker-1.png" alt="SSDI Timeline and Deadline Tracker" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">SSDI Timeline and Deadline Tracker</div>
+          <div class="template-card-desc">Track critical SSDI deadlines and milestones.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-ssdi-timeline-and-deadline-tracker', 'SSDI Timeline and Deadline Tracker', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/14. Disability_Daily_Symptom_Journal-1.png" alt="Disability Daily Symptom Journal" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Disability Daily Symptom Journal</div>
+          <div class="template-card-desc">Track daily symptoms to support disability claims and treatment.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-disability-daily-symptom-journal', 'Disability Daily Symptom Journal', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/disability/15. First_24_Hours_After_a_Disability_Diagnosis-1.png" alt="First 24 Hours After a Disability Diagnosis" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">First 24 Hours After a Disability Diagnosis</div>
+          <div class="template-card-desc">What to do immediately after receiving a disability diagnosis.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-first-24-hours-after-disability-diagnosis', 'First 24 Hours After a Disability Diagnosis', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RELOCATION -->
+  <section class="category-section" id="relocation">
+    <div class="category-header reveal">
+      <h2 class="category-title">Moving &amp; Relocation</h2>
+      <div class="category-count">13 templates</div>
+      <a href="/templates/relocation" class="bundle-link">Save with the full bundle — $16</a>
+    </div>
+    <div class="template-grid reveal">
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/1. Relocation_Address_Change_Master_Checklist-1.png" alt="Relocation Address Change Master Checklist" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Address Change Master Checklist</div>
+          <div class="template-card-desc">Track every address change needed when you move.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-address-change-master-checklist', 'Address Change Master Checklist', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/2. Proof_of_Residency_Letter-1.png" alt="Proof of Residency Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Proof of Residency Letter</div>
+          <div class="template-card-desc">Provide proof of residency for registration or enrollment.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-proof-of-residency-letter', 'Proof of Residency Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/3. Landlord_Reference_Letter-1.png" alt="Landlord Reference Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Landlord Reference Letter</div>
+          <div class="template-card-desc">Request a reference letter from your current landlord.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-landlord-reference-letter', 'Landlord Reference Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/4. Early_Lease_Termination_Letter-1.png" alt="Early Lease Termination Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Early Lease Termination Letter</div>
+          <div class="template-card-desc">Request early termination of your lease agreement.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-early-lease-termination-letter', 'Early Lease Termination Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/5. Utility_Transfer_Setup_Cancellation_Letter-1.png" alt="Utility Transfer/Setup/Cancellation Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Utility Transfer/Setup/Cancellation Letter</div>
+          <div class="template-card-desc">Transfer, set up, or cancel utilities when you move.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-utility-transfer-setup-cancellation-letter', 'Utility Transfer/Setup/Cancellation Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/6. Landlord_MoveOut_Notice_Letter-1.png" alt="Landlord Move-Out Notice Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Landlord Move-Out Notice Letter</div>
+          <div class="template-card-desc">Give your landlord proper written notice of your move-out.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-landlord-moveout-notice-letter', 'Landlord Move-Out Notice Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/7. School_Transfer_Request_Letter-1.png" alt="School Transfer Request Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">School Transfer Request Letter</div>
+          <div class="template-card-desc">Request a school transfer for your child due to relocation.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-school-transfer-request-letter', 'School Transfer Request Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/8. Employer_Remote_Work_State_Change_Notification-1.png" alt="Employer Remote Work State Change Notification" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Remote Work State Change Notification</div>
+          <div class="template-card-desc">Notify your employer of a state change for remote work tax purposes.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-remote-work-state-change-notification', 'Remote Work State Change Notification', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/9. Vehicle_Registration_Transfer_Checklist-1.png" alt="Vehicle Registration Transfer Checklist" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Vehicle Registration Transfer Checklist</div>
+          <div class="template-card-desc">Track steps to transfer your vehicle registration to a new state.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-vehicle-registration-transfer-checklist', 'Vehicle Registration Transfer Checklist', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/10. HOA_Transfer_Notification_Letter-1.png" alt="HOA Transfer Notification Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">HOA Transfer Notification Letter</div>
+          <div class="template-card-desc">Notify your HOA of ownership transfer or move-out.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-hoa-transfer-notification-letter', 'HOA Transfer Notification Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/11. PostMove_Government_Checklist-1.png" alt="Post-Move Government Checklist" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Post-Move Government Checklist</div>
+          <div class="template-card-desc">Update government records, IDs, and voter registration after moving.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-post-move-government-checklist', 'Post-Move Government Checklist', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/12. Pet_Registration_Transfer_Checklist-1.png" alt="Pet Registration Transfer Checklist" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Pet Registration Transfer Checklist</div>
+          <div class="template-card-desc">Transfer pet licenses, vet records, and registrations to your new state.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-pet-registration-transfer-checklist', 'Pet Registration Transfer Checklist', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/relocation/13. First_24_Hours_After_Deciding_to_Move-1.png" alt="First 24 Hours After Deciding to Move" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">First 24 Hours After Deciding to Move</div>
+          <div class="template-card-desc">Immediate action items once you decide to relocate.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-first-24-hours-after-deciding-to-move', 'First 24 Hours After Deciding to Move', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RETIREMENT -->
+  <section class="category-section" id="retirement">
+    <div class="category-header reveal">
+      <h2 class="category-title">Retirement Planning</h2>
+      <div class="category-count">15 templates</div>
+      <a href="/templates/retirement" class="bundle-link">Save with the full bundle — $16</a>
+    </div>
+    <div class="template-grid reveal">
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/1. Social_Security_Application_Information_Organizer-1.png" alt="Social Security Application Information Organizer" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Social Security Application Organizer</div>
+          <div class="template-card-desc">Organize information needed for your Social Security application.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-social-security-application-organizer', 'Social Security Application Organizer', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/2. Employer_Retirement_Notification_Letter-1.png" alt="Employer Retirement Notification Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Employer Retirement Notification Letter</div>
+          <div class="template-card-desc">Formally notify your employer of your planned retirement date.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-employer-retirement-notification-letter', 'Employer Retirement Notification Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/3. Pension_Benefit_Election_Comparison_Worksheet-1.png" alt="Pension Benefit Election Comparison Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Pension Benefit Election Comparison</div>
+          <div class="template-card-desc">Compare pension payout options to choose the best election.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-pension-benefit-election-comparison', 'Pension Benefit Election Comparison', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/4. RMD_Distribution_Request_Letter-1.png" alt="RMD Distribution Request Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">RMD Distribution Request Letter</div>
+          <div class="template-card-desc">Request your required minimum distribution from retirement accounts.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-rmd-distribution-request-letter', 'RMD Distribution Request Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/5. Medicare_Enrollment_Checklist_and_Cover_Letter-1.png" alt="Medicare Enrollment Checklist and Cover Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Medicare Enrollment Checklist &amp; Cover Letter</div>
+          <div class="template-card-desc">Track Medicare enrollment steps and submit your cover letter.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-medicare-enrollment-checklist-cover-letter', 'Medicare Enrollment Checklist & Cover Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/6. Roth_Conversion_Decision_Worksheet-1.png" alt="Roth Conversion Decision Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Roth Conversion Decision Worksheet</div>
+          <div class="template-card-desc">Evaluate whether a Roth conversion makes sense for your situation.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-roth-conversion-decision-worksheet', 'Roth Conversion Decision Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/7. Retirement_Account_Beneficiary_Update_Letter-1.png" alt="Retirement Account Beneficiary Update Letter" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Retirement Account Beneficiary Update Letter</div>
+          <div class="template-card-desc">Update beneficiary designations on your retirement accounts.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-retirement-account-beneficiary-update-letter', 'Retirement Account Beneficiary Update Letter', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/8. Retiree_Health_Insurance_Continuation_Request-1.png" alt="Retiree Health Insurance Continuation Request" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Retiree Health Insurance Continuation Request</div>
+          <div class="template-card-desc">Request continuation of employer health insurance into retirement.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-retiree-health-insurance-continuation-request', 'Retiree Health Insurance Continuation Request', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/9. Power_of_Attorney_Preparation_Checklist-1.png" alt="Power of Attorney Preparation Checklist" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Power of Attorney Preparation Checklist</div>
+          <div class="template-card-desc">Prepare to establish power of attorney with this guided checklist.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-power-of-attorney-preparation-checklist', 'Power of Attorney Preparation Checklist', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/10. Letter_of_Instruction_to_Heirs-1.png" alt="Letter of Instruction to Heirs" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Letter of Instruction to Heirs</div>
+          <div class="template-card-desc">Leave clear instructions for your heirs about accounts and wishes.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-letter-of-instruction-to-heirs', 'Letter of Instruction to Heirs', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/11. Social_Security_Delay_Strategy_Worksheet-1.png" alt="Social Security Delay Strategy Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Social Security Delay Strategy Worksheet</div>
+          <div class="template-card-desc">Calculate the benefit of delaying Social Security claims.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-social-security-delay-strategy-worksheet', 'Social Security Delay Strategy Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/12. Legacy_Letter_Ethical_Will-1.png" alt="Legacy Letter / Ethical Will" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Legacy Letter / Ethical Will</div>
+          <div class="template-card-desc">Write a personal legacy letter sharing your values and wishes.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-legacy-letter-ethical-will', 'Legacy Letter / Ethical Will', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/13. Healthcare_Bridge_Cost_Comparison_Worksheet-1.png" alt="Healthcare Bridge Cost Comparison Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Healthcare Bridge Cost Comparison</div>
+          <div class="template-card-desc">Compare healthcare costs between retirement and Medicare eligibility.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-healthcare-bridge-cost-comparison', 'Healthcare Bridge Cost Comparison', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/14. Medicare_Plan_Comparison_Worksheet-1.png" alt="Medicare Plan Comparison Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Medicare Plan Comparison Worksheet</div>
+          <div class="template-card-desc">Compare Medicare plan options side by side.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-medicare-plan-comparison-worksheet', 'Medicare Plan Comparison Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/retirement/15. First_24_Hours_After_Deciding_to_Retire-1.png" alt="First 24 Hours After Deciding to Retire" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">First 24 Hours After Deciding to Retire</div>
+          <div class="template-card-desc">Immediate steps to take once you decide to retire.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-first-24-hours-after-deciding-to-retire', 'First 24 Hours After Deciding to Retire', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BONUS WELLNESS -->
+  <section class="category-section" id="wellness">
+    <div class="category-header reveal">
+      <h2 class="category-title">Bonus Wellness Templates</h2>
+      <div class="category-count">3 templates</div>
+      <p style="font-size:13px;color:var(--muted);margin-top:6px;">Included free with any bundle — or buy individually</p>
+    </div>
+    <div class="template-grid reveal" style="max-width:780px;">
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/all-bundle-extras/ALL-01_CBT_Thought_Record_Worksheet_Transition_Edition-1.png" alt="CBT Thought Record Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">CBT Thought Record Worksheet</div>
+          <div class="template-card-desc">Challenge anxious thoughts with a cognitive behavioral therapy worksheet.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-cbt-thought-record-worksheet', 'CBT Thought Record Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/all-bundle-extras/ALL-02_Values_Clarification_Worksheet-1.png" alt="Values Clarification Worksheet" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Values Clarification Worksheet</div>
+          <div class="template-card-desc">Identify your core values to guide decisions during transitions.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-values-clarification-worksheet', 'Values Clarification Worksheet', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="template-card">
+        <div class="template-card-img"><img src="/static/images/individual-template-screenshots/all-bundle-extras/ALL-03_Grief_Stages_Psychoeducation_Handout-1.png" alt="Grief Stages Psychoeducation Handout" loading="lazy"></div>
+        <div class="template-card-body">
+          <div class="template-card-name">Grief Stages Psychoeducation Handout</div>
+          <div class="template-card-desc">Understand the stages of grief and healthy coping strategies.</div>
+          <div class="template-card-footer">
+            <div class="template-card-price">$3</div>
+            <button class="btn-add-cart" onclick="addToCart('individual-grief-stages-psychoeducation-handout', 'Grief Stages Psychoeducation Handout', 3)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust bar -->
+  <div class="trust-bar reveal">
+    <div class="trust-item"><span class="trust-icon">&#10003;</span> Professionally designed formats</div>
+    <div class="trust-item"><span class="trust-icon">&#10003;</span> Plain language</div>
+    <div class="trust-item"><span class="trust-icon">&#10003;</span> State-specific options</div>
+    <div class="trust-item"><span class="trust-icon">&#10003;</span> Instant download</div>
   </div>
 
+  <!-- CTA -->
+  <div class="cta-block reveal">
+    <div class="cta-title">Want them all?</div>
+    <p class="cta-subtitle">Get all 90+ templates across every transition category for just $36.</p>
+    <a href="/templates/master" class="btn-large">View the Life Transition Bundle &rarr;</a>
+  </div>
+
+  <!-- Footer -->
   <footer>
-    <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo">
-    <p class="footer-note">Lumeway is a guidance tool, not a licensed professional. Always consult a qualified advisor.</p>
-    <p class="footer-note"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a></p>
-    <div class="footer-social">
+    <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo reveal">
+    <p class="footer-note reveal">Lumeway is a guidance tool, not a licensed professional. Always consult a qualified advisor.</p>
+    <p class="footer-note reveal"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a></p>
+    <div class="footer-social reveal">
       <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a>
     </div>
   </footer>
@@ -174,242 +1281,100 @@
       dropdowns.forEach(function(dd) {
         var btn = dd.querySelector('.nav-drop-btn');
         var menu = dd.querySelector('.nav-drop-menu');
-        function open() { dropdowns.forEach(function(o) { if (o !== dd) { o.classList.remove('open'); o.querySelector('.nav-drop-btn').setAttribute('aria-expanded','false'); } }); dd.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
-        function close() { dd.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+        var links = Array.from(menu.querySelectorAll('a'));
+        links.forEach(function(a) { if (a.getAttribute('href') === window.location.pathname) a.classList.add('active'); });
+        function open() { dropdowns.forEach(function(other) { if (other !== dd) { other.classList.remove('open'); other.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false'); } }); dd.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+        function close() { dd.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
         btn.addEventListener('click', function(e) { e.stopPropagation(); dd.classList.contains('open') ? close() : open(); });
         menu.addEventListener('click', function(e) { e.stopPropagation(); });
+        btn.addEventListener('keydown', function(e) {
+          if (e.key === 'ArrowDown') { e.preventDefault(); open(); if (links[0]) links[0].focus(); }
+          if (e.key === 'Escape') close();
+        });
+        menu.addEventListener('keydown', function(e) {
+          var idx = links.indexOf(document.activeElement);
+          if (e.key === 'ArrowDown') { e.preventDefault(); if (links[idx + 1]) links[idx + 1].focus(); }
+          if (e.key === 'ArrowUp') { e.preventDefault(); idx > 0 ? links[idx - 1].focus() : btn.focus(); }
+          if (e.key === 'Escape') { close(); btn.focus(); }
+        });
       });
-      document.addEventListener('click', function() { dropdowns.forEach(function(dd) { dd.classList.remove('open'); dd.querySelector('.nav-drop-btn').setAttribute('aria-expanded','false'); }); });
+      document.addEventListener('click', function() { dropdowns.forEach(function(dd) { dd.classList.remove('open'); dd.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false'); }); });
     })();
 
-    var categories = [
-      {
-        id: "job-loss", title: "Job Loss & Income Crisis", folder: "jobloss", bundleId: "job-loss",
-        templates: [
-          {img:"1. Severance_Response_Letter-1.png", name:"Severance Response Letter", desc:"A starting-point template for responding to your severance offer"},
-          {img:"2. Severance_CounterOffer_Letter-1.png", name:"Severance Counter-Offer Letter", desc:"Template for negotiating better severance terms"},
-          {img:"3. COBRA_Election_Letter-1.png", name:"COBRA Election Letter", desc:"Letter to elect COBRA continuation coverage after job loss"},
-          {img:"4. Hardship_Letter_to_Creditor-1.png", name:"Hardship Letter to Creditor", desc:"Notify creditors of financial hardship and request accommodation"},
-          {img:"5. General_Authorization_Letter-1.png", name:"General Authorization Letter", desc:"Authorize someone to act on your behalf for specific matters"},
-          {img:"6. 401k_Rollover_Request_Letter-1.png", name:"401k Rollover Request Letter", desc:"Request to roll over your 401k to a new account after leaving a job"},
-          {img:"7. Professional_Reference_Request_Letter-1.png", name:"Professional Reference Request Letter", desc:"Ask a former colleague or manager for a professional reference"},
-          {img:"8. LinkedIn_Networking_Message_Template-1.png", name:"LinkedIn Networking Message Template", desc:"Reach out to contacts for job search networking"},
-          {img:"9. Unemployment_Appeal_Information_Organizer-1.png", name:"Unemployment Appeal Information Organizer", desc:"Organize your documents and details for an unemployment appeal"},
-          {img:"10. Health_Insurance_Comparison_Worksheet-1.png", name:"Health Insurance Comparison Worksheet", desc:"Compare COBRA, marketplace, and other health insurance options"},
-          {img:"11. Job_Search_Tracker_Worksheet-1.png", name:"Job Search Tracker Worksheet", desc:"Track applications, interviews, and follow-ups in one place"},
-          {img:"12. Budget_Reduction_Worksheet-1.png", name:"Budget Reduction Worksheet", desc:"Identify expenses to cut and create a lean budget after income loss"},
-          {img:"13. Job_Offer_Evaluation_Worksheet-1.png", name:"Job Offer Evaluation Worksheet", desc:"Compare job offers side-by-side on salary, benefits, and fit"},
-          {img:"14. First_24_Hours_After_Losing_Your_Job-1.png", name:"First 24 Hours After Losing Your Job", desc:"Step-by-step guide for the critical first day after job loss"}
-        ]
-      },
-      {
-        id: "estate", title: "Death & Estate", folder: "estate", bundleId: "estate",
-        templates: [
-          {img:"1. Survivor_Benefits_Information_Organizer-1.png", name:"Survivor Benefits Information Organizer", desc:"Organize pension, Social Security, and insurance survivor benefits"},
-          {img:"2. Employer_Notification_of_Death_Letter-1.png", name:"Employer Notification of Death Letter", desc:"Notify an employer of an employee or retiree's passing"},
-          {img:"3. Estate_Executor_Introduction_Letter-1.png", name:"Estate Executor Introduction Letter", desc:"Introduce yourself as the estate executor to institutions"},
-          {img:"4. Beneficiary_Change_Request-1.png", name:"Beneficiary Change Request", desc:"Request to update beneficiaries on accounts and policies"},
-          {img:"5. Personal_Affidavit_Information_Organizer-1.png", name:"Personal Affidavit Information Organizer", desc:"Gather personal details needed for affidavits and legal filings"},
-          {img:"6. Gift_Letter_Information_Organizer-1.png", name:"Gift Letter Information Organizer", desc:"Document financial gifts for tax and legal purposes"},
-          {img:"7. Bank_Death_Notification_Letter-1.png", name:"Bank Death Notification Letter", desc:"Notify banks and financial institutions of a death"},
-          {img:"8. Credit_Bureau_Death_Notification_Letter-1.png", name:"Credit Bureau Death Notification Letter", desc:"Notify credit bureaus to prevent identity theft after death"},
-          {img:"9. Utility_Account_Transfer_Cancellation_Letter-1.png", name:"Utility Account Transfer/Cancellation Letter", desc:"Transfer or cancel utility accounts after a death"},
-          {img:"10. Subscription_Membership_Cancellation_Letter-1.png", name:"Subscription/Membership Cancellation Letter", desc:"Cancel subscriptions and memberships for a deceased person"},
-          {img:"11. Life_Insurance_Claim_Preparation_Checklist-1.png", name:"Life Insurance Claim Preparation Checklist", desc:"Checklist to prepare and file a life insurance claim"},
-          {img:"12. Digital_Accounts_and_Passwords_Inventory-1.png", name:"Digital Accounts and Passwords Inventory", desc:"Inventory digital accounts, logins, and online assets"},
-          {img:"13. Vehicle_Title_Transfer_Letter-1.png", name:"Vehicle Title Transfer Letter", desc:"Request to transfer a vehicle title after a death"},
-          {img:"14. Safe_Deposit_Box_Access_Letter-1.png", name:"Safe Deposit Box Access Letter", desc:"Request access to a safe deposit box as estate representative"},
-          {img:"15. Obituary_Writing_Guide_and_Worksheet-1.png", name:"Obituary Writing Guide and Worksheet", desc:"Step-by-step guide to writing a meaningful obituary"},
-          {img:"16. First_24_Hours_After_a_Death-1.png", name:"First 24 Hours After a Death", desc:"Immediate steps to take in the first day after a loved one passes"}
-        ]
-      },
-      {
-        id: "divorce", title: "Divorce & Separation", folder: "divorce", bundleId: "divorce",
-        templates: [
-          {img:"1. Divorce_Financial_Disclosure_Information_Organizer-1.png", name:"Divorce Financial Disclosure Organizer", desc:"Organize income, assets, and debts for financial disclosure"},
-          {img:"2. Parental_Consent_Permission_Letter-1.png", name:"Parental Consent Permission Letter", desc:"Grant or request parental permission for child-related activities"},
-          {img:"3. CoParenting_Communication_Planning_Worksheet-1.png", name:"Co-Parenting Communication Planning Worksheet", desc:"Plan communication boundaries and schedules with a co-parent"},
-          {img:"4. Asset_Property_Inventory_Worksheet-1.png", name:"Asset and Property Inventory Worksheet", desc:"Inventory all shared assets and property for division"},
-          {img:"5. Name_Change_Notification_Letter-1.png", name:"Name Change Notification Letter", desc:"Notify institutions of a legal name change after divorce"},
-          {img:"6. Creditor_Notification_of_Divorce_Letter-1.png", name:"Creditor Notification of Divorce Letter", desc:"Inform creditors of divorce and request account separation"},
-          {img:"7. Retirement_Account_Division_Information_Request_Letter-1.png", name:"Retirement Account Division Request Letter", desc:"Request information on dividing retirement accounts"},
-          {img:"8. Joint_Account_Separation_Request_Letter-1.png", name:"Joint Account Separation Request Letter", desc:"Request to separate joint bank or financial accounts"},
-          {img:"9. Divorce_Attorney_Meeting_Preparation_Worksheet-1.png", name:"Divorce Attorney Meeting Preparation Worksheet", desc:"Prepare questions and documents before meeting your attorney"},
-          {img:"10. Child_Support_Modification_Information_Organizer-1.png", name:"Child Support Modification Organizer", desc:"Organize information to request a child support modification"},
-          {img:"11. School_Notification_of_Custody_Change_Letter-1.png", name:"School Notification of Custody Change Letter", desc:"Notify your child's school of updated custody arrangements"},
-          {img:"12. Insurance_Removal_Request_Letter-1.png", name:"Insurance Removal Request Letter", desc:"Request to remove a spouse from insurance policies"},
-          {img:"13. PostDivorce_Financial_Reset_Checklist-1.png", name:"Post-Divorce Financial Reset Checklist", desc:"Checklist for rebuilding your finances after divorce"},
-          {img:"14. First_24_Hours_After_Being_Served_Divorce_Papers-1.png", name:"First 24 Hours After Being Served Divorce Papers", desc:"Immediate steps after receiving divorce papers"}
-        ]
-      },
-      {
-        id: "disability", title: "Disability & Benefits", folder: "disability", bundleId: "disability",
-        templates: [
-          {img:"1. SSDI_Appeal_Information_Organizer-1.png", name:"SSDI Appeal Information Organizer", desc:"Organize evidence and documents for an SSDI appeal"},
-          {img:"2. Beneficiary_Review_After_Diagnosis_Checklist-1.png", name:"Beneficiary Review After Diagnosis Checklist", desc:"Review and update beneficiaries after a disability diagnosis"},
-          {img:"3. Medical_Authorization_Letter-1.png", name:"Medical Authorization Letter", desc:"Authorize release of medical records to a third party"},
-          {img:"4. Caregiver_Authorization_Letter-1.png", name:"Caregiver Authorization Letter", desc:"Authorize a caregiver to make decisions on your behalf"},
-          {img:"5. Benefits_Appeal_FollowUp_Tracking_Worksheet-1.png", name:"Benefits Appeal Follow-Up Tracking Worksheet", desc:"Track deadlines and follow-ups for benefits appeals"},
-          {img:"6. FMLA_Leave_Request_Letter-1.png", name:"FMLA Leave Request Letter", desc:"Formally request FMLA leave from your employer"},
-          {img:"7. Workplace_Accommodation_Request_ADA-1.png", name:"Workplace Accommodation Request (ADA)", desc:"Request reasonable workplace accommodations under the ADA"},
-          {img:"8. SSDI_Application_Information_Organizer-1.png", name:"SSDI Application Information Organizer", desc:"Organize medical, work, and personal details for your SSDI application"},
-          {img:"9. Disability_Insurance_Claim_Preparation_Checklist-1.png", name:"Disability Insurance Claim Preparation Checklist", desc:"Checklist for preparing a disability insurance claim"},
-          {img:"10. Return_to_Work_Letter_After_Disability-1.png", name:"Return to Work Letter After Disability", desc:"Notify your employer of your return and any needed accommodations"},
-          {img:"11. Disability_Accommodation_FollowUp_Letter-1.png", name:"Disability Accommodation Follow-Up Letter", desc:"Follow up on a previously submitted accommodation request"},
-          {img:"12. Letter_to_Employer_During_FMLA_Leave-1.png", name:"Letter to Employer During FMLA Leave", desc:"Communicate with your employer while on FMLA leave"},
-          {img:"13_SSDI_Timeline_and_Deadline_Tracker-1.png", name:"SSDI Timeline and Deadline Tracker", desc:"Track important SSDI dates, deadlines, and milestones"},
-          {img:"14. Disability_Daily_Symptom_Journal-1.png", name:"Disability Daily Symptom Journal", desc:"Log daily symptoms to support your disability claim"},
-          {img:"15. First_24_Hours_After_a_Disability_Diagnosis-1.png", name:"First 24 Hours After a Disability Diagnosis", desc:"Immediate steps after receiving a disability diagnosis"}
-        ]
-      },
-      {
-        id: "relocation", title: "Moving & Relocation", folder: "relocation", bundleId: "relocation",
-        templates: [
-          {img:"1. Relocation_Address_Change_Master_Checklist-1.png", name:"Relocation Address Change Master Checklist", desc:"Master checklist for updating your address everywhere"},
-          {img:"2. Proof_of_Residency_Letter-1.png", name:"Proof of Residency Letter", desc:"Template letter to verify your new residence"},
-          {img:"3. Landlord_Reference_Letter-1.png", name:"Landlord Reference Letter", desc:"Request or provide a reference letter for renting"},
-          {img:"4. Early_Lease_Termination_Letter-1.png", name:"Early Lease Termination Letter", desc:"Formally request early termination of your lease"},
-          {img:"5. Utility_Transfer_Setup_Cancellation_Letter-1.png", name:"Utility Transfer/Setup/Cancellation Letter", desc:"Transfer, set up, or cancel utilities when you move"},
-          {img:"6. Landlord_MoveOut_Notice_Letter-1.png", name:"Landlord Move-Out Notice Letter", desc:"Provide your landlord with formal notice of your move-out date"},
-          {img:"7. School_Transfer_Request_Letter-1.png", name:"School Transfer Request Letter", desc:"Request to transfer your child to a new school"},
-          {img:"8. Employer_Remote_Work_State_Change_Notification-1.png", name:"Employer Remote Work State Change Notification", desc:"Notify your employer of a state change for remote work tax purposes"},
-          {img:"9. Vehicle_Registration_Transfer_Checklist-1.png", name:"Vehicle Registration Transfer Checklist", desc:"Steps to transfer your vehicle registration to a new state"},
-          {img:"10. HOA_Transfer_Notification_Letter-1.png", name:"HOA Transfer Notification Letter", desc:"Notify the HOA of ownership transfer or new residency"},
-          {img:"11. PostMove_Government_Checklist-1.png", name:"Post-Move Government Checklist", desc:"Government updates to complete after relocating"},
-          {img:"12. Pet_Registration_Transfer_Checklist-1.png", name:"Pet Registration Transfer Checklist", desc:"Steps to update pet licenses and registrations after moving"},
-          {img:"13. First_24_Hours_After_Deciding_to_Move-1.png", name:"First 24 Hours After Deciding to Move", desc:"Immediate planning steps once you decide to relocate"}
-        ]
-      },
-      {
-        id: "retirement", title: "Retirement Planning", folder: "retirement", bundleId: "retirement",
-        templates: [
-          {img:"1. Social_Security_Application_Information_Organizer-1.png", name:"Social Security Application Organizer", desc:"Organize documents needed for your Social Security application"},
-          {img:"2. Employer_Retirement_Notification_Letter-1.png", name:"Employer Retirement Notification Letter", desc:"Formally notify your employer of your retirement date"},
-          {img:"3. Pension_Benefit_Election_Comparison_Worksheet-1.png", name:"Pension Benefit Election Comparison Worksheet", desc:"Compare pension payout options side by side"},
-          {img:"4. RMD_Distribution_Request_Letter-1.png", name:"RMD Distribution Request Letter", desc:"Request required minimum distributions from retirement accounts"},
-          {img:"5. Medicare_Enrollment_Checklist_and_Cover_Letter-1.png", name:"Medicare Enrollment Checklist and Cover Letter", desc:"Checklist and cover letter for Medicare enrollment"},
-          {img:"6. Roth_Conversion_Decision_Worksheet-1.png", name:"Roth Conversion Decision Worksheet", desc:"Evaluate whether a Roth conversion makes sense for you"},
-          {img:"7. Retirement_Account_Beneficiary_Update_Letter-1.png", name:"Retirement Account Beneficiary Update Letter", desc:"Update beneficiaries on your retirement accounts"},
-          {img:"8. Retiree_Health_Insurance_Continuation_Request-1.png", name:"Retiree Health Insurance Continuation Request", desc:"Request continuation of employer health insurance into retirement"},
-          {img:"9. Power_of_Attorney_Preparation_Checklist-1.png", name:"Power of Attorney Preparation Checklist", desc:"Checklist for preparing power of attorney documents"},
-          {img:"10. Letter_of_Instruction_to_Heirs-1.png", name:"Letter of Instruction to Heirs", desc:"Leave clear instructions for your heirs and loved ones"},
-          {img:"11. Social_Security_Delay_Strategy_Worksheet-1.png", name:"Social Security Delay Strategy Worksheet", desc:"Calculate whether delaying Social Security benefits pays off"},
-          {img:"12. Legacy_Letter_Ethical_Will-1.png", name:"Legacy Letter / Ethical Will", desc:"Share your values, memories, and wishes with future generations"},
-          {img:"13. Healthcare_Bridge_Cost_Comparison_Worksheet-1.png", name:"Healthcare Bridge Cost Comparison Worksheet", desc:"Compare healthcare coverage options between retirement and Medicare"},
-          {img:"14. Medicare_Plan_Comparison_Worksheet-1.png", name:"Medicare Plan Comparison Worksheet", desc:"Compare Medicare Advantage, Medigap, and Part D plans"},
-          {img:"15. First_24_Hours_After_Deciding_to_Retire-1.png", name:"First 24 Hours After Deciding to Retire", desc:"Immediate steps once you decide to retire"}
-        ]
-      },
-      {
-        id: "bonus", title: "Bonus Wellness Worksheets", folder: "all-bundle-extras", bundleId: null,
-        templates: [
-          {img:"ALL-01_CBT_Thought_Record_Worksheet_Transition_Edition-1.png", name:"CBT Thought Record Worksheet", desc:"A cognitive behavioral therapy worksheet to help reframe thoughts during transitions"},
-          {img:"ALL-02_Values_Clarification_Worksheet-1.png", name:"Values Clarification Worksheet", desc:"Identify and prioritize your core values to guide decisions during change"},
-          {img:"ALL-03_Grief_Stages_Psychoeducation_Handout-1.png", name:"Grief Stages Psychoeducation Handout", desc:"Understand the stages of grief with this educational reference guide"}
-        ]
-      }
-    ];
+    // Reveal on scroll
+    (function() {
+      var els = document.querySelectorAll('.reveal');
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+      }, { threshold: 0.1 });
+      els.forEach(function(el) { observer.observe(el); });
+    })();
 
-    function buildPage() {
-      var container = document.getElementById('template-sections');
-      categories.forEach(function(cat) {
-        var section = document.createElement('section');
-        section.className = 'category-section';
-        section.id = cat.id;
-
-        var header = '<div class="category-header">' +
-          '<h2 class="category-title">' + cat.title + '</h2>' +
-          '<div class="category-count">' + cat.templates.length + ' worksheets &middot; $3 each</div>';
-        if (cat.bundleId) {
-          header += '<a href="/templates#' + cat.bundleId + '" class="category-bundle-link">Or get the full bundle for $16 &rarr;</a>';
-        }
-        header += '</div>';
-
-        var grid = '<div class="template-grid">';
-        cat.templates.forEach(function(t) {
-          var pid = 'individual-' + cat.folder + '-' + t.img.replace(/\s/g, '_').replace('.png','');
-          grid += '<div class="template-card">' +
-            '<img src="/static/images/individual-template-screenshots/' + cat.folder + '/' + t.img + '" alt="' + t.name + '" loading="lazy">' +
-            '<div class="template-card-body">' +
-              '<div class="template-card-name">' + t.name + '</div>' +
-              '<div class="template-card-desc">' + t.desc + '</div>' +
-              '<div class="template-card-footer">' +
-                '<span class="template-card-price">$3</span>' +
-                '<button class="btn-add" onclick="addToCart(\'' + pid.replace(/'/g, "\\'") + '\',\'' + t.name.replace(/'/g, "\\'") + '\',3,\'individual\')">Add to Cart</button>' +
-              '</div>' +
-            '</div>' +
-          '</div>';
+    // Sticky category nav active state
+    (function() {
+      var sections = document.querySelectorAll('.category-section');
+      var navLinks = document.querySelectorAll('.category-nav a');
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var id = entry.target.id;
+            navLinks.forEach(function(link) {
+              link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+            });
+          }
         });
-        grid += '</div>';
+      }, { rootMargin: '-120px 0px -60% 0px', threshold: 0 });
+      sections.forEach(function(s) { observer.observe(s); });
+    })();
 
-        section.innerHTML = header + grid;
-        container.appendChild(section);
-      });
-    }
-
-    function addToCart(productId, name, price, type) {
+    // Add to cart
+    function addToCart(productId, name, price) {
       var btn = event.target;
+      var originalText = btn.textContent;
       btn.disabled = true;
-      var orig = btn.textContent;
       btn.textContent = 'Adding...';
       fetch('/api/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ product_id: productId, name: name, price: price, type: type })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.message === 'Already in cart') {
-          btn.textContent = 'Already in cart';
-          setTimeout(function() { btn.disabled = false; btn.textContent = orig; }, 2000);
-        } else {
-          btn.textContent = '\u2713 Added';
-          showToast(name + ' added to cart');
-          setTimeout(function() { btn.disabled = false; btn.textContent = orig; }, 2000);
-        }
-      })
-      .catch(function() {
-        alert('Something went wrong. Please try again.');
-        btn.disabled = false;
-        btn.textContent = orig;
-      });
+        body: JSON.stringify({ product_id: productId, name: name, price: price, type: 'individual' })
+      }).then(function(r) { return r.json(); })
+        .then(function(data) {
+          btn.textContent = 'Added!';
+          setTimeout(function() { btn.textContent = originalText; btn.disabled = false; }, 2000);
+        })
+        .catch(function(err) {
+          btn.textContent = 'Error';
+          setTimeout(function() { btn.textContent = originalText; btn.disabled = false; }, 2000);
+        });
     }
 
-    function showToast(msg) {
-      var existing = document.querySelector('.cart-toast');
-      if (existing) existing.remove();
-      var toast = document.createElement('div');
-      toast.className = 'cart-toast';
-      toast.innerHTML = msg + ' &nbsp;<a href="/cart" style="color:white;font-weight:600;text-decoration:underline;">View Cart \u2192</a>';
-      document.body.appendChild(toast);
-      setTimeout(function() { toast.classList.add('show'); }, 10);
-      setTimeout(function() { toast.classList.remove('show'); setTimeout(function() { toast.remove(); }, 300); }, 4000);
-    }
-
-    buildPage();
-
-    // Scroll to hash on load
-    if (window.location.hash) {
-      setTimeout(function() {
-        var el = document.querySelector(window.location.hash);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    }
-
-    // Highlight active category pill on scroll
-    var pills = document.querySelectorAll('.cat-pill');
-    var sections = document.querySelectorAll('.category-section');
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          pills.forEach(function(p) { p.classList.remove('active'); });
-          var pill = document.querySelector('.cat-pill[href="#' + entry.target.id + '"]');
-          if (pill) pill.classList.add('active');
+    // Smooth scroll for anchor links
+    document.querySelectorAll('.category-nav a').forEach(function(a) {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        var target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          var offset = 140;
+          var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({ top: top, behavior: 'smooth' });
+          history.replaceState(null, null, this.getAttribute('href'));
         }
       });
-    }, { threshold: 0.2 });
-    sections.forEach(function(s) { observer.observe(s); });
+    });
+
+    // Handle hash on page load
+    (function() {
+      if (window.location.hash) {
+        setTimeout(function() {
+          var target = document.querySelector(window.location.hash);
+          if (target) {
+            var offset = 140;
+            var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+            window.scrollTo({ top: top, behavior: 'smooth' });
+          }
+        }, 300);
+      }
+    })();
   </script>
-  <script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>
 </body>
 </html>

@@ -12,7 +12,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Features — Lumeway | Personalized Guidance for Life Transitions</title>
-  <meta name="description" content="Explore Lumeway's features: personalized checklists, a dashboard to track deadlines, calendars, letter drafts, printable worksheets, and more."/>
+  <meta name="description" content="Explore Lumeway's features: personalized checklists, a dashboard to track deadlines, calendars, letter templates, printable worksheets, and more."/>
   <link rel="canonical" href="https://lumeway.co/features"/>
   <meta property="og:type" content="website"/>
   <meta property="og:site_name" content="Lumeway"/>
@@ -177,56 +177,13 @@
     .feature-screenshot {
       background: var(--blush-light);
       border-radius: 20px;
-      padding: 0;
+      padding: 40px;
       min-height: 400px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--muted);
       font-size: 14px;
-      overflow: hidden;
-    }
-    .feature-screenshot video,
-    .feature-screenshot img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 20px;
-    }
-
-    /* Blurred preview with overlay */
-    .screenshot-preview {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-    .screenshot-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 20px;
-      filter: blur(2px);
-    }
-    .screenshot-preview.light-blur img {
-      filter: blur(1px);
-    }
-    .screenshot-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(44, 62, 80, 0.18);
-      border-radius: 20px;
-    }
-    .screenshot-overlay span {
-      background: rgba(255,255,255,0.92);
-      color: var(--navy);
-      font-size: 14px;
-      font-weight: 500;
-      padding: 10px 24px;
-      border-radius: 100px;
-      letter-spacing: 0.02em;
     }
 
     /* ── CTA Section ── */
@@ -328,38 +285,26 @@
         <span class="sun-icon nav-sun"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
         <span class="nav-logo-text">Lumeway</span>
       </a>
-      <div class="nav-dropdown">
-        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">&#9662;</span></button>
-        <div class="nav-drop-menu">
-          <a href="/estate">Death &amp; Estate</a>
-          <a href="/divorce">Divorce &amp; Separation</a>
-          <a href="/job-loss">Job Loss &amp; Income Crisis</a>
-          <a href="/relocation">Moving &amp; Relocation</a>
-          <a href="/disability">Disability &amp; Benefits</a>
-          <a href="/retirement">Retirement</a>
+      <div class="nav-links">
+        <div class="nav-dropdown">
+          <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">&#9662;</span></button>
+          <div class="nav-drop-menu">
+            <a href="/estate">Death &amp; Estate</a>
+            <a href="/divorce">Divorce &amp; Separation</a>
+            <a href="/job-loss">Job Loss &amp; Income Crisis</a>
+            <a href="/relocation">Moving &amp; Relocation</a>
+            <a href="/disability">Disability &amp; Benefits</a>
+            <a href="/retirement">Retirement</a>
+          </div>
         </div>
-      </div>
-      <a href="/features" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--muted);text-decoration:none;padding:6px 4px;transition:color 0.15s;" onmouseover="this.style.color='var(--navy)'" onmouseout="this.style.color='var(--muted)'">Features</a>
-
-      <div class="nav-dropdown">
-        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">&#9662;</span></button>
-        <div class="nav-drop-menu">
-          <a href="/templates">Shop</a>
-          <a href="/faq">FAQ</a>
-          <a href="/blog">Blog</a>
-          <div class="menu-div"></div>
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/terms">Terms</a>
-        </div>
+        <a href="/features" class="nav-link">Features</a>
+        <a href="/templates" class="nav-link">Explore</a>
       </div>
     </div>
     <div class="nav-right">
-      <a href="/login" class="btn-ghost" id="navAccount">Log in</a>
+      <a href="/login" class="nav-link" id="navAccount">Log in</a>
       <a href="/templates" class="btn-ghost">Shop</a>
       <a href="/chat" target="_blank" class="btn-primary">Try it free</a>
-      <a href="/cart" class="btn-ghost" title="Cart" style="font-size:18px;">&#128722;</a>
     </div>
     <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -390,7 +335,7 @@
   <section class="features-hero">
     <div class="section-label reveal">Features</div>
     <h1 class="section-title reveal">Everything you need to<br><em>navigate what's next</em></h1>
-    <p class="features-hero-subtitle reveal">A personal command center for your transition — checklists that know what comes next, a calendar that tracks every deadline, document storage to keep everything in one place, and guidance tailored to your state.</p>
+    <p class="features-hero-subtitle reveal">Personalized guidance, step-by-step checklists, deadline tracking, document management, and a dashboard that keeps it all organized — so you can focus on moving forward.</p>
   </section>
 
   <!-- 2. Chat Feature — text LEFT, screenshot RIGHT -->
@@ -398,7 +343,7 @@
     <div class="feature-grid">
       <div class="feature-content reveal">
         <h2 class="feature-title">Describe what's happening — in your own words</h2>
-        <p class="feature-desc">No forms. No intake paperwork. Just describe your situation and Lumeway organizes your next steps. It asks clarifying questions, provides starting-point letter templates, explains common forms, and tells you when you need a professional.</p>
+        <p class="feature-desc">No forms. No intake paperwork. Just describe your situation and Lumeway builds a personalized plan. It asks the right follow-up questions, drafts letters, explains forms, and knows when you need a professional.</p>
         <div class="feature-list reveal-stagger">
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
@@ -418,44 +363,33 @@
           </div>
         </div>
       </div>
-      <div class="feature-screenshot reveal">
-        <video autoplay loop muted playsinline style="border-radius:20px; box-shadow: 0 8px 32px rgba(44,74,94,0.12);">
-          <source src="/static/web-designs/chatclip960.mp4" type="video/mp4">
-        </video>
-      </div>
+      <div class="feature-screenshot reveal">Chat screenshot</div>
     </div>
   </section>
-
-  <div style="text-align:center;padding:40px 24px;background:var(--warm-white)">
-    <p style="font-size:15px;color:var(--muted);margin-bottom:12px;font-weight:300">Every feature is free to try. No credit card required.</p>
-    <a href="/chat" target="_blank" class="btn-large btn-large-primary" style="display:inline-flex">Start a conversation &rarr;</a>
-  </div>
 
   <!-- 3. Dashboard Feature — screenshot LEFT, text RIGHT -->
   <section class="feature-section bg-cream">
     <div class="feature-grid reverse">
-      <div class="feature-screenshot reveal">
-        <img src="/static/images/features/dashboard-overview.png" alt="Lumeway Dashboard Overview" loading="lazy" style="width:100%;border-radius:12px;box-shadow:0 8px 32px rgba(44,74,94,0.12);">
-      </div>
+      <div class="feature-screenshot reveal">Dashboard screenshot</div>
       <div class="feature-content reveal">
         <h2 class="feature-title">Your personal command center</h2>
-        <p class="feature-desc">Log every phone call, form you filed, and appointment you attended. Your dashboard becomes a record of everything you've done — so when someone asks "did you submit that?" you always have the answer.</p>
+        <p class="feature-desc">Track everything in one place. Your dashboard keeps deadlines, documents, goals, and calendar events organized so nothing falls through the cracks.</p>
         <div class="feature-list reveal-stagger">
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Activity log — track calls, forms, and appointments</span>
+            <span class="feature-list-text">Deadline tracker with auto-calculated dates</span>
           </div>
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Quick links to government resources for your state</span>
+            <span class="feature-list-text">Documents checklist — what to gather, who to contact</span>
           </div>
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Every conversation saved for reference</span>
+            <span class="feature-list-text">Goal setting and progress tracking</span>
           </div>
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Notes, documents, and deadlines all in one place</span>
+            <span class="feature-list-text">Calendar with month and day views</span>
           </div>
         </div>
       </div>
@@ -466,197 +400,86 @@
   <section class="feature-section bg-white">
     <div class="feature-grid">
       <div class="feature-content reveal">
-        <h2 class="feature-title">Know exactly what to do first</h2>
-        <p class="feature-desc">When everything feels urgent, it's hard to know where to start. Your checklist breaks it down — what to handle this week, what can wait until next month, and what to plan for down the road.</p>
+        <h2 class="feature-title">Checklists ordered by urgency</h2>
+        <p class="feature-desc">Every transition generates a checklist sorted by what matters most. Urgent items bubble to the top with clear deadlines and tags so you always know what to tackle next.</p>
         <div class="feature-list reveal-stagger">
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Tasks sorted by immediate, short-term, and long-term</span>
+            <span class="feature-list-text">Color-coded urgency tags</span>
           </div>
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Built for your specific transition — not generic advice</span>
+            <span class="feature-list-text">Specific deadlines and timeframes</span>
           </div>
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Track your progress as you check things off</span>
+            <span class="feature-list-text">Documents needed for each step</span>
           </div>
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Documents you need to gather listed alongside each step</span>
+            <span class="feature-list-text">Who to contact and what to bring</span>
           </div>
         </div>
       </div>
-      <div class="feature-screenshot reveal">
-        <img src="/static/images/features/dashboard-checklist.png" alt="Lumeway Checklist View" loading="lazy" style="width:100%;border-radius:12px;box-shadow:0 8px 32px rgba(44,74,94,0.12);">
-      </div>
+      <div class="feature-screenshot reveal">Checklist screenshot</div>
     </div>
   </section>
 
   <!-- 5. Calendar Feature — screenshot LEFT, text RIGHT -->
   <section class="feature-section bg-cream">
     <div class="feature-grid reverse">
-      <div class="feature-screenshot reveal">
-        <img src="/static/images/features/dashboard-calendar.png" alt="Lumeway Calendar View" loading="lazy" style="width:100%;border-radius:12px;box-shadow:0 8px 32px rgba(44,74,94,0.12);">
-      </div>
+      <div class="feature-screenshot reveal">Calendar screenshot</div>
       <div class="feature-content reveal">
         <h2 class="feature-title">Never miss a deadline again</h2>
-        <p class="feature-desc">COBRA has a 60-day window. Unemployment has a filing deadline. Probate has court dates. Your calendar fills in automatically based on your conversation, so critical dates don't slip by.</p>
+        <p class="feature-desc">Important dates auto-populate on your calendar. Switch between month and day views, add your own events, and see everything at a glance.</p>
         <div class="feature-list reveal-stagger">
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Deadlines from your conversations show up automatically</span>
+            <span class="feature-list-text">Apple Calendar-style monthly grid</span>
           </div>
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Enter a key date and calculate every deadline from it</span>
+            <span class="feature-list-text">Day view with full details</span>
           </div>
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Click any day to see details — who to call, what to bring</span>
+            <span class="feature-list-text">Add custom events</span>
           </div>
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Add your own appointments and important dates</span>
+            <span class="feature-list-text">Auto-calculated deadlines from your transition type</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 6. Activity Log Feature — text LEFT, screenshot RIGHT -->
+  <!-- 6. Worksheets Feature — text LEFT, screenshot RIGHT -->
   <section class="feature-section bg-white">
     <div class="feature-grid">
       <div class="feature-content reveal">
-        <h2 class="feature-title">Keep a record of everything you do</h2>
-        <p class="feature-desc">Phone calls, forms submitted, emails sent, appointments attended — log every action so you never lose track of where you are in the process.</p>
+        <h2 class="feature-title">Printable worksheets for every step</h2>
+        <p class="feature-desc">Download step-by-step worksheets and letter templates. Available as printable PDFs or Google Docs — use them offline, share with family, or bring to appointments.</p>
         <div class="feature-list reveal-stagger">
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Log phone calls, forms, emails, and appointments in one place</span>
+            <span class="feature-list-text">14-16 worksheets per bundle</span>
           </div>
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Track who you talked to and what organization they're from</span>
+            <span class="feature-list-text">Google Docs ready</span>
           </div>
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Never wonder "did I already file that?" again</span>
+            <span class="feature-list-text">Letter templates included</span>
           </div>
           <div class="feature-list-item reveal">
             <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Edit or remove entries anytime — your log, your way</span>
+            <span class="feature-list-text">Instant download</span>
           </div>
         </div>
       </div>
-      <div class="feature-screenshot reveal">
-        <img src="/static/images/features/dashboard-activity.png" alt="Lumeway Activity Log" loading="lazy" style="width:100%;border-radius:12px;box-shadow:0 8px 32px rgba(44,74,94,0.12);">
-      </div>
-    </div>
-  </section>
-
-  <!-- Document Storage Feature — screenshot LEFT, text RIGHT -->
-  <section class="feature-section bg-cream">
-    <div class="feature-grid reverse">
-      <div class="feature-screenshot reveal">
-        <div style="width:100%;border-radius:12px;background:var(--warm-white);border:1px solid var(--border);padding:32px;box-shadow:0 8px 32px rgba(44,74,94,0.12)">
-          <div style="font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">MY FILES</div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--cream);border-radius:10px;border:1px solid var(--border)">
-              <span style="font-size:18px">&#128196;</span>
-              <div><div style="font-size:13px;font-weight:500">Severance_Agreement.pdf</div><div style="font-size:11px;color:var(--muted)">2.1 MB &middot; Legal</div></div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--cream);border-radius:10px;border:1px solid var(--border)">
-              <span style="font-size:18px">&#128221;</span>
-              <div><div style="font-size:13px;font-weight:500">COBRA_Election_Notice.docx</div><div style="font-size:11px;color:var(--muted)">847 KB &middot; Insurance</div></div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--cream);border-radius:10px;border:1px solid var(--border)">
-              <span style="font-size:18px">&#128202;</span>
-              <div><div style="font-size:13px;font-weight:500">Monthly_Budget_Tracker.xlsx</div><div style="font-size:11px;color:var(--muted)">340 KB &middot; Financial</div></div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--cream);border-radius:10px;border:1px solid var(--border)">
-              <span style="font-size:18px">&#128444;&#65039;</span>
-              <div><div style="font-size:13px;font-weight:500">Insurance_Card_Front.jpg</div><div style="font-size:11px;color:var(--muted)">1.3 MB &middot; Insurance</div></div>
-            </div>
-          </div>
-          <div style="margin-top:16px;padding:16px;border:2px dashed var(--border);border-radius:10px;text-align:center">
-            <p style="font-size:12px;color:var(--muted);margin:0">Drop files here or click to browse</p>
-          </div>
-        </div>
-      </div>
-      <div class="feature-content reveal">
-        <h2 class="feature-title">Your transition filing cabinet</h2>
-        <p class="feature-desc">Severance agreements, insurance forms, court documents, pay stubs &mdash; every important document scattered across emails and kitchen counters, finally in one place. Upload anything, organize by category, access from anywhere.</p>
-        <div class="feature-list reveal-stagger">
-          <div class="feature-list-item reveal">
-            <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Upload PDFs, Word docs, images, and spreadsheets</span>
-          </div>
-          <div class="feature-list-item reveal">
-            <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Organize by category &mdash; legal, financial, insurance, medical</span>
-          </div>
-          <div class="feature-list-item reveal">
-            <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Access everything from one secure dashboard</span>
-          </div>
-          <div class="feature-list-item reveal">
-            <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">No more digging through email for that one attachment</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- State-Specific Guidance Feature — text LEFT, preview RIGHT -->
-  <section class="feature-section bg-white">
-    <div class="feature-grid">
-      <div class="feature-content reveal">
-        <h2 class="feature-title">Guidance tailored to your state</h2>
-        <p class="feature-desc">Unemployment filing deadlines, COBRA alternatives, probate rules, custody laws &mdash; they're all different depending on where you live. Set your state once and get resources, links, and guidance specific to you.</p>
-        <div class="feature-list reveal-stagger">
-          <div class="feature-list-item reveal">
-            <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Set your state in account settings &mdash; everything adapts</span>
-          </div>
-          <div class="feature-list-item reveal">
-            <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Direct links to your state's agencies and filing portals</span>
-          </div>
-          <div class="feature-list-item reveal">
-            <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Deadlines adjusted for your state's specific requirements</span>
-          </div>
-          <div class="feature-list-item reveal">
-            <div class="feature-list-icon"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span></div>
-            <span class="feature-list-text">Resource recommendations from people who've been through it in your state</span>
-          </div>
-        </div>
-      </div>
-      <div class="feature-screenshot reveal">
-        <div style="width:100%;border-radius:12px;background:var(--warm-white);border:1px solid var(--border);padding:32px;box-shadow:0 8px 32px rgba(44,74,94,0.12)">
-          <div style="font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">TAILORED TO YOU</div>
-          <div style="padding:16px;background:var(--cream);border-radius:10px;border:1px solid var(--border);margin-bottom:12px">
-            <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Your state</div>
-            <div style="font-size:15px;font-weight:500;color:var(--text)">California</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="padding:12px 16px;background:var(--cream);border-radius:10px;border:1px solid var(--border)">
-              <div style="font-size:13px;font-weight:500;color:var(--text)">&#128279; CA Employment Development Dept</div>
-              <div style="font-size:11px;color:var(--muted)">File for unemployment benefits</div>
-            </div>
-            <div style="padding:12px 16px;background:var(--cream);border-radius:10px;border:1px solid var(--border)">
-              <div style="font-size:13px;font-weight:500;color:var(--text)">&#128279; Covered California</div>
-              <div style="font-size:11px;color:var(--muted)">State health insurance marketplace</div>
-            </div>
-            <div style="padding:12px 16px;background:var(--cream);border-radius:10px;border:1px solid var(--border)">
-              <div style="font-size:13px;font-weight:500;color:var(--text)">&#128279; CA Courts Self-Help</div>
-              <div style="font-size:11px;color:var(--muted)">Legal forms and filing guides</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="feature-screenshot reveal">Worksheets screenshot</div>
     </div>
   </section>
 
