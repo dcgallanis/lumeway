@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QHWJDRDR9R"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QHWJDRDR9R');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pricing — Lumeway | Plans for Every Stage of Your Transition</title>
+  <meta name="description" content="Choose the right Lumeway plan for your life transition. Free chat, template bundles, Transition Passes, and Unlimited access."/>
+  <link rel="canonical" href="https://lumeway.co/pricing"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="Lumeway"/>
+  <meta property="og:title" content="Pricing — Lumeway"/>
+  <meta property="og:description" content="Plans that meet you where you are. From free guidance to full dashboard access."/>
+  <meta property="og:url" content="https://lumeway.co/pricing"/>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #FAF7F2; --warm-white: #FDFCFA; --blush: #F2E6DF; --sage: #D4DFD0;
+      --navy: #2C4A5E; --navy-deep: #1B3A4E; --text: #2C3E50; --muted: #6B7B8D;
+      --gold: #B8977E; --border: #E8E0D6; --accent: #C4704E; --green: #6B8F5E;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+    /* Sun icon */
+    .sun-icon svg { stroke: var(--gold); stroke-width: 1.8; fill: none; vertical-align: middle; }
+    .sun-icon svg circle { fill: var(--gold); }
+
+    /* Nav */
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 48px; background: var(--warm-white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .nav-left { display: flex; align-items: center; gap: 28px; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--navy); letter-spacing: 1.2px; text-transform: uppercase; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-btn { display: inline-flex; align-items: center; padding: 10px 22px; background: var(--accent); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500; border: none; border-radius: 10px; text-decoration: none; cursor: pointer; transition: all 0.2s; }
+    .nav-btn:hover { filter: brightness(1.08); }
+    .nav-link { font-size: 14px; color: var(--muted); text-decoration: none; padding: 6px 4px; transition: color 0.15s; }
+    .nav-link:hover { color: var(--navy); }
+
+    /* Hero */
+    .hero { text-align: center; padding: 80px 24px 40px; max-width: 680px; margin: 0 auto; }
+    .hero h1 { font-family: 'Libre Baskerville', serif; font-size: 38px; font-weight: 400; color: var(--navy); line-height: 1.3; margin-bottom: 16px; }
+    .hero p { font-size: 16px; font-weight: 300; color: var(--muted); line-height: 1.7; }
+
+    /* Pricing grid */
+    .pricing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1100px; margin: 0 auto 80px; padding: 0 24px; }
+    .tier { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 32px 24px; display: flex; flex-direction: column; }
+    .tier.featured { border: 2px solid var(--navy); position: relative; }
+    .tier.featured::before { content: 'Most Popular'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--navy); color: var(--cream); font-size: 11px; font-weight: 500; padding: 4px 14px; border-radius: 100px; white-space: nowrap; }
+    .tier-name { font-family: 'Libre Baskerville', serif; font-size: 20px; color: var(--navy); margin-bottom: 4px; }
+    .tier-price { font-size: 36px; font-weight: 600; color: var(--text); margin: 12px 0 4px; }
+    .tier-price span { font-size: 14px; font-weight: 300; color: var(--muted); }
+    .tier-desc { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.5; margin-bottom: 20px; min-height: 40px; }
+    .tier-cta { display: block; width: 100%; padding: 12px; text-align: center; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; margin-bottom: 24px; border: none; }
+    .tier-cta.primary { background: var(--accent); color: var(--cream); }
+    .tier-cta.primary:hover { filter: brightness(1.08); }
+    .tier-cta.secondary { background: var(--cream); color: var(--navy); border: 1px solid var(--border); }
+    .tier-cta.secondary:hover { border-color: var(--gold); }
+    .tier-features { list-style: none; flex: 1; }
+    .tier-features li { font-size: 13px; font-weight: 300; color: var(--text); padding: 6px 0; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-start; }
+    .tier-features li:last-child { border-bottom: none; }
+    .tier-features li::before { content: '\2713'; color: var(--green); font-weight: 600; font-size: 12px; flex-shrink: 0; margin-top: 2px; }
+    .tier-features li.locked::before { content: '\2014'; color: var(--border); }
+
+    /* FAQ */
+    .faq { max-width: 680px; margin: 0 auto 80px; padding: 0 24px; }
+    .faq h2 { font-family: 'Libre Baskerville', serif; font-size: 26px; font-weight: 400; color: var(--navy); margin-bottom: 24px; text-align: center; }
+    .faq-item { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+    .faq-q { padding: 16px 20px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .faq-q:hover { background: var(--cream); }
+    .faq-a { display: none; padding: 0 20px 16px; font-size: 13px; font-weight: 300; line-height: 1.7; color: var(--muted); }
+    .faq-item.open .faq-a { display: block; }
+    .faq-chev { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
+    .faq-item.open .faq-chev { transform: rotate(180deg); }
+
+    /* Footer */
+    .site-footer { background: var(--navy-deep); color: rgba(255,255,255,0.6); text-align: center; padding: 40px 24px; font-size: 12px; }
+    .site-footer a { color: rgba(255,255,255,0.6); text-decoration: none; }
+    .site-footer a:hover { color: white; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+      nav { padding: 12px 20px; }
+    }
+    @media (max-width: 600px) {
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+      .hero h1 { font-size: 28px; }
+      .tier.featured { order: -1; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-left">
+      <a href="/" class="nav-logo">
+        <span class="sun-icon"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
+        <span class="nav-logo-text">Lumeway</span>
+      </a>
+      <a href="/features" class="nav-link">Features</a>
+      <a href="/templates" class="nav-link">Shop</a>
+      <a href="/blog" class="nav-link">Blog</a>
+    </div>
+    <div class="nav-right">
+      <a href="/chat" class="nav-btn">Open Navigator</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <h1>Plans that meet you where you are</h1>
+    <p>Start free. Upgrade when you need more. Every plan includes unlimited access to the Lumeway Transition Navigator.</p>
+  </div>
+
+  <div class="pricing-grid">
+
+    <!-- Free -->
+    <div class="tier">
+      <div class="tier-name">Free</div>
+      <div class="tier-price">$0</div>
+      <div class="tier-desc">Start here. Talk through what you're facing and get your first steps.</div>
+      <a href="/chat" class="tier-cta secondary">Start a conversation</a>
+      <ul class="tier-features">
+        <li>Unlimited Navigator conversations</li>
+        <li>Basic checklist from chat</li>
+        <li>Content library previews</li>
+        <li>Landing pages and FAQs</li>
+        <li>Blog articles</li>
+        <li>Emergency Starter Kit PDF</li>
+        <li class="locked">Full task breakdowns</li>
+        <li class="locked">State-specific guidance</li>
+        <li class="locked">"What to ask" scripts</li>
+        <li class="locked">Document storage</li>
+      </ul>
+    </div>
+
+    <!-- Starter -->
+    <div class="tier">
+      <div class="tier-name">Starter</div>
+      <div class="tier-price">$16 <span>one-time</span></div>
+      <div class="tier-desc">A template bundle plus 30 days of full dashboard access to get you started.</div>
+      <a href="/templates" class="tier-cta secondary">Choose a bundle</a>
+      <ul class="tier-features">
+        <li>Everything in Free</li>
+        <li>1 template bundle (14-16 worksheets)</li>
+        <li>30-day full dashboard trial</li>
+        <li>All content library access (30 days)</li>
+        <li>Progress tracking and calendar</li>
+        <li class="locked">After 30 days, reverts to Free</li>
+        <li class="locked">State-specific guidance</li>
+        <li class="locked">"What to ask" scripts</li>
+        <li class="locked">Document storage</li>
+      </ul>
+    </div>
+
+    <!-- Transition Pass (featured) -->
+    <div class="tier featured">
+      <div class="tier-name">Transition Pass</div>
+      <div class="tier-price">$39 <span>one-time</span></div>
+      <div class="tier-desc">Full access to everything for one transition. The most common choice.</div>
+      <button class="tier-cta primary" onclick="showPassSelector()">Get your Pass</button>
+      <ul class="tier-features">
+        <li>Everything in Starter</li>
+        <li>Full dashboard for 1 transition</li>
+        <li>Complete content library</li>
+        <li>"What to ask" phone scripts</li>
+        <li>State-specific guidance and links</li>
+        <li>100 MB document storage</li>
+        <li>1 template bundle included</li>
+        <li>Never expires</li>
+      </ul>
+    </div>
+
+    <!-- Unlimited -->
+    <div class="tier">
+      <div class="tier-name">Unlimited</div>
+      <div class="tier-price">$9.99 <span>/month</span></div>
+      <div class="tier-desc">Full access to all six transitions. For when life throws more than one thing at you.</div>
+      <button class="tier-cta primary" onclick="startSubscription()">Subscribe</button>
+      <ul class="tier-features">
+        <li>Everything in Transition Pass</li>
+        <li>All 6 transitions unlocked</li>
+        <li>All 89+ templates included</li>
+        <li>1 GB document storage</li>
+        <li>Full content library, all transitions</li>
+        <li>All scripts and state guidance</li>
+        <li>Cancel anytime</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Pass selector modal (hidden) -->
+  <div id="passModal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.2);align-items:center;justify-content:center">
+    <div style="background:var(--warm-white);border-radius:16px;padding:32px;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.12)">
+      <h3 style="font-family:'Libre Baskerville',serif;font-size:20px;color:var(--navy);margin-bottom:8px">Choose your transition</h3>
+      <p style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:20px">Your Transition Pass gives you full access to one transition's complete guide, scripts, and tools.</p>
+      <div id="passOptions" style="display:flex;flex-direction:column;gap:8px"></div>
+      <button onclick="document.getElementById('passModal').style.display='none'" style="display:block;width:100%;padding:10px;background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;margin-top:16px">Cancel</button>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq">
+    <h2>Common questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        What happens after my 30-day Starter trial ends?
+        <span class="faq-chev">&#9662;</span>
+      </div>
+      <div class="faq-a">Your dashboard reverts to the free tier. You keep your template bundle forever. Your checklist and notes are saved. You can upgrade to a Transition Pass anytime to get full access back.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        Can I switch my Transition Pass to a different transition?
+        <span class="faq-chev">&#9662;</span>
+      </div>
+      <div class="faq-a">Not automatically, but reach out to hello@lumeway.co and we will take care of it. If you need access to multiple transitions, the Unlimited plan is usually the better fit.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        Is the Navigator chatbot really free?
+        <span class="faq-chev">&#9662;</span>
+      </div>
+      <div class="faq-a">Yes. The Transition Navigator is free with no limits. It is how people discover Lumeway and we want everyone to have access to guidance when they need it most.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        What if I am in financial hardship?
+        <span class="faq-chev">&#9662;</span>
+      </div>
+      <div class="faq-a">We understand. Many of our users are facing financial stress alongside their transition. The free tier provides meaningful support. If you need more, email hello@lumeway.co and we will work something out.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        Can I cancel the Unlimited subscription anytime?
+        <span class="faq-chev">&#9662;</span>
+      </div>
+      <div class="faq-a">Yes. Cancel anytime from your dashboard settings or email us. Your access continues until the end of your current billing period.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        Can someone else buy me a plan as a gift?
+        <span class="faq-chev">&#9662;</span>
+      </div>
+      <div class="faq-a">Gift passes are coming soon. For now, email hello@lumeway.co and we can set up a gift purchase for you.</div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Lumeway. All rights reserved.</p>
+    <p style="margin-top:8px"><a href="/privacy">Privacy Policy</a> &middot; <a href="/terms">Terms of Service</a> &middot; <a href="/contact">Contact</a></p>
+  </footer>
+
+  <script>
+    var PASSES = [
+      { id: 'pass-job-loss', label: 'Job Loss & Income Crisis' },
+      { id: 'pass-estate', label: 'Death & Estate' },
+      { id: 'pass-divorce', label: 'Divorce & Separation' },
+      { id: 'pass-disability', label: 'Disability & Benefits' },
+      { id: 'pass-relocation', label: 'Moving & Relocation' },
+      { id: 'pass-retirement', label: 'Retirement Planning' }
+    ];
+
+    function showPassSelector() {
+      var modal = document.getElementById('passModal');
+      var container = document.getElementById('passOptions');
+      container.innerHTML = '';
+      PASSES.forEach(function(p) {
+        var btn = document.createElement('button');
+        btn.textContent = p.label;
+        btn.style.cssText = 'padding:12px 16px;background:var(--cream);border:1px solid var(--border);border-radius:10px;font-family:Plus Jakarta Sans,sans-serif;font-size:14px;color:var(--text);cursor:pointer;text-align:left;transition:all 0.15s';
+        btn.onmouseover = function() { this.style.borderColor = 'var(--gold)'; };
+        btn.onmouseout = function() { this.style.borderColor = 'var(--border)'; };
+        btn.onclick = function() { purchasePass(p.id); };
+        container.appendChild(btn);
+      });
+      modal.style.display = 'flex';
+    }
+
+    function purchasePass(passId) {
+      fetch('/api/create-pass-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pass_id: passId })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.url) {
+          window.location.href = data.url;
+        } else if (data.error === 'Not logged in') {
+          window.location.href = '/login?next=/pricing';
+        } else {
+          alert(data.error || 'Something went wrong. Please try again.');
+        }
+      });
+    }
+
+    function startSubscription() {
+      fetch('/api/create-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.url) {
+          window.location.href = data.url;
+        } else if (data.error === 'Not logged in') {
+          window.location.href = '/login?next=/pricing';
+        } else {
+          alert(data.error || 'Something went wrong. Please try again.');
+        }
+      });
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('passModal').addEventListener('click', function(e) {
+      if (e.target === this) this.style.display = 'none';
+    });
+  </script>
+</body>
+</html>

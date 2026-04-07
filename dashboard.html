@@ -75,6 +75,48 @@
     .check-item.done .check-text { text-decoration: line-through; color: var(--muted); }
     .check-text { font-size: 13px; font-weight: 300; line-height: 1.5; }
 
+    /* Completion toast */
+    .completion-toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 14px 24px; font-size: 14px; font-weight: 300; color: var(--text); box-shadow: 0 4px 24px rgba(44,62,80,0.1); opacity: 0; transition: all 0.4s ease; pointer-events: none; z-index: 200; max-width: 400px; text-align: center; }
+    .completion-toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Skip button */
+    .check-skip { font-size: 11px; color: var(--muted); background: none; border: none; cursor: pointer; padding: 2px 8px; border-radius: 4px; opacity: 0; transition: all 0.15s; margin-left: auto; flex-shrink: 0; }
+    .check-item:hover .check-skip { opacity: 1; }
+    .check-skip:hover { color: var(--accent); background: rgba(196,112,78,0.06); }
+
+    /* Next task highlight */
+    .check-item.next-task { background: rgba(184,151,126,0.08); border-radius: 8px; margin: 0 -8px; padding: 7px 8px; }
+
+    /* Phase progress */
+    .phase-progress { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 8px; }
+
+    /* Milestone banner */
+    .milestone-banner { background: var(--warm-white); border: 1px solid var(--gold); border-radius: 12px; padding: 16px 20px; margin: 12px 0; font-size: 14px; font-weight: 300; color: var(--text); line-height: 1.6; animation: milestoneIn 0.5s ease forwards; }
+    @keyframes milestoneIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Human help link */
+    .check-help { font-size: 11px; color: var(--navy); text-decoration: none; opacity: 0; transition: all 0.15s; margin-left: 4px; flex-shrink: 0; }
+    .check-item:hover .check-help { opacity: 0.7; }
+    .check-help:hover { opacity: 1 !important; text-decoration: underline; }
+
+    /* Warm urgency for deadlines */
+    .upcoming-urgent { color: var(--accent); font-weight: 500; }
+
+    /* Upgrade prompt */
+    .upgrade-prompt { background: var(--warm-white); border: 1px solid var(--gold); border-radius: 12px; padding: 16px 20px; margin-top: 20px; display: flex; align-items: center; gap: 16px; }
+    .upgrade-prompt-text { font-size: 13px; font-weight: 300; color: var(--text); line-height: 1.5; flex: 1; }
+    .upgrade-prompt-btn { padding: 8px 16px; background: var(--accent); color: var(--cream); border: none; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; text-decoration: none; transition: all 0.2s; }
+    .upgrade-prompt-btn:hover { filter: brightness(1.08); }
+    .upgrade-prompt-dismiss { background: none; border: none; color: var(--muted); font-size: 16px; cursor: pointer; padding: 4px; }
+    .trial-banner { background: rgba(184,151,126,0.1); border-radius: 8px; padding: 10px 16px; font-size: 12px; font-weight: 400; color: var(--gold); text-align: center; margin-bottom: 16px; }
+
+    /* Locked guide content */
+    .guide-locked-overlay { position: relative; }
+    .guide-locked-overlay::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 120px; background: linear-gradient(transparent, var(--warm-white)); pointer-events: none; }
+    .guide-lock-msg { text-align: center; padding: 16px; font-size: 13px; color: var(--muted); font-weight: 300; }
+    .guide-lock-msg a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    .guide-lock-msg a:hover { text-decoration: underline; }
+
     /* Single column checklist when only one category */
     .checklist-single { max-width: 640px; }
 
@@ -204,7 +246,7 @@
     .upcoming-item:last-child { border-bottom: none; }
     .upcoming-title { font-size: 13px; font-weight: 400; }
     .upcoming-date { font-size: 12px; color: var(--muted); white-space: nowrap; }
-    .upcoming-overdue { color: var(--red); font-weight: 500; }
+    .upcoming-overdue { color: var(--accent); font-weight: 500; }
 
     /* Delete/action buttons for items */
     .item-actions { display: flex; gap: 4px; flex-shrink: 0; margin-left: auto; }
@@ -2786,62 +2828,78 @@ guideLibrary['disability'] = {
       var content = document.getElementById('guideContent');
       if (!t || !content) return;
 
+      var tier = (dashData && dashData.effective_tier) || 'free';
+      var isFree = (tier === 'free');
+
       var html = '';
+
+      // Trial countdown banner for starter users
+      if (tier === 'starter' && dashData && dashData.user && dashData.user.tier_expires_at) {
+        var expires = new Date(dashData.user.tier_expires_at);
+        var now = new Date();
+        var daysLeft = Math.max(0, Math.ceil((expires - now) / (1000 * 60 * 60 * 24)));
+        html += '<div class="trial-banner">Your Starter trial has ' + daysLeft + ' day' + (daysLeft !== 1 ? 's' : '') + ' remaining. <a href="/pricing" style="color:var(--accent);text-decoration:underline;">See plans</a></div>';
+      }
+
       t.categories.forEach(function(cat) {
         html += '<div class="guide-category">';
         html += '  <div class="guide-cat-header">' + cat.name + '</div>';
-        // Risk levels hidden from users — internal use only
 
         cat.tasks.forEach(function(task) {
           html += '<div class="guide-task" id="guide-' + task.id + '">';
           html += '  <div class="guide-task-header" onclick="toggleGuideTask(\'' + task.id + '\')">';
           html += '    <span class="guide-task-title">' + task.title + '</span>';
-          // Risk badges hidden — internal use only
           html += '    <span class="guide-chevron">\u25BE</span>';
           html += '  </div>';
           html += '  <div class="guide-task-body">';
 
-          // What + Why
+          // What + Why — always visible (free preview)
           if (task.what) html += '<div class="guide-what">' + task.what + '</div>';
           if (task.why) html += '<div class="guide-why">' + task.why + '</div>';
 
-          // Steps
-          if (task.steps && task.steps.length > 0) {
-            html += '<div class="guide-section-label">Steps</div>';
-            html += '<ol class="guide-steps">';
-            task.steps.forEach(function(s) { html += '<li>' + s + '</li>'; });
-            html += '</ol>';
-          }
-
-          // Terms
-          if (task.terms && task.terms.length > 0) {
-            html += '<div class="guide-section-label">Key Terms</div>';
-            html += '<div class="guide-terms">';
-            task.terms.forEach(function(t) {
-              html += '<div class="guide-term"><strong>' + t.term + '</strong> <span>' + t.def + '</span></div>';
-            });
-            html += '</div>';
-          }
-
-          // Contacts
-          if (task.contacts) {
-            html += '<div class="guide-section-label">Who to Contact</div>';
-            html += '<div class="guide-contact">' + task.contacts + '</div>';
-          }
-
-          // Mistakes
-          if (task.mistakes && task.mistakes.length > 0) {
-            html += '<div class="guide-section-label">Common Mistakes</div>';
-            html += '<ul class="guide-mistakes">';
-            task.mistakes.forEach(function(m) { html += '<li>' + m + '</li>'; });
-            html += '</ul>';
-          }
-
-          // Cross-references
-          if (task.crossRef && task.crossRef.length > 0) {
-            html += '<div class="guide-cross">';
-            task.crossRef.forEach(function(cr) { html += '<span class="guide-cross-tag">Also relevant: ' + cr + '</span>'; });
-            html += '</div>';
+          if (isFree) {
+            // Show locked overlay with first 2 steps as preview
+            if (task.steps && task.steps.length > 0) {
+              html += '<div class="guide-locked-overlay">';
+              html += '<div class="guide-section-label">Steps</div>';
+              html += '<ol class="guide-steps">';
+              var previewCount = Math.min(2, task.steps.length);
+              for (var i = 0; i < previewCount; i++) { html += '<li>' + task.steps[i] + '</li>'; }
+              html += '</ol>';
+              html += '</div>';
+            }
+            html += '<div class="guide-lock-msg">This guide continues with ' + (task.steps ? Math.max(0, task.steps.length - 2) : 0) + ' more steps, key terms, contacts, and common mistakes. <a href="/pricing">See what\'s included</a></div>';
+          } else {
+            // Full content for paid users
+            if (task.steps && task.steps.length > 0) {
+              html += '<div class="guide-section-label">Steps</div>';
+              html += '<ol class="guide-steps">';
+              task.steps.forEach(function(s) { html += '<li>' + s + '</li>'; });
+              html += '</ol>';
+            }
+            if (task.terms && task.terms.length > 0) {
+              html += '<div class="guide-section-label">Key Terms</div>';
+              html += '<div class="guide-terms">';
+              task.terms.forEach(function(t) {
+                html += '<div class="guide-term"><strong>' + t.term + '</strong> <span>' + t.def + '</span></div>';
+              });
+              html += '</div>';
+            }
+            if (task.contacts) {
+              html += '<div class="guide-section-label">Who to Contact</div>';
+              html += '<div class="guide-contact">' + task.contacts + '</div>';
+            }
+            if (task.mistakes && task.mistakes.length > 0) {
+              html += '<div class="guide-section-label">Common Mistakes</div>';
+              html += '<ul class="guide-mistakes">';
+              task.mistakes.forEach(function(m) { html += '<li>' + m + '</li>'; });
+              html += '</ul>';
+            }
+            if (task.crossRef && task.crossRef.length > 0) {
+              html += '<div class="guide-cross">';
+              task.crossRef.forEach(function(cr) { html += '<span class="guide-cross-tag">Also relevant: ' + cr + '</span>'; });
+              html += '</div>';
+            }
           }
 
           html += '  </div>'; // task-body
@@ -2852,11 +2910,23 @@ guideLibrary['disability'] = {
       });
 
       content.innerHTML = html;
+
+      // Show upgrade prompt once per session for free users
+      if (isFree) maybeShowUpgradePrompt(content);
     }
 
     function toggleGuideTask(id) {
       var el = document.getElementById('guide-' + id);
       if (el) el.classList.toggle('open');
+    }
+
+    function maybeShowUpgradePrompt(container) {
+      if (sessionStorage.getItem('lumeway_upgrade_shown')) return;
+      sessionStorage.setItem('lumeway_upgrade_shown', '1');
+      var prompt = document.createElement('div');
+      prompt.className = 'upgrade-prompt';
+      prompt.innerHTML = '<div class="upgrade-prompt-text">Want the full step-by-step guides, key terms, and professional contacts? See what\'s included in your transition plan.</div><a href="/pricing" class="upgrade-prompt-btn">See plans</a><button class="upgrade-prompt-dismiss" onclick="this.parentElement.remove()" title="Dismiss">&times;</button>';
+      container.appendChild(prompt);
     }
 
     function saveSettings(e) {
@@ -3041,6 +3111,15 @@ guideLibrary['disability'] = {
       html += '  <button class="dash-tab" data-tab="settings" onclick="switchTab(\'settings\')" style="margin-left:auto">⚙ Settings</button>';
       html += '</div>';
 
+      // Trial banner for starter users
+      var tier = (dashData && dashData.effective_tier) || 'free';
+      if (tier === 'starter' && u.tier_expires_at) {
+        var trialExpires = new Date(u.tier_expires_at);
+        var trialNow = new Date();
+        var trialDays = Math.max(0, Math.ceil((trialExpires - trialNow) / (1000 * 60 * 60 * 24)));
+        html += '<div class="trial-banner">Your Starter trial has ' + trialDays + ' day' + (trialDays !== 1 ? 's' : '') + ' remaining. <a href="/pricing" style="color:var(--accent);text-decoration:underline;">See plans</a></div>';
+      }
+
       // ═══════════════════════════════
       // ── OVERVIEW TAB ──
       // ═══════════════════════════════
@@ -3058,8 +3137,8 @@ guideLibrary['disability'] = {
       if (upcomingDeadlines.length > 0) {
         upcomingDeadlines.forEach(function(d) {
           var days = daysUntil(d.deadline_date);
-          var cls = days < 0 ? ' upcoming-overdue' : '';
-          var label = days < 0 ? (Math.abs(days) + 'd overdue') : days === 0 ? 'Today' : days + 'd left';
+          var cls = days < 0 ? ' upcoming-overdue' : (days >= 0 && days <= 7) ? ' upcoming-urgent' : '';
+          var label = days < 0 ? (Math.abs(days) + ' days overdue') : days === 0 ? 'Today' : days <= 30 ? ('You have ' + days + ' days left') : (days + 'd left');
           html += '<div class="upcoming-item">';
           html += '  <div class="upcoming-title">' + d.title + '</div>';
           html += '  <div style="display:flex;align-items:center;gap:6px">';
@@ -3283,14 +3362,23 @@ guideLibrary['disability'] = {
           var phases = categories[cat];
           var phaseOrder = Object.keys(phases);
           phaseOrder.forEach(function(phase) {
-            html += '<div class="phase-title">' + phase + '</div>';
-            phases[phase].forEach(function(item) {
+            var phaseItems = phases[phase];
+            var phaseDone = phaseItems.filter(function(i) { return i.is_completed; }).length;
+            var phaseTotal = phaseItems.length;
+            html += '<div class="phase-group" data-phase="' + cat + '-' + phase + '">';
+            html += '<div class="phase-title">' + phase + ' <span class="phase-progress">' + phaseDone + ' of ' + phaseTotal + '</span></div>';
+            phaseItems.forEach(function(item) {
               var doneClass = item.is_completed ? ' done' : '';
               html += '<div class="check-item' + doneClass + '" onclick="toggleItem(' + item.id + ', this)">';
               html += '  <div class="check-box"></div>';
               html += '  <div class="check-text">' + item.item_text + '</div>';
+              if (!item.is_completed) {
+                html += '  <button class="check-skip" onclick="event.stopPropagation();skipItem(' + item.id + ')" title="Skip for now">later</button>';
+                html += '  <a class="check-help" href="#" onclick="event.stopPropagation();showHumanHelp(\'' + (item.transition_type || cat) + '\');return false" title="Get help with this">\u2139\uFE0E</a>';
+              }
               html += '</div>';
             });
+            html += '</div>';
           });
           html += '</div>';
         });
@@ -3878,6 +3966,97 @@ guideLibrary['disability'] = {
       }
     }
 
+    // ── Completion celebration system ──
+    var COMPLETION_MESSAGES = [
+      'One less thing to worry about.',
+      'That one\'s done. Take a breath.',
+      'Handled. You\'re making progress.',
+      'Done. One step closer.',
+      'You took care of it. Well done.',
+      'Another one off your plate.',
+      'That\'s real progress.',
+      'Checked off. You\'re moving forward.'
+    ];
+    var MILESTONE_MESSAGES = {
+      'First 24 Hours': 'You handled the first 24 hours. That takes real strength.',
+      'First 72 Hours': 'You got through the first 72 hours. That takes real strength.',
+      'Immediate Tasks \u2014 First 72 Hours': 'The most urgent tasks are behind you. That takes real courage.',
+      'First Week': 'The first week is behind you. That takes real courage.',
+      'This Week': 'This week\'s tasks are done. You showed up for yourself.',
+      'First Month': 'A full month of progress. You should feel proud of that.',
+      'This Month': 'A month of steady progress. That matters.',
+      'Months 2\u20133': 'You\'ve been at this for a while now. That persistence matters.',
+      'Ongoing': 'You\'ve completed everything in this section. That\'s meaningful.'
+    };
+    var lastCompletionIdx = -1;
+    var completionToastTimer = null;
+
+    function showCompletionToast(msg) {
+      var toast = document.getElementById('completionToast');
+      if (!toast) return;
+      if (completionToastTimer) clearTimeout(completionToastTimer);
+      toast.textContent = msg;
+      toast.classList.add('visible');
+      completionToastTimer = setTimeout(function() {
+        toast.classList.remove('visible');
+      }, 3000);
+    }
+
+    function getRandomCompletionMessage() {
+      var idx = lastCompletionIdx;
+      while (idx === lastCompletionIdx && COMPLETION_MESSAGES.length > 1) {
+        idx = Math.floor(Math.random() * COMPLETION_MESSAGES.length);
+      }
+      lastCompletionIdx = idx;
+      return COMPLETION_MESSAGES[idx];
+    }
+
+    function checkPhaseComplete(itemId) {
+      var completedItem = null;
+      checklistItems.forEach(function(i) { if (i.id === itemId) completedItem = i; });
+      if (!completedItem) return;
+      var phase = completedItem.phase;
+      var transType = completedItem.transition_type;
+      var phaseItems = checklistItems.filter(function(i) {
+        return i.transition_type === transType && i.phase === phase;
+      });
+      var allDone = phaseItems.every(function(i) { return i.is_completed; });
+      if (allDone && phaseItems.length > 1) {
+        var msg = null;
+        var keys = Object.keys(MILESTONE_MESSAGES);
+        for (var k = 0; k < keys.length; k++) {
+          if (phase.indexOf(keys[k]) !== -1) { msg = MILESTONE_MESSAGES[keys[k]]; break; }
+        }
+        if (!msg) msg = 'You completed the ' + phase + ' phase. That\'s meaningful.';
+        setTimeout(function() {
+          var container = document.querySelector('[data-phase="' + transType + '-' + phase + '"]');
+          if (container) {
+            var existing = container.querySelector('.milestone-banner');
+            if (!existing) {
+              var banner = document.createElement('div');
+              banner.className = 'milestone-banner';
+              banner.textContent = msg;
+              container.appendChild(banner);
+            }
+          }
+        }, 500);
+      }
+    }
+
+    function highlightNextTask(itemId) {
+      // Remove any existing highlight
+      var prev = document.querySelector('.check-item.next-task');
+      if (prev) prev.classList.remove('next-task');
+      // Find the completed item's phase container and highlight next uncompleted
+      var completedItem = null;
+      checklistItems.forEach(function(i) { if (i.id === itemId) completedItem = i; });
+      if (!completedItem) return;
+      var container = document.querySelector('[data-phase="' + completedItem.transition_type + '-' + completedItem.phase + '"]');
+      if (!container) return;
+      var items = container.querySelectorAll('.check-item:not(.done)');
+      if (items.length > 0) items[0].classList.add('next-task');
+    }
+
     // ── Checklist actions ──
     function toggleItem(itemId, el) {
       fetch('/api/checklist/' + itemId + '/toggle', { method: 'POST' })
@@ -3885,10 +4064,16 @@ guideLibrary['disability'] = {
       .then(function(data) {
         if (data.ok) {
           el.classList.toggle('done');
+          var wasCompleted = data.is_completed;
           checklistItems.forEach(function(item) {
-            if (item.id === itemId) item.is_completed = data.is_completed;
+            if (item.id === itemId) item.is_completed = wasCompleted;
           });
           updateProgressUI();
+          if (wasCompleted) {
+            showCompletionToast(getRandomCompletionMessage());
+            checkPhaseComplete(itemId);
+            highlightNextTask(itemId);
+          }
         }
       });
     }
@@ -3909,6 +4094,63 @@ guideLibrary['disability'] = {
           loadDashboard();
         }
       });
+    }
+
+    // ── Skip item ──
+    function skipItem(itemId) {
+      fetch('/api/checklist/' + itemId + '/skip', { method: 'POST' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          showCompletionToast('No pressure. This task will be here when you\'re ready.');
+          loadDashboard();
+        }
+      });
+    }
+
+    // ── Human help resources ──
+    var HELP_RESOURCES = {
+      'estate': [
+        { label: 'Find a probate attorney', url: 'https://www.americanbar.org/groups/legal_services/flh-home/' },
+        { label: 'Free legal aid', url: 'https://www.lawhelp.org/' }
+      ],
+      'divorce': [
+        { label: 'Find a family law attorney', url: 'https://www.americanbar.org/groups/legal_services/flh-home/' },
+        { label: 'Free legal aid', url: 'https://www.lawhelp.org/' }
+      ],
+      'job-loss': [
+        { label: 'Career help', url: 'https://www.careeronestop.org/' },
+        { label: 'Free legal aid', url: 'https://www.lawhelp.org/' }
+      ],
+      'disability': [
+        { label: 'Disability attorneys', url: 'https://www.nosscr.org/find-an-advocate/' },
+        { label: 'Benefits counselor', url: 'https://choosework.ssa.gov/findhelp/' }
+      ],
+      'relocation': [
+        { label: 'Find a local attorney', url: 'https://www.americanbar.org/groups/legal_services/flh-home/' }
+      ],
+      'retirement': [
+        { label: 'Benefits counselor', url: 'https://www.ssa.gov/locator/' },
+        { label: 'Find a financial advisor', url: 'https://www.letsmakeaplan.org/' }
+      ]
+    };
+
+    function showHumanHelp(transitionType) {
+      // Remove any existing help popup
+      var existing = document.getElementById('helpPopup');
+      if (existing) { existing.remove(); return; }
+      var resources = HELP_RESOURCES[transitionType] || HELP_RESOURCES['estate'];
+      var html = '<div id="helpPopup" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:300;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.2)" onclick="this.remove()">';
+      html += '<div style="background:var(--warm-white);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.1)" onclick="event.stopPropagation()">';
+      html += '<div style="font-family:\'Libre Baskerville\',serif;font-size:16px;color:var(--navy);margin-bottom:4px">Need help with this?</div>';
+      html += '<p style="font-size:13px;color:var(--muted);margin-bottom:16px;font-weight:300">Some tasks are easier with professional support. Here are some options.</p>';
+      html += '<a href="/chat" target="_blank" style="display:block;padding:10px 14px;background:var(--navy);color:var(--cream);border-radius:8px;text-decoration:none;font-size:13px;text-align:center;margin-bottom:8px">Chat with Lumeway Navigator</a>';
+      resources.forEach(function(r) {
+        html += '<a href="' + r.url + '" target="_blank" rel="noopener" style="display:block;padding:10px 14px;border:1px solid var(--border);border-radius:8px;text-decoration:none;font-size:13px;color:var(--text);text-align:center;margin-bottom:6px">' + r.label + ' \u2192</a>';
+      });
+      html += '<button onclick="this.closest(\'#helpPopup\').remove()" style="display:block;width:100%;padding:8px;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;margin-top:8px">Close</button>';
+      html += '</div></div>';
+      document.body.insertAdjacentHTML('beforeend', html);
     }
 
     // ── Goal actions ──
@@ -4267,5 +4509,6 @@ guideLibrary['disability'] = {
       }
     });
   </script>
+  <div id="completionToast" class="completion-toast"></div>
 </body>
 </html>

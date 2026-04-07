@@ -513,6 +513,23 @@ def init_subscribers_db():
             created_at TEXT NOT NULL
         )""")
     conn.commit()
+    # Tier columns migration (idempotent)
+    for alter_sql in [
+        "ALTER TABLE users ADD COLUMN tier TEXT DEFAULT 'free'",
+        "ALTER TABLE users ADD COLUMN tier_transition TEXT",
+        "ALTER TABLE users ADD COLUMN tier_expires_at TEXT",
+        "ALTER TABLE users ADD COLUMN stripe_customer_id TEXT",
+    ]:
+        try:
+            conn2 = get_db()
+            db_execute(conn2, alter_sql)
+            conn2.commit()
+            conn2.close()
+        except Exception:
+            try:
+                conn2.close()
+            except Exception:
+                pass
     conn.close()
 
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "re_17DAfkrF_3mB4pCdStfmYHiNQoeKrxaWe")
@@ -577,13 +594,51 @@ def get_current_user():
         return None
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state, created_at, last_login_at FROM users WHERE id = {param}", (user_id,))
+    cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state, created_at, last_login_at, tier, tier_transition, tier_expires_at, stripe_customer_id FROM users WHERE id = {param}", (user_id,))
     row = cur.fetchone()
     conn.close()
     if row:
-        cols = ["id", "email", "display_name", "transition_type", "us_state", "created_at", "last_login_at"]
-        return dict(zip(cols, row))
+        cols = ["id", "email", "display_name", "transition_type", "us_state", "created_at", "last_login_at", "tier", "tier_transition", "tier_expires_at", "stripe_customer_id"]
+        user = dict(zip(cols, row))
+        # Default tier for existing users without the column
+        if not user.get("tier"):
+            user["tier"] = "free"
+        return user
     return None
+
+def get_effective_tier(user):
+    """Return the user's effective tier, accounting for trial expiration."""
+    tier = user.get("tier") or "free"
+    if tier == "starter" and user.get("tier_expires_at"):
+        try:
+            expires = datetime.fromisoformat(user["tier_expires_at"].replace("Z", "+00:00"))
+            if expires < datetime.now(timezone.utc):
+                return "free"
+        except (ValueError, TypeError):
+            pass
+    return tier
+
+def check_tier(user, required_tier="free", transition_type=None):
+    """Check if user has access at the required tier level.
+    Returns (has_access, upgrade_reason).
+    Tier hierarchy: unlimited > pass > starter > free
+    """
+    tier = get_effective_tier(user)
+    hierarchy = {"free": 0, "starter": 1, "pass": 2, "unlimited": 3}
+    user_level = hierarchy.get(tier, 0)
+    required_level = hierarchy.get(required_tier, 0)
+    if user_level >= required_level:
+        # For pass tier, also check transition_type match
+        if tier == "pass" and required_tier == "pass" and transition_type:
+            if user.get("tier_transition") != transition_type:
+                return (False, "Your Transition Pass is for " + (user.get("tier_transition") or "another transition") + ". Upgrade to Unlimited for access to all transitions.")
+        return (True, None)
+    reasons = {
+        "starter": "Upgrade to a Starter bundle for 30 days of full dashboard access.",
+        "pass": "Get a Transition Pass for full access to this transition.",
+        "unlimited": "Subscribe to Unlimited for access to all transitions."
+    }
+    return (False, reasons.get(required_tier, "Upgrade for access."))
 
 def send_auth_code(to_email, code):
     """Send login code via Resend."""
@@ -1482,6 +1537,25 @@ PRODUCTS = {
         "transition_page": "/retirement"},
 }
 
+# Transition Pass products ($39 each — full dashboard for 1 transition)
+PASS_PRODUCTS = {
+    "pass-job-loss": {"name": "Job Loss Transition Pass", "price": 3900, "transition": "job-loss",
+        "desc": "Full dashboard access for Job Loss & Income Crisis — checklists, content library, scripts, state-specific guidance."},
+    "pass-estate": {"name": "Estate Transition Pass", "price": 3900, "transition": "estate",
+        "desc": "Full dashboard access for Death & Estate — checklists, content library, scripts, state-specific guidance."},
+    "pass-divorce": {"name": "Divorce Transition Pass", "price": 3900, "transition": "divorce",
+        "desc": "Full dashboard access for Divorce & Separation — checklists, content library, scripts, state-specific guidance."},
+    "pass-disability": {"name": "Disability Transition Pass", "price": 3900, "transition": "disability",
+        "desc": "Full dashboard access for Disability & Benefits — checklists, content library, scripts, state-specific guidance."},
+    "pass-relocation": {"name": "Relocation Transition Pass", "price": 3900, "transition": "relocation",
+        "desc": "Full dashboard access for Moving & Relocation — checklists, content library, scripts, state-specific guidance."},
+    "pass-retirement": {"name": "Retirement Transition Pass", "price": 3900, "transition": "retirement",
+        "desc": "Full dashboard access for Retirement Planning — checklists, content library, scripts, state-specific guidance."},
+}
+
+# Unlimited subscription price ID (create in Stripe Dashboard, set via env var)
+STRIPE_UNLIMITED_PRICE_ID = os.environ.get("STRIPE_UNLIMITED_PRICE_ID")
+
 import secrets
 
 BUNDLE_FILES = {
@@ -1522,6 +1596,60 @@ def create_checkout():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/create-pass-checkout", methods=["POST"])
+def create_pass_checkout():
+    """Create Stripe checkout for a Transition Pass ($39)."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.get_json()
+    pass_id = data.get("pass_id")
+    if pass_id not in PASS_PRODUCTS:
+        return jsonify({"error": "Invalid pass"}), 400
+    product = PASS_PRODUCTS[pass_id]
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            customer_email=user["email"],
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {"name": product["name"], "description": product["desc"]},
+                    "unit_amount": product["price"],
+                },
+                "quantity": 1,
+            }],
+            mode="payment",
+            success_url=request.host_url + "dashboard?upgraded=1",
+            cancel_url=request.host_url + "pricing",
+            metadata={"tier": "pass", "transition_type": product["transition"], "user_email": user["email"]},
+        )
+        return jsonify({"url": session.url})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/create-subscription", methods=["POST"])
+def create_subscription():
+    """Create Stripe checkout for Unlimited subscription ($9.99/mo)."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    if not STRIPE_UNLIMITED_PRICE_ID:
+        return jsonify({"error": "Subscription not yet configured"}), 500
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            customer_email=user["email"],
+            line_items=[{"price": STRIPE_UNLIMITED_PRICE_ID, "quantity": 1}],
+            mode="subscription",
+            success_url=request.host_url + "dashboard?upgraded=1",
+            cancel_url=request.host_url + "pricing",
+            metadata={"tier": "unlimited", "user_email": user["email"]},
+        )
+        return jsonify({"url": session.url})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/webhook/stripe", methods=["POST"])
 def stripe_webhook():
     payload = request.get_data()
@@ -1540,7 +1668,19 @@ def stripe_webhook():
     if event_type == "checkout.session.completed":
         session_data = event["data"]["object"] if isinstance(event, dict) else event.data.object
         print(f"Webhook received: checkout.session.completed")
-        fulfill_purchase(session_data)
+        # Check if this is a tier upgrade
+        metadata = session_data.get("metadata") if isinstance(session_data, dict) else getattr(session_data, "metadata", {})
+        if isinstance(metadata, dict):
+            tier_type = metadata.get("tier")
+        else:
+            tier_type = getattr(metadata, "tier", None)
+        if tier_type:
+            handle_tier_upgrade(session_data, metadata)
+        else:
+            fulfill_purchase(session_data)
+    elif event_type == "customer.subscription.deleted":
+        sub_data = event["data"]["object"] if isinstance(event, dict) else event.data.object
+        handle_subscription_cancelled(sub_data)
     return "ok", 200
 
 def fulfill_purchase(session_data):
@@ -1576,9 +1716,66 @@ def fulfill_purchase(session_data):
         print(f"Purchase recorded: {email} bought {product['name']}")
     except Exception as e:
         print(f"DB error recording purchase: {e}")
+    # Grant 30-day starter trial for bundle purchases (don't downgrade existing paid tiers)
+    try:
+        conn2 = get_db()
+        param2 = "%s" if USE_POSTGRES else "?"
+        expires = (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
+        # Only upgrade if user is on free tier
+        db_execute(conn2, f"UPDATE users SET tier = 'starter', tier_expires_at = {param2} WHERE email = {param2} AND (tier IS NULL OR tier = 'free')", (expires, email))
+        conn2.commit()
+        conn2.close()
+    except Exception as e:
+        print(f"Error granting starter trial: {e}")
     # Send email in background thread so it doesn't block the response
     threading.Thread(target=send_purchase_email, args=(email, product_id, product["name"], token), daemon=True).start()
     print(f"Email send initiated for {email}")
+
+def handle_tier_upgrade(session_data, metadata):
+    """Update user tier after a Transition Pass or Unlimited purchase."""
+    if isinstance(metadata, dict):
+        tier = metadata.get("tier")
+        transition_type = metadata.get("transition_type")
+        email = metadata.get("user_email")
+    else:
+        tier = getattr(metadata, "tier", None)
+        transition_type = getattr(metadata, "transition_type", None)
+        email = getattr(metadata, "user_email", None)
+    if not email or not tier:
+        print(f"Cannot handle tier upgrade: email={email}, tier={tier}")
+        return
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+    if tier == "pass":
+        db_execute(conn, f"UPDATE users SET tier = 'pass', tier_transition = {param} WHERE email = {param}", (transition_type, email))
+    elif tier == "unlimited":
+        # Get stripe customer ID from session if available
+        customer_id = None
+        if isinstance(session_data, dict):
+            customer_id = session_data.get("customer")
+        else:
+            customer_id = getattr(session_data, "customer", None)
+        db_execute(conn, f"UPDATE users SET tier = 'unlimited', stripe_customer_id = {param} WHERE email = {param}", (customer_id, email))
+    elif tier == "starter":
+        expires = (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
+        db_execute(conn, f"UPDATE users SET tier = 'starter', tier_expires_at = {param} WHERE email = {param}", (expires, email))
+    conn.commit()
+    conn.close()
+    print(f"Tier upgraded: {email} → {tier}" + (f" ({transition_type})" if transition_type else ""))
+
+def handle_subscription_cancelled(sub_data):
+    """Downgrade user when their Unlimited subscription is cancelled."""
+    customer_id = sub_data.get("customer") if isinstance(sub_data, dict) else getattr(sub_data, "customer", None)
+    if not customer_id:
+        print("Cannot handle subscription cancellation: no customer ID")
+        return
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"UPDATE users SET tier = 'free', stripe_customer_id = NULL WHERE stripe_customer_id = {param}", (customer_id,))
+    conn.commit()
+    conn.close()
+    print(f"Subscription cancelled for customer {customer_id}, downgraded to free")
 
 @app.route("/purchase-success")
 def purchase_success():
@@ -1792,6 +1989,10 @@ def cart_checkout():
         return jsonify({"url": session.url})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route("/pricing")
+def pricing():
+    return send_from_directory(".", "pricing.html")
 
 @app.route("/templates")
 def templates():
@@ -2468,7 +2669,8 @@ def dashboard_data():
         "goals": goals,
         "deadlines": deadlines,
         "documents_needed": documents_needed,
-        "notes": notes
+        "notes": notes,
+        "effective_tier": get_effective_tier(user)
     })
 
 @app.route("/api/dashboard/history/<session_id>")
@@ -2524,6 +2726,28 @@ def toggle_checklist_item(item_id):
     conn.commit()
     conn.close()
     return jsonify({"ok": True, "is_completed": not bool(row[0])})
+
+@app.route("/api/checklist/<int:item_id>/skip", methods=["POST"])
+def skip_checklist_item(item_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    # Verify ownership and get item's phase info
+    cur = db_execute(conn, f"SELECT transition_type, phase FROM checklist_items WHERE id = {param} AND user_id = {param}", (item_id, user["id"]))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "Item not found"}), 404
+    t_type, phase = row[0], row[1]
+    # Find max sort_order in this phase and move item to end
+    cur = db_execute(conn, f"SELECT COALESCE(MAX(sort_order), 0) FROM checklist_items WHERE user_id = {param} AND transition_type = {param} AND phase = {param}", (user["id"], t_type, phase))
+    max_sort = cur.fetchone()[0]
+    db_execute(conn, f"UPDATE checklist_items SET sort_order = {param} WHERE id = {param}", (max_sort + 1, item_id))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
 
 @app.route("/api/checklist/init", methods=["POST"])
 def init_checklist():
