@@ -110,23 +110,30 @@
     .action-ctas .cta-buttons { display: flex; flex-direction: column; gap: 12px; }
 
 
-    /* State Selector */
-    .state-selector-section { padding: 0 24px 48px; max-width: 800px; margin: 0 auto; }
+    /* State Selector — split layout */
+    .state-selector-section { padding: 0 5% 48px; max-width: 100%; }
+    .state-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
+    .state-sidebar { position: sticky; top: 100px; }
     .state-selector-intro { font-size: 13px; color: var(--muted); font-weight: 300; margin-bottom: 12px; }
     .state-select-input { padding: 11px 40px 11px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--warm-white); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E7D8A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; min-width: 220px; }
     .state-select-input:focus { outline: 2px solid var(--navy); outline-offset: 2px; }
-    .state-callout { margin-top: 20px; background: var(--warm-white); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 0 16px 16px 0; padding: 24px 28px; max-width: 680px; }
+    .state-callout { background: var(--warm-white); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 0 16px 16px 0; padding: 24px 28px; }
     .state-callout-headline { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 500; margin-bottom: 16px; color: var(--text); }
     .state-callout-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
     .state-callout-bullets li { font-size: 14px; color: var(--muted); line-height: 1.65; padding-left: 20px; position: relative; font-weight: 300; }
     .state-callout-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--gold); }
     .state-disclaimer { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 20px; line-height: 1.6; }
-    .state-fallback-card { margin-top: 20px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; max-width: 680px; }
+    .state-fallback-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; }
     .state-fallback-card p { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 20px; }
 
 
-    /* Deadlines */
-    .deadlines-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; max-width: 800px; }
+    /* Deadlines — split layout */
+    .deadlines-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
+    .deadlines-sidebar { position: sticky; top: 100px; }
+    .deadlines-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
+    .deadlines-sidebar h2 em { font-style: italic; color: var(--accent-light); }
+    .deadlines-sidebar .section-label { margin-bottom: 12px; }
+    .deadlines-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
     .deadline-row { display: flex; gap: 20px; align-items: flex-start; padding: 20px 28px; border-bottom: 1px solid var(--border); }
     .deadline-row:last-child { border-bottom: none; }
     .deadline-time { font-family: 'Libre Baskerville', serif; font-size: 14px; font-weight: 600; color: #C0392B; white-space: nowrap; min-width: 80px; padding-top: 2px; }
@@ -160,7 +167,7 @@
     .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
     .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-    @media (max-width: 768px) { .resources-grid { grid-template-columns: 1fr 1fr; } nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { .resources-grid { grid-template-columns: 1fr; } nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
+    @media (max-width: 768px) { .resources-grid { grid-template-columns: 1fr 1fr; } nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid, .state-layout, .deadlines-layout { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar, .state-sidebar, .deadlines-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { .resources-grid { grid-template-columns: 1fr; } nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
     /* Chat Preview */
     .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
     .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
@@ -246,9 +253,11 @@
 </div>
 
 <div class="state-selector-section reveal">
-  <p class="state-selector-intro">See rules specific to your state:</p>
-  <select id="stateSelect" class="state-select-input" aria-label="Select your state for local guidance">
-    <option value="">Select your state →</option>
+  <div class="state-layout">
+  <div class="state-sidebar">
+    <p class="state-selector-intro">See rules specific to your state:</p>
+    <select id="stateSelect" class="state-select-input" aria-label="Select your state for local guidance">
+      <option value="">Select your state →</option>
     <option value="AL">Alabama</option>
     <option value="AK">Alaska</option>
     <option value="AZ">Arizona</option>
@@ -299,16 +308,20 @@
     <option value="WV">West Virginia</option>
     <option value="WI">Wisconsin</option>
     <option value="WY">Wyoming</option>
-  </select>
-  <div id="stateResult" class="state-callout" hidden aria-live="polite">
-    <h3 id="stateResultHeadline" class="state-callout-headline"></h3>
-    <ul id="stateResultBullets" class="state-callout-bullets"></ul>
-    <p class="state-disclaimer">Rules and requirements change — always verify with your state's official agencies.</p>
-    <a href="/chat" target="_blank" target="_blank" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Get general process guidance →</a>
+    </select>
   </div>
-  <div id="stateFallback" class="state-fallback-card" hidden>
-    <p>We're adding more states soon. In the meantime, Lumeway can walk you through state-specific guidance in the chat.</p>
-    <a href="/chat" target="_blank" target="_blank" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Talk to Lumeway free →</a>
+  <div class="state-results">
+    <div id="stateResult" class="state-callout" hidden aria-live="polite">
+      <h3 id="stateResultHeadline" class="state-callout-headline"></h3>
+      <ul id="stateResultBullets" class="state-callout-bullets"></ul>
+      <p class="state-disclaimer">Rules and requirements change — always verify with your state's official agencies.</p>
+      <a href="/chat" target="_blank" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Get general process guidance →</a>
+    </div>
+    <div id="stateFallback" class="state-fallback-card" hidden>
+      <p>We're adding more states soon. In the meantime, Lumeway can walk you through state-specific guidance in the chat.</p>
+      <a href="/chat" target="_blank" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Talk to Lumeway free →</a>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -385,16 +398,12 @@
 
 <div class="section-divider"></div>
 
-<div style="text-align:center;padding:48px 24px;background:var(--warm-white)">
-  <p style="font-size:13px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Your personal dashboard</p>
-  <p style="font-family:'Libre Baskerville',serif;font-size:clamp(20px,3vw,28px);font-weight:300;color:var(--text);margin-bottom:12px">Track every step in one place</p>
-  <p style="font-size:14px;color:var(--muted);font-weight:300;max-width:500px;margin:0 auto 20px;line-height:1.6">Upload documents, log activity, track deadlines, and access resources tailored to your state — all from your personal dashboard.</p>
-  <a href="/features" style="font-size:14px;color:var(--accent);text-decoration:none;font-weight:500">See all dashboard features &rarr;</a>
-</div>
-
 <section class="section">
-  <p class="section-label">Critical deadlines</p>
-  <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
+  <div class="deadlines-layout">
+  <div class="deadlines-sidebar">
+    <p class="section-label">Critical deadlines</p>
+    <h2>Time-sensitive steps<br><em>you can't miss</em></h2>
+  </div>
   <div class="deadlines-box">
     <div class="deadline-row">
       <span class="deadline-time">60 days</span>
@@ -439,6 +448,7 @@
       </div>
     </div>
   </div>
+  </div>
 </section>
 
 <div class="section-divider"></div>
@@ -482,34 +492,6 @@
 
 <div class="section-divider"></div>
 
-<section class="action-section">
-  <div class="action-grid">
-    <div class="action-preview">
-      <div class="chat-preview-wrap">
-        <div class="chat-preview">
-<div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">My husband passed away two weeks ago. I'm overwhelmed and don't know what to do first.</div></div>
-      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">I'm so sorry for your loss. You don't have to figure everything out at once — let's take it one step at a time together. Can I ask, what state are you in?</div></div>
-      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">California.</div></div>
-      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">Thank you. In California, the will needs to be filed with probate court within 30 days. But the very first thing — have you been able to get certified copies of the death certificate? You'll need about 10–15 copies for insurance, banks, and government agencies.</div></div>
-      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">I got 5 copies. Is that enough?</div></div>
-      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">You'll likely want more — I'd recommend at least 10. You can order additional copies from the county recorder's office. Would you like me to walk you through what to do next?</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="action-ctas">
-      <p class="section-label">See it in action</p>
-      <h2>See how Lumeway <em>helps</em></h2>
-      <p>Start with a free conversation — Lumeway walks you through your situation step by step. Then track everything in your personal dashboard: deadlines, documents, activity log, and state-specific resources.</p>
-      <div class="cta-buttons">
-        <a href="/chat" target="_blank" class="btn-large btn-large-primary">Start a free conversation &rarr;</a>
-        <a href="/features" class="btn-large btn-large-secondary">Explore dashboard features</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="section-divider"></div>
-
 <section class="faq-section">
   <div class="faq-layout">
     <div class="faq-sidebar">
@@ -545,6 +527,43 @@
   </div>
   </div>
 </section>
+
+<div class="section-divider"></div>
+
+<section class="action-section">
+  <div class="action-grid">
+    <div class="action-preview">
+      <div class="chat-preview-wrap">
+        <div class="chat-preview">
+<div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">My husband passed away two weeks ago. I'm overwhelmed and don't know what to do first.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">I'm so sorry for your loss. You don't have to figure everything out at once — let's take it one step at a time together. Can I ask, what state are you in?</div></div>
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">California.</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">Thank you. In California, the will needs to be filed with probate court within 30 days. But the very first thing — have you been able to get certified copies of the death certificate? You'll need about 10–15 copies for insurance, banks, and government agencies.</div></div>
+      <div class="cp-msg user"><div class="cp-avatar user">You</div><div class="cp-bubble">I got 5 copies. Is that enough?</div></div>
+      <div class="cp-msg bot"><div class="cp-avatar bot">L</div><div class="cp-bubble">You'll likely want more — I'd recommend at least 10. You can order additional copies from the county recorder's office. Would you like me to walk you through what to do next?</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="action-ctas">
+      <p class="section-label">See it in action</p>
+      <h2>See how Lumeway <em>helps</em></h2>
+      <p>Start with a free conversation — Lumeway walks you through your situation step by step. Then track everything in your personal dashboard: deadlines, documents, activity log, and state-specific resources.</p>
+      <div class="cta-buttons">
+        <a href="/chat" target="_blank" class="btn-large btn-large-primary" style="width:fit-content">Start a free conversation &rarr;</a>
+        <a href="/features" class="btn-large btn-large-secondary" style="width:fit-content">Explore dashboard features</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<div style="text-align:center;padding:48px 24px;background:var(--warm-white)">
+  <p style="font-size:13px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Your personal dashboard</p>
+  <p style="font-family:'Libre Baskerville',serif;font-size:clamp(20px,3vw,28px);font-weight:300;color:var(--text);margin-bottom:12px">Track every step in one place</p>
+  <p style="font-size:14px;color:var(--muted);font-weight:300;max-width:500px;margin:0 auto 20px;line-height:1.6">Upload documents, log activity, track deadlines, and access resources tailored to your state — all from your personal dashboard.</p>
+  <a href="/features" style="font-size:14px;color:var(--accent);text-decoration:none;font-weight:500">See all dashboard features &rarr;</a>
+</div>
 
 <div class="cta-section">
   <h2 class="cta-title">You don't have to do<br>this <em>alone</em></h2>
