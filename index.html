@@ -124,7 +124,11 @@
       flex-shrink: 0;
       animation: rise 0.55s cubic-bezier(0.22,1,0.36,1) 0.15s both;
       z-index: 1;
-      position: relative;
+      position: sticky;
+      top: 20px;
+      max-height: min(90vh, 840px);
+      overflow-y: auto;
+      order: -1;
     }
     .sidebar-card {
       background: var(--surface);
@@ -152,7 +156,7 @@
     .sidebar-card .feature-icon {
       font-size: 16px;
     }
-    .doc-list { list-style: none; padding: 0; margin: 0; }
+    .doc-list { list-style: none; padding: 0; margin: 0; max-height: 280px; overflow-y: auto; }
     .doc-list li {
       display: flex; align-items: center; gap: 8px;
       padding: 10px 0; border-bottom: 1px solid var(--border);
