@@ -98,7 +98,7 @@
       display: flex;
       gap: 20px;
       width: 100%;
-      max-width: 1020px;
+      max-width: 1300px;
       align-items: flex-start;
       z-index: 1;
       position: relative;
@@ -119,8 +119,8 @@
       animation: rise 0.55s cubic-bezier(0.22,1,0.36,1) both;
     }
 
-    .chat-sidebar {
-      width: 280px;
+    .chat-sidebar-left {
+      width: 260px;
       flex-shrink: 0;
       animation: rise 0.55s cubic-bezier(0.22,1,0.36,1) 0.15s both;
       z-index: 1;
@@ -129,6 +129,14 @@
       max-height: min(90vh, 840px);
       overflow-y: auto;
       order: -1;
+    }
+    .chat-sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      animation: rise 0.55s cubic-bezier(0.22,1,0.36,1) 0.15s both;
+      z-index: 1;
+      position: sticky;
+      top: 20px;
     }
     .sidebar-card {
       background: var(--surface);
@@ -178,6 +186,9 @@
     @keyframes docSlide {
       from { opacity: 0; transform: translateX(-8px); }
       to { opacity: 1; transform: translateX(0); }
+    }
+    @media (max-width: 1100px) {
+      .chat-sidebar-left { display: none; }
     }
     @media (max-width: 900px) {
       .chat-sidebar { display: none; }
@@ -784,6 +795,13 @@
   </div>
 </div>
 
+<div class="chat-sidebar-left">
+  <div class="sidebar-card" id="docs-card">
+    <h3><span class="feature-icon">&#x1F4C4;</span> Documents that may help you <span class="sidebar-count" id="docs-count" style="display:none">0</span></h3>
+    <p class="doc-list-empty" id="docs-empty">As we talk, I'll note any worksheets, checklists, or letters that could help with your situation.</p>
+    <ul class="doc-list" id="docs-list"></ul>
+  </div>
+</div>
 <div class="chat-sidebar">
   <div class="sidebar-card" style="padding:14px 20px;">
     <button class="header-action" onclick="startOver()" style="width:100%;text-align:center;padding:8px 14px;font-size:12.5px">↺ Start over</button>
@@ -791,11 +809,6 @@
   <div class="sidebar-card" id="save-explain-card" style="display:none">
     <h3><span class="feature-icon">&#x1F4BE;</span> Save to Dashboard</h3>
     <p>Clicking <strong>Save</strong> extracts your dates, deadlines, documents to gather, and goals from this conversation and saves them to your personal dashboard.</p>
-  </div>
-  <div class="sidebar-card" id="docs-card">
-    <h3><span class="feature-icon">&#x1F4C4;</span> Documents that may help you <span class="sidebar-count" id="docs-count" style="display:none">0</span></h3>
-    <p class="doc-list-empty" id="docs-empty">As we talk, I'll note any worksheets, checklists, or letters that could help with your situation.</p>
-    <ul class="doc-list" id="docs-list"></ul>
   </div>
   <div class="sidebar-card">
     <h3><span class="feature-icon">&#x1F4A1;</span> Tips</h3>
