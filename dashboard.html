@@ -1099,7 +1099,11 @@
       .then(function(data) {
         if (data.ok) {
           currentTab = 'checklist';
-      
+          loadDashboard();
+        }
+      });
+    }
+
     // ═══════════════════════════════
     // ── GUIDES CONTENT LIBRARY ──
     // ═══════════════════════════════
@@ -3549,9 +3553,6 @@ guideLibrary['retirement'] = {
 
 
     loadDashboard();
-        }
-      });
-    }
 
     // ── Goal actions ──
     function addGoal(timeframe) {
