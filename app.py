@@ -1797,10 +1797,6 @@ def cart_checkout():
 def templates():
     return send_from_directory(".", "templates.html")
 
-@app.route("/templates/individual")
-def individual_templates():
-    return send_from_directory(".", "individual-templates.html")
-
 @app.route("/templates/<product_id>")
 def template_detail(product_id):
     if product_id not in PRODUCTS:
