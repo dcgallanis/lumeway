@@ -24,7 +24,7 @@
   <meta name="twitter:description" content="Step-by-step guidance for navigating job loss. Timelines, deadlines, and resources — all in one place."/>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Should I sign my severance agreement right away?","acceptedAnswer":{"@type":"Answer","text":"No. You typically have 21 days to review it (45 days if you're over 40, under federal OWBPA rules). Use that time to understand the terms, and consider having an employment attorney review it — especially if it includes a non-compete or liability release."}},{"@type":"Question","name":"How do I file for unemployment?","acceptedAnswer":{"@type":"Answer","text":"File through your state's unemployment office, usually online. Do this within the first week — most states have a one-week unpaid waiting period before benefits begin, so the sooner you file, the sooner you'll receive payment."}},{"@type":"Question","name":"What happens to my health insurance?","acceptedAnswer":{"@type":"Answer","text":"You can elect COBRA to continue your employer's plan for up to 18 months (though you'll pay the full premium). Alternatively, job loss triggers a 60-day special enrollment period on Healthcare.gov for marketplace plans. Compare costs — marketplace plans with subsidies are often cheaper."}},{"@type":"Question","name":"What about my 401k?","acceptedAnswer":{"@type":"Answer","text":"Your 401k is yours regardless of employment. You can leave it with your former employer, roll it into an IRA, or roll it to a new employer's plan. Don't cash it out — early withdrawal penalties and taxes can cost you 30–40% of the balance."}},{"@type":"Question","name":"Can my employer contest my unemployment claim?","acceptedAnswer":{"@type":"Answer","text":"Yes, but being laid off generally qualifies you for benefits. Employers most commonly contest claims for employees who were fired for cause or who quit voluntarily. If your claim is denied, you have the right to appeal."}},{"@type":"Question","name":"What if I signed a non-compete?","acceptedAnswer":{"@type":"Answer","text":"Non-compete enforceability varies dramatically by state. Some states like California, North Dakota, Oklahoma, and Minnesota don't enforce them at all. Others enforce them strictly. Consult an employment attorney if your non-compete could affect your job search."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What should I do in the first 48 hours after losing my job?","acceptedAnswer":{"@type":"Answer","text":"Day 1: Don’t sign any severance paperwork. File for unemployment online. Day 2: Review your health insurance end date, confirm your 401k balance, and pull your credit report. Start tracking monthly expenses so you know your burn rate."}},{"@type":"Question","name":"How long does unemployment take and how much will I get?","acceptedAnswer":{"@type":"Answer","text":"After filing, expect a 1–3 week waiting period. Most states pay 40–50% of your previous salary, capped at $300–$800 per week. Benefits typically last 26 weeks."}},{"@type":"Question","name":"COBRA vs. marketplace insurance — which is cheaper?","acceptedAnswer":{"@type":"Answer","text":"COBRA continues your exact employer plan at full cost — typically $600–$700/month for an individual. Marketplace plans may be much cheaper because your lower post-job income could qualify you for substantial subsidies. You have 60 days for either option."}},{"@type":"Question","name":"Can I negotiate my severance package?","acceptedAnswer":{"@type":"Answer","text":"Yes — almost everything is negotiable. Common items: more weeks of pay, extended health insurance, outplacement services, a neutral reference letter, and removal of non-compete clauses."}},{"@type":"Question","name":"How long should my emergency savings last?","acceptedAnswer":{"@type":"Answer","text":"The average job search takes 3–6 months. Calculate your monthly survival number and cut discretionary spending immediately. Don’t touch your 401k — early withdrawal costs 30–40% in taxes and penalties."}},{"@type":"Question","name":"Can I still get a good reference from my former employer?","acceptedAnswer":{"@type":"Answer","text":"If you were laid off, most employers will provide a neutral or positive reference. Ask your direct manager if they’d be willing to serve as a reference. Get it in writing if possible."}}]}
   </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -62,40 +62,43 @@
     .btn-large-secondary:hover { border-color: var(--navy); color: var(--navy); transform: translateY(-2px); }
     .btn-large-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--navy); }
     .btn-large-outline:hover { background: var(--navy); color: var(--cream); transform: translateY(-2px); }
-    .section { width: 100%; padding: 64px 5%; }
+    .section { width: 100%; padding: 80px 5%; }
     .section-divider { width: 1px; height: 32px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
     .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
     .section-title { font-family: 'Libre Baskerville', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.15; margin-bottom: 36px; }
     .section-title em { font-style: italic; color: var(--accent-light); }
-    .timeline { display: flex; flex-direction: column; gap: 2px; }
-    .timeline-item { display: grid; grid-template-columns: 140px 1fr; background: var(--warm-white); border: 1px solid var(--border); }
-    .timeline-item:first-child { border-radius: 16px 16px 0 0; }
-    .timeline-item:last-child { border-radius: 0 0 16px 16px; }
-    .timeline-period { background: var(--navy); color: var(--cream); padding: 24px 20px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; font-weight: 500; line-height: 1.4; }
-    .timeline-content { padding: 24px 28px; }
-    .timeline-content h3 { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+    .timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+    .timeline::before { content: ''; position: absolute; left: 19px; top: 24px; bottom: 24px; width: 2px; background: linear-gradient(to bottom, var(--navy), var(--gold)); border-radius: 1px; }
+    .timeline-item { display: grid; grid-template-columns: 40px 1fr; gap: 0; position: relative; padding-bottom: 32px; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-step { display: flex; flex-direction: column; align-items: center; padding-top: 2px; position: relative; z-index: 1; }
+    .timeline-dot { width: 40px; height: 40px; border-radius: 50%; background: var(--navy); color: var(--cream); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; font-family: 'Libre Baskerville', serif; flex-shrink: 0; }
+
+    .timeline-period { display: inline-block; background: var(--navy); color: var(--cream); padding: 5px 14px; border-radius: 100px; font-size: 12px; font-weight: 500; letter-spacing: 0.03em; margin-bottom: 10px; }
+    .timeline-content { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; margin-left: 16px; }
+    .timeline-content h3 { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 500; margin-bottom: 10px; color: var(--text); }
     .timeline-content ul { list-style: none; }
     .timeline-content ul li { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.7; padding-left: 16px; position: relative; }
-    .timeline-content ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent-light); }
+    .timeline-content ul li::before { content: '\2192'; position: absolute; left: 0; color: var(--accent-light); }
 
     /* Timeline split layout */
-    .timeline-section { width: 100%; padding: 64px 5%; }
-    .timeline-layout { display: grid; grid-template-columns: 300px 1fr; gap: 48px; align-items: start; }
+    .timeline-section { width: 100%; padding: 80px 5% 64px; }
+    .timeline-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
     .timeline-sidebar { position: sticky; top: 100px; align-self: start; }
     .timeline-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
     .timeline-sidebar h2 em { font-style: italic; color: var(--accent-light); }
     .timeline-sidebar .section-label { margin-bottom: 12px; }
     .timeline-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
     /* FAQ split layout */
-    .faq-section { width: 100%; padding: 64px 5%; background: var(--cream); }
-    .faq-layout { display: grid; grid-template-columns: 300px 1fr; gap: 48px; align-items: start; }
+    .faq-section { width: 100%; padding: 80px 5%; background: var(--cream); }
+    .faq-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
     .faq-sidebar { position: sticky; top: 100px; align-self: start; }
     .faq-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
     .faq-sidebar h2 em { font-style: italic; color: var(--accent-light); }
     .faq-sidebar .section-label { margin-bottom: 12px; }
     .faq-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
     /* Action section split layout */
-    .action-section { width: 100%; padding: 64px 5%; background: var(--warm-white); }
+    .action-section { width: 100%; padding: 80px 5%; background: var(--warm-white); }
     .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
     .action-ctas h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 16px; }
     .action-ctas h2 em { font-style: italic; color: var(--accent-light); }
@@ -103,19 +106,26 @@
     .action-ctas p { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 32px; }
     .action-ctas .cta-buttons { display: flex; flex-direction: column; gap: 12px; }
 
-    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; border-top: 3px solid #C0392B; }
-    .deadline-days { font-family: 'Libre Baskerville', serif; font-size: 36px; font-weight: 300; color: #C0392B; line-height: 1; margin-bottom: 8px; }
-    .deadline-title { font-weight: 500; font-size: 15px; margin-bottom: 6px; }
-    .deadline-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
-    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.2s; text-decoration: none; display: block; }
-    .resource-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
-    .resource-icon { font-size: 24px; margin-bottom: 12px; }
-    .resource-title { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-    .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
-    .resource-link { font-size: 12px; color: var(--accent); margin-top: 8px; display: block; }
-    .cta-section { padding: 48px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
+
+    /* Deadlines */
+    .deadlines-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; max-width: 800px; }
+    .deadline-row { display: flex; gap: 20px; align-items: flex-start; padding: 20px 28px; border-bottom: 1px solid var(--border); }
+    .deadline-row:last-child { border-bottom: none; }
+    .deadline-time { font-family: 'Libre Baskerville', serif; font-size: 14px; font-weight: 600; color: #C0392B; white-space: nowrap; min-width: 80px; padding-top: 2px; }
+    .deadline-detail { flex: 1; min-width: 0; }
+    .deadline-name { font-weight: 500; font-size: 14px; color: var(--text); margin-bottom: 3px; }
+    .deadline-note { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+
+    /* Resources grid */
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .resource-square { background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 24px; text-decoration: none; display: flex; flex-direction: column; transition: all 0.2s; text-align: center; }
+    .resource-square:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
+    .resource-sq-icon { font-size: 28px; margin-bottom: 12px; }
+    .resource-sq-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .resource-sq-desc { font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 300; flex: 1; }
+    .resource-sq-link { font-size: 11px; color: var(--accent); margin-top: 10px; }
+
+    .cta-section { padding: 80px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
     .cta-title { font-family: 'Libre Baskerville', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
     .cta-title em { font-style: italic; color: var(--accent-light); }
     .cta-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
@@ -131,7 +141,7 @@
     .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
     .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-    @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
+    @media (max-width: 768px) { .resources-grid { grid-template-columns: 1fr 1fr; } nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { .resources-grid { grid-template-columns: 1fr; } nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
     /* Chat Preview */
     .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
     .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
@@ -148,10 +158,9 @@
     .cp-anim .cp-msg.cp-visible { opacity: 1; transform: translateY(0); }
     .chat-preview-cta { text-align: center; margin-top: 24px; }
     /* FAQ Accordion */
-    .faq-list { display: flex; flex-direction: column; gap: 2px; }
-    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; }
-    .faq-item:first-child { border-radius: 16px 16px 0 0; }
-    .faq-item:last-child { border-radius: 0 0 16px 16px; }
+    .faq-list { display: flex; flex-direction: column; gap: 8px; }
+    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; border-radius: 14px; }
+
     .faq-question { width: 100%; text-align: left; background: none; border: none; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; }
     .faq-question > span:first-child { flex: 1; min-width: 0; }
     .faq-question:hover { background: rgba(27,58,92,0.03); }
@@ -306,8 +315,10 @@
     <div class="timeline-phases">
       <div class="timeline reveal-stagger">
     <div class="timeline-item reveal">
-      <div class="timeline-period">Day 1–3</div>
-      <div class="timeline-content"><h3>Immediate priorities</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">1</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">Day 1–3</div>
+        <h3>Immediate priorities</h3><ul>
         <li>Do NOT sign your severance agreement yet — you have time to review it</li>
         <li>File for unemployment benefits through your state (do this immediately — there's often a waiting period)</li>
         <li>Take inventory of your benefits: health insurance, 401k, stock options, unused PTO</li>
@@ -315,8 +326,10 @@
       </ul></div>
     </div>
     <div class="timeline-item reveal">
-      <div class="timeline-period">First 1–2 weeks</div>
-      <div class="timeline-content"><h3>Protect your benefits</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">2</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">First 1–2 weeks</div>
+        <h3>Protect your benefits</h3><ul>
         <li>Decide on health insurance: elect COBRA (keeps your current plan) or enroll in a marketplace plan through Healthcare.gov</li>
         <li>Review your severance agreement carefully — consider having an employment attorney look at it</li>
         <li>Create a bare-bones budget based on unemployment income</li>
@@ -324,8 +337,10 @@
       </ul></div>
     </div>
     <div class="timeline-item reveal">
-      <div class="timeline-period">First month</div>
-      <div class="timeline-content"><h3>Stabilize and plan</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">3</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">First month</div>
+        <h3>Stabilize and plan</h3><ul>
         <li>Roll over your 401k to an IRA or leave it in place — do NOT cash it out (early withdrawal penalties are steep)</li>
         <li>Update your resume and LinkedIn profile</li>
         <li>Begin strategic job applications — quality over quantity</li>
@@ -333,8 +348,10 @@
       </ul></div>
     </div>
     <div class="timeline-item reveal">
-      <div class="timeline-period">1–3 months</div>
-      <div class="timeline-content"><h3>Build momentum</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">4</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">1–3 months</div>
+        <h3>Build momentum</h3><ul>
         <li>Reassess your budget based on actual spending</li>
         <li>Explore freelance, contract, or gig work as a bridge</li>
         <li>Follow up on unemployment if there are delays or issues</li>
@@ -348,42 +365,87 @@
 
 <div class="section-divider"></div>
 
-<div class="section">
+<section class="section">
   <p class="section-label">Critical deadlines</p>
-  <h2 class="section-title">Don't miss these<br><em>time-sensitive steps</em></h2>
-  <div class="deadlines-grid">
-    <div class="deadline-card">
-      <div class="deadline-days">21 days</div>
-      <div class="deadline-title">Severance agreement review period</div>
-      <p class="deadline-desc">Under federal law (OWBPA), workers over 40 get 45 days to review a severance offer, and 7 days to revoke after signing. Under 40, it's typically 21 days. Don't let anyone rush you.</p>
+  <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
+  <div class="deadlines-box">
+    <div class="deadline-row">
+      <span class="deadline-time">21 days</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Severance agreement review period</div>
+        <p class="deadline-note">Under federal law (OWBPA), workers over 40 get 45 days to review a severance offer, and 7 days to revoke after signing. Under 40, it's typically 21 days. Don't let anyone rush you.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">1–4 weeks</div>
-      <div class="deadline-title">Unemployment filing</div>
-      <p class="deadline-desc">Most states require filing within 1–4 weeks of your last day. The sooner you file, the sooner your waiting period starts. Don't delay — you can't get back-pay for weeks you didn't file.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">1–4 weeks</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Unemployment filing</div>
+        <p class="deadline-note">Most states require filing within 1–4 weeks of your last day. The sooner you file, the sooner your waiting period starts. Don't delay — you can't get back-pay for weeks you didn't file.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">60 days</div>
-      <div class="deadline-title">COBRA health insurance election</div>
-      <p class="deadline-desc">You have 60 days from your coverage end date to elect COBRA. It's retroactive, so you can wait and only elect if you need care — but don't miss the window.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">60 days</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">COBRA health insurance election</div>
+        <p class="deadline-note">You have 60 days from your coverage end date to elect COBRA. It's retroactive, so you can wait and only elect if you need care — but don't miss the window.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">60 days</div>
-      <div class="deadline-title">401k rollover</div>
-      <p class="deadline-desc">If you receive a 401k distribution check, you have 60 days to roll it into an IRA or new employer plan. Miss this and you'll owe income tax plus a 10% early withdrawal penalty if you're under 59½.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">60 days</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">401k rollover</div>
+        <p class="deadline-note">If you receive a 401k distribution check, you have 60 days to roll it into an IRA or new employer plan. Miss this and you'll owe income tax plus a 10% early withdrawal penalty if you're under 59½.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">60 days</div>
-      <div class="deadline-title">ACA special enrollment</div>
-      <p class="deadline-desc">Job loss triggers a 60-day special enrollment period on Healthcare.gov. This is separate from COBRA — compare costs before deciding.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">60 days</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">ACA special enrollment</div>
+        <p class="deadline-note">Job loss triggers a 60-day special enrollment period on Healthcare.gov. This is separate from COBRA — compare costs before deciding.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">Varies</div>
-      <div class="deadline-title">Non-compete review</div>
-      <p class="deadline-desc">If you signed a non-compete, review its terms now. Enforceability varies dramatically by state — some states (like California) don't enforce them at all.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">Varies</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Non-compete review</div>
+        <p class="deadline-note">If you signed a non-compete, review its terms now. Enforceability varies dramatically by state — some states (like California) don't enforce them at all.</p>
+      </div>
     </div>
   </div>
-</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="section" style="background:var(--warm-white)">
+  <p class="section-label">Trusted resources</p>
+  <h2 class="section-title">Where to go <em>for help</em></h2>
+  <div class="resources-grid">
+    <a href="https://www.careeronestop.org" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">🏛️</div>
+      <div class="resource-sq-title">CareerOneStop</div>
+      <p class="resource-sq-desc">U.S. Department of Labor tool to find unemployment benefits, career services, and training by state.</p>
+      <span class="resource-sq-link">careeronestop.org →</span>
+    </a>
+    <a href="https://www.healthcare.gov" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">🏥</div>
+      <div class="resource-sq-title">Healthcare.gov</div>
+      <p class="resource-sq-desc">Enroll in marketplace health insurance after job loss. Special enrollment period available for 60 days.</p>
+      <span class="resource-sq-link">healthcare.gov →</span>
+    </a>
+    <a href="https://www.usa.gov/unemployment" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">🇺🇸</div>
+      <div class="resource-sq-title">USA.gov Unemployment</div>
+      <p class="resource-sq-desc">Official federal guide to unemployment benefits, eligibility, and how to file by state.</p>
+      <span class="resource-sq-link">usa.gov/unemployment →</span>
+    </a>
+    <a href="https://www.aarp.org/aarp-foundation" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">🤝</div>
+      <div class="resource-sq-title">AARP Foundation</div>
+      <p class="resource-sq-desc">Job search resources, skills training, and employment programs for workers over 50.</p>
+      <span class="resource-sq-link">aarp.org/aarp-foundation →</span>
+    </a>
+  </div>
+</section>
 
 <div class="section-divider"></div>
 
@@ -412,39 +474,6 @@
     </div>
   </div>
 </section>
-
-<div class="section-divider"></div>
-
-<div class="section">
-  <p class="section-label">National resources</p>
-  <h2 class="section-title">Trusted organizations<br><em>that can help</em></h2>
-  <div class="resources-grid">
-    <a href="https://www.careeronestop.org" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">🏛️</div>
-      <div class="resource-title">CareerOneStop</div>
-      <p class="resource-desc">U.S. Department of Labor tool to find unemployment benefits, career services, and training by state.</p>
-      <span class="resource-link">careeronestop.org →</span>
-    </a>
-    <a href="https://www.healthcare.gov" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">🏥</div>
-      <div class="resource-title">Healthcare.gov</div>
-      <p class="resource-desc">Enroll in marketplace health insurance after job loss. Special enrollment period available for 60 days.</p>
-      <span class="resource-link">healthcare.gov →</span>
-    </a>
-    <a href="https://www.usa.gov/unemployment" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">🇺🇸</div>
-      <div class="resource-title">USA.gov Unemployment</div>
-      <p class="resource-desc">Official federal guide to unemployment benefits, eligibility, and how to file by state.</p>
-      <span class="resource-link">usa.gov/unemployment →</span>
-    </a>
-    <a href="https://www.aarp.org/aarp-foundation" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">🤝</div>
-      <div class="resource-title">AARP Foundation</div>
-      <p class="resource-desc">Job search resources, skills training, and employment programs for workers over 50.</p>
-      <span class="resource-link">aarp.org/aarp-foundation →</span>
-    </a>
-  </div>
-</div>
 
 <div class="section-divider"></div>
 

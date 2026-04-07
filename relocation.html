@@ -24,7 +24,7 @@
   <meta name="twitter:description" content="Step-by-step guidance for navigating a move or relocation. Timelines, deadlines, and resources — all in one place."/>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How soon do I need to get a new driver's license?","acceptedAnswer":{"@type":"Answer","text":"It varies by state — from as few as 10 days to as many as 90 days after establishing residency. Check your new state's DMV website immediately after moving. Driving with an out-of-state license past the deadline can result in fines."}},{"@type":"Question","name":"Do I need to re-register my car?","acceptedAnswer":{"@type":"Answer","text":"Yes. Most states require vehicle registration within 30 days of establishing residency. You'll likely also need a state vehicle inspection or emissions test, which can take time to schedule."}},{"@type":"Question","name":"How do I transfer my kids' school records?","acceptedAnswer":{"@type":"Answer","text":"Contact your current school to request official records be sent to the new school. You'll typically need immunization records, transcripts, and any IEP or 504 plans. Start this process early — some transfers take several weeks."}},{"@type":"Question","name":"How long does mail forwarding last?","acceptedAnswer":{"@type":"Answer","text":"USPS mail forwarding lasts 12 months for first-class mail. After that, unforwarded mail is returned to sender. Use that year to update your address with every account, subscription, and institution."}},{"@type":"Question","name":"Do I need to update my will when I move states?","acceptedAnswer":{"@type":"Answer","text":"Yes — this is commonly overlooked. Estate laws, power of attorney rules, and healthcare directive requirements vary between states. A will that's valid in your old state may not work optimally in your new one."}},{"@type":"Question","name":"What if I need to break my lease?","acceptedAnswer":{"@type":"Answer","text":"Review your lease for early termination terms. Many states require only 30–60 days written notice with an early termination fee. Certain situations — military orders, domestic violence, and sometimes job relocation — have legal protections that may let you break a lease without penalty."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What documents do I need to update when I move to a new state?","acceptedAnswer":{"@type":"Answer","text":"In priority order: driver's license (10–90 days), vehicle registration (30 days), voter registration, USPS mail forwarding, insurance policies, bank accounts, and your will and legal documents."}},{"@type":"Question","name":"Will I owe taxes in two states if I move mid-year?","acceptedAnswer":{"@type":"Answer","text":"Likely yes. Most states require a part-year resident return in both states. Keep records of your exact move date and income earned in each state."}},{"@type":"Question","name":"What if I need to break my lease?","acceptedAnswer":{"@type":"Answer","text":"Review your lease for an early termination clause. Many leases allow you to break with 30–60 days notice plus a fee of 1–2 months’ rent. Military relocations, domestic violence, and uninhabitable conditions have legal protections."}},{"@type":"Question","name":"How do I find new doctors and transfer medical records?","acceptedAnswer":{"@type":"Answer","text":"Check your insurance directory for in-network doctors. Request medical records be sent to new providers — they must comply within 30 days under HIPAA. Get at least 90 days of prescription refills before moving."}},{"@type":"Question","name":"How much does it actually cost to move?","acceptedAnswer":{"@type":"Answer","text":"Local move: $800–$2,500 for professional movers. Long-distance: $2,500–$7,500+ depending on distance and volume. Budget for hidden costs like security deposits, utility fees, and registration fees."}},{"@type":"Question","name":"How do I transfer my kids to a new school?","acceptedAnswer":{"@type":"Answer","text":"Contact the new school district 4–6 weeks before. You’ll need proof of residency, immunization records, official transcripts, and any IEP or 504 plans. The new school must honor existing IEPs for 30 days."}}]}
   </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -62,40 +62,43 @@
     .btn-large-secondary:hover { border-color: var(--navy); color: var(--navy); transform: translateY(-2px); }
     .btn-large-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--navy); }
     .btn-large-outline:hover { background: var(--navy); color: var(--cream); transform: translateY(-2px); }
-    .section { width: 100%; padding: 64px 5%; }
+    .section { width: 100%; padding: 80px 5%; }
     .section-divider { width: 1px; height: 32px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
     .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
     .section-title { font-family: 'Libre Baskerville', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.15; margin-bottom: 36px; }
     .section-title em { font-style: italic; color: var(--accent-light); }
-    .timeline { display: flex; flex-direction: column; gap: 2px; }
-    .timeline-item { display: grid; grid-template-columns: 140px 1fr; background: var(--warm-white); border: 1px solid var(--border); }
-    .timeline-item:first-child { border-radius: 16px 16px 0 0; }
-    .timeline-item:last-child { border-radius: 0 0 16px 16px; }
-    .timeline-period { background: var(--navy); color: var(--cream); padding: 24px 20px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; font-weight: 500; line-height: 1.4; }
-    .timeline-content { padding: 24px 28px; }
-    .timeline-content h3 { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+    .timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+    .timeline::before { content: ''; position: absolute; left: 19px; top: 24px; bottom: 24px; width: 2px; background: linear-gradient(to bottom, var(--navy), var(--gold)); border-radius: 1px; }
+    .timeline-item { display: grid; grid-template-columns: 40px 1fr; gap: 0; position: relative; padding-bottom: 32px; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-step { display: flex; flex-direction: column; align-items: center; padding-top: 2px; position: relative; z-index: 1; }
+    .timeline-dot { width: 40px; height: 40px; border-radius: 50%; background: var(--navy); color: var(--cream); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; font-family: 'Libre Baskerville', serif; flex-shrink: 0; }
+
+    .timeline-period { display: inline-block; background: var(--navy); color: var(--cream); padding: 5px 14px; border-radius: 100px; font-size: 12px; font-weight: 500; letter-spacing: 0.03em; margin-bottom: 10px; }
+    .timeline-content { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; margin-left: 16px; }
+    .timeline-content h3 { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 500; margin-bottom: 10px; color: var(--text); }
     .timeline-content ul { list-style: none; }
     .timeline-content ul li { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.7; padding-left: 16px; position: relative; }
-    .timeline-content ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent-light); }
+    .timeline-content ul li::before { content: '\2192'; position: absolute; left: 0; color: var(--accent-light); }
 
     /* Timeline split layout */
-    .timeline-section { width: 100%; padding: 64px 5%; }
-    .timeline-layout { display: grid; grid-template-columns: 300px 1fr; gap: 48px; align-items: start; }
+    .timeline-section { width: 100%; padding: 80px 5% 64px; }
+    .timeline-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
     .timeline-sidebar { position: sticky; top: 100px; align-self: start; }
     .timeline-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
     .timeline-sidebar h2 em { font-style: italic; color: var(--accent-light); }
     .timeline-sidebar .section-label { margin-bottom: 12px; }
     .timeline-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
     /* FAQ split layout */
-    .faq-section { width: 100%; padding: 64px 5%; background: var(--cream); }
-    .faq-layout { display: grid; grid-template-columns: 300px 1fr; gap: 48px; align-items: start; }
+    .faq-section { width: 100%; padding: 80px 5%; background: var(--cream); }
+    .faq-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
     .faq-sidebar { position: sticky; top: 100px; align-self: start; }
     .faq-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
     .faq-sidebar h2 em { font-style: italic; color: var(--accent-light); }
     .faq-sidebar .section-label { margin-bottom: 12px; }
     .faq-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
     /* Action section split layout */
-    .action-section { width: 100%; padding: 64px 5%; background: var(--warm-white); }
+    .action-section { width: 100%; padding: 80px 5%; background: var(--warm-white); }
     .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
     .action-ctas h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 16px; }
     .action-ctas h2 em { font-style: italic; color: var(--accent-light); }
@@ -103,19 +106,26 @@
     .action-ctas p { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 32px; }
     .action-ctas .cta-buttons { display: flex; flex-direction: column; gap: 12px; }
 
-    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; border-top: 3px solid #C0392B; }
-    .deadline-days { font-family: 'Libre Baskerville', serif; font-size: 36px; font-weight: 300; color: #C0392B; line-height: 1; margin-bottom: 8px; }
-    .deadline-title { font-weight: 500; font-size: 15px; margin-bottom: 6px; }
-    .deadline-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
-    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.2s; text-decoration: none; display: block; }
-    .resource-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
-    .resource-icon { font-size: 24px; margin-bottom: 12px; }
-    .resource-title { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-    .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
-    .resource-link { font-size: 12px; color: var(--accent); margin-top: 8px; display: block; }
-    .cta-section { padding: 48px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
+
+    /* Deadlines */
+    .deadlines-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; max-width: 800px; }
+    .deadline-row { display: flex; gap: 20px; align-items: flex-start; padding: 20px 28px; border-bottom: 1px solid var(--border); }
+    .deadline-row:last-child { border-bottom: none; }
+    .deadline-time { font-family: 'Libre Baskerville', serif; font-size: 14px; font-weight: 600; color: #C0392B; white-space: nowrap; min-width: 80px; padding-top: 2px; }
+    .deadline-detail { flex: 1; min-width: 0; }
+    .deadline-name { font-weight: 500; font-size: 14px; color: var(--text); margin-bottom: 3px; }
+    .deadline-note { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+
+    /* Resources grid */
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .resource-square { background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 24px; text-decoration: none; display: flex; flex-direction: column; transition: all 0.2s; text-align: center; }
+    .resource-square:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
+    .resource-sq-icon { font-size: 28px; margin-bottom: 12px; }
+    .resource-sq-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .resource-sq-desc { font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 300; flex: 1; }
+    .resource-sq-link { font-size: 11px; color: var(--accent); margin-top: 10px; }
+
+    .cta-section { padding: 80px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
     .cta-title { font-family: 'Libre Baskerville', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
     .cta-title em { font-style: italic; color: var(--accent-light); }
     .cta-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
@@ -131,7 +141,7 @@
     .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
     .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-    @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
+    @media (max-width: 768px) { .resources-grid { grid-template-columns: 1fr 1fr; } nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { .resources-grid { grid-template-columns: 1fr; } nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
     /* Chat Preview */
     .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
     .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
@@ -148,10 +158,9 @@
     .cp-anim .cp-msg.cp-visible { opacity: 1; transform: translateY(0); }
     .chat-preview-cta { text-align: center; margin-top: 24px; }
     /* FAQ Accordion */
-    .faq-list { display: flex; flex-direction: column; gap: 2px; }
-    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; }
-    .faq-item:first-child { border-radius: 16px 16px 0 0; }
-    .faq-item:last-child { border-radius: 0 0 16px 16px; }
+    .faq-list { display: flex; flex-direction: column; gap: 8px; }
+    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; border-radius: 14px; }
+
     .faq-question { width: 100%; text-align: left; background: none; border: none; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; }
     .faq-question > span:first-child { flex: 1; min-width: 0; }
     .faq-question:hover { background: rgba(27,58,92,0.03); }
@@ -306,8 +315,10 @@
     <div class="timeline-phases">
       <div class="timeline reveal-stagger">
     <div class="timeline-item reveal">
-      <div class="timeline-period">6–8 weeks before</div>
-      <div class="timeline-content"><h3>Research and prepare</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">1</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">6–8 weeks before</div>
+        <h3>Research and prepare</h3><ul>
         <li>Research your new area: cost of living, schools, healthcare providers, neighborhoods</li>
         <li>Give notice to your landlord or list your home for sale</li>
         <li>Start transferring medical records and requesting prescription transfers</li>
@@ -315,8 +326,10 @@
       </ul></div>
     </div>
     <div class="timeline-item reveal">
-      <div class="timeline-period">2–4 weeks before</div>
-      <div class="timeline-content"><h3>Start the paperwork</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">2</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">2–4 weeks before</div>
+        <h3>Start the paperwork</h3><ul>
         <li>Set up mail forwarding through USPS (do this at least 2 weeks early)</li>
         <li>Call your auto insurance company — rates change by state and ZIP code</li>
         <li>Research your new state's requirements for driver's license and vehicle registration</li>
@@ -324,8 +337,10 @@
       </ul></div>
     </div>
     <div class="timeline-item reveal">
-      <div class="timeline-period">First week after</div>
-      <div class="timeline-content"><h3>Establish yourself</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">3</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">First week after</div>
+        <h3>Establish yourself</h3><ul>
         <li>Get your new driver's license and register your vehicles (check your state's deadline — some are as short as 10 days)</li>
         <li>Register to vote at your new address</li>
         <li>Find a new primary care doctor, dentist, and any specialists</li>
@@ -333,8 +348,10 @@
       </ul></div>
     </div>
     <div class="timeline-item reveal">
-      <div class="timeline-period">First 1–3 months</div>
-      <div class="timeline-content"><h3>Settle in</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">4</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">First 1–3 months</div>
+        <h3>Settle in</h3><ul>
         <li>Establish residency for tax purposes (important if you moved mid-year)</li>
         <li>Update your will and estate documents — state laws differ significantly</li>
         <li>Enroll kids in school and transfer records</li>
@@ -348,42 +365,87 @@
 
 <div class="section-divider"></div>
 
-<div class="section">
+<section class="section">
   <p class="section-label">Critical deadlines</p>
-  <h2 class="section-title">Don't miss these<br><em>time-sensitive steps</em></h2>
-  <div class="deadlines-grid">
-    <div class="deadline-card">
-      <div class="deadline-days">10–90 days</div>
-      <div class="deadline-title">Driver's license transfer</div>
-      <p class="deadline-desc">This varies wildly by state. Some (like Florida and Georgia) require transfer within 30 days. Others give you 90 days. A few require it within 10 days. Check your new state immediately.</p>
+  <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
+  <div class="deadlines-box">
+    <div class="deadline-row">
+      <span class="deadline-time">10–90 days</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Driver's license transfer</div>
+        <p class="deadline-note">This varies wildly by state. Some (like Florida and Georgia) require transfer within 30 days. Others give you 90 days. A few require it within 10 days. Check your new state immediately.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">30 days</div>
-      <div class="deadline-title">Vehicle registration</div>
-      <p class="deadline-desc">Most states require vehicle registration within 30 days of establishing residency. You may also need a new state inspection or emissions test.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">30 days</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Vehicle registration</div>
+        <p class="deadline-note">Most states require vehicle registration within 30 days of establishing residency. You may also need a new state inspection or emissions test.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">30 days</div>
-      <div class="deadline-title">Voter registration update</div>
-      <p class="deadline-desc">Update your registration at vote.org or your local election office. You'll need to re-register in your new state — your old registration doesn't transfer.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">30 days</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Voter registration update</div>
+        <p class="deadline-note">Update your registration at vote.org or your local election office. You'll need to re-register in your new state — your old registration doesn't transfer.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">Varies</div>
-      <div class="deadline-title">State income tax residency</div>
-      <p class="deadline-desc">If you move mid-year, you may owe income tax in both states. Rules for establishing residency vary — some states count days, others look at where your "domicile" is.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">Varies</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">State income tax residency</div>
+        <p class="deadline-note">If you move mid-year, you may owe income tax in both states. Rules for establishing residency vary — some states count days, others look at where your "domicile" is.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">60 days</div>
-      <div class="deadline-title">Insurance updates</div>
-      <p class="deadline-desc">Update homeowner's or renter's insurance for your new address. Auto insurance rates change by location — failing to update could void your coverage.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">60 days</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Insurance updates</div>
+        <p class="deadline-note">Update homeowner's or renter's insurance for your new address. Auto insurance rates change by location — failing to update could void your coverage.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">Before enrollment</div>
-      <div class="deadline-title">School registration</div>
-      <p class="deadline-desc">Contact your new school district early. You'll need immunization records, previous transcripts, and proof of residency. IEP/504 plans should be transferred as well.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">Before enrollment</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">School registration</div>
+        <p class="deadline-note">Contact your new school district early. You'll need immunization records, previous transcripts, and proof of residency. IEP/504 plans should be transferred as well.</p>
+      </div>
     </div>
   </div>
-</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="section" style="background:var(--warm-white)">
+  <p class="section-label">Trusted resources</p>
+  <h2 class="section-title">Where to go <em>for help</em></h2>
+  <div class="resources-grid">
+    <a href="https://www.usps.com/move" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">📬</div>
+      <div class="resource-sq-title">USPS Mail Forwarding</div>
+      <p class="resource-sq-desc">Set up official mail forwarding before your move. Covers first-class mail for 12 months.</p>
+      <span class="resource-sq-link">usps.com/move →</span>
+    </a>
+    <a href="https://www.dmv.org" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">🚗</div>
+      <div class="resource-sq-title">DMV.org</div>
+      <p class="resource-sq-desc">State-by-state guide to driver's license transfers, vehicle registration, and title requirements.</p>
+      <span class="resource-sq-link">dmv.org →</span>
+    </a>
+    <a href="https://www.greatschools.org" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">🏫</div>
+      <div class="resource-sq-title">GreatSchools.org</div>
+      <p class="resource-sq-desc">School ratings, reviews, and comparison tools to research schools in your new area.</p>
+      <span class="resource-sq-link">greatschools.org →</span>
+    </a>
+    <a href="https://www.vote.org" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">🗳️</div>
+      <div class="resource-sq-title">Vote.org</div>
+      <p class="resource-sq-desc">Register to vote or update your registration at your new address in minutes.</p>
+      <span class="resource-sq-link">vote.org →</span>
+    </a>
+  </div>
+</section>
 
 <div class="section-divider"></div>
 
@@ -412,39 +474,6 @@
     </div>
   </div>
 </section>
-
-<div class="section-divider"></div>
-
-<div class="section">
-  <p class="section-label">National resources</p>
-  <h2 class="section-title">Trusted organizations<br><em>that can help</em></h2>
-  <div class="resources-grid">
-    <a href="https://www.usps.com/move" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">📬</div>
-      <div class="resource-title">USPS Mail Forwarding</div>
-      <p class="resource-desc">Set up official mail forwarding before your move. Covers first-class mail for 12 months.</p>
-      <span class="resource-link">usps.com/move →</span>
-    </a>
-    <a href="https://www.dmv.org" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">🚗</div>
-      <div class="resource-title">DMV.org</div>
-      <p class="resource-desc">State-by-state guide to driver's license transfers, vehicle registration, and title requirements.</p>
-      <span class="resource-link">dmv.org →</span>
-    </a>
-    <a href="https://www.greatschools.org" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">🏫</div>
-      <div class="resource-title">GreatSchools.org</div>
-      <p class="resource-desc">School ratings, reviews, and comparison tools to research schools in your new area.</p>
-      <span class="resource-link">greatschools.org →</span>
-    </a>
-    <a href="https://www.vote.org" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">🗳️</div>
-      <div class="resource-title">Vote.org</div>
-      <p class="resource-desc">Register to vote or update your registration at your new address in minutes.</p>
-      <span class="resource-link">vote.org →</span>
-    </a>
-  </div>
-</div>
 
 <div class="section-divider"></div>
 

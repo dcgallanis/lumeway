@@ -24,7 +24,7 @@
   <meta name="twitter:description" content="Step-by-step guidance for navigating retirement. Timelines, deadlines, and resources — all in one place."/>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"When should I start taking Social Security?","acceptedAnswer":{"@type":"Answer","text":"You can claim as early as 62 (with a roughly 30% reduction), at your full retirement age of 66–67 (for most), or delay until 70 (earning about 8% more per year you wait). The best age depends on your health, other income sources, and whether you need the money now versus later."}},{"@type":"Question","name":"How do I sign up for Medicare?","acceptedAnswer":{"@type":"Answer","text":"Enroll during your Initial Enrollment Period, which starts 3 months before you turn 65 and ends 3 months after. You can enroll at Medicare.gov or your local Social Security office. If you miss this window, you face permanent late enrollment penalties."}},{"@type":"Question","name":"What's the difference between Original Medicare and Medicare Advantage?","acceptedAnswer":{"@type":"Answer","text":"Original Medicare (Parts A and B) is the federal program that covers hospital and medical services — you can see any provider that accepts Medicare. Medicare Advantage (Part C) is a private plan alternative that often includes extra benefits (dental, vision) but restricts you to a provider network."}},{"@type":"Question","name":"When do I have to start withdrawing from my retirement accounts?","acceptedAnswer":{"@type":"Answer","text":"Required Minimum Distributions from 401k and traditional IRA accounts must begin by April 1 of the year after you turn 73. The penalty for missing an RMD is 25% of the amount you should have withdrawn."}},{"@type":"Question","name":"Should I do a Roth conversion before retiring?","acceptedAnswer":{"@type":"Answer","text":"The years between retirement and age 73 (when RMDs start) can be an ideal window for Roth conversions, especially if you're in a lower tax bracket. But the right strategy depends on your individual circumstances — consult a CPA or financial advisor before making this decision."}},{"@type":"Question","name":"What happens to my employer health insurance when I retire?","acceptedAnswer":{"@type":"Answer","text":"If you retire before 65, you'll need bridge coverage — COBRA (up to 18 months), a marketplace plan, retiree benefits (if your employer offers them), or a spouse's plan. At 65, Medicare becomes your primary coverage regardless of other insurance."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"When should I claim Social Security — and how much does waiting matter?","acceptedAnswer":{"@type":"Answer","text":"If your full benefit at 67 is $2,000/month: claiming at 62 drops it to ~$1,400. Waiting until 70 increases it to ~$2,480. That's a $1,080/month difference for life. The break-even point is around age 80."}},{"@type":"Question","name":"What happens if I miss my Medicare enrollment window?","acceptedAnswer":{"@type":"Answer","text":"Your Part B premium increases by 10% for every 12 months you were eligible but didn't enroll — and you pay that higher premium for life. Your Initial Enrollment Period is 7 months total, starting 3 months before your 65th birthday."}},{"@type":"Question","name":"How much should I budget for healthcare in retirement?","acceptedAnswer":{"@type":"Answer","text":"The average 65-year-old couple will spend approximately $315,000 on healthcare throughout retirement. Budget for Medicare Part B ($185/month), Part D drug coverage, supplemental insurance, and dental/vision."}},{"@type":"Question","name":"What are Required Minimum Distributions and when do they start?","acceptedAnswer":{"@type":"Answer","text":"RMDs are mandatory annual withdrawals from 401k and traditional IRA accounts starting at age 73. The penalty for missing one is 25% of what you should have withdrawn. Roth IRAs have no RMDs during your lifetime."}},{"@type":"Question","name":"How do my taxes change in retirement?","acceptedAnswer":{"@type":"Answer","text":"401k and IRA withdrawals are taxed as ordinary income. Up to 85% of Social Security may be taxable. The years between retirement and age 73 are often the lowest-tax years of your life — ideal for Roth conversions and tax planning."}},{"@type":"Question","name":"What happens to my health insurance if I retire before 65?","acceptedAnswer":{"@type":"Answer","text":"Options include COBRA (up to 18 months), marketplace plans where reduced income may qualify you for subsidies, retiree benefits if offered, or a spouse's plan. At 65, Medicare kicks in. Plan this before setting your retirement date."}}]}
   </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -62,40 +62,43 @@
     .btn-large-secondary:hover { border-color: var(--navy); color: var(--navy); transform: translateY(-2px); }
     .btn-large-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--navy); }
     .btn-large-outline:hover { background: var(--navy); color: var(--cream); transform: translateY(-2px); }
-    .section { width: 100%; padding: 64px 5%; }
+    .section { width: 100%; padding: 80px 5%; }
     .section-divider { width: 1px; height: 32px; background: linear-gradient(to bottom, transparent, var(--border), transparent); margin: 0 auto; }
     .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
     .section-title { font-family: 'Libre Baskerville', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.15; margin-bottom: 36px; }
     .section-title em { font-style: italic; color: var(--accent-light); }
-    .timeline { display: flex; flex-direction: column; gap: 2px; }
-    .timeline-item { display: grid; grid-template-columns: 140px 1fr; background: var(--warm-white); border: 1px solid var(--border); }
-    .timeline-item:first-child { border-radius: 16px 16px 0 0; }
-    .timeline-item:last-child { border-radius: 0 0 16px 16px; }
-    .timeline-period { background: var(--navy); color: var(--cream); padding: 24px 20px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; font-weight: 500; line-height: 1.4; }
-    .timeline-content { padding: 24px 28px; }
-    .timeline-content h3 { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+    .timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+    .timeline::before { content: ''; position: absolute; left: 19px; top: 24px; bottom: 24px; width: 2px; background: linear-gradient(to bottom, var(--navy), var(--gold)); border-radius: 1px; }
+    .timeline-item { display: grid; grid-template-columns: 40px 1fr; gap: 0; position: relative; padding-bottom: 32px; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-step { display: flex; flex-direction: column; align-items: center; padding-top: 2px; position: relative; z-index: 1; }
+    .timeline-dot { width: 40px; height: 40px; border-radius: 50%; background: var(--navy); color: var(--cream); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; font-family: 'Libre Baskerville', serif; flex-shrink: 0; }
+
+    .timeline-period { display: inline-block; background: var(--navy); color: var(--cream); padding: 5px 14px; border-radius: 100px; font-size: 12px; font-weight: 500; letter-spacing: 0.03em; margin-bottom: 10px; }
+    .timeline-content { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; margin-left: 16px; }
+    .timeline-content h3 { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 500; margin-bottom: 10px; color: var(--text); }
     .timeline-content ul { list-style: none; }
     .timeline-content ul li { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.7; padding-left: 16px; position: relative; }
-    .timeline-content ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent-light); }
+    .timeline-content ul li::before { content: '\2192'; position: absolute; left: 0; color: var(--accent-light); }
 
     /* Timeline split layout */
-    .timeline-section { width: 100%; padding: 64px 5%; }
-    .timeline-layout { display: grid; grid-template-columns: 300px 1fr; gap: 48px; align-items: start; }
+    .timeline-section { width: 100%; padding: 80px 5% 64px; }
+    .timeline-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
     .timeline-sidebar { position: sticky; top: 100px; align-self: start; }
     .timeline-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
     .timeline-sidebar h2 em { font-style: italic; color: var(--accent-light); }
     .timeline-sidebar .section-label { margin-bottom: 12px; }
     .timeline-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
     /* FAQ split layout */
-    .faq-section { width: 100%; padding: 64px 5%; background: var(--cream); }
-    .faq-layout { display: grid; grid-template-columns: 300px 1fr; gap: 48px; align-items: start; }
+    .faq-section { width: 100%; padding: 80px 5%; background: var(--cream); }
+    .faq-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
     .faq-sidebar { position: sticky; top: 100px; align-self: start; }
     .faq-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
     .faq-sidebar h2 em { font-style: italic; color: var(--accent-light); }
     .faq-sidebar .section-label { margin-bottom: 12px; }
     .faq-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
     /* Action section split layout */
-    .action-section { width: 100%; padding: 64px 5%; background: var(--warm-white); }
+    .action-section { width: 100%; padding: 80px 5%; background: var(--warm-white); }
     .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
     .action-ctas h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 16px; }
     .action-ctas h2 em { font-style: italic; color: var(--accent-light); }
@@ -103,19 +106,26 @@
     .action-ctas p { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 32px; }
     .action-ctas .cta-buttons { display: flex; flex-direction: column; gap: 12px; }
 
-    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .deadline-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; border-top: 3px solid #C0392B; }
-    .deadline-days { font-family: 'Libre Baskerville', serif; font-size: 36px; font-weight: 300; color: #C0392B; line-height: 1; margin-bottom: 8px; }
-    .deadline-title { font-weight: 500; font-size: 15px; margin-bottom: 6px; }
-    .deadline-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
-    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .resource-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.2s; text-decoration: none; display: block; }
-    .resource-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
-    .resource-icon { font-size: 24px; margin-bottom: 12px; }
-    .resource-title { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-    .resource-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
-    .resource-link { font-size: 12px; color: var(--accent); margin-top: 8px; display: block; }
-    .cta-section { padding: 48px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
+
+    /* Deadlines */
+    .deadlines-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; max-width: 800px; }
+    .deadline-row { display: flex; gap: 20px; align-items: flex-start; padding: 20px 28px; border-bottom: 1px solid var(--border); }
+    .deadline-row:last-child { border-bottom: none; }
+    .deadline-time { font-family: 'Libre Baskerville', serif; font-size: 14px; font-weight: 600; color: #C0392B; white-space: nowrap; min-width: 80px; padding-top: 2px; }
+    .deadline-detail { flex: 1; min-width: 0; }
+    .deadline-name { font-weight: 500; font-size: 14px; color: var(--text); margin-bottom: 3px; }
+    .deadline-note { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+
+    /* Resources grid */
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .resource-square { background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 24px; text-decoration: none; display: flex; flex-direction: column; transition: all 0.2s; text-align: center; }
+    .resource-square:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent-light); }
+    .resource-sq-icon { font-size: 28px; margin-bottom: 12px; }
+    .resource-sq-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .resource-sq-desc { font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 300; flex: 1; }
+    .resource-sq-link { font-size: 11px; color: var(--accent); margin-top: 10px; }
+
+    .cta-section { padding: 80px 24px; max-width: 700px; margin: 0 auto; text-align: center; }
     .cta-title { font-family: 'Libre Baskerville', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
     .cta-title em { font-style: italic; color: var(--accent-light); }
     .cta-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
@@ -131,7 +141,7 @@
     .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
     .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-    @media (max-width: 768px) { nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
+    @media (max-width: 768px) { .resources-grid { grid-template-columns: 1fr 1fr; } nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } .timeline-item { grid-template-columns: 90px 1fr; } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { .resources-grid { grid-template-columns: 1fr; } nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
     /* Chat Preview */
     .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
     .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
@@ -148,10 +158,9 @@
     .cp-anim .cp-msg.cp-visible { opacity: 1; transform: translateY(0); }
     .chat-preview-cta { text-align: center; margin-top: 24px; }
     /* FAQ Accordion */
-    .faq-list { display: flex; flex-direction: column; gap: 2px; }
-    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; }
-    .faq-item:first-child { border-radius: 16px 16px 0 0; }
-    .faq-item:last-child { border-radius: 0 0 16px 16px; }
+    .faq-list { display: flex; flex-direction: column; gap: 8px; }
+    .faq-item { background: var(--warm-white); border: 1px solid var(--border); overflow: hidden; border-radius: 14px; }
+
     .faq-question { width: 100%; text-align: left; background: none; border: none; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; }
     .faq-question > span:first-child { flex: 1; min-width: 0; }
     .faq-question:hover { background: rgba(27,58,92,0.03); }
@@ -306,8 +315,10 @@
     <div class="timeline-phases">
       <div class="timeline reveal-stagger">
     <div class="timeline-item reveal">
-      <div class="timeline-period">1–2 years before</div>
-      <div class="timeline-content"><h3>Plan and project</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">1</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">1–2 years before</div>
+        <h3>Plan and project</h3><ul>
         <li>Estimate your Social Security benefits at different claiming ages (use ssa.gov/myaccount)</li>
         <li>Review all retirement accounts: 401k, IRA, pension, brokerage accounts</li>
         <li>Meet with a fee-only financial advisor to stress-test your retirement plan</li>
@@ -315,8 +326,10 @@
       </ul></div>
     </div>
     <div class="timeline-item reveal">
-      <div class="timeline-period">6–12 months before</div>
-      <div class="timeline-content"><h3>Make key decisions</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">2</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">6–12 months before</div>
+        <h3>Make key decisions</h3><ul>
         <li>Decide your Social Security claiming strategy (62 = reduced, 67 = full, 70 = maximum)</li>
         <li>Create a detailed retirement budget — include healthcare, taxes, and inflation</li>
         <li>Plan for the health insurance gap if retiring before 65 (COBRA, marketplace, or spouse's plan)</li>
@@ -324,8 +337,10 @@
       </ul></div>
     </div>
     <div class="timeline-item reveal">
-      <div class="timeline-period">3 months before 65</div>
-      <div class="timeline-content"><h3>Medicare enrollment</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">3</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">3 months before 65</div>
+        <h3>Medicare enrollment</h3><ul>
         <li>Enroll in Medicare during your Initial Enrollment Period (starts 3 months before your 65th birthday)</li>
         <li>Choose between Original Medicare (Parts A &amp; B) and Medicare Advantage (Part C)</li>
         <li>Evaluate Medigap supplemental plans if choosing Original Medicare</li>
@@ -333,8 +348,10 @@
       </ul></div>
     </div>
     <div class="timeline-item reveal">
-      <div class="timeline-period">After retirement</div>
-      <div class="timeline-content"><h3>Manage and adjust</h3><ul>
+      <div class="timeline-step"><div class="timeline-dot">4</div></div>
+      <div class="timeline-content">
+        <div class="timeline-period">After retirement</div>
+        <h3>Manage and adjust</h3><ul>
         <li>Begin Required Minimum Distributions (RMDs) from retirement accounts at age 73</li>
         <li>Review and update your estate plan (will, trust, power of attorney, healthcare directive)</li>
         <li>Track actual spending vs. your budget for the first year — adjust as needed</li>
@@ -348,42 +365,87 @@
 
 <div class="section-divider"></div>
 
-<div class="section">
+<section class="section">
   <p class="section-label">Critical deadlines</p>
-  <h2 class="section-title">Don't miss these<br><em>time-sensitive steps</em></h2>
-  <div class="deadlines-grid">
-    <div class="deadline-card">
-      <div class="deadline-days">7-month window</div>
-      <div class="deadline-title">Medicare Initial Enrollment Period</div>
-      <p class="deadline-desc">Starts 3 months before you turn 65 and ends 3 months after. Missing this window triggers a late enrollment penalty that increases your Part B premium by 10% for every 12 months you were eligible but didn't enroll — and it's permanent.</p>
+  <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
+  <div class="deadlines-box">
+    <div class="deadline-row">
+      <span class="deadline-time">7-month window</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Medicare Initial Enrollment Period</div>
+        <p class="deadline-note">Starts 3 months before you turn 65 and ends 3 months after. Missing this window triggers a late enrollment penalty that increases your Part B premium by 10% for every 12 months you were eligible but didn't enroll — and it's permanent.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">Age 62 / 67 / 70</div>
-      <div class="deadline-title">Social Security claiming decision</div>
-      <p class="deadline-desc">Benefits are reduced ~30% if you claim at 62. Full benefits at 67 (for most). Delayed credits of 8% per year if you wait until 70. Once you claim, you can only undo it within 12 months.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">Age 62 / 67 / 70</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Social Security claiming decision</div>
+        <p class="deadline-note">Benefits are reduced ~30% if you claim at 62. Full benefits at 67 (for most). Delayed credits of 8% per year if you wait until 70. Once you claim, you can only undo it within 12 months.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">Age 73</div>
-      <div class="deadline-title">Required Minimum Distributions</div>
-      <p class="deadline-desc">RMDs from 401k and traditional IRA accounts must begin by April 1 of the year after you turn 73. The penalty for missing an RMD is 25% of the amount you should have withdrawn.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">Age 73</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Required Minimum Distributions</div>
+        <p class="deadline-note">RMDs from 401k and traditional IRA accounts must begin by April 1 of the year after you turn 73. The penalty for missing an RMD is 25% of the amount you should have withdrawn.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">Oct 15 – Dec 7</div>
-      <div class="deadline-title">Medicare open enrollment</div>
-      <p class="deadline-desc">This is your annual window to switch Medicare Advantage plans, change from Advantage to Original (or vice versa), and change Part D drug plans. Review your plan every year — formularies and costs change.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">Oct 15 – Dec 7</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Medicare open enrollment</div>
+        <p class="deadline-note">This is your annual window to switch Medicare Advantage plans, change from Advantage to Original (or vice versa), and change Part D drug plans. Review your plan every year — formularies and costs change.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">Varies</div>
-      <div class="deadline-title">Pension election deadline</div>
-      <p class="deadline-desc">If you have a pension, you'll need to choose a payout option (lump sum vs. annuity, single life vs. joint survivor). This is often irrevocable — take your time and consult a financial advisor.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">Varies</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Pension election deadline</div>
+        <p class="deadline-note">If you have a pension, you'll need to choose a payout option (lump sum vs. annuity, single life vs. joint survivor). This is often irrevocable — take your time and consult a financial advisor.</p>
+      </div>
     </div>
-    <div class="deadline-card">
-      <div class="deadline-days">Year of retirement</div>
-      <div class="deadline-title">Tax planning window</div>
-      <p class="deadline-desc">The year you retire is often the best time for Roth conversions, tax-loss harvesting, and other strategies. Work with a CPA or tax advisor before year-end.</p>
+    <div class="deadline-row">
+      <span class="deadline-time">Year of retirement</span>
+      <div class="deadline-detail">
+        <div class="deadline-name">Tax planning window</div>
+        <p class="deadline-note">The year you retire is often the best time for Roth conversions, tax-loss harvesting, and other strategies. Work with a CPA or tax advisor before year-end.</p>
+      </div>
     </div>
   </div>
-</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="section" style="background:var(--warm-white)">
+  <p class="section-label">Trusted resources</p>
+  <h2 class="section-title">Where to go <em>for help</em></h2>
+  <div class="resources-grid">
+    <a href="https://www.ssa.gov/benefits/retirement" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">🏛️</div>
+      <div class="resource-sq-title">SSA.gov Retirement</div>
+      <p class="resource-sq-desc">Estimate your Social Security benefits, apply online, and learn about claiming strategies.</p>
+      <span class="resource-sq-link">ssa.gov/benefits/retirement →</span>
+    </a>
+    <a href="https://www.medicare.gov" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">🏥</div>
+      <div class="resource-sq-title">Medicare.gov</div>
+      <p class="resource-sq-desc">Official Medicare enrollment, plan comparison tool, and coverage information.</p>
+      <span class="resource-sq-link">medicare.gov →</span>
+    </a>
+    <a href="https://www.aarp.org/retirement" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">📊</div>
+      <div class="resource-sq-title">AARP Retirement</div>
+      <p class="resource-sq-desc">Retirement planning calculators, guides, and resources for every stage.</p>
+      <span class="resource-sq-link">aarp.org/retirement →</span>
+    </a>
+    <a href="https://www.consumerfinance.gov/consumer-tools/retirement" target="_blank" class="resource-square">
+      <div class="resource-sq-icon">💰</div>
+      <div class="resource-sq-title">Consumer Financial Protection Bureau</div>
+      <p class="resource-sq-desc">Independent federal guide to retirement planning, avoiding scams, and managing your money.</p>
+      <span class="resource-sq-link">consumerfinance.gov →</span>
+    </a>
+  </div>
+</section>
 
 <div class="section-divider"></div>
 
@@ -412,39 +474,6 @@
     </div>
   </div>
 </section>
-
-<div class="section-divider"></div>
-
-<div class="section">
-  <p class="section-label">National resources</p>
-  <h2 class="section-title">Trusted organizations<br><em>that can help</em></h2>
-  <div class="resources-grid">
-    <a href="https://www.ssa.gov/benefits/retirement" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">🏛️</div>
-      <div class="resource-title">SSA.gov Retirement</div>
-      <p class="resource-desc">Estimate your Social Security benefits, apply online, and learn about claiming strategies.</p>
-      <span class="resource-link">ssa.gov/benefits/retirement →</span>
-    </a>
-    <a href="https://www.medicare.gov" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">🏥</div>
-      <div class="resource-title">Medicare.gov</div>
-      <p class="resource-desc">Official Medicare enrollment, plan comparison tool, and coverage information.</p>
-      <span class="resource-link">medicare.gov →</span>
-    </a>
-    <a href="https://www.aarp.org/retirement" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">📊</div>
-      <div class="resource-title">AARP Retirement</div>
-      <p class="resource-desc">Retirement planning calculators, guides, and resources for every stage.</p>
-      <span class="resource-link">aarp.org/retirement →</span>
-    </a>
-    <a href="https://www.consumerfinance.gov/consumer-tools/retirement" target="_blank" rel="noopener noreferrer" class="resource-card">
-      <div class="resource-icon">💰</div>
-      <div class="resource-title">Consumer Financial Protection Bureau</div>
-      <p class="resource-desc">Independent federal guide to retirement planning, avoiding scams, and managing your money.</p>
-      <span class="resource-link">consumerfinance.gov →</span>
-    </a>
-  </div>
-</div>
 
 <div class="section-divider"></div>
 

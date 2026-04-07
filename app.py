@@ -1490,6 +1490,10 @@ p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:24px}
 def templates():
     return send_from_directory(".", "templates.html")
 
+@app.route("/templates/individual")
+def individual_templates():
+    return send_from_directory(".", "individual-templates.html")
+
 @app.route("/templates/<product_id>")
 def template_detail(product_id):
     if product_id not in PRODUCTS:
