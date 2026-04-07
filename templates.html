@@ -33,8 +33,11 @@
     .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
     .btn-ghost:hover { background: var(--navy); color: var(--cream); }
     .btn-primary { padding: 8px 20px; border: none; border-radius: 8px; background: var(--accent); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
-    .nav-left { display: flex; align-items: center; gap: 28px; }
-    .nav-right { display: flex; gap: 12px; align-items: center; }
+    .nav-left { display: flex; align-items: center; gap: 36px; }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-right { display: flex; gap: 10px; align-items: center; }
+    .nav-link { font-size: 14px; color: var(--muted); text-decoration: none; padding: 6px 12px; transition: color 0.15s; font-weight: 400; }
+    .nav-link:hover { color: var(--navy); }
     .nav-dropdown { position: relative; }
     .nav-drop-btn { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
     .nav-drop-btn:hover { color: var(--navy); }
@@ -123,7 +126,11 @@
     .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
     .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-    @media (max-width: 768px) { .featured-card { flex-direction: column; gap: 24px; } .featured-preview { padding: 20px; } .bundle-row, .bundle-row-reverse { grid-template-columns: 1fr; gap: 32px; } .bundle-row-reverse .bundle-image { order: 0; } .bundle-row-reverse .bundle-content { order: 0; } }
+    /* Cart notification */
+    .cart-toast { position: fixed; top: 80px; right: 24px; background: #2d6a4f; color: white; padding: 14px 24px; border-radius: 12px; font-size: 14px; z-index: 9999; box-shadow: 0 4px 20px rgba(0,0,0,0.15); transform: translateX(120%); transition: transform 0.3s ease; }
+    .cart-toast.show { transform: translateX(0); }
+
+    @media (max-width: 768px) { .featured-card { flex-direction: column; gap: 24px; } .featured-preview { padding: 20px; } .bundle-row, .bundle-row-reverse { grid-template-columns: 1fr; gap: 32px; } .bundle-row-reverse .bundle-image { order: 0; } .bundle-row-reverse .bundle-content { order: 0; } .template-carousel-wrap { max-width: 100%; } }
     @media (max-width: 640px) { nav { padding: 16px 20px; } .featured-includes { grid-template-columns: 1fr; } .cta-block { padding: 32px 5%; } }
   </style>
 <script type="application/ld+json">
@@ -148,10 +155,11 @@
           <a href="/retirement">Retirement</a>
         </div>
       </div>
+      <a href="/features" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--muted);text-decoration:none;padding:6px 4px;transition:color 0.15s;" onmouseover="this.style.color='var(--navy)'" onmouseout="this.style.color='var(--muted)'">Features</a>
+
       <div class="nav-dropdown">
         <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">▾</span></button>
         <div class="nav-drop-menu">
-          <a href="/features">Features</a>
           <a href="/templates">Shop</a>
           <a href="/faq">FAQ</a>
           <a href="/blog">Blog</a>
@@ -164,9 +172,10 @@
       </div>
     </div>
     <div class="nav-right">
-      <a href="/chat" target="_blank" class="btn-ghost">Try it free</a>
-      <a href="/templates" class="btn-primary">Shop</a>
       <a href="/login" class="btn-ghost" id="navAccount">Log in</a>
+      <a href="/templates" class="btn-ghost">Shop</a>
+      <a href="/chat" target="_blank" class="btn-primary">Try it free</a>
+      <a href="/cart" class="btn-ghost" title="Cart" style="font-size:18px;">&#128722;</a>
     </div>
   </nav>
 
@@ -199,8 +208,8 @@
         <div class="featured-price">$36 <span>one-time</span></div>
         <div class="featured-savings">Save $60 vs. buying bundles separately</div>
         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-          <a href="/templates/master" class="btn-buy" style="text-decoration:none;">Add to Cart — $36</a>
-          <a href="/templates/individual#jobloss" style="font-size:13.5px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:1px solid var(--border);padding-bottom:2px;">or shop individual templates</a>
+          <button class="btn-buy" onclick="addToCart('master-bundle','Life Transition Bundle',36,'bundle')">Add to Cart — $36</button>
+          <a href="/templates/individual" style="font-size:13.5px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:1px solid var(--border);padding-bottom:2px;">or shop individual templates</a>
         </div>
       </div>
     </div>
@@ -228,8 +237,8 @@
         </ul>
         <div class="bundle-price">$16 <span>one-time</span></div>
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-          <a href="/templates/job-loss" class="btn-buy" style="text-decoration:none;">Add to Cart — $16</a>
-          <a href="/templates/individual#jobloss" style="font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:1px solid var(--border);padding-bottom:2px;">or shop individual templates</a>
+          <button class="btn-buy" onclick="addToCart('bundle-jobloss','Job Loss Survivor Kit',16,'bundle')">Add to Cart — $16</button>
+          <a href="/templates/individual#job-loss" style="font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:1px solid var(--border);padding-bottom:2px;">or shop individual templates</a>
         </div>
       </div>
     </div>
@@ -252,7 +261,7 @@
         </ul>
         <div class="bundle-price">$16 <span>one-time</span></div>
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-          <a href="/templates/estate" class="btn-buy" style="text-decoration:none;">Add to Cart — $16</a>
+          <button class="btn-buy" onclick="addToCart('bundle-estate','Estate &amp; Survivor Bundle',16,'bundle')">Add to Cart — $16</button>
           <a href="/templates/individual#estate" style="font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:1px solid var(--border);padding-bottom:2px;">or shop individual templates</a>
         </div>
       </div>
@@ -276,7 +285,7 @@
         </ul>
         <div class="bundle-price">$16 <span>one-time</span></div>
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-          <a href="/templates/divorce" class="btn-buy" style="text-decoration:none;">Add to Cart — $16</a>
+          <button class="btn-buy" onclick="addToCart('bundle-divorce','Divorce &amp; Separation Bundle',16,'bundle')">Add to Cart — $16</button>
           <a href="/templates/individual#divorce" style="font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:1px solid var(--border);padding-bottom:2px;">or shop individual templates</a>
         </div>
       </div>
@@ -300,7 +309,7 @@
         </ul>
         <div class="bundle-price">$16 <span>one-time</span></div>
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-          <a href="/templates/disability" class="btn-buy" style="text-decoration:none;">Add to Cart — $16</a>
+          <button class="btn-buy" onclick="addToCart('bundle-disability','Disability &amp; Benefits Bundle',16,'bundle')">Add to Cart — $16</button>
           <a href="/templates/individual#disability" style="font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:1px solid var(--border);padding-bottom:2px;">or shop individual templates</a>
         </div>
       </div>
@@ -324,7 +333,7 @@
         </ul>
         <div class="bundle-price">$16 <span>one-time</span></div>
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-          <a href="/templates/relocation" class="btn-buy" style="text-decoration:none;">Add to Cart — $16</a>
+          <button class="btn-buy" onclick="addToCart('bundle-relocation','Moving &amp; Relocation Bundle',16,'bundle')">Add to Cart — $16</button>
           <a href="/templates/individual#relocation" style="font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:1px solid var(--border);padding-bottom:2px;">or shop individual templates</a>
         </div>
       </div>
@@ -348,7 +357,7 @@
         </ul>
         <div class="bundle-price">$16 <span>one-time</span></div>
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-          <a href="/templates/retirement" class="btn-buy" style="text-decoration:none;">Add to Cart — $16</a>
+          <button class="btn-buy" onclick="addToCart('bundle-retirement','Retirement Planning Bundle',16,'bundle')">Add to Cart — $16</button>
           <a href="/templates/individual#retirement" style="font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:1px solid var(--border);padding-bottom:2px;">or shop individual templates</a>
         </div>
       </div>
@@ -377,7 +386,7 @@
 
   <div class="cta-block reveal">
     <div class="cta-title">Not sure which bundle you need?</div>
-    <p class="cta-subtitle">Tell Lumeway what you are going through and get personalized guidance — free.</p>
+    <p class="cta-subtitle">Describe what you are going through and get worksheet recommendations — free.</p>
     <a href="/chat" target="_blank" class="btn-large">Start a conversation →</a>
   </div>
 
@@ -482,5 +491,41 @@
 (function(){var r=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){r.forEach(function(e){e.classList.add('visible')});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('visible');o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();
 </script>
 <script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>
+<script>
+  // Add to cart function
+  function addToCart(productId, name, price, type) {
+    var btn = event.target;
+    btn.disabled = true;
+    var origText = btn.textContent;
+    btn.textContent = 'Adding...';
+    fetch('/api/cart/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product_id: productId, name: name, price: price, type: type })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      btn.textContent = '✓ Added';
+      showToast(name + ' added to cart');
+      setTimeout(function() { btn.disabled = false; btn.textContent = origText; }, 2000);
+    })
+    .catch(function() {
+      alert('Something went wrong. Please try again.');
+      btn.disabled = false;
+      btn.textContent = origText;
+    });
+  }
+
+  function showToast(msg) {
+    var existing = document.querySelector('.cart-toast');
+    if (existing) existing.remove();
+    var toast = document.createElement('div');
+    toast.className = 'cart-toast';
+    toast.innerHTML = msg + ' &nbsp;<a href="/cart" style="color:white;font-weight:600;text-decoration:underline;">View Cart →</a>';
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.classList.add('show'); }, 10);
+    setTimeout(function() { toast.classList.remove('show'); setTimeout(function() { toast.remove(); }, 300); }, 4000);
+  }
+</script>
 </body>
 </html>
