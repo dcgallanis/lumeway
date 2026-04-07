@@ -1865,6 +1865,8 @@ def download_file_purchase(token):
 
 PURCHASE_SUCCESS_HTML = """<!DOCTYPE html>
 <html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QHWJDRDR9R"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-QHWJDRDR9R');gtag('event','purchase',{item_name:'{{ product_name }}'});</script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Purchase Complete — Lumeway</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -3009,6 +3011,7 @@ Based on what was actually discussed, create a checklist of tasks the user needs
 Use this exact structure:
 {
   "transition_type": "estate|divorce|job-loss|relocation|disability|retirement",
+  "user_state": "Two-letter state abbreviation if mentioned (e.g. CA, NY) or null",
   "tasks": [
     {"phase": "This Week", "items": ["Specific task from conversation"]},
     {"phase": "This Month", "items": ["Another specific task"]},
@@ -3074,6 +3077,21 @@ Make tasks SPECIFIC to what was discussed — not generic. If they mentioned kid
                 target = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%d")
             db_execute(conn, f"INSERT INTO user_goals (user_id, title, timeframe, target_date, created_at) VALUES ({param},{param},{param},{param},{param})",
                 (user["id"], goal.get("title", ""), goal.get("timeframe", "weekly"), target, now))
+
+        # Auto-populate user state and transition type from chat
+        extracted_state = plan.get("user_state")
+        if extracted_state or t_type != "general":
+            update_fields = []
+            update_vals = []
+            if t_type and t_type != "general" and not user.get("transition_type"):
+                update_fields.append(f"transition_type = {param}")
+                update_vals.append(t_type)
+            if extracted_state and not user.get("us_state"):
+                update_fields.append(f"us_state = {param}")
+                update_vals.append(extracted_state.upper()[:5])
+            if update_fields:
+                update_vals.append(user["id"])
+                db_execute(conn, f"UPDATE users SET {', '.join(update_fields)} WHERE id = {param}", tuple(update_vals))
 
         conn.commit()
         conn.close()
@@ -3229,6 +3247,50 @@ def update_deadline(deadline_id):
     conn.commit()
     conn.close()
     return jsonify({"ok": True})
+
+
+@app.route("/api/deadlines/export.ics")
+def export_deadlines_ics():
+    user = get_current_user()
+    if not user:
+        return "Not logged in", 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id, transition_type, title, deadline_date, note, is_completed FROM user_deadlines WHERE user_id = {param} ORDER BY deadline_date", (user["id"],))
+    rows = cur.fetchall()
+    conn.close()
+
+    lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Lumeway//Deadlines//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "X-WR-CALNAME:Lumeway Deadlines",
+    ]
+    for r in rows:
+        dl_id, t_type, title, dl_date, note, is_completed = r
+        if not dl_date:
+            continue
+        date_clean = dl_date.replace("-", "")
+        lines.append("BEGIN:VEVENT")
+        lines.append(f"UID:deadline-{dl_id}@lumeway.co")
+        lines.append(f"DTSTART;VALUE=DATE:{date_clean}")
+        lines.append(f"SUMMARY:{_ics_escape(title)}")
+        if note:
+            lines.append(f"DESCRIPTION:{_ics_escape(note)}")
+        if t_type:
+            lines.append(f"CATEGORIES:{t_type}")
+        lines.append(f"STATUS:{'COMPLETED' if is_completed else 'CONFIRMED'}")
+        lines.append("END:VEVENT")
+    lines.append("END:VCALENDAR")
+
+    ics_text = "\r\n".join(lines)
+    return Response(ics_text, mimetype="text/calendar", headers={"Content-Disposition": "attachment; filename=lumeway-deadlines.ics"})
+
+def _ics_escape(text):
+    """Escape text for iCalendar format."""
+    return text.replace("\\", "\\\\").replace(",", "\\,").replace(";", "\\;").replace("\n", "\\n")
 
 
 # ── Documents Needed API ──

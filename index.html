@@ -1077,7 +1077,11 @@
               try {
                 const doneData = JSON.parse(payload.slice(6));
                 history = doneData.history || doneData;
-                if (doneData.session_id) sessionId = doneData.session_id;
+                if (doneData.session_id) {
+                  var isNewSession = !sessionId;
+                  sessionId = doneData.session_id;
+                  if (isNewSession && typeof gtag === 'function') gtag('event', 'chat_started');
+                }
               } catch(e) {}
             } else {
               // Decode \n back to real newlines (backend encodes them to avoid SSE line-splitting)
@@ -1394,6 +1398,7 @@ ${data.suggestedDocs && data.suggestedDocs.length ? `
       });
       var data = await res.json();
       if (data.ok) {
+        if (typeof gtag === 'function') gtag('event', 'save_to_dashboard');
         btn.textContent = '✓ Saved!';
         setTimeout(function() {
           btn.textContent = '💾 Save to Dashboard';

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QHWJDRDR9R"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-QHWJDRDR9R');</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Log In — Lumeway</title>
@@ -153,6 +155,9 @@
       .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
       .then(function(res) {
         if (res.ok && res.data.ok) {
+          if (typeof gtag === 'function') {
+            gtag('event', res.data.is_new ? 'sign_up' : 'login', { method: 'magic_link' });
+          }
           window.location.href = '/dashboard';
         } else {
           var msg = document.getElementById('codeMsg');

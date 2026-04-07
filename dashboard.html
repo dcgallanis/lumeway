@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QHWJDRDR9R"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-QHWJDRDR9R');</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Dashboard — Lumeway</title>
@@ -3040,6 +3042,7 @@ guideLibrary['disability'] = {
         dashData = results[0];
         checklistItems = results[1].items || [];
         activityLog = results[2].entries || [];
+        if (typeof gtag === 'function') gtag('event', 'dashboard_view', { tier: dashData.effective_tier || 'free' });
         renderDashboard();
         loadUserFiles();
       }).catch(function(err) {
@@ -3443,6 +3446,14 @@ guideLibrary['disability'] = {
       html += '    <button class="init-btn" onclick="calculateDeadlines()">Calculate</button>';
       html += '  </div>';
       html += '</div>';
+
+      // Export button
+      if (deadlines.length > 0) {
+        html += '<div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">';
+        html += '  <a href="/api/deadlines/export.ics" class="btn-ghost" style="font-size:12px;padding:6px 14px;display:inline-flex;align-items:center;gap:6px">&#128197; Export to calendar (.ics)</a>';
+        html += '  <span style="font-size:11px;color:var(--muted);align-self:center">Works with Google Calendar, Apple Calendar, and Outlook</span>';
+        html += '</div>';
+      }
 
       // Calendar layout: main + sidebar
       html += '<div class="cal-layout">';

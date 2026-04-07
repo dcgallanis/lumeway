@@ -450,6 +450,7 @@
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.url) {
+          if (typeof gtag === 'function') gtag('event', 'begin_checkout', { item_id: productId });
           window.location.href = data.url;
         } else {
           alert('Something went wrong. Please try again.');
