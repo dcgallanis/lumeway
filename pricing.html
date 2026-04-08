@@ -51,7 +51,10 @@
     .hero p { font-size: 16px; font-weight: 300; color: var(--muted); line-height: 1.7; }
 
     /* Pricing grid */
-    .pricing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1100px; margin: 0 auto 80px; padding: 0 24px; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 900px; margin: 0 auto 40px; padding: 0 24px; }
+    .pricing-addons { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 600px; margin: 0 auto 80px; padding: 0 24px; }
+    .credit-banner { max-width: 600px; margin: 0 auto 40px; padding: 16px 24px; background: rgba(184,151,126,0.12); border-radius: 12px; text-align: center; font-size: 14px; color: var(--text); font-weight: 300; display: none; }
+    .credit-banner strong { font-weight: 500; color: var(--navy); }
     .tier { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 32px 24px; display: flex; flex-direction: column; }
     .tier.featured { border: 2px solid var(--navy); position: relative; }
     .tier.featured::before { content: 'Most Popular'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--navy); color: var(--cream); font-size: 11px; font-weight: 500; padding: 4px 14px; border-radius: 100px; white-space: nowrap; }
@@ -88,11 +91,11 @@
 
     /* Responsive */
     @media (max-width: 900px) {
-      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
+      .pricing-addons { grid-template-columns: 1fr; max-width: 420px; }
       nav { padding: 12px 20px; }
     }
     @media (max-width: 600px) {
-      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
       .hero h1 { font-size: 28px; }
       .tier.featured { order: -1; }
     }
@@ -117,8 +120,10 @@
 
   <div class="hero">
     <h1>Plans that meet you where you are</h1>
-    <p>Start free. Upgrade when you need more. Every plan includes unlimited access to the Lumeway Navigator.</p>
+    <p>Start free. Upgrade when you need more. Every dollar you spend counts as credit toward the next tier.</p>
   </div>
+
+  <div id="creditBanner" class="credit-banner"></div>
 
   <div class="pricing-grid">
 
@@ -126,7 +131,7 @@
     <div class="tier">
       <div class="tier-name">Free</div>
       <div class="tier-price">$0</div>
-      <div class="tier-desc">Start here. Talk through what you're facing and get your first steps.</div>
+      <div class="tier-desc">Talk through what you're facing and get your first steps.</div>
       <a href="/chat" class="tier-cta secondary">Start a conversation</a>
       <ul class="tier-features">
         <li>Unlimited Navigator conversations</li>
@@ -134,11 +139,9 @@
         <li>Content library previews</li>
         <li>Landing pages and FAQs</li>
         <li>Blog articles</li>
-        <li>Emergency Starter Kit PDF</li>
-        <li class="locked">Full task breakdowns</li>
-        <li class="locked">State-specific guidance</li>
-        <li class="locked">"What to ask" scripts</li>
-        <li class="locked">Document storage</li>
+        <li class="locked">Templates and worksheets</li>
+        <li class="locked">Full guides and scripts</li>
+        <li class="locked">Calendar and deadline tracking</li>
       </ul>
     </div>
 
@@ -146,65 +149,78 @@
     <div class="tier">
       <div class="tier-name">Starter</div>
       <div class="tier-price">$16 <span>one-time</span></div>
-      <div class="tier-desc">A template bundle plus 30 days of full dashboard access to get you started.</div>
+      <div class="tier-desc">A template bundle with 14-16 worksheets you can download and keep forever.</div>
       <a href="/templates" class="tier-cta secondary">Choose a bundle</a>
       <ul class="tier-features">
         <li>Everything in Free</li>
         <li>1 template bundle (14-16 worksheets)</li>
-        <li>30-day full dashboard trial</li>
-        <li>All content library access (30 days)</li>
-        <li>Progress tracking and calendar</li>
-        <li class="locked">After 30 days, reverts to Free</li>
-        <li class="locked">State-specific guidance</li>
-        <li class="locked">"What to ask" scripts</li>
+        <li>Editable .docx files</li>
+        <li>Templates in your dashboard</li>
+        <li>$16 counts toward upgrade</li>
+        <li class="locked">Full content guides</li>
+        <li class="locked">Calendar and deadlines</li>
         <li class="locked">Document storage</li>
       </ul>
     </div>
 
-    <!-- Pass (featured) -->
+    <!-- One Transition (featured) -->
     <div class="tier featured">
-      <div class="tier-name">Pass</div>
-      <div class="tier-price">$39 <span>one-time</span></div>
-      <div class="tier-desc">Full access to everything for one life change. The most common choice.</div>
-      <button class="tier-cta primary" onclick="showPassSelector()">Get your Pass</button>
+      <div class="tier-name">Full Plan</div>
+      <div class="tier-price" id="transitionPrice">$39 <span>one-time</span></div>
+      <div class="tier-desc">Everything for one life change. The complete dashboard, guides, scripts, and tools.</div>
+      <button class="tier-cta primary" onclick="showTransitionSelector()">Get the full plan</button>
       <ul class="tier-features">
         <li>Everything in Starter</li>
         <li>Full dashboard for 1 life change</li>
-        <li>Complete content library</li>
-        <li>"What to ask" phone scripts</li>
-        <li>State-specific guidance and links</li>
+        <li>Complete step-by-step guides</li>
+        <li>"What to say" phone scripts</li>
+        <li>State-specific guidance</li>
+        <li>Calendar with real deadlines</li>
         <li>100 MB document storage</li>
-        <li>1 template bundle included</li>
+        <li>Activity log</li>
         <li>Never expires</li>
-      </ul>
-    </div>
-
-    <!-- Unlimited -->
-    <div class="tier">
-      <div class="tier-name">Unlimited</div>
-      <div class="tier-price">$9.99 <span>/month</span></div>
-      <div class="tier-desc">Full access to all six life changes. For when life throws more than one thing at you.</div>
-      <button class="tier-cta primary" onclick="startSubscription()">Subscribe</button>
-      <ul class="tier-features">
-        <li>Everything in the Pass</li>
-        <li>All 6 life changes unlocked</li>
-        <li>All 89+ templates included</li>
-        <li>1 GB document storage</li>
-        <li>Full content library, everything</li>
-        <li>All scripts and state guidance</li>
-        <li>Cancel anytime</li>
       </ul>
     </div>
 
   </div>
 
-  <!-- Pass selector modal (hidden) -->
-  <div id="passModal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.2);align-items:center;justify-content:center">
+  <!-- Add-on tiers -->
+  <div class="pricing-addons">
+    <!-- Add a Transition -->
+    <div class="tier">
+      <div class="tier-name">Add Another</div>
+      <div class="tier-price">+$20 <span>per life change</span></div>
+      <div class="tier-desc">Going through more than one thing? Add another life change to your dashboard.</div>
+      <button class="tier-cta secondary" onclick="showAddTransitionSelector()" id="addTransitionBtn">Add a life change</button>
+      <ul class="tier-features">
+        <li>Full dashboard for 1 more category</li>
+        <li>Templates + guides + scripts</li>
+        <li>Buy as many as you need</li>
+      </ul>
+    </div>
+
+    <!-- All Transitions -->
+    <div class="tier">
+      <div class="tier-name">Everything</div>
+      <div class="tier-price" id="allPrice">$125 <span>one-time</span></div>
+      <div class="tier-desc">All 6 life changes. All 89+ templates. Full dashboard for everything, permanently.</div>
+      <button class="tier-cta primary" onclick="purchaseAll()" id="allBtn">Get everything</button>
+      <ul class="tier-features">
+        <li>All 6 life changes unlocked</li>
+        <li>All 89+ templates</li>
+        <li>1 GB document storage</li>
+        <li>One-time purchase, yours forever</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Transition selector modal -->
+  <div id="transitionModal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.2);align-items:center;justify-content:center">
     <div style="background:var(--warm-white);border-radius:16px;padding:32px;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.12)">
-      <h3 style="font-family:'Libre Baskerville',serif;font-size:20px;color:var(--navy);margin-bottom:8px">What are you going through?</h3>
-      <p style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:20px">Your pass gives you full access to the complete guide, scripts, and tools for one life change.</p>
-      <div id="passOptions" style="display:flex;flex-direction:column;gap:8px"></div>
-      <button onclick="document.getElementById('passModal').style.display='none'" style="display:block;width:100%;padding:10px;background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;margin-top:16px">Cancel</button>
+      <h3 style="font-family:'Libre Baskerville',serif;font-size:20px;color:var(--navy);margin-bottom:8px" id="modalTitle">What are you going through?</h3>
+      <p style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:20px" id="modalDesc">Choose one. You'll get the full guide, checklists, scripts, and templates for that life change.</p>
+      <div id="transitionOptions" style="display:flex;flex-direction:column;gap:8px"></div>
+      <button onclick="document.getElementById('transitionModal').style.display='none'" style="display:block;width:100%;padding:10px;background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;margin-top:16px">Cancel</button>
     </div>
   </div>
 
@@ -214,18 +230,34 @@
 
     <div class="faq-item">
       <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-        What happens after my 30-day Starter trial ends?
+        What's the difference between Starter and the Full Plan?
         <span class="faq-chev">&#9662;</span>
       </div>
-      <div class="faq-a">Your dashboard reverts to the free tier. You keep your template bundle forever. Your checklist and notes are saved. You can get a Pass anytime to get full access back.</div>
+      <div class="faq-a">Starter gives you a template bundle — worksheets you can download and fill out. The Full Plan adds the complete dashboard: step-by-step guides, deadline calendar, phone scripts, state-specific guidance, document storage, and more. Your $16 counts toward the upgrade, so you'd only pay $23 more.</div>
     </div>
 
     <div class="faq-item">
       <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-        Can I switch my Pass to a different life change?
+        Do my purchases count as credit toward upgrades?
         <span class="faq-chev">&#9662;</span>
       </div>
-      <div class="faq-a">Not automatically, but reach out to hello@lumeway.co and we will take care of it. If you need access to more than one, the Unlimited plan is usually the better fit.</div>
+      <div class="faq-a">Yes. Every dollar you spend on Lumeway counts toward higher tiers. If you buy a $16 Starter bundle and later want the Full Plan ($39), you only pay the $23 difference. If you've bought one Full Plan ($39) and want Everything ($125), you'd pay $86. Your credit balance shows in your dashboard.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        I bought a bundle on Etsy. Does that count?
+        <span class="faq-chev">&#9662;</span>
+      </div>
+      <div class="faq-a">Yes. Your Etsy bundle came with a redemption code. Enter it in your dashboard to connect your purchase and get $16 in credit toward the Full Plan.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        What if I need help with more than one life change?
+        <span class="faq-chev">&#9662;</span>
+      </div>
+      <div class="faq-a">You can add more life changes for $20 each, or get everything for $125 (minus whatever you've already spent). A lot of people start with one and add more as their situation evolves.</div>
     </div>
 
     <div class="faq-item">
@@ -233,23 +265,15 @@
         What if I am in financial hardship?
         <span class="faq-chev">&#9662;</span>
       </div>
-      <div class="faq-a">We understand. Many of our users are navigating financial stress at the same time. The free tier provides meaningful support. If you need more, email hello@lumeway.co and we will work something out.</div>
+      <div class="faq-a">We understand. The free tier provides meaningful support — unlimited conversations with the Navigator, basic checklists, and content previews. If you need more, email hello@lumeway.co and we will work something out.</div>
     </div>
 
     <div class="faq-item">
       <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-        Can I cancel the Unlimited subscription anytime?
+        Do plans expire?
         <span class="faq-chev">&#9662;</span>
       </div>
-      <div class="faq-a">Yes. Cancel anytime from your dashboard settings or email us. Your access continues until the end of your current billing period.</div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-        Can someone else buy me a plan as a gift?
-        <span class="faq-chev">&#9662;</span>
-      </div>
-      <div class="faq-a">Gift passes are coming soon. For now, email hello@lumeway.co and we can set up a gift purchase for you.</div>
+      <div class="faq-a">No. Every purchase is one-time and permanent. There are no subscriptions, no renewals, and no surprises. What you buy is yours.</div>
     </div>
   </div>
 
@@ -259,51 +283,96 @@
   </footer>
 
   <script>
-    var PASSES = [
-      { id: 'pass-job-loss', label: 'Job Loss & Income Crisis' },
-      { id: 'pass-estate', label: 'Death & Estate' },
-      { id: 'pass-divorce', label: 'Divorce & Separation' },
-      { id: 'pass-disability', label: 'Disability & Benefits' },
-      { id: 'pass-relocation', label: 'Moving & Relocation' },
-      { id: 'pass-retirement', label: 'Retirement Planning' }
+    var TRANSITIONS = [
+      { cat: 'job-loss', label: 'Job Loss & Income Crisis' },
+      { cat: 'estate', label: 'Death & Estate' },
+      { cat: 'divorce', label: 'Divorce & Separation' },
+      { cat: 'disability', label: 'Disability & Benefits' },
+      { cat: 'relocation', label: 'Moving & Relocation' },
+      { cat: 'retirement', label: 'Retirement Planning' }
     ];
 
-    function showPassSelector() {
-      var modal = document.getElementById('passModal');
-      var container = document.getElementById('passOptions');
+    var userCredit = 0;
+    var userAccess = {};
+
+    // Load user's credit and access on page load
+    fetch('/api/account/upgrade-options')
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (!data) return;
+        userCredit = data.credit_cents || 0;
+        userAccess = data.category_access || {};
+        // Update prices to show credit
+        if (userCredit > 0) {
+          var banner = document.getElementById('creditBanner');
+          banner.innerHTML = 'You have <strong>$' + (userCredit / 100).toFixed(0) + ' in credit</strong> from previous purchases. Prices below are adjusted.';
+          banner.style.display = 'block';
+          // Update One Transition price
+          var transCharge = Math.max(0, 3900 - userCredit);
+          if (transCharge < 3900) {
+            document.getElementById('transitionPrice').innerHTML = '<s style="color:var(--muted);font-size:20px;font-weight:300">$39</s> $' + (transCharge / 100).toFixed(0) + ' <span>with credit</span>';
+          }
+          // Update All price
+          var allCharge = Math.max(0, 12500 - userCredit);
+          if (allCharge < 12500) {
+            document.getElementById('allPrice').innerHTML = '<s style="color:var(--muted);font-size:20px;font-weight:300">$125</s> $' + (allCharge / 100).toFixed(0) + ' <span>with credit</span>';
+          }
+        }
+      })
+      .catch(function() { /* Not logged in, show default prices */ });
+
+    function showTransitionSelector() {
+      showCategoryModal('one_transition', 'What are you going through?', 'Choose one. You\'ll get the full guide, checklists, scripts, and templates.');
+    }
+
+    function showAddTransitionSelector() {
+      showCategoryModal('add_transition', 'Add another life change', 'Choose one to add to your dashboard. $20 per additional category.');
+    }
+
+    function showCategoryModal(purchaseType, title, desc) {
+      var modal = document.getElementById('transitionModal');
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalDesc').textContent = desc;
+      var container = document.getElementById('transitionOptions');
       container.innerHTML = '';
-      PASSES.forEach(function(p) {
+      TRANSITIONS.forEach(function(t) {
         var btn = document.createElement('button');
-        btn.textContent = p.label;
-        btn.style.cssText = 'padding:12px 16px;background:var(--cream);border:1px solid var(--border);border-radius:10px;font-family:Plus Jakarta Sans,sans-serif;font-size:14px;color:var(--text);cursor:pointer;text-align:left;transition:all 0.15s';
-        btn.onmouseover = function() { this.style.borderColor = 'var(--gold)'; };
-        btn.onmouseout = function() { this.style.borderColor = 'var(--border)'; };
-        btn.onclick = function() { purchasePass(p.id); };
+        var hasAccess = userAccess[t.cat] === 'full';
+        btn.textContent = t.label + (hasAccess ? ' ✓' : '');
+        btn.disabled = hasAccess;
+        btn.style.cssText = 'padding:12px 16px;background:' + (hasAccess ? '#f0ede8' : 'var(--cream)') + ';border:1px solid var(--border);border-radius:10px;font-family:Plus Jakarta Sans,sans-serif;font-size:14px;color:' + (hasAccess ? 'var(--muted)' : 'var(--text)') + ';cursor:' + (hasAccess ? 'default' : 'pointer') + ';text-align:left;transition:all 0.15s';
+        if (!hasAccess) {
+          btn.onmouseover = function() { this.style.borderColor = 'var(--gold)'; };
+          btn.onmouseout = function() { this.style.borderColor = 'var(--border)'; };
+          btn.onclick = function() { purchaseTransition(t.cat, purchaseType); };
+        }
         container.appendChild(btn);
       });
       modal.style.display = 'flex';
     }
 
-    function purchasePass(passId) {
-      fetch('/api/create-pass-checkout', {
+    function purchaseTransition(category, purchaseType) {
+      fetch('/api/create-transition-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pass_id: passId })
+        body: JSON.stringify({ category: category })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.url) {
           window.location.href = data.url;
+        } else if (data.ok && data.redirect) {
+          window.location.href = data.redirect;
         } else if (data.error === 'Not logged in') {
           window.location.href = '/login?next=/pricing';
         } else {
-          alert(data.error || 'Something went wrong. Please try again.');
+          alert(data.error || 'Something went wrong.');
         }
       });
     }
 
-    function startSubscription() {
-      fetch('/api/create-subscription', {
+    function purchaseAll() {
+      fetch('/api/create-all-transitions-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -311,16 +380,18 @@
       .then(function(data) {
         if (data.url) {
           window.location.href = data.url;
+        } else if (data.ok && data.redirect) {
+          window.location.href = data.redirect;
         } else if (data.error === 'Not logged in') {
           window.location.href = '/login?next=/pricing';
         } else {
-          alert(data.error || 'Something went wrong. Please try again.');
+          alert(data.error || 'Something went wrong.');
         }
       });
     }
 
     // Close modal on backdrop click
-    document.getElementById('passModal').addEventListener('click', function(e) {
+    document.getElementById('transitionModal').addEventListener('click', function(e) {
       if (e.target === this) this.style.display = 'none';
     });
   </script>

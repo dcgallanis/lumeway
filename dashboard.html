@@ -2782,42 +2782,28 @@ guideLibrary['disability'] = {
       ]
     };
 
-    function cancelSubscription() {
-      if (!confirm('Are you sure you want to cancel? You\'ll keep full access until the end of your billing period.')) return;
-      fetch('/api/manage-subscription', {
+    function redeemCode() {
+      var code = document.getElementById('redeemCodeInput').value.trim();
+      var result = document.getElementById('redeemResult');
+      if (!code) { result.innerHTML = '<span style="color:var(--accent)">Enter a code first.</span>'; return; }
+      result.innerHTML = '<span style="color:var(--muted)">Checking...</span>';
+      fetch('/api/redeem-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'cancel' })
+        body: JSON.stringify({ code: code })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.ok) {
-          loadDashboard();
+          result.innerHTML = '<span style="color:var(--green)">' + data.message + '</span>';
+          document.getElementById('redeemCodeInput').value = '';
+          setTimeout(function() { loadDashboard(); }, 1500);
         } else {
-          alert(data.error || 'Something went wrong.');
+          result.innerHTML = '<span style="color:var(--accent)">' + (data.error || 'Something went wrong.') + '</span>';
         }
       })
       .catch(function() {
-        alert('Something went wrong. Please email hello@lumeway.co for help.');
-      });
-    }
-
-    function reactivateSubscription() {
-      fetch('/api/manage-subscription', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'reactivate' })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.ok) {
-          loadDashboard();
-        } else {
-          alert(data.error || 'Something went wrong.');
-        }
-      })
-      .catch(function() {
-        alert('Something went wrong. Please email hello@lumeway.co for help.');
+        result.innerHTML = '<span style="color:var(--accent)">Something went wrong. Please try again.</span>';
       });
     }
 
@@ -3823,62 +3809,73 @@ guideLibrary['disability'] = {
       // Current Plan card
       html += '<div class="dash-card">';
       html += '  <div class="card-label">Your Plan</div>';
-      var tierLabels = { free: 'Free', starter: 'Starter', pass: 'Pass', unlimited: 'Unlimited' };
+      var catAccess = dashData.category_access || {};
+      var creditCents = dashData.credit_cents || 0;
+      var tierLabels = { free: 'Free', starter: 'Starter', one_transition: 'Full Plan', all_transitions: 'Everything', pass: 'Full Plan', unlimited: 'Everything' };
       var tierLabel = tierLabels[tier] || 'Free';
-      html += '  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">';
+      var transLabels = { 'job-loss': 'Job Loss', estate: 'Estate', divorce: 'Divorce', disability: 'Disability', relocation: 'Relocation', retirement: 'Retirement' };
+      html += '  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">';
       html += '    <span style="display:inline-block;padding:6px 16px;background:' + (tier === 'free' ? 'var(--cream)' : 'var(--navy)') + ';color:' + (tier === 'free' ? 'var(--text)' : 'var(--cream)') + ';border-radius:100px;font-size:13px;font-weight:500;border:1px solid var(--border)">' + tierLabel + '</span>';
-      if (tier === 'pass' && userInfo.tier_transition) {
-        var transLabels = { 'job-loss': 'Job Loss', estate: 'Estate', divorce: 'Divorce', disability: 'Disability', relocation: 'Relocation', retirement: 'Retirement' };
-        html += '    <span style="font-size:13px;color:var(--muted)">' + (transLabels[userInfo.tier_transition] || userInfo.tier_transition) + '</span>';
-      }
+      // Show which categories they have access to
+      var fullCats = Object.keys(catAccess).filter(function(k) { return catAccess[k] === 'full'; });
+      var starterCats = Object.keys(catAccess).filter(function(k) { return catAccess[k] === 'starter'; });
+      fullCats.forEach(function(c) {
+        html += '<span style="font-size:11px;padding:4px 10px;background:rgba(107,143,94,0.12);color:var(--green);border-radius:100px">' + (transLabels[c] || c) + '</span>';
+      });
+      starterCats.forEach(function(c) {
+        if (fullCats.indexOf(c) === -1) {
+          html += '<span style="font-size:11px;padding:4px 10px;background:rgba(184,151,126,0.15);color:var(--gold);border-radius:100px">' + (transLabels[c] || c) + ' (templates)</span>';
+        }
+      });
       html += '  </div>';
+
+      // Credit balance
+      if (creditCents > 0) {
+        html += '  <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Credit balance: <strong style="color:var(--text)">$' + (creditCents / 100).toFixed(0) + '</strong> — counts toward your next upgrade.</div>';
+      }
 
       if (tier === 'free') {
         html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You\'re on the free plan. Upgrade for full access to guides, scripts, and step-by-step checklists.</p>';
         html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">View Plans</a>';
       } else if (tier === 'starter') {
-        var expiresAt = userInfo.tier_expires_at;
-        if (expiresAt) {
-          var daysLeft = Math.max(0, Math.ceil((new Date(expiresAt) - new Date()) / 86400000));
-          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Your Starter trial has <strong>' + daysLeft + ' days</strong> remaining.</p>';
-        }
-        html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">Upgrade</a>';
-      } else if (tier === 'pass') {
-        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6">You have full access to your complete guide, scripts, and tools.</p>';
-      } else if (tier === 'unlimited') {
-        var cancelAt = dashData.subscription_cancel_at;
-        if (cancelAt) {
-          // Subscription is cancelling
-          html += '  <div style="background:rgba(196,112,78,0.08);border:1px solid rgba(196,112,78,0.2);border-radius:12px;padding:16px 20px;margin-bottom:16px">';
-          html += '    <p style="font-size:14px;color:var(--text);font-weight:400;margin-bottom:4px">Your subscription ends on ' + cancelAt + '</p>';
-          html += '    <p style="font-size:13px;color:var(--muted);font-weight:300;line-height:1.5">You\'ll keep full access until then. After that, your dashboard will switch to the free plan. Your checklists, notes, and templates are yours to keep.</p>';
-          html += '  </div>';
-          html += '  <button onclick="reactivateSubscription()" style="padding:10px 24px;background:var(--accent);color:var(--cream);border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:Plus Jakarta Sans,sans-serif;font-weight:500">Reactivate Subscription</button>';
-          html += '  <span style="font-size:12px;color:var(--muted);margin-left:12px">Changed your mind? Pick up right where you left off.</span>';
-        } else {
-          // Active subscription
-          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have full access to everything — all guides, scripts, and tools.</p>';
-          html += '  <button onclick="cancelSubscription()" style="padding:8px 20px;background:none;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;font-family:Plus Jakarta Sans,sans-serif">Cancel Subscription</button>';
-        }
+        var upgradePrice = Math.max(0, (3900 - creditCents) / 100).toFixed(0);
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have your template bundle. Upgrade for the full dashboard — guides, calendar, scripts, and more.</p>';
+        html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">Upgrade — $' + upgradePrice + '</a>';
+      } else if (tier === 'one_transition' || tier === 'pass') {
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have full access to your plan.</p>';
+      } else if (tier === 'all_transitions' || tier === 'unlimited') {
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6">You have full access to everything. All guides, scripts, templates, and tools.</p>';
       }
       html += '</div>';
 
-      // Buy More / Manage section
-      if (tier !== 'unlimited') {
+      // Upgrade / Add more section
+      if (tier !== 'all_transitions' && tier !== 'unlimited') {
         html += '<div class="dash-card" style="margin-top:16px">';
-        html += '  <div class="card-label">Need More?</div>';
-        if (tier === 'pass') {
-          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Going through something else too? Add another pass or upgrade to Unlimited for access to everything.</p>';
+        if (tier === 'one_transition' || tier === 'pass') {
+          html += '  <div class="card-label">Going through more?</div>';
+          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Add another life change for $20, or get everything for $' + Math.max(0, (12500 - creditCents) / 100).toFixed(0) + '.</p>';
           html += '  <div style="display:flex;gap:10px;flex-wrap:wrap">';
-          html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:13px;text-decoration:none;font-weight:500">Add Another Pass — $39</a>';
-          html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:13px;text-decoration:none">Upgrade to Unlimited</a>';
+          html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:13px;text-decoration:none;font-weight:500">Add Another — $20</a>';
+          html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:13px;text-decoration:none">Get Everything</a>';
           html += '  </div>';
-        } else {
-          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Get full access to step-by-step guides, checklists, templates, and scripts for any life change.</p>';
-          html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">See Plans & Pricing</a>';
+        } else if (tier !== 'starter') {
+          html += '  <div class="card-label">Upgrade</div>';
+          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Get full access to step-by-step guides, checklists, templates, and scripts.</p>';
+          html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">See Plans</a>';
         }
         html += '</div>';
       }
+
+      // Etsy Code Redemption
+      html += '<div class="dash-card" style="margin-top:16px">';
+      html += '  <div class="card-label">Redeem a Code</div>';
+      html += '  <p style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:12px">Bought a bundle on Etsy? Enter your code to connect it to your account.</p>';
+      html += '  <div style="display:flex;gap:8px">';
+      html += '    <input id="redeemCodeInput" placeholder="e.g. LUMEWAY-JOBLOSS" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;background:var(--warm-white);color:var(--text);text-transform:uppercase">';
+      html += '    <button onclick="redeemCode()" style="padding:10px 20px;background:var(--accent);color:var(--cream);border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:Plus Jakarta Sans,sans-serif;font-weight:500">Redeem</button>';
+      html += '  </div>';
+      html += '  <div id="redeemResult" style="margin-top:8px;font-size:13px"></div>';
+      html += '</div>';
 
       html += '</div>'; // right column
       html += '</div>'; // 2-col grid

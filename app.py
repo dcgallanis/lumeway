@@ -520,6 +520,8 @@ def init_subscribers_db():
         "ALTER TABLE users ADD COLUMN tier_expires_at TEXT",
         "ALTER TABLE users ADD COLUMN stripe_customer_id TEXT",
         "ALTER TABLE users ADD COLUMN subscription_cancel_at TEXT",
+        "ALTER TABLE users ADD COLUMN credit_cents INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN active_transitions TEXT DEFAULT '[]'",
     ]:
         try:
             conn2 = get_db()
@@ -531,6 +533,34 @@ def init_subscribers_db():
                 conn2.close()
             except Exception:
                 pass
+    # Etsy redemptions table (idempotent)
+    try:
+        conn_etsy = get_db()
+        if USE_POSTGRES:
+            db_execute(conn_etsy, """CREATE TABLE IF NOT EXISTS etsy_redemptions (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL,
+                code TEXT NOT NULL,
+                category TEXT NOT NULL,
+                credit_cents INTEGER NOT NULL DEFAULT 1600,
+                redeemed_at TEXT NOT NULL
+            )""")
+        else:
+            db_execute(conn_etsy, """CREATE TABLE IF NOT EXISTS etsy_redemptions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                code TEXT NOT NULL,
+                category TEXT NOT NULL,
+                credit_cents INTEGER NOT NULL DEFAULT 1600,
+                redeemed_at TEXT NOT NULL
+            )""")
+        conn_etsy.commit()
+        conn_etsy.close()
+    except Exception:
+        try:
+            conn_etsy.close()
+        except Exception:
+            pass
     # Expenses table (idempotent)
     try:
         conn3 = get_db()
@@ -650,6 +680,27 @@ conversation_log.init_db()
 
 # ── Auth helpers ──
 
+VALID_CATEGORIES = ["job-loss", "estate", "divorce", "disability", "relocation", "retirement"]
+CATEGORY_LABELS = {
+    "job-loss": "Job Loss & Income Crisis",
+    "estate": "Death & Estate",
+    "divorce": "Divorce & Separation",
+    "disability": "Disability & Benefits",
+    "relocation": "Moving & Relocation",
+    "retirement": "Retirement Planning",
+}
+
+# Etsy redemption codes — one per category, reusable
+ETSY_CODES = {
+    "LUMEWAY-JOBLOSS": {"category": "job-loss", "credit_cents": 1600},
+    "LUMEWAY-ESTATE": {"category": "estate", "credit_cents": 1600},
+    "LUMEWAY-DIVORCE": {"category": "divorce", "credit_cents": 1600},
+    "LUMEWAY-DISABILITY": {"category": "disability", "credit_cents": 1600},
+    "LUMEWAY-RELOCATION": {"category": "relocation", "credit_cents": 1600},
+    "LUMEWAY-RETIREMENT": {"category": "retirement", "credit_cents": 1600},
+    "LUMEWAY-MASTER": {"category": "master", "credit_cents": 9700},
+}
+
 def get_current_user():
     """Return user dict if logged in, else None."""
     user_id = flask_session.get("user_id")
@@ -657,51 +708,133 @@ def get_current_user():
         return None
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state, created_at, last_login_at, tier, tier_transition, tier_expires_at, stripe_customer_id, subscription_cancel_at FROM users WHERE id = {param}", (user_id,))
+    cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state, created_at, last_login_at, tier, tier_transition, tier_expires_at, stripe_customer_id, subscription_cancel_at, credit_cents, active_transitions FROM users WHERE id = {param}", (user_id,))
     row = cur.fetchone()
     conn.close()
     if row:
-        cols = ["id", "email", "display_name", "transition_type", "us_state", "created_at", "last_login_at", "tier", "tier_transition", "tier_expires_at", "stripe_customer_id", "subscription_cancel_at"]
+        cols = ["id", "email", "display_name", "transition_type", "us_state", "created_at", "last_login_at", "tier", "tier_transition", "tier_expires_at", "stripe_customer_id", "subscription_cancel_at", "credit_cents", "active_transitions"]
         user = dict(zip(cols, row))
-        # Default tier for existing users without the column
         if not user.get("tier"):
             user["tier"] = "free"
+        if not user.get("credit_cents"):
+            user["credit_cents"] = 0
+        # Parse active_transitions from JSON string
+        try:
+            user["active_transitions"] = json.loads(user.get("active_transitions") or "[]")
+        except (json.JSONDecodeError, TypeError):
+            user["active_transitions"] = []
         return user
     return None
 
 def get_effective_tier(user):
-    """Return the user's effective tier, accounting for trial expiration."""
+    """Return the user's effective tier based on active_transitions."""
+    active = user.get("active_transitions") or []
     tier = user.get("tier") or "free"
-    if tier == "starter" and user.get("tier_expires_at"):
-        try:
-            expires = datetime.fromisoformat(user["tier_expires_at"].replace("Z", "+00:00"))
-            if expires < datetime.now(timezone.utc):
-                return "free"
-        except (ValueError, TypeError):
-            pass
-    return tier
+    # Backward compat: if old tier=unlimited or tier=pass, map to new system
+    if tier == "unlimited" or tier == "all_transitions":
+        return "all_transitions"
+    if len(active) >= 6:
+        return "all_transitions"
+    full_cats = [c for c in active if isinstance(c, dict) and c.get("level") == "full"] if active and isinstance(active[0] if active else None, dict) else []
+    starter_cats = [c for c in active if isinstance(c, dict) and c.get("level") == "starter"] if active and isinstance(active[0] if active else None, dict) else []
+    # Simple format: active_transitions stores list of {"cat": "job-loss", "level": "full"} dicts
+    if full_cats:
+        return "one_transition" if len(full_cats) == 1 else "all_transitions" if len(full_cats) >= 6 else "one_transition"
+    if starter_cats:
+        return "starter"
+    # Fallback to old tier column
+    if tier == "pass":
+        return "one_transition"
+    if tier == "starter":
+        return "starter"
+    return "free"
 
-def check_tier(user, required_tier="free", transition_type=None):
-    """Check if user has access at the required tier level.
-    Returns (has_access, upgrade_reason).
-    Tier hierarchy: unlimited > pass > starter > free
-    """
-    tier = get_effective_tier(user)
-    hierarchy = {"free": 0, "starter": 1, "pass": 2, "unlimited": 3}
-    user_level = hierarchy.get(tier, 0)
-    required_level = hierarchy.get(required_tier, 0)
-    if user_level >= required_level:
-        # For pass tier, also check transition_type match
-        if tier == "pass" and required_tier == "pass" and transition_type:
-            if user.get("tier_transition") != transition_type:
-                return (False, "Your pass is for " + (user.get("tier_transition") or "a different life change") + ". Upgrade to Unlimited for full access.")
+def get_user_categories(user):
+    """Return dict of {category: access_level} from active_transitions."""
+    active = user.get("active_transitions") or []
+    result = {}
+    for item in active:
+        if isinstance(item, dict):
+            result[item.get("cat", "")] = item.get("level", "starter")
+    # Backward compat: old pass users
+    if not result and user.get("tier") == "pass" and user.get("tier_transition"):
+        result[user["tier_transition"]] = "full"
+    # Backward compat: old unlimited users
+    if user.get("tier") in ("unlimited", "all_transitions"):
+        for cat in VALID_CATEGORIES:
+            result[cat] = "full"
+    return result
+
+def check_category_access(user, category, required_level="full"):
+    """Check if user can access a specific category at the required level.
+    Returns (has_access, reason)."""
+    cats = get_user_categories(user)
+    user_level = cats.get(category)
+    if required_level == "starter" and user_level in ("starter", "full"):
         return (True, None)
-    reasons = {
-        "starter": "Upgrade to a Starter bundle for 30 days of full dashboard access.",
-        "pass": "Get a pass for full access to guides, scripts, and tools.",
-        "unlimited": "Subscribe to Unlimited for access to all transitions."
-    }
-    return (False, reasons.get(required_tier, "Upgrade for access."))
+    if required_level == "full" and user_level == "full":
+        return (True, None)
+    if user_level == "starter":
+        credit = user.get("credit_cents", 0)
+        upgrade_price = max(0, 3900 - credit)
+        return (False, f"Upgrade for ${upgrade_price/100:.0f} to unlock the full plan for {CATEGORY_LABELS.get(category, category)}.")
+    return (False, f"Get access to {CATEGORY_LABELS.get(category, category)} starting at $16.")
+
+def add_user_category(user_id, category, level, conn=None):
+    """Add or upgrade a category in user's active_transitions JSON."""
+    should_close = conn is None
+    if conn is None:
+        conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT active_transitions FROM users WHERE id = {param}", (user_id,))
+    row = cur.fetchone()
+    try:
+        active = json.loads(row[0] or "[]") if row else []
+    except (json.JSONDecodeError, TypeError):
+        active = []
+    # Update existing or add new
+    found = False
+    for item in active:
+        if isinstance(item, dict) and item.get("cat") == category:
+            if level == "full" or item.get("level") != "full":
+                item["level"] = level
+            found = True
+            break
+    if not found:
+        active.append({"cat": category, "level": level})
+    db_execute(conn, f"UPDATE users SET active_transitions = {param} WHERE id = {param}", (json.dumps(active), user_id))
+    conn.commit()
+    if should_close:
+        conn.close()
+    return active
+
+def update_user_tier_from_access(user_id, conn=None):
+    """Recalculate and update the tier column based on active_transitions."""
+    should_close = conn is None
+    if conn is None:
+        conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT active_transitions FROM users WHERE id = {param}", (user_id,))
+    row = cur.fetchone()
+    try:
+        active = json.loads(row[0] or "[]") if row else []
+    except (json.JSONDecodeError, TypeError):
+        active = []
+    full_cats = [c for c in active if isinstance(c, dict) and c.get("level") == "full"]
+    starter_cats = [c for c in active if isinstance(c, dict) and c.get("level") == "starter"]
+    if len(full_cats) >= 6:
+        tier = "all_transitions"
+    elif len(full_cats) >= 1:
+        tier = "one_transition"
+    elif len(starter_cats) >= 1:
+        tier = "starter"
+    else:
+        tier = "free"
+    db_execute(conn, f"UPDATE users SET tier = {param} WHERE id = {param}", (tier, user_id))
+    conn.commit()
+    if should_close:
+        conn.close()
+    return tier
 
 def send_auth_code(to_email, code):
     """Send login code via Resend."""
@@ -1642,8 +1775,7 @@ PASS_PRODUCTS = {
         "desc": "Full dashboard access for Retirement Planning — checklists, content library, scripts, state-specific guidance."},
 }
 
-# Unlimited subscription price ID (create in Stripe Dashboard, set via env var)
-STRIPE_UNLIMITED_PRICE_ID = os.environ.get("STRIPE_UNLIMITED_PRICE_ID")
+# Subscription removed — all purchases are one-time
 
 import secrets
 
@@ -1717,27 +1849,239 @@ def create_pass_checkout():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route("/api/create-subscription", methods=["POST"])
-def create_subscription():
-    """Create Stripe checkout for Unlimited subscription ($9.99/mo)."""
+@app.route("/api/create-transition-checkout", methods=["POST"])
+def create_transition_checkout():
+    """Create Stripe checkout for One Transition ($39) or Add a Transition ($20)."""
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not logged in"}), 401
-    if not STRIPE_UNLIMITED_PRICE_ID:
-        return jsonify({"error": "Subscription is not set up yet. Please contact hello@lumeway.co."}), 400
+    data = request.get_json() or {}
+    category = data.get("category")
+    if category not in VALID_CATEGORIES:
+        return jsonify({"error": "Invalid category"}), 400
+    cats = get_user_categories(user)
+    if cats.get(category) == "full":
+        return jsonify({"error": "You already have full access to this category."}), 400
+    # Price: $39 for first full transition, $20 for additional
+    full_count = sum(1 for v in cats.values() if v == "full")
+    if full_count == 0:
+        base_price = 3900
+        product_name = f"One Transition — {CATEGORY_LABELS.get(category, category)}"
+        purchase_type = "one_transition"
+    else:
+        base_price = 2000
+        product_name = f"Add a Transition — {CATEGORY_LABELS.get(category, category)}"
+        purchase_type = "add_transition"
+    # Apply credit
+    credit = user.get("credit_cents", 0)
+    charge = max(0, base_price - credit)
+    if charge == 0:
+        # Credit covers the full price — fulfill immediately without Stripe
+        _fulfill_transition_purchase(user, category, purchase_type, base_price, credit, None, None)
+        return jsonify({"ok": True, "redirect": "/dashboard"})
     try:
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             customer_email=user["email"],
-            line_items=[{"price": STRIPE_UNLIMITED_PRICE_ID, "quantity": 1}],
-            mode="subscription",
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {"name": product_name},
+                    "unit_amount": charge,
+                },
+                "quantity": 1,
+            }],
+            mode="payment",
             success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=request.host_url + "pricing",
-            metadata={"purchase_type": "unlimited", "user_id": str(user["id"])},
+            metadata={
+                "purchase_type": purchase_type,
+                "category": category,
+                "user_id": str(user["id"]),
+                "base_price": str(base_price),
+                "credit_applied": str(min(credit, base_price)),
+            },
         )
         return jsonify({"url": session.url})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route("/api/create-all-transitions-checkout", methods=["POST"])
+def create_all_transitions_checkout():
+    """Create Stripe checkout for All Transitions ($125 minus credit)."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    credit = user.get("credit_cents", 0)
+    charge = max(0, 12500 - credit)
+    if charge == 0:
+        _fulfill_all_transitions(user, 12500, credit, None, None)
+        return jsonify({"ok": True, "redirect": "/dashboard"})
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            customer_email=user["email"],
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {"name": "All Transitions"},
+                    "unit_amount": charge,
+                },
+                "quantity": 1,
+            }],
+            mode="payment",
+            success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=request.host_url + "pricing",
+            metadata={
+                "purchase_type": "all_transitions",
+                "user_id": str(user["id"]),
+                "credit_applied": str(min(credit, 12500)),
+            },
+        )
+        return jsonify({"url": session.url})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/create-individual-template-checkout", methods=["POST"])
+def create_individual_template_checkout():
+    """Create Stripe checkout for a single template ($3)."""
+    data = request.get_json() or {}
+    template_id = data.get("template_id")
+    template_name = data.get("template_name", "Individual Template")
+    email = data.get("email")
+    user = get_current_user()
+    if not template_id:
+        return jsonify({"error": "No template specified"}), 400
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            customer_email=email or (user["email"] if user else None),
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {"name": template_name},
+                    "unit_amount": 300,
+                },
+                "quantity": 1,
+            }],
+            mode="payment",
+            success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=request.host_url + "templates",
+            metadata={
+                "purchase_type": "individual_template",
+                "template_id": template_id,
+                "template_name": template_name,
+                "user_id": str(user["id"]) if user else "",
+            },
+        )
+        return jsonify({"url": session.url})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/redeem-code", methods=["POST"])
+def redeem_code():
+    """Redeem an Etsy purchase code to credit account and unlock templates."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Please log in first."}), 401
+    code = (request.get_json() or {}).get("code", "").strip().upper()
+    if code not in ETSY_CODES:
+        return jsonify({"error": "That code doesn't look right. Double-check and try again."}), 400
+    code_info = ETSY_CODES[code]
+    category = code_info["category"]
+    credit_amount = code_info["credit_cents"]
+    # Check if already redeemed by this user for this category
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id FROM etsy_redemptions WHERE user_id = {param} AND category = {param}", (user["id"], category))
+    if cur.fetchone():
+        conn.close()
+        return jsonify({"error": "You've already redeemed a code for this category."}), 400
+    now = datetime.now(timezone.utc).isoformat()
+    # Record redemption
+    db_execute(conn, f"INSERT INTO etsy_redemptions (user_id, code, category, credit_cents, redeemed_at) VALUES ({param}, {param}, {param}, {param}, {param})",
+               (user["id"], code, category, credit_amount, now))
+    # Add credit
+    db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + {param} WHERE id = {param}", (credit_amount, user["id"]))
+    conn.commit()
+    # Grant starter access (templates only) for the category
+    if category == "master":
+        for cat in VALID_CATEGORIES:
+            add_user_category(user["id"], cat, "starter", conn)
+    else:
+        add_user_category(user["id"], category, "starter", conn)
+    update_user_tier_from_access(user["id"], conn)
+    # Grant template bundle downloads
+    cats_to_grant = VALID_CATEGORIES if category == "master" else [category]
+    for cat in cats_to_grant:
+        bundle_product = PRODUCTS.get(cat, {})
+        if bundle_product:
+            bundle_token = secrets.token_urlsafe(32)
+            try:
+                db_execute(conn, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+                    """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (user["email"], cat, bundle_product.get("name", f"{cat.title()} Bundle"), 0,
+                     f"etsy-redeem-{cat}-{now}", None, now, bundle_token, True if USE_POSTGRES else 1))
+                conn.commit()
+            except Exception as e:
+                print(f"Error granting etsy bundle {cat}: {e}")
+    conn.close()
+    return jsonify({
+        "ok": True,
+        "category": category,
+        "credit_cents": credit_amount,
+        "message": f"Code redeemed. Your {CATEGORY_LABELS.get(category, 'templates')} worksheets are ready in My Templates."
+    })
+
+@app.route("/api/account/upgrade-options")
+def upgrade_options():
+    """Return available upgrades with credit-adjusted pricing."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    cats = get_user_categories(user)
+    credit = user.get("credit_cents", 0)
+    full_count = sum(1 for v in cats.values() if v == "full")
+    options = []
+    # One Transition (if no full access yet)
+    if full_count == 0:
+        for cat in VALID_CATEGORIES:
+            if cats.get(cat) != "full":
+                charge = max(0, 3900 - credit)
+                options.append({
+                    "type": "one_transition",
+                    "category": cat,
+                    "label": CATEGORY_LABELS.get(cat, cat),
+                    "base_price": 3900,
+                    "credit": min(credit, 3900),
+                    "charge": charge,
+                })
+    # Add a Transition (if already have at least one full)
+    if full_count >= 1 and full_count < 6:
+        for cat in VALID_CATEGORIES:
+            if cats.get(cat) != "full":
+                options.append({
+                    "type": "add_transition",
+                    "category": cat,
+                    "label": CATEGORY_LABELS.get(cat, cat),
+                    "base_price": 2000,
+                    "credit": 0,
+                    "charge": 2000,
+                })
+    # All Transitions
+    if full_count < 6:
+        charge = max(0, 12500 - credit)
+        options.append({
+            "type": "all_transitions",
+            "category": "all",
+            "label": "All Transitions",
+            "base_price": 12500,
+            "credit": min(credit, 12500),
+            "charge": charge,
+        })
+    return jsonify({"options": options, "credit_cents": credit, "category_access": cats})
 
 @app.route("/webhook/stripe", methods=["POST"])
 def stripe_webhook():
@@ -1771,13 +2115,17 @@ def stripe_webhook():
                 metadata = raw_meta or {}
         purchase_type = metadata.get("purchase_type", "") if isinstance(metadata, dict) else getattr(metadata, "purchase_type", "")
         print(f"Webhook metadata: {metadata}, purchase_type: {purchase_type}")
-        if purchase_type in ("pass", "unlimited"):
+        if purchase_type in ("one_transition", "add_transition"):
+            handle_transition_webhook(session_data, metadata)
+        elif purchase_type == "all_transitions":
+            handle_all_transitions_webhook(session_data, metadata)
+        elif purchase_type == "individual_template":
+            handle_individual_template_webhook(session_data, metadata)
+        elif purchase_type in ("pass", "unlimited"):
+            # Legacy: handle old-style pass/unlimited purchases
             handle_tier_upgrade(session_data, metadata)
         else:
             fulfill_purchase(session_data)
-    elif event_type == "customer.subscription.deleted":
-        sub_data = event["data"]["object"] if isinstance(event, dict) else event.data.object
-        handle_subscription_cancelled(sub_data)
     return "ok", 200
 
 def fulfill_purchase(session_data):
@@ -1928,10 +2276,13 @@ def send_tier_email(to_email, tier, product_name):
     if not RESEND_API_KEY:
         print(f"RESEND_API_KEY not set, skipping tier email to {to_email}")
         return
-    if tier == "unlimited":
-        body = "Your Unlimited subscription is now active. You have full access to everything — all guides, scripts, and tools for every life change."
+    if tier == "all_transitions":
+        body = "You now have full access to everything — all guides, scripts, and tools for every life change. Your dashboard is ready."
+    elif tier == "unlimited":
+        # Legacy
+        body = "You have full access to everything — all guides, scripts, and tools for every life change."
     else:
-        body = f"Your {product_name} is now active. You have full access to your complete guide, scripts, and tools."
+        body = f"Your {product_name} is now active. Your dashboard is ready with the full guide, checklists, scripts, and tools."
     html = f"""<!DOCTYPE html>
 <html><body style="font-family:system-ui,-apple-system,sans-serif;color:#1B2A38;max-width:560px;margin:0 auto;padding:32px 24px;">
 <div style="text-align:center;margin-bottom:32px;">
@@ -1960,18 +2311,196 @@ def send_tier_email(to_email, tier, product_name):
     except Exception as e:
         print(f"Failed to send tier email to {to_email}: {e}")
 
-def handle_subscription_cancelled(sub_data):
-    """Downgrade user when their Unlimited subscription is cancelled."""
-    customer_id = sub_data.get("customer") if isinstance(sub_data, dict) else getattr(sub_data, "customer", None)
-    if not customer_id:
-        print("Cannot handle subscription cancellation: no customer ID")
+def handle_transition_webhook(session_data, metadata):
+    """Handle one_transition or add_transition purchase from webhook."""
+    email = _get_session_email(session_data)
+    session_id = _get_session_field(session_data, "id")
+    payment_intent = _get_session_field(session_data, "payment_intent")
+    category = metadata.get("category", "")
+    purchase_type = metadata.get("purchase_type", "")
+    user_id_str = metadata.get("user_id", "")
+    base_price = int(metadata.get("base_price", "3900"))
+    credit_applied = int(metadata.get("credit_applied", "0"))
+    if not email or not category:
+        print(f"Cannot handle transition purchase: email={email}, category={category}")
+        return
+    # Find user
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id FROM users WHERE email = {param}", (email,))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        print(f"User not found for {email}")
+        return
+    uid = row[0]
+    _fulfill_transition_purchase_db(conn, uid, email, category, purchase_type, base_price, credit_applied, session_id, payment_intent)
+    conn.close()
+
+def handle_all_transitions_webhook(session_data, metadata):
+    """Handle all_transitions purchase from webhook."""
+    email = _get_session_email(session_data)
+    session_id = _get_session_field(session_data, "id")
+    payment_intent = _get_session_field(session_data, "payment_intent")
+    credit_applied = int(metadata.get("credit_applied", "0"))
+    user_id_str = metadata.get("user_id", "")
+    if not email:
+        print(f"Cannot handle all_transitions: no email")
         return
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    db_execute(conn, f"UPDATE users SET tier = 'free', stripe_customer_id = NULL, subscription_cancel_at = NULL WHERE stripe_customer_id = {param}", (customer_id,))
-    conn.commit()
+    cur = db_execute(conn, f"SELECT id FROM users WHERE email = {param}", (email,))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return
+    uid = row[0]
+    _fulfill_all_transitions_db(conn, uid, email, 12500, credit_applied, session_id, payment_intent)
     conn.close()
-    print(f"Subscription cancelled for customer {customer_id}, downgraded to free")
+
+def handle_individual_template_webhook(session_data, metadata):
+    """Handle individual $3 template purchase from webhook."""
+    email = _get_session_email(session_data)
+    session_id = _get_session_field(session_data, "id")
+    payment_intent = _get_session_field(session_data, "payment_intent")
+    template_id = metadata.get("template_id", "")
+    template_name = metadata.get("template_name", "Individual Template")
+    if not email:
+        return
+    now = datetime.now(timezone.utc).isoformat()
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    # Record purchase
+    token = secrets.token_urlsafe(32)
+    try:
+        db_execute(conn, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+            """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (email, f"template-{template_id}", template_name, 300, session_id, payment_intent, now, token, True if USE_POSTGRES else 1))
+        conn.commit()
+    except Exception as e:
+        print(f"Error recording individual template purchase: {e}")
+    # Add $3 credit to user
+    try:
+        db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 300 WHERE email = {param}", (email,))
+        conn.commit()
+    except Exception as e:
+        print(f"Error adding credit for individual template: {e}")
+    conn.close()
+    # Send download email
+    threading.Thread(target=send_purchase_email, args=(email, f"template-{template_id}", template_name, token), daemon=True).start()
+    print(f"Individual template purchased: {email} bought {template_name}")
+
+def _fulfill_transition_purchase(user, category, purchase_type, base_price, credit_applied, session_id, payment_intent):
+    """Fulfill a transition purchase (called from route or webhook)."""
+    conn = get_db()
+    _fulfill_transition_purchase_db(conn, user["id"], user["email"], category, purchase_type, base_price, credit_applied, session_id, payment_intent)
+    conn.close()
+
+def _fulfill_transition_purchase_db(conn, user_id, email, category, purchase_type, base_price, credit_applied, session_id, payment_intent):
+    """Core logic: record purchase, grant access, update credit."""
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+    charge = max(0, base_price - credit_applied)
+    product_name = f"{CATEGORY_LABELS.get(category, category)} — Full Access"
+    # Record the purchase
+    token = secrets.token_urlsafe(32)
+    try:
+        db_execute(conn, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+            """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (email, f"transition-{category}", product_name, charge, session_id or f"credit-{now}", payment_intent, now, token, True if USE_POSTGRES else 1))
+        conn.commit()
+    except Exception as e:
+        print(f"Error recording transition purchase: {e}")
+    # Grant full access to this category
+    add_user_category(user_id, category, "full", conn)
+    update_user_tier_from_access(user_id, conn)
+    # Update credit: add what they paid (charge = actual money spent)
+    if charge > 0:
+        try:
+            db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + {param} WHERE id = {param}", (charge, user_id))
+            conn.commit()
+        except Exception as e:
+            print(f"Error updating credit: {e}")
+    # Grant template bundle download
+    bundle_product = PRODUCTS.get(category, {})
+    if bundle_product and category in BUNDLE_FILES:
+        bundle_token = secrets.token_urlsafe(32)
+        try:
+            db_execute(conn, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+                """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (email, category, bundle_product.get("name", f"{category.title()} Bundle"), 0,
+                 f"transition-bundle-{category}-{now}", None, now, bundle_token, True if USE_POSTGRES else 1))
+            conn.commit()
+        except Exception as e:
+            print(f"Error granting transition bundle {category}: {e}")
+    # Send confirmation email
+    threading.Thread(target=send_tier_email, args=(email, "one_transition", product_name), daemon=True).start()
+    print(f"Transition purchase fulfilled: {email} got full access to {category}")
+
+def _fulfill_all_transitions(user, base_price, credit_applied, session_id, payment_intent):
+    """Fulfill all-transitions purchase."""
+    conn = get_db()
+    _fulfill_all_transitions_db(conn, user["id"], user["email"], base_price, credit_applied, session_id, payment_intent)
+    conn.close()
+
+def _fulfill_all_transitions_db(conn, user_id, email, base_price, credit_applied, session_id, payment_intent):
+    """Core: grant all 6 categories at full level."""
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+    charge = max(0, base_price - credit_applied)
+    # Record the purchase
+    token = secrets.token_urlsafe(32)
+    try:
+        db_execute(conn, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+            """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (email, "all-transitions", "All Transitions", charge, session_id or f"credit-{now}", payment_intent, now, token, True if USE_POSTGRES else 1))
+        conn.commit()
+    except Exception as e:
+        print(f"Error recording all-transitions purchase: {e}")
+    # Grant full access to all categories
+    for cat in VALID_CATEGORIES:
+        add_user_category(user_id, cat, "full", conn)
+    db_execute(conn, f"UPDATE users SET tier = 'all_transitions' WHERE id = {param}", (user_id,))
+    # Set credit to full price
+    db_execute(conn, f"UPDATE users SET credit_cents = {param} WHERE id = {param}", (base_price, user_id))
+    conn.commit()
+    # Grant all bundle downloads
+    for cat in VALID_CATEGORIES:
+        bundle_product = PRODUCTS.get(cat, {})
+        if bundle_product and cat in BUNDLE_FILES:
+            bundle_token = secrets.token_urlsafe(32)
+            try:
+                db_execute(conn, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+                    """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (email, cat, bundle_product.get("name", f"{cat.title()} Bundle"), 0,
+                     f"all-trans-bundle-{cat}-{now}", None, now, bundle_token, True if USE_POSTGRES else 1))
+                conn.commit()
+            except Exception as e:
+                print(f"Error granting all-trans bundle {cat}: {e}")
+    threading.Thread(target=send_tier_email, args=(email, "all_transitions", "All Transitions"), daemon=True).start()
+    print(f"All Transitions purchased: {email}")
+
+def _get_session_email(session_data):
+    """Extract email from Stripe session data (handles both dict and object)."""
+    if hasattr(session_data, 'customer_details'):
+        return getattr(session_data.customer_details, 'email', None) or getattr(session_data, 'customer_email', None)
+    return (session_data.get("customer_details") or {}).get("email") or session_data.get("customer_email")
+
+def _get_session_field(session_data, field):
+    """Extract a field from Stripe session data."""
+    if hasattr(session_data, field):
+        return getattr(session_data, field, None)
+    return session_data.get(field)
 
 @app.route("/purchase-success")
 def purchase_success():
@@ -1992,12 +2521,26 @@ def purchase_success():
                 row = cur.fetchone()
                 conn.close()
 
-                if purchase_type in ("pass", "unlimited"):
-                    # Tier purchase — redirect to dashboard
+                if purchase_type in ("one_transition", "add_transition"):
                     if not row:
-                        print(f"No existing tier purchase found, handling now...")
+                        handle_transition_webhook(session_data, metadata)
+                    category = metadata.get("category", "")
+                    product_name = CATEGORY_LABELS.get(category, category)
+                    return render_template_string(TIER_SUCCESS_HTML, product_name=product_name, tier=purchase_type)
+                elif purchase_type == "all_transitions":
+                    if not row:
+                        handle_all_transitions_webhook(session_data, metadata)
+                    return render_template_string(TIER_SUCCESS_HTML, product_name="All Transitions", tier="all_transitions")
+                elif purchase_type == "individual_template":
+                    if not row:
+                        handle_individual_template_webhook(session_data, metadata)
+                    template_name = metadata.get("template_name", "your template")
+                    return render_template_string(PURCHASE_SUCCESS_HTML, product_name=template_name)
+                elif purchase_type in ("pass", "unlimited"):
+                    # Legacy support
+                    if not row:
                         handle_tier_upgrade(session_data, metadata)
-                    product_name = PASS_PRODUCTS.get(product_id, {}).get("name", "Unlimited") if purchase_type == "pass" else "Unlimited"
+                    product_name = PASS_PRODUCTS.get(product_id, {}).get("name", "Your Plan")
                     return render_template_string(TIER_SUCCESS_HTML, product_name=product_name, tier=purchase_type)
                 else:
                     # Template bundle purchase
@@ -2929,49 +3472,12 @@ def dashboard_data():
         "documents_needed": documents_needed,
         "notes": notes,
         "effective_tier": get_effective_tier(user),
-        "subscription_cancel_at": user.get("subscription_cancel_at")
+        "category_access": get_user_categories(user),
+        "credit_cents": user.get("credit_cents", 0),
+        "active_transitions": user.get("active_transitions", []),
     })
 
-@app.route("/api/manage-subscription", methods=["POST"])
-def manage_subscription():
-    user = get_current_user()
-    if not user:
-        return jsonify({"error": "Not logged in"}), 401
-    action = (request.get_json() or {}).get("action")
-    if action not in ("cancel", "reactivate"):
-        return jsonify({"error": "Invalid action"}), 400
-    customer_id = user.get("stripe_customer_id")
-    if not customer_id:
-        return jsonify({"error": "No active subscription found"}), 400
-    try:
-        subscriptions = stripe.Subscription.list(customer=customer_id, status="active", limit=1)
-        if not subscriptions.data:
-            return jsonify({"error": "No active subscription found"}), 400
-        sub = subscriptions.data[0]
-        param = "%s" if USE_POSTGRES else "?"
-
-        if action == "cancel":
-            stripe.Subscription.modify(sub.id, cancel_at_period_end=True)
-            # Save the end date so the dashboard can show it
-            from datetime import datetime
-            cancel_date = datetime.utcfromtimestamp(sub.current_period_end).strftime("%Y-%m-%d")
-            conn = get_db()
-            db_execute(conn, f"UPDATE users SET subscription_cancel_at = {param} WHERE id = {param}", (cancel_date, user["id"]))
-            conn.commit()
-            conn.close()
-            return jsonify({"ok": True, "cancel_at": cancel_date, "message": f"Your subscription will end on {cancel_date}. You'll keep full access until then."})
-
-        elif action == "reactivate":
-            stripe.Subscription.modify(sub.id, cancel_at_period_end=False)
-            conn = get_db()
-            db_execute(conn, f"UPDATE users SET subscription_cancel_at = NULL WHERE id = {param}", (user["id"],))
-            conn.commit()
-            conn.close()
-            return jsonify({"ok": True, "message": "Your subscription has been reactivated."})
-
-    except Exception as e:
-        print(f"Error managing subscription: {e}")
-        return jsonify({"error": "Something went wrong. Please email hello@lumeway.co for help."}), 500
+    # Subscription management removed — all purchases are one-time
 
 @app.route("/api/dashboard/history/<session_id>")
 def dashboard_history_detail(session_id):
