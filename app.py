@@ -693,11 +693,11 @@ def check_tier(user, required_tier="free", transition_type=None):
         # For pass tier, also check transition_type match
         if tier == "pass" and required_tier == "pass" and transition_type:
             if user.get("tier_transition") != transition_type:
-                return (False, "Your Transition Pass is for " + (user.get("tier_transition") or "another transition") + ". Upgrade to Unlimited for access to all transitions.")
+                return (False, "Your Chapter Pass is for " + (user.get("tier_transition") or "another chapter") + ". Upgrade to Unlimited for access to all chapters.")
         return (True, None)
     reasons = {
         "starter": "Upgrade to a Starter bundle for 30 days of full dashboard access.",
-        "pass": "Get a Transition Pass for full access to this transition.",
+        "pass": "Get a Chapter Pass for full access to this chapter.",
         "unlimited": "Subscribe to Unlimited for access to all transitions."
     }
     return (False, reasons.get(required_tier, "Upgrade for access."))
@@ -1625,19 +1625,19 @@ PRODUCTS = {
         "transition_page": "/retirement"},
 }
 
-# Transition Pass products ($39 each — full dashboard for 1 transition)
+# Chapter Pass products ($39 each — full dashboard for 1 life chapter)
 PASS_PRODUCTS = {
-    "pass-job-loss": {"name": "Job Loss Transition Pass", "price": 3900, "transition": "job-loss",
+    "pass-job-loss": {"name": "Job Loss Chapter Pass", "price": 3900, "transition": "job-loss",
         "desc": "Full dashboard access for Job Loss & Income Crisis — checklists, content library, scripts, state-specific guidance."},
-    "pass-estate": {"name": "Estate Transition Pass", "price": 3900, "transition": "estate",
+    "pass-estate": {"name": "Estate Chapter Pass", "price": 3900, "transition": "estate",
         "desc": "Full dashboard access for Death & Estate — checklists, content library, scripts, state-specific guidance."},
-    "pass-divorce": {"name": "Divorce Transition Pass", "price": 3900, "transition": "divorce",
+    "pass-divorce": {"name": "Divorce Chapter Pass", "price": 3900, "transition": "divorce",
         "desc": "Full dashboard access for Divorce & Separation — checklists, content library, scripts, state-specific guidance."},
-    "pass-disability": {"name": "Disability Transition Pass", "price": 3900, "transition": "disability",
+    "pass-disability": {"name": "Disability Chapter Pass", "price": 3900, "transition": "disability",
         "desc": "Full dashboard access for Disability & Benefits — checklists, content library, scripts, state-specific guidance."},
-    "pass-relocation": {"name": "Relocation Transition Pass", "price": 3900, "transition": "relocation",
+    "pass-relocation": {"name": "Relocation Chapter Pass", "price": 3900, "transition": "relocation",
         "desc": "Full dashboard access for Moving & Relocation — checklists, content library, scripts, state-specific guidance."},
-    "pass-retirement": {"name": "Retirement Transition Pass", "price": 3900, "transition": "retirement",
+    "pass-retirement": {"name": "Retirement Chapter Pass", "price": 3900, "transition": "retirement",
         "desc": "Full dashboard access for Retirement Planning — checklists, content library, scripts, state-specific guidance."},
 }
 
@@ -1686,7 +1686,7 @@ def create_checkout():
 
 @app.route("/api/create-pass-checkout", methods=["POST"])
 def create_pass_checkout():
-    """Create Stripe checkout for a Transition Pass ($39)."""
+    """Create Stripe checkout for a Chapter Pass ($39)."""
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not logged in"}), 401
@@ -1928,9 +1928,9 @@ def send_tier_email(to_email, tier, product_name):
         print(f"RESEND_API_KEY not set, skipping tier email to {to_email}")
         return
     if tier == "unlimited":
-        body = "Your Unlimited subscription is now active. You have full access to all transitions, guides, scripts, and tools."
+        body = "Your Unlimited subscription is now active. You have full access to every chapter — all guides, scripts, and tools."
     else:
-        body = f"Your {product_name} is now active. You have full access to your transition's complete guide, scripts, and tools."
+        body = f"Your {product_name} is now active. You have full access to your chapter's complete guide, scripts, and tools."
     html = f"""<!DOCTYPE html>
 <html><body style="font-family:system-ui,-apple-system,sans-serif;color:#1B2A38;max-width:560px;margin:0 auto;padding:32px 24px;">
 <div style="text-align:center;margin-bottom:32px;">
@@ -4326,7 +4326,7 @@ def admin_grant_tier():
         if tier == "pass":
             pass_id = "pass-" + (transition or "estate")
             product = PASS_PRODUCTS.get(pass_id, {})
-            product_name = product.get("name", f"Transition Pass — {transition.title()}")
+            product_name = product.get("name", f"Chapter Pass — {transition.title()}")
             amount_cents = product.get("price", 3900)
         else:
             pass_id = "unlimited"

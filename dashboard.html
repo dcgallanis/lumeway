@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Dashboard — Lumeway</title>
-  <meta name="description" content="Track your transition progress, view past conversations, and manage your checklist."/>
+  <meta name="description" content="Track your progress, view past conversations, and manage your checklist."/>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -337,6 +337,7 @@
       .dash-grid-3 { grid-template-columns: 1fr; }
       .cal-layout { grid-template-columns: 1fr; }
       .overview-layout { grid-template-columns: 1fr; }
+      #panel-account > div:first-child { grid-template-columns: 1fr !important; }
     }
     @media (max-width: 768px) {
       nav { padding: 14px 20px; }
@@ -2946,7 +2947,7 @@ guideLibrary['disability'] = {
       sessionStorage.setItem('lumeway_upgrade_shown', '1');
       var prompt = document.createElement('div');
       prompt.className = 'upgrade-prompt';
-      prompt.innerHTML = '<div class="upgrade-prompt-text">Want the full step-by-step guides, key terms, and professional contacts? See what\'s included in your transition plan.</div><a href="/pricing" class="upgrade-prompt-btn">See plans</a><button class="upgrade-prompt-dismiss" onclick="this.parentElement.remove()" title="Dismiss">&times;</button>';
+      prompt.innerHTML = '<div class="upgrade-prompt-text">Want the full step-by-step guides, key terms, and professional contacts? See what\'s included.</div><a href="/pricing" class="upgrade-prompt-btn">See plans</a><button class="upgrade-prompt-dismiss" onclick="this.parentElement.remove()" title="Dismiss">&times;</button>';
       container.appendChild(prompt);
     }
 
@@ -3127,9 +3128,8 @@ guideLibrary['disability'] = {
       html += '  <button class="dash-tab" data-tab="history" onclick="switchTab(\'history\')">History';
       if (sessions.length > 0) html += ' <span class="tab-badge">' + sessions.length + '</span>';
       html += '</button>';
-      html += '  <button class="dash-tab" data-tab="purchases" onclick="switchTab(\'purchases\')">Purchases</button>';
-      html += '  <button class="dash-tab" data-tab="account" onclick="switchTab(\'account\')">Account</button>';
-      html += '  <button class="dash-tab" data-tab="settings" onclick="switchTab(\'settings\')" style="margin-left:auto">⚙ Settings</button>';
+      html += '  <button class="dash-tab" data-tab="templates" onclick="switchTab(\'templates\')">My Templates</button>';
+      html += '  <button class="dash-tab" data-tab="account" onclick="switchTab(\'account\')" style="margin-left:auto">⚙ Account Settings</button>';
       html += '</div>';
 
       // Trial banner for starter users
@@ -3419,16 +3419,16 @@ guideLibrary['disability'] = {
       } else {
         html += '<div class="dash-card">';
         html += '  <div class="card-label">My Checklist</div>';
-        html += '  <p class="card-empty">Create a checklist to stay organized through your transition.</p>';
+        html += '  <p class="card-empty">Create a checklist to stay organized through your chapter.</p>';
         html += '</div>';
       }
 
       // Add checklist selector (always visible)
       html += '<div class="init-checklist">';
-      html += '  <div class="init-label">Add a transition checklist:</div>';
+      html += '  <div class="init-label">Add a chapter checklist:</div>';
       html += '  <div class="init-row">';
       html += '    <select class="init-select" id="transitionSelect">';
-      html += '      <option value="">Choose a transition...</option>';
+      html += '      <option value="">Choose a chapter...</option>';
       html += '      <option value="estate">Death & Estate</option>';
       html += '      <option value="divorce">Divorce & Separation</option>';
       html += '      <option value="job-loss">Job Loss & Income Crisis</option>';
@@ -3449,7 +3449,7 @@ guideLibrary['disability'] = {
       // Auto-calculate at top
       html += '<div class="calc-section">';
       html += '  <div class="calc-title">Auto-calculate deadlines</div>';
-      html += '  <p class="card-empty" style="margin-bottom:12px">Select your transition type and enter the key date. We\'ll generate a full timeline of deadlines with docs needed and who to contact.</p>';
+      html += '  <p class="card-empty" style="margin-bottom:12px">Select your chapter type and enter the key date. We\'ll generate a full timeline of deadlines with docs needed and who to contact.</p>';
       html += '  <div class="calc-row">';
       html += '    <select class="init-select" id="calcTransition">';
       html += '      <option value="">Choose transition...</option>';
@@ -3737,98 +3737,44 @@ guideLibrary['disability'] = {
       // ═══════════════════════════════
       // ── PURCHASES TAB ──
       // ═══════════════════════════════
-      html += '<div class="tab-panel" id="panel-purchases">';
-      if (purchases.length > 0) {
+      html += '<div class="tab-panel" id="panel-templates">';
+      html += '<div style="margin-bottom:20px">';
+      html += '  <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">My Templates</h2>';
+      html += '  <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Template bundles and worksheets you\'ve purchased will appear here for download.</p>';
+      html += '</div>';
+      var templatePurchases = purchases.filter(function(p) { return p.download_token && p.product_id !== 'unlimited' && !p.product_id.startsWith('pass-'); });
+      if (templatePurchases.length > 0) {
         html += '<div class="dash-card">';
-        purchases.forEach(function(p) {
+        templatePurchases.forEach(function(p) {
           html += '<div class="purchase-item">';
           html += '  <div><div class="purchase-name">' + p.product_name + '</div><div class="purchase-date">' + formatDate(p.purchased_at) + '</div></div>';
-          if (p.download_token && p.product_id !== 'unlimited' && !p.product_id.startsWith('pass-')) {
-            html += '  <a href="/download/' + p.download_token + '" class="purchase-dl">Download</a>';
-          }
+          html += '  <a href="/download/' + p.download_token + '" class="purchase-dl">Download</a>';
           html += '</div>';
         });
         html += '</div>';
       } else {
         html += '<div class="dash-card" style="text-align:center;padding:40px 24px">';
-        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300">No purchases yet.</p>';
-        html += '  <a href="/pricing" style="display:inline-block;margin-top:16px;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">View Plans</a>';
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300">No templates yet. When you purchase a chapter pass or bundle, your downloads will show up here.</p>';
+        html += '  <a href="/pricing" style="display:inline-block;margin-top:16px;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">Browse Plans</a>';
         html += '</div>';
       }
-      html += '</div>'; // panel-purchases
+      html += '</div>'; // panel-templates
 
       // ═══════════════════════════════
-      // ── ACCOUNT TAB ──
+      // ── ACCOUNT SETTINGS TAB (combined) ──
       // ═══════════════════════════════
       var tier = (dashData && dashData.effective_tier) || 'free';
       var userInfo = dashData.user || {};
       html += '<div class="tab-panel" id="panel-account">';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">';
+
+      // Left column: Profile Settings
       html += '<div class="dash-card">';
-      html += '  <h3 style="font-family:Libre Baskerville,serif;font-size:18px;font-weight:400;margin-bottom:20px">Account</h3>';
-      html += '  <div style="display:flex;flex-direction:column;gap:16px">';
-      html += '    <div><span style="font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em">Email</span><div style="font-size:15px;margin-top:4px">' + (userInfo.email || '') + '</div></div>';
-      html += '    <div><span style="font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em">Member since</span><div style="font-size:15px;margin-top:4px">' + formatDate(userInfo.created_at) + '</div></div>';
-      html += '  </div>';
-      html += '</div>';
-
-      // Plan / Subscription section
-      html += '<div class="dash-card" style="margin-top:16px">';
-      html += '  <h3 style="font-family:Libre Baskerville,serif;font-size:18px;font-weight:400;margin-bottom:20px">Your Plan</h3>';
-      var tierLabels = { free: 'Free', starter: 'Starter', pass: 'Transition Pass', unlimited: 'Unlimited' };
-      var tierLabel = tierLabels[tier] || 'Free';
-      html += '  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">';
-      html += '    <span style="display:inline-block;padding:6px 16px;background:' + (tier === 'free' ? 'var(--cream)' : 'var(--navy)') + ';color:' + (tier === 'free' ? 'var(--text)' : 'var(--cream)') + ';border-radius:100px;font-size:13px;font-weight:500;border:1px solid var(--border)">' + tierLabel + '</span>';
-      if (tier === 'pass' && userInfo.tier_transition) {
-        var transLabels = { 'job-loss': 'Job Loss', estate: 'Estate', divorce: 'Divorce', disability: 'Disability', relocation: 'Relocation', retirement: 'Retirement' };
-        html += '    <span style="font-size:13px;color:var(--muted)">' + (transLabels[userInfo.tier_transition] || userInfo.tier_transition) + '</span>';
-      }
-      html += '  </div>';
-
-      if (tier === 'free') {
-        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You are on the free plan. Upgrade for full access to guides, scripts, and step-by-step checklists.</p>';
-        html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">View Plans</a>';
-      } else if (tier === 'starter') {
-        var expiresAt = userInfo.tier_expires_at;
-        if (expiresAt) {
-          var daysLeft = Math.max(0, Math.ceil((new Date(expiresAt) - new Date()) / 86400000));
-          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Your Starter trial has <strong>' + daysLeft + ' days</strong> remaining.</p>';
-        }
-        html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">Upgrade</a>';
-      } else if (tier === 'pass') {
-        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6">You have full access to your transition\'s complete guide, scripts, and tools.</p>';
-      } else if (tier === 'unlimited') {
-        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have full access to all transitions, guides, scripts, and tools.</p>';
-        html += '  <button onclick="cancelSubscription()" style="padding:8px 20px;background:none;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;font-family:Plus Jakarta Sans,sans-serif">Cancel Subscription</button>';
-      }
-      html += '</div>';
-      html += '</div>'; // panel-account
-
-      // ═══════════════════════════════
-      // ── GUIDES TAB ──
-      // ═══════════════════════════════
-      html += '<div class="tab-panel" id="panel-guides">';
-      html += '<div style="margin-bottom:20px">';
-      html += '  <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Transition Guides</h2>';
-      html += '  <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Step-by-step guidance for every part of your transition. Click any task to expand the full walkthrough.</p>';
-      html += '</div>';
-      html += '<div class="guide-nav" id="guideTransitionNav"></div>';
-      html += '<div class="guide-disclaimer" style="margin-bottom:20px">';
-      html += '  This content provides general process information for educational and organizational purposes. It is not legal, financial, or medical advice. For guidance specific to your situation, consult a qualified professional. <a href="/privacy" style="color:var(--navy)">Privacy Policy</a>';
-      html += '</div>';
-      html += '<div id="guideContent"></div>';
-      html += '</div>'; // panel-guides
-
-      // ═══════════════════════════════
-      // ── SETTINGS TAB ──
-      // ═══════════════════════════════
-      html += '<div class="tab-panel" id="panel-settings">';
-      html += '<div class="dash-card" style="max-width:600px">';
-      html += '  <div class="card-label">Account Settings</div>';
+      html += '  <div class="card-label">Profile</div>';
       html += '  <form id="settingsForm" onsubmit="saveSettings(event)" style="display:flex;flex-direction:column;gap:20px">';
       html += '    <div>';
       html += '      <label style="font-size:13px;font-weight:500;color:var(--text);display:block;margin-bottom:6px">Display Name</label>';
       html += '      <input type="text" id="settingsName" value="' + (u.display_name || '').replace(/"/g, '&quot;') + '" placeholder="Enter your name" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;background:var(--warm-white);color:var(--text)">';
-      html += '      <p style="font-size:12px;color:var(--muted);margin-top:4px">This is what we\'ll call you instead of your email address.</p>';
       html += '    </div>';
       html += '    <div>';
       html += '      <label style="font-size:13px;font-weight:500;color:var(--text);display:block;margin-bottom:6px">Your State</label>';
@@ -3839,19 +3785,91 @@ guideLibrary['disability'] = {
         html += '<option value="' + s[0] + '"' + (u.us_state === s[0] ? ' selected' : '') + '>' + s[1] + '</option>';
       });
       html += '      </select>';
-      html += '      <p style="font-size:12px;color:var(--muted);margin-top:4px">We\'ll tailor deadlines, resources, and guidance to your state\'s specific requirements.</p>';
+      html += '      <p style="font-size:12px;color:var(--muted);margin-top:4px">We\'ll tailor deadlines and resources to your state.</p>';
       html += '    </div>';
       html += '    <div>';
       html += '      <label style="font-size:13px;font-weight:500;color:var(--text);display:block;margin-bottom:6px">Email</label>';
       html += '      <input type="email" value="' + u.email + '" disabled style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;background:#f0ede8;color:var(--muted);cursor:not-allowed">';
       html += '    </div>';
+      html += '    <div><span style="font-size:12px;color:var(--muted)">Member since ' + formatDate(userInfo.created_at) + '</span></div>';
       html += '    <div style="display:flex;align-items:center;gap:12px">';
       html += '      <button type="submit" class="btn-primary" style="padding:10px 28px">Save changes</button>';
       html += '      <span id="settingsSaved" style="font-size:13px;color:var(--green);opacity:0;transition:opacity 0.3s">✓ Saved</span>';
       html += '    </div>';
       html += '  </form>';
       html += '</div>';
-      html += '</div>'; // panel-settings
+
+      // Right column: Your Plan + Buy More
+      html += '<div>';
+
+      // Current Plan card
+      html += '<div class="dash-card">';
+      html += '  <div class="card-label">Your Plan</div>';
+      var tierLabels = { free: 'Free', starter: 'Starter', pass: 'Chapter Pass', unlimited: 'Unlimited' };
+      var tierLabel = tierLabels[tier] || 'Free';
+      html += '  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">';
+      html += '    <span style="display:inline-block;padding:6px 16px;background:' + (tier === 'free' ? 'var(--cream)' : 'var(--navy)') + ';color:' + (tier === 'free' ? 'var(--text)' : 'var(--cream)') + ';border-radius:100px;font-size:13px;font-weight:500;border:1px solid var(--border)">' + tierLabel + '</span>';
+      if (tier === 'pass' && userInfo.tier_transition) {
+        var transLabels = { 'job-loss': 'Job Loss', estate: 'Estate & Loss', divorce: 'Divorce', disability: 'Disability', relocation: 'Relocation', retirement: 'Retirement' };
+        html += '    <span style="font-size:13px;color:var(--muted)">' + (transLabels[userInfo.tier_transition] || userInfo.tier_transition) + '</span>';
+      }
+      html += '  </div>';
+
+      if (tier === 'free') {
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You\'re on the free plan. Upgrade for full access to guides, scripts, and step-by-step checklists.</p>';
+        html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">View Plans</a>';
+      } else if (tier === 'starter') {
+        var expiresAt = userInfo.tier_expires_at;
+        if (expiresAt) {
+          var daysLeft = Math.max(0, Math.ceil((new Date(expiresAt) - new Date()) / 86400000));
+          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Your Starter trial has <strong>' + daysLeft + ' days</strong> remaining.</p>';
+        }
+        html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">Upgrade</a>';
+      } else if (tier === 'pass') {
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6">You have full access to your chapter\'s complete guide, scripts, and tools.</p>';
+      } else if (tier === 'unlimited') {
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have full access to every chapter — all guides, scripts, and tools.</p>';
+        html += '  <button onclick="cancelSubscription()" style="padding:8px 20px;background:none;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;font-family:Plus Jakarta Sans,sans-serif">Cancel Subscription</button>';
+      }
+      html += '</div>';
+
+      // Buy More / Manage section
+      if (tier !== 'unlimited') {
+        html += '<div class="dash-card" style="margin-top:16px">';
+        html += '  <div class="card-label">Get More Chapters</div>';
+        if (tier === 'pass') {
+          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Need help with another life chapter? Add another pass or upgrade to Unlimited for access to everything.</p>';
+          html += '  <div style="display:flex;gap:10px;flex-wrap:wrap">';
+          html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:13px;text-decoration:none;font-weight:500">Add Another Chapter — $39</a>';
+          html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:13px;text-decoration:none">Upgrade to Unlimited</a>';
+          html += '  </div>';
+        } else {
+          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Get full access to step-by-step guides, checklists, templates, and expert scripts for any life chapter.</p>';
+          html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">See Plans & Pricing</a>';
+        }
+        html += '</div>';
+      }
+
+      html += '</div>'; // right column
+      html += '</div>'; // 2-col grid
+      html += '</div>'; // panel-account
+
+      // ═══════════════════════════════
+      // ── GUIDES TAB ──
+      // ═══════════════════════════════
+      html += '<div class="tab-panel" id="panel-guides">';
+      html += '<div style="margin-bottom:20px">';
+      html += '  <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Life Chapter Guides</h2>';
+      html += '  <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Step-by-step guidance for every part of your chapter. Click any task to expand the full walkthrough.</p>';
+      html += '</div>';
+      html += '<div class="guide-nav" id="guideTransitionNav"></div>';
+      html += '<div class="guide-disclaimer" style="margin-bottom:20px">';
+      html += '  This content provides general process information for educational and organizational purposes. It is not legal, financial, or medical advice. For guidance specific to your situation, consult a qualified professional. <a href="/privacy" style="color:var(--navy)">Privacy Policy</a>';
+      html += '</div>';
+      html += '<div id="guideContent"></div>';
+      html += '</div>'; // panel-guides
+
+      // Settings panel removed — merged into Account Settings tab above
 
       document.getElementById('dashContent').innerHTML = html;
 
@@ -4283,7 +4301,7 @@ guideLibrary['disability'] = {
     function calculateDeadlines() {
       var type = document.getElementById('calcTransition').value;
       var date = document.getElementById('calcDate').value;
-      if (!type || !date) { alert('Please select a transition type and enter a date.'); return; }
+      if (!type || !date) { alert('Please select a chapter type and enter a date.'); return; }
       fetch('/api/deadlines/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
