@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lumeway Admin Tools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Lumeway Admin</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lumeway Admin">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2C4A5E">
+<link rel="apple-touch-icon" href="/static/logos/lockup-h-navy-cream-v2-transparent.png">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -11,7 +17,7 @@
 body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; min-height: 100vh; }
 
 /* Header */
-.admin-header { padding: 16px 20px; background: var(--navy); color: var(--cream); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+.admin-header { padding: 16px 20px; padding-top: calc(16px + env(safe-area-inset-top)); background: var(--navy); color: var(--cream); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
 .admin-header h1 { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 400; }
 .admin-header a { color: var(--gold); font-size: 13px; text-decoration: none; }
 
@@ -141,12 +147,15 @@ tr:hover { background: var(--cream); }
           <label>Category</label>
           <select id="exp-category" required>
             <option value="">Select...</option>
+            <option>Templates & Products</option>
             <option>Software & Tools</option>
             <option>Marketing & Ads</option>
             <option>Design & Branding</option>
             <option>Web Hosting & Domain</option>
             <option>AI & API Costs</option>
             <option>Payment Processing</option>
+            <option>Etsy Fees</option>
+            <option>Notary Expenses</option>
             <option>Professional Services</option>
             <option>Education & Training</option>
             <option>Legal & Compliance</option>
@@ -375,9 +384,11 @@ function exportExpenseCSV() {
 function loadRevenue() {
   api('/api/admin/revenue').then(function(r) { return r.json(); }).then(function(data) {
     var purchases = data.purchases || [];
-    var total = purchases.reduce(function(s, p) { return s + p.amount_cents; }, 0);
+    // Filter out $0 bundle grants for revenue calculations
+    var paidPurchases = purchases.filter(function(p) { return p.amount_cents > 0; });
+    var total = paidPurchases.reduce(function(s, p) { return s + p.amount_cents; }, 0);
     var thisMonth = new Date().toISOString().slice(0, 7);
-    var monthTotal = purchases.filter(function(p) { return (p.purchased_at || '').startsWith(thisMonth); }).reduce(function(s, p) { return s + p.amount_cents; }, 0);
+    var monthTotal = paidPurchases.filter(function(p) { return (p.purchased_at || '').startsWith(thisMonth); }).reduce(function(s, p) { return s + p.amount_cents; }, 0);
 
     document.getElementById('revenue-stats').innerHTML =
       '<div class="stat-box green"><div class="stat-value">' + fmt(total) + '</div><div class="stat-label">Total Revenue</div></div>' +
@@ -401,12 +412,12 @@ function loadRevenue() {
     document.getElementById('revenue-chart').innerHTML = chartHtml || '<div class="empty">No revenue data yet.</div>';
 
     // List
-    if (purchases.length === 0) {
+    if (paidPurchases.length === 0) {
       document.getElementById('revenue-list').innerHTML = '<div class="empty">No purchases yet.</div>';
       return;
     }
     var listHtml = '';
-    purchases.slice(0, 50).forEach(function(p) {
+    paidPurchases.slice(0, 50).forEach(function(p) {
       var d = p.purchased_at ? new Date(p.purchased_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
       listHtml += '<div class="rev-item"><div><div class="rev-name">' + p.product_name + '</div><div class="rev-meta">' + p.email + ' · ' + d + '</div></div><div class="rev-amount">' + fmt(p.amount_cents) + '</div></div>';
     });

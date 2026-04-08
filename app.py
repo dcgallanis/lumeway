@@ -4246,6 +4246,22 @@ def admin_grant_tier():
             print(f"Error creating purchase record: {e}")
     return jsonify({"ok": True, "message": f"User {email} set to tier={tier}{record_msg}"})
 
+@app.route("/api/admin/delete-purchase", methods=["POST"])
+def admin_delete_purchase():
+    """Admin tool: delete a purchase record by stripe_session_id."""
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    session_id = data.get("session_id", "").strip()
+    if not session_id:
+        return jsonify({"error": "session_id required"}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"DELETE FROM purchases WHERE stripe_session_id = {param}", (session_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
 @app.route("/api/admin/retry-purchase", methods=["POST"])
 def admin_retry_purchase():
     """Admin tool: re-process a Stripe checkout session to create missing purchase records."""
