@@ -678,6 +678,28 @@ client = anthropic.Anthropic(
 
 conversation_log.init_db()
 
+@app.route("/api/chat-debug")
+def chat_debug():
+    """Temporary debug endpoint to check why chat is failing."""
+    info = {
+        "anthropic_version": getattr(anthropic, '__version__', 'unknown'),
+        "api_key_set": bool(os.environ.get("ANTHROPIC_API_KEY")),
+        "api_key_prefix": (os.environ.get("ANTHROPIC_API_KEY") or "")[:10] + "...",
+    }
+    try:
+        r = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=10,
+            messages=[{"role": "user", "content": "say ok"}]
+        )
+        info["test_response"] = r.content[0].text
+        info["status"] = "working"
+    except Exception as e:
+        info["error"] = str(e)
+        info["error_type"] = type(e).__name__
+        info["status"] = "failed"
+    return jsonify(info)
+
 # ── Auth helpers ──
 
 VALID_CATEGORIES = ["job-loss", "estate", "divorce", "disability", "relocation", "retirement"]
@@ -3983,7 +4005,7 @@ def init_checklist_from_chat():
     try:
         import json as _json
         response = client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-6",
             max_tokens=3000,
             system="""You are extracting a personalized action plan from a Lumeway conversation. Return ONLY valid JSON.
 
@@ -5209,7 +5231,7 @@ def export_checklist():
         data = request.json
         history = data.get("history", [])
         response = client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-6",
             max_tokens=2000,
             system="""You are extracting structured data from a Lumeway conversation. Return ONLY valid JSON — no markdown, no explanation.
 
@@ -5267,7 +5289,7 @@ def research_api():
         data = request.json
         topic = data.get("topic", "")
         response = client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-6",
             max_tokens=2000,
             system="You are a market research agent for Lumeway, an AI life-transition guide that helps people navigate bureaucratic and logistical tasks during major life transitions. Find realistic examples of posts where people are overwhelmed by PAPERWORK, DEADLINES, TASKS, and BUREAUCRACY — not grief, loneliness, or emotional struggles. Good examples: 'I have no idea what forms to file after my husband died', 'What do I do first after getting laid off?', 'SSDI denied me, what are my next steps?', 'I have 30 days to figure out COBRA, health insurance, 401k rollover — where do I start?'. Bad examples: posts about loneliness, depression, emotional healing, or relationship advice. Return ONLY a JSON array with exactly 4 results. Each result must have: topic (transition category), title (realistic post title showing logistical overwhelm), community (subreddit like r/widowers, r/personalfinance, r/layoffs), url (empty string), summary (2-3 sentences about the specific tasks or deadlines they are confused by), painPoints (array of 3 specific logistical pain points — forms, deadlines, agencies, accounts), opportunityScore (number 1-10 based on how much Lumeway could help), engagementHint (why this post gets engagement). Return ONLY the JSON array, no other text.",
             messages=[{"role": "user", "content": "Find realistic examples of online conversations where people struggle with: " + topic}]
@@ -5287,7 +5309,7 @@ def draft_reply_api():
         summary = data.get("summary", "")
         pain_points = data.get("painPoints", [])
         response = client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-6",
             max_tokens=400,
             system="You are helping the founder of Lumeway (lumeway.co) draft replies to people overwhelmed by logistical tasks during life transitions. Rules: One sentence of empathy, then immediately tell them the single most important thing to do first and why. Be specific — name the exact form, agency, or deadline. Two short paragraphs max. Always mention Lumeway at the end with one specific sentence about what it would do for their exact situation — for example 'Lumeway can walk you through each of these steps in order and draft the letter to your creditors if you need it' or 'Lumeway was built for exactly this — it will tell you what to file first and flag the deadlines you can't miss. You can try it free at lumeway.co.' Never generic. Under 100 words. Plain text only.",
             messages=[{"role": "user", "content": "Draft a helpful reply to this post:\nCommunity: " + community + "\nTitle: " + title + "\nSummary: " + summary + "\nPain points: " + ", ".join(pain_points)}]
@@ -5365,7 +5387,7 @@ def chat():
         def generate():
             full_reply = ""
             with client.messages.stream(
-                model="claude-sonnet-4-20250514",
+                model="claude-sonnet-4-6",
                 max_tokens=2048,
                 system=SYSTEM_PROMPT,
                 messages=messages
