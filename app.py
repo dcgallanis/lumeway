@@ -4165,6 +4165,7 @@ def admin_grant_tier():
     email = data.get("email", "").strip()
     tier = data.get("tier", "")
     transition = data.get("transition", "")
+    create_record = data.get("create_record", False)
     if not email or tier not in ("free", "starter", "pass", "unlimited"):
         return jsonify({"error": "Invalid email or tier"}), 400
     conn = get_db()
@@ -4179,6 +4180,28 @@ def admin_grant_tier():
     else:
         db_execute(conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL WHERE email = {param}", (email,))
     conn.commit()
+    # Optionally create a purchase record
+    if create_record and tier in ("pass", "unlimited"):
+        now = datetime.now(timezone.utc).isoformat()
+        token = secrets.token_urlsafe(32)
+        if tier == "pass":
+            pass_id = "pass-" + (transition or "estate")
+            product = PASS_PRODUCTS.get(pass_id, {})
+            product_name = product.get("name", f"Transition Pass — {transition.title()}")
+            amount_cents = product.get("price", 3900)
+        else:
+            pass_id = "unlimited"
+            product_name = "Unlimited Subscription"
+            amount_cents = 999
+        try:
+            db_execute(conn, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+                """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (email, pass_id, product_name, amount_cents, "manual-grant", None, now, token, True if USE_POSTGRES else 1))
+            conn.commit()
+        except Exception as e:
+            print(f"Error creating purchase record: {e}")
     conn.close()
     return jsonify({"ok": True, "message": f"User {email} set to tier={tier}"})
 
