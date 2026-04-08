@@ -1866,6 +1866,27 @@ def handle_tier_upgrade(session_data, metadata):
     except Exception as e:
         print(f"DB error recording tier purchase: {e}")
 
+    # Grant template bundle downloads
+    bundles_to_grant = []
+    if tier == "pass" and transition and transition in BUNDLE_FILES:
+        bundles_to_grant = [transition]
+    elif tier == "unlimited":
+        bundles_to_grant = list(BUNDLE_FILES.keys())  # all bundles including master
+    for bundle_id in bundles_to_grant:
+        bundle_product = PRODUCTS.get(bundle_id, {})
+        bundle_token = secrets.token_urlsafe(32)
+        try:
+            db_execute(conn, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+                """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (email, bundle_id, bundle_product.get("name", f"{bundle_id.title()} Bundle"), 0,
+                 (session_id or "") + "-bundle-" + bundle_id, None, now, bundle_token, True if USE_POSTGRES else 1))
+            conn.commit()
+            print(f"Bundle access granted: {email} got {bundle_id} templates")
+        except Exception as e:
+            print(f"DB error granting bundle {bundle_id}: {e}")
+
     conn.close()
 
     # Send confirmation email
@@ -4202,6 +4223,20 @@ def admin_grant_tier():
                 """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (email, pass_id, product_name, amount_cents, "manual-grant-" + now, None, now, token, True if USE_POSTGRES else 1))
+            # Also grant template bundle downloads
+            bundles_to_grant = []
+            if tier == "pass" and transition and transition in BUNDLE_FILES:
+                bundles_to_grant = [transition]
+            elif tier == "unlimited":
+                bundles_to_grant = list(BUNDLE_FILES.keys())
+            for bid in bundles_to_grant:
+                bp = PRODUCTS.get(bid, {})
+                bt = secrets.token_urlsafe(32)
+                db_execute(conn2, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+                    """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (email, bid, bp.get("name", f"{bid.title()} Bundle"), 0, "manual-bundle-" + bid + "-" + now, None, now, bt, True if USE_POSTGRES else 1))
             conn2.commit()
             conn2.close()
             record_msg = ", purchase record created"
