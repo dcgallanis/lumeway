@@ -118,13 +118,14 @@ tr:hover { background: var(--cream); }
 <body>
 <div class="admin-header">
   <h1>Lumeway Admin</h1>
-  <a href="/admin">← Back</a>
+  <a href="/">← Lumeway</a>
 </div>
 
 <div class="admin-tabs">
   <button class="admin-tab active" onclick="switchTab('expenses')">Expenses</button>
   <button class="admin-tab" onclick="switchTab('revenue')">Revenue</button>
   <button class="admin-tab" onclick="switchTab('pnl')">P&amp;L</button>
+  <button class="admin-tab" onclick="switchTab('subscribers')">Subscribers</button>
   <button class="admin-tab" onclick="switchTab('analytics')">Analytics</button>
 </div>
 
@@ -295,6 +296,25 @@ tr:hover { background: var(--cream); }
   </div>
 </div>
 
+<!-- SUBSCRIBERS TAB -->
+<div class="tab-content" id="tab-subscribers">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="margin-bottom:0">Email Subscribers</h2>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span id="sub-count" style="font-size:13px;color:var(--muted)"></span>
+        <button class="btn btn-ghost" onclick="exportSubscribers()" style="padding:6px 14px;font-size:12px">Export CSV</button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <input type="text" id="sub-search" placeholder="Search by email..." oninput="filterSubscribers()" style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--cream);width:100%;max-width:300px">
+    </div>
+    <div class="table-wrap">
+      <div id="sub-table"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ANALYTICS TAB -->
 <div class="tab-content" id="tab-analytics">
   <div class="card">
@@ -335,6 +355,7 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(function(p) { p.classList.toggle('active', p.id === 'tab-' + tab); });
   if (tab === 'revenue') loadRevenue();
   if (tab === 'pnl') loadPnl();
+  if (tab === 'subscribers') loadSubscribers();
   if (tab === 'analytics') loadAnalytics();
 }
 
@@ -647,6 +668,43 @@ function renderPnl(pnl, entries) {
   });
   html += '</tbody></table>';
   document.getElementById('rev-entries-table').innerHTML = html;
+}
+
+// ── SUBSCRIBERS ──
+var allSubscribers = [];
+
+function loadSubscribers() {
+  api('/api/admin/subscribers').then(function(r) { return r.json(); }).then(function(data) {
+    allSubscribers = data.subscribers || [];
+    renderSubscribers(allSubscribers);
+  });
+}
+
+function filterSubscribers() {
+  var q = (document.getElementById('sub-search').value || '').toLowerCase();
+  if (!q) { renderSubscribers(allSubscribers); return; }
+  renderSubscribers(allSubscribers.filter(function(s) { return s.email.toLowerCase().indexOf(q) > -1; }));
+}
+
+function renderSubscribers(subs) {
+  var active = subs.filter(function(s) { return !s.unsubscribed_at; });
+  document.getElementById('sub-count').textContent = active.length + ' active / ' + subs.length + ' total';
+  if (subs.length === 0) {
+    document.getElementById('sub-table').innerHTML = '<div class="empty">No subscribers yet.</div>';
+    return;
+  }
+  var html = '<table><thead><tr><th>Email</th><th>Source</th><th>Category</th><th>Date</th><th>Status</th></tr></thead><tbody>';
+  subs.forEach(function(s) {
+    var d = s.subscribed_at ? new Date(s.subscribed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+    var status = s.unsubscribed_at ? '<span style="color:var(--red);font-size:11px">Unsubscribed</span>' : '<span style="color:var(--green);font-size:11px">Active</span>';
+    html += '<tr><td style="font-size:12px">' + s.email + '</td><td style="font-size:12px;color:var(--muted)">' + (s.source || '') + '</td><td style="font-size:12px;color:var(--muted)">' + (s.category || '') + '</td><td style="font-size:12px;color:var(--muted)">' + d + '</td><td>' + status + '</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('sub-table').innerHTML = html;
+}
+
+function exportSubscribers() {
+  window.open('/admin/subscribers/export?key=' + encodeURIComponent(adminKey), '_blank');
 }
 
 // Init

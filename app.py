@@ -4136,6 +4136,15 @@ def admin_delete_expense(expense_id):
     conn.close()
     return jsonify({"ok": True})
 
+@app.route("/api/admin/subscribers", methods=["GET"])
+def admin_get_subscribers():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = get_db()
+    rows = db_execute(conn, "SELECT email, source, transition_category, subscribed_at, unsubscribed_at FROM subscribers ORDER BY subscribed_at DESC").fetchall()
+    conn.close()
+    return jsonify({"subscribers": [{"email": r[0], "source": r[1], "category": r[2], "subscribed_at": r[3], "unsubscribed_at": r[4]} for r in rows]})
+
 @app.route("/api/admin/revenue-entries", methods=["GET"])
 def admin_get_revenue_entries():
     if not check_admin():
