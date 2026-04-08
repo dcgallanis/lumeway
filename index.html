@@ -827,6 +827,7 @@
   let isLoggedIn = false;
   let messageCount = 0;
   let savePromptShown = false;
+  let lastAutoSaveCount = 0;
   let suggestedDocs = [];
   let templateIdeas = [];
 
@@ -1111,8 +1112,9 @@
     document.getElementById('send-btn').disabled = false;
     input.focus();
 
-    // Show save-progress prompt after 3 messages if not logged in
     messageCount++;
+
+    // Not logged in: prompt to create account after 3 messages
     if (messageCount >= 3 && !isLoggedIn && !savePromptShown) {
       savePromptShown = true;
       const msgs = document.getElementById('messages');
@@ -1121,6 +1123,12 @@
       prompt.innerHTML = '<span>Want to save your progress?</span> <a href="/login" target="_blank">Create a free account</a> <button onclick="this.parentElement.remove()">✕</button>';
       msgs.appendChild(prompt);
       msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    // Logged in: auto-save to dashboard every 5 messages
+    if (isLoggedIn && messageCount >= 5 && messageCount - lastAutoSaveCount >= 5) {
+      lastAutoSaveCount = messageCount;
+      autoSaveToDashboard();
     }
   }
 
@@ -1137,6 +1145,11 @@
   }
 
   window.addEventListener('beforeunload', function() {
+    // Auto-save on close for logged-in users with enough messages
+    if (isLoggedIn && history.length >= 4) {
+      navigator.sendBeacon('/api/checklist/init-from-chat',
+        new Blob([JSON.stringify({ history: history })], { type: 'application/json' }));
+    }
     if (sessionId) {
       navigator.sendBeacon('/api/session/' + sessionId + '/end',
         new Blob([JSON.stringify({})], { type: 'application/json' }));
@@ -1416,6 +1429,36 @@ ${data.suggestedDocs && data.suggestedDocs.length ? `
       btn.disabled = false;
       alert('Failed to save. Please try again.');
     }
+  }
+
+  // ── Auto-save to Dashboard (silent, no popup) ──
+  async function autoSaveToDashboard() {
+    if (history.length < 4) return;
+    try {
+      var res = await fetch('/api/checklist/init-from-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ history: history })
+      });
+      var data = await res.json();
+      if (data.ok) {
+        // Show subtle confirmation in chat
+        var msgs = document.getElementById('messages');
+        var note = document.createElement('div');
+        note.className = 'save-prompt';
+        note.style.background = 'rgba(107,143,94,0.08)';
+        note.style.borderColor = 'rgba(107,143,94,0.2)';
+        note.innerHTML = '<span style="color:var(--green)">✓ Progress saved to your dashboard.</span> <a href="/dashboard" target="_blank">View dashboard</a> <button onclick="this.parentElement.remove()">✕</button>';
+        msgs.appendChild(note);
+        msgs.scrollTop = msgs.scrollHeight;
+        // Update save button
+        var btn = document.getElementById('saveToDashBtn');
+        if (btn) {
+          btn.textContent = '✓ Saved!';
+          setTimeout(function() { btn.textContent = '💾 Save'; btn.disabled = false; }, 2000);
+        }
+      }
+    } catch(e) { /* silent fail */ }
   }
 
   // ── Start over ──

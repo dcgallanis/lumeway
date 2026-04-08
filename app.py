@@ -4031,6 +4031,17 @@ Make tasks SPECIFIC to what was discussed — not generic. If they mentioned kid
         now = datetime.now(timezone.utc).isoformat()
         t_type = plan.get("transition_type", transition_type)
 
+        # Clear previous uncompleted chat-generated items for this transition
+        # (keeps user-completed items, replaces uncompleted ones with fresh extraction)
+        false_val = "FALSE" if USE_POSTGRES else "0"
+        db_execute(conn, f"DELETE FROM checklist_items WHERE user_id = {param} AND transition_type = {param} AND is_completed = {false_val}",
+            (user["id"], t_type))
+        # Clear previous documents/deadlines/goals from chat for this transition (not user-created ones)
+        db_execute(conn, f"DELETE FROM user_documents_needed WHERE user_id = {param} AND transition_type = {param} AND is_gathered = {false_val}",
+            (user["id"], t_type))
+        db_execute(conn, f"DELETE FROM user_deadlines WHERE user_id = {param} AND transition_type = {param} AND source = 'chat'",
+            (user["id"], t_type))
+
         # Save checklist items
         order = 0
         for phase_group in plan.get("tasks", []):

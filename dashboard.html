@@ -3958,35 +3958,34 @@ guideLibrary['disability'] = {
       }
 
       if (tier === 'free') {
-        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You\'re on the free plan. Upgrade for full access to guides and step-by-step checklists.</p>';
-        html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">View Plans</a>';
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You\'re on the free plan. Upgrade for full access to step-by-step guides, calendars, document tracking, and more.</p>';
+        html += '  <div style="display:flex;gap:10px;flex-wrap:wrap">';
+        html += '    <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none;font-weight:500">See Plans</a>';
+        html += '    <a href="/templates" style="display:inline-block;padding:10px 24px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:14px;text-decoration:none">Shop Templates</a>';
+        html += '  </div>';
       } else if (tier === 'starter') {
         var upgradePrice = Math.max(0, (3900 - creditCents) / 100).toFixed(0);
         html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have your template bundle. Upgrade for the full dashboard — guides, calendar, tools, and more.</p>';
-        html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">Upgrade — $' + upgradePrice + '</a>';
+        html += '  <div style="display:flex;gap:10px;flex-wrap:wrap">';
+        html += '    <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none;font-weight:500">Upgrade — $' + upgradePrice + '</a>';
+        html += '    <a href="/templates" style="display:inline-block;padding:10px 24px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:14px;text-decoration:none">Shop Templates</a>';
+        html += '  </div>';
       } else if (tier === 'one_transition' || tier === 'pass') {
-        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have full access to your plan.</p>';
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6">You have full access to your plan.</p>';
       } else if (tier === 'all_transitions' || tier === 'unlimited') {
         html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6">You have full access to everything. All guides, templates, and tools.</p>';
       }
       html += '</div>';
 
-      // Upgrade / Add more section
-      if (tier !== 'all_transitions' && tier !== 'unlimited') {
+      // Add more section — only for users who already have a full plan but might need more
+      if (tier === 'one_transition' || tier === 'pass') {
         html += '<div class="dash-card" style="margin-top:16px">';
-        if (tier === 'one_transition' || tier === 'pass') {
-          html += '  <div class="card-label">Going through more?</div>';
-          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Add another life change for $20, or get everything for $' + Math.max(0, (12500 - creditCents) / 100).toFixed(0) + '.</p>';
-          html += '  <div style="display:flex;gap:10px;flex-wrap:wrap">';
-          html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:13px;text-decoration:none;font-weight:500">Add Another — $20</a>';
-          html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:13px;text-decoration:none">Get Everything</a>';
-          html += '  </div>';
-        } else {
-          html += '  <div class="card-label">Upgrade</div>';
-          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Get full access to step-by-step guides, calendars, document tracking, and more.</p>';
-          html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">See Plans</a>';
-          html += '  <a href="/templates" style="display:inline-block;padding:10px 24px;margin-left:10px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:14px;text-decoration:none">Shop Templates</a>';
-        }
+        html += '  <div class="card-label">Going through more?</div>';
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Add another life change for $20, or get everything for $' + Math.max(0, (12500 - creditCents) / 100).toFixed(0) + '.</p>';
+        html += '  <div style="display:flex;gap:10px;flex-wrap:wrap">';
+        html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:13px;text-decoration:none;font-weight:500">Add Another — $20</a>';
+        html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:13px;text-decoration:none">Get Everything</a>';
+        html += '  </div>';
         html += '</div>';
       }
 
