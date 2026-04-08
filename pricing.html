@@ -114,6 +114,7 @@
       <a href="/blog" class="nav-link">Blog</a>
     </div>
     <div class="nav-right">
+      <a href="/login" class="nav-link" id="navAccount">Sign in</a>
       <a href="/chat" class="nav-btn">Open Navigator</a>
     </div>
   </nav>
@@ -398,5 +399,6 @@
       if (e.target === this) this.style.display = 'none';
     });
   </script>
+  <script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>
 </body>
 </html>

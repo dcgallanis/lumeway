@@ -150,7 +150,7 @@
       </div>
     </div>
     <div class="nav-right">
-      <a href="/login" class="btn-ghost" id="navAccount">Log in</a>
+      <a href="/login" class="btn-ghost" id="navAccount">Sign in</a>
       <a href="/templates" class="btn-ghost">Shop</a>
       <a href="/chat" target="_blank" class="btn-primary">Try it free</a>
       <a href="/cart" class="btn-ghost" title="Cart" style="font-size:18px">&#128722;</a>
@@ -304,10 +304,20 @@
         subtotal += item.price;
         var typeLabel = item.type === 'plan' ? 'plan' : item.type;
         var typeClass = item.type === 'plan' ? 'bundle' : item.type;
+        var desc = '';
+        if (item.type === 'bundle') {
+          desc = '<div style="font-size:12px;color:var(--muted);margin-top:2px">Worksheet bundle + basic dashboard access</div>';
+        } else if (item.type === 'plan' && item.purchase_type === 'one_transition') {
+          desc = '<div style="font-size:12px;color:var(--muted);margin-top:2px">Full guides, calendar, documents, and dashboard tools</div>';
+        } else if (item.type === 'plan' && item.purchase_type === 'all_transitions') {
+          desc = '<div style="font-size:12px;color:var(--muted);margin-top:2px">Full access to all 6 life changes + every feature</div>';
+        } else if (item.type === 'individual') {
+          desc = '<div style="font-size:12px;color:var(--muted);margin-top:2px">Editable .docx worksheet</div>';
+        }
         html += '<div class="cart-item">'
           + '<div class="cart-item-info">'
           + '<span class="cart-item-type ' + typeClass + '">' + typeLabel + '</span>'
-          + '<span class="cart-item-name">' + escapeHtml(item.name) + '</span>'
+          + '<div><span class="cart-item-name">' + escapeHtml(item.name) + '</span>' + desc + '</div>'
           + '</div>'
           + '<div class="cart-item-right">'
           + '<span class="cart-item-price">' + formatPrice(item.price) + '</span>'
