@@ -12,7 +12,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pricing — Lumeway | Plans for Every Life Chapter</title>
-  <meta name="description" content="Choose the right Lumeway plan for your life chapter. Free chat, template bundles, Chapter Passes, and Unlimited access."/>
+  <meta name="description" content="Choose the right Lumeway plan for your life chapter. Free chat, template bundles, full dashboard plans, and everything access."/>
   <link rel="canonical" href="https://lumeway.co/pricing"/>
   <meta property="og:type" content="website"/>
   <meta property="og:site_name" content="Lumeway"/>
@@ -25,7 +25,7 @@
     :root {
       --cream: #FAF7F2; --warm-white: #FDFCFA; --blush: #F2E6DF; --sage: #D4DFD0;
       --navy: #2C4A5E; --navy-deep: #1B3A4E; --text: #2C3E50; --muted: #6B7B8D;
-      --gold: #B8977E; --border: #E8E0D6; --accent: #C4704E; --green: #6B8F5E;
+      --gold: #B8977E; --border: #E8E0D6; --accent: #C4704E; --accent-light: #D4896C; --green: #6B8F5E;
     }
     html { scroll-behavior: smooth; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
@@ -46,32 +46,72 @@
     .nav-link:hover { color: var(--navy); }
 
     /* Hero */
-    .hero { text-align: center; padding: 80px 24px 40px; max-width: 680px; margin: 0 auto; }
+    .hero { text-align: center; padding: 80px 24px 48px; max-width: 680px; margin: 0 auto; }
     .hero h1 { font-family: 'Libre Baskerville', serif; font-size: 38px; font-weight: 400; color: var(--navy); line-height: 1.3; margin-bottom: 16px; }
     .hero p { font-size: 16px; font-weight: 300; color: var(--muted); line-height: 1.7; }
 
-    /* Pricing grid */
-    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 900px; margin: 0 auto 40px; padding: 0 24px; }
-    .pricing-addons { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 600px; margin: 0 auto 80px; padding: 0 24px; }
-    .credit-banner { max-width: 600px; margin: 0 auto 40px; padding: 16px 24px; background: rgba(184,151,126,0.12); border-radius: 12px; text-align: center; font-size: 14px; color: var(--text); font-weight: 300; display: none; }
+    /* Credit banner */
+    .credit-banner { max-width: 700px; margin: 0 auto 40px; padding: 16px 24px; background: rgba(184,151,126,0.12); border-radius: 12px; text-align: center; font-size: 14px; color: var(--text); font-weight: 300; display: none; }
     .credit-banner strong { font-weight: 500; color: var(--navy); }
-    .tier { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 32px 24px; display: flex; flex-direction: column; }
-    .tier.featured { border: 2px solid var(--navy); position: relative; }
-    .tier.featured::before { content: 'Most Popular'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--navy); color: var(--cream); font-size: 11px; font-weight: 500; padding: 4px 14px; border-radius: 100px; white-space: nowrap; }
-    .tier-name { font-family: 'Libre Baskerville', serif; font-size: 20px; color: var(--navy); margin-bottom: 4px; }
-    .tier-price { font-size: 36px; font-weight: 600; color: var(--text); margin: 12px 0 4px; }
-    .tier-price span { font-size: 14px; font-weight: 300; color: var(--muted); }
-    .tier-desc { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.5; margin-bottom: 20px; min-height: 40px; }
-    .tier-cta { display: block; width: 100%; padding: 12px; text-align: center; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; margin-bottom: 24px; border: none; }
-    .tier-cta.primary { background: var(--accent); color: var(--cream); }
-    .tier-cta.primary:hover { filter: brightness(1.08); }
-    .tier-cta.secondary { background: var(--cream); color: var(--navy); border: 1px solid var(--border); }
-    .tier-cta.secondary:hover { border-color: var(--gold); }
-    .tier-features { list-style: none; flex: 1; }
-    .tier-features li { font-size: 13px; font-weight: 300; color: var(--text); padding: 6px 0; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-start; }
-    .tier-features li:last-child { border-bottom: none; }
-    .tier-features li::before { content: '\2713'; color: var(--green); font-weight: 600; font-size: 12px; flex-shrink: 0; margin-top: 2px; }
-    .tier-features li.locked::before { content: '\2014'; color: var(--border); }
+
+    /* ═══ Comparison Grid ═══ */
+    .compare-section { max-width: 960px; margin: 0 auto 60px; padding: 0 24px; }
+
+    /* Tier header row */
+    .tier-headers { display: grid; grid-template-columns: 1.8fr repeat(4, 1fr); gap: 0; margin-bottom: 0; }
+    .tier-header { text-align: center; padding: 28px 12px 20px; }
+    .tier-header:first-child { text-align: left; }
+    .tier-header.featured { background: rgba(44,74,94,0.04); border-radius: 16px 16px 0 0; position: relative; }
+    .tier-header.featured::before { content: 'Most Popular'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--navy); color: var(--cream); font-size: 10px; font-weight: 500; padding: 3px 12px; border-radius: 100px; white-space: nowrap; }
+    .tier-label { font-family: 'Libre Baskerville', serif; font-size: 17px; color: var(--navy); margin-bottom: 6px; }
+    .tier-price-tag { font-size: 28px; font-weight: 600; color: var(--text); line-height: 1.2; }
+    .tier-price-tag span { font-size: 12px; font-weight: 300; color: var(--muted); display: block; margin-top: 2px; }
+    .tier-desc-short { font-size: 12px; font-weight: 300; color: var(--muted); line-height: 1.4; margin-top: 8px; }
+
+    /* CTA row */
+    .cta-row { display: grid; grid-template-columns: 1.8fr repeat(4, 1fr); gap: 0; margin-bottom: 4px; }
+    .cta-cell { padding: 0 12px 20px; display: flex; justify-content: center; }
+    .cta-cell:first-child { justify-content: flex-start; }
+    .cta-cell.featured { background: rgba(44,74,94,0.04); }
+    .cta-btn { display: inline-block; padding: 10px 20px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; border: none; white-space: nowrap; }
+    .cta-btn.primary { background: var(--accent); color: var(--cream); }
+    .cta-btn.primary:hover { background: var(--accent-light); }
+    .cta-btn.secondary { background: var(--cream); color: var(--navy); border: 1px solid var(--border); }
+    .cta-btn.secondary:hover { border-color: var(--gold); }
+
+    /* Feature rows */
+    .feature-group-label { display: grid; grid-template-columns: 1.8fr repeat(4, 1fr); gap: 0; }
+    .feature-group-label td { padding: 16px 12px 8px; font-size: 12px; font-weight: 600; color: var(--navy); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--border); }
+    .feature-group-label td.featured { background: rgba(44,74,94,0.04); }
+
+    .feature-row { display: grid; grid-template-columns: 1.8fr repeat(4, 1fr); gap: 0; border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .feature-row:hover { background: rgba(44,74,94,0.02); }
+    .feature-cell { padding: 12px; font-size: 13px; font-weight: 300; color: var(--text); display: flex; align-items: center; }
+    .feature-cell.center { justify-content: center; text-align: center; }
+    .feature-cell.featured { background: rgba(44,74,94,0.04); }
+    .feature-name { line-height: 1.4; }
+    .feature-desc { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+    .ck { color: var(--green); font-weight: 600; font-size: 16px; }
+    .no { color: var(--border); font-size: 14px; }
+    .val { font-weight: 500; color: var(--text); font-size: 13px; }
+
+    /* Add-on cards */
+    .addons-section { max-width: 700px; margin: 0 auto 60px; padding: 0 24px; }
+    .addons-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .addon-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 24px 20px; }
+    .addon-card h3 { font-family: 'Libre Baskerville', serif; font-size: 17px; color: var(--navy); margin-bottom: 4px; font-weight: 400; }
+    .addon-price { font-size: 24px; font-weight: 600; color: var(--text); margin: 8px 0 4px; }
+    .addon-price span { font-size: 13px; font-weight: 300; color: var(--muted); }
+    .addon-desc { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.5; margin-bottom: 16px; }
+    .addon-btn { display: inline-block; padding: 10px 20px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
+
+    /* Value explainer */
+    .value-section { max-width: 760px; margin: 0 auto 60px; padding: 0 24px; }
+    .value-section h2 { font-family: 'Libre Baskerville', serif; font-size: 24px; font-weight: 400; color: var(--navy); text-align: center; margin-bottom: 24px; }
+    .value-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .value-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .value-card h3 { font-size: 15px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
+    .value-card p { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.6; }
 
     /* FAQ */
     .faq { max-width: 680px; margin: 0 auto 80px; padding: 0 24px; }
@@ -91,13 +131,22 @@
 
     /* Responsive */
     @media (max-width: 900px) {
-      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
-      .pricing-addons { grid-template-columns: 1fr; max-width: 420px; }
       nav { padding: 12px 20px; }
+      .tier-headers, .cta-row, .feature-group-label, .feature-row { grid-template-columns: 1.6fr repeat(4, 1fr); }
+      .tier-label { font-size: 14px; }
+      .tier-price-tag { font-size: 22px; }
+      .tier-desc-short { display: none; }
+      .feature-desc { display: none; }
+      .feature-cell { padding: 10px 6px; font-size: 12px; }
+      .addons-grid { grid-template-columns: 1fr; max-width: 420px; }
+      .value-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 600px) {
       .hero h1 { font-size: 28px; }
-      .tier.featured { order: -1; }
+      .tier-headers, .cta-row, .feature-group-label, .feature-row { grid-template-columns: 1.4fr repeat(4, 1fr); }
+      .tier-price-tag { font-size: 18px; }
+      .cta-btn { padding: 8px 10px; font-size: 11px; }
+      .tier-header { padding: 20px 6px 14px; }
     }
   </style>
 </head>
@@ -126,92 +175,86 @@
 
   <div id="creditBanner" class="credit-banner"></div>
 
-  <div class="pricing-grid">
+  <!-- ═══ Amazon-style comparison grid ═══ -->
+  <div class="compare-section">
 
-    <!-- Free -->
-    <div class="tier">
-      <div class="tier-name">Free</div>
-      <div class="tier-price">$0</div>
-      <div class="tier-desc">Talk through what you're facing and get your first steps.</div>
-      <a href="/chat" class="tier-cta secondary">Start a conversation</a>
-      <ul class="tier-features">
-        <li>Unlimited Navigator conversations</li>
-        <li>Basic checklist from chat</li>
-        <li>Content library previews</li>
-        <li>Landing pages and FAQs</li>
-        <li>Blog articles</li>
-        <li class="locked">Templates and worksheets</li>
-        <li class="locked">Full guides and scripts</li>
-        <li class="locked">Calendar and deadline tracking</li>
-      </ul>
+    <!-- Tier headers -->
+    <div class="tier-headers">
+      <div class="tier-header"></div>
+      <div class="tier-header">
+        <div class="tier-label">Free</div>
+        <div class="tier-price-tag">$0</div>
+        <div class="tier-desc-short">Chat with the Navigator and get your first steps</div>
+      </div>
+      <div class="tier-header">
+        <div class="tier-label">Starter</div>
+        <div class="tier-price-tag">$16 <span>one-time</span></div>
+        <div class="tier-desc-short">Template bundle with 14-16 editable worksheets</div>
+      </div>
+      <div class="tier-header featured">
+        <div class="tier-label">Full Plan</div>
+        <div class="tier-price-tag" id="transitionPrice">$39 <span>one-time</span></div>
+        <div class="tier-desc-short">Complete dashboard for one life change</div>
+      </div>
+      <div class="tier-header">
+        <div class="tier-label">Everything</div>
+        <div class="tier-price-tag" id="allPrice">$125 <span>one-time</span></div>
+        <div class="tier-desc-short">All 6 life changes, every feature, forever</div>
+      </div>
     </div>
 
-    <!-- Starter -->
-    <div class="tier">
-      <div class="tier-name">Starter</div>
-      <div class="tier-price">$16 <span>one-time</span></div>
-      <div class="tier-desc">A template bundle with 14-16 worksheets you can download and keep forever.</div>
-      <a href="/templates" class="tier-cta secondary">Choose a bundle</a>
-      <ul class="tier-features">
-        <li>Everything in Free</li>
-        <li>1 template bundle (14-16 worksheets)</li>
-        <li>Editable .docx files</li>
-        <li>Templates in your dashboard</li>
-        <li>$16 counts toward upgrade</li>
-        <li class="locked">Full content guides</li>
-        <li class="locked">Calendar and deadlines</li>
-        <li class="locked">Document storage</li>
-      </ul>
+    <!-- CTA buttons row -->
+    <div class="cta-row">
+      <div class="cta-cell"></div>
+      <div class="cta-cell"><a href="/chat" class="cta-btn secondary">Start free</a></div>
+      <div class="cta-cell"><a href="/templates" class="cta-btn secondary">Choose bundle</a></div>
+      <div class="cta-cell featured"><button class="cta-btn primary" onclick="showTransitionSelector()">Get full plan</button></div>
+      <div class="cta-cell"><button class="cta-btn primary" onclick="purchaseAll()" id="allBtn">Get everything</button></div>
     </div>
 
-    <!-- One Transition (featured) -->
-    <div class="tier featured">
-      <div class="tier-name">Full Plan</div>
-      <div class="tier-price" id="transitionPrice">$39 <span>one-time</span></div>
-      <div class="tier-desc">Everything for one life change. The complete dashboard, guides, scripts, and tools.</div>
-      <button class="tier-cta primary" onclick="showTransitionSelector()">Get the full plan</button>
-      <ul class="tier-features">
-        <li>Everything in Starter</li>
-        <li>Full dashboard for 1 life change</li>
-        <li>Complete step-by-step guides</li>
-        <li>"What to say" phone scripts</li>
-        <li>State-specific guidance</li>
-        <li>Calendar with real deadlines</li>
-        <li>100 MB document storage</li>
-        <li>Activity log</li>
-        <li>Never expires</li>
-      </ul>
-    </div>
+    <!-- Feature rows built by JS -->
+    <div id="compareGrid"></div>
 
   </div>
 
-  <!-- Add-on tiers -->
-  <div class="pricing-addons">
-    <!-- Add a Transition -->
-    <div class="tier">
-      <div class="tier-name">Add Another</div>
-      <div class="tier-price">+$20 <span>per life change</span></div>
-      <div class="tier-desc">Going through more than one thing? Add another life change to your dashboard.</div>
-      <button class="tier-cta secondary" onclick="showAddTransitionSelector()" id="addTransitionBtn">Add a life change</button>
-      <ul class="tier-features">
-        <li>Full dashboard for 1 more category</li>
-        <li>Templates + guides + scripts</li>
-        <li>Buy as many as you need</li>
-      </ul>
+  <!-- ═══ Add-ons ═══ -->
+  <div class="addons-section">
+    <div class="addons-grid">
+      <div class="addon-card">
+        <h3>Add Another Life Change</h3>
+        <div class="addon-price">+$20 <span>per life change</span></div>
+        <div class="addon-desc">Already have a Full Plan? Add another transition to your dashboard for $20.</div>
+        <button class="addon-btn cta-btn secondary" onclick="showAddTransitionSelector()" id="addTransitionBtn">Add a life change</button>
+      </div>
+      <div class="addon-card">
+        <h3>Complete Bundle</h3>
+        <div class="addon-price">$65 <span>one-time</span></div>
+        <div class="addon-desc">All 6 worksheet bundles (90 documents) in one download. Templates only — add a full plan for the dashboard.</div>
+        <a href="/templates" class="addon-btn cta-btn secondary">Shop templates</a>
+      </div>
     </div>
+  </div>
 
-    <!-- All Transitions -->
-    <div class="tier">
-      <div class="tier-name">Everything</div>
-      <div class="tier-price" id="allPrice">$125 <span>one-time</span></div>
-      <div class="tier-desc">All 6 life changes. All 89+ templates. Full dashboard for everything, permanently.</div>
-      <button class="tier-cta primary" onclick="purchaseAll()" id="allBtn">Get everything</button>
-      <ul class="tier-features">
-        <li>All 6 life changes unlocked</li>
-        <li>All 89+ templates</li>
-        <li>1 GB document storage</li>
-        <li>One-time purchase, yours forever</li>
-      </ul>
+  <!-- ═══ What's in the guides ═══ -->
+  <div class="value-section">
+    <h2>What you actually get</h2>
+    <div class="value-grid">
+      <div class="value-card">
+        <h3>Content Guides</h3>
+        <p>Each guide walks you through a specific task — what it is, why it matters, every step in order, key terms explained in plain language, who to call, and the mistakes other people make. Built for someone doing this for the first time.</p>
+      </div>
+      <div class="value-card">
+        <h3>State-Specific Guidance</h3>
+        <p>Rules vary by state — filing deadlines, benefit amounts, required forms, waiting periods. Your dashboard pulls in the rules for your state so you are not guessing or reading the wrong information.</p>
+      </div>
+      <div class="value-card">
+        <h3>Deadline Calendar</h3>
+        <p>Real dates, not vague timelines. COBRA election deadlines, probate filing windows, unemployment claim periods — added to your calendar so nothing slips through while you are overwhelmed.</p>
+      </div>
+      <div class="value-card">
+        <h3>Templates and Worksheets</h3>
+        <p>Editable .docx worksheets you download and keep. Budget trackers, asset inventories, benefit comparison sheets, letter templates — the actual paperwork you need, pre-formatted and ready to fill out.</p>
+      </div>
     </div>
   </div>
 
@@ -219,67 +262,72 @@
   <div id="transitionModal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.2);align-items:center;justify-content:center">
     <div style="background:var(--warm-white);border-radius:16px;padding:32px;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.12)">
       <h3 style="font-family:'Libre Baskerville',serif;font-size:20px;color:var(--navy);margin-bottom:8px" id="modalTitle">What are you going through?</h3>
-      <p style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:20px" id="modalDesc">Choose one. You'll get the full guide, checklists, scripts, and templates for that life change.</p>
+      <p style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:20px" id="modalDesc">Choose one. You'll get the full guide, checklists, and templates for that life change.</p>
       <div id="transitionOptions" style="display:flex;flex-direction:column;gap:8px"></div>
       <button onclick="document.getElementById('transitionModal').style.display='none'" style="display:block;width:100%;padding:10px;background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;margin-top:16px">Cancel</button>
     </div>
   </div>
 
-  <!-- Feature comparison table -->
-  <div style="max-width:900px;margin:0 auto 60px;padding:0 24px">
-    <h2 style="font-family:'Libre Baskerville',serif;font-size:26px;font-weight:400;color:var(--navy);text-align:center;margin-bottom:8px">What's included</h2>
-    <p style="font-size:14px;color:var(--muted);font-weight:300;text-align:center;margin-bottom:28px;line-height:1.6">Every feature, laid out. No surprises.</p>
-    <div style="overflow-x:auto">
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead>
-          <tr style="border-bottom:2px solid var(--border)">
-            <th style="text-align:left;padding:12px 8px;font-weight:500;color:var(--text);width:40%">Feature</th>
-            <th style="text-align:center;padding:12px 8px;font-weight:500;color:var(--muted);width:15%">Free</th>
-            <th style="text-align:center;padding:12px 8px;font-weight:500;color:var(--muted);width:15%">Starter<br><span style="font-size:11px;font-weight:300">$16</span></th>
-            <th style="text-align:center;padding:12px 8px;font-weight:500;color:var(--navy);width:15%;background:rgba(44,74,94,0.04);border-radius:8px 8px 0 0">Full Plan<br><span style="font-size:11px;font-weight:300">$39</span></th>
-            <th style="text-align:center;padding:12px 8px;font-weight:500;color:var(--muted);width:15%">Everything<br><span style="font-size:11px;font-weight:300">$125</span></th>
-          </tr>
-        </thead>
-        <tbody id="featureTable">
-        </tbody>
-      </table>
-    </div>
-  </div>
-
+  <!-- ═══ Build comparison grid ═══ -->
   <script>
   (function() {
-    var ck = '<span style="color:var(--green);font-weight:600">&#10003;</span>';
-    var no = '<span style="color:var(--border)">&#8212;</span>';
-    var features = [
-      ['Navigator chat (unlimited)', ck, ck, ck, ck],
-      ['Basic checklist from chat', ck, ck, ck, ck],
-      ['Guide previews', ck, ck, ck, ck],
-      ['Blog articles and FAQs', ck, ck, ck, ck],
-      ['Template bundle (14-16 worksheets)', no, ck, ck, ck],
-      ['Editable .docx files', no, ck, ck, ck],
-      ['Templates in dashboard', no, ck, ck, ck],
-      ['$16 credit toward upgrade', no, ck, ck, ck],
-      ['Full step-by-step guides', no, no, ck, ck],
-      ['Calendar with real deadlines', no, no, ck, ck],
-      ['Document tracking and storage', no, no, ck, ck],
-      ['Activity log and session history', no, no, ck, ck],
-      ['Notes and goal tracking', no, no, ck, ck],
-      ['Professional resource links', no, no, ck, ck],
-      ['Number of life changes covered', '0', '1', '1', 'All 6'],
-      ['Purchase type', 'Free', 'One-time', 'One-time', 'One-time'],
+    var ck = '<span class="ck">&#10003;</span>';
+    var no = '<span class="no">&#8212;</span>';
+    var ft = ' featured';
+
+    var groups = [
+      { label: 'Navigator + Chat', features: [
+        { name: 'Unlimited Navigator conversations', desc: 'AI-powered guidance for any life change, anytime', vals: [ck, ck, ck, ck] },
+        { name: 'Personalized checklist from chat', desc: 'The Navigator builds a checklist based on your situation', vals: [ck, ck, ck, ck] },
+        { name: 'Session history', desc: 'Review past conversations anytime', vals: [ck, ck, ck, ck] },
+      ]},
+      { label: 'Templates + Worksheets', features: [
+        { name: 'Template bundle (14-16 worksheets)', desc: 'Budget trackers, inventories, letter templates, comparison sheets', vals: [no, ck, ck, ck] },
+        { name: 'Editable .docx files', desc: 'Download and keep forever — works in Word, Google Docs, etc.', vals: [no, ck, ck, ck] },
+        { name: 'Templates stored in dashboard', desc: 'Access your purchased templates from your dashboard anytime', vals: [no, ck, ck, ck] },
+        { name: '$16 credit toward upgrade', desc: 'Every dollar spent counts toward the next tier', vals: [no, ck, ck, ck] },
+      ]},
+      { label: 'Content Guides', features: [
+        { name: 'Guide previews', desc: 'See what each guide covers before upgrading', vals: [ck, ck, ck, ck] },
+        { name: 'Full step-by-step walkthroughs', desc: 'Every step in order, written for someone doing this the first time', vals: [no, no, ck, ck] },
+        { name: 'Key terms explained', desc: 'Legal and financial terms defined in plain language', vals: [no, no, ck, ck] },
+        { name: '"Who to contact" for each task', desc: 'Exact agencies, phone numbers, and websites', vals: [no, no, ck, ck] },
+        { name: 'Common mistakes to avoid', desc: 'What other people get wrong — so you do not', vals: [no, no, ck, ck] },
+        { name: 'State-specific rules and deadlines', desc: 'Filing windows, benefit amounts, and requirements for your state', vals: [no, no, ck, ck] },
+      ]},
+      { label: 'Dashboard Tools', features: [
+        { name: 'Calendar with real deadlines', desc: 'COBRA elections, filing windows, claim periods — actual dates', vals: [no, no, ck, ck] },
+        { name: 'Document storage', desc: 'Upload and organize important documents in one place', vals: [no, no, '<span class="val">100 MB</span>', '<span class="val">1 GB</span>'] },
+        { name: 'Activity log', desc: 'Track phone calls, form submissions, and appointments', vals: [no, no, ck, ck] },
+        { name: 'Notes and goals', desc: 'Keep track of what matters to you during your transition', vals: [no, no, ck, ck] },
+        { name: 'Professional resource links', desc: 'Vetted links to legal aid, government agencies, and nonprofits', vals: [no, no, ck, ck] },
+      ]},
+      { label: 'Coverage', features: [
+        { name: 'Life changes covered', vals: ['<span class="val">Chat only</span>', '<span class="val">1 bundle</span>', '<span class="val">1 full</span>', '<span class="val">All 6</span>'] },
+        { name: 'Purchase type', vals: ['<span class="val">Free</span>', '<span class="val">One-time</span>', '<span class="val">One-time</span>', '<span class="val">One-time</span>'] },
+        { name: 'Never expires', vals: [ck, ck, ck, ck] },
+      ]},
     ];
-    var tbody = document.getElementById('featureTable');
+
+    var grid = document.getElementById('compareGrid');
     var html = '';
-    features.forEach(function(row) {
-      html += '<tr style="border-bottom:1px solid var(--border)">';
-      html += '<td style="padding:10px 8px;font-weight:300;color:var(--text)">' + row[0] + '</td>';
-      html += '<td style="text-align:center;padding:10px 8px">' + row[1] + '</td>';
-      html += '<td style="text-align:center;padding:10px 8px">' + row[2] + '</td>';
-      html += '<td style="text-align:center;padding:10px 8px;background:rgba(44,74,94,0.04)">' + row[3] + '</td>';
-      html += '<td style="text-align:center;padding:10px 8px">' + row[4] + '</td>';
-      html += '</tr>';
+
+    groups.forEach(function(group) {
+      // Group label row
+      html += '<div class="feature-group-label"><td>' + group.label + '</td><td></td><td></td><td class="featured"></td><td></td></div>';
+
+      group.features.forEach(function(f) {
+        html += '<div class="feature-row">';
+        html += '<div class="feature-cell"><div><span class="feature-name">' + f.name + '</span>' + (f.desc ? '<span class="feature-desc">' + f.desc + '</span>' : '') + '</div></div>';
+        html += '<div class="feature-cell center">' + f.vals[0] + '</div>';
+        html += '<div class="feature-cell center">' + f.vals[1] + '</div>';
+        html += '<div class="feature-cell center' + ft + '">' + f.vals[2] + '</div>';
+        html += '<div class="feature-cell center">' + f.vals[3] + '</div>';
+        html += '</div>';
+      });
     });
-    tbody.innerHTML = html;
+
+    grid.innerHTML = html;
   })();
   </script>
 
@@ -292,7 +340,15 @@
         What's the difference between Starter and the Full Plan?
         <span class="faq-chev">&#9662;</span>
       </div>
-      <div class="faq-a">Starter gives you a template bundle — worksheets you can download and fill out. The Full Plan adds the complete dashboard: step-by-step guides, deadline calendar, phone scripts, state-specific guidance, document storage, and more. Your $16 counts toward the upgrade, so you'd only pay $23 more.</div>
+      <div class="faq-a">Starter gives you a template bundle — worksheets you can download and fill out. The Full Plan adds the complete dashboard: step-by-step guides with key terms and contacts, deadline calendar, state-specific guidance, document storage, and more. Your $16 counts toward the upgrade, so you'd only pay $23 more.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        What exactly is in the content guides?
+        <span class="faq-chev">&#9662;</span>
+      </div>
+      <div class="faq-a">Each guide covers a specific task you need to handle — like evaluating health insurance options after a job loss, or navigating probate. For every task, you get: a plain-language explanation of what it is and why it matters, every step in order, key terms defined, who to contact (agencies, phone numbers, websites), common mistakes to avoid, and state-specific rules. It is like having someone walk you through each thing instead of figuring it out alone.</div>
     </div>
 
     <div class="faq-item">
@@ -361,27 +417,24 @@
         if (!data) return;
         userCredit = data.credit_cents || 0;
         userAccess = data.category_access || {};
-        // Update prices to show credit
         if (userCredit > 0) {
           var banner = document.getElementById('creditBanner');
           banner.innerHTML = 'You have <strong>$' + (userCredit / 100).toFixed(0) + ' in credit</strong> from previous purchases. Prices below are adjusted.';
           banner.style.display = 'block';
-          // Update One Transition price
           var transCharge = Math.max(0, 3900 - userCredit);
           if (transCharge < 3900) {
-            document.getElementById('transitionPrice').innerHTML = '<s style="color:var(--muted);font-size:20px;font-weight:300">$39</s> $' + (transCharge / 100).toFixed(0) + ' <span>with credit</span>';
+            document.getElementById('transitionPrice').innerHTML = '<s style="color:var(--muted);font-size:16px;font-weight:300">$39</s> $' + (transCharge / 100).toFixed(0) + ' <span>with credit</span>';
           }
-          // Update All price
           var allCharge = Math.max(0, 12500 - userCredit);
           if (allCharge < 12500) {
-            document.getElementById('allPrice').innerHTML = '<s style="color:var(--muted);font-size:20px;font-weight:300">$125</s> $' + (allCharge / 100).toFixed(0) + ' <span>with credit</span>';
+            document.getElementById('allPrice').innerHTML = '<s style="color:var(--muted);font-size:16px;font-weight:300">$125</s> $' + (allCharge / 100).toFixed(0) + ' <span>with credit</span>';
           }
         }
       })
-      .catch(function() { /* Not logged in, show default prices */ });
+      .catch(function() {});
 
     function showTransitionSelector() {
-      showCategoryModal('one_transition', 'What are you going through?', 'Choose one. You\'ll get the full guide, checklists, scripts, and templates.');
+      showCategoryModal('one_transition', 'What are you going through?', 'Choose one. You\'ll get the full guide, checklists, and templates.');
     }
 
     function showAddTransitionSelector() {
@@ -397,7 +450,7 @@
       TRANSITIONS.forEach(function(t) {
         var btn = document.createElement('button');
         var hasAccess = userAccess[t.cat] === 'full';
-        btn.textContent = t.label + (hasAccess ? ' ✓' : '');
+        btn.textContent = t.label + (hasAccess ? ' \u2713' : '');
         btn.disabled = hasAccess;
         btn.style.cssText = 'padding:12px 16px;background:' + (hasAccess ? '#f0ede8' : 'var(--cream)') + ';border:1px solid var(--border);border-radius:10px;font-family:Plus Jakarta Sans,sans-serif;font-size:14px;color:' + (hasAccess ? 'var(--muted)' : 'var(--text)') + ';cursor:' + (hasAccess ? 'default' : 'pointer') + ';text-align:left;transition:all 0.15s';
         if (!hasAccess) {
@@ -441,7 +494,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           product_id: 'plan-everything',
-          name: 'Everything — All Transitions',
+          name: 'Everything \u2014 All Transitions',
           price: 125,
           type: 'plan',
           purchase_type: 'all_transitions',
@@ -452,7 +505,6 @@
       .then(function() { window.location.href = '/cart'; });
     }
 
-    // Close modal on backdrop click
     document.getElementById('transitionModal').addEventListener('click', function(e) {
       if (e.target === this) this.style.display = 'none';
     });

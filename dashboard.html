@@ -104,6 +104,8 @@
     .onboard-skip { font-size: 13px; color: var(--muted); background: none; border: none; cursor: pointer; font-family: inherit; }
     .onboard-next { padding: 10px 28px; background: var(--accent); color: var(--cream); border: none; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
     .onboard-next:hover { background: var(--accent-light); }
+    .onboard-back { padding: 10px 20px; background: var(--cream); color: var(--muted); border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .onboard-back:hover { color: var(--navy); border-color: var(--gold); }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .check-skip:hover { color: var(--accent); background: rgba(196,112,78,0.06); }
 
@@ -313,6 +315,14 @@
     .guide-nav-btn { padding: 8px 18px; border: 1px solid var(--border); border-radius: 100px; background: var(--warm-white); color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; }
     .guide-nav-btn:hover { border-color: var(--gold); color: var(--text); }
     .guide-nav-btn.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    .guide-state-callout { background: linear-gradient(135deg, #f8f4ef, #f2ece3); border: 1px solid var(--gold); border-radius: 14px; padding: 20px 24px; margin-bottom: 24px; }
+    .guide-state-header { font-family: 'Libre Baskerville', serif; font-size: 16px; font-weight: 400; color: var(--navy); margin-bottom: 12px; }
+    .guide-state-icon { font-size: 16px; }
+    .guide-state-bullets { list-style: none; padding: 0; }
+    .guide-state-bullets li { font-size: 13px; font-weight: 300; color: var(--text); line-height: 1.6; padding: 4px 0 4px 16px; position: relative; }
+    .guide-state-bullets li::before { content: '\2022'; color: var(--gold); font-weight: 600; position: absolute; left: 0; }
+    .guide-state-prompt { background: var(--cream); border: 1px dashed var(--border); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.5; }
+    .guide-state-prompt a { color: var(--navy); font-weight: 500; }
     .guide-category { margin-bottom: 24px; }
     .guide-cat-header { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 400; color: var(--navy); margin-bottom: 4px; }
     .guide-cat-risk { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; }
@@ -410,6 +420,7 @@
     var dashData = null;
     var checklistItems = [];
     var activityLog = [];
+    var stateRulesData = null;
     var currentTab = 'overview';
     var calMonth = new Date().getMonth();
     var calYear = new Date().getFullYear();
@@ -2900,6 +2911,24 @@ guideLibrary['disability'] = {
 
       var html = '';
 
+      // State-specific callout (if user has a state set and we have data)
+      var userState = dashData && dashData.user && dashData.user.us_state;
+      var stateKey = stateRulesKeyMap[key];
+      if (hasFullForThis && userState && stateRulesData && stateRulesData[userState] && stateKey && stateRulesData[userState][stateKey]) {
+        var stateInfo = stateRulesData[userState][stateKey];
+        var stateName = stateRulesData[userState].name || userState;
+        html += '<div class="guide-state-callout">';
+        html += '  <div class="guide-state-header"><span class="guide-state-icon">📍</span> ' + stateName + ' rules for this transition</div>';
+        html += '  <ul class="guide-state-bullets">';
+        stateInfo.bullets.forEach(function(b) { html += '<li>' + b + '</li>'; });
+        html += '  </ul>';
+        html += '</div>';
+      } else if (hasFullForThis && !userState) {
+        html += '<div class="guide-state-prompt">';
+        html += '  <span class="guide-state-icon">📍</span> <a href="#" onclick="switchTab(\'account\');return false;">Set your state</a> in Account Settings to see state-specific rules, deadlines, and benefit amounts woven into your guides.';
+        html += '</div>';
+      }
+
       t.categories.forEach(function(cat) {
         html += '<div class="guide-category">';
         html += '  <div class="guide-cat-header">' + cat.name + '</div>';
@@ -3090,15 +3119,27 @@ guideLibrary['disability'] = {
       });
     }
 
+    // Map dashboard transition keys to state-rules.json category keys
+    var stateRulesKeyMap = {
+      'job-loss': 'job_loss',
+      'estate': 'loss_of_spouse',
+      'divorce': 'divorce',
+      'disability': 'disability',
+      'relocation': 'relocation',
+      'retirement': 'retirement'
+    };
+
     function loadDashboard() {
       Promise.all([
         fetch('/api/dashboard/data').then(function(r) { return r.json(); }),
         fetch('/api/checklist').then(function(r) { return r.json(); }),
-        fetch('/api/activity-log').then(function(r) { return r.json(); })
+        fetch('/api/activity-log').then(function(r) { return r.json(); }),
+        fetch('/static/data/state-rules.json').then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; })
       ]).then(function(results) {
         dashData = results[0];
         checklistItems = results[1].items || [];
         activityLog = results[2].entries || [];
+        stateRulesData = results[3];
         if (typeof gtag === 'function') gtag('event', 'dashboard_view', { tier: dashData.effective_tier || 'free' });
         renderDashboard();
         loadUserFiles();
@@ -3917,16 +3958,16 @@ guideLibrary['disability'] = {
       }
 
       if (tier === 'free') {
-        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You\'re on the free plan. Upgrade for full access to guides, scripts, and step-by-step checklists.</p>';
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You\'re on the free plan. Upgrade for full access to guides and step-by-step checklists.</p>';
         html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">View Plans</a>';
       } else if (tier === 'starter') {
         var upgradePrice = Math.max(0, (3900 - creditCents) / 100).toFixed(0);
-        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have your template bundle. Upgrade for the full dashboard — guides, calendar, scripts, and more.</p>';
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have your template bundle. Upgrade for the full dashboard — guides, calendar, tools, and more.</p>';
         html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">Upgrade — $' + upgradePrice + '</a>';
       } else if (tier === 'one_transition' || tier === 'pass') {
         html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have full access to your plan.</p>';
       } else if (tier === 'all_transitions' || tier === 'unlimited') {
-        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6">You have full access to everything. All guides, scripts, templates, and tools.</p>';
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6">You have full access to everything. All guides, templates, and tools.</p>';
       }
       html += '</div>';
 
@@ -4749,6 +4790,7 @@ guideLibrary['disability'] = {
           <div class="onboard-feature"><div class="feat-icon" style="background:var(--navy);color:var(--cream)">$39</div><div><strong>Full Plan</strong> — Guides, calendar, documents, and everything for one life change</div></div>
           <div class="onboard-feature"><div class="feat-icon" style="background:var(--accent);color:var(--cream)">$125</div><div><strong>Everything</strong> — All 6 life changes, every feature</div></div>
         </div>
+        <a href="/pricing" target="_blank" style="font-size:13px;color:var(--navy);text-decoration:none;font-weight:500;border-bottom:1px solid var(--border);padding-bottom:1px">See full pricing breakdown</a>
       </div>
 
       <!-- Slide 3: Get started -->
@@ -4772,7 +4814,10 @@ guideLibrary['disability'] = {
       </div>
       <div class="onboard-nav">
         <button class="onboard-skip" onclick="closeOnboarding()">Skip</button>
-        <button class="onboard-next" id="onboardNextBtn" onclick="nextOnboardSlide()">Next</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="onboard-back" id="onboardBackBtn" onclick="prevOnboardSlide()" style="display:none">Back</button>
+          <button class="onboard-next" id="onboardNextBtn" onclick="nextOnboardSlide()">Next</button>
+        </div>
       </div>
     </div>
   </div>
@@ -4786,6 +4831,13 @@ guideLibrary['disability'] = {
       document.getElementById('onboardModal').style.display = 'none';
       localStorage.setItem('lumeway_onboarded', '1');
     }
+    function updateOnboardNav() {
+      var slides = document.querySelectorAll('.onboard-slide');
+      var backBtn = document.getElementById('onboardBackBtn');
+      var nextBtn = document.getElementById('onboardNextBtn');
+      backBtn.style.display = onboardSlide > 0 ? 'inline-block' : 'none';
+      nextBtn.textContent = onboardSlide >= slides.length - 1 ? 'Get started' : 'Next';
+    }
     function nextOnboardSlide() {
       var slides = document.querySelectorAll('.onboard-slide');
       var dots = document.querySelectorAll('.onboard-dot');
@@ -4798,9 +4850,18 @@ guideLibrary['disability'] = {
       onboardSlide++;
       slides[onboardSlide].classList.add('active');
       dots[onboardSlide].classList.add('active');
-      if (onboardSlide >= slides.length - 1) {
-        document.getElementById('onboardNextBtn').textContent = 'Get started';
-      }
+      updateOnboardNav();
+    }
+    function prevOnboardSlide() {
+      if (onboardSlide <= 0) return;
+      var slides = document.querySelectorAll('.onboard-slide');
+      var dots = document.querySelectorAll('.onboard-dot');
+      slides[onboardSlide].classList.remove('active');
+      dots[onboardSlide].classList.remove('active');
+      onboardSlide--;
+      slides[onboardSlide].classList.add('active');
+      dots[onboardSlide].classList.add('active');
+      updateOnboardNav();
     }
   </script>
 </body>
