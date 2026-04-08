@@ -692,13 +692,13 @@ CATEGORY_LABELS = {
 
 # Etsy redemption codes — one per category, reusable
 ETSY_CODES = {
-    "LUMEWAY-JOBLOSS": {"category": "job-loss", "credit_cents": 1600},
-    "LUMEWAY-ESTATE": {"category": "estate", "credit_cents": 1600},
-    "LUMEWAY-DIVORCE": {"category": "divorce", "credit_cents": 1600},
-    "LUMEWAY-DISABILITY": {"category": "disability", "credit_cents": 1600},
-    "LUMEWAY-RELOCATION": {"category": "relocation", "credit_cents": 1600},
-    "LUMEWAY-RETIREMENT": {"category": "retirement", "credit_cents": 1600},
-    "LUMEWAY-MASTER": {"category": "master", "credit_cents": 9700},
+    "LUMEWAY-JOBLOSS1": {"category": "job-loss", "credit_cents": 1600},
+    "LUMEWAY-ESTATE2": {"category": "estate", "credit_cents": 1600},
+    "LUMEWAY-DIVORCE5": {"category": "divorce", "credit_cents": 1600},
+    "LUMEWAY-DISABILITY6": {"category": "disability", "credit_cents": 1600},
+    "LUMEWAY-RELOCATION4": {"category": "relocation", "credit_cents": 1600},
+    "LUMEWAY-RETIREMENT3": {"category": "retirement", "credit_cents": 1600},
+    "LUMEWAY-LIFE1": {"category": "master", "credit_cents": 6500},
 }
 
 def get_current_user():
@@ -1605,7 +1605,7 @@ def faq():
     return send_from_directory(".", "faq.html")
 
 PRODUCTS = {
-    "master": {"name": "Complete Bundle", "price": 3600, "desc": "All 6 category bundles — 90 documents",
+    "master": {"name": "Complete Bundle", "price": 6500, "desc": "All 6 category bundles — 90 documents",
         "headline": "Every Template. One Download.",
         "emoji": "📦", "count": "90",
         "long_desc": "Everything Lumeway offers in one package. All six bundles covering job loss, estate settlement, divorce, disability, relocation, and retirement — 90 documents plus bonus wellness worksheets.",

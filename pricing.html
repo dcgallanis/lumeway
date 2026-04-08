@@ -225,6 +225,64 @@
     </div>
   </div>
 
+  <!-- Feature comparison table -->
+  <div style="max-width:900px;margin:0 auto 60px;padding:0 24px">
+    <h2 style="font-family:'Libre Baskerville',serif;font-size:26px;font-weight:400;color:var(--navy);text-align:center;margin-bottom:8px">What's included</h2>
+    <p style="font-size:14px;color:var(--muted);font-weight:300;text-align:center;margin-bottom:28px;line-height:1.6">Every feature, laid out. No surprises.</p>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th style="text-align:left;padding:12px 8px;font-weight:500;color:var(--text);width:40%">Feature</th>
+            <th style="text-align:center;padding:12px 8px;font-weight:500;color:var(--muted);width:15%">Free</th>
+            <th style="text-align:center;padding:12px 8px;font-weight:500;color:var(--muted);width:15%">Starter<br><span style="font-size:11px;font-weight:300">$16</span></th>
+            <th style="text-align:center;padding:12px 8px;font-weight:500;color:var(--navy);width:15%;background:rgba(44,74,94,0.04);border-radius:8px 8px 0 0">Full Plan<br><span style="font-size:11px;font-weight:300">$39</span></th>
+            <th style="text-align:center;padding:12px 8px;font-weight:500;color:var(--muted);width:15%">Everything<br><span style="font-size:11px;font-weight:300">$125</span></th>
+          </tr>
+        </thead>
+        <tbody id="featureTable">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    var ck = '<span style="color:var(--green);font-weight:600">&#10003;</span>';
+    var no = '<span style="color:var(--border)">&#8212;</span>';
+    var features = [
+      ['Navigator chat (unlimited)', ck, ck, ck, ck],
+      ['Basic checklist from chat', ck, ck, ck, ck],
+      ['Guide previews', ck, ck, ck, ck],
+      ['Blog articles and FAQs', ck, ck, ck, ck],
+      ['Template bundle (14-16 worksheets)', no, ck, ck, ck],
+      ['Editable .docx files', no, ck, ck, ck],
+      ['Templates in dashboard', no, ck, ck, ck],
+      ['$16 credit toward upgrade', no, ck, ck, ck],
+      ['Full step-by-step guides', no, no, ck, ck],
+      ['Calendar with real deadlines', no, no, ck, ck],
+      ['Document tracking and storage', no, no, ck, ck],
+      ['Activity log and session history', no, no, ck, ck],
+      ['Notes and goal tracking', no, no, ck, ck],
+      ['Professional resource links', no, no, ck, ck],
+      ['Number of life changes covered', '0', '1', '1', 'All 6'],
+      ['Purchase type', 'Free', 'One-time', 'One-time', 'One-time'],
+    ];
+    var tbody = document.getElementById('featureTable');
+    var html = '';
+    features.forEach(function(row) {
+      html += '<tr style="border-bottom:1px solid var(--border)">';
+      html += '<td style="padding:10px 8px;font-weight:300;color:var(--text)">' + row[0] + '</td>';
+      html += '<td style="text-align:center;padding:10px 8px">' + row[1] + '</td>';
+      html += '<td style="text-align:center;padding:10px 8px">' + row[2] + '</td>';
+      html += '<td style="text-align:center;padding:10px 8px;background:rgba(44,74,94,0.04)">' + row[3] + '</td>';
+      html += '<td style="text-align:center;padding:10px 8px">' + row[4] + '</td>';
+      html += '</tr>';
+    });
+    tbody.innerHTML = html;
+  })();
+  </script>
+
   <!-- FAQ -->
   <div class="faq">
     <h2>Common questions</h2>

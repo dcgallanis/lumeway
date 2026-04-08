@@ -130,7 +130,7 @@
     .cart-toast { position: fixed; top: 80px; right: 24px; background: #2d6a4f; color: white; padding: 14px 24px; border-radius: 12px; font-size: 14px; z-index: 9999; box-shadow: 0 4px 20px rgba(0,0,0,0.15); transform: translateX(120%); transition: transform 0.3s ease; }
     .cart-toast.show { transform: translateX(0); }
 
-    @media (max-width: 768px) { .featured-card { flex-direction: column; gap: 24px; } .featured-preview { padding: 20px; } .bundle-row, .bundle-row-reverse { grid-template-columns: 1fr; gap: 32px; } .bundle-row-reverse .bundle-image { order: 0; } .bundle-row-reverse .bundle-content { order: 0; } .template-carousel-wrap { max-width: 100%; } }
+    @media (max-width: 768px) { .featured-card { flex-direction: column; gap: 24px; } .featured-preview { padding: 20px; } .bundle-row, .bundle-row-reverse { grid-template-columns: 1fr; gap: 32px; } .bundle-row-reverse .bundle-image { order: 0; } .bundle-row-reverse .bundle-content { order: 0; } .template-carousel-wrap { max-width: 100%; } .products-grid { grid-template-columns: 1fr !important; } }
     @media (max-width: 640px) { nav { padding: 16px 20px; } .featured-includes { grid-template-columns: 1fr; } .cta-block { padding: 32px 5%; } }
   </style>
 <script type="application/ld+json">
@@ -187,6 +187,37 @@
 
   <div id="purchase-msg" class="purchase-success" style="display:none;max-width:900px;margin:0 auto 0;"></div>
 
+  <!-- Two products explainer -->
+  <div class="products-grid reveal" style="max-width:900px;margin:0 auto 48px;padding:0 5%;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div style="background:var(--warm-white);border:1px solid var(--border);border-radius:16px;padding:28px 24px">
+      <div style="font-size:28px;margin-bottom:10px">📄</div>
+      <h3 style="font-family:'Libre Baskerville',serif;font-size:18px;font-weight:400;color:var(--navy);margin-bottom:8px">Worksheet Bundles</h3>
+      <div style="font-size:28px;font-weight:600;color:var(--text);margin-bottom:4px">$16 <span style="font-size:14px;font-weight:300;color:var(--muted)">per bundle</span></div>
+      <p style="font-size:13px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">14-16 editable worksheets and checklists you download and keep. Comes with basic dashboard access to store your templates.</p>
+      <ul style="list-style:none;font-size:13px;color:var(--text);font-weight:300;margin-bottom:16px">
+        <li style="padding:4px 0">✓ Editable .docx files</li>
+        <li style="padding:4px 0">✓ Instant download</li>
+        <li style="padding:4px 0">✓ Basic dashboard access</li>
+        <li style="padding:4px 0">✓ $16 counts toward full plan</li>
+      </ul>
+      <a href="#job-loss" style="font-size:13px;color:var(--navy);text-decoration:none;font-weight:500">Browse bundles below ↓</a>
+    </div>
+    <div style="background:var(--warm-white);border:2px solid var(--navy);border-radius:16px;padding:28px 24px;position:relative">
+      <div style="position:absolute;top:-11px;left:24px;background:var(--navy);color:var(--cream);font-size:11px;font-weight:500;padding:3px 12px;border-radius:100px">Full Experience</div>
+      <div style="font-size:28px;margin-bottom:10px">🏠</div>
+      <h3 style="font-family:'Libre Baskerville',serif;font-size:18px;font-weight:400;color:var(--navy);margin-bottom:8px">Dashboard Plan</h3>
+      <div style="font-size:28px;font-weight:600;color:var(--text);margin-bottom:4px">$39 <span style="font-size:14px;font-weight:300;color:var(--muted)">per life change</span></div>
+      <p style="font-size:13px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">The worksheets plus the full dashboard — step-by-step guides, calendar with deadlines, document tracking, and everything you need to stay on top of it.</p>
+      <ul style="list-style:none;font-size:13px;color:var(--text);font-weight:300;margin-bottom:16px">
+        <li style="padding:4px 0">✓ Everything in the bundle</li>
+        <li style="padding:4px 0">✓ Full guides and checklists</li>
+        <li style="padding:4px 0">✓ Calendar with real deadlines</li>
+        <li style="padding:4px 0">✓ Document storage and tracking</li>
+      </ul>
+      <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:13px;text-decoration:none;font-weight:500">See all plans</a>
+    </div>
+  </div>
+
   <div class="section-featured">
     <div class="featured-card reveal" id="master">
       <div class="featured-preview">
@@ -195,7 +226,7 @@
       <div class="featured-details">
         <span class="featured-badge">Best Value</span>
         <h2 class="featured-title">Life Transition Bundle</h2>
-        <p class="featured-desc">Everything Lumeway offers in one package. All six category bundles — 90 documents covering every major life transition.</p>
+        <p class="featured-desc">All six worksheet bundles in one download — 90 documents covering every major life transition. Templates only — add the full dashboard for $60 more.</p>
         <ul class="featured-includes">
           <li>Job Loss &amp; Income Crisis (14 docs)</li>
           <li>Death &amp; Estate (16 docs)</li>
@@ -205,10 +236,10 @@
           <li>Retirement Planning (15 docs)</li>
           <li>3 bonus wellness worksheets</li>
         </ul>
-        <div class="featured-price">$36 <span>one-time</span></div>
-        <div class="featured-savings">Save $60 vs. buying bundles separately</div>
+        <div class="featured-price">$65 <span>one-time</span></div>
+        <div class="featured-savings">Save $31 vs. buying bundles separately</div>
         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-          <button class="btn-buy" onclick="addToCart('master-bundle','Life Transition Bundle',36,'bundle')">Add to Cart — $36</button>
+          <button class="btn-buy" onclick="addToCart('master-bundle','Life Transition Bundle',65,'bundle')">Add to Cart — $65</button>
           <a href="/templates/individual" style="font-size:13.5px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:1px solid var(--border);padding-bottom:2px;">or shop individual templates</a>
         </div>
       </div>
