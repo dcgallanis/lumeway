@@ -519,6 +519,7 @@ def init_subscribers_db():
         "ALTER TABLE users ADD COLUMN tier_transition TEXT",
         "ALTER TABLE users ADD COLUMN tier_expires_at TEXT",
         "ALTER TABLE users ADD COLUMN stripe_customer_id TEXT",
+        "ALTER TABLE users ADD COLUMN subscription_cancel_at TEXT",
     ]:
         try:
             conn2 = get_db()
@@ -656,11 +657,11 @@ def get_current_user():
         return None
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state, created_at, last_login_at, tier, tier_transition, tier_expires_at, stripe_customer_id FROM users WHERE id = {param}", (user_id,))
+    cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state, created_at, last_login_at, tier, tier_transition, tier_expires_at, stripe_customer_id, subscription_cancel_at FROM users WHERE id = {param}", (user_id,))
     row = cur.fetchone()
     conn.close()
     if row:
-        cols = ["id", "email", "display_name", "transition_type", "us_state", "created_at", "last_login_at", "tier", "tier_transition", "tier_expires_at", "stripe_customer_id"]
+        cols = ["id", "email", "display_name", "transition_type", "us_state", "created_at", "last_login_at", "tier", "tier_transition", "tier_expires_at", "stripe_customer_id", "subscription_cancel_at"]
         user = dict(zip(cols, row))
         # Default tier for existing users without the column
         if not user.get("tier"):
@@ -1967,7 +1968,7 @@ def handle_subscription_cancelled(sub_data):
         return
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    db_execute(conn, f"UPDATE users SET tier = 'free', stripe_customer_id = NULL WHERE stripe_customer_id = {param}", (customer_id,))
+    db_execute(conn, f"UPDATE users SET tier = 'free', stripe_customer_id = NULL, subscription_cancel_at = NULL WHERE stripe_customer_id = {param}", (customer_id,))
     conn.commit()
     conn.close()
     print(f"Subscription cancelled for customer {customer_id}, downgraded to free")
@@ -2927,7 +2928,8 @@ def dashboard_data():
         "deadlines": deadlines,
         "documents_needed": documents_needed,
         "notes": notes,
-        "effective_tier": get_effective_tier(user)
+        "effective_tier": get_effective_tier(user),
+        "subscription_cancel_at": user.get("subscription_cancel_at")
     })
 
 @app.route("/api/manage-subscription", methods=["POST"])
@@ -2936,7 +2938,7 @@ def manage_subscription():
     if not user:
         return jsonify({"error": "Not logged in"}), 401
     action = (request.get_json() or {}).get("action")
-    if action != "cancel":
+    if action not in ("cancel", "reactivate"):
         return jsonify({"error": "Invalid action"}), 400
     customer_id = user.get("stripe_customer_id")
     if not customer_id:
@@ -2946,10 +2948,29 @@ def manage_subscription():
         if not subscriptions.data:
             return jsonify({"error": "No active subscription found"}), 400
         sub = subscriptions.data[0]
-        stripe.Subscription.modify(sub.id, cancel_at_period_end=True)
-        return jsonify({"ok": True, "message": "Your subscription will end at the current billing period."})
+        param = "%s" if USE_POSTGRES else "?"
+
+        if action == "cancel":
+            stripe.Subscription.modify(sub.id, cancel_at_period_end=True)
+            # Save the end date so the dashboard can show it
+            from datetime import datetime
+            cancel_date = datetime.utcfromtimestamp(sub.current_period_end).strftime("%Y-%m-%d")
+            conn = get_db()
+            db_execute(conn, f"UPDATE users SET subscription_cancel_at = {param} WHERE id = {param}", (cancel_date, user["id"]))
+            conn.commit()
+            conn.close()
+            return jsonify({"ok": True, "cancel_at": cancel_date, "message": f"Your subscription will end on {cancel_date}. You'll keep full access until then."})
+
+        elif action == "reactivate":
+            stripe.Subscription.modify(sub.id, cancel_at_period_end=False)
+            conn = get_db()
+            db_execute(conn, f"UPDATE users SET subscription_cancel_at = NULL WHERE id = {param}", (user["id"],))
+            conn.commit()
+            conn.close()
+            return jsonify({"ok": True, "message": "Your subscription has been reactivated."})
+
     except Exception as e:
-        print(f"Error cancelling subscription: {e}")
+        print(f"Error managing subscription: {e}")
         return jsonify({"error": "Something went wrong. Please email hello@lumeway.co for help."}), 500
 
 @app.route("/api/dashboard/history/<session_id>")

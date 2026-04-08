@@ -2783,7 +2783,7 @@ guideLibrary['disability'] = {
     };
 
     function cancelSubscription() {
-      if (!confirm('Are you sure you want to cancel your Unlimited subscription? Your access will continue until the end of your current billing period.')) return;
+      if (!confirm('Are you sure you want to cancel? You\'ll keep full access until the end of your billing period.')) return;
       fetch('/api/manage-subscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2792,7 +2792,25 @@ guideLibrary['disability'] = {
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.ok) {
-          alert(data.message || 'Your subscription has been cancelled.');
+          loadDashboard();
+        } else {
+          alert(data.error || 'Something went wrong.');
+        }
+      })
+      .catch(function() {
+        alert('Something went wrong. Please email hello@lumeway.co for help.');
+      });
+    }
+
+    function reactivateSubscription() {
+      fetch('/api/manage-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reactivate' })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
           loadDashboard();
         } else {
           alert(data.error || 'Something went wrong.');
@@ -3828,8 +3846,20 @@ guideLibrary['disability'] = {
       } else if (tier === 'pass') {
         html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6">You have full access to your complete guide, scripts, and tools.</p>';
       } else if (tier === 'unlimited') {
-        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have full access to everything — all guides, scripts, and tools.</p>';
-        html += '  <button onclick="cancelSubscription()" style="padding:8px 20px;background:none;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;font-family:Plus Jakarta Sans,sans-serif">Cancel Subscription</button>';
+        var cancelAt = dashData.subscription_cancel_at;
+        if (cancelAt) {
+          // Subscription is cancelling
+          html += '  <div style="background:rgba(196,112,78,0.08);border:1px solid rgba(196,112,78,0.2);border-radius:12px;padding:16px 20px;margin-bottom:16px">';
+          html += '    <p style="font-size:14px;color:var(--text);font-weight:400;margin-bottom:4px">Your subscription ends on ' + cancelAt + '</p>';
+          html += '    <p style="font-size:13px;color:var(--muted);font-weight:300;line-height:1.5">You\'ll keep full access until then. After that, your dashboard will switch to the free plan. Your checklists, notes, and templates are yours to keep.</p>';
+          html += '  </div>';
+          html += '  <button onclick="reactivateSubscription()" style="padding:10px 24px;background:var(--accent);color:var(--cream);border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:Plus Jakarta Sans,sans-serif;font-weight:500">Reactivate Subscription</button>';
+          html += '  <span style="font-size:12px;color:var(--muted);margin-left:12px">Changed your mind? Pick up right where you left off.</span>';
+        } else {
+          // Active subscription
+          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have full access to everything — all guides, scripts, and tools.</p>';
+          html += '  <button onclick="cancelSubscription()" style="padding:8px 20px;background:none;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;font-family:Plus Jakarta Sans,sans-serif">Cancel Subscription</button>';
+        }
       }
       html += '</div>';
 
