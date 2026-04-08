@@ -1730,9 +1730,16 @@ def stripe_webhook():
         if isinstance(session_data, dict):
             metadata = session_data.get("metadata") or {}
         else:
-            metadata = session_data.metadata or {}
-            metadata = dict(metadata) if not isinstance(metadata, dict) else metadata
-        purchase_type = metadata.get("purchase_type", "")
+            raw_meta = session_data.metadata
+            if raw_meta and not isinstance(raw_meta, dict):
+                try:
+                    metadata = dict(raw_meta)
+                except Exception:
+                    metadata = {k: getattr(raw_meta, k, None) for k in ["purchase_type", "product_id", "transition", "user_id"] if getattr(raw_meta, k, None) is not None}
+            else:
+                metadata = raw_meta or {}
+        purchase_type = metadata.get("purchase_type", "") if isinstance(metadata, dict) else getattr(metadata, "purchase_type", "")
+        print(f"Webhook metadata: {metadata}, purchase_type: {purchase_type}")
         if purchase_type in ("pass", "unlimited"):
             handle_tier_upgrade(session_data, metadata)
         else:
@@ -1792,6 +1799,7 @@ def fulfill_purchase(session_data):
 
 def handle_tier_upgrade(session_data, metadata):
     """Handle pass/unlimited purchases: update tier + create purchase record + send email."""
+    print(f"handle_tier_upgrade called with metadata: {metadata}")
     if hasattr(session_data, 'customer_details'):
         email = getattr(session_data.customer_details, 'email', None) or getattr(session_data, 'customer_email', None)
         session_id = getattr(session_data, 'id', None)
@@ -4147,6 +4155,55 @@ def admin_analytics():
         "signups_by_month": signups_by_month,
         "revenue_by_month": revenue_by_month
     })
+
+@app.route("/api/admin/grant-tier", methods=["POST"])
+def admin_grant_tier():
+    """Admin tool: manually grant a tier to a user (for fixing failed purchases)."""
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    email = data.get("email", "").strip()
+    tier = data.get("tier", "")
+    transition = data.get("transition", "")
+    if not email or tier not in ("free", "starter", "pass", "unlimited"):
+        return jsonify({"error": "Invalid email or tier"}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    if tier == "pass":
+        db_execute(conn, f"UPDATE users SET tier = 'pass', tier_transition = {param} WHERE email = {param}", (transition, email))
+    elif tier == "unlimited":
+        db_execute(conn, f"UPDATE users SET tier = 'unlimited' WHERE email = {param}", (email,))
+    elif tier == "starter":
+        expires = (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
+        db_execute(conn, f"UPDATE users SET tier = 'starter', tier_expires_at = {param} WHERE email = {param}", (expires, email))
+    else:
+        db_execute(conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL WHERE email = {param}", (email,))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "message": f"User {email} set to tier={tier}"})
+
+@app.route("/api/admin/retry-purchase", methods=["POST"])
+def admin_retry_purchase():
+    """Admin tool: re-process a Stripe checkout session to create missing purchase records."""
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    session_id = data.get("session_id", "").strip()
+    if not session_id:
+        return jsonify({"error": "session_id required"}), 400
+    try:
+        session_data = stripe.checkout.Session.retrieve(session_id)
+        if session_data.payment_status != "paid":
+            return jsonify({"error": "Session not paid"}), 400
+        metadata = session_data.metadata if isinstance(session_data.metadata, dict) else dict(session_data.metadata or {})
+        purchase_type = metadata.get("purchase_type", "")
+        if purchase_type in ("pass", "unlimited"):
+            handle_tier_upgrade(session_data, metadata)
+        else:
+            fulfill_purchase(session_data)
+        return jsonify({"ok": True, "message": "Purchase re-processed"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/api/export", methods=["POST"])
 def export_checklist():
