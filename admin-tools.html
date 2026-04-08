@@ -124,6 +124,7 @@ tr:hover { background: var(--cream); }
 <div class="admin-tabs">
   <button class="admin-tab active" onclick="switchTab('expenses')">Expenses</button>
   <button class="admin-tab" onclick="switchTab('revenue')">Revenue</button>
+  <button class="admin-tab" onclick="switchTab('pnl')">P&amp;L</button>
   <button class="admin-tab" onclick="switchTab('analytics')">Analytics</button>
 </div>
 
@@ -229,6 +230,71 @@ tr:hover { background: var(--cream); }
   </div>
 </div>
 
+<!-- P&L TAB -->
+<div class="tab-content" id="tab-pnl">
+  <div class="card">
+    <h2>YTD Summary</h2>
+    <div class="stats-grid" id="pnl-ytd-stats"></div>
+  </div>
+  <div class="card">
+    <h3>Revenue Breakdown</h3>
+    <div id="pnl-rev-breakdown"></div>
+  </div>
+  <div class="card">
+    <h3>Expense Breakdown</h3>
+    <div id="pnl-exp-breakdown"></div>
+  </div>
+  <div class="card">
+    <h2>Add Revenue Entry</h2>
+    <form id="revEntryForm" onsubmit="return addRevEntry(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="rev-date" required>
+        </div>
+        <div class="form-group">
+          <label>Amount ($)</label>
+          <input type="number" id="rev-amount" step="0.01" min="0" placeholder="0.00" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="rev-category" required>
+            <option value="">Select...</option>
+            <option>Etsy Revenue</option>
+            <option>Dashboard Revenue</option>
+            <option>Template Sales</option>
+            <option>Consulting</option>
+            <option>Affiliate</option>
+            <option>Other Revenue</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="rev-desc" placeholder="e.g. Etsy March sales" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Notes (optional)</label>
+          <textarea id="rev-notes" placeholder="Any details..."></textarea>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button type="submit" class="btn btn-primary">Add Revenue</button>
+        <button type="button" class="btn btn-ghost" onclick="document.getElementById('revEntryForm').reset();setRevDate()">Clear</button>
+      </div>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Manual Revenue Entries</h2>
+    <div class="table-wrap">
+      <div id="rev-entries-table"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ANALYTICS TAB -->
 <div class="tab-content" id="tab-analytics">
   <div class="card">
@@ -268,6 +334,7 @@ function switchTab(tab) {
   document.querySelectorAll('.admin-tab').forEach(function(t) { t.classList.toggle('active', t.textContent.toLowerCase().trim() === tab); });
   document.querySelectorAll('.tab-content').forEach(function(p) { p.classList.toggle('active', p.id === 'tab-' + tab); });
   if (tab === 'revenue') loadRevenue();
+  if (tab === 'pnl') loadPnl();
   if (tab === 'analytics') loadAnalytics();
 }
 
@@ -473,8 +540,118 @@ function loadAnalytics() {
   });
 }
 
+// ── P&L ──
+function setRevDate() {
+  document.getElementById('rev-date').valueAsDate = new Date();
+}
+
+function addRevEntry(e) {
+  e.preventDefault();
+  var data = {
+    date: document.getElementById('rev-date').value,
+    amount: parseFloat(document.getElementById('rev-amount').value),
+    category: document.getElementById('rev-category').value,
+    description: document.getElementById('rev-desc').value,
+    notes: document.getElementById('rev-notes').value
+  };
+  api('/api/admin/revenue-entries', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(function(r) { return r.json(); }).then(function(res) {
+    if (res.ok) {
+      showToast('$' + data.amount.toFixed(2) + ' added — ' + data.category);
+      document.getElementById('rev-amount').value = '';
+      document.getElementById('rev-desc').value = '';
+      document.getElementById('rev-notes').value = '';
+      loadPnl();
+    } else {
+      showToast(res.error || 'Error');
+    }
+  });
+  return false;
+}
+
+function deleteRevEntry(id) {
+  if (!confirm('Delete this revenue entry?')) return;
+  api('/api/admin/revenue-entries/' + id, { method: 'DELETE' }).then(function() {
+    loadPnl();
+    showToast('Entry deleted');
+  });
+}
+
+function loadPnl() {
+  Promise.all([
+    api('/api/admin/pnl').then(function(r) { return r.json(); }),
+    api('/api/admin/revenue-entries').then(function(r) { return r.json(); })
+  ]).then(function(results) {
+    var pnl = results[0];
+    var entries = results[1].entries || [];
+    renderPnl(pnl, entries);
+  });
+}
+
+function renderPnl(pnl, entries) {
+  var totalRev = pnl.total_revenue;
+  var totalExp = pnl.expenses.total;
+  var net = pnl.net_profit;
+
+  // YTD Summary
+  document.getElementById('pnl-ytd-stats').innerHTML =
+    '<div class="stat-box green"><div class="stat-value">' + fmt(totalRev) + '</div><div class="stat-label">YTD Revenue</div></div>' +
+    '<div class="stat-box accent"><div class="stat-value">' + fmt(totalExp) + '</div><div class="stat-label">YTD Expenses</div></div>' +
+    '<div class="stat-box ' + (net >= 0 ? 'green' : 'accent') + '"><div class="stat-value">' + fmt(net) + '</div><div class="stat-label">Net Profit</div></div>';
+
+  // Revenue breakdown
+  var revHtml = '';
+  if (pnl.stripe_revenue.categories.length > 0) {
+    revHtml += '<div style="margin-bottom:12px"><span style="font-size:12px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:0.05em">Dashboard / Stripe</span></div>';
+    pnl.stripe_revenue.categories.forEach(function(c) {
+      revHtml += '<div class="rev-item"><div class="rev-name">' + c.category + '</div><div class="rev-amount">' + fmt(c.amount_cents) + '</div></div>';
+    });
+    revHtml += '<div class="rev-item" style="border-top:2px solid var(--border);font-weight:600"><div>Subtotal</div><div class="rev-amount">' + fmt(pnl.stripe_revenue.total) + '</div></div>';
+  }
+  if (pnl.manual_revenue.categories.length > 0) {
+    revHtml += '<div style="margin:16px 0 12px"><span style="font-size:12px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:0.05em">Manual / Etsy</span></div>';
+    pnl.manual_revenue.categories.forEach(function(c) {
+      revHtml += '<div class="rev-item"><div class="rev-name">' + c.category + '</div><div class="rev-amount">' + fmt(c.amount_cents) + '</div></div>';
+    });
+    revHtml += '<div class="rev-item" style="border-top:2px solid var(--border);font-weight:600"><div>Subtotal</div><div class="rev-amount">' + fmt(pnl.manual_revenue.total) + '</div></div>';
+  }
+  if (!revHtml) revHtml = '<div class="empty">No revenue recorded yet.</div>';
+  revHtml += '<div class="rev-item" style="border-top:3px solid var(--navy);font-weight:700;font-size:15px;margin-top:8px"><div>Total Revenue</div><div style="color:var(--green)">' + fmt(totalRev) + '</div></div>';
+  document.getElementById('pnl-rev-breakdown').innerHTML = revHtml;
+
+  // Expense breakdown
+  var expHtml = '';
+  if (pnl.expenses.categories.length > 0) {
+    pnl.expenses.categories.forEach(function(c) {
+      expHtml += '<div class="rev-item"><div class="rev-name">' + c.category + '</div><div style="font-weight:600;color:var(--accent)">' + fmt(c.amount_cents) + '</div></div>';
+    });
+    expHtml += '<div class="rev-item" style="border-top:3px solid var(--navy);font-weight:700;font-size:15px;margin-top:8px"><div>Total Expenses</div><div style="color:var(--accent)">' + fmt(totalExp) + '</div></div>';
+  } else {
+    expHtml = '<div class="empty">No expenses recorded yet.</div>';
+  }
+  document.getElementById('pnl-exp-breakdown').innerHTML = expHtml;
+
+  // Manual revenue entries table
+  if (entries.length === 0) {
+    document.getElementById('rev-entries-table').innerHTML = '<div class="empty">No manual entries yet.</div>';
+    return;
+  }
+  var html = '<table><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th></th></tr></thead><tbody>';
+  entries.forEach(function(e) {
+    var d = new Date(e.date + 'T12:00:00');
+    var ds = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    html += '<tr><td>' + ds + '</td><td><span class="category-tag">' + e.category + '</span></td><td>' + e.description + '</td><td class="amount" style="color:var(--green)">' + fmt(e.amount_cents) + '</td><td><button class="btn-danger" onclick="deleteRevEntry(' + e.id + ')">&times;</button></td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('rev-entries-table').innerHTML = html;
+}
+
 // Init
 setToday();
+setRevDate();
 document.getElementById('exp-month-filter').value = new Date().toISOString().slice(0, 7);
 loadExpenses();
 </script>

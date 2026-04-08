@@ -562,6 +562,36 @@ def init_subscribers_db():
             conn3.close()
         except Exception:
             pass
+    # Revenue entries table (for manual revenue like Etsy sales)
+    try:
+        conn4 = get_db()
+        if USE_POSTGRES:
+            db_execute(conn4, """CREATE TABLE IF NOT EXISTS revenue_entries (
+                id SERIAL PRIMARY KEY,
+                date TEXT NOT NULL,
+                amount_cents INTEGER NOT NULL,
+                category TEXT NOT NULL,
+                description TEXT NOT NULL,
+                notes TEXT,
+                created_at TEXT NOT NULL
+            )""")
+        else:
+            db_execute(conn4, """CREATE TABLE IF NOT EXISTS revenue_entries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                date TEXT NOT NULL,
+                amount_cents INTEGER NOT NULL,
+                category TEXT NOT NULL,
+                description TEXT NOT NULL,
+                notes TEXT,
+                created_at TEXT NOT NULL
+            )""")
+        conn4.commit()
+        conn4.close()
+    except Exception:
+        try:
+            conn4.close()
+        except Exception:
+            pass
     conn.close()
 
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "re_17DAfkrF_3mB4pCdStfmYHiNQoeKrxaWe")
@@ -4105,6 +4135,83 @@ def admin_delete_expense(expense_id):
     conn.commit()
     conn.close()
     return jsonify({"ok": True})
+
+@app.route("/api/admin/revenue-entries", methods=["GET"])
+def admin_get_revenue_entries():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = get_db()
+    cur = db_execute(conn, "SELECT id, date, amount_cents, category, description, notes, created_at FROM revenue_entries ORDER BY date DESC LIMIT 200")
+    rows = cur.fetchall()
+    conn.close()
+    return jsonify({"entries": [{"id": r[0], "date": r[1], "amount_cents": r[2], "category": r[3], "description": r[4], "notes": r[5], "created_at": r[6]} for r in rows]})
+
+@app.route("/api/admin/revenue-entries", methods=["POST"])
+def admin_add_revenue_entry():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    date = data.get("date", "")
+    amount = data.get("amount", 0)
+    category = data.get("category", "")
+    description = data.get("description", "")
+    notes = data.get("notes", "")
+    if not date or not amount or not category or not description:
+        return jsonify({"error": "Missing required fields"}), 400
+    amount_cents = int(round(float(amount) * 100))
+    now = datetime.now(timezone.utc).isoformat()
+    conn = get_db()
+    db_execute(conn, """INSERT INTO revenue_entries (date, amount_cents, category, description, notes, created_at)
+        VALUES (%s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+        """INSERT INTO revenue_entries (date, amount_cents, category, description, notes, created_at)
+        VALUES (?, ?, ?, ?, ?, ?)""",
+        (date, amount_cents, category, description, notes, now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/admin/revenue-entries/<int:entry_id>", methods=["DELETE"])
+def admin_delete_revenue_entry(entry_id):
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"DELETE FROM revenue_entries WHERE id = {param}", (entry_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/admin/pnl", methods=["GET"])
+def admin_pnl():
+    """YTD profit & loss broken down by category."""
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    year = datetime.now(timezone.utc).strftime("%Y")
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    # Expenses by category (YTD)
+    cur = db_execute(conn, f"SELECT category, SUM(amount_cents) FROM expenses WHERE date LIKE {param} GROUP BY category ORDER BY SUM(amount_cents) DESC", (year + "%",))
+    expense_cats = [{"category": r[0], "amount_cents": r[1]} for r in cur.fetchall()]
+    # Manual revenue entries by category (YTD)
+    cur = db_execute(conn, f"SELECT category, SUM(amount_cents) FROM revenue_entries WHERE date LIKE {param} GROUP BY category ORDER BY SUM(amount_cents) DESC", (year + "%",))
+    manual_rev_cats = [{"category": r[0], "amount_cents": r[1]} for r in cur.fetchall()]
+    # Dashboard/Stripe revenue by product (YTD) — only paid purchases
+    cur = db_execute(conn, f"SELECT product_name, SUM(amount_cents) FROM purchases WHERE purchased_at LIKE {param} AND amount_cents > 0 GROUP BY product_name ORDER BY SUM(amount_cents) DESC", (year + "%",))
+    stripe_rev_cats = [{"category": r[0], "amount_cents": r[1]} for r in cur.fetchall()]
+    # Totals
+    total_expenses = sum(e["amount_cents"] for e in expense_cats)
+    total_manual_rev = sum(r["amount_cents"] for r in manual_rev_cats)
+    total_stripe_rev = sum(r["amount_cents"] for r in stripe_rev_cats)
+    total_revenue = total_manual_rev + total_stripe_rev
+    conn.close()
+    return jsonify({
+        "year": year,
+        "expenses": {"total": total_expenses, "categories": expense_cats},
+        "manual_revenue": {"total": total_manual_rev, "categories": manual_rev_cats},
+        "stripe_revenue": {"total": total_stripe_rev, "categories": stripe_rev_cats},
+        "total_revenue": total_revenue,
+        "net_profit": total_revenue - total_expenses
+    })
 
 @app.route("/api/admin/revenue", methods=["GET"])
 def admin_revenue():
