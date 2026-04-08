@@ -84,6 +84,27 @@
     /* Skip button */
     .check-skip { font-size: 11px; color: var(--muted); background: none; border: none; cursor: pointer; padding: 2px 8px; border-radius: 4px; opacity: 0; transition: all 0.15s; margin-left: auto; flex-shrink: 0; }
     .check-item:hover .check-skip { opacity: 1; }
+
+    /* Onboarding modal */
+    .onboard-overlay { position: fixed; inset: 0; background: rgba(44,62,80,0.5); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 24px; animation: fadeIn 0.3s ease; }
+    .onboard-card { background: var(--warm-white); border-radius: 20px; max-width: 520px; width: 100%; padding: 40px 36px 32px; position: relative; box-shadow: 0 12px 48px rgba(44,62,80,0.15); }
+    .onboard-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px; }
+    .onboard-slide { display: none; }
+    .onboard-slide.active { display: block; }
+    .onboard-icon { font-size: 40px; margin-bottom: 16px; }
+    .onboard-title { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 400; margin-bottom: 10px; color: var(--navy); }
+    .onboard-text { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
+    .onboard-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .onboard-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); line-height: 1.5; }
+    .onboard-feature .feat-icon { flex-shrink: 0; width: 28px; height: 28px; background: var(--cream); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .onboard-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 20px; }
+    .onboard-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.2s; }
+    .onboard-dot.active { background: var(--navy); }
+    .onboard-nav { display: flex; justify-content: space-between; align-items: center; }
+    .onboard-skip { font-size: 13px; color: var(--muted); background: none; border: none; cursor: pointer; font-family: inherit; }
+    .onboard-next { padding: 10px 28px; background: var(--accent); color: var(--cream); border: none; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .onboard-next:hover { background: var(--accent-light); }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .check-skip:hover { color: var(--accent); background: rgba(196,112,78,0.06); }
 
     /* Next task highlight */
@@ -3081,6 +3102,25 @@ guideLibrary['disability'] = {
         if (typeof gtag === 'function') gtag('event', 'dashboard_view', { tier: dashData.effective_tier || 'free' });
         renderDashboard();
         loadUserFiles();
+        // Show onboarding for new users
+        if (!localStorage.getItem('lumeway_onboarded')) {
+          showOnboarding();
+        }
+        // Prompt to chat if no checklist items and not onboarding
+        else if (checklistItems.length === 0 && !document.getElementById('chatPromptBanner')) {
+          var banner = document.createElement('div');
+          banner.id = 'chatPromptBanner';
+          banner.style.cssText = 'background:linear-gradient(135deg,#faf6f1,#f5efe6);border:1px solid #d4a574;border-radius:12px;padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px';
+          banner.innerHTML = '<div style="font-size:14px;color:var(--navy);line-height:1.5"><strong>Your dashboard is empty.</strong> Start a conversation with the Navigator to build your personalized checklist and get organized.</div>'
+            + '<div style="display:flex;gap:10px;align-items:center;flex-shrink:0">'
+            + '<a href="/chat" target="_blank" style="background:var(--accent);color:var(--cream);padding:10px 20px;border-radius:8px;font-size:13px;text-decoration:none;white-space:nowrap;font-weight:500">Start a chat</a>'
+            + '<button onclick="this.closest(\'#chatPromptBanner\').remove()" style="background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer;padding:4px">&times;</button>'
+            + '</div>';
+          var dashContent = document.getElementById('dashContent');
+          if (dashContent && dashContent.firstChild) {
+            dashContent.firstChild.after(banner);
+          }
+        }
       }).catch(function(err) {
         document.getElementById('loadingState').textContent = 'Failed to load dashboard. Please refresh.';
       });
@@ -4680,5 +4720,88 @@ guideLibrary['disability'] = {
     });
   </script>
   <div id="completionToast" class="completion-toast"></div>
+
+  <!-- Onboarding modal -->
+  <div class="onboard-overlay" id="onboardModal" style="display:none">
+    <div class="onboard-card">
+      <button class="onboard-close" onclick="closeOnboarding()">&times;</button>
+
+      <!-- Slide 1: Welcome -->
+      <div class="onboard-slide active" data-slide="0">
+        <div class="onboard-icon">👋</div>
+        <div class="onboard-title">Welcome to your dashboard</div>
+        <div class="onboard-text">This is your home base. Everything you need to stay organized during a major life change — checklists, deadlines, documents, and guides — lives here.</div>
+        <div class="onboard-features">
+          <div class="onboard-feature"><div class="feat-icon">✓</div><div>Personalized checklists based on your situation</div></div>
+          <div class="onboard-feature"><div class="feat-icon">📅</div><div>Calendar with real deadlines so nothing slips</div></div>
+          <div class="onboard-feature"><div class="feat-icon">📖</div><div>Step-by-step guides written in plain language</div></div>
+        </div>
+      </div>
+
+      <!-- Slide 2: How plans work -->
+      <div class="onboard-slide" data-slide="1">
+        <div class="onboard-icon">📦</div>
+        <div class="onboard-title">How plans work</div>
+        <div class="onboard-text">Lumeway is built around the life change you are going through. Choose what fits.</div>
+        <div class="onboard-features">
+          <div class="onboard-feature"><div class="feat-icon" style="background:var(--cream)">Free</div><div><strong>Free</strong> — Chat with the Navigator, basic checklists</div></div>
+          <div class="onboard-feature"><div class="feat-icon" style="background:#e8e0d6">$16</div><div><strong>Starter</strong> — Worksheet bundle + basic dashboard</div></div>
+          <div class="onboard-feature"><div class="feat-icon" style="background:var(--navy);color:var(--cream)">$39</div><div><strong>Full Plan</strong> — Guides, calendar, documents, and everything for one life change</div></div>
+          <div class="onboard-feature"><div class="feat-icon" style="background:var(--accent);color:var(--cream)">$125</div><div><strong>Everything</strong> — All 6 life changes, every feature</div></div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Get started -->
+      <div class="onboard-slide" data-slide="2">
+        <div class="onboard-icon">💬</div>
+        <div class="onboard-title">Start with a conversation</div>
+        <div class="onboard-text">The best way to set up your dashboard is to chat with the Navigator first. It will learn about your situation and build a personalized checklist, suggest deadlines, and recommend the right documents to gather.</div>
+        <div class="onboard-features">
+          <div class="onboard-feature"><div class="feat-icon">1</div><div>Tell the Navigator what you are going through</div></div>
+          <div class="onboard-feature"><div class="feat-icon">2</div><div>It builds your checklist and flags deadlines</div></div>
+          <div class="onboard-feature"><div class="feat-icon">3</div><div>Come back to your dashboard anytime to track progress</div></div>
+        </div>
+        <a href="/chat" target="_blank" style="display:inline-block;padding:12px 28px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none;font-weight:500;margin-bottom:20px;transition:all 0.2s">Start a conversation</a>
+      </div>
+
+      <!-- Dots + nav -->
+      <div class="onboard-dots">
+        <div class="onboard-dot active" data-dot="0"></div>
+        <div class="onboard-dot" data-dot="1"></div>
+        <div class="onboard-dot" data-dot="2"></div>
+      </div>
+      <div class="onboard-nav">
+        <button class="onboard-skip" onclick="closeOnboarding()">Skip</button>
+        <button class="onboard-next" id="onboardNextBtn" onclick="nextOnboardSlide()">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var onboardSlide = 0;
+    function showOnboarding() {
+      document.getElementById('onboardModal').style.display = 'flex';
+    }
+    function closeOnboarding() {
+      document.getElementById('onboardModal').style.display = 'none';
+      localStorage.setItem('lumeway_onboarded', '1');
+    }
+    function nextOnboardSlide() {
+      var slides = document.querySelectorAll('.onboard-slide');
+      var dots = document.querySelectorAll('.onboard-dot');
+      if (onboardSlide >= slides.length - 1) {
+        closeOnboarding();
+        return;
+      }
+      slides[onboardSlide].classList.remove('active');
+      dots[onboardSlide].classList.remove('active');
+      onboardSlide++;
+      slides[onboardSlide].classList.add('active');
+      dots[onboardSlide].classList.add('active');
+      if (onboardSlide >= slides.length - 1) {
+        document.getElementById('onboardNextBtn').textContent = 'Get started';
+      }
+    }
+  </script>
 </body>
 </html>

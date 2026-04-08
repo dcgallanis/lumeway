@@ -678,28 +678,6 @@ client = anthropic.Anthropic(
 
 conversation_log.init_db()
 
-@app.route("/api/chat-debug")
-def chat_debug():
-    """Temporary debug endpoint to check why chat is failing."""
-    info = {
-        "anthropic_version": getattr(anthropic, '__version__', 'unknown'),
-        "api_key_set": bool(os.environ.get("ANTHROPIC_API_KEY")),
-        "api_key_prefix": (os.environ.get("ANTHROPIC_API_KEY") or "")[:10] + "...",
-    }
-    try:
-        r = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=10,
-            messages=[{"role": "user", "content": "say ok"}]
-        )
-        info["test_response"] = r.content[0].text
-        info["status"] = "working"
-    except Exception as e:
-        info["error"] = str(e)
-        info["error_type"] = type(e).__name__
-        info["status"] = "failed"
-    return jsonify(info)
-
 # ── Auth helpers ──
 
 VALID_CATEGORIES = ["job-loss", "estate", "divorce", "disability", "relocation", "retirement"]
