@@ -1114,8 +1114,8 @@
 
     messageCount++;
 
-    // Not logged in: prompt to create account after 3 messages
-    if (messageCount >= 3 && !isLoggedIn && !savePromptShown) {
+    // Not logged in: prompt to create account after 6 messages
+    if (messageCount >= 6 && !isLoggedIn && !savePromptShown) {
       savePromptShown = true;
       const msgs = document.getElementById('messages');
       const prompt = document.createElement('div');

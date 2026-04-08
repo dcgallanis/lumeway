@@ -1105,7 +1105,17 @@
       var sevenDays = 7 * 24 * 60 * 60 * 1000;
       if (subscribed) return;
       if (dismissed && (Date.now() - parseInt(dismissed)) < sevenDays) return;
-      setTimeout(showPopup, 4000);
+      // Show after user has been on page 45s AND scrolled past the fold — give value first
+      var popupReady = false;
+      var hasScrolled = false;
+      setTimeout(function() { popupReady = true; if (hasScrolled) showPopup(); }, 45000);
+      window.addEventListener('scroll', function onScroll() {
+        if (window.scrollY > 600) {
+          hasScrolled = true;
+          window.removeEventListener('scroll', onScroll);
+          if (popupReady) showPopup();
+        }
+      });
     })();
 
     document.querySelectorAll('a[href="#signup"]').forEach(function(a) {
