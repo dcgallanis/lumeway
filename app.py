@@ -2081,7 +2081,7 @@ def upgrade_options():
             "credit": min(credit, 12500),
             "charge": charge,
         })
-    return jsonify({"options": options, "credit_cents": credit, "category_access": cats})
+    return jsonify({"options": options, "credit_cents": credit, "category_access": cats, "effective_tier": get_effective_tier(user)})
 
 @app.route("/webhook/stripe", methods=["POST"])
 def stripe_webhook():
@@ -2115,7 +2115,9 @@ def stripe_webhook():
                 metadata = raw_meta or {}
         purchase_type = metadata.get("purchase_type", "") if isinstance(metadata, dict) else getattr(metadata, "purchase_type", "")
         print(f"Webhook metadata: {metadata}, purchase_type: {purchase_type}")
-        if purchase_type in ("one_transition", "add_transition"):
+        if purchase_type == "cart":
+            handle_cart_webhook(session_data, metadata)
+        elif purchase_type in ("one_transition", "add_transition"):
             handle_transition_webhook(session_data, metadata)
         elif purchase_type == "all_transitions":
             handle_all_transitions_webhook(session_data, metadata)
@@ -2161,17 +2163,38 @@ def fulfill_purchase(session_data):
         print(f"Purchase recorded: {email} bought {product['name']}")
     except Exception as e:
         print(f"DB error recording purchase: {e}")
-    # Grant 30-day starter trial for bundle purchases (don't downgrade existing paid tiers)
+    # Grant starter-level category access for bundle purchases
+    # Map product_id to category for starter access
+    bundle_category_map = {
+        "bundle-job-loss": "job-loss",
+        "bundle-estate": "estate",
+        "bundle-divorce": "divorce",
+        "bundle-disability": "disability",
+        "bundle-relocation": "relocation",
+        "bundle-retirement": "retirement",
+        "bundle-master": None,  # master bundle = all categories
+    }
+    category = bundle_category_map.get(product_id)
     try:
         conn2 = get_db()
         param2 = "%s" if USE_POSTGRES else "?"
-        expires = (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
-        # Only upgrade if user is on free tier
-        db_execute(conn2, f"UPDATE users SET tier = 'starter', tier_expires_at = {param2} WHERE email = {param2} AND (tier IS NULL OR tier = 'free')", (expires, email))
+        cur2 = db_execute(conn2, f"SELECT id FROM users WHERE email = {param2}", (email,))
+        row2 = cur2.fetchone()
+        if row2:
+            uid = row2[0]
+            if product_id == "bundle-master":
+                # Master bundle grants starter access to all categories
+                for cat in VALID_CATEGORIES:
+                    add_user_category(uid, cat, "starter")
+            elif category:
+                add_user_category(uid, category, "starter")
+            update_user_tier_from_access(uid)
+            # Also add $16 credit for the bundle purchase
+            db_execute(conn2, f"UPDATE users SET credit_cents = credit_cents + 1600 WHERE id = {param2}", (uid,))
         conn2.commit()
         conn2.close()
     except Exception as e:
-        print(f"Error granting starter trial: {e}")
+        print(f"Error granting starter access: {e}")
     # Send email in background thread so it doesn't block the response
     threading.Thread(target=send_purchase_email, args=(email, product_id, product["name"], token), daemon=True).start()
     print(f"Email send initiated for {email}")
@@ -2391,6 +2414,59 @@ def handle_individual_template_webhook(session_data, metadata):
     # Send download email
     threading.Thread(target=send_purchase_email, args=(email, f"template-{template_id}", template_name, token), daemon=True).start()
     print(f"Individual template purchased: {email} bought {template_name}")
+
+def handle_cart_webhook(session_data, metadata):
+    """Handle cart checkout from webhook — fulfills all items in cart."""
+    email = _get_session_email(session_data)
+    session_id = _get_session_field(session_data, "id")
+    payment_intent = _get_session_field(session_data, "payment_intent")
+    if not email:
+        print("Cart webhook: no email found")
+        return
+    product_ids = metadata.get("product_ids", "").split(",")
+    purchase_types = metadata.get("purchase_types", "").split(",")
+    credit_used = int(metadata.get("credit_used", "0"))
+    user_id_str = metadata.get("user_id", "")
+    # Deduct credit if any was used
+    if credit_used > 0 and user_id_str:
+        try:
+            conn = get_db()
+            param = "%s" if USE_POSTGRES else "?"
+            db_execute(conn, f"UPDATE users SET credit_cents = GREATEST(0, credit_cents - {param}) WHERE id = {param}" if USE_POSTGRES else
+                       f"UPDATE users SET credit_cents = MAX(0, credit_cents - {param}) WHERE id = {param}", (credit_used, int(user_id_str)))
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            print(f"Error deducting credit in cart webhook: {e}")
+    # Look up user
+    user_id = None
+    try:
+        conn = get_db()
+        param = "%s" if USE_POSTGRES else "?"
+        cur = db_execute(conn, f"SELECT id FROM users WHERE email = {param}", (email,))
+        row = cur.fetchone()
+        if row:
+            user_id = row[0]
+        conn.close()
+    except:
+        pass
+    # Fulfill each product
+    for i, pid in enumerate(product_ids):
+        ptype = purchase_types[i] if i < len(purchase_types) else "bundle"
+        # Build an item dict for _fulfill_cart_item
+        item = {"product_id": pid, "name": pid, "price": 0, "purchase_type": ptype}
+        # Try to get proper name/price from PRODUCTS
+        if pid in PRODUCTS:
+            item["name"] = PRODUCTS[pid]["name"]
+            item["price"] = PRODUCTS[pid]["price"] / 100
+        # Extract category from product_id
+        if pid.startswith("plan-"):
+            cat = pid.replace("plan-", "")
+            item["category"] = cat
+        elif pid.startswith("bundle-"):
+            item["category"] = pid.replace("bundle-", "")
+        _fulfill_cart_item(email, item, user_id)
+    print(f"Cart webhook fulfilled: {email} bought {product_ids}")
 
 def _fulfill_transition_purchase(user, category, purchase_type, base_price, credit_applied, session_id, payment_intent):
     """Fulfill a transition purchase (called from route or webhook)."""
@@ -2741,15 +2817,20 @@ def add_to_cart():
     product_id = data.get("product_id")
     name = data.get("name")
     price = data.get("price")
-    item_type = data.get("type")  # "bundle" or "individual"
-    if not product_id or not name or price is None or item_type not in ("bundle", "individual"):
+    item_type = data.get("type")  # "bundle", "individual", "plan"
+    purchase_type = data.get("purchase_type", item_type)  # "bundle", "individual", "one_transition", "add_transition", "all_transitions"
+    category = data.get("category", "")
+    if not product_id or not name or price is None or item_type not in ("bundle", "individual", "plan"):
         return jsonify({"error": "Missing or invalid fields"}), 400
     cart = flask_session.get("cart", [])
     # Prevent duplicates
     for item in cart:
         if item["product_id"] == product_id:
             return jsonify({"items": cart, "message": "Already in cart"})
-    cart.append({"product_id": product_id, "name": name, "price": price, "type": item_type})
+    cart_item = {"product_id": product_id, "name": name, "price": price, "type": item_type, "purchase_type": purchase_type}
+    if category:
+        cart_item["category"] = category
+    cart.append(cart_item)
     flask_session["cart"] = cart
     return jsonify({"items": cart})
 
@@ -2767,29 +2848,152 @@ def cart_checkout():
     cart = flask_session.get("cart", [])
     if not cart:
         return jsonify({"error": "Cart is empty"}), 400
+    data = request.get_json() or {}
+    email = data.get("email", "").strip().lower()
+    if not email or "@" not in email:
+        return jsonify({"error": "Email is required"}), 400
+    # Calculate total and build line items
     line_items = []
+    product_ids = []
+    purchase_types = []
+    total_cents = 0
     for item in cart:
+        amount_cents = int(item["price"] * 100)
+        total_cents += amount_cents
+        product_ids.append(item["product_id"])
+        purchase_types.append(item.get("purchase_type", "bundle"))
         line_items.append({
             "price_data": {
                 "currency": "usd",
                 "product_data": {"name": item["name"]},
-                "unit_amount": int(item["price"] * 100),
+                "unit_amount": amount_cents,
             },
             "quantity": 1,
         })
+    # Check if logged-in user has credit to apply
+    user = get_current_user()
+    credit_cents = 0
+    user_id = None
+    if user:
+        credit_cents = user.get("credit_cents", 0)
+        user_id = user["id"]
+    elif email:
+        # Look up by email even if not logged in
+        try:
+            conn = get_db()
+            param = "%s" if USE_POSTGRES else "?"
+            cur = db_execute(conn, f"SELECT id, credit_cents FROM users WHERE email = {param}", (email,))
+            row = cur.fetchone()
+            if row:
+                user_id = row[0]
+                credit_cents = row[1] or 0
+            conn.close()
+        except:
+            pass
+    # Apply credit
+    charge_cents = max(0, total_cents - credit_cents)
+    credit_used = total_cents - charge_cents
+    # If credit covers everything, fulfill immediately
+    if charge_cents == 0 and user_id:
+        try:
+            conn = get_db()
+            param = "%s" if USE_POSTGRES else "?"
+            db_execute(conn, f"UPDATE users SET credit_cents = credit_cents - {param} WHERE id = {param}", (credit_used, user_id))
+            conn.commit()
+            conn.close()
+            # Fulfill each item in cart
+            for item in cart:
+                _fulfill_cart_item(email, item, user_id)
+            flask_session["cart"] = []
+            return jsonify({"fulfilled": True, "redirect": "/dashboard"})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    # Otherwise create Stripe checkout
+    # If credit applies, adjust the line items
+    if credit_used > 0 and len(line_items) > 0:
+        line_items.append({
+            "price_data": {
+                "currency": "usd",
+                "product_data": {"name": f"Account credit applied"},
+                "unit_amount": -credit_used if credit_used > 0 else 0,
+            },
+            "quantity": 1,
+        })
+        # Stripe doesn't support negative amounts, so recalculate as single line
+        line_items = [{
+            "price_data": {
+                "currency": "usd",
+                "product_data": {"name": "Lumeway — " + ", ".join(item["name"] for item in cart)},
+                "unit_amount": charge_cents,
+            },
+            "quantity": 1,
+        }]
     try:
+        meta = {
+            "product_ids": ",".join(product_ids),
+            "purchase_types": ",".join(purchase_types),
+            "purchase_type": "cart",
+            "email": email,
+            "credit_used": str(credit_used),
+        }
+        if user_id:
+            meta["user_id"] = str(user_id)
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
+            customer_email=email,
             line_items=line_items,
             mode="payment",
             success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=request.host_url + "cart",
-            metadata={"product_ids": ",".join(item["product_id"] for item in cart)},
+            metadata=meta,
         )
         flask_session["cart"] = []
         return jsonify({"url": session.url})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+def _fulfill_cart_item(email, item, user_id):
+    """Fulfill a single cart item after payment."""
+    product_id = item["product_id"]
+    purchase_type = item.get("purchase_type", "bundle")
+    now = datetime.now(timezone.utc).isoformat()
+    token = secrets.token_urlsafe(32)
+    try:
+        conn = get_db()
+        db_execute(conn, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+            """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (email, product_id, item["name"], int(item["price"] * 100), "cart-credit-" + now, None, now, token, True if USE_POSTGRES else 1))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"Error recording cart purchase: {e}")
+    # Grant appropriate access based on purchase type
+    if purchase_type == "one_transition" and user_id:
+        cat = item.get("category", "")
+        if cat in VALID_CATEGORIES:
+            add_user_category(user_id, cat, "full")
+            update_user_tier_from_access(user_id)
+    elif purchase_type == "add_transition" and user_id:
+        cat = item.get("category", "")
+        if cat in VALID_CATEGORIES:
+            add_user_category(user_id, cat, "full")
+            update_user_tier_from_access(user_id)
+    elif purchase_type == "all_transitions" and user_id:
+        for cat in VALID_CATEGORIES:
+            add_user_category(user_id, cat, "full")
+        update_user_tier_from_access(user_id)
+    elif purchase_type == "bundle" and user_id:
+        # Bundle = starter access for that category
+        bundle_category_map = {
+            "bundle-job-loss": "job-loss", "bundle-estate": "estate", "bundle-divorce": "divorce",
+            "bundle-disability": "disability", "bundle-relocation": "relocation", "bundle-retirement": "retirement",
+        }
+        cat = bundle_category_map.get(product_id)
+        if cat:
+            add_user_category(user_id, cat, "starter")
+            update_user_tier_from_access(user_id)
 
 @app.route("/pricing")
 def pricing():
@@ -4833,7 +5037,7 @@ def admin_analytics():
     revenue_this_month = db_execute(conn, "SELECT COALESCE(SUM(amount_cents), 0) FROM purchases WHERE purchased_at LIKE %s" if USE_POSTGRES else "SELECT COALESCE(SUM(amount_cents), 0) FROM purchases WHERE purchased_at LIKE ?", (this_month + "%",)).fetchone()[0]
     # Tier breakdown
     tier_counts = {}
-    for tier_name in ["free", "starter", "pass", "unlimited"]:
+    for tier_name in ["free", "starter", "one_transition", "all_transitions", "pass", "unlimited"]:
         param = "%s" if USE_POSTGRES else "?"
         cnt = db_execute(conn, f"SELECT COUNT(*) FROM users WHERE tier = {param}", (tier_name,)).fetchone()[0]
         tier_counts[tier_name] = cnt
@@ -4878,35 +5082,55 @@ def admin_grant_tier():
     tier = data.get("tier", "")
     transition = data.get("transition", "")
     create_record = data.get("create_record", False)
-    if not email or tier not in ("free", "starter", "pass", "unlimited"):
+    valid_tiers = ("free", "starter", "pass", "unlimited", "one_transition", "all_transitions")
+    if not email or tier not in valid_tiers:
         return jsonify({"error": "Invalid email or tier"}), 400
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    if tier == "pass":
-        db_execute(conn, f"UPDATE users SET tier = 'pass', tier_transition = {param} WHERE email = {param}", (transition, email))
-    elif tier == "unlimited":
-        db_execute(conn, f"UPDATE users SET tier = 'unlimited' WHERE email = {param}", (email,))
+    # Look up user
+    cur = db_execute(conn, f"SELECT id FROM users WHERE email = {param}", (email,))
+    user_row = cur.fetchone()
+    if not user_row:
+        conn.close()
+        return jsonify({"error": "User not found"}), 404
+    uid = user_row[0]
+    if tier == "all_transitions" or tier == "unlimited":
+        # Grant full access to all categories
+        for cat in VALID_CATEGORIES:
+            add_user_category(uid, cat, "full")
+        update_user_tier_from_access(uid)
+    elif tier == "one_transition" or tier == "pass":
+        # Grant full access to one category
+        cat = transition if transition in VALID_CATEGORIES else "job-loss"
+        add_user_category(uid, cat, "full")
+        update_user_tier_from_access(uid)
     elif tier == "starter":
-        expires = (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
-        db_execute(conn, f"UPDATE users SET tier = 'starter', tier_expires_at = {param} WHERE email = {param}", (expires, email))
+        # Grant starter access to one category
+        cat = transition if transition in VALID_CATEGORIES else "job-loss"
+        add_user_category(uid, cat, "starter")
+        update_user_tier_from_access(uid)
     else:
-        db_execute(conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL WHERE email = {param}", (email,))
+        db_execute(conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL, active_transitions = '[]' WHERE email = {param}", (email,))
     conn.commit()
     conn.close()
     # Optionally create a purchase record (use fresh connection)
     record_msg = ""
-    if create_record and tier in ("pass", "unlimited"):
+    if create_record and tier in ("pass", "unlimited", "one_transition", "all_transitions"):
         now = datetime.now(timezone.utc).isoformat()
         token = secrets.token_urlsafe(32)
-        if tier == "pass":
+        if tier in ("pass", "one_transition"):
             pass_id = "pass-" + (transition or "estate")
             product = PASS_PRODUCTS.get(pass_id, {})
-            product_name = product.get("name", f"{transition.title()} Pass")
+            product_name = product.get("name", f"{transition.title()} Full Plan")
             amount_cents = product.get("price", 3900)
+        elif tier in ("unlimited", "all_transitions"):
+            pass_id = "all-transitions"
+            product_name = "All Transitions"
+            amount_cents = 12500
         else:
-            pass_id = "unlimited"
-            product_name = "Unlimited Subscription"
-            amount_cents = 999
+            pass_id = "unknown"
+            product_name = "Unknown"
+            amount_cents = 0
         try:
             conn2 = get_db()
             db_execute(conn2, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
@@ -4916,9 +5140,9 @@ def admin_grant_tier():
                 (email, pass_id, product_name, amount_cents, "manual-grant-" + now, None, now, token, True if USE_POSTGRES else 1))
             # Also grant template bundle downloads
             bundles_to_grant = []
-            if tier == "pass" and transition and transition in BUNDLE_FILES:
+            if tier in ("pass", "one_transition") and transition and transition in BUNDLE_FILES:
                 bundles_to_grant = [transition]
-            elif tier == "unlimited":
+            elif tier in ("unlimited", "all_transitions"):
                 bundles_to_grant = [k for k in BUNDLE_FILES.keys() if k != "master"]
             for bid in bundles_to_grant:
                 bp = PRODUCTS.get(bid, {})

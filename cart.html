@@ -17,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --cream: #FAF7F2; --warm-white: #FDFCFA; --text: #2C3E50; --muted: #6B7B8D; --navy: #2C4A5E; --gold: #B8977E; --accent: #C4704E; --accent-light: #D4896C; --border: #E8E0D6; --shadow: 0 2px 40px rgba(27,58,92,0.09); }
+    :root { --cream: #FAF7F2; --warm-white: #FDFCFA; --text: #2C3E50; --muted: #6B7B8D; --navy: #2C4A5E; --gold: #B8977E; --accent: #C4704E; --accent-light: #D4896C; --border: #E8E0D6; --shadow: 0 2px 40px rgba(27,58,92,0.09); --green: #6B8F5E; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
 
     /* Nav */
@@ -68,6 +68,7 @@
     .cart-item-type { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; flex-shrink: 0; }
     .cart-item-type.bundle { background: var(--navy); color: var(--cream); }
     .cart-item-type.individual { background: var(--cream); color: var(--navy); border: 1px solid var(--border); }
+    .cart-item-type.plan { background: var(--accent); color: var(--cream); }
     .cart-item-name { font-size: 15px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .cart-item-right { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
     .cart-item-price { font-family: 'Libre Baskerville', serif; font-size: 17px; font-weight: 500; color: var(--navy); }
@@ -133,10 +134,10 @@
           <a href="/retirement">Retirement</a>
         </div>
       </div>
+      <a href="/features" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--muted);text-decoration:none;padding:6px 4px;transition:color 0.15s;" onmouseover="this.style.color='var(--navy)'" onmouseout="this.style.color='var(--muted)'">Features</a>
       <div class="nav-dropdown">
         <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">&#9662;</span></button>
         <div class="nav-drop-menu">
-          <a href="/features">Features</a>
           <a href="/templates">Shop</a>
           <a href="/faq">FAQ</a>
           <a href="/blog">Blog</a>
@@ -152,7 +153,7 @@
       <a href="/login" class="btn-ghost" id="navAccount">Log in</a>
       <a href="/templates" class="btn-ghost">Shop</a>
       <a href="/chat" target="_blank" class="btn-primary">Try it free</a>
-      <a href="/cart" class="btn-ghost" title="Cart" style="font-size:18px;">&#128722;</a>
+      <a href="/cart" class="btn-ghost" title="Cart" style="font-size:18px">&#128722;</a>
     </div>
   </nav>
 
@@ -174,14 +175,37 @@
     <div id="cartContents" style="display:none;">
       <div class="cart-items" id="cartItems"></div>
 
-      <div class="cart-summary">
+      <!-- Upsell prompt (shown when bundle in cart but no plan) -->
+      <div id="cartUpsell" style="display:none; margin-top:16px; padding:20px; background:linear-gradient(135deg,#faf6f1,#f5efe6); border:1px solid #d4a574; border-radius:12px;">
+        <div style="display:flex;align-items:flex-start;gap:14px">
+          <div style="font-size:28px;flex-shrink:0">✨</div>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:500;color:var(--navy);margin-bottom:6px">Add the full dashboard plan</div>
+            <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Get step-by-step guides, personalized calendar, document tracking, and everything you need — not just the templates.</div>
+            <button id="upsellBtn" onclick="addUpsell()" style="padding:10px 20px;background:var(--navy);color:var(--cream);border:none;border-radius:8px;font-size:13px;font-family:Plus Jakarta Sans,sans-serif;font-weight:500;cursor:pointer;transition:all 0.2s">Add full plan — <span id="upsellPrice">$23</span> more</button>
+          </div>
+          <button onclick="this.closest('#cartUpsell').style.display='none'" style="background:none;border:none;font-size:16px;color:var(--muted);cursor:pointer;padding:4px">&times;</button>
+        </div>
+      </div>
+
+      <!-- Email + Summary section -->
+      <div class="cart-summary" style="margin-top:24px">
+        <div style="margin-bottom:20px">
+          <label for="checkoutEmail" style="font-size:13px;font-weight:500;color:var(--text);display:block;margin-bottom:6px">Email for your purchase</label>
+          <input type="email" id="checkoutEmail" placeholder="you@email.com" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;background:var(--warm-white);color:var(--text)">
+          <p style="font-size:11px;color:var(--muted);margin-top:4px">Your downloads and dashboard access will be linked to this email.</p>
+        </div>
         <div class="cart-summary-row">
           <span class="cart-summary-label">Subtotal</span>
-          <span class="cart-summary-value" id="cartSubtotal">$0.00</span>
+          <span class="cart-summary-value" id="cartSubtotal">$0</span>
+        </div>
+        <div id="creditRow" style="display:none" class="cart-summary-row">
+          <span class="cart-summary-label" style="color:var(--green)">Account credit</span>
+          <span class="cart-summary-value" id="cartCredit" style="color:var(--green)">-$0</span>
         </div>
         <div class="cart-summary-total">
           <span class="cart-summary-label">Total</span>
-          <span class="cart-summary-value" id="cartTotal">$0.00</span>
+          <span class="cart-summary-value" id="cartTotal">$0</span>
         </div>
       </div>
 
@@ -234,19 +258,34 @@
       document.addEventListener('click', function() { dropdowns.forEach(function(dd) { dd.classList.remove('open'); dd.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false'); }); });
     })();
 
-    // Cart logic
+    // Cart state
+    var cartItems = [];
+    var userEmail = '';
+    var userCredit = 0;
+    var userTier = 'free';
+    var userLoggedIn = false;
+
     function formatPrice(dollars) {
       if (Number.isInteger(dollars)) return '$' + dollars;
       return '$' + dollars.toFixed(2);
     }
 
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
     function renderCart(items) {
+      cartItems = items || [];
       var empty = document.getElementById('cartEmpty');
       var contents = document.getElementById('cartContents');
       var countEl = document.getElementById('cartCount');
       var itemsEl = document.getElementById('cartItems');
       var subtotalEl = document.getElementById('cartSubtotal');
       var totalEl = document.getElementById('cartTotal');
+      var creditRow = document.getElementById('creditRow');
+      var creditEl = document.getElementById('cartCredit');
 
       if (!items || items.length === 0) {
         empty.style.display = 'block';
@@ -263,9 +302,11 @@
       var subtotal = 0;
       items.forEach(function(item) {
         subtotal += item.price;
+        var typeLabel = item.type === 'plan' ? 'plan' : item.type;
+        var typeClass = item.type === 'plan' ? 'bundle' : item.type;
         html += '<div class="cart-item">'
           + '<div class="cart-item-info">'
-          + '<span class="cart-item-type ' + item.type + '">' + item.type + '</span>'
+          + '<span class="cart-item-type ' + typeClass + '">' + typeLabel + '</span>'
           + '<span class="cart-item-name">' + escapeHtml(item.name) + '</span>'
           + '</div>'
           + '<div class="cart-item-right">'
@@ -278,13 +319,71 @@
       });
       itemsEl.innerHTML = html;
       subtotalEl.textContent = formatPrice(subtotal);
-      totalEl.textContent = formatPrice(subtotal);
+
+      // Apply credit display
+      var subtotalCents = Math.round(subtotal * 100);
+      if (userCredit > 0 && subtotalCents > 0) {
+        var creditApplied = Math.min(userCredit, subtotalCents);
+        var totalAfterCredit = Math.max(0, subtotalCents - creditApplied);
+        creditRow.style.display = 'flex';
+        creditEl.textContent = '-$' + (creditApplied / 100).toFixed(0);
+        totalEl.textContent = formatPrice(totalAfterCredit / 100);
+      } else {
+        creditRow.style.display = 'none';
+        totalEl.textContent = formatPrice(subtotal);
+      }
+
+      // Show upsell if cart has a bundle but no plan
+      checkUpsell(items, subtotal);
     }
 
-    function escapeHtml(str) {
-      var div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
+    function checkUpsell(items, subtotal) {
+      var upsell = document.getElementById('cartUpsell');
+      var hasBundleOnly = items.some(function(i) { return i.type === 'bundle'; });
+      var hasPlan = items.some(function(i) { return i.type === 'plan'; });
+
+      if (hasBundleOnly && !hasPlan && userTier !== 'all_transitions' && userTier !== 'unlimited' && userTier !== 'one_transition' && userTier !== 'pass') {
+        // Calculate upsell price: $39 full plan minus bundle price ($16) minus any credit
+        var bundlePrice = 1600;
+        var fullPlanPrice = 3900;
+        var upsellCents = Math.max(0, fullPlanPrice - bundlePrice - userCredit);
+        document.getElementById('upsellPrice').textContent = '$' + (upsellCents / 100).toFixed(0);
+        upsell.style.display = 'block';
+      } else {
+        upsell.style.display = 'none';
+      }
+    }
+
+    function addUpsell() {
+      // Find what bundle category is in cart to upsell matching plan
+      var bundleItem = cartItems.find(function(i) { return i.type === 'bundle'; });
+      if (!bundleItem) return;
+      var catMap = {
+        'bundle-job-loss': 'job-loss', 'bundle-estate': 'estate', 'bundle-divorce': 'divorce',
+        'bundle-disability': 'disability', 'bundle-relocation': 'relocation', 'bundle-retirement': 'retirement'
+      };
+      var catLabels = {
+        'job-loss': 'Job Loss', estate: 'Estate', divorce: 'Divorce',
+        disability: 'Disability', relocation: 'Relocation', retirement: 'Retirement'
+      };
+      var cat = catMap[bundleItem.product_id] || 'job-loss';
+      var label = catLabels[cat] || cat;
+      // Price = $39 plan minus $16 bundle already in cart = $23
+      var upsellPrice = 23;
+      fetch('/api/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_id: 'plan-' + cat,
+          name: label + ' Full Plan (upgrade)',
+          price: upsellPrice,
+          type: 'plan',
+          purchase_type: 'one_transition',
+          category: cat
+        })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) { renderCart(data.items); });
     }
 
     function loadCart() {
@@ -305,16 +404,26 @@
     }
 
     function checkout() {
+      var email = document.getElementById('checkoutEmail').value.trim();
+      if (!email || email.indexOf('@') === -1) {
+        document.getElementById('checkoutEmail').style.borderColor = 'var(--accent)';
+        document.getElementById('checkoutEmail').focus();
+        return;
+      }
       var btn = document.getElementById('btnCheckout');
       btn.disabled = true;
-      btn.textContent = 'Redirecting...';
+      btn.textContent = 'Processing...';
       fetch('/api/cart/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        if (data.url) {
+        if (data.fulfilled) {
+          // Credit covered it — go straight to dashboard
+          window.location.href = data.redirect || '/dashboard';
+        } else if (data.url) {
           window.location.href = data.url;
         } else {
           alert(data.error || 'Something went wrong. Please try again.');
@@ -329,8 +438,28 @@
       });
     }
 
-    // Load cart on page load
+    // Reset email border on input
+    document.getElementById('checkoutEmail').addEventListener('input', function() {
+      this.style.borderColor = 'var(--border)';
+    });
+
+    // Load cart + check auth for email pre-fill and credit
     loadCart();
+    fetch('/api/auth/me').then(function(r) { return r.json(); }).then(function(d) {
+      if (d.logged_in) {
+        userLoggedIn = true;
+        userEmail = d.email || '';
+        document.getElementById('checkoutEmail').value = userEmail;
+        // Fetch credit info
+        fetch('/api/account/upgrade-options').then(function(r) { return r.json(); }).then(function(opts) {
+          userCredit = opts.credit_cents || 0;
+          userTier = opts.effective_tier || 'free';
+          // Re-render to show credit
+          renderCart(cartItems);
+        }).catch(function() {});
+      }
+    }).catch(function() {});
   </script>
+  <script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>
 </body>
 </html>

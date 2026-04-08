@@ -536,7 +536,7 @@ function loadAnalytics() {
     // Tier breakdown
     var tiers = data.tiers || {};
     var tierHtml = '';
-    [['free', 'Free'], ['starter', 'Starter'], ['pass', 'Pass'], ['unlimited', 'Unlimited']].forEach(function(t) {
+    [['free', 'Free'], ['starter', 'Starter'], ['one_transition', 'Full Plan'], ['all_transitions', 'Everything'], ['pass', 'Pass (Legacy)'], ['unlimited', 'Unlimited (Legacy)']].forEach(function(t) {
       tierHtml += '<div class="tier-badge"><div class="tier-count">' + (tiers[t[0]] || 0) + '</div><div class="tier-name">' + t[1] + '</div></div>';
     });
     document.getElementById('tier-breakdown').innerHTML = tierHtml;

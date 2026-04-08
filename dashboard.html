@@ -2814,29 +2814,47 @@ guideLibrary['disability'] = {
       var content = document.getElementById('guideContent');
       if (!nav || !content) return;
 
-      // Build transition nav pills
+      var tier = (dashData && dashData.effective_tier) || 'free';
+      var catAccess = dashData.category_access || {};
+      var isAllAccess = (tier === 'all_transitions' || tier === 'unlimited');
+
+      // Build transition nav pills — only show categories user has full access to
       var html = '';
       var transitionKeys = Object.keys(guideLibrary);
-      transitionKeys.forEach(function(key) {
+      var accessibleKeys = transitionKeys.filter(function(key) {
+        return isAllAccess || catAccess[key] === 'full';
+      });
+
+      if (accessibleKeys.length === 0) {
+        // No accessible guides — show message
+        content.innerHTML = '<div style="text-align:center;padding:40px 20px">'
+          + '<div style="font-size:48px;margin-bottom:16px">📖</div>'
+          + '<h3 style="font-family:Libre Baskerville,serif;font-weight:400;margin-bottom:10px">Guides unlock with a full plan</h3>'
+          + '<p style="font-size:14px;color:var(--muted);line-height:1.6;max-width:400px;margin:0 auto 20px">Get step-by-step walkthroughs, key terms, who to contact, and common mistakes to avoid — all tailored to your specific situation.</p>'
+          + '<a href="/pricing" style="display:inline-block;background:var(--navy);color:#fff;padding:10px 24px;border-radius:6px;font-size:14px;text-decoration:none">See plans</a>'
+          + '</div>';
+        return;
+      }
+
+      accessibleKeys.forEach(function(key) {
         var t = guideLibrary[key];
-        var isActive = activeGuideTransition === key || (!activeGuideTransition && key === transitionKeys[0]);
+        var isActive = activeGuideTransition === key || (!activeGuideTransition && key === accessibleKeys[0]);
         html += '<button class="guide-nav-btn' + (isActive ? ' active' : '') + '" onclick="switchGuideTransition(\'' + key + '\')">' + t.label + '</button>';
       });
-      // Coming soon pills for transitions not yet loaded
-      var planned = [
-        { key: 'disability', label: 'Disability & Benefits' },
-        { key: 'relocation', label: 'Moving & Relocation' },
-        { key: 'retirement', label: 'Retirement Planning' }
-      ];
-      planned.forEach(function(p) {
-        if (!guideLibrary[p.key]) {
-          html += '<button class="guide-nav-btn" style="opacity:0.5;cursor:default" title="Coming soon">' + p.label + '</button>';
+
+      // Show locked pills for transitions not accessible
+      transitionKeys.forEach(function(key) {
+        if (accessibleKeys.indexOf(key) === -1) {
+          html += '<button class="guide-nav-btn" style="opacity:0.4;cursor:default" title="Upgrade to access">' + guideLibrary[key].label + ' 🔒</button>';
         }
       });
+
       nav.innerHTML = html;
 
-      // Set active
-      if (!activeGuideTransition) activeGuideTransition = transitionKeys[0];
+      // Set active to first accessible key
+      if (!activeGuideTransition || accessibleKeys.indexOf(activeGuideTransition) === -1) {
+        activeGuideTransition = accessibleKeys[0];
+      }
       renderGuideTransition(activeGuideTransition);
     }
 
@@ -2855,17 +2873,11 @@ guideLibrary['disability'] = {
       if (!t || !content) return;
 
       var tier = (dashData && dashData.effective_tier) || 'free';
-      var isFree = (tier === 'free');
+      var catAccess = dashData.category_access || {};
+      var isAllAccess = (tier === 'all_transitions' || tier === 'unlimited');
+      var hasFullForThis = isAllAccess || catAccess[key] === 'full';
 
       var html = '';
-
-      // Trial countdown banner for starter users
-      if (tier === 'starter' && dashData && dashData.user && dashData.user.tier_expires_at) {
-        var expires = new Date(dashData.user.tier_expires_at);
-        var now = new Date();
-        var daysLeft = Math.max(0, Math.ceil((expires - now) / (1000 * 60 * 60 * 24)));
-        html += '<div class="trial-banner">Your Starter trial has ' + daysLeft + ' day' + (daysLeft !== 1 ? 's' : '') + ' remaining. <a href="/pricing" style="color:var(--accent);text-decoration:underline;">See plans</a></div>';
-      }
 
       t.categories.forEach(function(cat) {
         html += '<div class="guide-category">';
@@ -2883,7 +2895,7 @@ guideLibrary['disability'] = {
           if (task.what) html += '<div class="guide-what">' + task.what + '</div>';
           if (task.why) html += '<div class="guide-why">' + task.why + '</div>';
 
-          if (isFree) {
+          if (!hasFullForThis) {
             // Show locked overlay with first 2 steps as preview
             if (task.steps && task.steps.length > 0) {
               html += '<div class="guide-locked-overlay">';
@@ -3112,37 +3124,51 @@ guideLibrary['disability'] = {
       html += '  <p class="dash-sub">' + u.email + '</p>';
       html += '</div>';
 
-      // Tabs
+      // Tabs — tier-based visibility
+      var tier = (dashData && dashData.effective_tier) || 'free';
+      var hasFullAccess = (tier === 'one_transition' || tier === 'all_transitions' || tier === 'unlimited' || tier === 'pass');
+      var catAccess = dashData.category_access || {};
+      var hasSomeFullCat = Object.keys(catAccess).some(function(k) { return catAccess[k] === 'full'; });
+
       html += '<div class="dash-tabs">';
       html += '  <button class="dash-tab active" data-tab="overview" onclick="switchTab(\'overview\')">Overview</button>';
       html += '  <button class="dash-tab" data-tab="checklist" onclick="switchTab(\'checklist\')">Checklist';
       if (prog.total > 0) html += ' <span class="tab-badge">' + prog.completed + '/' + prog.total + '</span>';
       html += '</button>';
-      html += '  <button class="dash-tab" data-tab="calendar" onclick="switchTab(\'calendar\')">Calendar';
-      if (deadlines.length > 0) html += ' <span class="tab-badge">' + deadlines.filter(function(d){return !d.is_completed;}).length + '</span>';
-      html += '</button>';
-      html += '  <button class="dash-tab" data-tab="documents" onclick="switchTab(\'documents\')">Documents';
-      if (documents.length > 0) html += ' <span class="tab-badge">' + documents.filter(function(d){return !d.is_gathered;}).length + '</span>';
-      html += '</button>';
-      html += '  <button class="dash-tab" data-tab="notes" onclick="switchTab(\'notes\')">Notes</button>';
-      html += '  <button class="dash-tab" data-tab="guides" onclick="switchTab(\'guides\')">Guides</button>';
-      html += '  <button class="dash-tab" data-tab="activity" onclick="switchTab(\'activity\')">Activity Log';
-      if (activityLog.length > 0) html += ' <span class="tab-badge">' + activityLog.length + '</span>';
-      html += '</button>';
-      html += '  <button class="dash-tab" data-tab="history" onclick="switchTab(\'history\')">History';
-      if (sessions.length > 0) html += ' <span class="tab-badge">' + sessions.length + '</span>';
-      html += '</button>';
+      if (hasFullAccess || hasSomeFullCat) {
+        html += '  <button class="dash-tab" data-tab="calendar" onclick="switchTab(\'calendar\')">Calendar';
+        if (deadlines.length > 0) html += ' <span class="tab-badge">' + deadlines.filter(function(d){return !d.is_completed;}).length + '</span>';
+        html += '</button>';
+        html += '  <button class="dash-tab" data-tab="documents" onclick="switchTab(\'documents\')">Documents';
+        if (documents.length > 0) html += ' <span class="tab-badge">' + documents.filter(function(d){return !d.is_gathered;}).length + '</span>';
+        html += '</button>';
+        html += '  <button class="dash-tab" data-tab="notes" onclick="switchTab(\'notes\')">Notes</button>';
+        html += '  <button class="dash-tab" data-tab="guides" onclick="switchTab(\'guides\')">Guides</button>';
+        html += '  <button class="dash-tab" data-tab="activity" onclick="switchTab(\'activity\')">Activity Log';
+        if (activityLog.length > 0) html += ' <span class="tab-badge">' + activityLog.length + '</span>';
+        html += '</button>';
+        html += '  <button class="dash-tab" data-tab="history" onclick="switchTab(\'history\')">History';
+        if (sessions.length > 0) html += ' <span class="tab-badge">' + sessions.length + '</span>';
+        html += '</button>';
+      }
       html += '  <button class="dash-tab" data-tab="templates" onclick="switchTab(\'templates\')">My Templates</button>';
       html += '  <button class="dash-tab" data-tab="account" onclick="switchTab(\'account\')" style="margin-left:auto">⚙ Account Settings</button>';
       html += '</div>';
 
-      // Trial banner for starter users
-      var tier = (dashData && dashData.effective_tier) || 'free';
-      if (tier === 'starter' && u.tier_expires_at) {
-        var trialExpires = new Date(u.tier_expires_at);
-        var trialNow = new Date();
-        var trialDays = Math.max(0, Math.ceil((trialExpires - trialNow) / (1000 * 60 * 60 * 24)));
-        html += '<div class="trial-banner">Your Starter trial has ' + trialDays + ' day' + (trialDays !== 1 ? 's' : '') + ' remaining. <a href="/pricing" style="color:var(--accent);text-decoration:underline;">See plans</a></div>';
+      // Upgrade banner for free/starter users
+      if (tier === 'free' || tier === 'starter') {
+        var bannerMsg = tier === 'free'
+          ? 'You\'re on the Free plan. Unlock full step-by-step guides, calendars, and document tracking.'
+          : 'You have Starter access (templates only). Upgrade for full guides, calendars, and personalized support.';
+        if (!sessionStorage.getItem('upgrade_banner_dismissed')) {
+          html += '<div class="upgrade-banner" id="upgradeBanner" style="background:linear-gradient(135deg,#faf6f1,#f5efe6);border:1px solid #d4a574;border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px">';
+          html += '  <div style="font-size:14px;color:var(--navy);line-height:1.5">' + bannerMsg + '</div>';
+          html += '  <div style="display:flex;gap:10px;align-items:center;flex-shrink:0">';
+          html += '    <a href="/pricing" style="background:var(--navy);color:#fff;padding:8px 18px;border-radius:6px;font-size:13px;text-decoration:none;white-space:nowrap">See plans</a>';
+          html += '    <button onclick="this.closest(\'.upgrade-banner\').remove();sessionStorage.setItem(\'upgrade_banner_dismissed\',\'1\')" style="background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer;padding:4px">&times;</button>';
+          html += '  </div>';
+          html += '</div>';
+        }
       }
 
       // ═══════════════════════════════
@@ -3346,6 +3372,22 @@ guideLibrary['disability'] = {
           html += '  </div>';
           html += '</div>';
         }
+      }
+
+      // Upgrade card for free/starter users in sidebar
+      if (!hasFullAccess && !hasSomeFullCat) {
+        html += '<div class="dash-card" style="background:linear-gradient(135deg,#faf6f1,#f5efe6);border:1px solid #d4a574">';
+        html += '  <div class="card-label" style="color:var(--navy)">What a full plan includes</div>';
+        html += '  <div style="font-size:13px;line-height:1.7;color:#4a4a4a">';
+        html += '    <div style="margin-bottom:4px">✓ Step-by-step guides for your situation</div>';
+        html += '    <div style="margin-bottom:4px">✓ Personalized calendar with deadlines</div>';
+        html += '    <div style="margin-bottom:4px">✓ Document tracking and checklists</div>';
+        html += '    <div style="margin-bottom:4px">✓ Activity log and session history</div>';
+        html += '    <div style="margin-bottom:4px">✓ Notes and goal tracking</div>';
+        html += '    <div>✓ All templates for your life change</div>';
+        html += '  </div>';
+        html += '  <a href="/pricing" style="display:block;margin-top:14px;text-align:center;background:var(--navy);color:#fff;padding:10px;border-radius:6px;font-size:14px;text-decoration:none">See plans</a>';
+        html += '</div>';
       }
 
       html += '</div>'; // overview-sidebar
@@ -3767,7 +3809,7 @@ guideLibrary['disability'] = {
       // ═══════════════════════════════
       // ── ACCOUNT SETTINGS TAB (combined) ──
       // ═══════════════════════════════
-      var tier = (dashData && dashData.effective_tier) || 'free';
+      // tier, hasFullAccess, catAccess already defined above in tab section
       var userInfo = dashData.user || {};
       html += '<div class="tab-panel" id="panel-account">';
       html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">';
@@ -3809,7 +3851,7 @@ guideLibrary['disability'] = {
       // Current Plan card
       html += '<div class="dash-card">';
       html += '  <div class="card-label">Your Plan</div>';
-      var catAccess = dashData.category_access || {};
+      // catAccess already defined in tab section above
       var creditCents = dashData.credit_cents || 0;
       var tierLabels = { free: 'Free', starter: 'Starter', one_transition: 'Full Plan', all_transitions: 'Everything', pass: 'Full Plan', unlimited: 'Everything' };
       var tierLabel = tierLabels[tier] || 'Free';
@@ -3871,7 +3913,7 @@ guideLibrary['disability'] = {
       html += '  <div class="card-label">Redeem a Code</div>';
       html += '  <p style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:12px">Bought a bundle on Etsy? Enter your code to connect it to your account.</p>';
       html += '  <div style="display:flex;gap:8px">';
-      html += '    <input id="redeemCodeInput" placeholder="e.g. LUMEWAY-JOBLOSS" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;background:var(--warm-white);color:var(--text);text-transform:uppercase">';
+      html += '    <input id="redeemCodeInput" placeholder="" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;background:var(--warm-white);color:var(--text);text-transform:uppercase">';
       html += '    <button onclick="redeemCode()" style="padding:10px 20px;background:var(--accent);color:var(--cream);border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:Plus Jakarta Sans,sans-serif;font-weight:500">Redeem</button>';
       html += '  </div>';
       html += '  <div id="redeemResult" style="margin-top:8px;font-size:13px"></div>';

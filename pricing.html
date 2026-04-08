@@ -351,43 +351,46 @@
       modal.style.display = 'flex';
     }
 
+    var catLabels = {
+      'job-loss': 'Job Loss', estate: 'Estate', divorce: 'Divorce',
+      disability: 'Disability', relocation: 'Relocation', retirement: 'Retirement'
+    };
+
     function purchaseTransition(category, purchaseType) {
-      fetch('/api/create-transition-checkout', {
+      var label = catLabels[category] || category;
+      var price = purchaseType === 'add_transition' ? 20 : 39;
+      var name = purchaseType === 'add_transition' ? label + ' (Add Transition)' : label + ' Full Plan';
+      fetch('/api/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ category: category })
+        body: JSON.stringify({
+          product_id: 'plan-' + category,
+          name: name,
+          price: price,
+          type: 'plan',
+          purchase_type: purchaseType,
+          category: category
+        })
       })
       .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.url) {
-          window.location.href = data.url;
-        } else if (data.ok && data.redirect) {
-          window.location.href = data.redirect;
-        } else if (data.error === 'Not logged in') {
-          window.location.href = '/login?next=/pricing';
-        } else {
-          alert(data.error || 'Something went wrong.');
-        }
-      });
+      .then(function() { window.location.href = '/cart'; });
     }
 
     function purchaseAll() {
-      fetch('/api/create-all-transitions-checkout', {
+      fetch('/api/cart/add', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_id: 'plan-everything',
+          name: 'Everything — All Transitions',
+          price: 125,
+          type: 'plan',
+          purchase_type: 'all_transitions',
+          category: 'all'
+        })
       })
       .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.url) {
-          window.location.href = data.url;
-        } else if (data.ok && data.redirect) {
-          window.location.href = data.redirect;
-        } else if (data.error === 'Not logged in') {
-          window.location.href = '/login?next=/pricing';
-        } else {
-          alert(data.error || 'Something went wrong.');
-        }
-      });
+      .then(function() { window.location.href = '/cart'; });
     }
 
     // Close modal on backdrop click
