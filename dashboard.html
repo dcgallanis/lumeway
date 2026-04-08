@@ -359,6 +359,36 @@
     .guide-cross-tag { font-size: 11px; padding: 3px 10px; border-radius: 100px; background: rgba(44,74,94,0.06); color: var(--navy); }
     .guide-disclaimer { font-size: 12px; font-weight: 300; line-height: 1.6; color: var(--muted); background: var(--cream); border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 12px 16px; margin-top: 16px; }
 
+    /* Progressive disclosure — collapsed phases */
+    .phase-group.collapsed .check-item { display: none; }
+    .phase-group.collapsed .milestone-banner { display: none; }
+    .phase-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+    .phase-toggle .phase-chevron { font-size: 10px; color: var(--muted); transition: transform 0.2s; flex-shrink: 0; }
+    .phase-group:not(.collapsed) .phase-toggle .phase-chevron { transform: rotate(90deg); }
+    .phase-group.collapsed .phase-title { margin-bottom: 2px; }
+    .phase-group.phase-done .phase-title { color: var(--green); }
+    .phase-group.phase-done .phase-toggle .phase-done-check { color: var(--green); font-size: 12px; margin-right: 2px; }
+    .phase-summary-collapsed { display: none; font-size: 12px; font-weight: 300; color: var(--muted); padding: 2px 0 6px 18px; line-height: 1.5; }
+    .phase-group.collapsed .phase-summary-collapsed { display: block; }
+    .phase-group.phase-done.collapsed .phase-summary-collapsed { color: var(--green); }
+
+    /* "Your next step" card on overview */
+    .next-step-card { background: linear-gradient(135deg, #faf6f1, #f5efe6); border: 1px solid var(--gold); border-radius: 16px; padding: 24px 28px; margin-bottom: 0; }
+    .next-step-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+    .next-step-phase { font-size: 12px; font-weight: 400; color: var(--muted); margin-bottom: 6px; }
+    .next-step-text { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 400; color: var(--navy); line-height: 1.4; margin-bottom: 12px; }
+    .next-step-action { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; background: var(--accent); color: var(--cream); border: none; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .next-step-action:hover { background: var(--accent-light); transform: translateY(-1px); }
+    .next-step-context { font-size: 12px; font-weight: 300; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+
+    /* Phase completion summary (richer) */
+    .phase-complete-summary { background: linear-gradient(135deg, rgba(107,143,94,0.06), rgba(107,143,94,0.02)); border: 1px solid rgba(107,143,94,0.25); border-radius: 14px; padding: 20px 24px; margin: 14px 0 6px; animation: milestoneIn 0.5s ease forwards; }
+    .phase-complete-title { font-family: 'Libre Baskerville', serif; font-size: 15px; font-weight: 400; color: var(--navy); margin-bottom: 8px; }
+    .phase-complete-list { list-style: none; padding: 0; margin: 0 0 10px; }
+    .phase-complete-list li { font-size: 12px; font-weight: 300; color: var(--green); line-height: 1.6; padding: 2px 0 2px 18px; position: relative; }
+    .phase-complete-list li::before { content: '\2713'; position: absolute; left: 0; font-weight: 600; }
+    .phase-complete-msg { font-size: 13px; font-weight: 300; color: var(--text); line-height: 1.6; }
+
     /* Loading */
     .loading { text-align: center; padding: 48px; color: var(--muted); font-size: 15px; font-weight: 300; }
 
@@ -3266,6 +3296,32 @@ guideLibrary['disability'] = {
       html += '<div class="overview-layout">';
       html += '<div class="overview-main">';
 
+      // ── "Your next step" card — Section 11 psychology: reduce overwhelm with single action ──
+      var nextTask = getNextTask(checklistItems);
+      if (nextTask) {
+        var ntCatLabels = { 'estate': 'Death & Estate', 'divorce': 'Divorce & Separation', 'job-loss': 'Job Loss & Income Crisis', 'relocation': 'Moving & Relocation', 'disability': 'Disability & Benefits', 'retirement': 'Retirement' };
+        var ntLabel = ntCatLabels[nextTask.category] || nextTask.category;
+        var remainingInPhase = 0;
+        checklistItems.forEach(function(i) {
+          if (i.transition_type === nextTask.category && i.phase === nextTask.phase && !i.is_completed) remainingInPhase++;
+        });
+        html += '<div class="next-step-card">';
+        html += '  <div class="next-step-label">Your next step</div>';
+        html += '  <div class="next-step-phase">' + ntLabel + ' — ' + nextTask.phase + '</div>';
+        html += '  <div class="next-step-text">' + nextTask.item.item_text + '</div>';
+        html += '  <a href="#" class="next-step-action" onclick="switchTab(\'checklist\');return false">Open checklist &#8594;</a>';
+        if (remainingInPhase > 1) {
+          html += '  <div class="next-step-context">' + (remainingInPhase - 1) + ' more task' + (remainingInPhase > 2 ? 's' : '') + ' in this phase after this one.</div>';
+        }
+        html += '</div>';
+      } else if (checklistItems.length > 0) {
+        // All done
+        html += '<div class="next-step-card" style="border-color:var(--green)">';
+        html += '  <div class="next-step-label" style="color:var(--green)">All caught up</div>';
+        html += '  <div class="next-step-text">You\'ve completed every task on your checklist. That\'s a real accomplishment.</div>';
+        html += '</div>';
+      }
+
       // Upcoming deadlines card
       html += '<div class="dash-card">';
       html += '  <div class="card-label">Upcoming Deadlines</div>';
@@ -3512,13 +3568,44 @@ guideLibrary['disability'] = {
           html += '<div class="checklist-category' + (catOrder.length === 1 ? ' checklist-single' : '') + '">';
           html += '<div class="category-header">' + label + '</div>';
           var phases = categories[cat];
-          var phaseOrder = Object.keys(phases);
-          phaseOrder.forEach(function(phase) {
+          var phaseOrder = sortPhases(Object.keys(phases));
+
+          // Determine which phase is "current" (first with uncompleted items)
+          var currentPhaseIdx = -1;
+          for (var pi = 0; pi < phaseOrder.length; pi++) {
+            var hasUncompleted = phases[phaseOrder[pi]].some(function(i) { return !i.is_completed; });
+            if (hasUncompleted) { currentPhaseIdx = pi; break; }
+          }
+
+          phaseOrder.forEach(function(phase, idx) {
             var phaseItems = phases[phase];
             var phaseDone = phaseItems.filter(function(i) { return i.is_completed; }).length;
             var phaseTotal = phaseItems.length;
-            html += '<div class="phase-group" data-phase="' + cat + '-' + phase + '">';
-            html += '<div class="phase-title">' + phase + ' <span class="phase-progress">' + phaseDone + ' of ' + phaseTotal + '</span></div>';
+            var allDone = phaseDone === phaseTotal;
+            var isCurrent = (idx === currentPhaseIdx);
+            var isFuture = (currentPhaseIdx >= 0 && idx > currentPhaseIdx);
+
+            // Progressive disclosure: collapse completed and future phases, expand current
+            var phaseClasses = 'phase-group';
+            if (allDone) phaseClasses += ' phase-done collapsed';
+            else if (isFuture) phaseClasses += ' collapsed';
+
+            html += '<div class="' + phaseClasses + '" data-phase="' + cat + '-' + phase + '">';
+
+            // Clickable phase header with chevron
+            html += '<div class="phase-title"><div class="phase-toggle" onclick="togglePhaseCollapse(\'' + cat + '-' + phase + '\')">';
+            html += '<span class="phase-chevron">&#9654;</span>';
+            if (allDone) html += '<span class="phase-done-check">&#10003;</span>';
+            html += phase + ' <span class="phase-progress">' + phaseDone + ' of ' + phaseTotal + '</span>';
+            html += '</div></div>';
+
+            // Collapsed summary line
+            if (allDone) {
+              html += '<div class="phase-summary-collapsed">All ' + phaseTotal + ' tasks complete</div>';
+            } else if (isFuture) {
+              html += '<div class="phase-summary-collapsed">' + phaseTotal + ' tasks — click to preview</div>';
+            }
+
             phaseItems.forEach(function(item) {
               var doneClass = item.is_completed ? ' done' : '';
               html += '<div class="check-item' + doneClass + '" onclick="toggleItem(' + item.id + ', this)">';
@@ -3526,7 +3613,7 @@ guideLibrary['disability'] = {
               html += '  <div class="check-text">' + item.item_text + '</div>';
               if (!item.is_completed) {
                 html += '  <button class="check-skip" onclick="event.stopPropagation();skipItem(' + item.id + ')" title="Skip for now">later</button>';
-                html += '  <a class="check-help" href="#" onclick="event.stopPropagation();showHumanHelp(\'' + (item.transition_type || cat) + '\');return false" title="Get help with this">\u2139\uFE0E</a>';
+                html += '  <a class="check-help" href="#" onclick="event.stopPropagation();showHumanHelp(\'' + (item.transition_type || cat) + '\');return false" title="Get help with this">&#8505;&#65038;</a>';
               }
               html += '</div>';
             });
@@ -4220,6 +4307,76 @@ guideLibrary['disability'] = {
       }
     }
 
+    // ── Phase ordering for progressive disclosure ──
+    var PHASE_ORDER = [
+      'First 24 Hours',
+      'Immediate Tasks — First 72 Hours',
+      'First 72 Hours',
+      'This Week',
+      'First Week',
+      'Week 1',
+      'This Month',
+      'First Month',
+      'Month 1',
+      'Months 2–3',
+      'Months 2-3',
+      'First 3 Months',
+      'First 6 Months',
+      'Ongoing',
+      'Long-term'
+    ];
+
+    function getPhaseIndex(phaseName) {
+      for (var i = 0; i < PHASE_ORDER.length; i++) {
+        if (phaseName.indexOf(PHASE_ORDER[i]) !== -1 || PHASE_ORDER[i].indexOf(phaseName) !== -1) return i;
+      }
+      return PHASE_ORDER.length; // unknown phases go last
+    }
+
+    function sortPhases(phaseNames) {
+      return phaseNames.slice().sort(function(a, b) {
+        return getPhaseIndex(a) - getPhaseIndex(b);
+      });
+    }
+
+    // ── Find the user's next uncompleted task (across all transitions) ──
+    function getNextTask(items) {
+      if (!items || items.length === 0) return null;
+      // Group by transition, find earliest phase with uncompleted items
+      var cats = {};
+      items.forEach(function(item) {
+        if (!cats[item.transition_type]) cats[item.transition_type] = {};
+        if (!cats[item.transition_type][item.phase]) cats[item.transition_type][item.phase] = [];
+        cats[item.transition_type][item.phase].push(item);
+      });
+      var bestTask = null;
+      var bestPhaseIdx = Infinity;
+      Object.keys(cats).forEach(function(cat) {
+        var phases = Object.keys(cats[cat]);
+        var sorted = sortPhases(phases);
+        for (var p = 0; p < sorted.length; p++) {
+          var phaseItems = cats[cat][sorted[p]];
+          for (var i = 0; i < phaseItems.length; i++) {
+            if (!phaseItems[i].is_completed) {
+              var idx = getPhaseIndex(sorted[p]);
+              if (idx < bestPhaseIdx || (idx === bestPhaseIdx && !bestTask)) {
+                bestPhaseIdx = idx;
+                bestTask = { item: phaseItems[i], phase: sorted[p], category: cat };
+              }
+              return; // found first uncompleted in this category
+            }
+          }
+        }
+      });
+      return bestTask;
+    }
+
+    // ── Toggle collapsed phase in checklist ──
+    function togglePhaseCollapse(phaseKey) {
+      var el = document.querySelector('[data-phase="' + phaseKey + '"]');
+      if (el) el.classList.toggle('collapsed');
+    }
+
     // ── Completion celebration system ──
     var COMPLETION_MESSAGES = [
       'One less thing to worry about.',
@@ -4285,12 +4442,45 @@ guideLibrary['disability'] = {
         setTimeout(function() {
           var container = document.querySelector('[data-phase="' + transType + '-' + phase + '"]');
           if (container) {
-            var existing = container.querySelector('.milestone-banner');
-            if (!existing) {
-              var banner = document.createElement('div');
-              banner.className = 'milestone-banner';
-              banner.textContent = msg;
-              container.appendChild(banner);
+            var existing = container.querySelector('.phase-complete-summary');
+            if (existing) return; // already shown
+            // Remove old simple milestone banner if present
+            var oldBanner = container.querySelector('.milestone-banner');
+            if (oldBanner) oldBanner.remove();
+
+            // Build rich phase summary
+            var summary = document.createElement('div');
+            summary.className = 'phase-complete-summary';
+            var titleHtml = '<div class="phase-complete-title">' + msg + '</div>';
+            var listHtml = '<ul class="phase-complete-list">';
+            phaseItems.forEach(function(pi) {
+              listHtml += '<li>' + pi.item_text + '</li>';
+            });
+            listHtml += '</ul>';
+
+            // Find next phase name
+            var allPhases = [];
+            checklistItems.forEach(function(ci) {
+              if (ci.transition_type === transType && allPhases.indexOf(ci.phase) === -1) allPhases.push(ci.phase);
+            });
+            var sorted = sortPhases(allPhases);
+            var nextPhase = null;
+            for (var np = 0; np < sorted.length; np++) {
+              if (sorted[np] === phase && np + 1 < sorted.length) { nextPhase = sorted[np + 1]; break; }
+            }
+            var contextHtml = nextPhase
+              ? '<div class="phase-complete-msg">Up next: <strong>' + nextPhase + '</strong></div>'
+              : '<div class="phase-complete-msg">That was the last phase. You did it.</div>';
+
+            summary.innerHTML = titleHtml + listHtml + contextHtml;
+            container.appendChild(summary);
+
+            // Collapse this phase and mark done
+            container.classList.add('phase-done', 'collapsed');
+            // Expand next phase if it was collapsed
+            if (nextPhase) {
+              var nextEl = document.querySelector('[data-phase="' + transType + '-' + nextPhase + '"]');
+              if (nextEl) nextEl.classList.remove('collapsed');
             }
           }
         }, 500);
@@ -4308,7 +4498,23 @@ guideLibrary['disability'] = {
       var container = document.querySelector('[data-phase="' + completedItem.transition_type + '-' + completedItem.phase + '"]');
       if (!container) return;
       var items = container.querySelectorAll('.check-item:not(.done)');
-      if (items.length > 0) items[0].classList.add('next-task');
+      if (items.length > 0) {
+        items[0].classList.add('next-task');
+      } else {
+        // Phase complete — find first uncompleted item in next visible phase for this category
+        var catContainer = container.closest('.checklist-category');
+        if (catContainer) {
+          var allUncompleted = catContainer.querySelectorAll('.phase-group:not(.collapsed) .check-item:not(.done)');
+          if (allUncompleted.length > 0) allUncompleted[0].classList.add('next-task');
+        }
+      }
+      // Also update the phase progress count display
+      var phaseTitle = container.querySelector('.phase-progress');
+      if (phaseTitle) {
+        var phaseDoneCount = container.querySelectorAll('.check-item.done').length;
+        var phaseTotalCount = container.querySelectorAll('.check-item').length;
+        phaseTitle.textContent = phaseDoneCount + ' of ' + phaseTotalCount;
+      }
     }
 
     // ── Checklist actions ──
