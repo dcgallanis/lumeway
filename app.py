@@ -4180,7 +4180,9 @@ def admin_grant_tier():
     else:
         db_execute(conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL WHERE email = {param}", (email,))
     conn.commit()
-    # Optionally create a purchase record
+    conn.close()
+    # Optionally create a purchase record (use fresh connection)
+    record_msg = ""
     if create_record and tier in ("pass", "unlimited"):
         now = datetime.now(timezone.utc).isoformat()
         token = secrets.token_urlsafe(32)
@@ -4194,16 +4196,20 @@ def admin_grant_tier():
             product_name = "Unlimited Subscription"
             amount_cents = 999
         try:
-            db_execute(conn, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            conn2 = get_db()
+            db_execute(conn2, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
                 """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                (email, pass_id, product_name, amount_cents, "manual-grant", None, now, token, True if USE_POSTGRES else 1))
-            conn.commit()
+                (email, pass_id, product_name, amount_cents, "manual-grant-" + now, None, now, token, True if USE_POSTGRES else 1))
+            conn2.commit()
+            conn2.close()
+            record_msg = ", purchase record created"
+            print(f"Purchase record created for {email}: {product_name}")
         except Exception as e:
+            record_msg = f", purchase record FAILED: {e}"
             print(f"Error creating purchase record: {e}")
-    conn.close()
-    return jsonify({"ok": True, "message": f"User {email} set to tier={tier}"})
+    return jsonify({"ok": True, "message": f"User {email} set to tier={tier}{record_msg}"})
 
 @app.route("/api/admin/retry-purchase", methods=["POST"])
 def admin_retry_purchase():
