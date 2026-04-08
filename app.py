@@ -693,11 +693,11 @@ def check_tier(user, required_tier="free", transition_type=None):
         # For pass tier, also check transition_type match
         if tier == "pass" and required_tier == "pass" and transition_type:
             if user.get("tier_transition") != transition_type:
-                return (False, "Your Chapter Pass is for " + (user.get("tier_transition") or "another chapter") + ". Upgrade to Unlimited for access to all chapters.")
+                return (False, "Your pass is for " + (user.get("tier_transition") or "a different life change") + ". Upgrade to Unlimited for full access.")
         return (True, None)
     reasons = {
         "starter": "Upgrade to a Starter bundle for 30 days of full dashboard access.",
-        "pass": "Get a Chapter Pass for full access to this chapter.",
+        "pass": "Get a pass for full access to guides, scripts, and tools.",
         "unlimited": "Subscribe to Unlimited for access to all transitions."
     }
     return (False, reasons.get(required_tier, "Upgrade for access."))
@@ -1471,10 +1471,10 @@ def faq():
     return send_from_directory(".", "faq.html")
 
 PRODUCTS = {
-    "master": {"name": "Life Transition Bundle", "price": 3600, "desc": "All 6 category bundles — 90 documents",
-        "headline": "Every Transition. Every Template. One Download.",
+    "master": {"name": "Complete Bundle", "price": 3600, "desc": "All 6 category bundles — 90 documents",
+        "headline": "Every Template. One Download.",
         "emoji": "📦", "count": "90",
-        "long_desc": "Everything Lumeway offers in one package. All six category bundles covering job loss, estate settlement, divorce, disability, relocation, and retirement — 90 documents plus bonus wellness worksheets.",
+        "long_desc": "Everything Lumeway offers in one package. All six bundles covering job loss, estate settlement, divorce, disability, relocation, and retirement — 90 documents plus bonus wellness worksheets.",
         "includes": [
             ("Job Loss Survivor Kit (14 docs)", "Complete toolkit for severance, COBRA, unemployment, budgeting, job search, and more."),
             ("Estate & Survivor Bundle (16 docs)", "Notification letters, benefits claims, estate settlement, executor tools, and more."),
@@ -1625,19 +1625,19 @@ PRODUCTS = {
         "transition_page": "/retirement"},
 }
 
-# Chapter Pass products ($39 each — full dashboard for 1 life chapter)
+# Pass products ($39 each — full dashboard for 1 life change)
 PASS_PRODUCTS = {
-    "pass-job-loss": {"name": "Job Loss Chapter Pass", "price": 3900, "transition": "job-loss",
+    "pass-job-loss": {"name": "Job Loss Pass", "price": 3900, "transition": "job-loss",
         "desc": "Full dashboard access for Job Loss & Income Crisis — checklists, content library, scripts, state-specific guidance."},
-    "pass-estate": {"name": "Estate Chapter Pass", "price": 3900, "transition": "estate",
+    "pass-estate": {"name": "Estate Pass", "price": 3900, "transition": "estate",
         "desc": "Full dashboard access for Death & Estate — checklists, content library, scripts, state-specific guidance."},
-    "pass-divorce": {"name": "Divorce Chapter Pass", "price": 3900, "transition": "divorce",
+    "pass-divorce": {"name": "Divorce Pass", "price": 3900, "transition": "divorce",
         "desc": "Full dashboard access for Divorce & Separation — checklists, content library, scripts, state-specific guidance."},
-    "pass-disability": {"name": "Disability Chapter Pass", "price": 3900, "transition": "disability",
+    "pass-disability": {"name": "Disability Pass", "price": 3900, "transition": "disability",
         "desc": "Full dashboard access for Disability & Benefits — checklists, content library, scripts, state-specific guidance."},
-    "pass-relocation": {"name": "Relocation Chapter Pass", "price": 3900, "transition": "relocation",
+    "pass-relocation": {"name": "Relocation Pass", "price": 3900, "transition": "relocation",
         "desc": "Full dashboard access for Moving & Relocation — checklists, content library, scripts, state-specific guidance."},
-    "pass-retirement": {"name": "Retirement Chapter Pass", "price": 3900, "transition": "retirement",
+    "pass-retirement": {"name": "Retirement Pass", "price": 3900, "transition": "retirement",
         "desc": "Full dashboard access for Retirement Planning — checklists, content library, scripts, state-specific guidance."},
 }
 
@@ -1901,7 +1901,7 @@ def handle_tier_upgrade(session_data, metadata):
     if tier == "pass" and transition and transition in BUNDLE_FILES:
         bundles_to_grant = [transition]
     elif tier == "unlimited":
-        bundles_to_grant = list(BUNDLE_FILES.keys())  # all bundles including master
+        bundles_to_grant = [k for k in BUNDLE_FILES.keys() if k != "master"]  # 6 individual bundles, not master
     for bundle_id in bundles_to_grant:
         bundle_product = PRODUCTS.get(bundle_id, {})
         bundle_token = secrets.token_urlsafe(32)
@@ -1928,9 +1928,9 @@ def send_tier_email(to_email, tier, product_name):
         print(f"RESEND_API_KEY not set, skipping tier email to {to_email}")
         return
     if tier == "unlimited":
-        body = "Your Unlimited subscription is now active. You have full access to every chapter — all guides, scripts, and tools."
+        body = "Your Unlimited subscription is now active. You have full access to everything — all guides, scripts, and tools for every life change."
     else:
-        body = f"Your {product_name} is now active. You have full access to your chapter's complete guide, scripts, and tools."
+        body = f"Your {product_name} is now active. You have full access to your complete guide, scripts, and tools."
     html = f"""<!DOCTYPE html>
 <html><body style="font-family:system-ui,-apple-system,sans-serif;color:#1B2A38;max-width:560px;margin:0 auto;padding:32px 24px;">
 <div style="text-align:center;margin-bottom:32px;">
@@ -1992,12 +1992,12 @@ def purchase_success():
                 conn.close()
 
                 if purchase_type in ("pass", "unlimited"):
-                    # Tier purchase
+                    # Tier purchase — redirect to dashboard
                     if not row:
                         print(f"No existing tier purchase found, handling now...")
                         handle_tier_upgrade(session_data, metadata)
-                    product_name = PASS_PRODUCTS.get(product_id, {}).get("name", "Unlimited Subscription") if purchase_type == "pass" else "Unlimited Subscription"
-                    return render_template_string(PURCHASE_SUCCESS_HTML, product_name=product_name)
+                    product_name = PASS_PRODUCTS.get(product_id, {}).get("name", "Unlimited") if purchase_type == "pass" else "Unlimited"
+                    return render_template_string(TIER_SUCCESS_HTML, product_name=product_name, tier=purchase_type)
                 else:
                     # Template bundle purchase
                     product = PRODUCTS.get(product_id, {})
@@ -2109,6 +2109,54 @@ Still need help? Email us at <a href="mailto:hello@lumeway.co">hello@lumeway.co<
 <p class="footer-note"><a href="/about">About</a> &middot; <a href="/privacy">Privacy Policy</a></p>
 <div class="footer-social"><a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a></div>
 </footer>
+</body></html>"""
+
+TIER_SUCCESS_HTML = """<!DOCTYPE html>
+<html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QHWJDRDR9R"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-QHWJDRDR9R');gtag('event','purchase',{item_name:'{{ product_name }}'});</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>You're All Set — Lumeway</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@300;400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#FAF7F2;--warm-white:#FDFCFA;--text:#2C3E50;--navy:#2C4A5E;--gold:#B8977E;--accent:#C4704E;--muted:#6B7B8D;--border:#E8E0D6;--green:#6B8F5E}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:var(--warm-white);border:1px solid var(--border);border-radius:24px;padding:48px;max-width:520px;text-align:center;box-shadow:0 2px 40px rgba(44,62,80,0.06)}
+.check{width:72px;height:72px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 28px;font-size:32px;color:white}
+h1{font-family:'Libre Baskerville',serif;font-size:32px;font-weight:300;margin-bottom:8px}
+.plan-badge{display:inline-block;padding:6px 20px;background:var(--navy);color:var(--cream);border-radius:100px;font-size:13px;font-weight:500;margin:16px 0 24px}
+.desc{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:32px;font-weight:300}
+.features{background:var(--cream);border-radius:16px;padding:24px;text-align:left;margin-bottom:32px}
+.features li{font-size:14px;line-height:2;color:var(--text);font-weight:300;list-style:none;padding-left:24px;position:relative}
+.features li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:600}
+.btn{display:inline-block;padding:14px 36px;background:var(--accent);color:var(--cream);border-radius:100px;text-decoration:none;font-size:15px;font-weight:500;transition:all 0.2s}
+.btn:hover{filter:brightness(1.08)}
+.secondary{display:block;margin-top:16px;font-size:13px;color:var(--muted);text-decoration:none}
+.secondary:hover{color:var(--navy)}
+@media(max-width:640px){.card{padding:32px 24px}h1{font-size:26px}}
+</style></head><body>
+<div class="card">
+<div class="check">✓</div>
+<h1>You're all set</h1>
+<div class="plan-badge">{{ product_name }}</div>
+<p class="desc">
+{% if tier == 'unlimited' %}
+Your Unlimited subscription is active. You have full access to every guide, checklist, script, and template across all six life changes.
+{% else %}
+Your plan is active. You have full access to your complete guide, checklists, scripts, and templates.
+{% endif %}
+</p>
+<ul class="features">
+<li>Full step-by-step guides and checklists</li>
+<li>"What to say" phone and email scripts</li>
+<li>State-specific guidance and resources</li>
+<li>Template worksheets ready to download</li>
+<li>Calendar deadlines and document tracker</li>
+</ul>
+<a href="/dashboard" class="btn">Go to Your Dashboard</a>
+<a href="/chat" class="secondary">Or start a conversation with the Navigator →</a>
+</div>
 </body></html>"""
 
 DOWNLOAD_PAGE_HTML = """<!DOCTYPE html>
@@ -4326,7 +4374,7 @@ def admin_grant_tier():
         if tier == "pass":
             pass_id = "pass-" + (transition or "estate")
             product = PASS_PRODUCTS.get(pass_id, {})
-            product_name = product.get("name", f"Chapter Pass — {transition.title()}")
+            product_name = product.get("name", f"{transition.title()} Pass")
             amount_cents = product.get("price", 3900)
         else:
             pass_id = "unlimited"
@@ -4344,7 +4392,7 @@ def admin_grant_tier():
             if tier == "pass" and transition and transition in BUNDLE_FILES:
                 bundles_to_grant = [transition]
             elif tier == "unlimited":
-                bundles_to_grant = list(BUNDLE_FILES.keys())
+                bundles_to_grant = [k for k in BUNDLE_FILES.keys() if k != "master"]
             for bid in bundles_to_grant:
                 bp = PRODUCTS.get(bid, {})
                 bt = secrets.token_urlsafe(32)
