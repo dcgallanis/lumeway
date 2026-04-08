@@ -530,6 +530,38 @@ def init_subscribers_db():
                 conn2.close()
             except Exception:
                 pass
+    # Expenses table (idempotent)
+    try:
+        conn3 = get_db()
+        if USE_POSTGRES:
+            db_execute(conn3, """CREATE TABLE IF NOT EXISTS expenses (
+                id SERIAL PRIMARY KEY,
+                date TEXT NOT NULL,
+                amount_cents INTEGER NOT NULL,
+                category TEXT NOT NULL,
+                description TEXT NOT NULL,
+                payment_method TEXT,
+                notes TEXT,
+                created_at TEXT NOT NULL
+            )""")
+        else:
+            db_execute(conn3, """CREATE TABLE IF NOT EXISTS expenses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                date TEXT NOT NULL,
+                amount_cents INTEGER NOT NULL,
+                category TEXT NOT NULL,
+                description TEXT NOT NULL,
+                payment_method TEXT,
+                notes TEXT,
+                created_at TEXT NOT NULL
+            )""")
+        conn3.commit()
+        conn3.close()
+    except Exception:
+        try:
+            conn3.close()
+        except Exception:
+            pass
     conn.close()
 
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "re_17DAfkrF_3mB4pCdStfmYHiNQoeKrxaWe")
@@ -1640,15 +1672,15 @@ def create_pass_checkout():
             line_items=[{
                 "price_data": {
                     "currency": "usd",
-                    "product_data": {"name": product["name"], "description": product["desc"]},
+                    "product_data": {"name": product["name"], "description": "Full access to one transition's complete guide, scripts, and tools."},
                     "unit_amount": product["price"],
                 },
                 "quantity": 1,
             }],
             mode="payment",
-            success_url=request.host_url + "dashboard?upgraded=1",
+            success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=request.host_url + "pricing",
-            metadata={"tier": "pass", "transition_type": product["transition"], "user_email": user["email"]},
+            metadata={"product_id": pass_id, "purchase_type": "pass", "transition": product["transition"], "user_id": str(user["id"])},
         )
         return jsonify({"url": session.url})
     except Exception as e:
@@ -1661,16 +1693,16 @@ def create_subscription():
     if not user:
         return jsonify({"error": "Not logged in"}), 401
     if not STRIPE_UNLIMITED_PRICE_ID:
-        return jsonify({"error": "Subscription not yet configured"}), 500
+        return jsonify({"error": "Subscription is not set up yet. Please contact hello@lumeway.co."}), 400
     try:
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             customer_email=user["email"],
             line_items=[{"price": STRIPE_UNLIMITED_PRICE_ID, "quantity": 1}],
             mode="subscription",
-            success_url=request.host_url + "dashboard?upgraded=1",
+            success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=request.host_url + "pricing",
-            metadata={"tier": "unlimited", "user_email": user["email"]},
+            metadata={"purchase_type": "unlimited", "user_id": str(user["id"])},
         )
         return jsonify({"url": session.url})
     except Exception as e:
@@ -1694,13 +1726,14 @@ def stripe_webhook():
     if event_type == "checkout.session.completed":
         session_data = event["data"]["object"] if isinstance(event, dict) else event.data.object
         print(f"Webhook received: checkout.session.completed")
-        # Check if this is a tier upgrade
-        metadata = session_data.get("metadata") if isinstance(session_data, dict) else getattr(session_data, "metadata", {})
-        if isinstance(metadata, dict):
-            tier_type = metadata.get("tier")
+        # Route based on purchase type
+        if isinstance(session_data, dict):
+            metadata = session_data.get("metadata") or {}
         else:
-            tier_type = getattr(metadata, "tier", None)
-        if tier_type:
+            metadata = session_data.metadata or {}
+            metadata = dict(metadata) if not isinstance(metadata, dict) else metadata
+        purchase_type = metadata.get("purchase_type", "")
+        if purchase_type in ("pass", "unlimited"):
             handle_tier_upgrade(session_data, metadata)
         else:
             fulfill_purchase(session_data)
@@ -1758,37 +1791,114 @@ def fulfill_purchase(session_data):
     print(f"Email send initiated for {email}")
 
 def handle_tier_upgrade(session_data, metadata):
-    """Update user tier after a Transition Pass or Unlimited purchase."""
-    if isinstance(metadata, dict):
-        tier = metadata.get("tier")
-        transition_type = metadata.get("transition_type")
-        email = metadata.get("user_email")
+    """Handle pass/unlimited purchases: update tier + create purchase record + send email."""
+    if hasattr(session_data, 'customer_details'):
+        email = getattr(session_data.customer_details, 'email', None) or getattr(session_data, 'customer_email', None)
+        session_id = getattr(session_data, 'id', None)
+        payment_intent = getattr(session_data, 'payment_intent', None)
+        customer_id = getattr(session_data, 'customer', None)
+        sub_id = getattr(session_data, 'subscription', None)
     else:
-        tier = getattr(metadata, "tier", None)
-        transition_type = getattr(metadata, "transition_type", None)
-        email = getattr(metadata, "user_email", None)
-    if not email or not tier:
-        print(f"Cannot handle tier upgrade: email={email}, tier={tier}")
+        email = (session_data.get("customer_details") or {}).get("email") or session_data.get("customer_email")
+        session_id = session_data.get("id")
+        payment_intent = session_data.get("payment_intent")
+        customer_id = session_data.get("customer")
+        sub_id = session_data.get("subscription")
+
+    purchase_type = metadata.get("purchase_type", "")
+    product_id = metadata.get("product_id", "")
+    transition = metadata.get("transition", "")
+    user_id_str = metadata.get("user_id", "")
+
+    if not email:
+        print(f"Cannot handle tier upgrade: no email")
         return
+
+    # Determine tier, product name, and price
+    if purchase_type == "pass" and product_id in PASS_PRODUCTS:
+        product = PASS_PRODUCTS[product_id]
+        tier = "pass"
+        product_name = product["name"]
+        amount_cents = product["price"]
+    elif purchase_type == "unlimited":
+        tier = "unlimited"
+        product_id = "unlimited"
+        product_name = "Unlimited Subscription"
+        amount_cents = 999
+    else:
+        print(f"Unknown tier purchase type: {purchase_type}")
+        return
+
+    now = datetime.now(timezone.utc).isoformat()
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    now = datetime.now(timezone.utc).isoformat()
-    if tier == "pass":
-        db_execute(conn, f"UPDATE users SET tier = 'pass', tier_transition = {param} WHERE email = {param}", (transition_type, email))
-    elif tier == "unlimited":
-        # Get stripe customer ID from session if available
-        customer_id = None
-        if isinstance(session_data, dict):
-            customer_id = session_data.get("customer")
-        else:
-            customer_id = getattr(session_data, "customer", None)
-        db_execute(conn, f"UPDATE users SET tier = 'unlimited', stripe_customer_id = {param} WHERE email = {param}", (customer_id, email))
-    elif tier == "starter":
-        expires = (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
-        db_execute(conn, f"UPDATE users SET tier = 'starter', tier_expires_at = {param} WHERE email = {param}", (expires, email))
-    conn.commit()
+
+    # Update user tier
+    try:
+        if tier == "pass":
+            db_execute(conn, f"UPDATE users SET tier = 'pass', tier_transition = {param} WHERE email = {param}", (transition, email))
+        elif tier == "unlimited":
+            db_execute(conn, f"UPDATE users SET tier = 'unlimited', stripe_customer_id = {param} WHERE email = {param}", (customer_id, email))
+        conn.commit()
+        print(f"User {email} upgraded to tier={tier}")
+    except Exception as e:
+        print(f"Error updating user tier: {e}")
+
+    # Create purchase record so it shows in Purchases tab
+    token = secrets.token_urlsafe(32)
+    try:
+        db_execute(conn, """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+            """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (email, product_id, product_name, amount_cents,
+             session_id, payment_intent, now, token, True if USE_POSTGRES else 1))
+        conn.commit()
+        print(f"Tier purchase recorded: {email} bought {product_name}")
+    except Exception as e:
+        print(f"DB error recording tier purchase: {e}")
+
     conn.close()
-    print(f"Tier upgraded: {email} → {tier}" + (f" ({transition_type})" if transition_type else ""))
+
+    # Send confirmation email
+    threading.Thread(target=send_tier_email, args=(email, tier, product_name), daemon=True).start()
+
+def send_tier_email(to_email, tier, product_name):
+    """Send tier upgrade confirmation email."""
+    if not RESEND_API_KEY:
+        print(f"RESEND_API_KEY not set, skipping tier email to {to_email}")
+        return
+    if tier == "unlimited":
+        body = "Your Unlimited subscription is now active. You have full access to all transitions, guides, scripts, and tools."
+    else:
+        body = f"Your {product_name} is now active. You have full access to your transition's complete guide, scripts, and tools."
+    html = f"""<!DOCTYPE html>
+<html><body style="font-family:system-ui,-apple-system,sans-serif;color:#1B2A38;max-width:560px;margin:0 auto;padding:32px 24px;">
+<div style="text-align:center;margin-bottom:32px;">
+  <span style="font-family:Georgia,serif;font-size:24px;color:#1B3A5C;font-weight:500;">Lumeway</span>
+</div>
+<p style="font-size:16px;line-height:1.6;">Hi there,</p>
+<p style="font-size:16px;line-height:1.6;">{body}</p>
+<div style="text-align:center;margin:32px 0;">
+  <a href="https://lumeway.co/dashboard" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Go to Your Dashboard</a>
+</div>
+<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">If you have any questions, just reply to this email.</p>
+<hr style="border:none;border-top:1px solid #E4DDD3;margin:32px 0;" />
+<p style="font-size:13px;color:#6E7D8A;">Warmly,<br>The Lumeway Team<br><a href="https://lumeway.co" style="color:#1B3A5C;">lumeway.co</a></p>
+</body></html>"""
+    try:
+        resp = http_requests.post("https://api.resend.com/emails", json={
+            "from": "Lumeway <hello@lumeway.co>",
+            "to": [to_email],
+            "subject": f"Your {product_name} is active",
+            "html": html,
+        }, headers={
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        }, timeout=10)
+        print(f"Tier email sent to {to_email}: {resp.status_code}")
+    except Exception as e:
+        print(f"Failed to send tier email to {to_email}: {e}")
 
 def handle_subscription_cancelled(sub_data):
     """Downgrade user when their Unlimited subscription is cancelled."""
@@ -1812,24 +1922,36 @@ def purchase_success():
             session_data = stripe.checkout.Session.retrieve(session_id)
             print(f"Session retrieved: payment_status={session_data.payment_status}, metadata={session_data.metadata}")
             if session_data.payment_status == "paid":
-                product_id = session_data.metadata.get("product_id", "") if isinstance(session_data.metadata, dict) else getattr(session_data.metadata, "product_id", "")
-                product = PRODUCTS.get(product_id, {})
+                metadata = session_data.metadata if isinstance(session_data.metadata, dict) else dict(session_data.metadata or {})
+                product_id = metadata.get("product_id", "")
+                purchase_type = metadata.get("purchase_type", "")
+
                 # Check if already fulfilled (webhook may have handled it)
                 conn = get_db()
                 cur = db_execute(conn, "SELECT download_token FROM purchases WHERE stripe_session_id = %s" if USE_POSTGRES else "SELECT download_token FROM purchases WHERE stripe_session_id = ?", (session_id,))
                 row = cur.fetchone()
                 conn.close()
-                if not row:
-                    print(f"No existing purchase found, fulfilling now...")
-                    fulfill_purchase(session_data)
+
+                if purchase_type in ("pass", "unlimited"):
+                    # Tier purchase
+                    if not row:
+                        print(f"No existing tier purchase found, handling now...")
+                        handle_tier_upgrade(session_data, metadata)
+                    product_name = PASS_PRODUCTS.get(product_id, {}).get("name", "Unlimited Subscription") if purchase_type == "pass" else "Unlimited Subscription"
+                    return render_template_string(PURCHASE_SUCCESS_HTML, product_name=product_name)
                 else:
-                    print(f"Purchase already exists in DB, token={row[0]}")
-                    # Resend email in case it failed before
-                    email = getattr(session_data.customer_details, 'email', None) or getattr(session_data, 'customer_email', None)
-                    if email:
-                        print(f"Resending purchase email to {email}")
-                        threading.Thread(target=send_purchase_email, args=(email, product_id, product.get("name", ""), row[0]), daemon=True).start()
-                return render_template_string(PURCHASE_SUCCESS_HTML, product_name=product.get("name", "your templates"))
+                    # Template bundle purchase
+                    product = PRODUCTS.get(product_id, {})
+                    if not row:
+                        print(f"No existing purchase found, fulfilling now...")
+                        fulfill_purchase(session_data)
+                    else:
+                        print(f"Purchase already exists in DB, token={row[0]}")
+                        email = getattr(session_data.customer_details, 'email', None) or getattr(session_data, 'customer_email', None)
+                        if email:
+                            print(f"Resending purchase email to {email}")
+                            threading.Thread(target=send_purchase_email, args=(email, product_id, product.get("name", ""), row[0]), daemon=True).start()
+                    return render_template_string(PURCHASE_SUCCESS_HTML, product_name=product.get("name", "your templates"))
         except Exception as e:
             import traceback
             print(f"Error in purchase-success: {e}")
@@ -2700,6 +2822,28 @@ def dashboard_data():
         "notes": notes,
         "effective_tier": get_effective_tier(user)
     })
+
+@app.route("/api/manage-subscription", methods=["POST"])
+def manage_subscription():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    action = (request.get_json() or {}).get("action")
+    if action != "cancel":
+        return jsonify({"error": "Invalid action"}), 400
+    customer_id = user.get("stripe_customer_id")
+    if not customer_id:
+        return jsonify({"error": "No active subscription found"}), 400
+    try:
+        subscriptions = stripe.Subscription.list(customer=customer_id, status="active", limit=1)
+        if not subscriptions.data:
+            return jsonify({"error": "No active subscription found"}), 400
+        sub = subscriptions.data[0]
+        stripe.Subscription.modify(sub.id, cancel_at_period_end=True)
+        return jsonify({"ok": True, "message": "Your subscription will end at the current billing period."})
+    except Exception as e:
+        print(f"Error cancelling subscription: {e}")
+        return jsonify({"error": "Something went wrong. Please email hello@lumeway.co for help."}), 500
 
 @app.route("/api/dashboard/history/<session_id>")
 def dashboard_history_detail(session_id):
@@ -3867,6 +4011,142 @@ def admin_export_csv():
         mimetype="text/csv",
         headers={"Content-Disposition": f"attachment;filename=lumeway_subscribers_{datetime.now().strftime('%Y%m%d')}.csv"}
     )
+
+# ── Admin Tools (Expenses, Revenue, Analytics) ──
+
+def check_admin():
+    key = request.args.get("key", "") or request.headers.get("X-Admin-Key", "")
+    if not ADMIN_KEY or key != ADMIN_KEY:
+        return False
+    return True
+
+@app.route("/admin/tools")
+def admin_tools():
+    if not check_admin():
+        return redirect("/admin")
+    return send_from_directory(".", "admin-tools.html")
+
+@app.route("/api/admin/expenses", methods=["GET"])
+def admin_get_expenses():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    month = request.args.get("month")  # YYYY-MM
+    if month:
+        cur = db_execute(conn, f"SELECT id, date, amount_cents, category, description, payment_method, notes, created_at FROM expenses WHERE date LIKE {param} ORDER BY date DESC", (month + "%",))
+    else:
+        cur = db_execute(conn, "SELECT id, date, amount_cents, category, description, payment_method, notes, created_at FROM expenses ORDER BY date DESC LIMIT 200")
+    rows = cur.fetchall()
+    conn.close()
+    return jsonify({"expenses": [{"id": r[0], "date": r[1], "amount_cents": r[2], "category": r[3], "description": r[4], "payment_method": r[5], "notes": r[6], "created_at": r[7]} for r in rows]})
+
+@app.route("/api/admin/expenses", methods=["POST"])
+def admin_add_expense():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    date = data.get("date", "")
+    amount = data.get("amount", 0)
+    category = data.get("category", "")
+    description = data.get("description", "")
+    payment_method = data.get("payment_method", "")
+    notes = data.get("notes", "")
+    if not date or not amount or not category or not description:
+        return jsonify({"error": "Missing required fields"}), 400
+    amount_cents = int(round(float(amount) * 100))
+    now = datetime.now(timezone.utc).isoformat()
+    conn = get_db()
+    db_execute(conn, """INSERT INTO expenses (date, amount_cents, category, description, payment_method, notes, created_at)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
+        """INSERT INTO expenses (date, amount_cents, category, description, payment_method, notes, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)""",
+        (date, amount_cents, category, description, payment_method, notes, now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/admin/expenses/<int:expense_id>", methods=["DELETE"])
+def admin_delete_expense(expense_id):
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"DELETE FROM expenses WHERE id = {param}", (expense_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+@app.route("/api/admin/revenue", methods=["GET"])
+def admin_revenue():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = get_db()
+    # All purchases
+    cur = db_execute(conn, "SELECT product_id, product_name, amount_cents, purchased_at, email FROM purchases ORDER BY purchased_at DESC")
+    purchases = [{"product_id": r[0], "product_name": r[1], "amount_cents": r[2], "purchased_at": r[3], "email": r[4]} for r in cur.fetchall()]
+    conn.close()
+    return jsonify({"purchases": purchases})
+
+@app.route("/api/admin/analytics", methods=["GET"])
+def admin_analytics():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = get_db()
+    # User stats
+    total_users = db_execute(conn, "SELECT COUNT(*) FROM users").fetchone()[0]
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    users_today = db_execute(conn, "SELECT COUNT(*) FROM users WHERE created_at LIKE %s" if USE_POSTGRES else "SELECT COUNT(*) FROM users WHERE created_at LIKE ?", (today + "%",)).fetchone()[0]
+    this_month = datetime.now(timezone.utc).strftime("%Y-%m")
+    users_this_month = db_execute(conn, "SELECT COUNT(*) FROM users WHERE created_at LIKE %s" if USE_POSTGRES else "SELECT COUNT(*) FROM users WHERE created_at LIKE ?", (this_month + "%",)).fetchone()[0]
+    # Chat stats
+    total_chats = db_execute(conn, "SELECT COUNT(*) FROM chat_sessions").fetchone()[0]
+    chats_this_month = db_execute(conn, "SELECT COUNT(*) FROM chat_sessions WHERE started_at LIKE %s" if USE_POSTGRES else "SELECT COUNT(*) FROM chat_sessions WHERE started_at LIKE ?", (this_month + "%",)).fetchone()[0]
+    # Checklist stats
+    total_checklist_users = db_execute(conn, "SELECT COUNT(DISTINCT user_id) FROM checklist_items").fetchone()[0]
+    true_val = "TRUE" if USE_POSTGRES else "1"
+    total_completed = db_execute(conn, f"SELECT COUNT(*) FROM checklist_items WHERE is_completed = {true_val}").fetchone()[0]
+    total_items = db_execute(conn, "SELECT COUNT(*) FROM checklist_items").fetchone()[0]
+    # Purchase stats
+    total_revenue = db_execute(conn, "SELECT COALESCE(SUM(amount_cents), 0) FROM purchases").fetchone()[0]
+    total_purchases = db_execute(conn, "SELECT COUNT(*) FROM purchases").fetchone()[0]
+    revenue_this_month = db_execute(conn, "SELECT COALESCE(SUM(amount_cents), 0) FROM purchases WHERE purchased_at LIKE %s" if USE_POSTGRES else "SELECT COALESCE(SUM(amount_cents), 0) FROM purchases WHERE purchased_at LIKE ?", (this_month + "%",)).fetchone()[0]
+    # Tier breakdown
+    tier_counts = {}
+    for tier_name in ["free", "starter", "pass", "unlimited"]:
+        param = "%s" if USE_POSTGRES else "?"
+        cnt = db_execute(conn, f"SELECT COUNT(*) FROM users WHERE tier = {param}", (tier_name,)).fetchone()[0]
+        tier_counts[tier_name] = cnt
+    # Expense stats
+    total_expenses = db_execute(conn, "SELECT COALESCE(SUM(amount_cents), 0) FROM expenses").fetchone()[0]
+    expenses_this_month = db_execute(conn, "SELECT COALESCE(SUM(amount_cents), 0) FROM expenses WHERE date LIKE %s" if USE_POSTGRES else "SELECT COALESCE(SUM(amount_cents), 0) FROM expenses WHERE date LIKE ?", (this_month + "%",)).fetchone()[0]
+    # Signups by month (last 6 months)
+    signups_by_month = []
+    for i in range(5, -1, -1):
+        d = datetime.now(timezone.utc) - timedelta(days=i*30)
+        m = d.strftime("%Y-%m")
+        param = "%s" if USE_POSTGRES else "?"
+        cnt = db_execute(conn, f"SELECT COUNT(*) FROM users WHERE created_at LIKE {param}", (m + "%",)).fetchone()[0]
+        signups_by_month.append({"month": m, "count": cnt})
+    # Revenue by month (last 6 months)
+    revenue_by_month = []
+    for i in range(5, -1, -1):
+        d = datetime.now(timezone.utc) - timedelta(days=i*30)
+        m = d.strftime("%Y-%m")
+        param = "%s" if USE_POSTGRES else "?"
+        amt = db_execute(conn, f"SELECT COALESCE(SUM(amount_cents), 0) FROM purchases WHERE purchased_at LIKE {param}", (m + "%",)).fetchone()[0]
+        revenue_by_month.append({"month": m, "amount_cents": amt})
+    conn.close()
+    return jsonify({
+        "users": {"total": total_users, "today": users_today, "this_month": users_this_month},
+        "chats": {"total": total_chats, "this_month": chats_this_month},
+        "checklist": {"users": total_checklist_users, "completed": total_completed, "total": total_items},
+        "revenue": {"total": total_revenue, "this_month": revenue_this_month, "purchases": total_purchases},
+        "expenses": {"total": total_expenses, "this_month": expenses_this_month},
+        "tiers": tier_counts,
+        "signups_by_month": signups_by_month,
+        "revenue_by_month": revenue_by_month
+    })
 
 @app.route("/api/export", methods=["POST"])
 def export_checklist():

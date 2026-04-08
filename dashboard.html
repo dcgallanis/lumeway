@@ -2781,7 +2781,26 @@ guideLibrary['disability'] = {
       ]
     };
 
-    var activeGuideTransition = null;
+    function cancelSubscription() {
+      if (!confirm('Are you sure you want to cancel your Unlimited subscription? Your access will continue until the end of your current billing period.')) return;
+      fetch('/api/manage-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'cancel' })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          alert(data.message || 'Your subscription has been cancelled.');
+          loadDashboard();
+        } else {
+          alert(data.error || 'Something went wrong.');
+        }
+      })
+      .catch(function() {
+        alert('Something went wrong. Please email hello@lumeway.co for help.');
+      });
+    }
 
     var activeGuideTransition = null;
 
@@ -3108,9 +3127,8 @@ guideLibrary['disability'] = {
       html += '  <button class="dash-tab" data-tab="history" onclick="switchTab(\'history\')">History';
       if (sessions.length > 0) html += ' <span class="tab-badge">' + sessions.length + '</span>';
       html += '</button>';
-      if (purchases.length > 0) {
-        html += '  <button class="dash-tab" data-tab="purchases" onclick="switchTab(\'purchases\')">Purchases</button>';
-      }
+      html += '  <button class="dash-tab" data-tab="purchases" onclick="switchTab(\'purchases\')">Purchases</button>';
+      html += '  <button class="dash-tab" data-tab="account" onclick="switchTab(\'account\')">Account</button>';
       html += '  <button class="dash-tab" data-tab="settings" onclick="switchTab(\'settings\')" style="margin-left:auto">⚙ Settings</button>';
       html += '</div>';
 
@@ -3719,18 +3737,71 @@ guideLibrary['disability'] = {
       // ═══════════════════════════════
       // ── PURCHASES TAB ──
       // ═══════════════════════════════
+      html += '<div class="tab-panel" id="panel-purchases">';
       if (purchases.length > 0) {
-        html += '<div class="tab-panel" id="panel-purchases">';
         html += '<div class="dash-card">';
         purchases.forEach(function(p) {
           html += '<div class="purchase-item">';
           html += '  <div><div class="purchase-name">' + p.product_name + '</div><div class="purchase-date">' + formatDate(p.purchased_at) + '</div></div>';
-          html += '  <a href="/download/' + p.download_token + '" class="purchase-dl">Download</a>';
+          if (p.download_token && p.product_id !== 'unlimited' && !p.product_id.startsWith('pass-')) {
+            html += '  <a href="/download/' + p.download_token + '" class="purchase-dl">Download</a>';
+          }
           html += '</div>';
         });
         html += '</div>';
-        html += '</div>'; // panel-purchases
+      } else {
+        html += '<div class="dash-card" style="text-align:center;padding:40px 24px">';
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300">No purchases yet.</p>';
+        html += '  <a href="/pricing" style="display:inline-block;margin-top:16px;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">View Plans</a>';
+        html += '</div>';
       }
+      html += '</div>'; // panel-purchases
+
+      // ═══════════════════════════════
+      // ── ACCOUNT TAB ──
+      // ═══════════════════════════════
+      var tier = (dashData && dashData.effective_tier) || 'free';
+      var userInfo = dashData.user || {};
+      html += '<div class="tab-panel" id="panel-account">';
+      html += '<div class="dash-card">';
+      html += '  <h3 style="font-family:Libre Baskerville,serif;font-size:18px;font-weight:400;margin-bottom:20px">Account</h3>';
+      html += '  <div style="display:flex;flex-direction:column;gap:16px">';
+      html += '    <div><span style="font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em">Email</span><div style="font-size:15px;margin-top:4px">' + (userInfo.email || '') + '</div></div>';
+      html += '    <div><span style="font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em">Member since</span><div style="font-size:15px;margin-top:4px">' + formatDate(userInfo.created_at) + '</div></div>';
+      html += '  </div>';
+      html += '</div>';
+
+      // Plan / Subscription section
+      html += '<div class="dash-card" style="margin-top:16px">';
+      html += '  <h3 style="font-family:Libre Baskerville,serif;font-size:18px;font-weight:400;margin-bottom:20px">Your Plan</h3>';
+      var tierLabels = { free: 'Free', starter: 'Starter', pass: 'Transition Pass', unlimited: 'Unlimited' };
+      var tierLabel = tierLabels[tier] || 'Free';
+      html += '  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">';
+      html += '    <span style="display:inline-block;padding:6px 16px;background:' + (tier === 'free' ? 'var(--cream)' : 'var(--navy)') + ';color:' + (tier === 'free' ? 'var(--text)' : 'var(--cream)') + ';border-radius:100px;font-size:13px;font-weight:500;border:1px solid var(--border)">' + tierLabel + '</span>';
+      if (tier === 'pass' && userInfo.tier_transition) {
+        var transLabels = { 'job-loss': 'Job Loss', estate: 'Estate', divorce: 'Divorce', disability: 'Disability', relocation: 'Relocation', retirement: 'Retirement' };
+        html += '    <span style="font-size:13px;color:var(--muted)">' + (transLabels[userInfo.tier_transition] || userInfo.tier_transition) + '</span>';
+      }
+      html += '  </div>';
+
+      if (tier === 'free') {
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You are on the free plan. Upgrade for full access to guides, scripts, and step-by-step checklists.</p>';
+        html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">View Plans</a>';
+      } else if (tier === 'starter') {
+        var expiresAt = userInfo.tier_expires_at;
+        if (expiresAt) {
+          var daysLeft = Math.max(0, Math.ceil((new Date(expiresAt) - new Date()) / 86400000));
+          html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Your Starter trial has <strong>' + daysLeft + ' days</strong> remaining.</p>';
+        }
+        html += '  <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none">Upgrade</a>';
+      } else if (tier === 'pass') {
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6">You have full access to your transition\'s complete guide, scripts, and tools.</p>';
+      } else if (tier === 'unlimited') {
+        html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have full access to all transitions, guides, scripts, and tools.</p>';
+        html += '  <button onclick="cancelSubscription()" style="padding:8px 20px;background:none;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;font-family:Plus Jakarta Sans,sans-serif">Cancel Subscription</button>';
+      }
+      html += '</div>';
+      html += '</div>'; // panel-account
 
       // ═══════════════════════════════
       // ── GUIDES TAB ──
