@@ -30,14 +30,16 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --cream: #FAF7F2; --warm-white: #FDFCFA; --text: #2C3E50; --muted: #6B7B8D; --navy: #2C4A5E; --gold: #B8977E; --accent: #C4704E; --accent-light: #D4896C; --border: #E8E0D6; --shadow: 0 2px 40px rgba(27,58,92,0.09); }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 14px 5%; display: flex; align-items: center; justify-content: space-between; background: rgba(250,247,242,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(232,224,214,0.6); }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .sun-icon { display: inline-flex; } .sun-icon svg { stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; }
-    .nav-logo-text { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 500; color: var(--text); }
-    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
-    .btn-ghost:hover { background: var(--navy); color: var(--cream); }
-    .btn-primary { padding: 8px 20px; border: 1.5px solid var(--accent); border-radius: 8px; background: var(--accent); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
-    .nav-left { display: flex; align-items: center; gap: 28px; }
+    .nav-logo-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--navy); letter-spacing: 0.08em; text-transform: uppercase; }
+    .nav-link { font-size: 14px; color: var(--muted); text-decoration: none; padding: 6px 12px; transition: color 0.15s; font-weight: 400; }
+    .nav-link:hover { color: var(--navy); }
+    .btn-ghost { padding: 8px 20px; border: 1.5px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13.5px; font-weight: 500; text-decoration: none; transition: all 0.18s; cursor: pointer; }
+    .btn-ghost:hover { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    .btn-primary { padding: 8px 22px; border: 1.5px solid var(--accent); border-radius: 8px; background: var(--accent); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13.5px; font-weight: 500; text-decoration: none; transition: all 0.18s; cursor: pointer; }
+    .nav-left { display: flex; align-items: center; gap: 36px; }
     .nav-right { display: flex; gap: 12px; align-items: center; }
     .nav-dropdown { position: relative; }
     .nav-drop-btn { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
@@ -87,11 +89,11 @@
     /* Timeline split layout */
     .timeline-section { width: 100%; padding: 80px 5% 64px; }
     .timeline-layout { display: grid; grid-template-columns: 2fr 3fr; gap: 56px; align-items: start; }
-    .timeline-sidebar { position: sticky; top: 100px; align-self: start; }
-    .timeline-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
+    .timeline-sidebar { position: sticky; top: 100px; align-self: start; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 300px; }
+    .timeline-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: clamp(32px, 4vw, 44px); font-weight: 300; line-height: 1.15; margin-bottom: 16px; }
     .timeline-sidebar h2 em { font-style: italic; color: var(--accent-light); }
     .timeline-sidebar .section-label { margin-bottom: 12px; }
-    .timeline-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; }
+    .timeline-sidebar p { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 280px; }
     /* FAQ split layout */
     .faq-section { width: 100%; padding: 80px 5%; background: var(--cream); }
     .faq-layout { display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: start; }
@@ -125,12 +127,7 @@
     .state-fallback-card p { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 20px; }
 
 
-    /* Deadlines — split layout */
-    .deadlines-layout { display: grid; grid-template-columns: 2fr 3fr; gap: 56px; align-items: start; }
-    .deadlines-sidebar { position: sticky; top: 100px; }
-    .deadlines-sidebar h2 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 400; margin-bottom: 12px; }
-    .deadlines-sidebar h2 em { font-style: italic; color: var(--accent-light); }
-    .deadlines-sidebar .section-label { margin-bottom: 12px; }
+    /* Deadlines — stacked layout like resources */
     .deadlines-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
     .deadline-row { display: flex; gap: 20px; align-items: flex-start; padding: 20px 28px; border-bottom: 1px solid var(--border); }
     .deadline-row:last-child { border-bottom: none; }
@@ -189,7 +186,7 @@
     .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.48s; }
     .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.60s; }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-    @media (max-width: 768px) { .resources-grid { grid-template-columns: 1fr 1fr; } nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid, .deadlines-layout { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar, .deadlines-sidebar { position: static; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { .resources-grid { grid-template-columns: 1fr; } nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
+    @media (max-width: 768px) { .resources-grid { grid-template-columns: 1fr 1fr; } nav { padding: 14px 20px; } .nav-right { display: none; } .hero-section { padding: 85px 20px 40px; } .hero-section h1 { font-size: clamp(32px, 7vw, 48px); } footer { padding: 20px; flex-direction: column; text-align: center; }  .timeline-layout, .faq-layout, .action-grid { grid-template-columns: 1fr; } .timeline-sidebar, .faq-sidebar { position: static; text-align: left; min-height: auto; } .action-section .chat-preview-wrap { max-width: 100%; } } @media (max-width: 480px) { .resources-grid { grid-template-columns: 1fr; } nav { padding: 12px 16px; } .btn-ghost, .btn-primary { font-size: 12px; padding: 6px 14px; } .hero-section { padding: 75px 16px 32px; } }
     /* Chat Preview */
     .chat-preview-wrap { max-width: 640px; margin: 0 auto; }
     .chat-preview { background: #FDFAF6; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow); }
@@ -404,11 +401,8 @@
 <div class="section-divider"></div>
 
 <section class="section">
-  <div class="deadlines-layout">
-  <div class="deadlines-sidebar">
-    <p class="section-label">Critical deadlines</p>
-    <h2>Time-sensitive steps<br><em>you can't miss</em></h2>
-  </div>
+  <p class="section-label">Critical deadlines</p>
+  <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
   <div class="deadlines-box">
     <div class="deadline-row">
       <span class="deadline-time">60 days</span>
@@ -452,7 +446,6 @@
         <p class="deadline-note">Outdated beneficiaries on retirement accounts and life insurance can cause serious problems. Do this soon.</p>
       </div>
     </div>
-  </div>
   </div>
 </section>
 
