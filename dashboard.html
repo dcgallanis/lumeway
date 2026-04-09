@@ -157,6 +157,7 @@
     .goal-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .goal-item:last-child { border-bottom: none; }
     .goal-item.done .check-box { background: var(--green); border-color: var(--green); }
+    .goal-item.done .check-box::after { content: '\2713'; color: white; font-size: 12px; font-weight: 600; }
     .goal-item.done .goal-text { text-decoration: line-through; color: var(--muted); }
     .goal-text { font-size: 14px; font-weight: 300; line-height: 1.5; flex: 1; cursor: pointer; }
     .goal-date { font-size: 11px; color: var(--muted); white-space: nowrap; margin-top: 2px; }
