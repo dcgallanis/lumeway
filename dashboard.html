@@ -359,6 +359,14 @@
     .guide-cross { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
     .guide-cross-tag { font-size: 11px; padding: 3px 10px; border-radius: 100px; background: rgba(44,74,94,0.06); color: var(--navy); }
     .guide-disclaimer { font-size: 12px; font-weight: 300; line-height: 1.6; color: var(--muted); background: var(--cream); border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 12px 16px; margin-top: 16px; }
+    /* Progressive disclosure — collapsible sections inside guides */
+    .guide-reveal-btn { display: flex; align-items: center; gap: 8px; background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--navy); margin-top: 12px; width: 100%; transition: all 0.15s; }
+    .guide-reveal-btn:hover { background: var(--warm-white); border-color: var(--gold); }
+    .guide-reveal-btn .reveal-icon { font-size: 10px; transition: transform 0.2s; color: var(--muted); }
+    .guide-reveal-btn.open .reveal-icon { transform: rotate(90deg); }
+    .guide-reveal-content { display: none; margin-top: 8px; }
+    .guide-reveal-btn.open + .guide-reveal-content { display: block; }
+    .guide-more-info { border-top: 1px solid var(--border); margin-top: 16px; padding-top: 4px; }
 
     /* Progressive disclosure — collapsed phases */
     .phase-group.collapsed .check-item { display: none; }
@@ -3128,14 +3136,20 @@ guideLibrary['disability'] = {
             var remainSteps = task.steps ? Math.max(0, task.steps.length - 2) : 0;
             html += '<div class="guide-lock-msg">This guide continues with ' + remainSteps + ' more steps, key terms, contacts, and common mistakes — so you don\'t miss a deadline or make a costly error. <a href="/pricing">See full plans</a></div>';
           } else {
-            // Full content for paid users
+            // Full content for paid users — progressive disclosure
             if (task.steps && task.steps.length > 0) {
               html += '<div class="guide-section-label">Steps</div>';
               html += '<ol class="guide-steps">';
               task.steps.forEach(function(s) { html += '<li>' + s + '</li>'; });
               html += '</ol>';
             }
+            // Script — collapsed behind reveal button
             if (task.script) {
+              var scriptId = 'script-' + task.id;
+              html += '<button class="guide-reveal-btn" onclick="event.stopPropagation();this.classList.toggle(\'open\')" aria-expanded="false">';
+              html += '  <span class="reveal-icon">&#9654;</span> What to say — phone/conversation script';
+              html += '</button>';
+              html += '<div class="guide-reveal-content">';
               html += '<div class="guide-script">';
               html += '  <div class="guide-script-label">What to say</div>';
               if (task.script.intro) html += '<div class="guide-script-intro">' + task.script.intro + '</div>';
@@ -3147,29 +3161,41 @@ guideLibrary['disability'] = {
               if (task.script.note) html += '<div class="guide-script-note">' + task.script.note + '</div>';
               html += '  <button class="guide-script-copy" onclick="event.stopPropagation();copyScript(this)">Copy to clipboard</button>';
               html += '</div>';
-            }
-            if (task.terms && task.terms.length > 0) {
-              html += '<div class="guide-section-label">Key Terms</div>';
-              html += '<div class="guide-terms">';
-              task.terms.forEach(function(t) {
-                html += '<div class="guide-term"><strong>' + t.term + '</strong> <span>' + t.def + '</span></div>';
-              });
               html += '</div>';
             }
-            if (task.contacts) {
-              html += '<div class="guide-section-label">Who to Contact</div>';
-              html += '<div class="guide-contact">' + task.contacts + '</div>';
-            }
-            if (task.mistakes && task.mistakes.length > 0) {
-              html += '<div class="guide-section-label">Common Mistakes</div>';
-              html += '<ul class="guide-mistakes">';
-              task.mistakes.forEach(function(m) { html += '<li>' + m + '</li>'; });
-              html += '</ul>';
-            }
-            if (task.crossRef && task.crossRef.length > 0) {
-              html += '<div class="guide-cross">';
-              task.crossRef.forEach(function(cr) { html += '<span class="guide-cross-tag">Also relevant: ' + cr + '</span>'; });
-              html += '</div>';
+            // More details — terms, contacts, mistakes collapsed
+            var hasMore = (task.terms && task.terms.length > 0) || task.contacts || (task.mistakes && task.mistakes.length > 0) || (task.crossRef && task.crossRef.length > 0);
+            if (hasMore) {
+              html += '<div class="guide-more-info">';
+              html += '<button class="guide-reveal-btn" onclick="event.stopPropagation();this.classList.toggle(\'open\')" aria-expanded="false">';
+              html += '  <span class="reveal-icon">&#9654;</span> More details — terms, contacts, common mistakes';
+              html += '</button>';
+              html += '<div class="guide-reveal-content">';
+              if (task.terms && task.terms.length > 0) {
+                html += '<div class="guide-section-label">Key Terms</div>';
+                html += '<div class="guide-terms">';
+                task.terms.forEach(function(t) {
+                  html += '<div class="guide-term"><strong>' + t.term + '</strong> <span>' + t.def + '</span></div>';
+                });
+                html += '</div>';
+              }
+              if (task.contacts) {
+                html += '<div class="guide-section-label">Who to Contact</div>';
+                html += '<div class="guide-contact">' + task.contacts + '</div>';
+              }
+              if (task.mistakes && task.mistakes.length > 0) {
+                html += '<div class="guide-section-label">Common Mistakes</div>';
+                html += '<ul class="guide-mistakes">';
+                task.mistakes.forEach(function(m) { html += '<li>' + m + '</li>'; });
+                html += '</ul>';
+              }
+              if (task.crossRef && task.crossRef.length > 0) {
+                html += '<div class="guide-cross">';
+                task.crossRef.forEach(function(cr) { html += '<span class="guide-cross-tag">Also relevant: ' + cr + '</span>'; });
+                html += '</div>';
+              }
+              html += '</div>'; // reveal-content
+              html += '</div>'; // guide-more-info
             }
           }
 
