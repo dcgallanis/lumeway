@@ -46,7 +46,8 @@
     .nav-drop-btn:hover { color: var(--navy); }
     .nav-drop-btn .chev { display: inline-block; transition: transform 0.2s ease; }
     .nav-drop-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
-    .nav-drop-menu { display: none; position: absolute; top: calc(100% + 8px); left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 200px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
+    .nav-drop-menu { display: none; position: absolute; top: 100%; left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 200px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; padding-top: 14px; }
+    .nav-drop-menu::before { content: ''; position: absolute; top: -8px; left: 0; right: 0; height: 8px; }
     .nav-drop-menu a { display: block; padding: 9px 12px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 7px; }
     .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--cream); color: var(--navy); }
     .nav-drop-menu .menu-div { height: 1px; background: var(--border); margin: 4px 6px; }
@@ -230,7 +231,15 @@
       </div>
     </div>
     <a href="/features" class="nav-link">Features</a>
-    <a href="/templates" class="nav-link">Explore</a>
+    <div class="nav-dropdown">
+      <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">&#9662;</span></button>
+      <div class="nav-drop-menu">
+        <a href="/templates">Template Shop</a>
+        <a href="/blog">Blog</a>
+        <a href="/faq">FAQ</a>
+        <a href="/about">About</a>
+      </div>
+    </div>
   </div>
   <div class="nav-right">
     <a href="/chat" target="_blank" class="btn-ghost">Try it free</a>
