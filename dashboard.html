@@ -403,6 +403,22 @@
     .phase-complete-list li::before { content: '\2713'; position: absolute; left: 0; font-weight: 600; }
     .phase-complete-msg { font-size: 13px; font-weight: 300; color: var(--text); line-height: 1.6; }
 
+    /* Phase completion modal */
+    .phase-modal-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; animation: phaseModalBgIn 0.3s ease; }
+    @keyframes phaseModalBgIn { from { opacity: 0; } to { opacity: 1; } }
+    .phase-modal { background: var(--warm-white); border-radius: 20px; padding: 40px 36px 32px; max-width: 440px; width: 90%; text-align: center; box-shadow: 0 16px 48px rgba(44,74,94,0.15); animation: phaseModalIn 0.4s ease; }
+    @keyframes phaseModalIn { from { opacity: 0; transform: scale(0.92) translateY(16px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .phase-modal-icon { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, rgba(107,143,94,0.15), rgba(107,143,94,0.05)); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px; color: var(--green); }
+    .phase-modal h3 { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 400; color: var(--navy); margin-bottom: 10px; line-height: 1.4; }
+    .phase-modal p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.7; margin-bottom: 6px; }
+    .phase-modal-tasks { list-style: none; padding: 0; margin: 16px 0; text-align: left; }
+    .phase-modal-tasks li { font-size: 13px; font-weight: 300; color: var(--green); line-height: 1.7; padding: 2px 0 2px 22px; position: relative; }
+    .phase-modal-tasks li::before { content: '\2713'; position: absolute; left: 0; font-weight: 600; }
+    .phase-modal-next { font-size: 13px; font-weight: 400; color: var(--text); margin-top: 12px; }
+    .phase-modal-next strong { color: var(--navy); }
+    .phase-modal-btn { display: inline-block; margin-top: 20px; padding: 12px 28px; background: var(--accent); color: var(--cream); border: none; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .phase-modal-btn:hover { filter: brightness(1.08); }
+
     /* Guide scripts — "What to say" sections */
     .guide-script { background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-top: 12px; }
     .guide-script-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
@@ -4758,6 +4774,49 @@ guideLibrary['disability'] = {
       return COMPLETION_MESSAGES[idx];
     }
 
+    function showPhaseCompleteModal(msg, phaseItems, nextPhase, transType, phase) {
+      var overlay = document.createElement('div');
+      overlay.className = 'phase-modal-overlay';
+      var taskListHtml = '<ul class="phase-modal-tasks">';
+      phaseItems.forEach(function(pi) { taskListHtml += '<li>' + pi.item_text + '</li>'; });
+      taskListHtml += '</ul>';
+      var nextHtml = nextPhase
+        ? '<div class="phase-modal-next">Up next: <strong>' + nextPhase + '</strong></div>'
+        : '<div class="phase-modal-next">That was the last phase. You handled all of it.</div>';
+      var btnLabel = nextPhase ? 'Continue' : 'Done';
+      overlay.innerHTML = '<div class="phase-modal">'
+        + '<div class="phase-modal-icon">&#10003;</div>'
+        + '<h3>' + msg + '</h3>'
+        + '<p>Here is everything you took care of:</p>'
+        + taskListHtml
+        + nextHtml
+        + '<button class="phase-modal-btn" onclick="dismissPhaseModal(this, \'' + transType + '\', \'' + phase + '\', ' + (nextPhase ? '\'' + nextPhase + '\'' : 'null') + ')">' + btnLabel + '</button>'
+        + '</div>';
+      document.body.appendChild(overlay);
+      // Close on background click
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+          dismissPhaseModal(overlay.querySelector('.phase-modal-btn'), transType, phase, nextPhase);
+        }
+      });
+    }
+
+    function dismissPhaseModal(btn, transType, phase, nextPhase) {
+      var overlay = btn.closest('.phase-modal-overlay');
+      if (overlay) overlay.remove();
+      // Collapse completed phase and expand next
+      var container = document.querySelector('[data-phase="' + transType + '-' + phase + '"]');
+      if (container) {
+        container.classList.add('phase-done', 'collapsed');
+      }
+      if (nextPhase) {
+        var nextEl = document.querySelector('[data-phase="' + transType + '-' + nextPhase + '"]');
+        if (nextEl) nextEl.classList.remove('collapsed');
+        // Scroll next phase into view
+        setTimeout(function() { if (nextEl) nextEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+      }
+    }
+
     function checkPhaseComplete(itemId) {
       var completedItem = null;
       checklistItems.forEach(function(i) { if (i.id === itemId) completedItem = i; });
@@ -4775,50 +4834,42 @@ guideLibrary['disability'] = {
           if (phase.indexOf(keys[k]) !== -1) { msg = MILESTONE_MESSAGES[keys[k]]; break; }
         }
         if (!msg) msg = 'You completed the ' + phase + ' phase. That\'s meaningful.';
+
+        // Find next phase
+        var allPhases = [];
+        checklistItems.forEach(function(ci) {
+          if (ci.transition_type === transType && allPhases.indexOf(ci.phase) === -1) allPhases.push(ci.phase);
+        });
+        var sorted = sortPhases(allPhases);
+        var nextPhase = null;
+        for (var np = 0; np < sorted.length; np++) {
+          if (sorted[np] === phase && np + 1 < sorted.length) { nextPhase = sorted[np + 1]; break; }
+        }
+
         setTimeout(function() {
           var container = document.querySelector('[data-phase="' + transType + '-' + phase + '"]');
           if (container) {
             var existing = container.querySelector('.phase-complete-summary');
             if (existing) return; // already shown
-            // Remove old simple milestone banner if present
             var oldBanner = container.querySelector('.milestone-banner');
             if (oldBanner) oldBanner.remove();
 
-            // Build rich phase summary
+            // Build inline summary (stays in the phase after modal is dismissed)
             var summary = document.createElement('div');
             summary.className = 'phase-complete-summary';
             var titleHtml = '<div class="phase-complete-title">' + msg + '</div>';
             var listHtml = '<ul class="phase-complete-list">';
-            phaseItems.forEach(function(pi) {
-              listHtml += '<li>' + pi.item_text + '</li>';
-            });
+            phaseItems.forEach(function(pi) { listHtml += '<li>' + pi.item_text + '</li>'; });
             listHtml += '</ul>';
-
-            // Find next phase name
-            var allPhases = [];
-            checklistItems.forEach(function(ci) {
-              if (ci.transition_type === transType && allPhases.indexOf(ci.phase) === -1) allPhases.push(ci.phase);
-            });
-            var sorted = sortPhases(allPhases);
-            var nextPhase = null;
-            for (var np = 0; np < sorted.length; np++) {
-              if (sorted[np] === phase && np + 1 < sorted.length) { nextPhase = sorted[np + 1]; break; }
-            }
             var contextHtml = nextPhase
               ? '<div class="phase-complete-msg">Up next: <strong>' + nextPhase + '</strong></div>'
               : '<div class="phase-complete-msg">That was the last phase. You did it.</div>';
-
             summary.innerHTML = titleHtml + listHtml + contextHtml;
             container.appendChild(summary);
-
-            // Collapse this phase and mark done
-            container.classList.add('phase-done', 'collapsed');
-            // Expand next phase if it was collapsed
-            if (nextPhase) {
-              var nextEl = document.querySelector('[data-phase="' + transType + '-' + nextPhase + '"]');
-              if (nextEl) nextEl.classList.remove('collapsed');
-            }
           }
+
+          // Show celebratory modal
+          showPhaseCompleteModal(msg, phaseItems, nextPhase, transType, phase);
         }, 500);
       }
     }
