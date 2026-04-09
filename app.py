@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, send_file, Response, render_template_string, redirect, session as flask_session
+from flask import Flask, request, jsonify, send_from_directory, send_file, Response, render_template_string, redirect, session as flask_session, make_response
 from flask_cors import CORS
 import anthropic
 from collections import defaultdict
@@ -4945,6 +4945,31 @@ def download_user_file(file_id):
     decrypted_data = file_cipher.decrypt(encrypted_data)
     audit_log(user["id"], "file_download", "file", str(file_id), row[0])
     return send_file(io.BytesIO(decrypted_data), as_attachment=True, download_name=row[0], mimetype=row[2] if '/' in str(row[2]) else 'application/octet-stream')
+
+
+@app.route("/api/files/<int:file_id>/preview")
+def preview_user_file(file_id):
+    """Serve file inline for in-browser preview (not as download attachment)."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT original_name, stored_name, content_type FROM user_files WHERE id = {param} AND user_id = {param}", (file_id, user["id"]))
+    row = cur.fetchone()
+    conn.close()
+    if not row:
+        return jsonify({"error": "File not found"}), 404
+    encrypted_data = storage_load(user["id"], row[1])
+    if encrypted_data is None:
+        return jsonify({"error": "File not found in storage"}), 404
+    decrypted_data = file_cipher.decrypt(encrypted_data)
+    mime = row[2] if row[2] and '/' in str(row[2]) else 'application/octet-stream'
+    resp = make_response(decrypted_data)
+    resp.headers['Content-Type'] = mime
+    resp.headers['Content-Disposition'] = f'inline; filename="{row[0]}"'
+    resp.headers['Cache-Control'] = 'private, no-store'
+    return resp
 
 
 @app.route("/api/files/<int:file_id>", methods=["DELETE"])
