@@ -3644,11 +3644,12 @@ def demo_dashboard():
         for phase, items in demo_items.items():
             for i, text in enumerate(items):
                 # Mark first few items as completed for demo
-                is_done = "TRUE" if (USE_POSTGRES and i < 2) else ("1" if i < 2 else "0")
                 if USE_POSTGRES:
                     is_done = "TRUE" if i < 2 else "FALSE"
-                db_execute(conn, f"INSERT INTO checklist_items (user_id, transition_type, phase, item_text, is_completed, created_at) VALUES ({param},{param},{param},{param},{is_done},{param})",
-                           (user_id, "job-loss", phase, text, now))
+                else:
+                    is_done = "1" if i < 2 else "0"
+                db_execute(conn, f"INSERT INTO checklist_items (user_id, transition_type, phase, item_text, is_completed, sort_order) VALUES ({param},{param},{param},{param},{is_done},{param})",
+                           (user_id, "job-loss", phase, text, i))
 
     # Seed a sample deadline if empty
     cur = db_execute(conn, f"SELECT COUNT(*) FROM user_deadlines WHERE user_id = {param}", (user_id,))
