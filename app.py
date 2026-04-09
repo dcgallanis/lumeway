@@ -770,8 +770,8 @@ def email_wrap(body_html):
         <div style="width:32px;height:1px;background-color:#B8977E;margin-top:10px;"></div>
       </td>
       <td style="padding-left:12px;">
-        <p style="font-family:'Libre Baskerville',Georgia,serif;font-size:14px;font-style:italic;color:#6B7B8D;line-height:1.6;margin:0;">Warmly,</p>
-        <p style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13px;font-weight:500;color:#2C4A5E;margin:4px 0 0;">The Lumeway Team</p>
+        <p style="font-family:'Libre Baskerville',Georgia,serif;font-size:14px;font-style:italic;color:#6B7B8D;line-height:1.6;margin:0;">You got this,</p>
+        <p style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13px;font-weight:500;color:#2C4A5E;margin:4px 0 0;">Cara</p>
       </td>
     </tr></table>
   </td></tr>
