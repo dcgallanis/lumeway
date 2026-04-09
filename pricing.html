@@ -508,6 +508,7 @@
       var label = catLabels[category] || category;
       var price = purchaseType === 'add_transition' ? 20 : 39;
       var name = purchaseType === 'add_transition' ? label + ' (Add Transition)' : label + ' Full Plan';
+      if (typeof gtag === 'function') gtag('event', 'begin_checkout', { category: category, purchase_type: purchaseType, value: price });
       fetch('/api/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -525,6 +526,7 @@
     }
 
     function purchaseAll() {
+      if (typeof gtag === 'function') gtag('event', 'begin_checkout', { category: 'all', purchase_type: 'all_transitions', value: 125 });
       fetch('/api/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

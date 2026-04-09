@@ -585,8 +585,16 @@
       });
     }
 
+    // ── Analytics helper ──
+    function trackEvent(eventName, params) {
+      if (typeof gtag === 'function') {
+        gtag('event', eventName, params || {});
+      }
+    }
+
     function switchTab(tab) {
       currentTab = tab;
+      trackEvent('tab_switch', { tab_name: tab });
       document.querySelectorAll('.dash-tab').forEach(function(t) {
         t.classList.toggle('active', t.dataset.tab === tab);
       });
@@ -3268,6 +3276,7 @@ guideLibrary['disability'] = {
     var quickModeActive = false;
     function toggleQuickMode() {
       quickModeActive = !quickModeActive;
+      trackEvent('quick_mode_toggle', { enabled: quickModeActive });
       var sw = document.getElementById('quickModeSwitch');
       if (sw) sw.classList.toggle('active', quickModeActive);
       var gc = document.getElementById('guideContent');
@@ -3276,7 +3285,11 @@ guideLibrary['disability'] = {
 
     function toggleGuideTask(id) {
       var el = document.getElementById('guide-' + id);
-      if (el) el.classList.toggle('open');
+      if (el) {
+        var wasOpen = el.classList.contains('open');
+        el.classList.toggle('open');
+        if (!wasOpen) trackEvent('guide_task_expand', { guide_id: id });
+      }
     }
 
     function maybeShowUpgradePrompt(container) {
@@ -4866,6 +4879,7 @@ guideLibrary['disability'] = {
       };
 
       // Open panel
+      trackEvent('guide_slideover_open', { transition: transitionType, guide_id: guideId });
       document.getElementById('guideSlideoverOverlay').classList.add('open');
       document.getElementById('guideSlideover').classList.add('open');
     }
@@ -5032,6 +5046,7 @@ guideLibrary['disability'] = {
           }
 
           // Show celebratory modal
+          trackEvent('phase_complete', { transition: transType, phase: phase });
           showPhaseCompleteModal(msg, phaseItems, nextPhase, transType, phase);
         }, 500);
       }
@@ -5080,9 +5095,12 @@ guideLibrary['disability'] = {
           });
           updateProgressUI();
           if (wasCompleted) {
+            trackEvent('checklist_item_complete', { item_id: itemId });
             showCompletionToast(getRandomCompletionMessage());
             checkPhaseComplete(itemId);
             highlightNextTask(itemId);
+          } else {
+            trackEvent('checklist_item_uncomplete', { item_id: itemId });
           }
         }
       });
