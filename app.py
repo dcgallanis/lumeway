@@ -921,6 +921,11 @@ CATEGORY_LABELS = {
     "retirement": "Retirement Planning",
 }
 
+# Promo codes — grants full access to everything
+PROMO_CODES = {
+    "LUMEFRIEND": {"tier": "all_transitions", "label": "Full Access — All Transitions"},
+}
+
 # Etsy redemption codes — one per category, reusable
 ETSY_CODES = {
     "LUMEWAY-JOBLOSS1": {"category": "job-loss", "credit_cents": 1600},
@@ -2204,11 +2209,39 @@ def create_individual_template_checkout():
 
 @app.route("/api/redeem-code", methods=["POST"])
 def redeem_code():
-    """Redeem an Etsy purchase code to credit account and unlock templates."""
+    """Redeem a promo code or Etsy purchase code."""
     user = get_current_user()
     if not user:
         return jsonify({"error": "Please log in first."}), 401
     code = (request.get_json() or {}).get("code", "").strip().upper()
+
+    # Check promo codes first (full access grants)
+    if code in PROMO_CODES:
+        promo = PROMO_CODES[code]
+        conn = get_db()
+        param = "%s" if USE_POSTGRES else "?"
+        # Check if already redeemed
+        cur = db_execute(conn, f"SELECT id FROM etsy_redemptions WHERE user_id = {param} AND code = {param}", (user["id"], code))
+        if cur.fetchone():
+            conn.close()
+            return jsonify({"error": "You have already redeemed this code."}), 400
+        now = datetime.now(timezone.utc).isoformat()
+        # Record redemption
+        db_execute(conn, f"INSERT INTO etsy_redemptions (user_id, code, category, credit_cents, redeemed_at) VALUES ({param}, {param}, {param}, {param}, {param})",
+                   (user["id"], code, "promo-all", 0, now))
+        # Grant full access to all categories
+        for cat in VALID_CATEGORIES:
+            add_user_category(user["id"], cat, "full", conn)
+        update_user_tier_from_access(user["id"], conn)
+        conn.commit()
+        conn.close()
+        return jsonify({
+            "ok": True,
+            "category": "all",
+            "credit_cents": 0,
+            "message": "Code redeemed. You now have full access to everything — all guides, checklists, and tools for every life change."
+        })
+
     if code not in ETSY_CODES:
         return jsonify({"error": "That code doesn't look right. Double-check and try again."}), 400
     code_info = ETSY_CODES[code]

@@ -188,6 +188,14 @@
       <span>·</span>
       <span>Satisfaction guaranteed</span>
     </div>
+    <div style="margin-top:16px"><a href="#" onclick="document.getElementById('promoSection').style.display='block';this.style.display='none';return false" style="font-size:13px;color:var(--navy);font-weight:400;">Have a promo code?</a></div>
+    <div id="promoSection" style="display:none;margin-top:16px;max-width:360px;margin-left:auto;margin-right:auto">
+      <div style="display:flex;gap:8px">
+        <input id="promoInput" placeholder="Enter code" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;background:var(--warm-white);color:var(--text);text-transform:uppercase">
+        <button onclick="redeemPromo()" style="padding:10px 20px;background:var(--accent);color:var(--cream);border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500">Redeem</button>
+      </div>
+      <div id="promoResult" style="margin-top:8px;font-size:13px;text-align:center"></div>
+    </div>
   </div>
 
   <div id="creditBanner" class="credit-banner"></div>
@@ -546,6 +554,37 @@
     document.getElementById('transitionModal').addEventListener('click', function(e) {
       if (e.target === this) this.style.display = 'none';
     });
+
+    function redeemPromo() {
+      var code = document.getElementById('promoInput').value.trim().toUpperCase();
+      var result = document.getElementById('promoResult');
+      if (!code) { result.style.color = 'var(--accent)'; result.textContent = 'Please enter a code.'; return; }
+      result.style.color = 'var(--muted)'; result.textContent = 'Checking\u2026';
+      fetch('/api/redeem-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code })
+      })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(res) {
+        if (res.ok && res.data.ok) {
+          result.style.color = 'var(--green)';
+          result.textContent = res.data.message || 'Code redeemed. Full access unlocked.';
+          if (typeof gtag === 'function') gtag('event', 'promo_redeemed', { code: code });
+          setTimeout(function() { window.location.href = '/dashboard'; }, 2000);
+        } else if (res.data.error && res.data.error.toLowerCase().indexOf('log in') !== -1) {
+          result.style.color = 'var(--accent)';
+          result.innerHTML = 'You need to <a href="/dashboard" style="color:var(--navy);font-weight:500">log in</a> first, then enter your code on the dashboard.';
+        } else {
+          result.style.color = 'var(--accent)';
+          result.textContent = res.data.error || 'Invalid code. Please try again.';
+        }
+      })
+      .catch(function() {
+        result.style.color = 'var(--accent)';
+        result.textContent = 'Something went wrong. Please try again.';
+      });
+    }
   </script>
   <script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>
 <script src="/static/feedback-widget.js"></script>
