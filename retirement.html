@@ -41,17 +41,16 @@
     .btn-primary { padding: 8px 22px; border: 1.5px solid var(--accent); border-radius: 8px; background: var(--accent); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13.5px; font-weight: 500; text-decoration: none; transition: all 0.18s; cursor: pointer; }
     .nav-left { display: flex; align-items: center; gap: 36px; }
     .nav-right { display: flex; gap: 12px; align-items: center; }
-    .nav-dropdown { position: relative; }
-    .nav-drop-btn { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
+    .nav-dropdown { position: relative; padding-bottom: 8px; margin-bottom: -8px; }
+    .nav-drop-btn { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 12px; transition: color 0.15s; display: flex; align-items: center; gap: 5px; font-weight: 400; }
     .nav-drop-btn:hover { color: var(--navy); }
-    .nav-drop-btn .chev { display: inline-block; transition: transform 0.2s ease; }
-    .nav-drop-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
-    .nav-drop-menu { display: none; position: absolute; top: 100%; left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 200px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; padding-top: 14px; }
-    .nav-drop-menu::before { content: ''; position: absolute; top: -8px; left: 0; right: 0; height: 8px; }
-    .nav-drop-menu a { display: block; padding: 9px 12px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 7px; }
+    .nav-drop-btn .chev { display: inline-block; font-size: 10px; transition: transform 0.2s ease; }
+    .nav-dropdown:hover .nav-drop-btn .chev { transform: rotate(180deg); }
+    .nav-drop-menu { display: none; position: absolute; top: 100%; left: -8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 210px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
+    .nav-drop-menu a { display: block; padding: 9px 14px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 8px; transition: background 0.12s; }
     .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--cream); color: var(--navy); }
     .nav-drop-menu .menu-div { height: 1px; background: var(--border); margin: 4px 6px; }
-    .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
+    .nav-dropdown:hover .nav-drop-menu { display: block; }
     .hero { width: 100%; padding: 140px 5% 60px; text-align: center; }
     .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
     .hero-title { font-family: 'Libre Baskerville', serif; font-size: clamp(40px, 7vw, 72px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 24px; }
@@ -624,27 +623,22 @@
   });
 </script>
 <script>
-  // Nav dropdown — hover to open, click links directly
+  // Nav dropdowns — CSS :hover handles open/close, JS just for keyboard + active link
   (function() {
-    var dropdowns = document.querySelectorAll('.nav-dropdown');
-    dropdowns.forEach(function(dd) {
+    document.querySelectorAll('.nav-dropdown').forEach(function(dd) {
       var btn = dd.querySelector('.nav-drop-btn');
       var menu = dd.querySelector('.nav-drop-menu');
       var links = Array.from(menu.querySelectorAll('a'));
       links.forEach(function(a) { if (a.getAttribute('href') === window.location.pathname) a.classList.add('active'); });
-      function open() { dropdowns.forEach(function(other) { if (other !== dd) { other.classList.remove('open'); other.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false'); } }); dd.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
-      function close() { dd.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
-      dd.addEventListener('mouseenter', open);
-      dd.addEventListener('mouseleave', close);
       btn.addEventListener('keydown', function(e) {
-        if (e.key === 'ArrowDown') { e.preventDefault(); open(); if (links[0]) links[0].focus(); }
-        if (e.key === 'Escape') close();
+        if (e.key === 'ArrowDown') { e.preventDefault(); if (links[0]) links[0].focus(); }
+        if (e.key === 'Escape') btn.blur();
       });
       menu.addEventListener('keydown', function(e) {
         var idx = links.indexOf(document.activeElement);
         if (e.key === 'ArrowDown') { e.preventDefault(); if (links[idx + 1]) links[idx + 1].focus(); }
         if (e.key === 'ArrowUp') { e.preventDefault(); idx > 0 ? links[idx - 1].focus() : btn.focus(); }
-        if (e.key === 'Escape') { close(); btn.focus(); }
+        if (e.key === 'Escape') { btn.focus(); btn.blur(); }
       });
     });
   })();
