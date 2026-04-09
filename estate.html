@@ -127,14 +127,12 @@
     .state-fallback-card p { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 20px; }
 
 
-    /* Deadlines — stacked layout like resources */
-    .deadlines-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-    .deadline-row { display: flex; gap: 20px; align-items: flex-start; padding: 20px 28px; border-bottom: 1px solid var(--border); }
-    .deadline-row:last-child { border-bottom: none; }
-    .deadline-time { font-family: 'Libre Baskerville', serif; font-size: 14px; font-weight: 600; color: #C0392B; white-space: nowrap; min-width: 80px; padding-top: 2px; }
-    .deadline-detail { flex: 1; min-width: 0; }
-    .deadline-name { font-weight: 500; font-size: 14px; color: var(--text); margin-bottom: 3px; }
-    .deadline-note { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+    /* Deadlines — card grid like resources */
+    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .deadline-card { background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; text-align: center; }
+    .deadline-card-time { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 600; color: var(--accent); margin-bottom: 10px; }
+    .deadline-card-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .deadline-card-note { font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 300; flex: 1; }
 
     /* Resources grid */
     .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
@@ -403,48 +401,36 @@
 <section class="section">
   <p class="section-label">Critical deadlines</p>
   <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
-  <div class="deadlines-box">
-    <div class="deadline-row">
-      <span class="deadline-time">60 days</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">COBRA health insurance</div>
-        <p class="deadline-note">You have 60 days from loss of coverage to elect COBRA continuation coverage. Missing this window means losing access entirely.</p>
-      </div>
+  <div class="deadlines-grid">
+    <div class="deadline-card">
+      <div class="deadline-card-time">60 days</div>
+      <div class="deadline-card-name">COBRA health insurance</div>
+      <p class="deadline-card-note">You have 60 days from loss of coverage to elect COBRA continuation coverage. Missing this window means losing access entirely.</p>
     </div>
-    <div class="deadline-row">
-      <span class="deadline-time">6 months</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Social Security survivor benefits</div>
-        <p class="deadline-note">Benefits don't back-pay more than 6 months. Apply as soon as possible.</p>
-      </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">6 months</div>
+      <div class="deadline-card-name">Social Security survivor benefits</div>
+      <p class="deadline-card-note">Benefits don't back-pay more than 6 months. Apply as soon as possible.</p>
     </div>
-    <div class="deadline-row">
-      <span class="deadline-time">9 months</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Estate tax return</div>
-        <p class="deadline-note">Federal estate tax return (Form 706) is due 9 months after date of death if the estate exceeds the exemption threshold.</p>
-      </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">9 months</div>
+      <div class="deadline-card-name">Estate tax return</div>
+      <p class="deadline-card-note">Federal estate tax return (Form 706) is due 9 months after date of death if the estate exceeds the exemption threshold.</p>
     </div>
-    <div class="deadline-row">
-      <span class="deadline-time">2 years</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">File as qualifying widow(er)</div>
-        <p class="deadline-note">You can file taxes at the married filing jointly rate for 2 years after your spouse's death if you have a dependent child.</p>
-      </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">2 years</div>
+      <div class="deadline-card-name">File as qualifying widow(er)</div>
+      <p class="deadline-card-note">You can file taxes at the married filing jointly rate for 2 years after your spouse's death if you have a dependent child.</p>
     </div>
-    <div class="deadline-row">
-      <span class="deadline-time">Varies</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Probate filing</div>
-        <p class="deadline-note">Most states require the will to be filed with probate court within 30-90 days of death.</p>
-      </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">Varies</div>
+      <div class="deadline-card-name">Probate filing</div>
+      <p class="deadline-card-note">Most states require the will to be filed with probate court within 30-90 days of death.</p>
     </div>
-    <div class="deadline-row">
-      <span class="deadline-time">ASAP</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Update beneficiaries</div>
-        <p class="deadline-note">Outdated beneficiaries on retirement accounts and life insurance can cause serious problems. Do this soon.</p>
-      </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">ASAP</div>
+      <div class="deadline-card-name">Update beneficiaries</div>
+      <p class="deadline-card-note">Outdated beneficiaries on retirement accounts and life insurance can cause serious problems. Do this soon.</p>
     </div>
   </div>
 </section>
@@ -642,7 +628,7 @@
   });
 </script>
 <script>
-  // Nav dropdown
+  // Nav dropdown — hover to open, click links directly
   (function() {
     var dropdowns = document.querySelectorAll('.nav-dropdown');
     dropdowns.forEach(function(dd) {
@@ -652,8 +638,8 @@
       links.forEach(function(a) { if (a.getAttribute('href') === window.location.pathname) a.classList.add('active'); });
       function open() { dropdowns.forEach(function(other) { if (other !== dd) { other.classList.remove('open'); other.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false'); } }); dd.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
       function close() { dd.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
-      btn.addEventListener('click', function(e) { e.stopPropagation(); dd.classList.contains('open') ? close() : open(); });
-      menu.addEventListener('click', function(e) { e.stopPropagation(); });
+      dd.addEventListener('mouseenter', open);
+      dd.addEventListener('mouseleave', close);
       btn.addEventListener('keydown', function(e) {
         if (e.key === 'ArrowDown') { e.preventDefault(); open(); if (links[0]) links[0].focus(); }
         if (e.key === 'Escape') close();
@@ -665,7 +651,6 @@
         if (e.key === 'Escape') { close(); btn.focus(); }
       });
     });
-    document.addEventListener('click', function() { dropdowns.forEach(function(dd) { dd.classList.remove('open'); dd.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false'); }); });
   })();
 </script>
 <script>
