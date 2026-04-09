@@ -1751,7 +1751,7 @@ def privacy():
 
 # Category keywords that map transition pages to blog post categories
 TRANSITION_CATEGORIES = {
-    "loss-of-spouse": ["Estate", "Death", "Loss of Spouse", "Grief"],
+    "estate": ["Estate", "Death", "Loss of Spouse", "Grief"],
     "divorce": ["Divorce", "Separation"],
     "job-loss": ["Job Loss", "Job Loss Worksheet", "Unemployment", "COBRA"],
     "relocation": ["Relocation", "Moving"],
@@ -1790,7 +1790,7 @@ def features():
 
 @app.route("/estate")
 def estate():
-    return inject_related_posts("estate.html", TRANSITION_CATEGORIES["loss-of-spouse"])
+    return inject_related_posts("estate.html", TRANSITION_CATEGORIES["estate"])
 
 @app.route("/loss-of-spouse")
 def loss_of_spouse():
@@ -3436,7 +3436,7 @@ def sitemap_xml():
         ("https://lumeway.co/chat", "monthly", "0.9"),
         ("https://lumeway.co/job-loss", "weekly", "0.9"),
         ("https://lumeway.co/divorce", "weekly", "0.9"),
-        ("https://lumeway.co/loss-of-spouse", "weekly", "0.9"),
+        ("https://lumeway.co/estate", "weekly", "0.9"),
         ("https://lumeway.co/relocation", "weekly", "0.9"),
         ("https://lumeway.co/disability", "weekly", "0.9"),
         ("https://lumeway.co/retirement", "weekly", "0.9"),
@@ -3674,8 +3674,8 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
     {% set category_links = {
       'Job Loss': ('/job-loss', 'Job Loss & Income Crisis Guide'),
       'Job Loss Worksheet': ('/job-loss', 'Job Loss & Income Crisis Guide'),
-      'Estate': ('/loss-of-spouse', 'Death & Estate Guide'),
-      'Death': ('/loss-of-spouse', 'Death & Estate Guide'),
+      'Estate': ('/estate', 'Death & Estate Guide'),
+      'Death': ('/estate', 'Death & Estate Guide'),
       'Divorce': ('/divorce', 'Divorce & Separation Guide'),
       'Relocation': ('/relocation', 'Moving & Relocation Guide'),
       'Moving': ('/relocation', 'Moving & Relocation Guide'),
