@@ -113,6 +113,16 @@
     .value-card h3 { font-size: 15px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
     .value-card p { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.6; }
 
+    /* Guarantee */
+    .guarantee { max-width: 680px; margin: 0 auto 56px; padding: 0 24px; }
+    .guarantee-card { background: var(--warm-white); border: 1px solid var(--gold); border-radius: 14px; padding: 36px 32px; text-align: center; }
+    .guarantee-icon { font-size: 32px; margin-bottom: 12px; }
+    .guarantee-card h2 { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 400; color: var(--navy); margin-bottom: 12px; }
+    .guarantee-card p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.7; max-width: 520px; margin: 0 auto; }
+    .guarantee-card p + p { margin-top: 10px; }
+    .guarantee-contact { display: inline-block; margin-top: 16px; font-size: 13px; font-weight: 500; color: var(--navy); text-decoration: none; border-bottom: 1px solid var(--gold); padding-bottom: 1px; }
+    .guarantee-contact:hover { color: var(--accent); }
+
     /* FAQ */
     .faq { max-width: 680px; margin: 0 auto 80px; padding: 0 24px; }
     .faq h2 { font-family: 'Libre Baskerville', serif; font-size: 26px; font-weight: 400; color: var(--navy); margin-bottom: 24px; text-align: center; }
@@ -337,6 +347,17 @@
     grid.innerHTML = html;
   })();
   </script>
+
+  <!-- Guarantee -->
+  <div class="guarantee">
+    <div class="guarantee-card">
+      <div class="guarantee-icon">&#9734;</div>
+      <h2>14-day money-back guarantee</h2>
+      <p>If your purchase does not help, we do not want your money. Email us within 14 days and we will refund you in full — no forms, no hoops, no questions you should not have to answer during a hard time.</p>
+      <p>This applies to every paid plan and every add-on. One-time purchases, yours forever — or your money back.</p>
+      <a href="mailto:hello@lumeway.co" class="guarantee-contact">hello@lumeway.co</a>
+    </div>
+  </div>
 
   <!-- FAQ -->
   <div class="faq">
