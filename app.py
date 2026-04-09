@@ -3611,6 +3611,83 @@ def auth_me():
         return jsonify({"logged_in": False})
     return jsonify({"logged_in": True, "user": user})
 
+# ── Demo / test dashboard ──
+
+DEMO_EMAIL = "demo@lumeway.co"
+
+@app.route("/demo")
+def demo_dashboard():
+    """One-click demo login — creates or reuses a demo account with full access and sample data."""
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Find or create demo user
+    cur = db_execute(conn, f"SELECT id FROM users WHERE email = {param}", (DEMO_EMAIL,))
+    row = cur.fetchone()
+    if row:
+        user_id = row[0]
+        db_execute(conn, f"UPDATE users SET last_login_at = {param} WHERE id = {param}", (now, user_id))
+    else:
+        db_execute(conn, f"INSERT INTO users (email, display_name, created_at, last_login_at) VALUES ({param}, {param}, {param}, {param})", (DEMO_EMAIL, "Demo User", now, now))
+        cur = db_execute(conn, f"SELECT id FROM users WHERE email = {param}", (DEMO_EMAIL,))
+        user_id = cur.fetchone()[0]
+
+    # Grant full access
+    db_execute(conn, f"UPDATE users SET tier = 'all_transitions', active_transitions = {param} WHERE id = {param}",
+               ('["estate","divorce","job-loss","relocation","disability","retirement"]', user_id))
+
+    # Seed sample checklist if empty
+    cur = db_execute(conn, f"SELECT COUNT(*) FROM checklist_items WHERE user_id = {param}", (user_id,))
+    if cur.fetchone()[0] == 0:
+        demo_items = DEFAULT_CHECKLISTS.get("job-loss", {})
+        for phase, items in demo_items.items():
+            for i, text in enumerate(items):
+                # Mark first few items as completed for demo
+                is_done = "TRUE" if (USE_POSTGRES and i < 2) else ("1" if i < 2 else "0")
+                if USE_POSTGRES:
+                    is_done = "TRUE" if i < 2 else "FALSE"
+                db_execute(conn, f"INSERT INTO checklist_items (user_id, transition_type, phase, item_text, is_completed, created_at) VALUES ({param},{param},{param},{param},{is_done},{param})",
+                           (user_id, "job-loss", phase, text, now))
+
+    # Seed a sample deadline if empty
+    cur = db_execute(conn, f"SELECT COUNT(*) FROM user_deadlines WHERE user_id = {param}", (user_id,))
+    if cur.fetchone()[0] == 0:
+        from datetime import timedelta as td
+        deadlines = [
+            ("File for unemployment benefits", (datetime.now(timezone.utc) + td(days=3)).strftime("%Y-%m-%d"), "job-loss"),
+            ("COBRA election deadline", (datetime.now(timezone.utc) + td(days=45)).strftime("%Y-%m-%d"), "job-loss"),
+            ("Review severance agreement", (datetime.now(timezone.utc) + td(days=14)).strftime("%Y-%m-%d"), "job-loss"),
+        ]
+        for title, date, ttype in deadlines:
+            db_execute(conn, f"INSERT INTO user_deadlines (user_id, title, deadline_date, transition_type, source, created_at) VALUES ({param},{param},{param},{param},'demo',{param})",
+                       (user_id, title, date, ttype, now))
+
+    conn.commit()
+    conn.close()
+
+    # Log them in
+    flask_session["user_id"] = user_id
+    flask_session.permanent = True
+    return redirect("/dashboard")
+
+
+@app.route("/demo/reset", methods=["POST"])
+def demo_reset():
+    """Reset the demo account — clears all data and re-seeds."""
+    user = get_current_user()
+    if not user or user.get("email") != DEMO_EMAIL:
+        return jsonify({"error": "Not the demo account"}), 403
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    uid = user["id"]
+    for table in ["checklist_items", "user_deadlines", "user_documents_needed", "user_goals", "user_notes", "chat_sessions"]:
+        db_execute(conn, f"DELETE FROM {table} WHERE user_id = {param}", (uid,))
+    conn.commit()
+    conn.close()
+    return redirect("/demo")
+
+
 # ── Dashboard routes ──
 
 
