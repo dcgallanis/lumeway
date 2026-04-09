@@ -416,6 +416,22 @@
     .check-item:hover .check-guide-link { opacity: 0.8; }
     .check-guide-link:hover { opacity: 1 !important; background: rgba(44,74,94,0.1); color: var(--accent); }
 
+    /* Guide slide-over panel */
+    .guide-slideover-overlay { position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.18); opacity: 0; transition: opacity 0.25s; pointer-events: none; }
+    .guide-slideover-overlay.open { opacity: 1; pointer-events: auto; }
+    .guide-slideover { position: fixed; top: 0; right: 0; bottom: 0; z-index: 401; width: min(520px, 90vw); background: var(--warm-white); box-shadow: -8px 0 32px rgba(44,74,94,0.12); transform: translateX(100%); transition: transform 0.3s ease; display: flex; flex-direction: column; }
+    .guide-slideover.open { transform: translateX(0); }
+    .guide-slideover-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .guide-slideover-header h3 { font-family: 'Libre Baskerville', serif; font-size: 17px; font-weight: 400; color: var(--navy); line-height: 1.4; flex: 1; margin-right: 12px; }
+    .guide-slideover-close { background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all 0.15s; flex-shrink: 0; }
+    .guide-slideover-close:hover { background: var(--cream); color: var(--navy); }
+    .guide-slideover-body { flex: 1; overflow-y: auto; padding: 24px; }
+    .guide-slideover-body .guide-what { font-size: 14px; font-weight: 300; color: var(--text); line-height: 1.7; margin-bottom: 12px; }
+    .guide-slideover-body .guide-why { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.6; margin-bottom: 16px; padding-left: 12px; border-left: 2px solid var(--gold); }
+    .guide-slideover-footer { padding: 14px 24px; border-top: 1px solid var(--border); flex-shrink: 0; }
+    .guide-slideover-full { font-size: 13px; font-weight: 400; color: var(--navy); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .guide-slideover-full:hover { color: var(--accent); }
+
     /* Phase completion summary (richer) */
     .phase-complete-summary { background: linear-gradient(135deg, rgba(107,143,94,0.06), rgba(107,143,94,0.02)); border: 1px solid rgba(107,143,94,0.25); border-radius: 14px; padding: 20px 24px; margin: 14px 0 6px; animation: milestoneIn 0.5s ease forwards; }
     .phase-complete-title { font-family: 'Libre Baskerville', serif; font-size: 15px; font-weight: 400; color: var(--navy); margin-bottom: 8px; }
@@ -4745,22 +4761,135 @@ guideLibrary['disability'] = {
     }
 
     function openGuideFromChecklist(transitionType, guideId) {
-      // Switch to guides tab and open the specific guide task
-      switchTab('guides');
-      // Small delay to let guides render, then switch to right transition and open task
-      setTimeout(function() {
-        switchGuideTransition(transitionType);
-        setTimeout(function() {
-          var el = document.getElementById('guide-' + guideId);
-          if (el) {
-            el.classList.add('open');
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            // Brief highlight
-            el.style.boxShadow = '0 0 0 2px var(--gold)';
-            setTimeout(function() { el.style.boxShadow = ''; }, 2000);
+      // Render guide task content in slide-over panel
+      var task = findGuideTask(transitionType, guideId);
+      if (!task) {
+        // Fallback: switch to guides tab
+        switchTab('guides');
+        setTimeout(function() { switchGuideTransition(transitionType); }, 100);
+        return;
+      }
+
+      var tier = (dashData && dashData.effective_tier) || 'free';
+      var catAccess = dashData.category_access || {};
+      var isAllAccess = (tier === 'all_transitions' || tier === 'unlimited');
+      var hasFullForThis = isAllAccess || catAccess[transitionType] === 'full';
+
+      document.getElementById('guideSlideoverTitle').textContent = task.title;
+
+      var html = '';
+      if (task.what) html += '<div class="guide-what">' + task.what + '</div>';
+      if (task.why) html += '<div class="guide-why">' + task.why + '</div>';
+
+      if (!hasFullForThis) {
+        if (task.steps && task.steps.length > 0) {
+          html += '<div class="guide-section-label">Steps</div>';
+          html += '<ol class="guide-steps">';
+          var previewCount = Math.min(2, task.steps.length);
+          for (var i = 0; i < previewCount; i++) { html += '<li>' + task.steps[i] + '</li>'; }
+          html += '</ol>';
+        }
+        var remainSteps = task.steps ? Math.max(0, task.steps.length - 2) : 0;
+        html += '<div class="guide-lock-msg">This guide continues with ' + remainSteps + ' more steps, key terms, contacts, and common mistakes. <a href="/pricing">See full plans</a></div>';
+      } else {
+        if (task.steps && task.steps.length > 0) {
+          html += '<div class="guide-section-label">Steps</div>';
+          html += '<ol class="guide-steps">';
+          task.steps.forEach(function(s) { html += '<li>' + s + '</li>'; });
+          html += '</ol>';
+        }
+        if (task.script) {
+          html += '<button class="guide-reveal-btn" onclick="event.stopPropagation();this.classList.toggle(\'open\')" aria-expanded="false">';
+          html += '  <span class="reveal-icon">&#9654;</span> What to say — phone/conversation script';
+          html += '</button>';
+          html += '<div class="guide-reveal-content">';
+          html += '<div class="guide-script">';
+          html += '  <div class="guide-script-label">What to say</div>';
+          if (task.script.intro) html += '<div class="guide-script-intro">' + task.script.intro + '</div>';
+          if (task.script.lines) {
+            task.script.lines.forEach(function(line) { html += '<div class="guide-script-text">' + line + '</div>'; });
           }
-        }, 200);
-      }, 100);
+          if (task.script.note) html += '<div class="guide-script-note">' + task.script.note + '</div>';
+          html += '  <button class="guide-script-copy" onclick="event.stopPropagation();copyScript(this)">Copy to clipboard</button>';
+          html += '</div>';
+          html += '</div>';
+        }
+        var hasMore = (task.terms && task.terms.length > 0) || task.contacts || (task.mistakes && task.mistakes.length > 0) || (task.crossRef && task.crossRef.length > 0);
+        if (hasMore) {
+          html += '<div class="guide-more-info">';
+          html += '<button class="guide-reveal-btn" onclick="event.stopPropagation();this.classList.toggle(\'open\')" aria-expanded="false">';
+          html += '  <span class="reveal-icon">&#9654;</span> More details — terms, contacts, common mistakes';
+          html += '</button>';
+          html += '<div class="guide-reveal-content">';
+          if (task.terms && task.terms.length > 0) {
+            html += '<div class="guide-section-label">Key Terms</div>';
+            html += '<div class="guide-terms">';
+            task.terms.forEach(function(t) { html += '<div class="guide-term"><strong>' + t.term + '</strong> <span>' + t.def + '</span></div>'; });
+            html += '</div>';
+          }
+          if (task.contacts) { html += '<div class="guide-section-label">Who to Contact</div><div class="guide-contact">' + task.contacts + '</div>'; }
+          if (task.mistakes && task.mistakes.length > 0) {
+            html += '<div class="guide-section-label">Common Mistakes</div><ul class="guide-mistakes">';
+            task.mistakes.forEach(function(m) { html += '<li>' + m + '</li>'; });
+            html += '</ul>';
+          }
+          if (task.crossRef && task.crossRef.length > 0) {
+            html += '<div class="guide-cross">';
+            task.crossRef.forEach(function(cr) { html += '<span class="guide-cross-tag">Also relevant: ' + cr + '</span>'; });
+            html += '</div>';
+          }
+          html += '</div></div>';
+        }
+      }
+
+      document.getElementById('guideSlideoverBody').innerHTML = html;
+
+      // Set up "Open in full" link
+      var fullLink = document.getElementById('guideSlideoverFull');
+      fullLink.onclick = function(e) {
+        e.preventDefault();
+        closeGuideSlideover();
+        switchTab('guides');
+        setTimeout(function() {
+          switchGuideTransition(transitionType);
+          setTimeout(function() {
+            var el = document.getElementById('guide-' + guideId);
+            if (el) {
+              el.classList.add('open');
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              el.style.boxShadow = '0 0 0 2px var(--gold)';
+              setTimeout(function() { el.style.boxShadow = ''; }, 2000);
+            }
+          }, 200);
+        }, 100);
+        return false;
+      };
+
+      // Open panel
+      document.getElementById('guideSlideoverOverlay').classList.add('open');
+      document.getElementById('guideSlideover').classList.add('open');
+    }
+
+    function closeGuideSlideover() {
+      document.getElementById('guideSlideoverOverlay').classList.remove('open');
+      document.getElementById('guideSlideover').classList.remove('open');
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && document.getElementById('guideSlideover').classList.contains('open')) {
+        closeGuideSlideover();
+      }
+    });
+
+    function findGuideTask(transitionType, guideId) {
+      var lib = guideLibrary[transitionType];
+      if (!lib || !lib.categories) return null;
+      for (var c = 0; c < lib.categories.length; c++) {
+        var tasks = lib.categories[c].tasks;
+        for (var t = 0; t < tasks.length; t++) {
+          if (tasks[t].id === guideId) return tasks[t];
+        }
+      }
+      return null;
     }
 
     // ── Completion celebration system ──
@@ -5391,6 +5520,19 @@ guideLibrary['disability'] = {
     });
   </script>
   <div id="completionToast" class="completion-toast"></div>
+
+  <!-- Guide slide-over panel -->
+  <div class="guide-slideover-overlay" id="guideSlideoverOverlay" onclick="closeGuideSlideover()"></div>
+  <div class="guide-slideover" id="guideSlideover">
+    <div class="guide-slideover-header">
+      <h3 id="guideSlideoverTitle"></h3>
+      <button class="guide-slideover-close" onclick="closeGuideSlideover()">&times;</button>
+    </div>
+    <div class="guide-slideover-body" id="guideSlideoverBody"></div>
+    <div class="guide-slideover-footer">
+      <a href="#" class="guide-slideover-full" id="guideSlideoverFull" onclick="return false">Open in full Guides tab &#8594;</a>
+    </div>
+  </div>
 
   <!-- Onboarding modal -->
   <div class="onboard-overlay" id="onboardModal" style="display:none">
