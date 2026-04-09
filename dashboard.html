@@ -3336,7 +3336,7 @@ guideLibrary['disability'] = {
       var container = document.getElementById('myFilesContainer');
       if (!container) return;
       if (userFiles.length === 0) {
-        container.innerHTML = '<p class="card-empty">No files uploaded yet. Upload documents to keep everything in one place.</p>';
+        container.innerHTML = '<p class="card-empty">No files uploaded yet. This is a safe place to store copies of important documents — insurance cards, legal paperwork, letters you receive — so everything is in one place when you need it.</p>';
         return;
       }
       var groups = {};
@@ -3436,7 +3436,7 @@ guideLibrary['disability'] = {
           var banner = document.createElement('div');
           banner.id = 'chatPromptBanner';
           banner.style.cssText = 'background:linear-gradient(135deg,#faf6f1,#f5efe6);border:1px solid #d4a574;border-radius:12px;padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px';
-          banner.innerHTML = '<div style="font-size:14px;color:var(--navy);line-height:1.5"><strong>Your dashboard is empty.</strong> Start a conversation with the Navigator to build your personalized checklist and get organized.</div>'
+          banner.innerHTML = '<div style="font-size:14px;color:var(--navy);line-height:1.5"><strong>Welcome.</strong> You are in the right place. Start a conversation with the Navigator and we\'ll figure out what you need to do first — then build your checklist together.</div>'
             + '<div style="display:flex;gap:10px;align-items:center;flex-shrink:0">'
             + '<a href="/chat" target="_blank" style="background:var(--accent);color:var(--cream);padding:10px 20px;border-radius:8px;font-size:13px;text-decoration:none;white-space:nowrap;font-weight:500">Start a chat</a>'
             + '<button onclick="this.closest(\'#chatPromptBanner\').remove()" style="background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer;padding:4px">&times;</button>'
@@ -3619,7 +3619,7 @@ guideLibrary['disability'] = {
           html += '</div>';
         });
       } else {
-        html += '<p class="card-empty">No weekly goals yet.</p>';
+        html += '<p class="card-empty">No weekly goals yet. Set small, manageable goals to keep moving forward.</p>';
       }
       html += '<div class="goal-add">';
       html += '  <input class="goal-input" id="weeklyGoalInput" placeholder="Add a weekly goal..." onkeydown="if(event.key===\'Enter\')addGoal(\'weekly\')">';
@@ -3641,7 +3641,7 @@ guideLibrary['disability'] = {
           html += '</div>';
         });
       } else {
-        html += '<p class="card-empty">No monthly goals yet.</p>';
+        html += '<p class="card-empty">No monthly goals yet. Bigger milestones go here — things you want to accomplish this month.</p>';
       }
       html += '<div class="goal-add">';
       html += '  <input class="goal-input" id="monthlyGoalInput" placeholder="Add a monthly goal..." onkeydown="if(event.key===\'Enter\')addGoal(\'monthly\')">';
@@ -3894,7 +3894,7 @@ guideLibrary['disability'] = {
       } else {
         html += '<div class="dash-card">';
         html += '  <div class="card-label">My Checklist</div>';
-        html += '  <p class="card-empty">Create a checklist to stay organized through what\'s ahead.</p>';
+        html += '  <p class="card-empty">You don\'t have a checklist yet. Choose what you\'re going through below and we\'ll build one — broken into phases so you know what to handle first.</p>';
         html += '</div>';
       }
 
@@ -4080,7 +4080,7 @@ guideLibrary['disability'] = {
           html += '</div>';
         });
       } else {
-        html += '<p class="card-empty">No documents to gather yet. Add your own above or start a conversation with the Navigator and we\'ll identify what you need.</p>';
+        html += '<p class="card-empty">No documents to gather yet. As you work through your checklist, add documents here that you need to locate or request — birth certificates, insurance policies, court paperwork, anything you\'ll need along the way.</p>';
         html += '<a href="/chat" target="_blank" class="quick-btn" style="margin-top:12px">\uD83D\uDCAC Talk to the Navigator</a>';
       }
       html += '</div>';
@@ -4180,7 +4180,7 @@ guideLibrary['disability'] = {
         });
       } else {
         html += '<div class="dash-card">';
-        html += '  <p class="card-empty">No activity logged yet. Record phone calls, form submissions, appointments, and other actions you\'ve taken during your transition.</p>';
+        html += '  <p class="card-empty">No activity logged yet. Use this to track phone calls you\'ve made, forms you\'ve submitted, and appointments you\'ve scheduled — so you have a record of everything you\'ve done.</p>';
         html += '</div>';
       }
 
