@@ -281,6 +281,18 @@
     .ws-gather-pct { font-size: 11px; font-weight: 400; color: var(--muted); }
     .doc-gather-upload { font-size: 11px; color: var(--navy); cursor: pointer; opacity: 0; transition: opacity 0.15s; margin-left: auto; }
     .doc-item:hover .doc-gather-upload { opacity: 1; }
+    /* Quill editor overrides */
+    .ws-viewer-body .ql-toolbar { border: none; border-bottom: 1px solid var(--border); background: var(--cream); padding: 8px 12px; }
+    .ws-viewer-body .ql-container { border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; }
+    .ws-viewer-body .ql-editor { padding: 24px 28px; min-height: 300px; line-height: 1.7; color: var(--text); }
+    .ws-viewer-body .ql-editor h1 { font-family: 'Libre Baskerville', serif; color: var(--navy); font-size: 22px; margin-bottom: 8px; }
+    .ws-viewer-body .ql-editor h2 { font-family: 'Libre Baskerville', serif; color: var(--navy); font-size: 18px; margin-bottom: 6px; }
+    .ws-viewer-body .ql-editor h3 { color: var(--navy); font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .ws-viewer-body .ql-editor p { margin-bottom: 10px; }
+    .ws-viewer-body .ql-editor a { color: var(--accent); }
+    .ws-viewer-body .ql-snow .ql-stroke { stroke: var(--muted); }
+    .ws-viewer-body .ql-snow .ql-fill { fill: var(--muted); }
+    .ws-viewer-body .ql-snow .ql-picker { color: var(--muted); }
 
     /* Notes */
     .note-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 10px; }
@@ -3517,11 +3529,43 @@ guideLibrary['disability'] = {
       document.getElementById('fileUploadInput').click();
     }
 
-    // ── Document Viewer ──
+    // ── Document Viewer + Editor ──
+    var wsQuill = null;
+    var wsSaveTimer = null;
+    var wsEditorDirty = false;
+
+    function loadEditorLibs(callback) {
+      // Load Quill + mammoth + html-docx-js if needed
+      var needed = [];
+      if (typeof Quill === 'undefined') needed.push({src: 'https://cdn.quilljs.com/1.3.7/quill.min.js', type: 'js'});
+      if (typeof mammoth === 'undefined') needed.push({src: 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js', type: 'js'});
+      if (typeof htmlDocx === 'undefined') needed.push({src: 'https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js', type: 'js'});
+      // Quill CSS
+      if (!document.getElementById('quillCSS')) {
+        var link = document.createElement('link');
+        link.id = 'quillCSS';
+        link.rel = 'stylesheet';
+        link.href = 'https://cdn.quilljs.com/1.3.7/quill.snow.css';
+        document.head.appendChild(link);
+      }
+      if (needed.length === 0) { callback(); return; }
+      var loaded = 0;
+      needed.forEach(function(lib) {
+        var el = document.createElement('script');
+        el.src = lib.src;
+        el.onload = function() { loaded++; if (loaded === needed.length) callback(); };
+        document.head.appendChild(el);
+      });
+    }
+
     function openFileViewer(fileId) {
+      // Save current edit before switching
+      if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
       var file = userFiles.find(function(f) { return f.id === fileId; });
       if (!file) return;
       wsActiveFileId = fileId;
+      wsQuill = null;
+      wsEditorDirty = false;
       renderUserFiles(); // highlight active file
       var header = document.getElementById('wsViewerHeader');
       var title = document.getElementById('wsViewerTitle');
@@ -3530,52 +3574,187 @@ guideLibrary['disability'] = {
       header.style.display = 'flex';
       title.textContent = file.original_name;
       dlBtn.href = '/api/files/' + fileId + '/download';
+      // Remove old export button if any
+      var oldExport = document.getElementById('wsExportBtn');
+      if (oldExport) oldExport.remove();
       var ext = file.original_name.split('.').pop().toLowerCase();
       var previewUrl = '/api/files/' + fileId + '/preview';
+      var isEditable = ['doc','docx','txt','csv'].indexOf(ext) >= 0;
 
-      if (ext === 'pdf') {
+      if (isEditable && ['doc','docx'].indexOf(ext) >= 0) {
+        // Add export button to header
+        var exportBtn = document.createElement('button');
+        exportBtn.id = 'wsExportBtn';
+        exportBtn.className = 'ws-viewer-btn';
+        exportBtn.textContent = 'Export as Word';
+        exportBtn.onclick = function() { exportAsDocx(file.original_name); };
+        header.insertBefore(exportBtn, dlBtn);
+        body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Loading editor\u2026</div>';
+        loadEditorLibs(function() {
+          // Check for saved edit first
+          fetch('/api/files/' + fileId + '/edit').then(function(r) { return r.json(); }).then(function(data) {
+            if (data.html) {
+              initQuillEditor(body, data.html, fileId);
+            } else {
+              // Convert original docx
+              fetch(previewUrl).then(function(r) { return r.arrayBuffer(); }).then(function(buf) {
+                mammoth.convertToHtml({ arrayBuffer: buf }).then(function(result) {
+                  initQuillEditor(body, result.value, fileId);
+                }).catch(function() {
+                  body.innerHTML = '<div class="ws-viewer-placeholder"><div class="ws-viewer-placeholder-text">Could not open this document for editing.<br><a href="/api/files/' + fileId + '/download" style="color:var(--navy)">Download instead</a></div></div>';
+                });
+              });
+            }
+          });
+        });
+      } else if (ext === 'pdf') {
         body.innerHTML = '<iframe src="' + previewUrl + '" style="width:100%;height:100%;border:none"></iframe>';
       } else if (['jpg','jpeg','png','gif'].indexOf(ext) >= 0) {
         body.innerHTML = '<img src="' + previewUrl + '" alt="' + file.original_name + '" style="max-width:100%;height:auto;display:block;margin:20px auto">';
-      } else if (['doc','docx'].indexOf(ext) >= 0) {
-        body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Loading document\u2026</div>';
-        // Load mammoth.js if not loaded
-        if (typeof mammoth === 'undefined') {
-          var script = document.createElement('script');
-          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
-          script.onload = function() { renderDocx(fileId, body); };
-          document.head.appendChild(script);
-        } else {
-          renderDocx(fileId, body);
-        }
       } else if (['txt','csv'].indexOf(ext) >= 0) {
+        // Add save button
+        var saveBtn = document.createElement('button');
+        saveBtn.id = 'wsExportBtn';
+        saveBtn.className = 'ws-viewer-btn';
+        saveBtn.textContent = 'Saved';
+        saveBtn.style.opacity = '0.5';
+        header.insertBefore(saveBtn, dlBtn);
         fetch(previewUrl).then(function(r) { return r.text(); }).then(function(text) {
-          body.innerHTML = '<textarea class="ws-text-editor" id="wsTextEditor">' + text.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</textarea>';
+          body.innerHTML = '<textarea class="ws-text-editor" id="wsTextEditor"></textarea>';
+          var ta = document.getElementById('wsTextEditor');
+          ta.value = text;
+          ta.addEventListener('input', function() {
+            wsEditorDirty = true;
+            var btn = document.getElementById('wsExportBtn');
+            if (btn) { btn.textContent = 'Save'; btn.style.opacity = '1'; btn.onclick = function() { saveTextEdit(fileId); }; }
+          });
         });
       } else {
         body.innerHTML = '<div class="ws-viewer-placeholder"><div class="ws-viewer-placeholder-icon">' + getFileIcon(file.original_name) + '</div><div class="ws-viewer-placeholder-text">This file type can\'t be previewed in the browser.<br><a href="/api/files/' + fileId + '/download" style="color:var(--navy)">Download to view</a></div></div>';
       }
     }
 
-    function renderDocx(fileId, body) {
-      fetch('/api/files/' + fileId + '/preview')
-        .then(function(r) { return r.arrayBuffer(); })
-        .then(function(buf) {
-          mammoth.convertToHtml({ arrayBuffer: buf })
-            .then(function(result) {
-              body.innerHTML = '<div class="ws-docx-content">' + result.value + '</div>';
-            })
-            .catch(function() {
-              body.innerHTML = '<div class="ws-viewer-placeholder"><div class="ws-viewer-placeholder-text">Could not render this document.<br><a href="/api/files/' + fileId + '/download" style="color:var(--navy)">Download to view</a></div></div>';
-            });
-        });
+    function initQuillEditor(body, html, fileId) {
+      body.innerHTML = '<div id="wsQuillToolbar"></div><div id="wsQuillEditor" style="min-height:300px"></div>';
+      // Style overrides for Quill in our design
+      var editorEl = document.getElementById('wsQuillEditor');
+      editorEl.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+      editorEl.style.fontSize = '14px';
+      editorEl.style.lineHeight = '1.7';
+      editorEl.style.color = 'var(--text)';
+      editorEl.style.background = 'var(--warm-white)';
+      wsQuill = new Quill('#wsQuillEditor', {
+        theme: 'snow',
+        modules: {
+          toolbar: [
+            [{ 'header': [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            ['link'],
+            ['clean']
+          ]
+        },
+        placeholder: 'Start editing\u2026'
+      });
+      wsQuill.root.innerHTML = html;
+      wsEditorDirty = false;
+      // Auto-save on change (debounced)
+      wsQuill.on('text-change', function() {
+        wsEditorDirty = true;
+        var saveIndicator = document.getElementById('wsExportBtn');
+        if (saveIndicator && saveIndicator.textContent === 'Export as Word') {
+          // don't change export button text
+        }
+        updateSaveStatus('Saving\u2026');
+        clearTimeout(wsSaveTimer);
+        wsSaveTimer = setTimeout(function() { saveFileEdit(fileId); }, 2000);
+      });
+    }
+
+    function updateSaveStatus(text) {
+      var title = document.getElementById('wsViewerTitle');
+      if (!title) return;
+      var indicator = document.getElementById('wsSaveStatus');
+      if (!indicator) {
+        indicator = document.createElement('span');
+        indicator.id = 'wsSaveStatus';
+        indicator.style.cssText = 'font-size:11px;color:var(--muted);font-weight:300;margin-left:8px';
+        title.parentNode.insertBefore(indicator, title.nextSibling);
+      }
+      indicator.textContent = text;
+    }
+
+    function saveFileEdit(fileId) {
+      if (!wsQuill) return;
+      var html = wsQuill.root.innerHTML;
+      fetch('/api/files/' + fileId + '/edit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html: html })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.ok) {
+          wsEditorDirty = false;
+          updateSaveStatus('Saved');
+          setTimeout(function() { updateSaveStatus(''); }, 2000);
+        }
+      });
+    }
+
+    function saveTextEdit(fileId) {
+      var ta = document.getElementById('wsTextEditor');
+      if (!ta) return;
+      var html = ta.value;
+      fetch('/api/files/' + fileId + '/edit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html: html })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.ok) {
+          wsEditorDirty = false;
+          var btn = document.getElementById('wsExportBtn');
+          if (btn) { btn.textContent = 'Saved'; btn.style.opacity = '0.5'; }
+        }
+      });
+    }
+
+    function exportAsDocx(originalName) {
+      if (!wsQuill) return;
+      var html = wsQuill.root.innerHTML;
+      // Wrap in a proper HTML document for conversion
+      var fullHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.6;color:#333}h1{font-size:18pt;color:#2C4A5E}h2{font-size:14pt;color:#2C4A5E}h3{font-size:12pt;color:#2C4A5E}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px 10px}</style></head><body>' + html + '</body></html>';
+      if (typeof htmlDocx !== 'undefined' && htmlDocx.asBlob) {
+        var blob = htmlDocx.asBlob(fullHtml);
+        var name = originalName.replace(/\.[^.]+$/, '') + '-edited.docx';
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      } else {
+        // Fallback: download as HTML
+        var blob = new Blob([fullHtml], { type: 'text/html' });
+        var name = originalName.replace(/\.[^.]+$/, '') + '-edited.html';
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }
     }
 
     function closeViewer() {
+      // Save before closing
+      if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
       wsActiveFileId = null;
+      wsQuill = null;
+      wsEditorDirty = false;
       renderUserFiles();
       var header = document.getElementById('wsViewerHeader');
       var body = document.getElementById('wsViewerBody');
+      var oldExport = document.getElementById('wsExportBtn');
+      var oldStatus = document.getElementById('wsSaveStatus');
+      if (oldExport) oldExport.remove();
+      if (oldStatus) oldStatus.remove();
       if (header) header.style.display = 'none';
       if (body) body.innerHTML = '<div class="ws-viewer-placeholder"><div class="ws-viewer-placeholder-icon">\uD83D\uDCC4</div><div class="ws-viewer-placeholder-text">Select a file to view it here.<br>You can preview PDFs, images, Word documents, and text files.</div></div>';
     }

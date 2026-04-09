@@ -381,6 +381,14 @@ def init_subscribers_db():
             page_url TEXT,
             created_at TEXT NOT NULL
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS file_edits (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            file_id INTEGER NOT NULL,
+            html_content TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            UNIQUE(user_id, file_id)
+        )""")
     else:
         db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -531,6 +539,14 @@ def init_subscribers_db():
             message TEXT NOT NULL,
             page_url TEXT,
             created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS file_edits (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            file_id INTEGER NOT NULL,
+            html_content TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            UNIQUE(user_id, file_id)
         )""")
     conn.commit()
     # Tier columns migration (idempotent)
@@ -4972,6 +4988,50 @@ def preview_user_file(file_id):
     return resp
 
 
+@app.route("/api/files/<int:file_id>/edit", methods=["GET"])
+def get_file_edit(file_id):
+    """Get saved HTML edit for a file."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT html_content, updated_at FROM file_edits WHERE user_id = {param} AND file_id = {param}", (user["id"], file_id))
+    row = cur.fetchone()
+    conn.close()
+    if row:
+        return jsonify({"ok": True, "html": row[0], "updated_at": row[1]})
+    return jsonify({"ok": True, "html": None})
+
+
+@app.route("/api/files/<int:file_id>/edit", methods=["POST"])
+def save_file_edit(file_id):
+    """Save HTML edit for a file (auto-save from editor)."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.get_json() or {}
+    html_content = data.get("html", "")
+    if not html_content:
+        return jsonify({"error": "No content"}), 400
+    now = datetime.now(timezone.utc).isoformat()
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    # Upsert
+    if USE_POSTGRES:
+        db_execute(conn, f"""INSERT INTO file_edits (user_id, file_id, html_content, updated_at)
+            VALUES ({param}, {param}, {param}, {param})
+            ON CONFLICT (user_id, file_id) DO UPDATE SET html_content = EXCLUDED.html_content, updated_at = EXCLUDED.updated_at""",
+            (user["id"], file_id, html_content, now))
+    else:
+        db_execute(conn, f"""INSERT OR REPLACE INTO file_edits (user_id, file_id, html_content, updated_at)
+            VALUES ({param}, {param}, {param}, {param})""",
+            (user["id"], file_id, html_content, now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
 @app.route("/api/files/<int:file_id>", methods=["DELETE"])
 def delete_file(file_id):
     user = get_current_user()
@@ -4987,6 +5047,7 @@ def delete_file(file_id):
     # Delete file from storage (S3 or local)
     storage_delete(user["id"], row[0])
     db_execute(conn, f"DELETE FROM user_files WHERE id = {param} AND user_id = {param}", (file_id, user["id"]))
+    db_execute(conn, f"DELETE FROM file_edits WHERE user_id = {param} AND file_id = {param}", (user["id"], file_id))
     conn.commit()
     conn.close()
     audit_log(user["id"], "file_delete", "file", str(file_id))
