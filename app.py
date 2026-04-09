@@ -5858,6 +5858,66 @@ def cron_send_emails():
     return jsonify({"sent": sent_count, "errors": error_count, "processed": len(due_emails)})
 
 
+@app.route("/api/cron/reengagement", methods=["POST"])
+def cron_reengagement():
+    """Check for inactive users and queue a gentle re-engagement email. Run daily."""
+    secret = request.headers.get("X-Cron-Secret") or request.args.get("secret")
+    if secret != CRON_SECRET:
+        return jsonify({"error": "unauthorized"}), 401
+
+    now = datetime.now(timezone.utc)
+    cutoff_7d = (now - timedelta(days=7)).isoformat()
+    cutoff_30d = (now - timedelta(days=30)).isoformat()
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+
+    # Find users who: have a purchase/tier, last logged in 7-30 days ago, haven't already gotten this email
+    try:
+        cur = db_execute(conn, f"""SELECT u.id, u.email, u.display_name, u.transition_type
+            FROM users u
+            WHERE u.last_login_at IS NOT NULL
+            AND u.last_login_at < {param}
+            AND u.last_login_at > {param}
+            AND u.tier != 'free'
+            AND u.email NOT IN (
+                SELECT to_email FROM email_queue WHERE sequence_name = 'reengagement' AND created_at > {param}
+            )""", (cutoff_7d, cutoff_30d, cutoff_30d))
+        inactive_users = cur.fetchall()
+    except Exception as e:
+        print(f"Error checking inactive users: {e}")
+        conn.close()
+        return jsonify({"error": str(e)}), 500
+
+    queued = 0
+    dashboard_url = "https://lumeway.co/dashboard"
+    for row in inactive_users:
+        user_id, email, name, transition = row[0], row[1], row[2], row[3]
+        greeting = f"Hi {name}," if name else "Hi there,"
+        html_body = email_wrap(f"""
+<p style="font-size:16px;line-height:1.6;">{greeting}</p>
+<p style="font-size:16px;line-height:1.6;">It has been a little while since you logged into Lumeway. That is completely okay — life gets overwhelming, especially during a transition.</p>
+<p style="font-size:16px;line-height:1.6;">Your dashboard is still here, exactly where you left it. If you have been putting something off, picking one small task can help build momentum again.</p>
+<div style="text-align:center;margin:28px 0;">
+  <a href="{dashboard_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Pick up where you left off</a>
+</div>
+<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">If something is not working or you need help, just reply to this email.</p>""")
+
+        send_after = (now + timedelta(hours=1)).isoformat()
+        try:
+            db_execute(conn, f"""INSERT INTO email_queue
+                (to_email, subject, html_body, sequence_name, sequence_step, send_after, created_at)
+                VALUES ({param},{param},{param},{param},{param},{param},{param})""",
+                (email, "Your dashboard is waiting for you", html_body, "reengagement", 1, send_after, now.isoformat()))
+            queued += 1
+        except Exception as e:
+            print(f"Error queuing reengagement for {email}: {e}")
+
+    conn.commit()
+    conn.close()
+    print(f"Reengagement: queued {queued} emails for {len(inactive_users)} inactive users")
+    return jsonify({"queued": queued, "checked": len(inactive_users)})
+
+
 @app.route("/api/admin/email-queue", methods=["GET"])
 def admin_email_queue():
     """View scheduled and sent emails."""
