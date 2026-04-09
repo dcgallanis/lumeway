@@ -751,38 +751,33 @@ def email_wrap(body_html):
 </head>
 <body style="margin:0;padding:0;background-color:#FAF7F2;font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;color:#2C3E50;-webkit-font-smoothing:antialiased;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF7F2;">
-<tr><td align="center" style="padding:40px 16px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
-  <!-- Logo -->
-  <tr><td style="text-align:center;padding-bottom:32px;">
-    <span style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:14px;font-weight:600;color:#2C4A5E;letter-spacing:2.5px;text-transform:uppercase;">&#9788;&ensp;LUMEWAY</span>
+<tr><td align="center" style="padding:32px 16px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background-color:#FDFCFA;border:1px solid #E8E0D6;border-radius:16px;overflow:hidden;">
+  <!-- Navy header -->
+  <tr><td style="background:linear-gradient(135deg,#2C4A5E,#1B3A4E);padding:30px 36px;text-align:center;">
+    <span style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13px;font-weight:600;color:rgba(250,247,242,0.5);letter-spacing:2.5px;text-transform:uppercase;">&#9788;&ensp;LUMEWAY</span>
   </td></tr>
-  <!-- Card -->
-  <tr><td>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FDFCFA;border:1px solid #E8E0D6;border-radius:16px;overflow:hidden;">
-    <!-- Gold accent bar -->
-    <tr><td style="height:3px;background:linear-gradient(90deg,#B8977E,#D4B49A,#B8977E);font-size:0;line-height:0;">&nbsp;</td></tr>
-    <!-- Body -->
-    <tr><td style="padding:40px 36px 32px;">
-      {body_html}
-    </td></tr>
-    <!-- Sign-off -->
-    <tr><td style="padding:0 36px 36px;">
-      <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-        <td style="width:40px;vertical-align:top;padding-top:2px;">
-          <div style="width:32px;height:1px;background-color:#B8977E;margin-top:10px;"></div>
-        </td>
-        <td style="padding-left:12px;">
-          <p style="font-family:'Libre Baskerville',Georgia,serif;font-size:14px;font-style:italic;color:#6B7B8D;line-height:1.6;margin:0;">Warmly,</p>
-          <p style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13px;font-weight:500;color:#2C4A5E;margin:4px 0 0;">The Lumeway Team</p>
-        </td>
-      </tr></table>
-    </td></tr>
-  </table>
+  <!-- Gold accent line -->
+  <tr><td style="height:3px;background:linear-gradient(90deg,#B8977E,#D4B49A,#B8977E);font-size:0;line-height:0;">&nbsp;</td></tr>
+  <!-- Body -->
+  <tr><td style="padding:40px 36px 32px;">
+    {body_html}
+  </td></tr>
+  <!-- Sign-off -->
+  <tr><td style="padding:0 36px 36px;">
+    <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+      <td style="width:40px;vertical-align:top;padding-top:2px;">
+        <div style="width:32px;height:1px;background-color:#B8977E;margin-top:10px;"></div>
+      </td>
+      <td style="padding-left:12px;">
+        <p style="font-family:'Libre Baskerville',Georgia,serif;font-size:14px;font-style:italic;color:#6B7B8D;line-height:1.6;margin:0;">Warmly,</p>
+        <p style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13px;font-weight:500;color:#2C4A5E;margin:4px 0 0;">The Lumeway Team</p>
+      </td>
+    </tr></table>
   </td></tr>
   <!-- Footer -->
-  <tr><td style="padding:28px 12px 0;text-align:center;">
-    <p style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:11px;color:#999;line-height:1.7;margin:0 0 12px;">Lumeway provides organizational tools, not legal or financial advice.<br>Always consult a qualified professional for decisions specific to your situation.</p>
+  <tr><td style="background-color:#F5F0E8;padding:24px 36px;border-top:1px solid #E8E0D6;">
+    <p style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:11px;color:#999;line-height:1.7;margin:0 0 10px;">Lumeway provides organizational tools, not legal or financial advice. Always consult a qualified professional for decisions specific to your situation.</p>
     <p style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:11px;color:#bbb;margin:0 0 8px;"><a href="https://lumeway.co" style="color:#2C4A5E;text-decoration:none;font-weight:500;">lumeway.co</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/privacy" style="color:#999;text-decoration:none;">Privacy</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/contact" style="color:#999;text-decoration:none;">Contact</a></p>
     <p style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:10px;color:#ccc;margin:0;">Reply with "unsubscribe" to stop receiving these emails.</p>
   </td></tr>
