@@ -110,13 +110,11 @@
 
 
     /* Deadlines */
-    .deadlines-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; max-width: 800px; }
-    .deadline-row { display: flex; gap: 20px; align-items: flex-start; padding: 20px 28px; border-bottom: 1px solid var(--border); }
-    .deadline-row:last-child { border-bottom: none; }
-    .deadline-time { font-family: 'Libre Baskerville', serif; font-size: 14px; font-weight: 600; color: #C0392B; white-space: nowrap; min-width: 80px; padding-top: 2px; }
-    .deadline-detail { flex: 1; min-width: 0; }
-    .deadline-name { font-weight: 500; font-size: 14px; color: var(--text); margin-bottom: 3px; }
-    .deadline-note { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .deadline-card { background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; text-align: center; }
+    .deadline-card-time { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 600; color: var(--accent); margin-bottom: 10px; }
+    .deadline-card-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .deadline-card-note { font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 300; flex: 1; }
 
     /* Resources grid */
     .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
@@ -390,61 +388,51 @@
 
 <div class="section-divider"></div>
 
+<section class="section">
+  <p class="section-label">Critical deadlines</p>
+  <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
+  <div class="deadlines-grid">
+    <div class="deadline-card">
+      <div class="deadline-card-time">7-month window</div>
+      <div class="deadline-card-name">Medicare Initial Enrollment Period</div>
+      <p class="deadline-card-note">Starts 3 months before you turn 65 and ends 3 months after. Missing this window triggers a late enrollment penalty that increases your Part B premium by 10% for every 12 months you were eligible but didn't enroll — and it's permanent.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">Age 62 / 67 / 70</div>
+      <div class="deadline-card-name">Social Security claiming decision</div>
+      <p class="deadline-card-note">Benefits are reduced ~30% if you claim at 62. Full benefits at 67 (for most). Delayed credits of 8% per year if you wait until 70. Once you claim, you can only undo it within 12 months.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">Age 73</div>
+      <div class="deadline-card-name">Required Minimum Distributions</div>
+      <p class="deadline-card-note">RMDs from 401k and traditional IRA accounts must begin by April 1 of the year after you turn 73. The penalty for missing an RMD is 25% of the amount you should have withdrawn.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">Oct 15 – Dec 7</div>
+      <div class="deadline-card-name">Medicare open enrollment</div>
+      <p class="deadline-card-note">This is your annual window to switch Medicare Advantage plans, change from Advantage to Original (or vice versa), and change Part D drug plans. Review your plan every year — formularies and costs change.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">Varies</div>
+      <div class="deadline-card-name">Pension election deadline</div>
+      <p class="deadline-card-note">If you have a pension, you'll need to choose a payout option (lump sum vs. annuity, single life vs. joint survivor). This is often irrevocable — take your time and consult a financial advisor.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">Year of retirement</div>
+      <div class="deadline-card-name">Tax planning window</div>
+      <p class="deadline-card-note">The year you retire is often the best time for Roth conversions, tax-loss harvesting, and other strategies. Work with a CPA or tax advisor before year-end.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
 <div style="text-align:center;padding:48px 24px;background:var(--warm-white)">
   <p style="font-size:13px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Your personal dashboard</p>
   <p style="font-family:'Libre Baskerville',serif;font-size:clamp(20px,3vw,28px);font-weight:300;color:var(--text);margin-bottom:12px">Track every step in one place</p>
   <p style="font-size:14px;color:var(--muted);font-weight:300;max-width:500px;margin:0 auto 20px;line-height:1.6">Upload documents, log activity, track deadlines, and access resources tailored to your state — all from your personal dashboard.</p>
   <a href="/features" style="font-size:14px;color:var(--accent);text-decoration:none;font-weight:500">See all dashboard features &rarr;</a>
 </div>
-
-<section class="section">
-  <p class="section-label">Critical deadlines</p>
-  <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
-  <div class="deadlines-box">
-    <div class="deadline-row">
-      <span class="deadline-time">7-month window</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Medicare Initial Enrollment Period</div>
-        <p class="deadline-note">Starts 3 months before you turn 65 and ends 3 months after. Missing this window triggers a late enrollment penalty that increases your Part B premium by 10% for every 12 months you were eligible but didn't enroll — and it's permanent.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">Age 62 / 67 / 70</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Social Security claiming decision</div>
-        <p class="deadline-note">Benefits are reduced ~30% if you claim at 62. Full benefits at 67 (for most). Delayed credits of 8% per year if you wait until 70. Once you claim, you can only undo it within 12 months.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">Age 73</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Required Minimum Distributions</div>
-        <p class="deadline-note">RMDs from 401k and traditional IRA accounts must begin by April 1 of the year after you turn 73. The penalty for missing an RMD is 25% of the amount you should have withdrawn.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">Oct 15 – Dec 7</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Medicare open enrollment</div>
-        <p class="deadline-note">This is your annual window to switch Medicare Advantage plans, change from Advantage to Original (or vice versa), and change Part D drug plans. Review your plan every year — formularies and costs change.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">Varies</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Pension election deadline</div>
-        <p class="deadline-note">If you have a pension, you'll need to choose a payout option (lump sum vs. annuity, single life vs. joint survivor). This is often irrevocable — take your time and consult a financial advisor.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">Year of retirement</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Tax planning window</div>
-        <p class="deadline-note">The year you retire is often the best time for Roth conversions, tax-loss harvesting, and other strategies. Work with a CPA or tax advisor before year-end.</p>
-      </div>
-    </div>
-  </div>
-</section>
 
 <div class="section-divider"></div>
 

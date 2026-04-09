@@ -110,13 +110,11 @@
 
 
     /* Deadlines */
-    .deadlines-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; max-width: 800px; }
-    .deadline-row { display: flex; gap: 20px; align-items: flex-start; padding: 20px 28px; border-bottom: 1px solid var(--border); }
-    .deadline-row:last-child { border-bottom: none; }
-    .deadline-time { font-family: 'Libre Baskerville', serif; font-size: 14px; font-weight: 600; color: #C0392B; white-space: nowrap; min-width: 80px; padding-top: 2px; }
-    .deadline-detail { flex: 1; min-width: 0; }
-    .deadline-name { font-weight: 500; font-size: 14px; color: var(--text); margin-bottom: 3px; }
-    .deadline-note { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .deadline-card { background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; text-align: center; }
+    .deadline-card-time { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 600; color: var(--accent); margin-bottom: 10px; }
+    .deadline-card-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .deadline-card-note { font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 300; flex: 1; }
 
     /* Resources grid */
     .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
@@ -390,61 +388,51 @@
 
 <div class="section-divider"></div>
 
+<section class="section">
+  <p class="section-label">Critical deadlines</p>
+  <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
+  <div class="deadlines-grid">
+    <div class="deadline-card">
+      <div class="deadline-card-time">~30 days</div>
+      <div class="deadline-card-name">Employer short-term disability filing</div>
+      <p class="deadline-card-note">Most employer STD policies require filing within 30 days of disability onset. Check your specific policy — missing this deadline can forfeit your benefits.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">12 weeks</div>
+      <div class="deadline-card-name">FMLA job protection</div>
+      <p class="deadline-card-note">FMLA protects your job for 12 weeks. After that, your employer is not legally required to hold your position. Plan accordingly and understand your company's policy.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">5 months</div>
+      <div class="deadline-card-name">SSDI waiting period</div>
+      <p class="deadline-card-note">Even if approved, SSDI benefits don't begin until 5 full months after your disability onset date. Plan your finances for this gap.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">60 days</div>
+      <div class="deadline-card-name">SSDI appeal after denial</div>
+      <p class="deadline-card-note">If your SSDI application is denied, you have exactly 60 days from the denial date to request reconsideration. Missing this means starting the entire application over.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">24 months</div>
+      <div class="deadline-card-name">Medicare eligibility</div>
+      <p class="deadline-card-note">Medicare coverage begins 24 months after your SSDI benefits start (not 24 months after approval — after benefits start, which is after the 5-month waiting period). That's a 29-month gap from onset to Medicare.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">Ongoing</div>
+      <div class="deadline-card-name">Medical documentation</div>
+      <p class="deadline-card-note">There's no single deadline, but consistent, ongoing medical documentation is the single most important factor in SSDI approval. Every gap in treatment weakens your case.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
 <div style="text-align:center;padding:48px 24px;background:var(--warm-white)">
   <p style="font-size:13px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Your personal dashboard</p>
   <p style="font-family:'Libre Baskerville',serif;font-size:clamp(20px,3vw,28px);font-weight:300;color:var(--text);margin-bottom:12px">Track every step in one place</p>
   <p style="font-size:14px;color:var(--muted);font-weight:300;max-width:500px;margin:0 auto 20px;line-height:1.6">Upload documents, log activity, track deadlines, and access resources tailored to your state — all from your personal dashboard.</p>
   <a href="/features" style="font-size:14px;color:var(--accent);text-decoration:none;font-weight:500">See all dashboard features &rarr;</a>
 </div>
-
-<section class="section">
-  <p class="section-label">Critical deadlines</p>
-  <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
-  <div class="deadlines-box">
-    <div class="deadline-row">
-      <span class="deadline-time">~30 days</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Employer short-term disability filing</div>
-        <p class="deadline-note">Most employer STD policies require filing within 30 days of disability onset. Check your specific policy — missing this deadline can forfeit your benefits.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">12 weeks</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">FMLA job protection</div>
-        <p class="deadline-note">FMLA protects your job for 12 weeks. After that, your employer is not legally required to hold your position. Plan accordingly and understand your company's policy.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">5 months</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">SSDI waiting period</div>
-        <p class="deadline-note">Even if approved, SSDI benefits don't begin until 5 full months after your disability onset date. Plan your finances for this gap.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">60 days</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">SSDI appeal after denial</div>
-        <p class="deadline-note">If your SSDI application is denied, you have exactly 60 days from the denial date to request reconsideration. Missing this means starting the entire application over.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">24 months</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Medicare eligibility</div>
-        <p class="deadline-note">Medicare coverage begins 24 months after your SSDI benefits start (not 24 months after approval — after benefits start, which is after the 5-month waiting period). That's a 29-month gap from onset to Medicare.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">Ongoing</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Medical documentation</div>
-        <p class="deadline-note">There's no single deadline, but consistent, ongoing medical documentation is the single most important factor in SSDI approval. Every gap in treatment weakens your case.</p>
-      </div>
-    </div>
-  </div>
-</section>
 
 <div class="section-divider"></div>
 

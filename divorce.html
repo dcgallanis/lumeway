@@ -110,13 +110,11 @@
 
 
     /* Deadlines */
-    .deadlines-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; max-width: 800px; }
-    .deadline-row { display: flex; gap: 20px; align-items: flex-start; padding: 20px 28px; border-bottom: 1px solid var(--border); }
-    .deadline-row:last-child { border-bottom: none; }
-    .deadline-time { font-family: 'Libre Baskerville', serif; font-size: 14px; font-weight: 600; color: #C0392B; white-space: nowrap; min-width: 80px; padding-top: 2px; }
-    .deadline-detail { flex: 1; min-width: 0; }
-    .deadline-name { font-weight: 500; font-size: 14px; color: var(--text); margin-bottom: 3px; }
-    .deadline-note { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+    .deadlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .deadline-card { background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; text-align: center; }
+    .deadline-card-time { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 600; color: var(--accent); margin-bottom: 10px; }
+    .deadline-card-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .deadline-card-note { font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 300; flex: 1; }
 
     /* Resources grid */
     .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
@@ -390,61 +388,51 @@
 
 <div class="section-divider"></div>
 
+<section class="section">
+  <p class="section-label">Critical deadlines</p>
+  <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
+  <div class="deadlines-grid">
+    <div class="deadline-card">
+      <div class="deadline-card-time">30 days</div>
+      <div class="deadline-card-name">Temporary restraining order on assets</div>
+      <p class="deadline-card-note">Some states issue automatic asset freezes upon filing; others require a separate motion. Missing this can allow a spouse to drain accounts or hide assets.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">60 days</div>
+      <div class="deadline-card-name">COBRA health insurance</div>
+      <p class="deadline-card-note">If you lose coverage through your spouse's employer, you have 60 days to elect COBRA continuation. After that, the window closes permanently.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">90 days</div>
+      <div class="deadline-card-name">QDRO for retirement accounts</div>
+      <p class="deadline-card-note">A Qualified Domestic Relations Order should be filed with or shortly after the divorce decree. Delays can complicate retirement account division significantly.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">Varies</div>
+      <div class="deadline-card-name">Residency requirement</div>
+      <p class="deadline-card-note">Most states require 6 months to 1 year of residency before you can file. Check your state's requirement before beginning the process.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">Tax yr</div>
+      <div class="deadline-card-name">Filing status change</div>
+      <p class="deadline-card-note">Your tax filing status is based on your marital status as of December 31. The year your divorce is finalized, you'll file as single or head of household.</p>
+    </div>
+    <div class="deadline-card">
+      <div class="deadline-card-time">ASAP</div>
+      <div class="deadline-card-name">Update beneficiaries</div>
+      <p class="deadline-card-note">Retirement accounts, life insurance, and transfer-on-death designations may still name your ex-spouse. Update these as soon as the divorce is final.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
 <div style="text-align:center;padding:48px 24px;background:var(--warm-white)">
   <p style="font-size:13px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Your personal dashboard</p>
   <p style="font-family:'Libre Baskerville',serif;font-size:clamp(20px,3vw,28px);font-weight:300;color:var(--text);margin-bottom:12px">Track every step in one place</p>
   <p style="font-size:14px;color:var(--muted);font-weight:300;max-width:500px;margin:0 auto 20px;line-height:1.6">Upload documents, log activity, track deadlines, and access resources tailored to your state — all from your personal dashboard.</p>
   <a href="/features" style="font-size:14px;color:var(--accent);text-decoration:none;font-weight:500">See all dashboard features &rarr;</a>
 </div>
-
-<section class="section">
-  <p class="section-label">Critical deadlines</p>
-  <h2 class="section-title">Time-sensitive steps <em>you can't miss</em></h2>
-  <div class="deadlines-box">
-    <div class="deadline-row">
-      <span class="deadline-time">30 days</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Temporary restraining order on assets</div>
-        <p class="deadline-note">Some states issue automatic asset freezes upon filing; others require a separate motion. Missing this can allow a spouse to drain accounts or hide assets.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">60 days</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">COBRA health insurance</div>
-        <p class="deadline-note">If you lose coverage through your spouse's employer, you have 60 days to elect COBRA continuation. After that, the window closes permanently.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">90 days</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">QDRO for retirement accounts</div>
-        <p class="deadline-note">A Qualified Domestic Relations Order should be filed with or shortly after the divorce decree. Delays can complicate retirement account division significantly.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">Varies</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Residency requirement</div>
-        <p class="deadline-note">Most states require 6 months to 1 year of residency before you can file. Check your state's requirement before beginning the process.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">Tax yr</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Filing status change</div>
-        <p class="deadline-note">Your tax filing status is based on your marital status as of December 31. The year your divorce is finalized, you'll file as single or head of household.</p>
-      </div>
-    </div>
-    <div class="deadline-row">
-      <span class="deadline-time">ASAP</span>
-      <div class="deadline-detail">
-        <div class="deadline-name">Update beneficiaries</div>
-        <p class="deadline-note">Retirement accounts, life insurance, and transfer-on-death designations may still name your ex-spouse. Update these as soon as the divorce is final.</p>
-      </div>
-    </div>
-  </div>
-</section>
 
 <div class="section-divider"></div>
 
