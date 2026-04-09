@@ -690,13 +690,11 @@ def send_purchase_email(to_email, product_id, product_name, download_token):
         return False
     download_url = f"https://lumeway.co/download/{download_token}"
     html = email_wrap(f"""
-<p style="font-size:16px;line-height:1.6;margin:0 0 16px;">Hi there,</p>
-<p style="font-size:16px;line-height:1.6;margin:0 0 16px;">Thank you for your purchase. Your <strong>{product_name}</strong> is ready to download.</p>
-<div style="text-align:center;margin:28px 0;">
-  <a href="{download_url}" style="display:inline-block;padding:14px 32px;background:#C4704E;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Download Your Templates</a>
-</div>
-<p style="font-size:14px;color:#6B7B8D;line-height:1.6;margin:0 0 8px;">This link is unique to your purchase and does not expire.</p>
-<p style="font-size:14px;color:#6B7B8D;line-height:1.6;margin:0;">If you have any questions, just reply to this email.</p>""")
+<p style="{_e_hi}">Hi there,</p>
+<p style="{_e_p}">Thank you for your purchase. Your <strong>{product_name}</strong> is ready to download.</p>
+{_e_btn(download_url, 'Download Your Templates')}
+<p style="{_e_muted}margin-bottom:8px;">This link is unique to your purchase and does not expire.</p>
+<p style="{_e_muted}">If you have any questions, just reply to this email.</p>""")
     try:
         resp = http_requests.post("https://api.resend.com/emails", json={
             "from": "Lumeway <hello@lumeway.co>",
@@ -747,40 +745,60 @@ def email_wrap(body_html):
     """Wrap email body in the standard Lumeway email template."""
     return f"""<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#FAF7F2;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#2C3E50;-webkit-font-smoothing:antialiased;">
-<!-- Outer wrapper -->
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0;padding:0;background-color:#FAF7F2;font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;color:#2C3E50;-webkit-font-smoothing:antialiased;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF7F2;">
-<tr><td align="center" style="padding:32px 16px;">
-<!-- Inner card -->
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background-color:#FDFCFA;border:1px solid #E8E0D6;border-radius:16px;overflow:hidden;">
-  <!-- Header -->
-  <tr><td style="background:linear-gradient(135deg,#2C4A5E,#1B3A4E);padding:28px 32px;text-align:center;">
-    <span style="font-family:Georgia,'Times New Roman',serif;font-size:22px;color:#FAF7F2;font-weight:400;letter-spacing:1.5px;">&#9788;&ensp;LUMEWAY</span>
+<tr><td align="center" style="padding:40px 16px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+  <!-- Logo -->
+  <tr><td style="text-align:center;padding-bottom:32px;">
+    <span style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:14px;font-weight:600;color:#2C4A5E;letter-spacing:2.5px;text-transform:uppercase;">&#9788;&ensp;LUMEWAY</span>
   </td></tr>
-  <!-- Body -->
-  <tr><td style="padding:36px 32px 28px;">
-    {body_html}
-  </td></tr>
-  <!-- Divider -->
-  <tr><td style="padding:0 32px;">
-    <div style="border-top:1px solid #E8E0D6;"></div>
-  </td></tr>
-  <!-- Sign-off -->
-  <tr><td style="padding:24px 32px 16px;">
-    <p style="font-size:14px;color:#6B7B8D;line-height:1.6;margin:0;">Warmly,<br><span style="color:#2C4A5E;font-weight:500;">The Lumeway Team</span></p>
+  <!-- Card -->
+  <tr><td>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FDFCFA;border:1px solid #E8E0D6;border-radius:16px;overflow:hidden;">
+    <!-- Gold accent bar -->
+    <tr><td style="height:3px;background:linear-gradient(90deg,#B8977E,#D4B49A,#B8977E);font-size:0;line-height:0;">&nbsp;</td></tr>
+    <!-- Body -->
+    <tr><td style="padding:40px 36px 32px;">
+      {body_html}
+    </td></tr>
+    <!-- Sign-off -->
+    <tr><td style="padding:0 36px 36px;">
+      <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+        <td style="width:40px;vertical-align:top;padding-top:2px;">
+          <div style="width:32px;height:1px;background-color:#B8977E;margin-top:10px;"></div>
+        </td>
+        <td style="padding-left:12px;">
+          <p style="font-family:'Libre Baskerville',Georgia,serif;font-size:14px;font-style:italic;color:#6B7B8D;line-height:1.6;margin:0;">Warmly,</p>
+          <p style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13px;font-weight:500;color:#2C4A5E;margin:4px 0 0;">The Lumeway Team</p>
+        </td>
+      </tr></table>
+    </td></tr>
+  </table>
   </td></tr>
   <!-- Footer -->
-  <tr><td style="background-color:#FAF7F2;padding:20px 32px;border-top:1px solid #E8E0D6;">
-    <p style="font-size:12px;color:#6B7B8D;line-height:1.6;margin:0 0 8px;">Lumeway provides organizational tools, not legal or financial advice. Always consult a qualified professional for decisions specific to your situation.</p>
-    <p style="font-size:11px;color:#999;margin:0;"><a href="https://lumeway.co" style="color:#2C4A5E;text-decoration:none;">lumeway.co</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/privacy" style="color:#999;text-decoration:none;">Privacy</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/contact" style="color:#999;text-decoration:none;">Contact</a></p>
-    <p style="font-size:10px;color:#bbb;margin:10px 0 0;">If you no longer want to receive these emails, reply with "unsubscribe" and we will remove you.</p>
+  <tr><td style="padding:28px 12px 0;text-align:center;">
+    <p style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:11px;color:#999;line-height:1.7;margin:0 0 12px;">Lumeway provides organizational tools, not legal or financial advice.<br>Always consult a qualified professional for decisions specific to your situation.</p>
+    <p style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:11px;color:#bbb;margin:0 0 8px;"><a href="https://lumeway.co" style="color:#2C4A5E;text-decoration:none;font-weight:500;">lumeway.co</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/privacy" style="color:#999;text-decoration:none;">Privacy</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/contact" style="color:#999;text-decoration:none;">Contact</a></p>
+    <p style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:10px;color:#ccc;margin:0;">Reply with "unsubscribe" to stop receiving these emails.</p>
   </td></tr>
 </table>
 </td></tr>
 </table>
 </body></html>"""
 
+
+# ── Email content style helpers ──
+_e_hi = "font-family:'Libre Baskerville',Georgia,serif;font-size:18px;color:#2C4A5E;line-height:1.5;margin:0 0 20px;font-weight:400;"
+_e_p = "font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:15px;font-weight:300;line-height:1.7;color:#2C3E50;margin:0 0 16px;"
+_e_ul = "font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:14px;font-weight:300;line-height:1.9;color:#2C3E50;padding-left:20px;margin:0 0 16px;"
+_e_li = "margin-bottom:8px;"
+_e_muted = "font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13px;font-weight:300;color:#6B7B8D;line-height:1.6;margin:0;"
+_e_btn = lambda url, text: f'<div style="text-align:center;margin:32px 0;"><a href="{url}" style="display:inline-block;padding:14px 32px;background:#C4704E;color:white;text-decoration:none;border-radius:100px;font-family:\'Plus Jakarta Sans\',system-ui,sans-serif;font-size:14px;font-weight:500;letter-spacing:0.3px;">{text}</a></div>'
 
 # ── Post-purchase email sequence templates ──
 def get_post_purchase_sequence(product_name, is_plan=False):
@@ -794,81 +812,69 @@ def get_post_purchase_sequence(product_name, is_plan=False):
     # Day 1: Welcome + orientation
     if is_plan:
         day1_body = email_wrap(f"""
-<p style="font-size:16px;line-height:1.6;">Hi there,</p>
-<p style="font-size:16px;line-height:1.6;">Your <strong>{product_name}</strong> is set up and ready. Here is what you have access to now:</p>
-<ul style="font-size:15px;line-height:1.8;color:#1B2A38;">
-  <li>A phased checklist that breaks everything into manageable steps</li>
-  <li>Step-by-step guides with key terms, contacts, and common mistakes</li>
-  <li>A deadline calendar so nothing slips through</li>
-  <li>Document storage to keep everything in one place</li>
+<p style="{_e_hi}">Hi there,</p>
+<p style="{_e_p}">Your <strong>{product_name}</strong> is set up and ready. Here is what you have access to now:</p>
+<ul style="{_e_ul}">
+  <li style="{_e_li}">A phased checklist that breaks everything into manageable steps</li>
+  <li style="{_e_li}">Step-by-step guides with key terms, contacts, and common mistakes</li>
+  <li style="{_e_li}">A deadline calendar so nothing slips through</li>
+  <li style="{_e_li}">Document storage to keep everything in one place</li>
 </ul>
-<p style="font-size:16px;line-height:1.6;">You do not have to do everything today. Start with whatever feels most pressing, and the dashboard will keep track of the rest.</p>
-<div style="text-align:center;margin:28px 0;">
-  <a href="{dashboard_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Open your dashboard</a>
-</div>""")
+<p style="{_e_p}">You do not have to do everything today. Start with whatever feels most pressing, and the dashboard will keep track of the rest.</p>
+{_e_btn(dashboard_url, 'Open your dashboard')}""")
     else:
         day1_body = email_wrap(f"""
-<p style="font-size:16px;line-height:1.6;">Hi there,</p>
-<p style="font-size:16px;line-height:1.6;">Your <strong>{product_name}</strong> templates are ready. If you have not downloaded them yet, you can find them in your dashboard under My Templates.</p>
-<p style="font-size:16px;line-height:1.6;">These worksheets are designed to help you get organized — budget trackers, inventories, letter templates, and comparison sheets. Fill them out at your own pace.</p>
-<div style="text-align:center;margin:28px 0;">
-  <a href="{dashboard_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Open your dashboard</a>
-</div>""")
+<p style="{_e_hi}">Hi there,</p>
+<p style="{_e_p}">Your <strong>{product_name}</strong> templates are ready. If you have not downloaded them yet, you can find them in your dashboard under My Templates.</p>
+<p style="{_e_p}">These worksheets are designed to help you get organized — budget trackers, inventories, letter templates, and comparison sheets. Fill them out at your own pace.</p>
+{_e_btn(dashboard_url, 'Open your dashboard')}""")
     emails.append((1, f"Getting started with your {product_name}", day1_body))
 
     # Day 3: Gentle check-in
     day3_body = email_wrap(f"""
-<p style="font-size:16px;line-height:1.6;">Hi there,</p>
-<p style="font-size:16px;line-height:1.6;">Just checking in. If you have had a chance to look at your dashboard, we hope it is helping you feel more organized.</p>
-<p style="font-size:16px;line-height:1.6;">If you have not started yet, that is okay. There is no deadline on your end. When you are ready, the Navigator can help you figure out what to focus on first.</p>
-<div style="text-align:center;margin:28px 0;">
-  <a href="{chat_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Talk to the Navigator</a>
-</div>
-<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">If something is not working or you have questions, just reply to this email.</p>""")
+<p style="{_e_hi}">Hi there,</p>
+<p style="{_e_p}">Just checking in. If you have had a chance to look at your dashboard, we hope it is helping you feel more organized.</p>
+<p style="{_e_p}">If you have not started yet, that is okay. There is no deadline on your end. When you are ready, the Navigator can help you figure out what to focus on first.</p>
+{_e_btn(chat_url, 'Talk to the Navigator')}
+<p style="{_e_muted}">If something is not working or you have questions, just reply to this email.</p>""")
     emails.append((3, "How are things going?", day3_body))
 
     # Day 7: Feature highlight
     if is_plan:
         day7_body = email_wrap(f"""
-<p style="font-size:16px;line-height:1.6;">Hi there,</p>
-<p style="font-size:16px;line-height:1.6;">A few things in your dashboard you might not have found yet:</p>
-<ul style="font-size:15px;line-height:1.8;color:#1B2A38;">
-  <li><strong>Activity log</strong> — track phone calls, form submissions, and appointments so you have a record</li>
-  <li><strong>Notes</strong> — jot down questions, reminders, or anything on your mind</li>
-  <li><strong>Document storage</strong> — upload copies of important paperwork so everything is in one place</li>
+<p style="{_e_hi}">Hi there,</p>
+<p style="{_e_p}">A few things in your dashboard you might not have found yet:</p>
+<ul style="{_e_ul}">
+  <li style="{_e_li}"><strong>Activity log</strong> — track phone calls, form submissions, and appointments so you have a record</li>
+  <li style="{_e_li}"><strong>Notes</strong> — jot down questions, reminders, or anything on your mind</li>
+  <li style="{_e_li}"><strong>Document storage</strong> — upload copies of important paperwork so everything is in one place</li>
 </ul>
-<p style="font-size:16px;line-height:1.6;">You are doing the hard part. These tools are here to make it a little easier.</p>
-<div style="text-align:center;margin:28px 0;">
-  <a href="{dashboard_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Open your dashboard</a>
-</div>""")
+<p style="{_e_p}">You are doing the hard part. These tools are here to make it a little easier.</p>
+{_e_btn(dashboard_url, 'Open your dashboard')}""")
     else:
         day7_body = email_wrap(f"""
-<p style="font-size:16px;line-height:1.6;">Hi there,</p>
-<p style="font-size:16px;line-height:1.6;">Your templates give you the worksheets. If you want the full picture — step-by-step guides, deadline tracking, state-specific rules, and more — the Full Plan picks up where the templates leave off.</p>
-<p style="font-size:16px;line-height:1.6;">And your ${product_name} purchase counts as credit toward the upgrade, so you would only pay the difference.</p>
-<div style="text-align:center;margin:28px 0;">
-  <a href="{pricing_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">See what is included</a>
-</div>
-<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">No pressure. The templates are yours forever either way.</p>""")
+<p style="{_e_hi}">Hi there,</p>
+<p style="{_e_p}">Your templates give you the worksheets. If you want the full picture — step-by-step guides, deadline tracking, state-specific rules, and more — the Full Plan picks up where the templates leave off.</p>
+<p style="{_e_p}">And your {product_name} purchase counts as credit toward the upgrade, so you would only pay the difference.</p>
+{_e_btn(pricing_url, 'See what is included')}
+<p style="{_e_muted}">No pressure. The templates are yours forever either way.</p>""")
     emails.append((7, "A few things you might find helpful", day7_body))
 
     # Day 20: Progress encouragement
     day20_body = email_wrap(f"""
-<p style="font-size:16px;line-height:1.6;">Hi there,</p>
-<p style="font-size:16px;line-height:1.6;">It has been a few weeks since you started using Lumeway. However far you have gotten, you are further along than you were before.</p>
-<p style="font-size:16px;line-height:1.6;">If you have been putting something off, that is normal. Pick one small thing and start there. The checklist keeps track of everything else so it does not slip through.</p>
-<div style="text-align:center;margin:28px 0;">
-  <a href="{dashboard_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Pick up where you left off</a>
-</div>""")
+<p style="{_e_hi}">Hi there,</p>
+<p style="{_e_p}">It has been a few weeks since you started using Lumeway. However far you have gotten, you are further along than you were before.</p>
+<p style="{_e_p}">If you have been putting something off, that is normal. Pick one small thing and start there. The checklist keeps track of everything else so it does not slip through.</p>
+{_e_btn(dashboard_url, 'Pick up where you left off')}""")
     emails.append((20, "You are further along than you think", day20_body))
 
     # Day 28: Feedback request
     day28_body = email_wrap(f"""
-<p style="font-size:16px;line-height:1.6;">Hi there,</p>
-<p style="font-size:16px;line-height:1.6;">You have been using Lumeway for about a month now. We would genuinely like to know how it is going.</p>
-<p style="font-size:16px;line-height:1.6;">Is the dashboard helping? Is anything confusing or missing? We read every reply and use your feedback to make Lumeway better.</p>
-<p style="font-size:16px;line-height:1.6;">Just hit reply and tell us what you think — even a sentence or two is helpful.</p>
-<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">Thank you for trusting us with something this important.</p>""")
+<p style="{_e_hi}">Hi there,</p>
+<p style="{_e_p}">You have been using Lumeway for about a month now. We would genuinely like to know how it is going.</p>
+<p style="{_e_p}">Is the dashboard helping? Is anything confusing or missing? We read every reply and use your feedback to make Lumeway better.</p>
+<p style="{_e_p}">Just hit reply and tell us what you think — even a sentence or two is helpful.</p>
+<p style="{_e_muted}font-style:italic;">Thank you for trusting us with something this important.</p>""")
     emails.append((28, "How is Lumeway working for you?", day28_body))
 
     return emails
@@ -1072,11 +1078,11 @@ def send_auth_code(to_email, code):
         print(f"RESEND_API_KEY not set, skipping auth code to {to_email}")
         return False
     html = email_wrap(f"""
-<p style="font-size:16px;line-height:1.6;margin:0 0 8px;">Your login code is:</p>
-<div style="text-align:center;margin:24px 0;padding:20px;background-color:#FAF7F2;border-radius:12px;border:1px solid #E8E0D6;">
-  <span style="font-size:36px;font-weight:600;letter-spacing:8px;color:#2C4A5E;">{code}</span>
+<p style="{_e_p}">Your login code is:</p>
+<div style="text-align:center;margin:24px 0;padding:24px;background-color:#FAF7F2;border-radius:12px;border:1px solid #E8E0D6;">
+  <span style="font-family:'Libre Baskerville',Georgia,serif;font-size:36px;font-weight:400;letter-spacing:8px;color:#2C4A5E;">{code}</span>
 </div>
-<p style="font-size:14px;color:#6B7B8D;line-height:1.6;margin:0;">This code expires in 10 minutes. If you did not request this, you can ignore this email.</p>""")
+<p style="{_e_muted}">This code expires in 10 minutes. If you did not request this, you can ignore this email.</p>""")
     try:
         resp = http_requests.post("https://api.resend.com/emails", json={
             "from": "Lumeway <hello@lumeway.co>",
@@ -2534,12 +2540,10 @@ def send_tier_email(to_email, tier, product_name):
     else:
         body = f"Your {product_name} is now active. Your dashboard is ready with the full guide, checklists, scripts, and tools."
     html = email_wrap(f"""
-<p style="font-size:16px;line-height:1.6;margin:0 0 16px;">Hi there,</p>
-<p style="font-size:16px;line-height:1.6;margin:0 0 16px;">{body}</p>
-<div style="text-align:center;margin:28px 0;">
-  <a href="https://lumeway.co/dashboard" style="display:inline-block;padding:14px 32px;background:#C4704E;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Go to Your Dashboard</a>
-</div>
-<p style="font-size:14px;color:#6B7B8D;line-height:1.6;margin:0;">If you have any questions, just reply to this email.</p>""")
+<p style="{_e_hi}">Hi there,</p>
+<p style="{_e_p}">{body}</p>
+{_e_btn('https://lumeway.co/dashboard', 'Go to Your Dashboard')}
+<p style="{_e_muted}">If you have any questions, just reply to this email.</p>""")
     try:
         resp = http_requests.post("https://api.resend.com/emails", json={
             "from": "Lumeway <hello@lumeway.co>",
@@ -5896,13 +5900,11 @@ def cron_reengagement():
         user_id, email, name, transition = row[0], row[1], row[2], row[3]
         greeting = f"Hi {name}," if name else "Hi there,"
         html_body = email_wrap(f"""
-<p style="font-size:16px;line-height:1.6;">{greeting}</p>
-<p style="font-size:16px;line-height:1.6;">It has been a little while since you logged into Lumeway. That is completely okay — life gets overwhelming, especially during a transition.</p>
-<p style="font-size:16px;line-height:1.6;">Your dashboard is still here, exactly where you left it. If you have been putting something off, picking one small task can help build momentum again.</p>
-<div style="text-align:center;margin:28px 0;">
-  <a href="{dashboard_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Pick up where you left off</a>
-</div>
-<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">If something is not working or you need help, just reply to this email.</p>""")
+<p style="{_e_hi}">{greeting}</p>
+<p style="{_e_p}">It has been a little while since you logged into Lumeway. That is completely okay — life gets overwhelming, especially during a transition.</p>
+<p style="{_e_p}">Your dashboard is still here, exactly where you left it. If you have been putting something off, picking one small task can help build momentum again.</p>
+{_e_btn(dashboard_url, 'Pick up where you left off')}
+<p style="{_e_muted}">If something is not working or you need help, just reply to this email.</p>""")
 
         send_after = (now + timedelta(hours=1)).isoformat()
         try:
