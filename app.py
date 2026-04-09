@@ -371,6 +371,16 @@ def init_subscribers_db():
             ip_address TEXT,
             created_at TEXT NOT NULL
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_feedback (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER,
+            email TEXT,
+            area TEXT NOT NULL,
+            rating INTEGER,
+            message TEXT NOT NULL,
+            page_url TEXT,
+            created_at TEXT NOT NULL
+        )""")
     else:
         db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -510,6 +520,16 @@ def init_subscribers_db():
             resource_id TEXT,
             detail TEXT,
             ip_address TEXT,
+            created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS user_feedback (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            email TEXT,
+            area TEXT NOT NULL,
+            rating INTEGER,
+            message TEXT NOT NULL,
+            page_url TEXT,
             created_at TEXT NOT NULL
         )""")
     conn.commit()
@@ -5463,6 +5483,64 @@ def flagged_sessions():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
         
+# ── User feedback ──
+
+@app.route("/api/feedback", methods=["POST"])
+def submit_feedback():
+    """Accept feedback from any user (logged in or not)."""
+    data = request.get_json()
+    area = (data.get("area") or "").strip()
+    message = (data.get("message") or "").strip()
+    rating = data.get("rating")
+    page_url = (data.get("page_url") or "").strip()
+    email = (data.get("email") or "").strip()
+
+    if not area or not message:
+        return jsonify({"error": "Area and message are required"}), 400
+    if area not in ("site", "templates", "dashboard", "chat", "guides", "other"):
+        return jsonify({"error": "Invalid area"}), 400
+    if rating is not None:
+        try:
+            rating = int(rating)
+            if rating < 1 or rating > 5:
+                rating = None
+        except (ValueError, TypeError):
+            rating = None
+
+    user = get_current_user()
+    user_id = user["id"] if user else None
+    if user and not email:
+        email = user.get("email", "")
+
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+    db_execute(conn, f"""INSERT INTO user_feedback (user_id, email, area, rating, message, page_url, created_at)
+        VALUES ({param},{param},{param},{param},{param},{param},{param})""",
+        (user_id, email, area, rating, message, page_url, now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/admin/feedback", methods=["GET"])
+def admin_get_feedback():
+    """Admin: view all feedback."""
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = get_db()
+    rows = db_execute(conn, "SELECT * FROM user_feedback ORDER BY created_at DESC").fetchall()
+    conn.close()
+    feedback = []
+    for r in rows:
+        feedback.append({
+            "id": r["id"], "user_id": r["user_id"], "email": r["email"],
+            "area": r["area"], "rating": r["rating"], "message": r["message"],
+            "page_url": r["page_url"], "created_at": r["created_at"]
+        })
+    return jsonify({"feedback": feedback})
+
+
 if __name__ == "__main__":
     print("\n✓ Lumeway is running!")
     app.run(debug=True, port=int(os.environ.get("PORT", 5000)))

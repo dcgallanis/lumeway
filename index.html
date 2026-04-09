@@ -1512,5 +1512,70 @@ ${data.suggestedDocs && data.suggestedDocs.length ? `
     sendMessage("Please give me a session summary — what we covered today, my complete task list with statuses, and my single most urgent next step.");
   }
 </script>
+
+<!-- Feedback widget -->
+<style>
+  .feedback-btn{position:fixed;bottom:24px;right:24px;z-index:150;background:var(--navy,#2C4A5E);color:#FAF7F2;border:none;border-radius:50px;padding:12px 20px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;box-shadow:0 4px 16px rgba(44,62,80,0.2);transition:all 0.2s;display:flex;align-items:center;gap:8px}
+  .feedback-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(44,62,80,0.3)}
+  .fb-overlay{display:none;position:fixed;inset:0;background:rgba(44,62,80,0.4);z-index:300}
+  .fb-overlay.open{display:flex;align-items:center;justify-content:center;padding:24px}
+  .fb-card{background:#FDFCFA;border-radius:20px;max-width:480px;width:100%;padding:32px;box-shadow:0 12px 48px rgba(44,62,80,0.15);position:relative}
+  .fb-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;color:#6B7B8D;cursor:pointer}
+  .fb-title{font-family:'Libre Baskerville',serif;font-size:22px;font-weight:400;color:#2C4A5E;margin-bottom:6px}
+  .fb-sub{font-size:14px;font-weight:300;color:#6B7B8D;line-height:1.5;margin-bottom:20px}
+  .fb-areas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .fb-area{padding:8px 16px;border:1px solid #E8E0D6;border-radius:100px;background:#FAF7F2;color:#6B7B8D;font-family:inherit;font-size:13px;cursor:pointer;transition:all 0.15s}
+  .fb-area:hover{border-color:#B8977E;color:#2C3E50}
+  .fb-area.active{background:#2C4A5E;color:#FAF7F2;border-color:#2C4A5E}
+  .fb-stars{display:flex;gap:6px;margin-bottom:16px}
+  .fb-star{font-size:24px;cursor:pointer;color:#E8E0D6;transition:color 0.1s}
+  .fb-star.active{color:#B8977E}
+  .fb-star:hover{color:#B8977E}
+  .fb-ta{width:100%;min-height:100px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:300;padding:14px;border:1px solid #E8E0D6;border-radius:12px;background:#FAF7F2;color:#2C3E50;resize:vertical;outline:none;line-height:1.6;margin-bottom:12px}
+  .fb-ta:focus{border-color:#C4704E}
+  .fb-email{width:100%;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;padding:10px 14px;border:1px solid #E8E0D6;border-radius:10px;background:#FAF7F2;color:#2C3E50;outline:none;margin-bottom:16px}
+  .fb-submit{width:100%;padding:12px;background:#C4704E;color:#FAF7F2;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s}
+  .fb-submit:hover{background:#D4896C}
+</style>
+<button class="feedback-btn" onclick="document.getElementById('fbOverlay').classList.add('open')">💬 Feedback</button>
+<div class="fb-overlay" id="fbOverlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="fb-card">
+    <button class="fb-close" onclick="document.getElementById('fbOverlay').classList.remove('open')">&times;</button>
+    <div id="fbForm">
+      <div class="fb-title">Share your feedback</div>
+      <div class="fb-sub">Help us make Lumeway better. What's on your mind?</div>
+      <div style="font-size:12px;font-weight:500;color:#B8977E;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">What's this about?</div>
+      <div class="fb-areas" id="fbAreas">
+        <button class="fb-area" onclick="selFbArea(this)" data-a="chat">Chat</button>
+        <button class="fb-area" onclick="selFbArea(this)" data-a="site">Site</button>
+        <button class="fb-area" onclick="selFbArea(this)" data-a="templates">Templates</button>
+        <button class="fb-area" onclick="selFbArea(this)" data-a="guides">Guides</button>
+        <button class="fb-area" onclick="selFbArea(this)" data-a="other">Other</button>
+      </div>
+      <div style="font-size:12px;font-weight:500;color:#B8977E;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">How's your experience?</div>
+      <div class="fb-stars" id="fbStars">
+        <span class="fb-star" onclick="setFbR(1)" data-r="1">★</span>
+        <span class="fb-star" onclick="setFbR(2)" data-r="2">★</span>
+        <span class="fb-star" onclick="setFbR(3)" data-r="3">★</span>
+        <span class="fb-star" onclick="setFbR(4)" data-r="4">★</span>
+        <span class="fb-star" onclick="setFbR(5)" data-r="5">★</span>
+      </div>
+      <textarea class="fb-ta" id="fbMsg" placeholder="What's working? What's confusing? What would you change?"></textarea>
+      <input class="fb-email" id="fbEmail" type="email" placeholder="Email (optional — if you'd like us to follow up)">
+      <button class="fb-submit" onclick="sendFb()">Send feedback</button>
+    </div>
+    <div id="fbSuccess" style="display:none;text-align:center;padding:24px 0">
+      <div style="font-size:48px;margin-bottom:12px">🙏</div>
+      <div style="font-size:16px;font-weight:400;color:#2C4A5E;margin-bottom:6px">Thank you for your feedback</div>
+      <div style="font-size:13px;font-weight:300;color:#6B7B8D">Every piece helps us make Lumeway better.</div>
+    </div>
+  </div>
+</div>
+<script>
+var fbArea='',fbRating=0;
+function selFbArea(b){document.querySelectorAll('.fb-area').forEach(function(x){x.classList.remove('active')});b.classList.add('active');fbArea=b.dataset.a}
+function setFbR(r){fbRating=r;document.querySelectorAll('.fb-star').forEach(function(s){s.classList.toggle('active',parseInt(s.dataset.r)<=r)})}
+function sendFb(){var m=document.getElementById('fbMsg').value.trim();if(!fbArea){alert('Please select what this is about.');return}if(!m){alert('Please write your feedback.');return}fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({area:fbArea,rating:fbRating||null,message:m,email:document.getElementById('fbEmail').value.trim(),page_url:window.location.href})}).then(function(r){return r.json()}).then(function(d){if(d.ok){document.getElementById('fbForm').style.display='none';document.getElementById('fbSuccess').style.display='block';setTimeout(function(){document.getElementById('fbOverlay').classList.remove('open')},3000)}})}
+</script>
 </body>
 </html>

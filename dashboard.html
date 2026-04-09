@@ -395,6 +395,44 @@
     .phase-complete-list li::before { content: '\2713'; position: absolute; left: 0; font-weight: 600; }
     .phase-complete-msg { font-size: 13px; font-weight: 300; color: var(--text); line-height: 1.6; }
 
+    /* Guide scripts — "What to say" sections */
+    .guide-script { background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-top: 12px; }
+    .guide-script-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .guide-script-label::before { content: '\260E'; font-size: 14px; }
+    .guide-script-intro { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.5; margin-bottom: 10px; font-style: italic; }
+    .guide-script-text { font-size: 13px; font-weight: 400; color: var(--text); line-height: 1.7; background: var(--warm-white); border-radius: 8px; padding: 14px 16px; border-left: 3px solid var(--accent); margin-bottom: 8px; }
+    .guide-script-note { font-size: 12px; font-weight: 300; color: var(--muted); line-height: 1.5; margin-top: 8px; }
+    .guide-script-copy { font-size: 11px; color: var(--accent); background: none; border: 1px solid var(--accent); border-radius: 6px; padding: 4px 12px; cursor: pointer; margin-top: 8px; font-family: inherit; transition: all 0.15s; }
+    .guide-script-copy:hover { background: var(--accent); color: var(--cream); }
+
+    /* Feedback widget */
+    .feedback-btn { position: fixed; bottom: 24px; right: 24px; z-index: 150; background: var(--navy); color: var(--cream); border: none; border-radius: 50px; padding: 12px 20px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(44,62,80,0.2); transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+    .feedback-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(44,62,80,0.3); }
+    .feedback-overlay { display: none; position: fixed; inset: 0; background: rgba(44,62,80,0.4); z-index: 300; }
+    .feedback-overlay.open { display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .feedback-card { background: var(--warm-white); border-radius: 20px; max-width: 480px; width: 100%; padding: 32px; box-shadow: 0 12px 48px rgba(44,62,80,0.15); }
+    .feedback-title { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 400; color: var(--navy); margin-bottom: 6px; }
+    .feedback-sub { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.5; margin-bottom: 20px; }
+    .feedback-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; }
+    .feedback-area-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .feedback-area-btn { padding: 8px 16px; border: 1px solid var(--border); border-radius: 100px; background: var(--cream); color: var(--muted); font-family: inherit; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+    .feedback-area-btn:hover { border-color: var(--gold); color: var(--text); }
+    .feedback-area-btn.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    .feedback-stars { display: flex; gap: 6px; margin-bottom: 16px; }
+    .feedback-star { font-size: 24px; cursor: pointer; color: var(--border); transition: color 0.1s; }
+    .feedback-star.active { color: var(--gold); }
+    .feedback-star:hover { color: var(--gold); }
+    .feedback-textarea { width: 100%; min-height: 100px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 300; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--cream); color: var(--text); resize: vertical; outline: none; line-height: 1.6; margin-bottom: 12px; }
+    .feedback-textarea:focus { border-color: var(--accent); }
+    .feedback-email { width: 100%; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 300; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); color: var(--text); outline: none; margin-bottom: 16px; }
+    .feedback-email:focus { border-color: var(--accent); }
+    .feedback-submit { width: 100%; padding: 12px; background: var(--accent); color: var(--cream); border: none; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .feedback-submit:hover { background: var(--accent-light); }
+    .feedback-success { text-align: center; padding: 24px 0; }
+    .feedback-success-icon { font-size: 48px; margin-bottom: 12px; }
+    .feedback-success-msg { font-size: 16px; font-weight: 400; color: var(--navy); margin-bottom: 6px; }
+    .feedback-success-sub { font-size: 13px; font-weight: 300; color: var(--muted); }
+
     /* Loading */
     .loading { text-align: center; padding: 48px; color: var(--muted); font-size: 15px; font-weight: 300; }
 
@@ -531,7 +569,15 @@
                 'Not comparing marketplace plans \u2014 marketplace + subsidy is often half the cost of COBRA.',
                 'Picking the cheapest plan without checking the deductible \u2014 Bronze plans have $9,100 deductibles.',
                 'Not reporting severance income to marketplace \u2014 this affects your subsidy amount.'
-              ]
+              ],
+              script: {
+                intro: 'When calling your former employer\'s HR or benefits department about COBRA:',
+                lines: [
+                  '"Hi, my name is [your name]. I was recently separated from the company and I\'m calling about my COBRA continuation coverage. My last day was [date]. Can you tell me what my COBRA premium would be, when my current coverage ends, and when I should expect the COBRA election notice?"',
+                  '"Can you also confirm whether the COBRA coverage would be the same plan I had, or if there are any changes? And is there a specific deadline I need to elect by?"'
+                ],
+                note: 'Write down the name of who you spoke to, the date, and what they told you. If they say they\'ll mail the COBRA notice, ask for a timeline.'
+              }
             },
             { id: 'jl-1-2', title: 'Transfer Prescriptions and Ongoing Care', risk: 'low',
               crossRef: ['Disability & Benefits'],
@@ -648,7 +694,16 @@
                 'Signing too quickly without reading everything.',
                 'Not negotiating \u2014 most employers expect some back-and-forth.',
                 'Not asking for COBRA premium coverage as part of the package.'
-              ]
+              ],
+              script: {
+                intro: 'When negotiating severance with your employer or HR:',
+                lines: [
+                  '"Thank you for presenting this. I\'d like to take the full [21/45 days] to review it carefully. Before I do, can you walk me through the key terms \u2014 specifically the severance amount, the non-compete, and what happens with my health benefits?"',
+                  '"I\'ve been with the company for [X years] and I believe my contributions warrant [specific ask \u2014 e.g., additional weeks, extended health coverage, outplacement services]. Is there flexibility on [the term you want to negotiate]?"',
+                  '"I\'d also like to request [a neutral reference letter / modification of the non-compete geography / 3 additional months of COBRA premium coverage]. These are standard asks and I think they\'re reasonable given my tenure."'
+                ],
+                note: 'Stay calm and professional. Don\'t say "I\'ll sue" \u2014 it closes doors. Framing as "I think this is fair given my contributions" works better. Have an employment attorney review before signing, especially if there\'s a release of claims.'
+              }
             },
             { id: 'jl-2-4', title: 'Apply for Government Assistance Programs', risk: 'medium',
               what: 'Identifying and applying for all benefits programs you may now qualify for.',
@@ -665,7 +720,15 @@
                 'Waiting too long to file for unemployment (benefits don\'t start until you file).',
                 'Being embarrassed to apply for assistance \u2014 these programs are for this exact situation.',
                 'Not reporting all qualifying dependents.'
-              ]
+              ],
+              script: {
+                intro: 'When calling creditors about hardship programs:',
+                lines: [
+                  '"Hi, I\'m calling because I recently lost my job and I\'m having difficulty making my payments. I\'d like to find out if you have a hardship program or if there are any options to temporarily reduce or defer my payments while I look for work."',
+                  '"My account number is [number]. I\'ve been a customer since [year] and I\'ve always made payments on time. I\'m not trying to avoid paying \u2014 I just need some flexibility for the next few months. What options do you have?"'
+                ],
+                note: 'Most credit card companies, mortgage servicers, and utility companies have hardship programs they don\'t advertise. Ask specifically for "hardship" or "forbearance" options. Get any agreement in writing or via email.'
+              }
             }
           ]},
           { name: 'Unemployment Benefits', risk: 'high', tasks: [
@@ -690,7 +753,15 @@
                 'Missing weekly certifications (claim gets suspended).',
                 'Not keeping detailed job search records.',
                 'Working part-time without reporting it (fraud risk).'
-              ]
+              ],
+              script: {
+                intro: 'If you need to call your state unemployment office (some states require phone filing):',
+                lines: [
+                  '"I\'m calling to file an initial unemployment insurance claim. My last day of employment was [date]. I was [laid off / my position was eliminated / the company did a reduction in force]. My employer was [company name] and I worked there for [X years]."',
+                  '"I have my Social Security number, driver\'s license, and bank account information for direct deposit ready. Can you walk me through what I need to complete the claim?"'
+                ],
+                note: 'Be honest about why you left. Saying "laid off" vs. "fired for cause" affects eligibility. If you\'re unsure, say "my position was eliminated." Get a confirmation number before hanging up.'
+              }
             },
             { id: 'jl-3-2', title: 'Appeal a Denied Claim', risk: 'high',
               what: 'Contesting an unemployment benefits denial.',
@@ -997,7 +1068,16 @@
               'Assuming beneficiary designation is current \u2014 check for outdated names.',
               'Not looking for employer group life insurance \u2014 many employees don\'t realize they have it.',
               'Assuming life insurance is taxable \u2014 it\'s not (but interest on held funds is).'
-            ]
+            ],
+            script: {
+              intro: 'When calling a life insurance company to file a death claim:',
+              lines: [
+                '"I\'m calling to file a death claim on policy number [number] for [deceased\'s full name]. I\'m the named beneficiary. The policyholder passed away on [date] and I have the certified death certificate."',
+                '"Can you walk me through your claims process? What forms do I need to complete, and what documents do you need from me? How long does the payout typically take once you have everything?"',
+                '"Can you also confirm the benefit amount and whether there are any other policies on file for this person? I want to make sure I\'m not missing anything."'
+              ],
+              note: 'If you don\'t know the policy number, provide the deceased\'s full name, date of birth, and SSN. The company can look it up. Ask for a claim number and direct phone line for follow-up.'
+            }
           },
           { id: 'es-3-2', title: 'Access Joint and Individual Bank Accounts',
             what: 'Understanding which accounts are accessible immediately (joint, transfer-on-death) and which are frozen pending probate.',
@@ -1046,7 +1126,16 @@
               'Thinking only widow/widower gets benefits \u2014 children and dependent parents are also eligible.',
               'Not understanding earnings limits while working and collecting.',
               'Assuming child benefits continue automatically after age 19.'
-            ]
+            ],
+            script: {
+              intro: 'When calling Social Security (1-800-772-1213) to report a death and file for survivor benefits:',
+              lines: [
+                '"I\'m calling to report the death of [full name], Social Security number [XXX-XX-XXXX]. They passed away on [date]. I\'m their [spouse/child/parent] and I need to file for survivor benefits."',
+                '"I have the certified death certificate. Can you tell me what benefits I may be eligible for, and what documents I need to bring to file? I\'d also like to apply for the $255 lump-sum death payment."',
+                '"Can you also tell me what the deceased\'s monthly benefit amount was, so I can understand what my survivor benefit might be?"'
+              ],
+              note: 'Call early in the morning (8am local time) to avoid long hold times. Have the deceased\'s SSN, your SSN, the death certificate, and your marriage certificate ready. They may schedule an in-person appointment at your local office.'
+            }
           },
           { id: 'es-3-4', title: 'Claim Pension and Retirement Account Benefits',
             what: 'Accessing survivor benefits from 401(k), IRA, pension plans \u2014 understanding payout options and the 10-year distribution rule.',
@@ -1517,7 +1606,16 @@
               'Filing without the other spouse\'s Social Security number.',
               'Not serving your spouse properly \u2014 invalid service means dismissal or delay.',
               'Assuming no-fault divorce means you don\'t have to disclose finances.'
-            ]
+            ],
+            script: {
+              intro: 'When calling a family law attorney for an initial consultation:',
+              lines: [
+                '"Hi, I\'m looking for a family law attorney for a divorce. I\'d like to schedule an initial consultation. Can you tell me your consultation fee, if any, and what I should bring to the first meeting?"',
+                '"Here\'s my situation: we\'ve been married [X years], we [do/don\'t] have children, and we [do/don\'t] agree on the major terms. We [own/rent] our home and have [brief description of assets]. I\'m trying to understand my options and what this process would look like."',
+                '"Can you give me a rough estimate of cost and timeline for my type of case? And do you handle mediation as well, or only litigation?"'
+              ],
+              note: 'Call 2\u20133 attorneys to compare. Many offer free 15\u201330 minute consultations. Bring your financial documents, marriage certificate, and a list of your questions. Don\'t sign a retainer at the first meeting \u2014 take time to decide.'
+            }
           },
           { id: 'dv-2-2', title: 'Choose: Mediation vs. Collaborative vs. Litigation',
             what: 'Three paths to divorce with different costs, timelines, and outcomes.',
@@ -2013,7 +2111,16 @@
           'Thinking retiree health insurance or COBRA coverage counts as creditable coverage that delays the Part B penalty clock \u2014 it does not.',
           'Missing the 7-month IEP and waiting for the General Enrollment Period, which adds months of no coverage and triggers a permanent premium penalty.',
           'Not enrolling in Part D because you take no prescriptions now \u2014 you still owe the penalty when you eventually do need drug coverage.'
-        ]
+        ],
+        script: {
+          intro: 'When calling Medicare (1-800-633-4227) or SSA (1-800-772-1213) to enroll:',
+          lines: [
+            '"I\'m calling to enroll in Medicare. I\'m turning 65 on [date] and I\'m currently [still working with employer coverage / retired / on COBRA]. I want to make sure I enroll in the right parts and don\'t miss any deadlines."',
+            '"Can you confirm my Initial Enrollment Period dates? I want to enroll in Part A and Part B. I also need to understand my Part D options. Do I need to sign up for Part D now, or is my current drug coverage considered creditable?"',
+            '"I\'m also trying to decide between a Medigap supplement and a Medicare Advantage plan. Can you point me to resources that compare plans available in my zip code?"'
+          ],
+          note: 'Call SSA (not Medicare) to actually enroll. Medicare\'s 800 number is for questions about coverage. Have your Social Security number, current insurance card, and a list of your doctors and prescriptions ready.'
+        }
       },
       { id: 'ret-2-2', title: 'Choosing Between Medicare Supplement and Medicare Advantage',
         what: 'Deciding whether to pair Original Medicare with a Medigap supplement plan or to enroll in an all-in-one Medicare Advantage plan instead.',
@@ -2341,7 +2448,16 @@ guideLibrary['disability'] = {
               'Understating your limitations by describing your best days rather than typical or worst days.',
               'Forgetting to report all medical conditions \u2014 SSA evaluates the combined effect of all impairments.',
               'Failing to keep copies of submitted documents.'
-            ]
+            ],
+            script: {
+              intro: 'When calling Social Security (1-800-772-1213) to start your disability application:',
+              lines: [
+                '"I\'m calling to file an initial application for Social Security Disability Insurance. I became unable to work on [date] due to [brief description of conditions]. I\'d like to set up my protective filing date today."',
+                '"I have my Social Security number, birth certificate, medical records, and work history ready. Can I complete the application over the phone, or do I need to schedule an in-person appointment at my local office?"',
+                '"Can you also tell me what the expected timeline is for a decision, and what happens if my initial application is denied?"'
+              ],
+              note: 'Describe your WORST days, not your best. SSA needs to understand what you can\'t do. Be specific: "I can\'t stand for more than 10 minutes" is better than "I have trouble standing." Ask for a confirmation number.'
+            }
           },
           { id: 'dis-1-2', title: 'Gather Medical Evidence and Documentation',
             what: 'Collect and organize all medical records, test results, and provider statements that support your disability claim.',
@@ -2455,7 +2571,16 @@ guideLibrary['disability'] = {
               'Missing the claim filing deadline \u2014 plans often deny claims filed even days late.',
               'Assuming LTD approval guarantees SSDI approval \u2014 they use different standards.',
               'Accepting an LTD denial without appealing.'
-            ]
+            ],
+            script: {
+              intro: 'When calling your HR department about disability leave and benefits:',
+              lines: [
+                '"Hi, this is [your name] in [department]. I need to discuss a medical situation. My doctor has advised that I\'m unable to work starting [date]. I need to understand my options for FMLA leave and how to file a short-term disability claim."',
+                '"Can you send me the forms for both FMLA and short-term disability? What are the deadlines for filing each? I also want to understand what happens to my health insurance while I\'m on leave."',
+                '"If my condition extends beyond the short-term disability period, what\'s the process for transitioning to long-term disability? And who is the insurance carrier I need to contact?"'
+              ],
+              note: 'Call HR as soon as you know you\'ll be out. Even if you\'re not sure how long, starting the process protects your rights. Ask for everything in writing and keep a log of every HR conversation.'
+            }
           }
         ]},
         { name: 'Insurance & Healthcare', tasks: [
@@ -2772,7 +2897,15 @@ guideLibrary['disability'] = {
               'Relying only on USPS forwarding for important mail.',
               'Scheduling internet for move-in day with a 1\u20132 week backlog.',
               'Forgetting to cancel utilities at your old address.'
-            ]
+            ],
+            script: {
+              intro: 'When calling to set up or transfer utilities at your new address:',
+              lines: [
+                '"Hi, I\'m moving to [new address] and I need to start [electric/gas/water] service. My move-in date is [date]. Can you set up a new account and schedule the service to begin that day?"',
+                '"I also need to cancel service at my current address, [old address], effective [date]. Can you do both on this call? And is there a deposit required for the new account?"'
+              ],
+              note: 'Call 2\u20134 weeks before moving. Ask about deposits (often waived if you transfer an existing account). Get confirmation numbers for both the start and stop of service.'
+            }
           }
         ]},
         { name: 'Healthcare & Insurance', tasks: [
@@ -3001,6 +3134,19 @@ guideLibrary['disability'] = {
               html += '<ol class="guide-steps">';
               task.steps.forEach(function(s) { html += '<li>' + s + '</li>'; });
               html += '</ol>';
+            }
+            if (task.script) {
+              html += '<div class="guide-script">';
+              html += '  <div class="guide-script-label">What to say</div>';
+              if (task.script.intro) html += '<div class="guide-script-intro">' + task.script.intro + '</div>';
+              if (task.script.lines) {
+                task.script.lines.forEach(function(line) {
+                  html += '<div class="guide-script-text">' + line + '</div>';
+                });
+              }
+              if (task.script.note) html += '<div class="guide-script-note">' + task.script.note + '</div>';
+              html += '  <button class="guide-script-copy" onclick="event.stopPropagation();copyScript(this)">Copy to clipboard</button>';
+              html += '</div>';
             }
             if (task.terms && task.terms.length > 0) {
               html += '<div class="guide-section-label">Key Terms</div>';
@@ -5235,6 +5381,109 @@ guideLibrary['disability'] = {
       slides[onboardSlide].classList.add('active');
       dots[onboardSlide].classList.add('active');
       updateOnboardNav();
+    }
+  </script>
+
+  <!-- Feedback widget -->
+  <button class="feedback-btn" onclick="openFeedback()">💬 Feedback</button>
+  <div class="feedback-overlay" id="feedbackOverlay" onclick="if(event.target===this)closeFeedback()">
+    <div class="feedback-card" style="position:relative">
+      <button class="feedback-close" onclick="closeFeedback()">&times;</button>
+      <div id="feedbackForm">
+        <div class="feedback-title">Share your feedback</div>
+        <div class="feedback-sub">Help us make Lumeway better. What's on your mind?</div>
+        <div style="font-size:12px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">What's this about?</div>
+        <div class="feedback-area-btns" id="feedbackAreas">
+          <button class="feedback-area-btn" data-area="dashboard" onclick="selectFeedbackArea(this)">Dashboard</button>
+          <button class="feedback-area-btn" data-area="chat" onclick="selectFeedbackArea(this)">Chat</button>
+          <button class="feedback-area-btn" data-area="guides" onclick="selectFeedbackArea(this)">Guides</button>
+          <button class="feedback-area-btn" data-area="templates" onclick="selectFeedbackArea(this)">Templates</button>
+          <button class="feedback-area-btn" data-area="site" onclick="selectFeedbackArea(this)">Site</button>
+          <button class="feedback-area-btn" data-area="other" onclick="selectFeedbackArea(this)">Other</button>
+        </div>
+        <div style="font-size:12px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">How's your experience?</div>
+        <div class="feedback-stars" id="feedbackStars">
+          <span class="feedback-star" data-rating="1" onclick="setFeedbackRating(1)">★</span>
+          <span class="feedback-star" data-rating="2" onclick="setFeedbackRating(2)">★</span>
+          <span class="feedback-star" data-rating="3" onclick="setFeedbackRating(3)">★</span>
+          <span class="feedback-star" data-rating="4" onclick="setFeedbackRating(4)">★</span>
+          <span class="feedback-star" data-rating="5" onclick="setFeedbackRating(5)">★</span>
+        </div>
+        <textarea class="feedback-textarea" id="feedbackMessage" placeholder="What's working? What's confusing? What would you change?"></textarea>
+        <input class="feedback-email" id="feedbackEmail" type="email" placeholder="Email (optional — if you'd like us to follow up)">
+        <button class="feedback-submit" onclick="submitFeedback()">Send feedback</button>
+      </div>
+      <div id="feedbackSuccess" style="display:none">
+        <div class="feedback-success">
+          <div class="feedback-success-icon">🙏</div>
+          <div class="feedback-success-msg">Thank you for your feedback</div>
+          <div class="feedback-success-sub">Every piece of feedback helps us make Lumeway better for people going through difficult transitions.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    var feedbackArea = '';
+    var feedbackRating = 0;
+
+    function openFeedback() {
+      document.getElementById('feedbackOverlay').classList.add('open');
+      document.getElementById('feedbackForm').style.display = 'block';
+      document.getElementById('feedbackSuccess').style.display = 'none';
+      feedbackArea = ''; feedbackRating = 0;
+      document.querySelectorAll('.feedback-area-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.feedback-star').forEach(function(s) { s.classList.remove('active'); });
+      document.getElementById('feedbackMessage').value = '';
+      document.getElementById('feedbackEmail').value = '';
+    }
+    function closeFeedback() {
+      document.getElementById('feedbackOverlay').classList.remove('open');
+    }
+    function selectFeedbackArea(btn) {
+      document.querySelectorAll('.feedback-area-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      feedbackArea = btn.getAttribute('data-area');
+    }
+    function setFeedbackRating(r) {
+      feedbackRating = r;
+      document.querySelectorAll('.feedback-star').forEach(function(s) {
+        s.classList.toggle('active', parseInt(s.getAttribute('data-rating')) <= r);
+      });
+    }
+    function submitFeedback() {
+      var msg = document.getElementById('feedbackMessage').value.trim();
+      if (!feedbackArea) { alert('Please select what this is about.'); return; }
+      if (!msg) { alert('Please write your feedback.'); return; }
+      fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          area: feedbackArea,
+          rating: feedbackRating || null,
+          message: msg,
+          email: document.getElementById('feedbackEmail').value.trim(),
+          page_url: window.location.href
+        })
+      }).then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          document.getElementById('feedbackForm').style.display = 'none';
+          document.getElementById('feedbackSuccess').style.display = 'block';
+          setTimeout(closeFeedback, 3000);
+        }
+      });
+    }
+
+    // Copy script to clipboard
+    function copyScript(btn) {
+      var scriptDiv = btn.closest('.guide-script');
+      var lines = scriptDiv.querySelectorAll('.guide-script-text');
+      var text = '';
+      lines.forEach(function(l) { text += l.textContent + '\n\n'; });
+      navigator.clipboard.writeText(text.trim()).then(function() {
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = 'Copy to clipboard'; }, 2000);
+      });
     }
   </script>
 </body>
