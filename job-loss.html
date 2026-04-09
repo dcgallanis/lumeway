@@ -130,6 +130,31 @@
     .cta-title em { font-style: italic; color: var(--accent-light); }
     .cta-subtitle { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 36px; }
     .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .nav-link { font-size: 14px; color: var(--muted); text-decoration: none; padding: 6px 4px; transition: color 0.15s; }
+    .nav-link:hover { color: var(--navy); }
+    /* Feedback button in nav */
+    .btn-feedback { padding: 8px 16px; border: 1px solid var(--gold); border-radius: 8px; background: transparent; color: var(--gold); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .btn-feedback:hover { background: var(--gold); color: var(--cream); }
+    /* Feedback modal */
+    .fb-overlay{display:none;position:fixed;inset:0;background:rgba(44,62,80,0.4);z-index:300}
+    .fb-overlay.open{display:flex;align-items:center;justify-content:center;padding:24px}
+    .fb-card{background:var(--warm-white);border-radius:20px;max-width:480px;width:100%;padding:32px;box-shadow:0 12px 48px rgba(44,62,80,0.15);position:relative}
+    .fb-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer}
+    .fb-title{font-family:'Libre Baskerville',serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:6px}
+    .fb-sub{font-size:14px;font-weight:300;color:var(--muted);line-height:1.5;margin-bottom:20px}
+    .fb-areas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+    .fb-area{padding:8px 16px;border:1px solid var(--border);border-radius:100px;background:var(--cream);color:var(--muted);font-family:inherit;font-size:13px;cursor:pointer;transition:all 0.15s}
+    .fb-area:hover{border-color:var(--gold);color:var(--text)}
+    .fb-area.active{background:var(--navy);color:var(--cream);border-color:var(--navy)}
+    .fb-stars{display:flex;gap:6px;margin-bottom:16px}
+    .fb-star{font-size:24px;cursor:pointer;color:var(--border);transition:color 0.1s}
+    .fb-star.active{color:var(--gold)}
+    .fb-star:hover{color:var(--gold)}
+    .fb-ta{width:100%;min-height:100px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:300;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--cream);color:var(--text);resize:vertical;outline:none;line-height:1.6;margin-bottom:12px}
+    .fb-ta:focus{border-color:var(--accent)}
+    .fb-email{width:100%;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--cream);color:var(--text);outline:none;margin-bottom:16px}
+    .fb-submit{width:100%;padding:12px;background:var(--accent);color:var(--cream);border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s}
+    .fb-submit:hover{background:var(--accent-light)}
     footer { padding: 40px 48px 28px; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
     .footer-logo { height: 120px; object-fit: contain; margin-bottom: 4px; }
     .footer-note { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; } .footer-social { display: flex; gap: 16px; align-items: center; } .footer-social a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; color: var(--muted); text-decoration: none; transition: all 0.15s ease; } .footer-social a:hover { border-color: var(--gold); color: var(--navy); background: var(--surface2, #EEE8DE); } .footer-social svg { width: 16px; height: 16px; fill: currentColor; }
@@ -204,25 +229,13 @@
         <a href="/retirement">Retirement</a>
       </div>
     </div>
-    <div class="nav-dropdown">
-      <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">▾</span></button>
-      <div class="nav-drop-menu">
-        <a href="/features">Features</a>
-        <a href="/templates">Shop</a>
-          <a href="/faq">FAQ</a>
-        <a href="/blog">Blog</a>
-        <div class="menu-div"></div>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
-        <a href="/privacy">Privacy</a>
-        <a href="/terms">Terms</a>
-      </div>
-    </div>
+    <a href="/features" class="nav-link">Features</a>
   </div>
   <div class="nav-right">
-    <a href="/chat" target="_blank" target="_blank" class="btn-ghost">Try it free</a>
+    <a href="/chat" target="_blank" class="btn-ghost">Try it free</a>
     <a href="/templates" class="btn-primary">Shop</a>
-      <a href="/login" class="btn-ghost" id="navAccount">Sign in</a>
+    <a href="/login" class="btn-ghost" id="navAccount">Sign in</a>
+    <button class="btn-feedback" onclick="openFeedback()">Feedback</button>
   </div>
 </nav>
 
@@ -231,7 +244,7 @@
   <h1 class="hero-title reveal">Job Loss &amp; Income Crisis Guide</h1>
   <p class="hero-subtitle reveal">Losing a job is disorienting — but there are steps you can take right now to protect your income, your benefits, and your future. Lumeway helps you know exactly what to do first.</p>
   <div class="hero-actions reveal">
-    <a href="/chat" target="_blank" target="_blank" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
+    <a href="/chat" target="_blank" class="btn-large btn-large-primary">Talk to Lumeway free →</a>
     <a href="/templates" class="btn-large btn-large-secondary">Browse worksheets</a>
   </div>
 </div>
@@ -295,11 +308,11 @@
     <h3 id="stateResultHeadline" class="state-callout-headline"></h3>
     <ul id="stateResultBullets" class="state-callout-bullets"></ul>
     <p class="state-disclaimer">Rules and requirements change — always verify with your state's official agencies.</p>
-    <a href="/chat" target="_blank" target="_blank" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Get general process guidance →</a>
+    <a href="/chat" target="_blank" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Get general process guidance →</a>
   </div>
   <div id="stateFallback" class="state-fallback-card" hidden>
     <p>We're adding more states soon. In the meantime, Lumeway can walk you through state-specific guidance in the chat.</p>
-    <a href="/chat" target="_blank" target="_blank" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Talk to Lumeway free →</a>
+    <a href="/chat" target="_blank" class="btn-large btn-large-primary" style="font-size:14px;padding:11px 24px;">Talk to Lumeway free →</a>
   </div>
 </div>
 
@@ -494,7 +507,7 @@
   <div class="faq-list">
     <div class="faq-item">
       <button class="faq-question" aria-expanded="false" aria-controls="jl-a1" id="jl-q1"><span>Should I sign my severance agreement right away?</span><span class="faq-icon" aria-hidden="true">+</span></button>
-      <div class="faq-answer" id="jl-a1" role="region" aria-labelledby="jl-q1"><div class="faq-answer-inner">No. You typically have 21 days to review it (45 days if you're over 40, under federal OWBPA rules). Use that time to understand the terms, and consider having an employment attorney review it — especially if it includes a non-compete or liability release. <a href="/chat" target="_blank" target="_blank">Lumeway can walk you through what to look for →</a></div></div>
+      <div class="faq-answer" id="jl-a1" role="region" aria-labelledby="jl-q1"><div class="faq-answer-inner">No. You typically have 21 days to review it (45 days if you're over 40, under federal OWBPA rules). Use that time to understand the terms, and consider having an employment attorney review it — especially if it includes a non-compete or liability release. <a href="/chat" target="_blank">Lumeway can walk you through what to look for →</a></div></div>
     </div>
     <div class="faq-item">
       <button class="faq-question" aria-expanded="false" aria-controls="jl-a2" id="jl-q2"><span>How do I file for unemployment?</span><span class="faq-icon" aria-hidden="true">+</span></button>
@@ -652,5 +665,48 @@
   })();
 </script>
 <script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>
+<!-- Feedback modal -->
+<div class="fb-overlay" id="fbOverlay" onclick="if(event.target===this)closeFeedback()">
+  <div class="fb-card">
+    <button class="fb-close" onclick="closeFeedback()">&times;</button>
+    <div id="fbForm">
+      <div class="fb-title">Share your feedback</div>
+      <div class="fb-sub">Help us make Lumeway better. What's on your mind?</div>
+      <div style="font-size:12px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">What's this about?</div>
+      <div class="fb-areas">
+        <button class="fb-area" onclick="selFbArea(this)" data-a="site">Site</button>
+        <button class="fb-area" onclick="selFbArea(this)" data-a="chat">Chat</button>
+        <button class="fb-area" onclick="selFbArea(this)" data-a="templates">Templates</button>
+        <button class="fb-area" onclick="selFbArea(this)" data-a="dashboard">Dashboard</button>
+        <button class="fb-area" onclick="selFbArea(this)" data-a="guides">Guides</button>
+        <button class="fb-area" onclick="selFbArea(this)" data-a="other">Other</button>
+      </div>
+      <div style="font-size:12px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">How's your experience?</div>
+      <div class="fb-stars">
+        <span class="fb-star" onclick="setFbR(1)" data-r="1">&#9733;</span>
+        <span class="fb-star" onclick="setFbR(2)" data-r="2">&#9733;</span>
+        <span class="fb-star" onclick="setFbR(3)" data-r="3">&#9733;</span>
+        <span class="fb-star" onclick="setFbR(4)" data-r="4">&#9733;</span>
+        <span class="fb-star" onclick="setFbR(5)" data-r="5">&#9733;</span>
+      </div>
+      <textarea class="fb-ta" id="fbMsg" placeholder="What's working? What's confusing? What would you change?"></textarea>
+      <input class="fb-email" id="fbEmail" type="email" placeholder="Email (optional — if you'd like us to follow up)">
+      <button class="fb-submit" onclick="sendFb()">Send feedback</button>
+    </div>
+    <div id="fbSuccess" style="display:none;text-align:center;padding:24px 0">
+      <div style="font-size:48px;margin-bottom:12px">&#128591;</div>
+      <div style="font-size:16px;font-weight:400;color:var(--navy);margin-bottom:6px">Thank you for your feedback</div>
+      <div style="font-size:13px;font-weight:300;color:var(--muted)">Every piece helps us make Lumeway better.</div>
+    </div>
+  </div>
+</div>
+<script>
+var fbArea='',fbRating=0;
+function openFeedback(){document.getElementById('fbOverlay').classList.add('open');document.getElementById('fbForm').style.display='block';document.getElementById('fbSuccess').style.display='none';fbArea='';fbRating=0;document.querySelectorAll('.fb-area').forEach(function(b){b.classList.remove('active')});document.querySelectorAll('.fb-star').forEach(function(s){s.classList.remove('active')});document.getElementById('fbMsg').value='';document.getElementById('fbEmail').value=''}
+function closeFeedback(){document.getElementById('fbOverlay').classList.remove('open')}
+function selFbArea(b){document.querySelectorAll('.fb-area').forEach(function(x){x.classList.remove('active')});b.classList.add('active');fbArea=b.dataset.a}
+function setFbR(r){fbRating=r;document.querySelectorAll('.fb-star').forEach(function(s){s.classList.toggle('active',parseInt(s.dataset.r)<=r)})}
+function sendFb(){var m=document.getElementById('fbMsg').value.trim();if(!fbArea){alert('Please select what this is about.');return}if(!m){alert('Please write your feedback.');return}fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({area:fbArea,rating:fbRating||null,message:m,email:document.getElementById('fbEmail').value.trim(),page_url:window.location.href})}).then(function(r){return r.json()}).then(function(d){if(d.ok){document.getElementById('fbForm').style.display='none';document.getElementById('fbSuccess').style.display='block';setTimeout(closeFeedback,3000)}})}
+</script>
 </body>
 </html>
