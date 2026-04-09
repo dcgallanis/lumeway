@@ -224,6 +224,46 @@
     .doc-name { font-size: 14px; font-weight: 400; }
     .doc-desc { font-size: 12px; font-weight: 300; color: var(--muted); margin-top: 2px; }
 
+    /* Document Workspace */
+    .ws-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .ws-stat { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+    .ws-stat-num { font-family: 'Libre Baskerville', serif; font-size: 28px; color: var(--navy); line-height: 1.2; }
+    .ws-stat-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+    .ws-search { width: 100%; padding: 10px 14px 10px 36px; border: 1px solid var(--border); border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; background: var(--warm-white); color: var(--text); margin-bottom: 16px; }
+    .ws-search:focus { outline: none; border-color: var(--gold); }
+    .ws-search-wrap { position: relative; }
+    .ws-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .ws-cat-section { margin-bottom: 12px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--warm-white); }
+    .ws-cat-header { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; user-select: none; transition: background 0.15s; }
+    .ws-cat-header:hover { background: var(--cream); }
+    .ws-cat-icon { font-size: 18px; width: 28px; text-align: center; }
+    .ws-cat-name { font-size: 13px; font-weight: 600; color: var(--navy); flex: 1; }
+    .ws-cat-count { font-size: 11px; color: var(--muted); background: var(--cream); padding: 2px 8px; border-radius: 10px; }
+    .ws-cat-chevron { color: var(--muted); transition: transform 0.2s; font-size: 12px; }
+    .ws-cat-section.open .ws-cat-chevron { transform: rotate(90deg); }
+    .ws-cat-files { display: none; padding: 0 16px 12px; }
+    .ws-cat-section.open .ws-cat-files { display: block; }
+    .ws-file { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; margin-bottom: 4px; transition: background 0.1s; }
+    .ws-file:hover { background: var(--cream); }
+    .ws-file-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+    .ws-file-info { flex: 1; min-width: 0; }
+    .ws-file-name { font-size: 13px; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ws-file-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .ws-file-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
+    .ws-file:hover .ws-file-actions { opacity: 1; }
+    .ws-file-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 11px; color: var(--navy); cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .ws-file-btn:hover { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    .ws-file-btn.del { color: var(--muted); }
+    .ws-file-btn.del:hover { background: var(--accent); color: white; border-color: var(--accent); }
+    .ws-drop { border: 2px dashed var(--border); border-radius: 14px; padding: 28px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--cream); margin-bottom: 16px; }
+    .ws-drop:hover, .ws-drop.dragover { border-color: var(--gold); background: #FAF5EE; }
+    .ws-drop-icon { font-size: 24px; margin-bottom: 6px; color: var(--muted); }
+    .ws-drop-text { font-size: 13px; color: var(--muted); }
+    .ws-drop-hint { font-size: 11px; color: var(--muted); margin-top: 4px; opacity: 0.7; }
+    .ws-upload-row { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .doc-gather-upload { font-size: 11px; color: var(--navy); cursor: pointer; opacity: 0; transition: opacity 0.15s; margin-left: auto; }
+    .doc-item:hover .doc-gather-upload { opacity: 1; }
+
     /* Notes */
     .note-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 10px; }
     .note-content { font-size: 14px; font-weight: 300; line-height: 1.6; white-space: pre-wrap; }
@@ -3329,28 +3369,52 @@ guideLibrary['disability'] = {
       fetch('/api/files').then(function(r) { return r.json(); }).then(function(data) {
         userFiles = data.files || [];
         renderUserFiles();
+        // Update file count stat if it exists
+        var statEls = document.querySelectorAll('.ws-stat-num');
+        if (statEls.length > 0) statEls[0].textContent = userFiles.length;
       });
     }
+
+    var wsFilterText = '';
 
     function renderUserFiles() {
       var container = document.getElementById('myFilesContainer');
       if (!container) return;
       if (userFiles.length === 0) {
-        container.innerHTML = '<p class="card-empty">No files uploaded yet. This is a safe place to store copies of important documents — insurance cards, legal paperwork, letters you receive — so everything is in one place when you need it.</p>';
+        container.innerHTML = '<p class="card-empty" style="margin-bottom:8px">No files uploaded yet. This is a safe place to store copies of important documents — insurance cards, legal paperwork, letters you receive — so everything is in one place when you need it.</p>';
         return;
       }
+      var catIcons = {legal:'\uD83D\uDCDC', financial:'\uD83D\uDCB3', insurance:'\uD83D\uDEE1\uFE0F', medical:'\u2695\uFE0F', personal:'\uD83D\uDC64', other:'\uD83D\uDCC1'};
+      var catLabels = {legal:'Legal', financial:'Financial', insurance:'Insurance', medical:'Medical', personal:'Personal', other:'Other'};
+      var catOrder = ['legal','financial','insurance','medical','personal','other'];
       var groups = {};
-      userFiles.forEach(function(f) {
+      var filtered = userFiles.filter(function(f) {
+        if (!wsFilterText) return true;
+        return f.original_name.toLowerCase().indexOf(wsFilterText) >= 0 || (f.category || '').toLowerCase().indexOf(wsFilterText) >= 0;
+      });
+      filtered.forEach(function(f) {
         var cat = f.category || 'other';
         if (!groups[cat]) groups[cat] = [];
         groups[cat].push(f);
       });
-      var catLabels = {legal:'Legal', financial:'Financial', insurance:'Insurance', medical:'Medical', personal:'Personal', other:'Other'};
+      if (filtered.length === 0 && wsFilterText) {
+        container.innerHTML = '<p class="card-empty">No files match your search.</p>';
+        return;
+      }
       var html = '';
-      Object.keys(groups).sort().forEach(function(cat) {
-        html += '<div style="margin-bottom:16px">';
-        html += '<div style="font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">' + (catLabels[cat] || cat) + '</div>';
-        groups[cat].forEach(function(f) {
+      catOrder.forEach(function(cat) {
+        if (!groups[cat]) return;
+        var files = groups[cat];
+        var isOpen = files.length <= 6 || wsFilterText;
+        html += '<div class="ws-cat-section' + (isOpen ? ' open' : '') + '">';
+        html += '  <div class="ws-cat-header" onclick="this.parentElement.classList.toggle(\'open\')">';
+        html += '    <span class="ws-cat-icon">' + (catIcons[cat] || '\uD83D\uDCC1') + '</span>';
+        html += '    <span class="ws-cat-name">' + (catLabels[cat] || cat) + '</span>';
+        html += '    <span class="ws-cat-count">' + files.length + ' file' + (files.length !== 1 ? 's' : '') + '</span>';
+        html += '    <span class="ws-cat-chevron">\u25B6</span>';
+        html += '  </div>';
+        html += '  <div class="ws-cat-files">';
+        files.forEach(function(f) {
           var icon = '\uD83D\uDCCE';
           var ext = f.original_name.split('.').pop().toLowerCase();
           if (ext === 'pdf') icon = '\uD83D\uDCC4';
@@ -3360,19 +3424,41 @@ guideLibrary['disability'] = {
           var size = f.file_size < 1024 ? f.file_size + ' B' :
                      f.file_size < 1048576 ? (f.file_size / 1024).toFixed(1) + ' KB' :
                      (f.file_size / 1048576).toFixed(1) + ' MB';
-          html += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">';
-          html += '  <span style="font-size:20px">' + icon + '</span>';
-          html += '  <div style="flex:1;min-width:0">';
-          html += '    <div style="font-size:14px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + f.original_name + '</div>';
-          html += '    <div style="font-size:11px;color:var(--muted)">' + size + ' \u00B7 ' + formatDate(f.uploaded_at) + '</div>';
+          html += '<div class="ws-file">';
+          html += '  <span class="ws-file-icon">' + icon + '</span>';
+          html += '  <div class="ws-file-info">';
+          html += '    <div class="ws-file-name">' + f.original_name + '</div>';
+          html += '    <div class="ws-file-meta">' + size + ' \u00B7 ' + formatDate(f.uploaded_at) + '</div>';
           html += '  </div>';
-          html += '  <a href="/api/files/' + f.id + '/download" style="font-size:12px;color:var(--navy);text-decoration:none;padding:4px 10px;border:1px solid var(--border);border-radius:6px">Download</a>';
-          html += '  <button onclick="deleteFile(' + f.id + ')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:4px" title="Delete">\u00D7</button>';
+          html += '  <div class="ws-file-actions">';
+          html += '    <a href="/api/files/' + f.id + '/download" class="ws-file-btn">Download</a>';
+          html += '    <button onclick="deleteFile(' + f.id + ')" class="ws-file-btn del" title="Delete">\u00D7</button>';
+          html += '  </div>';
           html += '</div>';
         });
+        html += '  </div>';
         html += '</div>';
       });
       container.innerHTML = html;
+    }
+
+    function filterFiles(val) {
+      wsFilterText = val.toLowerCase().trim();
+      renderUserFiles();
+    }
+
+    function wsFileSelected(input) {
+      if (input.files && input.files[0]) {
+        document.getElementById('uploadFileName').textContent = input.files[0].name;
+        document.getElementById('uploadRow').style.display = 'flex';
+        document.getElementById('dropZone').style.display = 'none';
+      }
+    }
+
+    function cancelUpload() {
+      document.getElementById('fileUploadInput').value = '';
+      document.getElementById('uploadRow').style.display = 'none';
+      document.getElementById('dropZone').style.display = '';
     }
 
     function uploadFile() {
@@ -3383,16 +3469,17 @@ guideLibrary['disability'] = {
       formData.append('file', input.files[0]);
       formData.append('category', category);
       var btn = document.getElementById('uploadBtn');
-      btn.textContent = 'Uploading...';
+      btn.textContent = 'Uploading\u2026';
       btn.disabled = true;
       fetch('/api/files/upload', { method: 'POST', body: formData })
         .then(function(r) { return r.json(); })
         .then(function(data) {
           btn.textContent = 'Upload'; btn.disabled = false;
-          input.value = '';
-          document.getElementById('dropZoneText').textContent = 'Drop files here or click to browse';
-          if (data.ok) { loadUserFiles(); }
-          else { alert(data.error || 'Upload failed'); }
+          if (data.ok) {
+            cancelUpload();
+            loadUserFiles();
+            if (typeof trackEvent === 'function') trackEvent('file_uploaded', { category: category });
+          } else { alert(data.error || 'Upload failed'); }
         }).catch(function() { btn.textContent = 'Upload'; btn.disabled = false; alert('Upload failed'); });
     }
 
@@ -3401,6 +3488,23 @@ guideLibrary['disability'] = {
       fetch('/api/files/' + id, { method: 'DELETE' }).then(function(r) { return r.json(); }).then(function(data) {
         if (data.ok) loadUserFiles();
       });
+    }
+
+    function triggerUploadFor(docName) {
+      document.getElementById('fileUploadInput').click();
+      document.getElementById('fileUploadInput').onchange = function() {
+        if (this.files && this.files[0]) {
+          wsFileSelected(this);
+          // Auto-categorize based on doc name
+          var name = docName.toLowerCase();
+          var cat = 'other';
+          if (name.indexOf('insurance') >= 0 || name.indexOf('policy') >= 0) cat = 'insurance';
+          else if (name.indexOf('tax') >= 0 || name.indexOf('bank') >= 0 || name.indexOf('financial') >= 0 || name.indexOf('account') >= 0) cat = 'financial';
+          else if (name.indexOf('birth') >= 0 || name.indexOf('death') >= 0 || name.indexOf('marriage') >= 0 || name.indexOf('will') >= 0 || name.indexOf('deed') >= 0 || name.indexOf('court') >= 0 || name.indexOf('legal') >= 0) cat = 'legal';
+          else if (name.indexOf('medical') >= 0 || name.indexOf('health') >= 0 || name.indexOf('prescription') >= 0 || name.indexOf('doctor') >= 0) cat = 'medical';
+          document.getElementById('fileCategory').value = cat;
+        }
+      };
     }
 
     // Map dashboard transition keys to state-rules.json category keys
@@ -4022,49 +4126,62 @@ guideLibrary['disability'] = {
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-documents">';
 
+      // Summary stats
+      var gatheredCount = documents.filter(function(d) { return d.is_gathered; }).length;
+      var totalDocs = documents.length;
+      var fileCount = userFiles.length;
+      html += '<div class="ws-summary">';
+      html += '  <div class="ws-stat"><div class="ws-stat-num">' + fileCount + '</div><div class="ws-stat-label">Files Uploaded</div></div>';
+      html += '  <div class="ws-stat"><div class="ws-stat-num">' + gatheredCount + '/' + totalDocs + '</div><div class="ws-stat-label">Docs Gathered</div></div>';
+      html += '  <div class="ws-stat"><div class="ws-stat-num">' + (totalDocs - gatheredCount) + '</div><div class="ws-stat-label">Still Needed</div></div>';
+      html += '</div>';
+
       // Security trust banner
-      html += '<div style="display:flex;align-items:center;gap:10px;background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:14px 20px;margin-bottom:16px">';
-      html += '  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
-      html += '  <p style="font-size:13px;color:var(--muted);margin:0"><strong style="color:var(--text)">Your files are secure.</strong> All documents are encrypted at rest and in transit. Only you can access your files. <a href="/privacy" style="color:var(--navy)">Learn more</a></p>';
+      html += '<div style="display:flex;align-items:center;gap:10px;background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:20px">';
+      html += '  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+      html += '  <p style="font-size:12px;color:var(--muted);margin:0">Your files are encrypted and only accessible by you. <a href="/privacy" style="color:var(--navy)">Privacy details</a></p>';
       html += '</div>';
 
-      // My Files upload section
-      html += '<div class="dash-card" style="margin-bottom:20px">';
-      html += '  <div class="card-label">My Files</div>';
-      html += '  <div style="display:flex;gap:12px;align-items:flex-end;margin-bottom:16px;flex-wrap:wrap">';
-      html += '    <div id="dropZone" onclick="document.getElementById(\'fileUploadInput\').click()" style="flex:1;min-width:200px;border:2px dashed var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all 0.15s;background:var(--cream)">';
-      html += '      <input type="file" id="fileUploadInput" style="display:none" onchange="document.getElementById(\'dropZoneText\').textContent=this.files[0]?this.files[0].name:\'Drop files here or click to browse\'">';
-      html += '      <p id="dropZoneText" style="font-size:13px;color:var(--muted);margin:0">Drop files here or click to browse</p>';
-      html += '      <p style="font-size:11px;color:var(--muted);margin-top:4px">PDF, Word, Excel, images · 10MB max</p>';
-      html += '    </div>';
-      html += '    <div style="display:flex;gap:8px;align-items:center">';
-      html += '      <select id="fileCategory" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;background:var(--warm-white);color:var(--text)">';
-      html += '        <option value="legal">Legal</option>';
-      html += '        <option value="financial">Financial</option>';
-      html += '        <option value="insurance">Insurance</option>';
-      html += '        <option value="medical">Medical</option>';
-      html += '        <option value="personal">Personal</option>';
-      html += '        <option value="other" selected>Other</option>';
-      html += '      </select>';
-      html += '      <button id="uploadBtn" onclick="uploadFile()" class="btn-primary" style="padding:8px 20px;white-space:nowrap">Upload</button>';
-      html += '    </div>';
-      html += '  </div>';
-      html += '  <div id="myFilesContainer"></div>';
+      // Upload zone
+      html += '<div class="ws-drop" id="dropZone" onclick="document.getElementById(\'fileUploadInput\').click()">';
+      html += '  <input type="file" id="fileUploadInput" style="display:none" onchange="wsFileSelected(this)">';
+      html += '  <div class="ws-drop-icon">\uD83D\uDCC1</div>';
+      html += '  <div class="ws-drop-text" id="dropZoneText">Drop files here or click to browse</div>';
+      html += '  <div class="ws-drop-hint">PDF, Word, Excel, images \u00B7 10MB max</div>';
+      html += '</div>';
+      html += '<div class="ws-upload-row" id="uploadRow" style="display:none">';
+      html += '  <span id="uploadFileName" style="font-size:13px;color:var(--text);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>';
+      html += '  <select id="fileCategory" style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;background:var(--warm-white);color:var(--text)">';
+      html += '    <option value="legal">Legal</option>';
+      html += '    <option value="financial">Financial</option>';
+      html += '    <option value="insurance">Insurance</option>';
+      html += '    <option value="medical">Medical</option>';
+      html += '    <option value="personal">Personal</option>';
+      html += '    <option value="other" selected>Other</option>';
+      html += '  </select>';
+      html += '  <button id="uploadBtn" onclick="uploadFile()" class="btn-primary" style="padding:7px 18px;font-size:13px;white-space:nowrap">Upload</button>';
+      html += '  <button onclick="cancelUpload()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:4px">\u00D7</button>';
       html += '</div>';
 
-      html += '<div class="dash-card" style="margin-bottom:20px">';
-      html += '  <div class="card-label">Add a Document</div>';
-      html += '  <div class="date-add">';
-      html += '    <input class="goal-input" id="addDocName" placeholder="Document name (e.g. Birth certificate)" style="flex:2">';
-      html += '    <input class="goal-input" id="addDocDesc" placeholder="Description (optional)" style="flex:2">';
-      html += '    <button class="init-btn" onclick="addDocument()">Add</button>';
-      html += '  </div>';
+      // Search bar
+      html += '<div class="ws-search-wrap">';
+      html += '  <svg class="ws-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>';
+      html += '  <input class="ws-search" id="wsSearch" placeholder="Search files\u2026" oninput="filterFiles(this.value)">';
       html += '</div>';
-      html += '<div class="dash-card">';
-      html += '  <div class="card-label">Documents & Info to Gather</div>';
+
+      // Files grouped by category
+      html += '<div id="myFilesContainer"></div>';
+
+      // Documents to Gather section
+      html += '<div class="dash-card" style="margin-top:20px">';
+      html += '  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">';
+      html += '    <div class="card-label" style="margin-bottom:0">Documents to Gather</div>';
+      if (totalDocs > 0) {
+        var pct = Math.round((gatheredCount / totalDocs) * 100);
+        html += '    <span style="font-size:11px;color:var(--muted)">' + pct + '% complete</span>';
+      }
+      html += '  </div>';
       if (documents.length > 0) {
-        var gatheredCount = documents.filter(function(d) { return d.is_gathered; }).length;
-        html += '<p style="font-size:13px;color:var(--muted);margin-bottom:14px">' + gatheredCount + ' of ' + documents.length + ' gathered</p>';
         documents.forEach(function(d) {
           var cls = d.is_gathered ? ' gathered' : '';
           html += '<div class="doc-item' + cls + '">';
@@ -4073,6 +4190,9 @@ guideLibrary['disability'] = {
           html += '    <div class="doc-name">' + d.document_name + '</div>';
           if (d.description) html += '    <div class="doc-desc">' + d.description + '</div>';
           html += '  </div>';
+          if (!d.is_gathered) {
+            html += '  <span class="doc-gather-upload" onclick="event.stopPropagation();triggerUploadFor(\'' + d.document_name.replace(/'/g, "\\'") + '\')">Upload</span>';
+          }
           html += '  <div class="item-actions">';
           html += '    <button class="item-edit" onclick="event.stopPropagation();editDocument(' + d.id + ',\'' + d.document_name.replace(/'/g, "\\'") + '\',\'' + (d.description || '').replace(/'/g, "\\'") + '\')" title="Edit">Edit</button>';
           html += '    <button class="item-del" onclick="event.stopPropagation();deleteDocument(' + d.id + ')" title="Delete">&times;</button>';
@@ -4080,9 +4200,12 @@ guideLibrary['disability'] = {
           html += '</div>';
         });
       } else {
-        html += '<p class="card-empty">No documents to gather yet. As you work through your checklist, add documents here that you need to locate or request — birth certificates, insurance policies, court paperwork, anything you\'ll need along the way.</p>';
-        html += '<a href="/chat" target="_blank" class="quick-btn" style="margin-top:12px">\uD83D\uDCAC Talk to the Navigator</a>';
+        html += '<p class="card-empty">No documents to gather yet. As you work through your checklist, add items here for documents you need to locate or request.</p>';
       }
+      html += '  <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">';
+      html += '    <input class="goal-input" id="addDocName" placeholder="Add a document to track (e.g. Birth certificate)" style="flex:2;min-width:180px">';
+      html += '    <button class="init-btn" onclick="addDocument()" style="white-space:nowrap">Add</button>';
+      html += '  </div>';
       html += '</div>';
       html += '</div>'; // panel-documents
 
@@ -5343,12 +5466,11 @@ guideLibrary['disability'] = {
 
     function addDocument() {
       var name = document.getElementById('addDocName').value.trim();
-      var desc = document.getElementById('addDocDesc').value.trim();
       if (!name) return;
       fetch('/api/documents-needed', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ document_name: name, description: desc })
+        body: JSON.stringify({ document_name: name, description: '' })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) { if (data.ok) { currentTab = 'documents'; loadDashboard(); } });
@@ -5520,20 +5642,20 @@ guideLibrary['disability'] = {
     // Drag and drop for file upload
     document.addEventListener('dragover', function(e) {
       var dz = document.getElementById('dropZone');
-      if (dz) { e.preventDefault(); dz.style.borderColor = 'var(--accent)'; dz.style.background = 'var(--warm-white)'; }
+      if (dz && dz.style.display !== 'none') { e.preventDefault(); dz.classList.add('dragover'); }
     });
     document.addEventListener('dragleave', function(e) {
       var dz = document.getElementById('dropZone');
-      if (dz) { dz.style.borderColor = 'var(--border)'; dz.style.background = 'var(--cream)'; }
+      if (dz) { dz.classList.remove('dragover'); }
     });
     document.addEventListener('drop', function(e) {
       e.preventDefault();
       var dz = document.getElementById('dropZone');
-      if (dz) { dz.style.borderColor = 'var(--border)'; dz.style.background = 'var(--cream)'; }
+      if (dz) { dz.classList.remove('dragover'); }
       var input = document.getElementById('fileUploadInput');
       if (input && e.dataTransfer.files.length > 0) {
         input.files = e.dataTransfer.files;
-        document.getElementById('dropZoneText').textContent = e.dataTransfer.files[0].name;
+        wsFileSelected(input);
       }
     });
   </script>
