@@ -643,6 +643,42 @@ def init_subscribers_db():
             conn4.close()
         except Exception:
             pass
+    # Email queue table (for post-purchase sequences)
+    try:
+        conn_eq = get_db()
+        if USE_POSTGRES:
+            db_execute(conn_eq, """CREATE TABLE IF NOT EXISTS email_queue (
+                id SERIAL PRIMARY KEY,
+                to_email TEXT NOT NULL,
+                subject TEXT NOT NULL,
+                html_body TEXT NOT NULL,
+                sequence_name TEXT,
+                sequence_step INTEGER,
+                send_after TEXT NOT NULL,
+                sent_at TEXT,
+                error TEXT,
+                created_at TEXT NOT NULL
+            )""")
+        else:
+            db_execute(conn_eq, """CREATE TABLE IF NOT EXISTS email_queue (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                to_email TEXT NOT NULL,
+                subject TEXT NOT NULL,
+                html_body TEXT NOT NULL,
+                sequence_name TEXT,
+                sequence_step INTEGER,
+                send_after TEXT NOT NULL,
+                sent_at TEXT,
+                error TEXT,
+                created_at TEXT NOT NULL
+            )""")
+        conn_eq.commit()
+        conn_eq.close()
+    except Exception:
+        try:
+            conn_eq.close()
+        except Exception:
+            pass
     conn.close()
 
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "re_17DAfkrF_3mB4pCdStfmYHiNQoeKrxaWe")
@@ -688,6 +724,164 @@ def send_purchase_email(to_email, product_id, product_name, download_token):
     except Exception as e:
         print(f"Failed to send email to {to_email}: {e}")
         return False
+
+def send_email_via_resend(to_email, subject, html_body):
+    """General-purpose email sender using Resend."""
+    if not RESEND_API_KEY:
+        print(f"RESEND_API_KEY not set, skipping email to {to_email}")
+        return False
+    try:
+        resp = http_requests.post("https://api.resend.com/emails", json={
+            "from": "Lumeway <hello@lumeway.co>",
+            "to": [to_email],
+            "subject": subject,
+            "html": html_body,
+        }, headers={
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        }, timeout=10)
+        if resp.status_code == 200:
+            print(f"Email sent to {to_email}: {subject}")
+            return True
+        else:
+            print(f"Resend error ({resp.status_code}): {resp.text}")
+            return False
+    except Exception as e:
+        print(f"Failed to send email to {to_email}: {e}")
+        return False
+
+
+def email_wrap(body_html):
+    """Wrap email body in the standard Lumeway email template."""
+    return f"""<!DOCTYPE html>
+<html><body style="font-family:system-ui,-apple-system,sans-serif;color:#1B2A38;max-width:560px;margin:0 auto;padding:32px 24px;">
+<div style="text-align:center;margin-bottom:32px;">
+  <span style="font-family:Georgia,serif;font-size:24px;color:#1B3A5C;font-weight:500;">Lumeway</span>
+</div>
+{body_html}
+<hr style="border:none;border-top:1px solid #E4DDD3;margin:32px 0;" />
+<p style="font-size:13px;color:#6E7D8A;">Warmly,<br>The Lumeway Team<br><a href="https://lumeway.co" style="color:#1B3A5C;">lumeway.co</a></p>
+<p style="font-size:11px;color:#999;margin-top:24px;">Lumeway provides organizational tools, not legal or financial advice. Always consult a qualified professional for decisions specific to your situation.</p>
+<p style="font-size:10px;color:#bbb;margin-top:16px;">If you no longer want to receive these emails, reply with "unsubscribe" and we will remove you.</p>
+</body></html>"""
+
+
+# ── Post-purchase email sequence templates ──
+def get_post_purchase_sequence(product_name, is_plan=False):
+    """Return list of (delay_days, subject, html_body) for post-purchase emails."""
+    dashboard_url = "https://lumeway.co/dashboard"
+    chat_url = "https://lumeway.co/chat"
+    pricing_url = "https://lumeway.co/pricing"
+
+    emails = []
+
+    # Day 1: Welcome + orientation
+    if is_plan:
+        day1_body = email_wrap(f"""
+<p style="font-size:16px;line-height:1.6;">Hi there,</p>
+<p style="font-size:16px;line-height:1.6;">Your <strong>{product_name}</strong> is set up and ready. Here is what you have access to now:</p>
+<ul style="font-size:15px;line-height:1.8;color:#1B2A38;">
+  <li>A phased checklist that breaks everything into manageable steps</li>
+  <li>Step-by-step guides with key terms, contacts, and common mistakes</li>
+  <li>A deadline calendar so nothing slips through</li>
+  <li>Document storage to keep everything in one place</li>
+</ul>
+<p style="font-size:16px;line-height:1.6;">You do not have to do everything today. Start with whatever feels most pressing, and the dashboard will keep track of the rest.</p>
+<div style="text-align:center;margin:28px 0;">
+  <a href="{dashboard_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Open your dashboard</a>
+</div>""")
+    else:
+        day1_body = email_wrap(f"""
+<p style="font-size:16px;line-height:1.6;">Hi there,</p>
+<p style="font-size:16px;line-height:1.6;">Your <strong>{product_name}</strong> templates are ready. If you have not downloaded them yet, you can find them in your dashboard under My Templates.</p>
+<p style="font-size:16px;line-height:1.6;">These worksheets are designed to help you get organized — budget trackers, inventories, letter templates, and comparison sheets. Fill them out at your own pace.</p>
+<div style="text-align:center;margin:28px 0;">
+  <a href="{dashboard_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Open your dashboard</a>
+</div>""")
+    emails.append((1, f"Getting started with your {product_name}", day1_body))
+
+    # Day 3: Gentle check-in
+    day3_body = email_wrap(f"""
+<p style="font-size:16px;line-height:1.6;">Hi there,</p>
+<p style="font-size:16px;line-height:1.6;">Just checking in. If you have had a chance to look at your dashboard, we hope it is helping you feel more organized.</p>
+<p style="font-size:16px;line-height:1.6;">If you have not started yet, that is okay. There is no deadline on your end. When you are ready, the Navigator can help you figure out what to focus on first.</p>
+<div style="text-align:center;margin:28px 0;">
+  <a href="{chat_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Talk to the Navigator</a>
+</div>
+<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">If something is not working or you have questions, just reply to this email.</p>""")
+    emails.append((3, "How are things going?", day3_body))
+
+    # Day 7: Feature highlight
+    if is_plan:
+        day7_body = email_wrap(f"""
+<p style="font-size:16px;line-height:1.6;">Hi there,</p>
+<p style="font-size:16px;line-height:1.6;">A few things in your dashboard you might not have found yet:</p>
+<ul style="font-size:15px;line-height:1.8;color:#1B2A38;">
+  <li><strong>Activity log</strong> — track phone calls, form submissions, and appointments so you have a record</li>
+  <li><strong>Notes</strong> — jot down questions, reminders, or anything on your mind</li>
+  <li><strong>Document storage</strong> — upload copies of important paperwork so everything is in one place</li>
+</ul>
+<p style="font-size:16px;line-height:1.6;">You are doing the hard part. These tools are here to make it a little easier.</p>
+<div style="text-align:center;margin:28px 0;">
+  <a href="{dashboard_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Open your dashboard</a>
+</div>""")
+    else:
+        day7_body = email_wrap(f"""
+<p style="font-size:16px;line-height:1.6;">Hi there,</p>
+<p style="font-size:16px;line-height:1.6;">Your templates give you the worksheets. If you want the full picture — step-by-step guides, deadline tracking, state-specific rules, and more — the Full Plan picks up where the templates leave off.</p>
+<p style="font-size:16px;line-height:1.6;">And your ${product_name} purchase counts as credit toward the upgrade, so you would only pay the difference.</p>
+<div style="text-align:center;margin:28px 0;">
+  <a href="{pricing_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">See what is included</a>
+</div>
+<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">No pressure. The templates are yours forever either way.</p>""")
+    emails.append((7, "A few things you might find helpful", day7_body))
+
+    # Day 20: Progress encouragement
+    day20_body = email_wrap(f"""
+<p style="font-size:16px;line-height:1.6;">Hi there,</p>
+<p style="font-size:16px;line-height:1.6;">It has been a few weeks since you started using Lumeway. However far you have gotten, you are further along than you were before.</p>
+<p style="font-size:16px;line-height:1.6;">If you have been putting something off, that is normal. Pick one small thing and start there. The checklist keeps track of everything else so it does not slip through.</p>
+<div style="text-align:center;margin:28px 0;">
+  <a href="{dashboard_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Pick up where you left off</a>
+</div>""")
+    emails.append((20, "You are further along than you think", day20_body))
+
+    # Day 28: Feedback request
+    day28_body = email_wrap(f"""
+<p style="font-size:16px;line-height:1.6;">Hi there,</p>
+<p style="font-size:16px;line-height:1.6;">You have been using Lumeway for about a month now. We would genuinely like to know how it is going.</p>
+<p style="font-size:16px;line-height:1.6;">Is the dashboard helping? Is anything confusing or missing? We read every reply and use your feedback to make Lumeway better.</p>
+<p style="font-size:16px;line-height:1.6;">Just hit reply and tell us what you think — even a sentence or two is helpful.</p>
+<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">Thank you for trusting us with something this important.</p>""")
+    emails.append((28, "How is Lumeway working for you?", day28_body))
+
+    return emails
+
+
+def schedule_post_purchase_emails(to_email, product_name, is_plan=False):
+    """Queue the 5-email post-purchase sequence for a buyer."""
+    sequence = get_post_purchase_sequence(product_name, is_plan)
+    now = datetime.now(timezone.utc)
+    sequence_name = f"post-purchase-{product_name[:30]}"
+    try:
+        conn = get_db()
+        param = "%s" if USE_POSTGRES else "?"
+        for step, (delay_days, subject, html_body) in enumerate(sequence, 1):
+            send_after = (now + timedelta(days=delay_days)).isoformat()
+            db_execute(conn, f"""INSERT INTO email_queue
+                (to_email, subject, html_body, sequence_name, sequence_step, send_after, created_at)
+                VALUES ({param},{param},{param},{param},{param},{param},{param})""",
+                (to_email, subject, html_body, sequence_name, step, send_after, now.isoformat()))
+        conn.commit()
+        conn.close()
+        print(f"Scheduled {len(sequence)} post-purchase emails for {to_email}")
+    except Exception as e:
+        print(f"Error scheduling emails for {to_email}: {e}")
+        try:
+            conn.close()
+        except Exception:
+            pass
+
 
 init_subscribers_db()
 os.makedirs("uploads", exist_ok=True)
@@ -2218,6 +2412,8 @@ def fulfill_purchase(session_data):
     # Send email in background thread so it doesn't block the response
     threading.Thread(target=send_purchase_email, args=(email, product_id, product["name"], token), daemon=True).start()
     print(f"Email send initiated for {email}")
+    # Schedule post-purchase email sequence
+    threading.Thread(target=schedule_post_purchase_emails, args=(email, product["name"], False), daemon=True).start()
 
 def handle_tier_upgrade(session_data, metadata):
     """Handle pass/unlimited purchases: update tier + create purchase record + send email."""
@@ -2313,6 +2509,8 @@ def handle_tier_upgrade(session_data, metadata):
 
     # Send confirmation email
     threading.Thread(target=send_tier_email, args=(email, tier, product_name), daemon=True).start()
+    # Schedule post-purchase email sequence (plans are is_plan=True)
+    threading.Thread(target=schedule_post_purchase_emails, args=(email, product_name, True), daemon=True).start()
 
 def send_tier_email(to_email, tier, product_name):
     """Send tier upgrade confirmation email."""
@@ -5617,6 +5815,66 @@ def admin_get_feedback():
             "page_url": r["page_url"], "created_at": r["created_at"]
         })
     return jsonify({"feedback": feedback})
+
+
+# ── Cron endpoint: process email queue ──
+CRON_SECRET = os.environ.get("CRON_SECRET", "lumeway-cron-2026")
+
+@app.route("/api/cron/send-emails", methods=["POST"])
+def cron_send_emails():
+    """Process due emails from the queue. Called by Railway cron or manual trigger."""
+    # Simple secret check to prevent public abuse
+    secret = request.headers.get("X-Cron-Secret") or request.args.get("secret")
+    if secret != CRON_SECRET:
+        return jsonify({"error": "unauthorized"}), 401
+
+    now = datetime.now(timezone.utc).isoformat()
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+
+    try:
+        cur = db_execute(conn, f"SELECT id, to_email, subject, html_body FROM email_queue WHERE sent_at IS NULL AND send_after <= {param} ORDER BY send_after LIMIT 10", (now,))
+        due_emails = cur.fetchall()
+    except Exception as e:
+        print(f"Error fetching email queue: {e}")
+        conn.close()
+        return jsonify({"error": str(e)}), 500
+
+    sent_count = 0
+    error_count = 0
+    for row in due_emails:
+        email_id, to_email, subject, html_body = row[0], row[1], row[2], row[3]
+        success = send_email_via_resend(to_email, subject, html_body)
+        if success:
+            db_execute(conn, f"UPDATE email_queue SET sent_at = {param} WHERE id = {param}", (now, email_id))
+            sent_count += 1
+        else:
+            db_execute(conn, f"UPDATE email_queue SET error = {param} WHERE id = {param}", (f"Failed at {now}", email_id))
+            error_count += 1
+
+    conn.commit()
+    conn.close()
+    print(f"Cron: sent {sent_count} emails, {error_count} errors, {len(due_emails)} processed")
+    return jsonify({"sent": sent_count, "errors": error_count, "processed": len(due_emails)})
+
+
+@app.route("/api/admin/email-queue", methods=["GET"])
+def admin_email_queue():
+    """View scheduled and sent emails."""
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = get_db()
+    cur = db_execute(conn, "SELECT id, to_email, subject, sequence_name, sequence_step, send_after, sent_at, error, created_at FROM email_queue ORDER BY created_at DESC LIMIT 100")
+    rows = cur.fetchall()
+    conn.close()
+    emails = []
+    for r in rows:
+        emails.append({
+            "id": r[0], "to_email": r[1], "subject": r[2],
+            "sequence_name": r[3], "sequence_step": r[4],
+            "send_after": r[5], "sent_at": r[6], "error": r[7], "created_at": r[8]
+        })
+    return jsonify({"emails": emails})
 
 
 if __name__ == "__main__":
