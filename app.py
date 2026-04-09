@@ -689,22 +689,14 @@ def send_purchase_email(to_email, product_id, product_name, download_token):
         print(f"RESEND_API_KEY not set, skipping email to {to_email}")
         return False
     download_url = f"https://lumeway.co/download/{download_token}"
-    html = f"""<!DOCTYPE html>
-<html><body style="font-family:system-ui,-apple-system,sans-serif;color:#1B2A38;max-width:560px;margin:0 auto;padding:32px 24px;">
-<div style="text-align:center;margin-bottom:32px;">
-  <span style="font-family:Georgia,serif;font-size:24px;color:#1B3A5C;font-weight:500;">Lumeway</span>
+    html = email_wrap(f"""
+<p style="font-size:16px;line-height:1.6;margin:0 0 16px;">Hi there,</p>
+<p style="font-size:16px;line-height:1.6;margin:0 0 16px;">Thank you for your purchase. Your <strong>{product_name}</strong> is ready to download.</p>
+<div style="text-align:center;margin:28px 0;">
+  <a href="{download_url}" style="display:inline-block;padding:14px 32px;background:#C4704E;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Download Your Templates</a>
 </div>
-<p style="font-size:16px;line-height:1.6;">Hi there,</p>
-<p style="font-size:16px;line-height:1.6;">Thank you for your purchase! Your <strong>{product_name}</strong> is ready to download.</p>
-<div style="text-align:center;margin:32px 0;">
-  <a href="{download_url}" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Download Your Templates</a>
-</div>
-<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">This link is unique to your purchase and does not expire.</p>
-<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">If you have any questions, just reply to this email.</p>
-<hr style="border:none;border-top:1px solid #E4DDD3;margin:32px 0;" />
-<p style="font-size:13px;color:#6E7D8A;">Warmly,<br>The Lumeway Team<br><a href="https://lumeway.co" style="color:#1B3A5C;">lumeway.co</a></p>
-<p style="font-size:11px;color:#999;margin-top:24px;">Lumeway provides organizational tools, not legal or financial advice. Always consult a qualified professional for decisions specific to your situation.</p>
-</body></html>"""
+<p style="font-size:14px;color:#6B7B8D;line-height:1.6;margin:0 0 8px;">This link is unique to your purchase and does not expire.</p>
+<p style="font-size:14px;color:#6B7B8D;line-height:1.6;margin:0;">If you have any questions, just reply to this email.</p>""")
     try:
         resp = http_requests.post("https://api.resend.com/emails", json={
             "from": "Lumeway <hello@lumeway.co>",
@@ -754,15 +746,39 @@ def send_email_via_resend(to_email, subject, html_body):
 def email_wrap(body_html):
     """Wrap email body in the standard Lumeway email template."""
     return f"""<!DOCTYPE html>
-<html><body style="font-family:system-ui,-apple-system,sans-serif;color:#1B2A38;max-width:560px;margin:0 auto;padding:32px 24px;">
-<div style="text-align:center;margin-bottom:32px;">
-  <span style="font-family:Georgia,serif;font-size:24px;color:#1B3A5C;font-weight:500;">Lumeway</span>
-</div>
-{body_html}
-<hr style="border:none;border-top:1px solid #E4DDD3;margin:32px 0;" />
-<p style="font-size:13px;color:#6E7D8A;">Warmly,<br>The Lumeway Team<br><a href="https://lumeway.co" style="color:#1B3A5C;">lumeway.co</a></p>
-<p style="font-size:11px;color:#999;margin-top:24px;">Lumeway provides organizational tools, not legal or financial advice. Always consult a qualified professional for decisions specific to your situation.</p>
-<p style="font-size:10px;color:#bbb;margin-top:16px;">If you no longer want to receive these emails, reply with "unsubscribe" and we will remove you.</p>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#FAF7F2;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#2C3E50;-webkit-font-smoothing:antialiased;">
+<!-- Outer wrapper -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF7F2;">
+<tr><td align="center" style="padding:32px 16px;">
+<!-- Inner card -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background-color:#FDFCFA;border:1px solid #E8E0D6;border-radius:16px;overflow:hidden;">
+  <!-- Header -->
+  <tr><td style="background:linear-gradient(135deg,#2C4A5E,#1B3A4E);padding:28px 32px;text-align:center;">
+    <span style="font-family:Georgia,'Times New Roman',serif;font-size:22px;color:#FAF7F2;font-weight:400;letter-spacing:1.5px;">&#9788;&ensp;LUMEWAY</span>
+  </td></tr>
+  <!-- Body -->
+  <tr><td style="padding:36px 32px 28px;">
+    {body_html}
+  </td></tr>
+  <!-- Divider -->
+  <tr><td style="padding:0 32px;">
+    <div style="border-top:1px solid #E8E0D6;"></div>
+  </td></tr>
+  <!-- Sign-off -->
+  <tr><td style="padding:24px 32px 16px;">
+    <p style="font-size:14px;color:#6B7B8D;line-height:1.6;margin:0;">Warmly,<br><span style="color:#2C4A5E;font-weight:500;">The Lumeway Team</span></p>
+  </td></tr>
+  <!-- Footer -->
+  <tr><td style="background-color:#FAF7F2;padding:20px 32px;border-top:1px solid #E8E0D6;">
+    <p style="font-size:12px;color:#6B7B8D;line-height:1.6;margin:0 0 8px;">Lumeway provides organizational tools, not legal or financial advice. Always consult a qualified professional for decisions specific to your situation.</p>
+    <p style="font-size:11px;color:#999;margin:0;"><a href="https://lumeway.co" style="color:#2C4A5E;text-decoration:none;">lumeway.co</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/privacy" style="color:#999;text-decoration:none;">Privacy</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/contact" style="color:#999;text-decoration:none;">Contact</a></p>
+    <p style="font-size:10px;color:#bbb;margin:10px 0 0;">If you no longer want to receive these emails, reply with "unsubscribe" and we will remove you.</p>
+  </td></tr>
+</table>
+</td></tr>
+</table>
 </body></html>"""
 
 
@@ -1055,19 +1071,12 @@ def send_auth_code(to_email, code):
     if not RESEND_API_KEY:
         print(f"RESEND_API_KEY not set, skipping auth code to {to_email}")
         return False
-    html = f"""<!DOCTYPE html>
-<html><body style="font-family:system-ui,-apple-system,sans-serif;color:#1B2A38;max-width:560px;margin:0 auto;padding:32px 24px;">
-<div style="text-align:center;margin-bottom:32px;">
-  <span style="font-family:Georgia,serif;font-size:24px;color:#1B3A5C;font-weight:500;">Lumeway</span>
+    html = email_wrap(f"""
+<p style="font-size:16px;line-height:1.6;margin:0 0 8px;">Your login code is:</p>
+<div style="text-align:center;margin:24px 0;padding:20px;background-color:#FAF7F2;border-radius:12px;border:1px solid #E8E0D6;">
+  <span style="font-size:36px;font-weight:600;letter-spacing:8px;color:#2C4A5E;">{code}</span>
 </div>
-<p style="font-size:16px;line-height:1.6;">Your login code is:</p>
-<div style="text-align:center;margin:24px 0;">
-  <span style="font-size:36px;font-weight:600;letter-spacing:8px;color:#1B3A5C;">{code}</span>
-</div>
-<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">This code expires in 10 minutes. If you didn't request this, you can ignore this email.</p>
-<hr style="border:none;border-top:1px solid #E4DDD3;margin:32px 0;" />
-<p style="font-size:13px;color:#6E7D8A;">Lumeway<br><a href="https://lumeway.co" style="color:#1B3A5C;">lumeway.co</a></p>
-</body></html>"""
+<p style="font-size:14px;color:#6B7B8D;line-height:1.6;margin:0;">This code expires in 10 minutes. If you did not request this, you can ignore this email.</p>""")
     try:
         resp = http_requests.post("https://api.resend.com/emails", json={
             "from": "Lumeway <hello@lumeway.co>",
@@ -2524,20 +2533,13 @@ def send_tier_email(to_email, tier, product_name):
         body = "You have full access to everything — all guides, scripts, and tools for every life change."
     else:
         body = f"Your {product_name} is now active. Your dashboard is ready with the full guide, checklists, scripts, and tools."
-    html = f"""<!DOCTYPE html>
-<html><body style="font-family:system-ui,-apple-system,sans-serif;color:#1B2A38;max-width:560px;margin:0 auto;padding:32px 24px;">
-<div style="text-align:center;margin-bottom:32px;">
-  <span style="font-family:Georgia,serif;font-size:24px;color:#1B3A5C;font-weight:500;">Lumeway</span>
+    html = email_wrap(f"""
+<p style="font-size:16px;line-height:1.6;margin:0 0 16px;">Hi there,</p>
+<p style="font-size:16px;line-height:1.6;margin:0 0 16px;">{body}</p>
+<div style="text-align:center;margin:28px 0;">
+  <a href="https://lumeway.co/dashboard" style="display:inline-block;padding:14px 32px;background:#C4704E;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Go to Your Dashboard</a>
 </div>
-<p style="font-size:16px;line-height:1.6;">Hi there,</p>
-<p style="font-size:16px;line-height:1.6;">{body}</p>
-<div style="text-align:center;margin:32px 0;">
-  <a href="https://lumeway.co/dashboard" style="display:inline-block;padding:14px 32px;background:#1B3A5C;color:white;text-decoration:none;border-radius:100px;font-size:15px;font-weight:500;">Go to Your Dashboard</a>
-</div>
-<p style="font-size:14px;color:#6E7D8A;line-height:1.6;">If you have any questions, just reply to this email.</p>
-<hr style="border:none;border-top:1px solid #E4DDD3;margin:32px 0;" />
-<p style="font-size:13px;color:#6E7D8A;">Warmly,<br>The Lumeway Team<br><a href="https://lumeway.co" style="color:#1B3A5C;">lumeway.co</a></p>
-</body></html>"""
+<p style="font-size:14px;color:#6B7B8D;line-height:1.6;margin:0;">If you have any questions, just reply to this email.</p>""")
     try:
         resp = http_requests.post("https://api.resend.com/emails", json={
             "from": "Lumeway <hello@lumeway.co>",
