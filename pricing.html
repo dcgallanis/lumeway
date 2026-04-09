@@ -548,5 +548,6 @@
     });
   </script>
   <script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>
+<script src="/static/feedback-widget.js"></script>
 </body>
 </html>
