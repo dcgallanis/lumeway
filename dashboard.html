@@ -251,7 +251,7 @@
     .doc-desc { font-size: 12px; font-weight: 300; color: var(--muted); margin-top: 2px; }
 
     /* Document Workspace — folder sidebar + editor */
-    .ws-main { display: grid; grid-template-columns: 200px 1fr; gap: 0; min-height: calc(100vh - 160px); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
+    .ws-main { display: grid; grid-template-columns: 25% 75%; gap: 0; min-height: calc(100vh - 160px); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
     @media (max-width: 768px) { .ws-main { grid-template-columns: 1fr; min-height: auto; } }
     .ws-sidebar { background: var(--cream); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
     .ws-sidebar-top { padding: 14px 14px 10px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
@@ -281,7 +281,7 @@
     .ws-viewer-title { font-size: 13px; font-weight: 500; color: var(--navy); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .ws-viewer-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 11px; color: var(--navy); cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 4px; }
     .ws-viewer-btn:hover { background: var(--navy); color: var(--cream); border-color: var(--navy); }
-    .ws-viewer-body { flex: 1; overflow: auto; position: relative; }
+    .ws-viewer-body { flex: 1; overflow: auto; position: relative; background: var(--cream); }
     .ws-viewer-body iframe { width: 100%; height: 100%; border: none; }
     .ws-viewer-body img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; margin: 20px auto; }
     .ws-viewer-body .ws-text-editor { width: 100%; height: 100%; border: none; padding: 24px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; line-height: 1.7; color: var(--text); background: var(--warm-white); resize: none; outline: none; }
@@ -336,8 +336,11 @@
     .pdf-sig-ghost { position: fixed; pointer-events: none; z-index: 1000; font-size: 24px; color: rgba(44,74,94,0.6); white-space: nowrap; display: none; }
     /* Spreadsheet viewer */
     #sheetTableWrap table { border-collapse: collapse; width: max-content; min-width: 100%; }
-    #sheetTableWrap td, #sheetTableWrap th { border: 1px solid var(--border); padding: 5px 10px; font-size: 12px; white-space: nowrap; min-width: 80px; }
-    #sheetTableWrap th { background: var(--cream); font-weight: 600; color: var(--navy); position: sticky; top: 0; z-index: 2; }
+    #sheetTableWrap td, #sheetTableWrap th { border: 1px solid #d0d7de; padding: 4px 8px; font-size: 12px; white-space: nowrap; min-width: 80px; font-family: 'Plus Jakarta Sans', sans-serif; }
+    #sheetTableWrap th { background: #f0f2f4; font-weight: 600; color: var(--navy); position: sticky; top: 0; z-index: 2; text-align: center; font-size: 11px; padding: 3px 8px; }
+    #sheetTableWrap td[contenteditable] { outline: none; cursor: text; }
+    #sheetTableWrap td[contenteditable]:focus { background: #e8f0fe; box-shadow: inset 0 0 0 2px #1a73e8; }
+    .ss-row-num { background: #f0f2f4 !important; color: var(--muted) !important; font-size: 10px !important; text-align: center !important; min-width: 36px !important; width: 36px !important; font-weight: 500 !important; user-select: none; cursor: default !important; }
     /* Quill editor overrides */
     .ws-viewer-body .ql-toolbar { border: none; border-bottom: 1px solid var(--border); background: var(--cream); padding: 8px 16px; position: sticky; top: 0; z-index: 5; }
     .ws-viewer-body .ql-toolbar .ql-formats { margin-right: 10px; }
@@ -3827,22 +3830,36 @@ guideLibrary['disability'] = {
     function renderSheetTable(wb, sheetName) {
       var ws = wb.Sheets[sheetName];
       if (!ws) return;
-      var html = XLSX.utils.sheet_to_html(ws, { editable: false });
       var wrap = document.getElementById('sheetTableWrap');
       if (!wrap) return;
-      wrap.innerHTML = html;
-      // Style the generated table
-      var table = wrap.querySelector('table');
-      if (table) {
-        table.style.cssText = 'border-collapse:collapse;width:100%;font-family:"Plus Jakarta Sans",sans-serif;font-size:12px';
-        table.querySelectorAll('td,th').forEach(function(cell) {
-          cell.style.cssText = 'border:1px solid var(--border);padding:6px 10px;text-align:left;white-space:nowrap;min-width:80px';
-        });
-        table.querySelectorAll('th').forEach(function(th) {
-          th.style.cssText += ';background:var(--cream);font-weight:600;color:var(--navy);position:sticky;top:0;z-index:2';
-        });
+
+      // Get data as array of arrays
+      var data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      if (!data.length) { wrap.innerHTML = '<p style="padding:20px;color:var(--muted)">Empty sheet</p>'; return; }
+
+      // Find max columns
+      var maxCols = 0;
+      data.forEach(function(row) { if (row.length > maxCols) maxCols = row.length; });
+      if (maxCols === 0) maxCols = 1;
+
+      var html = '<table><thead><tr><th class="ss-row-num"></th>';
+      for (var c = 0; c < maxCols; c++) {
+        var colLetter = '';
+        var n = c;
+        while (n >= 0) { colLetter = String.fromCharCode(65 + (n % 26)) + colLetter; n = Math.floor(n / 26) - 1; }
+        html += '<th>' + colLetter + '</th>';
       }
-      // Store ref for sheet switching
+      html += '</tr></thead><tbody>';
+      data.forEach(function(row, ri) {
+        html += '<tr><td class="ss-row-num">' + (ri + 1) + '</td>';
+        for (var ci = 0; ci < maxCols; ci++) {
+          var val = (row[ci] !== undefined && row[ci] !== null) ? String(row[ci]) : '';
+          html += '<td contenteditable="true" data-r="' + ri + '" data-c="' + ci + '">' + val.replace(/</g, '&lt;') + '</td>';
+        }
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      wrap.innerHTML = html;
       window._activeWb = wb;
     }
 
@@ -3901,6 +3918,8 @@ guideLibrary['disability'] = {
       if (sigWrap) sigWrap.style.display = 'none';
       var sigDd = document.getElementById('wsSigDropdown');
       if (sigDd) sigDd.classList.remove('open');
+      var printBtn = document.getElementById('wsPrintBtn');
+      if (printBtn) printBtn.style.display = 'flex';
 
       var ext = file.original_name.split('.').pop().toLowerCase();
       var previewUrl = '/api/files/' + fileId + '/preview';
@@ -3911,7 +3930,7 @@ guideLibrary['disability'] = {
         var exportBtn = document.createElement('button');
         exportBtn.id = 'wsExportBtn';
         exportBtn.className = 'ws-viewer-btn';
-        exportBtn.textContent = 'Export as Word';
+        exportBtn.textContent = 'Export edited';
         exportBtn.onclick = function() { exportAsDocx(file.original_name); };
         header.insertBefore(exportBtn, dlBtn);
         // Show signature button in header
@@ -4273,6 +4292,9 @@ guideLibrary['disability'] = {
         + '<option value="#2C3E50">Black</option><option value="#2C4A5E">Navy</option><option value="#C4704E">Terracotta</option><option value="#6B8F5E">Green</option><option value="#1a73e8">Blue</option><option value="#c62828">Red</option>'
         + '</select>'
         + '<button class="pdf-toolbar-btn" id="pdfBoldBtn" onclick="pdfAnnotBold=!pdfAnnotBold;this.classList.toggle(\'active\',pdfAnnotBold)" title="Bold" style="font-weight:700;padding:3px 8px">B</button>'
+        + '<select id="pdfHighlight" onchange="pdfAnnotHighlight=this.value" style="padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;background:var(--warm-white);font-family:inherit">'
+        + '<option value="">No highlight</option><option value="rgba(255,255,0,0.4)">Yellow</option><option value="rgba(0,255,0,0.25)">Green</option><option value="rgba(0,200,255,0.25)">Blue</option><option value="rgba(255,150,150,0.3)">Pink</option>'
+        + '</select>'
         + '<div class="pdf-toolbar-sep"></div>'
         + '<button class="pdf-toolbar-btn" id="pdfZoomOutBtn" onclick="pdfZoom(-0.15)">−</button>'
         + '<span class="pdf-toolbar-info" id="pdfZoomLevel">100%</span>'
@@ -4364,6 +4386,7 @@ guideLibrary['disability'] = {
     var pdfAnnotFontSize = '14';
     var pdfAnnotFontColor = '#2C3E50';
     var pdfAnnotBold = false;
+    var pdfAnnotHighlight = '';
 
     function togglePdfTextMode() {
       pdfTextMode = !pdfTextMode;
@@ -4436,7 +4459,7 @@ guideLibrary['disability'] = {
       } else if (pdfTextMode) {
         var annot = addPdfAnnotation(layer, pageNum, {
           type: 'text', x: xPct, y: yPct, text: '',
-          fontSize: pdfAnnotFontSize, color: pdfAnnotFontColor, bold: pdfAnnotBold
+          fontSize: pdfAnnotFontSize, color: pdfAnnotFontColor, bold: pdfAnnotBold, highlight: pdfAnnotHighlight
         });
         // Focus the text input
         var textEl = annot.querySelector('.pdf-annot-text');
@@ -4465,6 +4488,7 @@ guideLibrary['disability'] = {
         if (data.fontSize) txt.style.fontSize = data.fontSize + 'px';
         if (data.color) txt.style.color = data.color;
         if (data.bold) txt.style.fontWeight = '700';
+        if (data.highlight) txt.style.background = data.highlight;
         txt.oninput = function() { pdfMarkDirty(); };
         txt.onblur = function() { pdfAutoSave(); };
         el.appendChild(txt);
@@ -4560,7 +4584,8 @@ guideLibrary['disability'] = {
               type: 'text', x: xPct, y: yPct, text: val,
               fontSize: parseInt(textEl.style.fontSize) || 14,
               color: textEl.style.color || '#2C3E50',
-              bold: textEl.style.fontWeight === '700'
+              bold: textEl.style.fontWeight === '700',
+              highlight: textEl.style.background || ''
             });
           }
         });
@@ -4667,6 +4692,25 @@ guideLibrary['disability'] = {
     }
 
     // PDF-aware overrides are applied by modifying the original functions below
+
+    function printCurrentFile() {
+      if (wsQuill) {
+        // Print Quill editor content
+        var printWin = window.open('', '_blank');
+        printWin.document.write('<html><head><title>Print</title><style>body{font-family:Calibri,Arial,sans-serif;padding:40px;font-size:11pt;line-height:1.6;color:#333}h1{font-size:18pt}h2{font-size:14pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px 10px}</style></head><body>' + wsQuill.root.innerHTML + '</body></html>');
+        printWin.document.close();
+        printWin.focus();
+        setTimeout(function() { printWin.print(); }, 300);
+      } else if (pdfDoc) {
+        // Print PDF — open original in new tab for printing
+        var blob = new Blob([pdfOriginalBytes], { type: 'application/pdf' });
+        var url = URL.createObjectURL(blob);
+        var printWin = window.open(url, '_blank');
+        setTimeout(function() { printWin.print(); URL.revokeObjectURL(url); }, 500);
+      } else {
+        window.print();
+      }
+    }
 
     function cleanupPdfState() {
       // Save PDF annotations before closing
@@ -4779,13 +4823,19 @@ guideLibrary['disability'] = {
     };
 
     function loadDashboard() {
-      Promise.all([
-        fetch('/api/dashboard/data').then(function(r) { return r.json(); }),
-        fetch('/api/checklist').then(function(r) { return r.json(); }),
-        fetch('/api/activity-log').then(function(r) { return r.json(); }),
-        fetch('/static/data/state-rules.json').then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; }),
-        fetch('/api/files').then(function(r) { return r.ok ? r.json() : {files:[]}; }).catch(function() { return {files:[]}; })
-      ]).then(function(results) {
+      // Check auth first, then load everything
+      fetch('/api/dashboard/data').then(function(r) {
+        if (r.status === 401) { window.location.href = '/login'; throw new Error('Not logged in'); }
+        return r.json();
+      }).then(function(dash) {
+        return Promise.all([
+          Promise.resolve(dash),
+          fetch('/api/checklist').then(function(r) { return r.json(); }),
+          fetch('/api/activity-log').then(function(r) { return r.json(); }),
+          fetch('/static/data/state-rules.json').then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; }),
+          fetch('/api/files').then(function(r) { return r.json(); }).catch(function() { return {files:[]}; })
+        ]);
+      }).then(function(results) {
         dashData = results[0];
         checklistItems = results[1].items || [];
         activityLog = results[2].entries || [];
@@ -4986,57 +5036,21 @@ guideLibrary['disability'] = {
       }
       html += '</div>';
 
-      // Weekly & Monthly Goals
-      var weeklyGoals = goals.filter(function(g) { return g.timeframe === 'weekly'; });
-      var monthlyGoals = goals.filter(function(g) { return g.timeframe === 'monthly'; });
-
-      html += '<div class="dash-grid">';
-
-      // Weekly goals
-      html += '<div class="dash-card">';
-      html += '  <div class="card-label">Weekly Goals</div>';
-      if (weeklyGoals.length > 0) {
-        weeklyGoals.forEach(function(g) {
-          var doneClass = g.is_completed ? ' done' : '';
-          html += '<div class="goal-item' + doneClass + '">';
-          html += '  <div class="check-box" onclick="toggleGoal(' + g.id + ', this.parentElement)"></div>';
-          html += '  <div class="goal-text" onclick="toggleGoal(' + g.id + ', this.parentElement)">' + g.title + '</div>';
-          if (g.target_date) html += '  <div class="goal-date">' + formatShortDate(g.target_date) + '</div>';
-          html += '  <button class="item-del" onclick="deleteGoal(' + g.id + ')" title="Delete">&times;</button>';
+      // Goals — single card, managed in checklist sidebar
+      var allGoalsOv = goals.filter(function(g) { return !g.is_completed; });
+      if (allGoalsOv.length > 0) {
+        html += '<div class="dash-card">';
+        html += '  <div class="card-label">Active Goals</div>';
+        allGoalsOv.slice(0, 5).forEach(function(g) {
+          html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">';
+          html += '  <div class="check-box" onclick="toggleGoal(' + g.id + ', this.parentElement)" style="margin-top:2px"></div>';
+          html += '  <div style="flex:1;font-size:13px">' + g.title + '</div>';
+          html += '  <span style="font-size:10px;color:var(--muted);white-space:nowrap">' + g.timeframe + '</span>';
           html += '</div>';
         });
-      } else {
-        html += '<p class="card-empty">No weekly goals yet. Set small, manageable goals to keep moving forward.</p>';
+        if (allGoalsOv.length > 5) html += '<div style="font-size:12px;color:var(--muted);margin-top:8px">' + (allGoalsOv.length - 5) + ' more on your checklist tab</div>';
+        html += '</div>';
       }
-      html += '<div class="goal-add">';
-      html += '  <input class="goal-input" id="weeklyGoalInput" placeholder="Add a weekly goal..." onkeydown="if(event.key===\'Enter\')addGoal(\'weekly\')">';
-      html += '  <button class="init-btn" onclick="addGoal(\'weekly\')">Add</button>';
-      html += '</div>';
-      html += '</div>';
-
-      // Monthly goals
-      html += '<div class="dash-card">';
-      html += '  <div class="card-label">Monthly Goals</div>';
-      if (monthlyGoals.length > 0) {
-        monthlyGoals.forEach(function(g) {
-          var doneClass = g.is_completed ? ' done' : '';
-          html += '<div class="goal-item' + doneClass + '">';
-          html += '  <div class="check-box" onclick="toggleGoal(' + g.id + ', this.parentElement)"></div>';
-          html += '  <div class="goal-text" onclick="toggleGoal(' + g.id + ', this.parentElement)">' + g.title + '</div>';
-          if (g.target_date) html += '  <div class="goal-date">' + formatShortDate(g.target_date) + '</div>';
-          html += '  <button class="item-del" onclick="deleteGoal(' + g.id + ')" title="Delete">&times;</button>';
-          html += '</div>';
-        });
-      } else {
-        html += '<p class="card-empty">No monthly goals yet. Bigger milestones go here — things you want to accomplish this month.</p>';
-      }
-      html += '<div class="goal-add">';
-      html += '  <input class="goal-input" id="monthlyGoalInput" placeholder="Add a monthly goal..." onkeydown="if(event.key===\'Enter\')addGoal(\'monthly\')">';
-      html += '  <button class="init-btn" onclick="addGoal(\'monthly\')">Add</button>';
-      html += '</div>';
-      html += '</div>';
-
-      html += '</div>'; // dash-grid
 
       // Important dates section
       html += '<div class="dash-card" style="margin-bottom:24px">';
@@ -5433,16 +5447,15 @@ guideLibrary['disability'] = {
       }
       html += '</div>';
 
-      // Export section
-      if (deadlines.length > 0) {
-        html += '<div class="cal-sidebar-card" style="text-align:center">';
-        html += '  <a href="/api/deadlines/export.ics" class="btn-ghost" style="font-size:12px;padding:8px 16px;display:inline-flex;align-items:center;gap:6px;width:100%;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export (.ics)</a>';
-        html += '  <p style="font-size:10px;color:var(--muted);margin-top:6px">Google, Apple, Outlook</p>';
-        html += '</div>';
-      }
-
       html += '</div>'; // cal-sidebar
       html += '</div>'; // cal-layout
+
+      // Export button below calendar
+      if (deadlines.length > 0) {
+        html += '<div style="text-align:center;margin-top:16px">';
+        html += '  <a href="/api/deadlines/export.ics" class="btn-ghost" style="font-size:12px;padding:8px 16px;display:inline-flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export calendar (.ics) \u2014 Google, Apple, Outlook</a>';
+        html += '</div>';
+      }
 
       html += '</div>'; // panel-calendar
 
@@ -5506,7 +5519,8 @@ guideLibrary['disability'] = {
       html += '      <button class="ws-sig-stamp" onclick="stampSignature()" style="width:100%;padding:10px;font-size:13px">Place signature</button>';
       html += '    </div>';
       html += '  </div>';
-      html += '  <a class="ws-viewer-btn" id="wsViewerDl" href="#" title="Download"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>';
+      html += '  <button class="ws-viewer-btn" id="wsPrintBtn" onclick="printCurrentFile()" title="Print" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>';
+      html += '  <a class="ws-viewer-btn" id="wsViewerDl" href="#" title="Download original"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>';
       html += '  <button class="ws-viewer-btn" onclick="closeViewer()">&times;</button>';
       html += '</div>';
       html += '<div class="ws-viewer-body" id="wsViewerBody">';
@@ -5602,7 +5616,8 @@ guideLibrary['disability'] = {
       html += '    </div>';
       html += '    <div style="display:flex;flex-direction:column;gap:4px;min-width:140px">';
       html += '      <label style="font-size:11px;color:var(--muted)">Date</label>';
-      html += '      <input type="date" id="activityDate" value="' + new Date().toISOString().split('T')[0] + '" max="' + new Date().toISOString().split('T')[0] + '">';
+      var localToday = new Date(); var localDateStr = localToday.getFullYear() + '-' + String(localToday.getMonth()+1).padStart(2,'0') + '-' + String(localToday.getDate()).padStart(2,'0');
+      html += '      <input type="date" id="activityDate" value="' + localDateStr + '" max="' + localDateStr + '">';
       html += '    </div>';
       html += '    <div style="display:flex;flex-direction:column;gap:4px;justify-content:flex-end">';
       html += '      <button class="init-btn" onclick="addActivityLog()">Add</button>';

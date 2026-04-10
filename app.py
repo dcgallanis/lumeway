@@ -187,8 +187,13 @@ def check_upload_rate(user_id, max_uploads=20, window=3600):
 
 
 app = Flask(__name__, static_folder=".", static_url_path="/static")
-app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
-app.permanent_session_lifetime = timedelta(hours=24)
+# Use a stable fallback key so sessions survive app restarts when SECRET_KEY env var is not set
+_FALLBACK_SECRET = "lumeway-dev-secret-key-change-in-production-2024"
+app.secret_key = os.environ.get("SECRET_KEY", _FALLBACK_SECRET)
+if app.secret_key == _FALLBACK_SECRET and not os.environ.get("FLASK_ENV") == "development":
+    import warnings
+    warnings.warn("SECRET_KEY not set! Using fallback. Set SECRET_KEY env var in production.", stacklevel=2)
+app.permanent_session_lifetime = timedelta(days=7)
 CORS(app)
 
 
