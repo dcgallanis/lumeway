@@ -252,8 +252,19 @@
     .doc-desc { font-size: 12px; font-weight: 300; color: var(--muted); margin-top: 2px; }
 
     /* Document Workspace — folder sidebar + editor */
-    .ws-main { display: grid; grid-template-columns: 25% 75%; gap: 0; min-height: calc(100vh - 160px); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
-    @media (max-width: 768px) { .ws-main { grid-template-columns: 1fr; min-height: auto; } }
+    .ws-main { display: grid; grid-template-columns: 25% 1fr; gap: 0; min-height: calc(100vh - 160px); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
+    .ws-main.has-notes-panel { grid-template-columns: 25% 1fr 260px; }
+    @media (max-width: 768px) { .ws-main, .ws-main.has-notes-panel { grid-template-columns: 1fr; min-height: auto; } }
+    .ws-notes-panel { background: var(--cream); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+    .ws-notes-panel-header { padding: 12px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .ws-notes-panel-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; color: var(--navy); margin: 0; }
+    .ws-notes-panel-body { flex: 1; overflow-y: auto; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+    .ws-notes-panel-body textarea { width: 100%; min-height: 60px; padding: 8px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 300; resize: vertical; background: var(--warm-white); color: var(--text); line-height: 1.5; }
+    .ws-notes-panel-body textarea:focus { outline: none; border-color: var(--gold); }
+    .ws-notes-mini { padding: 8px 10px; background: var(--warm-white); border-radius: 8px; border: 1px solid var(--border); font-size: 11px; font-weight: 300; color: var(--text); line-height: 1.4; }
+    .ws-notes-mini-date { font-size: 10px; color: var(--muted); margin-top: 4px; }
+    .ws-notes-panel-footer { padding: 8px 12px; border-top: 1px solid var(--border); text-align: center; }
+    .ws-notes-panel-footer a { font-size: 11px; color: var(--navy); text-decoration: none; }
     .ws-sidebar { background: var(--cream); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
     .ws-sidebar-top { padding: 14px 14px 10px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
     .ws-drop { border: 2px dashed var(--border); border-radius: 10px; padding: 10px 14px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--warm-white); display: flex; align-items: center; gap: 8px; justify-content: center; font-size: 12px; color: var(--muted); }
@@ -271,10 +282,20 @@
     .ws-folder-icon { font-size: 14px; width: 20px; text-align: center; }
     .ws-folder-name { flex: 1; }
     .ws-folder-count { font-size: 10px; color: var(--muted); background: var(--cream); padding: 1px 6px; border-radius: 8px; }
+    .ws-status-tabs { display: flex; gap: 2px; padding: 4px 10px; border-bottom: 1px solid var(--border); background: var(--cream); }
+    .ws-status-tab { padding: 4px 10px; border: none; border-radius: 4px; font-size: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; cursor: pointer; background: transparent; color: var(--muted); transition: all 0.15s; }
+    .ws-status-tab:hover { color: var(--text); }
+    .ws-status-tab.active { background: var(--warm-white); color: var(--navy); }
+    .ws-file-status { font-size: 8px; padding: 1px 5px; border-radius: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0; cursor: pointer; border: none; }
+    .ws-file-status.todo { background: rgba(107,143,94,0.15); color: var(--green); }
+    .ws-file-status.in-progress { background: rgba(184,151,126,0.25); color: #8B6914; }
+    .ws-file-status.need-action { background: rgba(196,112,78,0.15); color: var(--accent); }
+    .ws-file-status.done { background: rgba(44,74,94,0.1); color: var(--navy); }
     .ws-folder-files { padding: 0 8px 4px 34px; display: none; }
     .ws-folder.active + .ws-folder-files, .ws-folder.open + .ws-folder-files { display: block; }
     .ws-folder-file { padding: 5px 8px; border-radius: 6px; font-size: 11px; color: var(--muted); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: all 0.1s; }
     .ws-folder-file:hover { background: var(--cream); color: var(--text); }
+    .ws-folder-file:hover .ws-file-status { opacity: 1 !important; }
     .ws-folder-file.active { color: var(--navy); font-weight: 500; background: var(--cream); }
     .ws-sidebar-footer { padding: 10px 14px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--muted); }
     .ws-editor { display: flex; flex-direction: column; overflow: hidden; }
@@ -338,6 +359,10 @@
     .pdf-text-layer span.pdf-highlighted { background: rgba(255, 255, 0, 0.45) !important; }
     .pdf-text-layer.editing-mode { pointer-events: none; opacity: 0; }
     .erase-highlight-mode .pdf-highlighted { cursor: pointer !important; outline: 2px dashed var(--accent); outline-offset: 1px; }
+    .pdf-highlight-group { display: flex; align-items: center; gap: 4px; padding: 2px 6px; border: 1px solid var(--border); border-radius: 8px; background: var(--warm-white); }
+    .pdf-highlight-group label { font-size: 10px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-right: 2px; }
+    .pdf-hl-color { width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--border); cursor: pointer; padding: 0; }
+    .pdf-hl-color:focus { outline: 2px solid var(--navy); outline-offset: 1px; }
     .pdf-annot-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
     .pdf-annot-layer.text-mode { pointer-events: auto; cursor: text; }
     .pdf-annot-layer.sig-mode { pointer-events: auto; cursor: none; }
@@ -534,6 +559,9 @@
     .guide-reveal-content { display: none; margin-top: 8px; }
     .guide-reveal-btn.open + .guide-reveal-content { display: block; }
     .guide-more-info { border-top: 1px solid var(--border); margin-top: 16px; padding-top: 4px; }
+    .guide-save-tooltip { position: absolute; z-index: 50; background: var(--navy); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 500; padding: 6px 12px; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 5px; white-space: nowrap; transition: opacity 0.15s; user-select: none; }
+    .guide-save-tooltip:hover { filter: brightness(1.2); }
+    .guide-save-tooltip::after { content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--navy); }
 
     /* Quick Mode toggle */
     .guide-mode-toggle { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
@@ -3501,6 +3529,16 @@ guideLibrary['disability'] = {
               html += '</div>'; // reveal-content
               html += '</div>'; // guide-more-info
             }
+
+            // Action bar: save note, bookmark to files
+            html += '<div class="guide-action-bar" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap">';
+            html += '  <button class="guide-action-btn" onclick="event.stopPropagation();guideQuickNote(\'' + task.id + '\',\'' + task.title.replace(/'/g, "\\'") + '\')" style="font-size:11px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;background:var(--cream);cursor:pointer;color:var(--navy);font-family:inherit;display:flex;align-items:center;gap:4px">';
+            html += '    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Save note';
+            html += '  </button>';
+            html += '  <button class="guide-action-btn" onclick="event.stopPropagation();guideAddToChecklist(\'' + task.id + '\',\'' + task.title.replace(/'/g, "\\'") + '\')" style="font-size:11px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;background:var(--cream);cursor:pointer;color:var(--navy);font-family:inherit;display:flex;align-items:center;gap:4px">';
+            html += '    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Add to checklist';
+            html += '  </button>';
+            html += '</div>';
           }
 
           html += '  </div>'; // task-body
@@ -3511,6 +3549,9 @@ guideLibrary['disability'] = {
       });
 
       content.innerHTML = html;
+
+      // Init text selection → save to notes
+      initGuideSaveTooltip();
 
       // Show upgrade prompt once per session for free users
       if (tier === 'free') maybeShowUpgradePrompt(content);
@@ -3524,6 +3565,117 @@ guideLibrary['disability'] = {
       if (sw) sw.classList.toggle('active', quickModeActive);
       var gc = document.getElementById('guideContent');
       if (gc) gc.classList.toggle('guide-content-quick', quickModeActive);
+    }
+
+    function guideQuickNote(taskId, taskTitle) {
+      var note = prompt('Add a note about "' + taskTitle + '":');
+      if (!note || !note.trim()) return;
+      var fullNote = 'Guide: ' + taskTitle + '\n' + note.trim();
+      fetch('/api/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: fullNote })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          var btn = document.querySelector('#guide-' + taskId + ' .guide-action-bar .guide-action-btn');
+          if (btn) { btn.textContent = 'Note saved'; btn.style.color = 'var(--green)'; setTimeout(function() { btn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Save note'; btn.style.color = 'var(--navy)'; }, 2000); }
+        }
+      });
+    }
+
+    function guideAddToChecklist(taskId, taskTitle) {
+      fetch('/api/checklist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task_text: taskTitle, phase: 'From Guides' })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          var btns = document.querySelectorAll('#guide-' + taskId + ' .guide-action-bar .guide-action-btn');
+          var btn = btns.length > 1 ? btns[1] : null;
+          if (btn) { btn.textContent = 'Added to checklist'; btn.style.color = 'var(--green)'; setTimeout(function() { btn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Add to checklist'; btn.style.color = 'var(--navy)'; }, 2000); }
+        }
+      });
+    }
+
+    // ── Guide text selection → Save to Notes tooltip ──
+    var guideSaveTooltip = null;
+
+    function initGuideSaveTooltip() {
+      // Remove old if exists
+      if (guideSaveTooltip) { guideSaveTooltip.remove(); guideSaveTooltip = null; }
+
+      var guideContent = document.getElementById('guideContent');
+      if (!guideContent) return;
+
+      guideContent.addEventListener('mouseup', onGuideTextSelect);
+      document.addEventListener('mousedown', hideGuideSaveTooltip);
+    }
+
+    function onGuideTextSelect(e) {
+      // Small delay so selection is finalized
+      setTimeout(function() {
+        var sel = window.getSelection();
+        if (!sel || sel.isCollapsed || !sel.toString().trim()) { hideGuideSaveTooltip(); return; }
+
+        var text = sel.toString().trim();
+        if (text.length < 3) { hideGuideSaveTooltip(); return; }
+
+        // Make sure selection is inside guide content
+        var range = sel.getRangeAt(0);
+        var guideContent = document.getElementById('guideContent');
+        if (!guideContent || !guideContent.contains(range.commonAncestorContainer)) { hideGuideSaveTooltip(); return; }
+
+        // Position tooltip above the selection
+        var rect = range.getBoundingClientRect();
+
+        if (!guideSaveTooltip) {
+          guideSaveTooltip = document.createElement('div');
+          guideSaveTooltip.className = 'guide-save-tooltip';
+          guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Save to Notes';
+          document.body.appendChild(guideSaveTooltip);
+        }
+
+        guideSaveTooltip.style.display = 'flex';
+        guideSaveTooltip.style.left = (rect.left + rect.width / 2 - 55 + window.scrollX) + 'px';
+        guideSaveTooltip.style.top = (rect.top - 38 + window.scrollY) + 'px';
+
+        guideSaveTooltip.onclick = function(ev) {
+          ev.stopPropagation();
+          ev.preventDefault();
+          saveGuideSelection(text);
+        };
+      }, 10);
+    }
+
+    function hideGuideSaveTooltip() {
+      if (guideSaveTooltip) guideSaveTooltip.style.display = 'none';
+    }
+
+    function saveGuideSelection(text) {
+      fetch('/api/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: text })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok && guideSaveTooltip) {
+          guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Saved';
+          guideSaveTooltip.style.background = 'var(--green)';
+          setTimeout(function() {
+            hideGuideSaveTooltip();
+            if (guideSaveTooltip) {
+              guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Save to Notes';
+              guideSaveTooltip.style.background = 'var(--navy)';
+            }
+          }, 1500);
+          window.getSelection().removeAllRanges();
+        }
+      });
     }
 
     function toggleGuideTask(id) {
@@ -3603,6 +3755,40 @@ guideLibrary['disability'] = {
     }
 
     var wsActiveFolder = 'all';
+    var wsStatusFilter = 'all';
+
+    // File status stored in localStorage — key: file id, value: 'todo'|'in-progress'|'need-action'|'done'
+    function getFileStatus(fileId) {
+      try {
+        var statuses = JSON.parse(localStorage.getItem('lumeway_file_statuses') || '{}');
+        return statuses[fileId] || '';
+      } catch(e) { return ''; }
+    }
+    function setFileStatus(fileId, status) {
+      try {
+        var statuses = JSON.parse(localStorage.getItem('lumeway_file_statuses') || '{}');
+        if (status) statuses[fileId] = status; else delete statuses[fileId];
+        localStorage.setItem('lumeway_file_statuses', JSON.stringify(statuses));
+      } catch(e) {}
+      renderUserFiles();
+    }
+    function cycleFileStatus(fileId, e) {
+      e.stopPropagation();
+      var order = ['todo', 'in-progress', 'need-action', 'done', ''];
+      var current = getFileStatus(fileId);
+      var idx = order.indexOf(current);
+      var next = order[(idx + 1) % order.length];
+      setFileStatus(fileId, next);
+    }
+    function filterFileStatus(status, btn) {
+      wsStatusFilter = status;
+      document.querySelectorAll('.ws-status-tab').forEach(function(t) { t.classList.toggle('active', t.dataset.status === status); });
+      renderUserFiles();
+    }
+    function getStatusLabel(status) {
+      var labels = { 'todo': 'To Do', 'in-progress': 'In Progress', 'need-action': 'Need Action', 'done': 'Done' };
+      return labels[status] || '';
+    }
 
     function renderUserFiles() {
       var container = document.getElementById('wsFolders');
@@ -3616,6 +3802,14 @@ guideLibrary['disability'] = {
         return f.original_name.toLowerCase().indexOf(wsFilterText) >= 0;
       });
       filtered.forEach(function(f) {
+        // Apply status filter
+        if (wsStatusFilter !== 'all') {
+          var fStatus = getFileStatus(f.id);
+          if (wsStatusFilter === 'todo' && fStatus !== 'todo') return;
+          if (wsStatusFilter === 'in-progress' && fStatus !== 'in-progress') return;
+          if (wsStatusFilter === 'need-action' && fStatus !== 'need-action') return;
+          if (wsStatusFilter === 'done' && fStatus !== 'done') return;
+        }
         groups.all.push(f);
         var cat = f.category || 'other';
         if (!groups[cat]) groups[cat] = [];
@@ -3648,8 +3842,11 @@ guideLibrary['disability'] = {
           } else {
             files.forEach(function(f) {
               var fActive = wsActiveFileId === f.id ? ' active' : '';
+              var fStatus = getFileStatus(f.id);
               html += '<div class="ws-folder-file' + fActive + '" style="display:flex;align-items:center;gap:4px" onclick="event.stopPropagation();openFileViewer(' + f.id + ')" title="' + f.original_name + '">';
               html += '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + getFileIcon(f.original_name) + ' ' + f.original_name + '</span>';
+              if (fStatus) html += '<button class="ws-file-status ' + fStatus + '" onclick="cycleFileStatus(' + f.id + ',event)" title="Click to change status">' + getStatusLabel(fStatus) + '</button>';
+              else html += '<button class="ws-file-status" onclick="cycleFileStatus(' + f.id + ',event)" title="Click to set status" style="opacity:0;font-size:7px;padding:1px 4px">+</button>';
               html += '<button onclick="event.stopPropagation();deleteFile(' + f.id + ')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0 2px;opacity:0.4;flex-shrink:0" title="Delete" onmouseover="this.style.opacity=1;this.style.color=\'var(--accent)\'" onmouseout="this.style.opacity=0.4;this.style.color=\'var(--muted)\'">&times;</button>';
               html += '</div>';
             });
@@ -3811,10 +4008,10 @@ guideLibrary['disability'] = {
       if (typeof XLSX === 'undefined') needed.push({ src: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', type: 'js' });
       if (typeof jspreadsheet === 'undefined' && typeof jexcel === 'undefined') {
         needed.push({ src: 'https://cdn.jsdelivr.net/npm/jsuites@5.5.1/dist/jsuites.min.js', type: 'js' });
-        needed.push({ src: 'https://cdn.jsdelivr.net/npm/jspreadsheet-ce@4.13.4/dist/jspreadsheet.min.js', type: 'js' });
+        needed.push({ src: 'https://cdn.jsdelivr.net/npm/jspreadsheet-ce@4.13.4/dist/index.js', type: 'js' });
         // CSS
         if (!document.getElementById('jspreadsheetCSS')) {
-          var link1 = document.createElement('link'); link1.id = 'jspreadsheetCSS'; link1.rel = 'stylesheet'; link1.href = 'https://cdn.jsdelivr.net/npm/jspreadsheet-ce@4.13.4/dist/jspreadsheet.min.css'; document.head.appendChild(link1);
+          var link1 = document.createElement('link'); link1.id = 'jspreadsheetCSS'; link1.rel = 'stylesheet'; link1.href = 'https://cdn.jsdelivr.net/npm/jspreadsheet-ce@4.13.4/dist/jspreadsheet.css'; document.head.appendChild(link1);
           var link2 = document.createElement('link'); link2.rel = 'stylesheet'; link2.href = 'https://cdn.jsdelivr.net/npm/jsuites@5.5.1/dist/jsuites.min.css'; document.head.appendChild(link2);
         }
       }
@@ -3826,6 +4023,7 @@ guideLibrary['disability'] = {
         var el = document.createElement('script');
         el.src = needed[loaded].src;
         el.onload = function() { loaded++; loadNext(); };
+        el.onerror = function() { console.error('Failed to load: ' + needed[loaded].src); loaded++; loadNext(); };
         document.head.appendChild(el);
       }
       loadNext();
@@ -4404,8 +4602,14 @@ guideLibrary['disability'] = {
         + '<span class="pdf-toolbar-info" id="pdfZoomLevel">120%</span>'
         + '<button class="pdf-toolbar-btn" id="pdfZoomInBtn" onclick="pdfZoom(0.15)">+</button>'
         + '<div class="pdf-toolbar-sep"></div>'
-        + '<button class="pdf-toolbar-btn" id="pdfHighlightSelBtn" onclick="highlightPdfSelection()" title="Select text on the PDF, then click this to highlight it" style="background:rgba(255,255,0,0.3)">&#9652; Highlight</button>'
-        + '<button class="pdf-toolbar-btn" id="pdfEraseHighlightBtn" onclick="toggleEraseHighlightMode()" title="Click on highlighted text to remove the highlight">&#9003; Erase highlight</button>'
+        + '<div class="pdf-highlight-group">'
+        + '<label>Highlight</label>'
+        + '<button class="pdf-toolbar-btn" id="pdfHighlightToggle" onclick="togglePdfHighlightMode()" title="Toggle highlight mode: select text to highlight" style="padding:3px 8px">'
+        + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>'
+        + '<input type="color" class="pdf-hl-color" id="pdfHlColor" value="#FFFF00" title="Highlight color">'
+        + '<button class="pdf-toolbar-btn" id="pdfEraseHighlightBtn" onclick="toggleEraseHighlightMode()" title="Click highlighted text to erase" style="padding:3px 8px">'
+        + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7L3 16c-.8-.8-.8-2 0-2.8L14.4 2l6.4 6.4L11.5 17.5"/><path d="M7 20l-4-4"/></svg></button>'
+        + '</div>'
         + '<div class="pdf-toolbar-sep"></div>'
         + '<span class="pdf-toolbar-info" id="pdfPageInfo"></span>'
         + '</div>'
@@ -4517,23 +4721,51 @@ guideLibrary['disability'] = {
     var pdfHighlights = []; // saved highlights: [{pageNum, spans: [{left, top, width, height}], color}]
 
     var pdfEraseMode = false;
+    var pdfHighlightMode = false;
+
+    function togglePdfHighlightMode() {
+      pdfHighlightMode = !pdfHighlightMode;
+      if (pdfHighlightMode) { pdfEraseMode = false; var eb = document.getElementById('pdfEraseHighlightBtn'); if (eb) eb.classList.remove('active'); var container = document.getElementById('pdfViewer'); if (container) { container.classList.remove('erase-highlight-mode'); container.removeEventListener('click', eraseHighlightClick); } }
+      var btn = document.getElementById('pdfHighlightToggle');
+      if (btn) btn.classList.toggle('active', pdfHighlightMode);
+      // When highlight mode is on, listen for mouseup to auto-highlight selection
+      var viewer = document.getElementById('pdfViewer');
+      if (!viewer) return;
+      if (pdfHighlightMode) {
+        viewer.addEventListener('mouseup', onPdfHighlightMouseUp);
+      } else {
+        viewer.removeEventListener('mouseup', onPdfHighlightMouseUp);
+      }
+    }
+
+    function onPdfHighlightMouseUp() {
+      if (!pdfHighlightMode) return;
+      setTimeout(function() { highlightPdfSelection(); }, 10);
+    }
+
+    function getHighlightColor() {
+      var picker = document.getElementById('pdfHlColor');
+      if (!picker) return 'rgba(255,255,0,0.45)';
+      var hex = picker.value;
+      // Convert hex to rgba with 0.45 opacity
+      var r = parseInt(hex.substr(1,2), 16);
+      var g = parseInt(hex.substr(3,2), 16);
+      var b = parseInt(hex.substr(5,2), 16);
+      return 'rgba(' + r + ',' + g + ',' + b + ',0.45)';
+    }
 
     function highlightPdfSelection() {
       var sel = window.getSelection();
-      if (!sel || sel.isCollapsed || !sel.toString().trim()) {
-        alert('Select some text on the PDF first, then click Highlight.');
-        return;
-      }
-      // Use the browser's range to find exactly which text nodes are selected
-      var range = sel.getRangeAt(0);
+      if (!sel || sel.isCollapsed || !sel.toString().trim()) return;
 
-      // Get all text nodes within the range
+      var range = sel.getRangeAt(0);
+      var hlColor = getHighlightColor();
+
+      // Collect text nodes in the selection range that are inside pdf-text-layer
       var textNodes = [];
-      var walker = document.createTreeWalker(
-        range.commonAncestorContainer.nodeType === 1 ? range.commonAncestorContainer : range.commonAncestorContainer.parentElement,
-        NodeFilter.SHOW_TEXT,
-        null
-      );
+      var ancestor = range.commonAncestorContainer;
+      if (ancestor.nodeType !== 1) ancestor = ancestor.parentElement;
+      var walker = document.createTreeWalker(ancestor, NodeFilter.SHOW_TEXT, null);
       var node;
       while (node = walker.nextNode()) {
         if (range.intersectsNode(node)) {
@@ -4544,28 +4776,99 @@ guideLibrary['disability'] = {
         }
       }
 
-      if (textNodes.length === 0) {
-        sel.removeAllRanges();
-        return;
-      }
+      if (textNodes.length === 0) { sel.removeAllRanges(); return; }
 
-      // Single text node — just highlight the parent span
-      if (textNodes.length === 1) {
-        var span = textNodes[0].parentElement;
-        if (span && span.tagName === 'SPAN') {
-          span.style.backgroundColor = 'rgba(255, 255, 0, 0.45)';
-          span.classList.add('pdf-highlighted');
+      textNodes.forEach(function(tn, idx) {
+        var span = tn.parentElement;
+        if (!span || span.tagName !== 'SPAN' || !span.closest('.pdf-text-layer')) return;
+
+        var fullText = tn.textContent;
+        var startOff = 0;
+        var endOff = fullText.length;
+
+        // If this is the first node in the selection, trim the start
+        if (idx === 0 && range.startContainer === tn) {
+          startOff = range.startOffset;
+        } else if (idx === 0 && range.startContainer === span) {
+          startOff = range.startOffset;
         }
-      } else {
-        // Multiple text nodes — highlight each parent span
-        textNodes.forEach(function(tn) {
-          var span = tn.parentElement;
-          if (span && span.tagName === 'SPAN' && span.closest('.pdf-text-layer')) {
-            span.style.backgroundColor = 'rgba(255, 255, 0, 0.45)';
-            span.classList.add('pdf-highlighted');
-          }
-        });
-      }
+
+        // If this is the last node, trim the end
+        if (idx === textNodes.length - 1 && range.endContainer === tn) {
+          endOff = range.endOffset;
+        } else if (idx === textNodes.length - 1 && range.endContainer === span) {
+          endOff = range.endOffset;
+        }
+
+        // If the entire span text is selected, just highlight the span
+        if (startOff === 0 && endOff === fullText.length) {
+          span.style.backgroundColor = hlColor;
+          span.classList.add('pdf-highlighted');
+          return;
+        }
+
+        // Split the span into up to 3 parts: before, highlighted, after
+        // We need to preserve the original span's position/style
+        var origStyle = span.getAttribute('style') || '';
+        var origLeft = parseFloat(span.style.left) || 0;
+        var origTop = span.style.top;
+        var origFontSize = parseFloat(span.style.fontSize) || 12;
+        var origTransform = span.style.transform || '';
+
+        // Measure character widths using a temporary canvas
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var computedStyle = window.getComputedStyle(span);
+        ctx.font = computedStyle.fontSize + ' ' + computedStyle.fontFamily;
+
+        var textBefore = fullText.substring(0, startOff);
+        var textHighlight = fullText.substring(startOff, endOff);
+        var textAfter = fullText.substring(endOff);
+
+        var widthBefore = ctx.measureText(textBefore).width;
+        var widthHighlight = ctx.measureText(textHighlight).width;
+
+        // Get scale factor from transform if present
+        var scaleX = 1;
+        var scaleMatch = origTransform.match(/scaleX\(([\d.]+)\)/);
+        if (scaleMatch) scaleX = parseFloat(scaleMatch[1]);
+        widthBefore *= scaleX;
+        widthHighlight *= scaleX;
+
+        var parentLayer = span.closest('.pdf-text-layer');
+
+        // Remove original span
+        var nextSibling = span.nextSibling;
+
+        // Create highlighted portion
+        var hlSpan = span.cloneNode(false);
+        hlSpan.textContent = textHighlight;
+        hlSpan.style.left = (origLeft + widthBefore) + 'px';
+        hlSpan.style.width = widthHighlight + 'px';
+        hlSpan.style.backgroundColor = hlColor;
+        hlSpan.classList.add('pdf-highlighted');
+
+        // Create before portion (if any)
+        if (textBefore) {
+          var beforeSpan = span.cloneNode(false);
+          beforeSpan.textContent = textBefore;
+          beforeSpan.style.width = widthBefore + 'px';
+          parentLayer.insertBefore(beforeSpan, nextSibling);
+        }
+
+        parentLayer.insertBefore(hlSpan, nextSibling);
+
+        // Create after portion (if any)
+        if (textAfter) {
+          var afterSpan = span.cloneNode(false);
+          afterSpan.textContent = textAfter;
+          afterSpan.style.left = (origLeft + widthBefore + widthHighlight) + 'px';
+          parentLayer.insertBefore(afterSpan, nextSibling);
+        }
+
+        // Remove original
+        span.remove();
+      });
 
       sel.removeAllRanges();
       pdfMarkDirty();
@@ -4573,9 +4876,9 @@ guideLibrary['disability'] = {
 
     function toggleEraseHighlightMode() {
       pdfEraseMode = !pdfEraseMode;
+      if (pdfEraseMode) { pdfHighlightMode = false; var hb = document.getElementById('pdfHighlightToggle'); if (hb) hb.classList.remove('active'); var viewer = document.getElementById('pdfViewer'); if (viewer) viewer.removeEventListener('mouseup', onPdfHighlightMouseUp); }
       var btn = document.getElementById('pdfEraseHighlightBtn');
       if (btn) btn.classList.toggle('active', pdfEraseMode);
-      // Toggle click listeners on highlighted spans
       var container = document.getElementById('pdfViewer');
       if (!container) return;
       if (pdfEraseMode) {
@@ -5197,8 +5500,8 @@ guideLibrary['disability'] = {
       if (hasFullAccess || hasSomeFullCat) {
         html += '  <button class="dash-tab" data-tab="calendar" onclick="switchTab(\'calendar\')">Calendar</button>';
         html += '  <button class="dash-tab" data-tab="documents" onclick="switchTab(\'documents\')">Files & Templates</button>';
-        html += '  <button class="dash-tab" data-tab="notes" onclick="switchTab(\'notes\')">Notes</button>';
         html += '  <button class="dash-tab" data-tab="guides" onclick="switchTab(\'guides\')">Guides</button>';
+        html += '  <button class="dash-tab" data-tab="notes" onclick="switchTab(\'notes\')">Notes</button>';
         html += '  <button class="dash-tab" data-tab="activity" onclick="switchTab(\'activity\')">Activity Log';
         html += '</button>';
         html += '  <button class="dash-tab" data-tab="history" onclick="switchTab(\'history\')">History</button>';
@@ -5725,7 +6028,7 @@ guideLibrary['disability'] = {
       // ── DOCUMENTS TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-documents">';
-      html += '<div class="ws-main">';
+      html += '<div class="ws-main has-notes-panel">';
 
       // ── SIDEBAR: upload, folders, files ──
       html += '<div class="ws-sidebar">';
@@ -5750,6 +6053,15 @@ guideLibrary['disability'] = {
       html += '    <svg class="ws-search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>';
       html += '    <input class="ws-search" id="wsSearch" placeholder="Search\u2026" oninput="filterFiles(this.value)">';
       html += '  </div>';
+      html += '</div>';
+
+      // Status filter tabs
+      html += '<div class="ws-status-tabs">';
+      html += '  <button class="ws-status-tab active" data-status="all" onclick="filterFileStatus(\'all\',this)">All</button>';
+      html += '  <button class="ws-status-tab" data-status="todo" onclick="filterFileStatus(\'todo\',this)">To Do</button>';
+      html += '  <button class="ws-status-tab" data-status="in-progress" onclick="filterFileStatus(\'in-progress\',this)">In Progress</button>';
+      html += '  <button class="ws-status-tab" data-status="need-action" onclick="filterFileStatus(\'need-action\',this)">Need Action</button>';
+      html += '  <button class="ws-status-tab" data-status="done" onclick="filterFileStatus(\'done\',this)">Done</button>';
       html += '</div>';
 
       // Folder list (rendered by JS)
@@ -5785,6 +6097,7 @@ guideLibrary['disability'] = {
       html += '    </div>';
       html += '  </div>';
       html += '  <button class="ws-viewer-btn" id="wsPrintBtn" onclick="printCurrentFile()" title="Print" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>';
+      html += '  <button class="ws-viewer-btn" onclick="toggleDocNotesPanel()" title="Toggle notes panel"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>';
       html += '  <a class="ws-viewer-btn" id="wsViewerDl" href="#" title="Download original"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>';
       html += '  <button class="ws-viewer-btn" onclick="closeViewer()">&times;</button>';
       html += '</div>';
@@ -5811,6 +6124,10 @@ guideLibrary['disability'] = {
       html += '  <h3>Supported files</h3>';
       html += '  <p>PDF, Word (.doc, .docx), Excel (.xlsx), images (.jpg, .png), text files (.txt, .csv)</p>';
       html += '  <p style="margin-top:20px;font-size:13px;color:var(--navy)"><strong>To get started</strong>, upload a file using the sidebar or drag and drop one anywhere on this page.</p>';
+      html += '  <div style="margin-top:20px;padding:14px 16px;background:linear-gradient(135deg,var(--cream),#f5efe7);border:1px solid var(--border);border-radius:10px">';
+      html += '    <p style="font-size:13px;font-weight:400;color:var(--navy);margin:0 0 4px">Just downloaded a pile of forms and need a break?</p>';
+      html += '    <p style="font-size:12px;font-weight:300;color:var(--muted);margin:0;line-height:1.5">Upload them here and they will be waiting when you are ready. No rush. Everything is saved and encrypted.</p>';
+      html += '  </div>';
       html += '  <div class="ws-trouble">';
       html += '    <button class="ws-trouble-toggle" onclick="this.classList.toggle(\'open\');this.nextElementSibling.classList.toggle(\'open\')">';
       html += '      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"/></svg>';
@@ -5838,6 +6155,33 @@ guideLibrary['disability'] = {
       html += '<div class="ws-sig-bar" id="wsSigBar" style="display:none"></div>';
 
       html += '</div>'; // ws-editor
+
+      // ── RIGHT SIDEBAR: Quick Notes ──
+      html += '<div class="ws-notes-panel" id="wsNotesPanel">';
+      html += '  <div class="ws-notes-panel-header">';
+      html += '    <h3>Notes</h3>';
+      html += '    <button onclick="toggleDocNotesPanel()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px" title="Close notes panel">&times;</button>';
+      html += '  </div>';
+      html += '  <div class="ws-notes-panel-body" id="wsNotesPanelBody">';
+      html += '    <textarea id="wsQuickNote" placeholder="Jot a note while reading..."></textarea>';
+      html += '    <button class="init-btn" onclick="saveQuickNote()" style="font-size:11px;padding:6px 12px;align-self:flex-end">Save</button>';
+      // Show recent notes
+      if (notes.length > 0) {
+        var recentNotes = notes.slice(0, 5);
+        recentNotes.forEach(function(n) {
+          html += '<div class="ws-notes-mini">';
+          html += n.content.replace(/</g, '&lt;').replace(/\n/g, '<br>').substring(0, 120);
+          if (n.content.length > 120) html += '...';
+          html += '<div class="ws-notes-mini-date">' + formatDate(n.created_at) + '</div>';
+          html += '</div>';
+        });
+      }
+      html += '  </div>';
+      html += '  <div class="ws-notes-panel-footer">';
+      html += '    <a href="#" onclick="switchTab(\'notes\');return false">View all notes &rarr;</a>';
+      html += '  </div>';
+      html += '</div>'; // ws-notes-panel
+
       html += '</div>'; // ws-main
       html += '</div>'; // panel-documents
 
@@ -6115,6 +6459,10 @@ guideLibrary['disability'] = {
       html += '<div style="margin-bottom:20px">';
       html += '  <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Guides</h2>';
       html += '  <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Step-by-step guidance for what you\'re going through. Click any task to expand the full walkthrough.</p>';
+      html += '  <div style="display:flex;gap:16px;align-items:center;margin-top:8px;flex-wrap:wrap">';
+      html += '    <a href="#" onclick="switchTab(\'notes\');return false" style="font-size:12px;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Quick note</a>';
+      html += '    <span style="font-size:12px;color:var(--muted);font-weight:300">Jot something down while you read — it will be saved in your Notes tab.</span>';
+      html += '  </div>';
       html += '</div>';
       html += '<div class="guide-mode-toggle" style="margin-bottom:16px">';
       html += '  <label onclick="toggleQuickMode()"><span class="guide-mode-switch" id="quickModeSwitch"></span> Quick mode</label>';
@@ -7237,6 +7585,43 @@ guideLibrary['disability'] = {
           loadDashboard();
         }
       });
+    }
+
+    // ── Quick Note from Documents sidebar ──
+    function saveQuickNote() {
+      var textarea = document.getElementById('wsQuickNote');
+      if (!textarea) return;
+      var content = textarea.value.trim();
+      if (!content) return;
+      fetch('/api/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: content })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          textarea.value = '';
+          // Add the new note to the panel without reloading
+          var body = document.getElementById('wsNotesPanelBody');
+          if (body) {
+            var miniNote = document.createElement('div');
+            miniNote.className = 'ws-notes-mini';
+            miniNote.innerHTML = content.replace(/</g, '&lt;').replace(/\n/g, '<br>').substring(0, 120) + '<div class="ws-notes-mini-date">Just now</div>';
+            var saveBtn = body.querySelector('.init-btn');
+            if (saveBtn) saveBtn.insertAdjacentElement('afterend', miniNote);
+          }
+        }
+      });
+    }
+
+    function toggleDocNotesPanel() {
+      var main = document.querySelector('.ws-main');
+      var panel = document.getElementById('wsNotesPanel');
+      if (!main || !panel) return;
+      var isOpen = main.classList.contains('has-notes-panel');
+      main.classList.toggle('has-notes-panel', !isOpen);
+      panel.style.display = isOpen ? 'none' : 'flex';
     }
 
     // ── Activity Log actions ──
