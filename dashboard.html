@@ -3808,9 +3808,9 @@ guideLibrary['disability'] = {
     function loadSheetLibs(callback) {
       var needed = [];
       if (typeof XLSX === 'undefined') needed.push({ src: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', type: 'js' });
-      if (typeof jspreadsheet === 'undefined') {
-        needed.push({ src: 'https://cdn.jsdelivr.net/npm/jspreadsheet-ce@4.13.4/dist/jspreadsheet.min.js', type: 'js' });
+      if (typeof jspreadsheet === 'undefined' && typeof jexcel === 'undefined') {
         needed.push({ src: 'https://cdn.jsdelivr.net/npm/jsuites@5.5.1/dist/jsuites.min.js', type: 'js' });
+        needed.push({ src: 'https://cdn.jsdelivr.net/npm/jspreadsheet-ce@4.13.4/dist/jspreadsheet.min.js', type: 'js' });
         // CSS
         if (!document.getElementById('jspreadsheetCSS')) {
           var link1 = document.createElement('link'); link1.id = 'jspreadsheetCSS'; link1.rel = 'stylesheet'; link1.href = 'https://cdn.jsdelivr.net/npm/jspreadsheet-ce@4.13.4/dist/jspreadsheet.min.css'; document.head.appendChild(link1);
@@ -3856,9 +3856,13 @@ guideLibrary['disability'] = {
       var wrap = document.getElementById('sheetTableWrap');
       if (!wrap) return;
 
+      // Resolve which global name the library registered
+      var jssFn = (typeof jspreadsheet !== 'undefined') ? jspreadsheet : (typeof jexcel !== 'undefined') ? jexcel : null;
+      if (!jssFn) { wrap.innerHTML = '<p style="padding:20px;color:var(--muted)">Spreadsheet library failed to load.</p>'; return; }
+
       // Destroy previous instance
       if (activeJspreadsheet) {
-        try { jspreadsheet.destroy(wrap); } catch(e) {}
+        try { wrap.innerHTML = ''; } catch(e) {}
         activeJspreadsheet = null;
       }
       wrap.innerHTML = '';
@@ -3885,7 +3889,7 @@ guideLibrary['disability'] = {
       window._activeWb = wb;
       window._activeSheetName = sheetName;
 
-      activeJspreadsheet = jspreadsheet(wrap, {
+      jssFn(wrap, {
         data: data,
         columns: columns,
         rowResize: true,
@@ -3899,14 +3903,16 @@ guideLibrary['disability'] = {
         onchange: function() {
           sheetDirty = true;
           // Sync changes back to workbook
-          if (activeJspreadsheet) {
-            var newData = activeJspreadsheet.getData();
+          var inst = wrap.jexcel || wrap.jspreadsheet;
+          if (inst) {
+            var newData = inst.getData();
             wb.Sheets[sheetName] = XLSX.utils.aoa_to_sheet(newData);
           }
           if (sheetSaveTimer) clearTimeout(sheetSaveTimer);
           sheetSaveTimer = setTimeout(function() { saveSheetEdits(); }, 1500);
         }
       });
+      activeJspreadsheet = wrap.jexcel || wrap.jspreadsheet || wrap;
     }
 
     function saveSheetEdits() {
