@@ -5133,6 +5133,25 @@ def save_file_edit(file_id):
     return jsonify({"ok": True})
 
 
+@app.route("/api/files/<int:file_id>/category", methods=["POST"])
+def update_file_category(file_id):
+    """Change the category of an uploaded file."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.get_json() or {}
+    category = data.get("category", "other")
+    valid = ['legal', 'financial', 'insurance', 'medical', 'personal', 'other']
+    if category not in valid:
+        return jsonify({"error": "Invalid category"}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"UPDATE user_files SET category = {param} WHERE id = {param} AND user_id = {param}", (category, file_id, user["id"]))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
 @app.route("/api/files/<int:file_id>", methods=["DELETE"])
 def delete_file(file_id):
     user = get_current_user()
