@@ -31,8 +31,7 @@ struct GuidesView: View {
                                 } label: {
                                     GuideCategoryCard(
                                         label: cat.name,
-                                        taskCount: cat.tasks.count,
-                                        risk: cat.risk
+                                        taskCount: cat.tasks.count
                                     )
                                 }
                             }
@@ -91,7 +90,6 @@ struct GuidesView: View {
 struct GuideCategoryCard: View {
     let label: String
     let taskCount: Int
-    let risk: String?
 
     var body: some View {
         VStack(spacing: 8) {
@@ -107,9 +105,6 @@ struct GuideCategoryCard: View {
                 .font(.lumeSmall)
                 .foregroundColor(.lumeMuted)
 
-            if let risk = risk {
-                RiskBadge(risk: risk)
-            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 20)
@@ -120,28 +115,6 @@ struct GuideCategoryCard: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.lumeBorder, lineWidth: 1)
         )
-    }
-}
-
-struct RiskBadge: View {
-    let risk: String
-
-    private var color: Color {
-        switch risk.lowercased() {
-        case "high": return .lumeAccent
-        case "medium": return .lumeGold
-        default: return .lumeGreen
-        }
-    }
-
-    var body: some View {
-        Text(risk.capitalized)
-            .font(.system(size: 10, weight: .medium))
-            .foregroundColor(color)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 3)
-            .background(color.opacity(0.1))
-            .cornerRadius(8)
     }
 }
 
@@ -191,10 +164,7 @@ struct GuideTaskCard: View {
                             .foregroundColor(.lumeText)
                             .multilineTextAlignment(.leading)
 
-                        if let risk = task.risk {
-                            RiskBadge(risk: risk)
                         }
-                    }
                     Spacer()
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 12, weight: .medium))
