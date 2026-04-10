@@ -253,18 +253,21 @@
 
     /* Document Workspace — folder sidebar + editor */
     .ws-main { display: grid; grid-template-columns: 25% 1fr; gap: 0; min-height: calc(100vh - 160px); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
-    .ws-main.has-notes-panel { grid-template-columns: 25% 1fr 260px; }
-    @media (max-width: 768px) { .ws-main, .ws-main.has-notes-panel { grid-template-columns: 1fr; min-height: auto; } }
-    .ws-notes-panel { background: var(--cream); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
-    .ws-notes-panel-header { padding: 12px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .ws-notes-panel-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; color: var(--navy); margin: 0; }
-    .ws-notes-panel-body { flex: 1; overflow-y: auto; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
-    .ws-notes-panel-body textarea { width: 100%; min-height: 60px; padding: 8px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 300; resize: vertical; background: var(--warm-white); color: var(--text); line-height: 1.5; }
-    .ws-notes-panel-body textarea:focus { outline: none; border-color: var(--gold); }
-    .ws-notes-mini { padding: 8px 10px; background: var(--warm-white); border-radius: 8px; border: 1px solid var(--border); font-size: 11px; font-weight: 300; color: var(--text); line-height: 1.4; }
-    .ws-notes-mini-date { font-size: 10px; color: var(--muted); margin-top: 4px; }
-    .ws-notes-panel-footer { padding: 8px 12px; border-top: 1px solid var(--border); text-align: center; }
-    .ws-notes-panel-footer a { font-size: 11px; color: var(--navy); text-decoration: none; }
+    @media (max-width: 768px) { .ws-main { grid-template-columns: 1fr; min-height: auto; } }
+    .ws-sticky-note { position: fixed; z-index: 999; width: 240px; min-height: 120px; background: #FFF9C4; border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1); display: none; flex-direction: column; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .ws-sticky-note.open { display: flex; }
+    .ws-sticky-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; cursor: move; user-select: none; border-bottom: 1px solid rgba(0,0,0,0.08); }
+    .ws-sticky-header span { font-size: 11px; font-weight: 600; color: #5D4037; }
+    .ws-sticky-close { background: none; border: none; cursor: pointer; color: #8D6E63; font-size: 14px; padding: 0 2px; }
+    .ws-sticky-close:hover { color: #3E2723; }
+    .ws-sticky-body { flex: 1; padding: 0; }
+    .ws-sticky-body textarea { width: 100%; height: 100%; min-height: 80px; border: none; background: transparent; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 300; color: #3E2723; padding: 8px 10px; resize: none; outline: none; line-height: 1.5; }
+    .ws-sticky-footer { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-top: 1px solid rgba(0,0,0,0.08); }
+    .ws-sticky-footer a { font-size: 10px; color: #8D6E63; text-decoration: none; }
+    .ws-sticky-footer a:hover { color: #5D4037; }
+    .ws-sticky-save { background: #5D4037; color: #FFF9C4; border: none; border-radius: 4px; font-size: 10px; font-weight: 600; padding: 3px 10px; cursor: pointer; font-family: inherit; }
+    .ws-sticky-save:hover { background: #3E2723; }
+    .ws-sticky-saved { font-size: 10px; color: #6B8F5E; font-weight: 500; display: none; }
     .ws-sidebar { background: var(--cream); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
     .ws-sidebar-top { padding: 14px 14px 10px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
     .ws-drop { border: 2px dashed var(--border); border-radius: 10px; padding: 10px 14px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--warm-white); display: flex; align-items: center; gap: 8px; justify-content: center; font-size: 12px; color: var(--muted); }
@@ -361,12 +364,14 @@
     .erase-highlight-mode .pdf-highlighted { cursor: pointer !important; outline: 2px dashed var(--accent); outline-offset: 1px; }
     .pdf-highlight-group { display: flex; align-items: center; gap: 4px; padding: 2px 6px; border: 1px solid var(--border); border-radius: 8px; background: var(--warm-white); }
     .pdf-highlight-group label { font-size: 10px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-right: 2px; }
-    .pdf-hl-color { width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--border); cursor: pointer; padding: 0; }
-    .pdf-hl-color:focus { outline: 2px solid var(--navy); outline-offset: 1px; }
+    .pdf-hl-colors { display: flex; gap: 3px; }
+    .pdf-hl-swatch { width: 18px; height: 18px; border-radius: 4px; border: 2px solid transparent; cursor: pointer; padding: 0; transition: border-color 0.15s; }
+    .pdf-hl-swatch:hover { border-color: var(--navy); }
+    .pdf-hl-swatch.active { border-color: var(--navy); }
     .pdf-annot-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
     .pdf-annot-layer.text-mode { pointer-events: auto; cursor: text; }
     .pdf-annot-layer.sig-mode { pointer-events: auto; cursor: none; }
-    .pdf-annot { position: absolute; cursor: move; pointer-events: auto; z-index: 3; }
+    .pdf-annot { position: absolute; cursor: move; pointer-events: auto !important; z-index: 10; }
     .pdf-annot-text { cursor: text; }
     .pdf-annot-text { border: 1.5px dashed transparent; padding: 2px 4px 2px 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #2C3E50; background: rgba(255,255,255,0.85); min-width: 60px; min-height: 22px; outline: none; border-radius: 2px; line-height: 1.4; cursor: text; }
     .pdf-annot-text:focus, .pdf-annot-text:hover { border-color: var(--gold); background: rgba(255,255,255,0.95); }
@@ -384,10 +389,10 @@
     .pdf-toolbar-info { font-size: 11px; color: var(--muted); font-weight: 300; margin-left: auto; }
     .pdf-sig-ghost { position: fixed; pointer-events: none; z-index: 1000; font-size: 24px; color: rgba(44,74,94,0.6); white-space: nowrap; display: none; }
     /* Spreadsheet viewer (jspreadsheet) */
-    #sheetTableWrap { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; }
+    #sheetTableWrap { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; overflow: auto; height: calc(100vh - 220px); }
     #sheetTableWrap .jexcel { font-size: 12px; }
     #sheetTableWrap .jexcel td { font-family: 'Plus Jakarta Sans', sans-serif; }
-    #sheetTableWrap .jexcel_content { max-height: calc(100vh - 260px); }
+    #sheetTableWrap .jexcel_content { max-height: none !important; overflow: visible !important; }
     /* TinyMCE overrides */
     .ws-viewer-body .tox-tinymce { border: none !important; border-radius: 0 !important; }
     .ws-viewer-body .tox .tox-toolbar__primary { background: var(--cream) !important; border-bottom: 1px solid var(--border) !important; }
@@ -4094,9 +4099,8 @@ guideLibrary['disability'] = {
         rowResize: true,
         columnResize: true,
         columnDrag: true,
-        tableOverflow: true,
+        tableOverflow: false,
         tableWidth: '100%',
-        tableHeight: (window.innerHeight - 260) + 'px',
         defaultColWidth: 120,
         minDimensions: [maxCols, data.length],
         onchange: function() {
@@ -4221,7 +4225,7 @@ guideLibrary['disability'] = {
         var exportBtn = document.createElement('button');
         exportBtn.id = 'wsExportBtn';
         exportBtn.className = 'ws-viewer-btn';
-        exportBtn.textContent = 'Export edited';
+        exportBtn.textContent = 'Download edited';
         exportBtn.onclick = function() { exportAsDocx(file.original_name); };
         header.insertBefore(exportBtn, dlBtn);
         // Show signature button in header
@@ -4606,7 +4610,13 @@ guideLibrary['disability'] = {
         + '<label>Highlight</label>'
         + '<button class="pdf-toolbar-btn" id="pdfHighlightToggle" onclick="togglePdfHighlightMode()" title="Toggle highlight mode: select text to highlight" style="padding:3px 8px">'
         + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>'
-        + '<input type="color" class="pdf-hl-color" id="pdfHlColor" value="#FFFF00" title="Highlight color">'
+        + '<div class="pdf-hl-colors">'
+        + '<button class="pdf-hl-swatch active" data-color="#FFFF00" onclick="setPdfHlColor(this)" style="background:rgba(255,255,0,0.6)" title="Yellow"></button>'
+        + '<button class="pdf-hl-swatch" data-color="#90EE90" onclick="setPdfHlColor(this)" style="background:rgba(144,238,144,0.6)" title="Green"></button>'
+        + '<button class="pdf-hl-swatch" data-color="#87CEFA" onclick="setPdfHlColor(this)" style="background:rgba(135,206,250,0.6)" title="Blue"></button>'
+        + '<button class="pdf-hl-swatch" data-color="#FFB6C1" onclick="setPdfHlColor(this)" style="background:rgba(255,182,193,0.6)" title="Pink"></button>'
+        + '<button class="pdf-hl-swatch" data-color="#FFA500" onclick="setPdfHlColor(this)" style="background:rgba(255,165,0,0.6)" title="Orange"></button>'
+        + '</div>'
         + '<button class="pdf-toolbar-btn" id="pdfEraseHighlightBtn" onclick="toggleEraseHighlightMode()" title="Click highlighted text to erase" style="padding:3px 8px">'
         + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7L3 16c-.8-.8-.8-2 0-2.8L14.4 2l6.4 6.4L11.5 17.5"/><path d="M7 20l-4-4"/></svg></button>'
         + '</div>'
@@ -4743,11 +4753,16 @@ guideLibrary['disability'] = {
       setTimeout(function() { highlightPdfSelection(); }, 10);
     }
 
+    var pdfHlColorHex = '#FFFF00';
+
+    function setPdfHlColor(btn) {
+      pdfHlColorHex = btn.dataset.color;
+      document.querySelectorAll('.pdf-hl-swatch').forEach(function(s) { s.classList.remove('active'); });
+      btn.classList.add('active');
+    }
+
     function getHighlightColor() {
-      var picker = document.getElementById('pdfHlColor');
-      if (!picker) return 'rgba(255,255,0,0.45)';
-      var hex = picker.value;
-      // Convert hex to rgba with 0.45 opacity
+      var hex = pdfHlColorHex;
       var r = parseInt(hex.substr(1,2), 16);
       var g = parseInt(hex.substr(3,2), 16);
       var b = parseInt(hex.substr(5,2), 16);
@@ -5018,6 +5033,7 @@ guideLibrary['disability'] = {
         if (data.highlight) txt.style.background = data.highlight;
         txt.oninput = function() { pdfMarkDirty(); };
         txt.onblur = function() { pdfAutoSave(); };
+        txt.onmousedown = function(e) { e.stopPropagation(); };
         txt.onclick = function(e) { e.stopPropagation(); this.focus(); };
         el.appendChild(txt);
       }
@@ -6012,15 +6028,16 @@ guideLibrary['disability'] = {
       }
       html += '</div>';
 
-      html += '</div>'; // cal-sidebar
-      html += '</div>'; // cal-layout
-
-      // Export button below calendar
+      // Export button in sidebar
       if (deadlines.length > 0) {
-        html += '<div style="text-align:center;margin-top:16px">';
-        html += '  <a href="/api/deadlines/export.ics" class="btn-ghost" style="font-size:12px;padding:8px 16px;display:inline-flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export calendar (.ics) \u2014 Google, Apple, Outlook</a>';
+        html += '<div class="cal-sidebar-card" style="text-align:center">';
+        html += '  <a href="/api/deadlines/export.ics" class="btn-ghost" style="font-size:11px;padding:8px 14px;display:inline-flex;align-items:center;gap:6px;width:100%;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export (.ics)</a>';
+        html += '  <div style="font-size:10px;color:var(--muted);margin-top:4px">Google, Apple, Outlook</div>';
         html += '</div>';
       }
+
+      html += '</div>'; // cal-sidebar
+      html += '</div>'; // cal-layout
 
       html += '</div>'; // panel-calendar
 
@@ -6028,7 +6045,7 @@ guideLibrary['disability'] = {
       // ── DOCUMENTS TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-documents">';
-      html += '<div class="ws-main has-notes-panel">';
+      html += '<div class="ws-main">';
 
       // ── SIDEBAR: upload, folders, files ──
       html += '<div class="ws-sidebar">';
@@ -6097,7 +6114,7 @@ guideLibrary['disability'] = {
       html += '    </div>';
       html += '  </div>';
       html += '  <button class="ws-viewer-btn" id="wsPrintBtn" onclick="printCurrentFile()" title="Print" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>';
-      html += '  <button class="ws-viewer-btn" onclick="toggleDocNotesPanel()" title="Toggle notes panel"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>';
+      html += '  <button class="ws-viewer-btn" onclick="toggleStickyNote()" title="Quick note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>';
       html += '  <a class="ws-viewer-btn" id="wsViewerDl" href="#" title="Download original"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>';
       html += '  <button class="ws-viewer-btn" onclick="closeViewer()">&times;</button>';
       html += '</div>';
@@ -6155,34 +6172,24 @@ guideLibrary['disability'] = {
       html += '<div class="ws-sig-bar" id="wsSigBar" style="display:none"></div>';
 
       html += '</div>'; // ws-editor
-
-      // ── RIGHT SIDEBAR: Quick Notes ──
-      html += '<div class="ws-notes-panel" id="wsNotesPanel">';
-      html += '  <div class="ws-notes-panel-header">';
-      html += '    <h3>Notes</h3>';
-      html += '    <button onclick="toggleDocNotesPanel()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px" title="Close notes panel">&times;</button>';
-      html += '  </div>';
-      html += '  <div class="ws-notes-panel-body" id="wsNotesPanelBody">';
-      html += '    <textarea id="wsQuickNote" placeholder="Jot a note while reading..."></textarea>';
-      html += '    <button class="init-btn" onclick="saveQuickNote()" style="font-size:11px;padding:6px 12px;align-self:flex-end">Save</button>';
-      // Show recent notes
-      if (notes.length > 0) {
-        var recentNotes = notes.slice(0, 5);
-        recentNotes.forEach(function(n) {
-          html += '<div class="ws-notes-mini">';
-          html += n.content.replace(/</g, '&lt;').replace(/\n/g, '<br>').substring(0, 120);
-          if (n.content.length > 120) html += '...';
-          html += '<div class="ws-notes-mini-date">' + formatDate(n.created_at) + '</div>';
-          html += '</div>';
-        });
-      }
-      html += '  </div>';
-      html += '  <div class="ws-notes-panel-footer">';
-      html += '    <a href="#" onclick="switchTab(\'notes\');return false">View all notes &rarr;</a>';
-      html += '  </div>';
-      html += '</div>'; // ws-notes-panel
-
       html += '</div>'; // ws-main
+
+      // Floating sticky note
+      html += '<div class="ws-sticky-note" id="wsStickyNote" style="top:160px;right:40px">';
+      html += '  <div class="ws-sticky-header" id="wsStickyDrag">';
+      html += '    <span>Quick Note</span>';
+      html += '    <button class="ws-sticky-close" onclick="toggleStickyNote()">&times;</button>';
+      html += '  </div>';
+      html += '  <div class="ws-sticky-body">';
+      html += '    <textarea id="wsStickyText" placeholder="Type a note and hit Enter to save..."></textarea>';
+      html += '  </div>';
+      html += '  <div class="ws-sticky-footer">';
+      html += '    <a href="#" onclick="switchTab(\'notes\');return false">All notes &rarr;</a>';
+      html += '    <span class="ws-sticky-saved" id="wsStickyStatus">Saved</span>';
+      html += '    <button class="ws-sticky-save" onclick="saveStickyNote()">Save</button>';
+      html += '  </div>';
+      html += '</div>';
+
       html += '</div>'; // panel-documents
 
       // ═══════════════════════════════
@@ -7587,11 +7594,22 @@ guideLibrary['disability'] = {
       });
     }
 
-    // ── Quick Note from Documents sidebar ──
-    function saveQuickNote() {
-      var textarea = document.getElementById('wsQuickNote');
-      if (!textarea) return;
-      var content = textarea.value.trim();
+    // ── Floating Sticky Note ──
+    function toggleStickyNote() {
+      var el = document.getElementById('wsStickyNote');
+      if (!el) return;
+      el.classList.toggle('open');
+      if (el.classList.contains('open')) {
+        initStickyDrag();
+        var ta = document.getElementById('wsStickyText');
+        if (ta) { ta.focus(); ta.onkeydown = function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveStickyNote(); } }; }
+      }
+    }
+
+    function saveStickyNote() {
+      var ta = document.getElementById('wsStickyText');
+      if (!ta) return;
+      var content = ta.value.trim();
       if (!content) return;
       fetch('/api/notes', {
         method: 'POST',
@@ -7601,27 +7619,40 @@ guideLibrary['disability'] = {
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.ok) {
-          textarea.value = '';
-          // Add the new note to the panel without reloading
-          var body = document.getElementById('wsNotesPanelBody');
-          if (body) {
-            var miniNote = document.createElement('div');
-            miniNote.className = 'ws-notes-mini';
-            miniNote.innerHTML = content.replace(/</g, '&lt;').replace(/\n/g, '<br>').substring(0, 120) + '<div class="ws-notes-mini-date">Just now</div>';
-            var saveBtn = body.querySelector('.init-btn');
-            if (saveBtn) saveBtn.insertAdjacentElement('afterend', miniNote);
-          }
+          ta.value = '';
+          var status = document.getElementById('wsStickyStatus');
+          if (status) { status.style.display = 'inline'; setTimeout(function() { status.style.display = 'none'; }, 2000); }
         }
       });
     }
 
-    function toggleDocNotesPanel() {
-      var main = document.querySelector('.ws-main');
-      var panel = document.getElementById('wsNotesPanel');
-      if (!main || !panel) return;
-      var isOpen = main.classList.contains('has-notes-panel');
-      main.classList.toggle('has-notes-panel', !isOpen);
-      panel.style.display = isOpen ? 'none' : 'flex';
+    function initStickyDrag() {
+      var note = document.getElementById('wsStickyNote');
+      var header = document.getElementById('wsStickyDrag');
+      if (!note || !header || header._dragInit) return;
+      header._dragInit = true;
+      var dragging = false, startX, startY, origLeft, origTop;
+      header.addEventListener('mousedown', function(e) {
+        if (e.target.tagName === 'BUTTON') return;
+        dragging = true;
+        startX = e.clientX; startY = e.clientY;
+        origLeft = note.offsetLeft; origTop = note.offsetTop;
+        note.style.right = 'auto';
+        note.style.left = origLeft + 'px';
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+        e.preventDefault();
+      });
+      function onMove(e) {
+        if (!dragging) return;
+        note.style.left = Math.max(0, origLeft + e.clientX - startX) + 'px';
+        note.style.top = Math.max(0, origTop + e.clientY - startY) + 'px';
+      }
+      function onUp() {
+        dragging = false;
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
     }
 
     // ── Activity Log actions ──
