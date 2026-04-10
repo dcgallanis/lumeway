@@ -36,8 +36,10 @@
     .btn-primary:hover { background: var(--accent-light); }
 
     /* Dashboard layout */
-    .dash { max-width: 1100px; margin: 0 auto; padding: 100px 24px 64px; }
-    .dash.dash-wide { max-width: 100%; padding-left: 32px; padding-right: 32px; }
+    .dash { max-width: 100%; margin: 0 auto; padding: 100px 24px 64px; }
+    .dash-tabs { min-height: 46px; max-width: 1100px; margin-left: auto; margin-right: auto; }
+    .tab-panel { max-width: 1100px; margin-left: auto; margin-right: auto; }
+    .tab-panel#panel-documents { max-width: 100%; padding-left: 8px; padding-right: 8px; }
     .dash-header { margin-bottom: 32px; }
     .dash-greeting { font-family: 'Libre Baskerville', serif; font-size: clamp(32px, 5vw, 44px); font-weight: 300; line-height: 1.15; margin-bottom: 8px; }
     .dash-sub { font-size: 15px; font-weight: 300; color: var(--muted); }
@@ -268,6 +270,9 @@
     .ws-sticky-save { background: #5D4037; color: #FFF9C4; border: none; border-radius: 4px; font-size: 10px; font-weight: 600; padding: 3px 10px; cursor: pointer; font-family: inherit; }
     .ws-sticky-save:hover { background: #3E2723; }
     .ws-sticky-saved { font-size: 10px; color: #6B8F5E; font-weight: 500; display: none; }
+    .ws-note-hint { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 6px; background: var(--navy); color: var(--cream); font-size: 11px; font-weight: 500; padding: 8px 14px; border-radius: 8px; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 30; animation: noteHintPulse 2s ease infinite; }
+    .ws-note-hint::before { content: ''; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid var(--navy); }
+    @keyframes noteHintPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     .ws-sidebar { background: var(--cream); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
     .ws-sidebar-top { padding: 14px 14px 10px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
     .ws-drop { border: 2px dashed var(--border); border-radius: 10px; padding: 10px 14px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--warm-white); display: flex; align-items: center; gap: 8px; justify-content: center; font-size: 12px; color: var(--muted); }
@@ -289,12 +294,12 @@
     .ws-status-tab { padding: 4px 10px; border: none; border-radius: 4px; font-size: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; cursor: pointer; background: transparent; color: var(--muted); transition: all 0.15s; }
     .ws-status-tab:hover { color: var(--text); }
     .ws-status-tab.active { background: var(--warm-white); color: var(--navy); }
-    .ws-file-status { font-size: 8px; padding: 1px 5px; border-radius: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0; cursor: pointer; border: none; position: relative; }
-    .ws-file-status.todo { background: rgba(107,143,94,0.15); color: var(--green); }
-    .ws-file-status.in-progress { background: rgba(184,151,126,0.25); color: #8B6914; }
-    .ws-file-status.need-action { background: rgba(196,112,78,0.15); color: var(--accent); }
-    .ws-file-status.done { background: rgba(44,74,94,0.1); color: var(--navy); }
-    .ws-file-status.none-set { background: var(--cream); color: var(--muted); font-size: 7px; opacity: 0.6; }
+    .ws-file-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; cursor: pointer; border: 1.5px solid var(--border); position: relative; transition: all 0.15s; }
+    .ws-file-dot:hover { transform: scale(1.3); }
+    .ws-file-dot.todo { background: var(--green); border-color: var(--green); }
+    .ws-file-dot.in-progress { background: #D4A843; border-color: #D4A843; }
+    .ws-file-dot.need-action { background: var(--accent); border-color: var(--accent); }
+    .ws-file-dot.done { background: var(--navy); border-color: var(--navy); }
     .ws-status-menu { position: absolute; top: 100%; right: 0; z-index: 50; background: var(--warm-white); border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 4px 0; min-width: 110px; display: none; }
     .ws-status-menu.open { display: block; }
     .ws-status-opt { display: flex; align-items: center; gap: 6px; padding: 5px 10px; font-size: 10px; font-weight: 500; cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: inherit; color: var(--text); transition: background 0.1s; }
@@ -308,7 +313,7 @@
     .ws-folder.active + .ws-folder-files, .ws-folder.open + .ws-folder-files { display: block; }
     .ws-folder-file { padding: 5px 8px; border-radius: 6px; font-size: 11px; color: var(--muted); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: all 0.1s; }
     .ws-folder-file:hover { background: var(--cream); color: var(--text); }
-    .ws-folder-file:hover .ws-file-status.none-set { opacity: 1; }
+    .ws-folder-file:hover .ws-file-dot { transform: scale(1.3); }
     .ws-folder-file.active { color: var(--navy); font-weight: 500; background: var(--cream); }
     .ws-sidebar-footer { padding: 10px 14px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--muted); }
     .ws-editor { display: flex; flex-direction: column; overflow: hidden; }
@@ -366,7 +371,7 @@
     .pdf-viewer { position: relative; padding: 20px; background: #525659; min-height: 400px; overflow-y: auto; max-height: calc(100vh - 200px); }
     .pdf-page-wrap { position: relative; margin: 0 auto 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.25); background: white; max-width: 100%; }
     .pdf-page-wrap canvas { display: block; }
-    .pdf-text-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; line-height: 1; z-index: 1; }
+    .pdf-text-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; line-height: 1; z-index: 3; }
     .pdf-text-layer span { position: absolute; white-space: pre; color: transparent; pointer-events: all; cursor: text; }
     .pdf-text-layer span::selection { background: rgba(0,100,200,0.35); }
     .pdf-text-layer span.pdf-highlighted { background: rgba(255, 255, 0, 0.45) !important; }
@@ -382,9 +387,9 @@
     .pdf-annot-layer.text-mode { pointer-events: auto; cursor: text; }
     .pdf-annot-layer.sig-mode { pointer-events: auto; cursor: none; }
     .pdf-annot { position: absolute; cursor: move; pointer-events: auto !important; z-index: 10; }
-    .pdf-annot-text { cursor: text; }
-    .pdf-annot-text { border: 1.5px dashed transparent; padding: 2px 4px 2px 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #2C3E50; background: rgba(255,255,255,0.85); min-width: 60px; min-height: 22px; outline: none; border-radius: 2px; line-height: 1.4; cursor: text; }
-    .pdf-annot-text:focus, .pdf-annot-text:hover { border-color: var(--gold); background: rgba(255,255,255,0.95); }
+    .pdf-annot-text { border: 1.5px dashed rgba(0,0,0,0.15); padding: 2px 4px 2px 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #2C3E50; background: rgba(255,255,255,0.9); min-width: 60px; min-height: 22px; outline: none; border-radius: 2px; line-height: 1.4; cursor: text; pointer-events: auto !important; }
+    .pdf-annot-text:focus { border-color: var(--gold); background: rgba(255,255,255,0.98); box-shadow: 0 0 0 2px rgba(184,151,126,0.25); }
+    .pdf-annot-text:hover { border-color: var(--gold); background: rgba(255,255,255,0.95); }
     .pdf-annot-drag { position: absolute; left: 0; top: 0; width: 14px; height: 100%; cursor: move; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 8px; opacity: 0; transition: opacity 0.15s; user-select: none; letter-spacing: 1px; }
     .pdf-annot:hover .pdf-annot-drag { opacity: 0.6; }
     .pdf-annot-sig { font-size: 24px; color: #2C4A5E; pointer-events: auto; user-select: none; white-space: nowrap; padding: 2px 6px; border: 1.5px dashed transparent; border-radius: 2px; }
@@ -507,11 +512,11 @@
     .guide-nav-item { border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
     .guide-nav-item:hover { background: var(--cream); border-color: var(--border); }
     .guide-nav-item.active { background: var(--navy); border-color: var(--navy); }
-    .guide-nav-label { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; color: var(--text); display: block; margin-bottom: 4px; }
+    .guide-nav-label { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 600; color: var(--text); display: block; margin-bottom: 4px; }
     .guide-nav-item.active .guide-nav-label { color: var(--cream); }
     .guide-nav-item.locked .guide-nav-label { color: var(--muted); opacity: 0.5; }
     .guide-nav-sections { list-style: none; padding: 0; margin: 0; }
-    .guide-nav-sections li { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 300; color: var(--muted); line-height: 1.5; padding: 1px 0; cursor: pointer; transition: color 0.15s; }
+    .guide-nav-sections li { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.5; padding: 2px 0; cursor: pointer; transition: color 0.15s; }
     .guide-nav-sections li:hover { color: var(--navy); }
     .guide-nav-item.active .guide-nav-sections li { color: rgba(253,252,250,0.6); }
     .guide-nav-item.active .guide-nav-sections li:hover { color: var(--cream); }
@@ -843,9 +848,7 @@
       document.querySelectorAll('.tab-panel').forEach(function(p) {
         p.classList.toggle('active', p.id === 'panel-' + tab);
       });
-      // Expand to full width for documents tab only
-      var dashEl = document.querySelector('.dash');
-      if (dashEl) dashEl.classList.toggle('dash-wide', tab === 'documents');
+      // Documents tab uses full width via CSS, no class toggle needed
     }
 
     // ═══════════════════════════════
@@ -3650,7 +3653,7 @@ guideLibrary['disability'] = {
         if (!guideSaveTooltip) {
           guideSaveTooltip = document.createElement('div');
           guideSaveTooltip.className = 'guide-save-tooltip';
-          guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Save to Notes';
+          guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Add to Note';
           document.body.appendChild(guideSaveTooltip);
         }
 
@@ -3661,7 +3664,7 @@ guideLibrary['disability'] = {
         guideSaveTooltip.onclick = function(ev) {
           ev.stopPropagation();
           ev.preventDefault();
-          saveGuideSelection(text);
+          addToStickyNote(text);
         };
       }, 10);
     }
@@ -3670,27 +3673,28 @@ guideLibrary['disability'] = {
       if (guideSaveTooltip) guideSaveTooltip.style.display = 'none';
     }
 
-    function saveGuideSelection(text) {
-      fetch('/api/notes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: text })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.ok && guideSaveTooltip) {
-          guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Saved';
-          guideSaveTooltip.style.background = 'var(--green)';
-          setTimeout(function() {
-            hideGuideSaveTooltip();
-            if (guideSaveTooltip) {
-              guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Save to Notes';
-              guideSaveTooltip.style.background = 'var(--navy)';
-            }
-          }, 1500);
-          window.getSelection().removeAllRanges();
-        }
-      });
+    function addToStickyNote(text) {
+      // Open sticky note and append text
+      var el = document.getElementById('wsStickyNote');
+      if (!el || !el.classList.contains('open')) toggleStickyNote();
+      var ta = document.getElementById('wsStickyText');
+      if (ta) {
+        if (ta.value.trim()) ta.value += '\n\n' + text;
+        else ta.value = text;
+      }
+      // Flash the tooltip as confirmation
+      if (guideSaveTooltip) {
+        guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Added';
+        guideSaveTooltip.style.background = 'var(--green)';
+        setTimeout(function() {
+          hideGuideSaveTooltip();
+          if (guideSaveTooltip) {
+            guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Add to Note';
+            guideSaveTooltip.style.background = 'var(--navy)';
+          }
+        }, 1200);
+        window.getSelection().removeAllRanges();
+      }
     }
 
     function toggleGuideTask(id) {
@@ -3865,11 +3869,9 @@ guideLibrary['disability'] = {
             files.forEach(function(f) {
               var fActive = wsActiveFileId === f.id ? ' active' : '';
               var fStatus = getFileStatus(f.id);
-              var statusClass = fStatus ? fStatus : 'none-set';
-              var statusText = fStatus ? getStatusLabel(fStatus) : '+ status';
-              html += '<div class="ws-folder-file' + fActive + '" style="display:flex;align-items:center;gap:4px" onclick="event.stopPropagation();openFileViewer(' + f.id + ')" title="' + f.original_name + '">';
+              html += '<div class="ws-folder-file' + fActive + '" style="display:flex;align-items:center;gap:5px;position:relative" onclick="event.stopPropagation();openFileViewer(' + f.id + ')" title="' + f.original_name + '">';
+              html += '<div class="ws-file-dot ' + fStatus + '" onclick="toggleStatusMenu(' + f.id + ',event)" title="' + (fStatus ? getStatusLabel(fStatus) : 'Set status') + '"></div>';
               html += '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + getFileIcon(f.original_name) + ' ' + f.original_name + '</span>';
-              html += '<button class="ws-file-status ' + statusClass + '" onclick="toggleStatusMenu(' + f.id + ',event)">' + statusText + '</button>';
               html += '<div class="ws-status-menu" id="statusMenu-' + f.id + '">';
               html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'todo\');event.stopPropagation()"><span class="ws-status-dot c-todo"></span> To Do</button>';
               html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'in-progress\');event.stopPropagation()"><span class="ws-status-dot c-in-progress"></span> In Progress</button>';
@@ -4215,6 +4217,22 @@ guideLibrary['disability'] = {
       if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
       cleanupEditor();
       cleanupPdfState();
+      // Show sticky note hint on first file open
+      if (!localStorage.getItem('lumeway_note_hint_seen')) {
+        localStorage.setItem('lumeway_note_hint_seen', '1');
+        setTimeout(function() {
+          var noteBtn = document.querySelector('.ws-viewer-header [onclick*="toggleStickyNote"]');
+          if (noteBtn) {
+            noteBtn.style.position = 'relative';
+            var hint = document.createElement('div');
+            hint.className = 'ws-note-hint';
+            hint.innerHTML = 'Use this to take notes while you read';
+            noteBtn.appendChild(hint);
+            setTimeout(function() { hint.remove(); }, 6000);
+            hint.onclick = function(e) { e.stopPropagation(); hint.remove(); };
+          }
+        }, 800);
+      }
       var file = userFiles.find(function(f) { return f.id === fileId; });
       if (!file) return;
       wsActiveFileId = fileId;
@@ -5058,8 +5076,11 @@ guideLibrary['disability'] = {
         if (data.highlight) txt.style.background = data.highlight;
         txt.oninput = function() { pdfMarkDirty(); };
         txt.onblur = function() { pdfAutoSave(); };
-        txt.onmousedown = function(e) { e.stopPropagation(); };
-        txt.onclick = function(e) { e.stopPropagation(); this.focus(); };
+        txt.onmousedown = function(e) { e.stopPropagation(); e.stopImmediatePropagation(); };
+        txt.onclick = function(e) { e.stopPropagation(); e.stopImmediatePropagation(); this.focus(); };
+        txt.ondblclick = function(e) { e.stopPropagation(); this.focus(); };
+        // Make sure text can receive focus regardless of parent layer state
+        txt.setAttribute('tabindex', '0');
         el.appendChild(txt);
       }
 
@@ -6100,10 +6121,10 @@ guideLibrary['disability'] = {
       // Status filter tabs
       html += '<div class="ws-status-tabs">';
       html += '  <button class="ws-status-tab active" data-status="all" onclick="filterFileStatus(\'all\',this)">All</button>';
-      html += '  <button class="ws-status-tab" data-status="todo" onclick="filterFileStatus(\'todo\',this)">To Do</button>';
-      html += '  <button class="ws-status-tab" data-status="in-progress" onclick="filterFileStatus(\'in-progress\',this)">In Progress</button>';
-      html += '  <button class="ws-status-tab" data-status="need-action" onclick="filterFileStatus(\'need-action\',this)">Need Action</button>';
-      html += '  <button class="ws-status-tab" data-status="done" onclick="filterFileStatus(\'done\',this)">Done</button>';
+      html += '  <button class="ws-status-tab" data-status="todo" onclick="filterFileStatus(\'todo\',this)"><span class="ws-status-dot c-todo" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px;vertical-align:middle"></span>To Do</button>';
+      html += '  <button class="ws-status-tab" data-status="in-progress" onclick="filterFileStatus(\'in-progress\',this)"><span class="ws-status-dot c-in-progress" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px;vertical-align:middle"></span>In Progress</button>';
+      html += '  <button class="ws-status-tab" data-status="need-action" onclick="filterFileStatus(\'need-action\',this)"><span class="ws-status-dot c-need-action" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px;vertical-align:middle"></span>Need Action</button>';
+      html += '  <button class="ws-status-tab" data-status="done" onclick="filterFileStatus(\'done\',this)"><span class="ws-status-dot c-done" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px;vertical-align:middle"></span>Done</button>';
       html += '</div>';
 
       // Folder list (rendered by JS)
@@ -6214,9 +6235,46 @@ guideLibrary['disability'] = {
       html += '</div>';
 
       if (notes.length > 0) {
+        // Group notes by category tag
+        var noteGroups = { _uncategorized: [] };
+        var groupOrder = [];
         notes.forEach(function(n) {
-          html += '<div class="note-card" id="note-' + n.id + '">';
-          html += '  <div class="note-content">' + n.content.replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</div>';
+          var tagMatch = n.content.match(/^\[(File|Guide): ([^\]]+)\]/);
+          if (tagMatch) {
+            var groupKey = tagMatch[1] + ': ' + tagMatch[2];
+            if (!noteGroups[groupKey]) { noteGroups[groupKey] = []; groupOrder.push(groupKey); }
+            noteGroups[groupKey].push(n);
+          } else {
+            noteGroups._uncategorized.push(n);
+          }
+        });
+
+        // Show category filter tabs if we have grouped notes
+        if (groupOrder.length > 0) {
+          html += '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px">';
+          html += '  <button class="ws-status-tab active" onclick="filterNotes(\'all\',this)" data-nfilter="all" style="font-size:11px">All</button>';
+          groupOrder.forEach(function(key) {
+            var icon = key.startsWith('File') ? '\uD83D\uDCC4' : '\uD83D\uDCD6';
+            html += '  <button class="ws-status-tab" onclick="filterNotes(\'' + key.replace(/'/g, "\\'") + '\',this)" data-nfilter="' + key.replace(/"/g, '&quot;') + '" style="font-size:11px">' + icon + ' ' + key + ' <span style="font-size:9px;color:var(--muted)">(' + noteGroups[key].length + ')</span></button>';
+          });
+          if (noteGroups._uncategorized.length > 0) {
+            html += '  <button class="ws-status-tab" onclick="filterNotes(\'_uncategorized\',this)" data-nfilter="_uncategorized" style="font-size:11px">Other (' + noteGroups._uncategorized.length + ')</button>';
+          }
+          html += '</div>';
+        }
+
+        notes.forEach(function(n) {
+          var tagMatch = n.content.match(/^\[(File|Guide): ([^\]]+)\]/);
+          var groupKey = tagMatch ? (tagMatch[1] + ': ' + tagMatch[2]) : '_uncategorized';
+          var displayContent = n.content;
+          var tagHtml = '';
+          if (tagMatch) {
+            displayContent = n.content.substring(tagMatch[0].length).trim();
+            var icon = tagMatch[1] === 'File' ? '\uD83D\uDCC4' : '\uD83D\uDCD6';
+            tagHtml = '<span style="font-size:10px;background:var(--cream);padding:2px 6px;border-radius:4px;color:var(--navy);font-weight:500;margin-right:6px">' + icon + ' ' + tagMatch[2] + '</span>';
+          }
+          html += '<div class="note-card" id="note-' + n.id + '" data-notegroup="' + groupKey.replace(/"/g, '&quot;') + '">';
+          html += '  <div class="note-content">' + tagHtml + displayContent.replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</div>';
           html += '  <div class="note-meta">';
           html += '    <div class="note-date">' + formatDate(n.created_at) + (n.updated_at ? ' (edited)' : '') + '</div>';
           html += '    <div class="note-actions">';
@@ -7610,6 +7668,14 @@ guideLibrary['disability'] = {
       });
     }
 
+    function filterNotes(group, btn) {
+      document.querySelectorAll('[data-nfilter]').forEach(function(b) { b.classList.toggle('active', b.dataset.nfilter === group); });
+      document.querySelectorAll('.note-card').forEach(function(card) {
+        if (group === 'all') { card.style.display = ''; }
+        else { card.style.display = card.dataset.notegroup === group ? '' : 'none'; }
+      });
+    }
+
     function deleteNote(noteId) {
       if (!confirm('Delete this note?')) return;
       fetch('/api/notes/' + noteId, { method: 'DELETE' })
@@ -7638,11 +7704,28 @@ guideLibrary['disability'] = {
       }
     }
 
+    function getStickyNoteContext() {
+      // Determine current context for note categorization
+      if (currentTab === 'documents' && wsActiveFileId) {
+        var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
+        if (file) return '[File: ' + file.original_name + '] ';
+      }
+      if (currentTab === 'guides') {
+        var activeNav = document.querySelector('.guide-nav-item.active .guide-nav-label');
+        if (activeNav) return '[Guide: ' + activeNav.textContent.trim() + '] ';
+      }
+      return '';
+    }
+
     function saveStickyNote() {
       var ta = document.getElementById('wsStickyText');
       if (!ta) return;
-      var content = ta.value.trim();
-      if (!content) return;
+      var rawContent = ta.value.trim();
+      if (!rawContent) return;
+      // Auto-tag with context if not already tagged
+      var content = rawContent;
+      var ctx = getStickyNoteContext();
+      if (ctx && content.indexOf('[') !== 0) content = ctx + content;
       fetch('/api/notes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
