@@ -289,16 +289,26 @@
     .ws-status-tab { padding: 4px 10px; border: none; border-radius: 4px; font-size: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; cursor: pointer; background: transparent; color: var(--muted); transition: all 0.15s; }
     .ws-status-tab:hover { color: var(--text); }
     .ws-status-tab.active { background: var(--warm-white); color: var(--navy); }
-    .ws-file-status { font-size: 8px; padding: 1px 5px; border-radius: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0; cursor: pointer; border: none; }
+    .ws-file-status { font-size: 8px; padding: 1px 5px; border-radius: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0; cursor: pointer; border: none; position: relative; }
     .ws-file-status.todo { background: rgba(107,143,94,0.15); color: var(--green); }
     .ws-file-status.in-progress { background: rgba(184,151,126,0.25); color: #8B6914; }
     .ws-file-status.need-action { background: rgba(196,112,78,0.15); color: var(--accent); }
     .ws-file-status.done { background: rgba(44,74,94,0.1); color: var(--navy); }
+    .ws-file-status.none-set { background: var(--cream); color: var(--muted); font-size: 7px; opacity: 0.6; }
+    .ws-status-menu { position: absolute; top: 100%; right: 0; z-index: 50; background: var(--warm-white); border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 4px 0; min-width: 110px; display: none; }
+    .ws-status-menu.open { display: block; }
+    .ws-status-opt { display: flex; align-items: center; gap: 6px; padding: 5px 10px; font-size: 10px; font-weight: 500; cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: inherit; color: var(--text); transition: background 0.1s; }
+    .ws-status-opt:hover { background: var(--cream); }
+    .ws-status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .ws-status-dot.c-todo { background: var(--green); }
+    .ws-status-dot.c-in-progress { background: #D4A843; }
+    .ws-status-dot.c-need-action { background: var(--accent); }
+    .ws-status-dot.c-done { background: var(--navy); }
     .ws-folder-files { padding: 0 8px 4px 34px; display: none; }
     .ws-folder.active + .ws-folder-files, .ws-folder.open + .ws-folder-files { display: block; }
     .ws-folder-file { padding: 5px 8px; border-radius: 6px; font-size: 11px; color: var(--muted); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: all 0.1s; }
     .ws-folder-file:hover { background: var(--cream); color: var(--text); }
-    .ws-folder-file:hover .ws-file-status { opacity: 1 !important; }
+    .ws-folder-file:hover .ws-file-status.none-set { opacity: 1; }
     .ws-folder-file.active { color: var(--navy); font-weight: 500; background: var(--cream); }
     .ws-sidebar-footer { padding: 10px 14px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--muted); }
     .ws-editor { display: flex; flex-direction: column; overflow: hidden; }
@@ -3777,13 +3787,20 @@ guideLibrary['disability'] = {
       } catch(e) {}
       renderUserFiles();
     }
-    function cycleFileStatus(fileId, e) {
+    function toggleStatusMenu(fileId, e) {
       e.stopPropagation();
-      var order = ['todo', 'in-progress', 'need-action', 'done', ''];
-      var current = getFileStatus(fileId);
-      var idx = order.indexOf(current);
-      var next = order[(idx + 1) % order.length];
-      setFileStatus(fileId, next);
+      // Close any other open menus
+      document.querySelectorAll('.ws-status-menu.open').forEach(function(m) { m.classList.remove('open'); });
+      var menu = document.getElementById('statusMenu-' + fileId);
+      if (menu) menu.classList.toggle('open');
+      // Close on outside click
+      function closeMenu(ev) {
+        if (menu && !menu.contains(ev.target)) {
+          menu.classList.remove('open');
+          document.removeEventListener('click', closeMenu);
+        }
+      }
+      setTimeout(function() { document.addEventListener('click', closeMenu); }, 10);
     }
     function filterFileStatus(status, btn) {
       wsStatusFilter = status;
@@ -3848,10 +3865,18 @@ guideLibrary['disability'] = {
             files.forEach(function(f) {
               var fActive = wsActiveFileId === f.id ? ' active' : '';
               var fStatus = getFileStatus(f.id);
+              var statusClass = fStatus ? fStatus : 'none-set';
+              var statusText = fStatus ? getStatusLabel(fStatus) : '+ status';
               html += '<div class="ws-folder-file' + fActive + '" style="display:flex;align-items:center;gap:4px" onclick="event.stopPropagation();openFileViewer(' + f.id + ')" title="' + f.original_name + '">';
               html += '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + getFileIcon(f.original_name) + ' ' + f.original_name + '</span>';
-              if (fStatus) html += '<button class="ws-file-status ' + fStatus + '" onclick="cycleFileStatus(' + f.id + ',event)" title="Click to change status">' + getStatusLabel(fStatus) + '</button>';
-              else html += '<button class="ws-file-status" onclick="cycleFileStatus(' + f.id + ',event)" title="Click to set status" style="opacity:0;font-size:7px;padding:1px 4px">+</button>';
+              html += '<button class="ws-file-status ' + statusClass + '" onclick="toggleStatusMenu(' + f.id + ',event)">' + statusText + '</button>';
+              html += '<div class="ws-status-menu" id="statusMenu-' + f.id + '">';
+              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'todo\');event.stopPropagation()"><span class="ws-status-dot c-todo"></span> To Do</button>';
+              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'in-progress\');event.stopPropagation()"><span class="ws-status-dot c-in-progress"></span> In Progress</button>';
+              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'need-action\');event.stopPropagation()"><span class="ws-status-dot c-need-action"></span> Need Action</button>';
+              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'done\');event.stopPropagation()"><span class="ws-status-dot c-done"></span> Done</button>';
+              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'\');event.stopPropagation()" style="color:var(--muted)">Clear</button>';
+              html += '</div>';
               html += '<button onclick="event.stopPropagation();deleteFile(' + f.id + ')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0 2px;opacity:0.4;flex-shrink:0" title="Delete" onmouseover="this.style.opacity=1;this.style.color=\'var(--accent)\'" onmouseout="this.style.opacity=0.4;this.style.color=\'var(--muted)\'">&times;</button>';
               html += '</div>';
             });
@@ -6089,7 +6114,10 @@ guideLibrary['disability'] = {
       html += '    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
       html += '    Encrypted \u00B7 Private';
       html += '  </span>';
-      html += '  <a href="mailto:support@lumeway.co?subject=File%20issue" style="color:var(--muted);font-size:10px;text-decoration:none;transition:color 0.15s" onmouseover="this.style.color=\'var(--accent)\'" onmouseout="this.style.color=\'var(--muted)\'">Need help?</a>';
+      html += '  <span style="display:flex;gap:8px;align-items:center">';
+      html += '    <a href="#" onclick="toggleStickyNote();return false" style="color:var(--muted);font-size:10px;text-decoration:none;transition:color 0.15s" title="Open sticky note">Note</a>';
+      html += '    <a href="mailto:support@lumeway.co?subject=File%20issue" style="color:var(--muted);font-size:10px;text-decoration:none;transition:color 0.15s" onmouseover="this.style.color=\'var(--accent)\'" onmouseout="this.style.color=\'var(--muted)\'">Help</a>';
+      html += '  </span>';
       html += '</div>';
       html += '</div>'; // ws-sidebar
 
@@ -6173,23 +6201,6 @@ guideLibrary['disability'] = {
 
       html += '</div>'; // ws-editor
       html += '</div>'; // ws-main
-
-      // Floating sticky note
-      html += '<div class="ws-sticky-note" id="wsStickyNote" style="top:160px;right:40px">';
-      html += '  <div class="ws-sticky-header" id="wsStickyDrag">';
-      html += '    <span>Quick Note</span>';
-      html += '    <button class="ws-sticky-close" onclick="toggleStickyNote()">&times;</button>';
-      html += '  </div>';
-      html += '  <div class="ws-sticky-body">';
-      html += '    <textarea id="wsStickyText" placeholder="Type a note and hit Enter to save..."></textarea>';
-      html += '  </div>';
-      html += '  <div class="ws-sticky-footer">';
-      html += '    <a href="#" onclick="switchTab(\'notes\');return false">All notes &rarr;</a>';
-      html += '    <span class="ws-sticky-saved" id="wsStickyStatus">Saved</span>';
-      html += '    <button class="ws-sticky-save" onclick="saveStickyNote()">Save</button>';
-      html += '  </div>';
-      html += '</div>';
-
       html += '</div>'; // panel-documents
 
       // ═══════════════════════════════
@@ -6471,9 +6482,10 @@ guideLibrary['disability'] = {
       html += '    <span style="font-size:12px;color:var(--muted);font-weight:300">Jot something down while you read — it will be saved in your Notes tab.</span>';
       html += '  </div>';
       html += '</div>';
-      html += '<div class="guide-mode-toggle" style="margin-bottom:16px">';
+      html += '<div class="guide-mode-toggle" style="margin-bottom:16px;flex-wrap:wrap;gap:6px 16px">';
       html += '  <label onclick="toggleQuickMode()"><span class="guide-mode-switch" id="quickModeSwitch"></span> Quick mode</label>';
-      html += '  <span style="font-size:11px;font-weight:300;color:var(--muted)">Hides detailed steps — just titles and summaries</span>';
+      html += '  <label onclick="toggleStickyNote()" style="cursor:pointer"><span class="guide-mode-switch" id="noteModeSwitch"></span> Note mode</label>';
+      html += '  <span style="font-size:11px;font-weight:300;color:var(--muted);flex-basis:100%">Quick mode hides details. Note mode opens a sticky note for jotting things down.</span>';
       html += '</div>';
       html += '<div class="guide-layout">';
       html += '  <div class="guide-sidebar">';
@@ -6489,6 +6501,22 @@ guideLibrary['disability'] = {
       html += '</div>'; // panel-guides
 
       // Settings panel removed — merged into Account Settings tab above
+
+      // ── Global floating sticky note (available on any tab) ──
+      html += '<div class="ws-sticky-note" id="wsStickyNote" style="top:160px;right:40px">';
+      html += '  <div class="ws-sticky-header" id="wsStickyDrag">';
+      html += '    <span>Quick Note</span>';
+      html += '    <button class="ws-sticky-close" onclick="toggleStickyNote()">&times;</button>';
+      html += '  </div>';
+      html += '  <div class="ws-sticky-body">';
+      html += '    <textarea id="wsStickyText" placeholder="Type a note and hit Enter to save..."></textarea>';
+      html += '  </div>';
+      html += '  <div class="ws-sticky-footer">';
+      html += '    <a href="#" onclick="switchTab(\'notes\');return false">All notes &rarr;</a>';
+      html += '    <span class="ws-sticky-saved" id="wsStickyStatus">Saved</span>';
+      html += '    <button class="ws-sticky-save" onclick="saveStickyNote()">Save</button>';
+      html += '  </div>';
+      html += '</div>';
 
       document.getElementById('dashContent').innerHTML = html;
 
@@ -7599,7 +7627,11 @@ guideLibrary['disability'] = {
       var el = document.getElementById('wsStickyNote');
       if (!el) return;
       el.classList.toggle('open');
-      if (el.classList.contains('open')) {
+      var isOpen = el.classList.contains('open');
+      // Sync note mode switch visual
+      var sw = document.getElementById('noteModeSwitch');
+      if (sw) sw.classList.toggle('active', isOpen);
+      if (isOpen) {
         initStickyDrag();
         var ta = document.getElementById('wsStickyText');
         if (ta) { ta.focus(); ta.onkeydown = function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveStickyNote(); } }; }
