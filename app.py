@@ -27,6 +27,12 @@ try:
     HAS_BOTO3 = True
 except ImportError:
     HAS_BOTO3 = False
+try:
+    from docx import Document as DocxDocument
+    from docx.oxml.ns import qn
+    HAS_DOCX = True
+except ImportError:
+    HAS_DOCX = False
 import conversation_log
 
 load_dotenv()
@@ -4979,13 +4985,108 @@ def preview_user_file(file_id):
     encrypted_data = storage_load(user["id"], row[1])
     if encrypted_data is None:
         return jsonify({"error": "File not found in storage"}), 404
-    decrypted_data = file_cipher.decrypt(encrypted_data)
+    try:
+        decrypted_data = file_cipher.decrypt(encrypted_data)
+    except Exception:
+        return jsonify({"error": "Could not decrypt file"}), 500
     mime = row[2] if row[2] and '/' in str(row[2]) else 'application/octet-stream'
-    resp = make_response(decrypted_data)
-    resp.headers['Content-Type'] = mime
-    resp.headers['Content-Disposition'] = f'inline; filename="{row[0]}"'
-    resp.headers['Cache-Control'] = 'private, no-store'
-    return resp
+    # Use send_file for proper streaming of binary data
+    return send_file(
+        io.BytesIO(decrypted_data),
+        mimetype=mime,
+        as_attachment=False,
+        download_name=row[0]
+    )
+
+
+@app.route("/api/files/<int:file_id>/convert")
+def convert_docx_to_html(file_id):
+    """Convert a .docx file to HTML with proper table support using python-docx."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    if not HAS_DOCX:
+        return jsonify({"error": "Document conversion not available", "html": None})
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT original_name, stored_name FROM user_files WHERE id = {param} AND user_id = {param}", (file_id, user["id"]))
+    row = cur.fetchone()
+    conn.close()
+    if not row:
+        return jsonify({"error": "File not found"}), 404
+    ext = os.path.splitext(row[0])[1].lower()
+    if ext not in ('.docx',):
+        return jsonify({"error": "Only .docx files can be converted", "html": None})
+    encrypted_data = storage_load(user["id"], row[1])
+    if encrypted_data is None:
+        return jsonify({"error": "File not found in storage"}), 404
+    try:
+        decrypted_data = file_cipher.decrypt(encrypted_data)
+        doc = DocxDocument(io.BytesIO(decrypted_data))
+        html_parts = []
+        for element in doc.element.body:
+            tag = element.tag.split('}')[-1] if '}' in element.tag else element.tag
+            if tag == 'p':
+                # Paragraph
+                p = element
+                style_name = ''
+                pPr = p.find(qn('w:pPr'))
+                if pPr is not None:
+                    pStyle = pPr.find(qn('w:pStyle'))
+                    if pStyle is not None:
+                        style_name = pStyle.get(qn('w:val'), '')
+                text_parts = []
+                for run in p.findall(qn('w:r')):
+                    rPr = run.find(qn('w:rPr'))
+                    bold = rPr is not None and rPr.find(qn('w:b')) is not None
+                    italic = rPr is not None and rPr.find(qn('w:i')) is not None
+                    underline = rPr is not None and rPr.find(qn('w:u')) is not None
+                    t = run.find(qn('w:t'))
+                    txt = t.text if t is not None and t.text else ''
+                    if bold: txt = '<strong>' + txt + '</strong>'
+                    if italic: txt = '<em>' + txt + '</em>'
+                    if underline: txt = '<u>' + txt + '</u>'
+                    text_parts.append(txt)
+                content = ''.join(text_parts)
+                if not content.strip():
+                    html_parts.append('<p><br></p>')
+                elif 'Heading1' in style_name or 'Title' in style_name:
+                    html_parts.append('<h1>' + content + '</h1>')
+                elif 'Heading2' in style_name:
+                    html_parts.append('<h2>' + content + '</h2>')
+                elif 'Heading3' in style_name:
+                    html_parts.append('<h3>' + content + '</h3>')
+                else:
+                    html_parts.append('<p>' + content + '</p>')
+            elif tag == 'tbl':
+                # Table
+                rows_html = []
+                for tr in element.findall(qn('w:tr')):
+                    cells_html = []
+                    for tc in tr.findall(qn('w:tc')):
+                        cell_text = []
+                        for cp in tc.findall(qn('w:p')):
+                            parts = []
+                            for run in cp.findall(qn('w:r')):
+                                t = run.find(qn('w:t'))
+                                if t is not None and t.text:
+                                    parts.append(t.text)
+                            cell_text.append(''.join(parts))
+                        # Check for shading (colored cells)
+                        tcPr = tc.find(qn('w:tcPr'))
+                        shade = ''
+                        if tcPr is not None:
+                            shd = tcPr.find(qn('w:shd'))
+                            if shd is not None:
+                                fill = shd.get(qn('w:fill'), '')
+                                if fill and fill != 'auto' and fill != 'FFFFFF':
+                                    shade = ' style="background:#' + fill + '"'
+                        cells_html.append('<td' + shade + '>' + '<br>'.join(cell_text) + '</td>')
+                    rows_html.append('<tr>' + ''.join(cells_html) + '</tr>')
+                html_parts.append('<table>' + ''.join(rows_html) + '</table>')
+        return jsonify({"ok": True, "html": '\n'.join(html_parts)})
+    except Exception as e:
+        return jsonify({"error": str(e), "html": None})
 
 
 @app.route("/api/files/<int:file_id>/edit", methods=["GET"])

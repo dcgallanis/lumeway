@@ -225,62 +225,46 @@
     .doc-desc { font-size: 12px; font-weight: 300; color: var(--muted); margin-top: 2px; }
 
     /* Document Workspace */
-    .ws-layout { display: grid; grid-template-columns: 300px 1fr; gap: 20px; min-height: 500px; }
-    @media (max-width: 768px) { .ws-layout { grid-template-columns: 1fr; min-height: auto; } }
-    .ws-left { display: flex; flex-direction: column; gap: 16px; }
-    .ws-right { display: flex; flex-direction: column; }
-    .ws-drop { border: 2px dashed var(--border); border-radius: 14px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--cream); }
+    .ws-topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .ws-drop { flex: 1; min-width: 200px; border: 2px dashed var(--border); border-radius: 12px; padding: 16px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--cream); display: flex; align-items: center; gap: 12px; justify-content: center; }
     .ws-drop:hover, .ws-drop.dragover { border-color: var(--gold); background: #FAF5EE; }
     .ws-drop.uploading { pointer-events: none; opacity: 0.6; }
-    .ws-drop-icon { font-size: 28px; margin-bottom: 8px; }
     .ws-drop-text { font-size: 13px; color: var(--muted); }
-    .ws-drop-hint { font-size: 11px; color: var(--muted); margin-top: 6px; opacity: 0.7; }
-    .ws-cat-select { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 12px; background: var(--warm-white); color: var(--text); }
-    .ws-stat-row { display: flex; gap: 8px; }
-    .ws-stat { flex: 1; background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center; }
-    .ws-stat-num { font-family: 'Libre Baskerville', serif; font-size: 22px; color: var(--navy); line-height: 1.2; }
-    .ws-stat-label { font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
-    .ws-search { width: 100%; padding: 10px 14px 10px 36px; border: 1px solid var(--border); border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; background: var(--warm-white); color: var(--text); }
+    .ws-drop-hint { font-size: 11px; color: var(--muted); }
+    .ws-cat-select { padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 12px; background: var(--warm-white); color: var(--text); }
+    .ws-search { flex: 1; min-width: 160px; padding: 9px 14px 9px 34px; border: 1px solid var(--border); border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; background: var(--warm-white); color: var(--text); }
     .ws-search:focus { outline: none; border-color: var(--gold); }
-    .ws-search-wrap { position: relative; margin-bottom: 12px; }
-    .ws-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
-    .ws-file-list { flex: 1; overflow-y: auto; }
-    .ws-file { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 2px; transition: all 0.12s; cursor: pointer; border: 1px solid transparent; }
-    .ws-file:hover { background: var(--warm-white); border-color: var(--border); }
-    .ws-file.active { background: var(--warm-white); border-color: var(--gold); }
-    .ws-file-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+    .ws-search-wrap { position: relative; flex: 1; min-width: 160px; }
+    .ws-search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .ws-file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; margin-bottom: 16px; }
+    .ws-file { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; transition: all 0.12s; cursor: pointer; border: 1px solid var(--border); background: var(--warm-white); }
+    .ws-file:hover { border-color: var(--gold); box-shadow: 0 2px 8px rgba(44,74,94,0.06); }
+    .ws-file.active { border-color: var(--navy); background: var(--cream); }
+    .ws-file-icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
     .ws-file-info { flex: 1; min-width: 0; }
-    .ws-file-name { font-size: 13px; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .ws-file-meta { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .ws-file-name { font-size: 12px; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ws-file-meta { font-size: 10px; color: var(--muted); margin-top: 1px; }
     .ws-file-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
     .ws-file:hover .ws-file-actions { opacity: 1; }
-    .ws-file-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; font-size: 10px; color: var(--navy); cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; }
-    .ws-file-btn:hover { background: var(--navy); color: var(--cream); border-color: var(--navy); }
-    .ws-file-btn.del:hover { background: var(--accent); color: white; border-color: var(--accent); }
-    .ws-cat-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); padding: 8px 12px 4px; }
+    .ws-file-btn { background: none; border: none; padding: 4px; color: var(--muted); cursor: pointer; text-decoration: none; transition: color 0.15s; display: flex; align-items: center; }
+    .ws-file-btn:hover { color: var(--navy); }
+    .ws-file-btn.del:hover { color: var(--accent); }
+    .ws-cat-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); padding: 12px 4px 6px; grid-column: 1 / -1; }
     .ws-empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; font-weight: 300; }
-    .ws-viewer { flex: 1; background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; min-height: 400px; }
-    .ws-viewer-header { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--cream); }
+    .ws-viewer { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: none; flex-direction: column; height: 600px; }
+    .ws-viewer.open { display: flex; }
+    .ws-viewer-header { display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-bottom: 1px solid var(--border); background: var(--cream); flex-shrink: 0; }
     .ws-viewer-title { font-size: 14px; font-weight: 500; color: var(--navy); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .ws-viewer-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 5px 12px; font-size: 11px; color: var(--navy); cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .ws-viewer-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 5px 12px; font-size: 11px; color: var(--navy); cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 5px; }
     .ws-viewer-btn:hover { background: var(--navy); color: var(--cream); border-color: var(--navy); }
     .ws-viewer-body { flex: 1; overflow: auto; position: relative; }
     .ws-viewer-body iframe { width: 100%; height: 100%; border: none; }
-    .ws-viewer-body img { max-width: 100%; height: auto; display: block; margin: 20px auto; }
-    .ws-viewer-body .ws-docx-content { padding: 32px 28px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; line-height: 1.7; color: var(--text); }
-    .ws-viewer-body .ws-docx-content h1, .ws-viewer-body .ws-docx-content h2, .ws-viewer-body .ws-docx-content h3 { color: var(--navy); margin: 20px 0 8px; }
-    .ws-viewer-body .ws-docx-content p { margin-bottom: 10px; }
-    .ws-viewer-body .ws-docx-content table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-    .ws-viewer-body .ws-docx-content td, .ws-viewer-body .ws-docx-content th { border: 1px solid var(--border); padding: 8px 10px; font-size: 13px; }
+    .ws-viewer-body img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; margin: 20px auto; }
     .ws-viewer-body .ws-text-editor { width: 100%; height: 100%; border: none; padding: 24px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; line-height: 1.7; color: var(--text); background: var(--warm-white); resize: none; outline: none; }
     .ws-viewer-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 40px; text-align: center; color: var(--muted); }
     .ws-viewer-placeholder-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }
     .ws-viewer-placeholder-text { font-size: 14px; font-weight: 300; line-height: 1.6; }
-    .ws-gather-section { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; }
-    .ws-gather-title { font-size: 12px; font-weight: 600; color: var(--navy); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-    .ws-gather-pct { font-size: 11px; font-weight: 400; color: var(--muted); }
-    .doc-gather-upload { font-size: 11px; color: var(--navy); cursor: pointer; opacity: 0; transition: opacity 0.15s; margin-left: auto; }
-    .doc-item:hover .doc-gather-upload { opacity: 1; }
+    .ws-secure { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); padding: 8px 0; }
     /* Quill editor overrides */
     .ws-viewer-body .ql-toolbar { border: none; border-bottom: 1px solid var(--border); background: var(--cream); padding: 8px 12px; }
     .ws-viewer-body .ql-container { border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; }
@@ -290,6 +274,8 @@
     .ws-viewer-body .ql-editor h3 { color: var(--navy); font-size: 15px; font-weight: 600; margin-bottom: 4px; }
     .ws-viewer-body .ql-editor p { margin-bottom: 10px; }
     .ws-viewer-body .ql-editor a { color: var(--accent); }
+    .ws-viewer-body .ql-editor table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+    .ws-viewer-body .ql-editor td, .ws-viewer-body .ql-editor th { border: 1px solid var(--border); padding: 8px 10px; font-size: 13px; }
     .ws-viewer-body .ql-snow .ql-stroke { stroke: var(--muted); }
     .ws-viewer-body .ql-snow .ql-fill { fill: var(--muted); }
     .ws-viewer-body .ql-snow .ql-picker { color: var(--muted); }
@@ -3423,10 +3409,8 @@ guideLibrary['disability'] = {
     function renderUserFiles() {
       var container = document.getElementById('myFilesContainer');
       if (!container) return;
-      var countEl = document.getElementById('wsFileCount');
-      if (countEl) countEl.textContent = userFiles.length;
       if (userFiles.length === 0) {
-        container.innerHTML = '<div class="ws-empty">No files uploaded yet.<br>Drop a file on the left to get started.</div>';
+        container.innerHTML = '<div class="ws-empty">No files yet. Choose a category above, then upload a file to get started.</div>';
         return;
       }
       var catLabels = {legal:'Legal', financial:'Financial', insurance:'Insurance', medical:'Medical', personal:'Personal', other:'Other'};
@@ -3445,6 +3429,7 @@ guideLibrary['disability'] = {
         container.innerHTML = '<div class="ws-empty">No files match your search.</div>';
         return;
       }
+      var dlIcon = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
       var html = '';
       catOrder.forEach(function(cat) {
         if (!groups[cat]) return;
@@ -3458,8 +3443,8 @@ guideLibrary['disability'] = {
           html += '    <div class="ws-file-meta">' + formatSize(f.file_size) + ' \u00B7 ' + formatDate(f.uploaded_at) + '</div>';
           html += '  </div>';
           html += '  <div class="ws-file-actions">';
-          html += '    <a href="/api/files/' + f.id + '/download" class="ws-file-btn" onclick="event.stopPropagation()">DL</a>';
-          html += '    <button onclick="event.stopPropagation();deleteFile(' + f.id + ')" class="ws-file-btn del">\u00D7</button>';
+          html += '    <a href="/api/files/' + f.id + '/download" class="ws-file-btn" onclick="event.stopPropagation()" title="Download">' + dlIcon + '</a>';
+          html += '    <button onclick="event.stopPropagation();deleteFile(' + f.id + ')" class="ws-file-btn del" title="Delete">\u00D7</button>';
           html += '  </div>';
           html += '</div>';
         });
@@ -3567,11 +3552,12 @@ guideLibrary['disability'] = {
       wsQuill = null;
       wsEditorDirty = false;
       renderUserFiles(); // highlight active file
+      var viewer = document.getElementById('wsViewer');
       var header = document.getElementById('wsViewerHeader');
       var title = document.getElementById('wsViewerTitle');
       var dlBtn = document.getElementById('wsViewerDl');
       var body = document.getElementById('wsViewerBody');
-      header.style.display = 'flex';
+      viewer.classList.add('open');
       title.textContent = file.original_name;
       dlBtn.href = '/api/files/' + fileId + '/download';
       // Remove old export button if any
@@ -3596,12 +3582,28 @@ guideLibrary['disability'] = {
             if (data.html) {
               initQuillEditor(body, data.html, fileId);
             } else {
-              // Convert original docx
-              fetch(previewUrl).then(function(r) { return r.arrayBuffer(); }).then(function(buf) {
-                mammoth.convertToHtml({ arrayBuffer: buf }).then(function(result) {
-                  initQuillEditor(body, result.value, fileId);
-                }).catch(function() {
-                  body.innerHTML = '<div class="ws-viewer-placeholder"><div class="ws-viewer-placeholder-text">Could not open this document for editing.<br><a href="/api/files/' + fileId + '/download" style="color:var(--navy)">Download instead</a></div></div>';
+              // Try server-side conversion first (better table support), fall back to mammoth
+              fetch('/api/files/' + fileId + '/convert').then(function(r) { return r.json(); }).then(function(conv) {
+                if (conv.ok && conv.html) {
+                  initQuillEditor(body, conv.html, fileId);
+                } else {
+                  // Fallback to mammoth.js
+                  fetch(previewUrl).then(function(r) { return r.arrayBuffer(); }).then(function(buf) {
+                    mammoth.convertToHtml({ arrayBuffer: buf }).then(function(result) {
+                      initQuillEditor(body, result.value, fileId);
+                    }).catch(function() {
+                      body.innerHTML = '<div class="ws-viewer-placeholder"><div class="ws-viewer-placeholder-text">Could not open this document for editing.<br><a href="/api/files/' + fileId + '/download" style="color:var(--navy)">Download instead</a></div></div>';
+                    });
+                  });
+                }
+              }).catch(function() {
+                // Fallback to mammoth.js
+                fetch(previewUrl).then(function(r) { return r.arrayBuffer(); }).then(function(buf) {
+                  mammoth.convertToHtml({ arrayBuffer: buf }).then(function(result) {
+                    initQuillEditor(body, result.value, fileId);
+                  }).catch(function() {
+                    body.innerHTML = '<div class="ws-viewer-placeholder"><div class="ws-viewer-placeholder-text">Could not open this document for editing.<br><a href="/api/files/' + fileId + '/download" style="color:var(--navy)">Download instead</a></div></div>';
+                  });
                 });
               });
             }
@@ -3749,14 +3751,14 @@ guideLibrary['disability'] = {
       wsQuill = null;
       wsEditorDirty = false;
       renderUserFiles();
-      var header = document.getElementById('wsViewerHeader');
+      var viewer = document.getElementById('wsViewer');
       var body = document.getElementById('wsViewerBody');
       var oldExport = document.getElementById('wsExportBtn');
       var oldStatus = document.getElementById('wsSaveStatus');
       if (oldExport) oldExport.remove();
       if (oldStatus) oldStatus.remove();
-      if (header) header.style.display = 'none';
-      if (body) body.innerHTML = '<div class="ws-viewer-placeholder"><div class="ws-viewer-placeholder-icon">\uD83D\uDCC4</div><div class="ws-viewer-placeholder-text">Select a file to view it here.<br>You can preview PDFs, images, Word documents, and text files.</div></div>';
+      if (viewer) viewer.classList.remove('open');
+      if (body) body.innerHTML = '';
     }
 
     // Map dashboard transition keys to state-rules.json category keys
@@ -4377,21 +4379,15 @@ guideLibrary['disability'] = {
       // ── DOCUMENTS TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-documents">';
-      html += '<div class="ws-layout">';
 
-      // ── LEFT SIDE: Upload + Documents to Gather ──
-      html += '<div class="ws-left">';
-
-      // Upload zone
-      html += '<div class="ws-drop" id="dropZone" onclick="document.getElementById(\'fileUploadInput\').click()">';
-      html += '  <input type="file" id="fileUploadInput" style="display:none">';
-      html += '  <div class="ws-drop-icon">\uD83D\uDCC1</div>';
-      html += '  <div class="ws-drop-text" id="dropZoneText">Drop files here or click to browse</div>';
-      html += '  <div class="ws-drop-hint">PDF, Word, Excel, images \u00B7 10MB max</div>';
-      html += '</div>';
-      html += '<div>';
-      html += '  <label style="font-size:11px;font-weight:500;color:var(--muted);display:block;margin-bottom:4px">File category</label>';
-      html += '  <select id="fileCategory" class="ws-cat-select">';
+      // Top bar: upload + category + search
+      html += '<div class="ws-topbar">';
+      html += '  <div class="ws-drop" id="dropZone" onclick="document.getElementById(\'fileUploadInput\').click()">';
+      html += '    <input type="file" id="fileUploadInput" style="display:none">';
+      html += '    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
+      html += '    <span class="ws-drop-text" id="dropZoneText">Upload file</span>';
+      html += '  </div>';
+      html += '  <select id="fileCategory" class="ws-cat-select" title="File category">';
       html += '    <option value="legal">Legal</option>';
       html += '    <option value="financial">Financial</option>';
       html += '    <option value="insurance">Insurance</option>';
@@ -4399,83 +4395,31 @@ guideLibrary['disability'] = {
       html += '    <option value="personal">Personal</option>';
       html += '    <option value="other" selected>Other</option>';
       html += '  </select>';
-      html += '</div>';
-
-      // Stats
-      var gatheredCount = documents.filter(function(d) { return d.is_gathered; }).length;
-      var totalDocs = documents.length;
-      html += '<div class="ws-stat-row">';
-      html += '  <div class="ws-stat"><div class="ws-stat-num" id="wsFileCount">0</div><div class="ws-stat-label">Files</div></div>';
-      html += '  <div class="ws-stat"><div class="ws-stat-num">' + gatheredCount + '/' + totalDocs + '</div><div class="ws-stat-label">Gathered</div></div>';
-      html += '</div>';
-
-      // Documents to Gather
-      html += '<div class="ws-gather-section">';
-      html += '  <div class="ws-gather-title">Documents to Gather';
-      if (totalDocs > 0) {
-        html += '  <span class="ws-gather-pct">' + Math.round((gatheredCount / totalDocs) * 100) + '%</span>';
-      }
-      html += '  </div>';
-      if (documents.length > 0) {
-        documents.forEach(function(d) {
-          var cls = d.is_gathered ? ' gathered' : '';
-          html += '<div class="doc-item' + cls + '" style="padding:6px 0">';
-          html += '  <div class="check-box" onclick="toggleDocument(' + d.id + ', this.parentElement)" style="width:16px;height:16px;min-width:16px"></div>';
-          html += '  <div style="flex:1" onclick="toggleDocument(' + d.id + ', this.parentElement)">';
-          html += '    <div class="doc-name" style="font-size:12px">' + d.document_name + '</div>';
-          html += '  </div>';
-          if (!d.is_gathered) {
-            html += '  <span class="doc-gather-upload" onclick="event.stopPropagation();triggerUploadFor(\'' + d.document_name.replace(/'/g, "\\'") + '\')" title="Upload this document">\u2191</span>';
-          }
-          html += '  <button class="item-del" onclick="event.stopPropagation();deleteDocument(' + d.id + ')" title="Delete" style="font-size:14px;padding:0 4px">&times;</button>';
-          html += '</div>';
-        });
-      } else {
-        html += '<p style="font-size:12px;color:var(--muted);font-weight:300">Add documents you need to find or request.</p>';
-      }
-      html += '  <div style="margin-top:8px;display:flex;gap:6px">';
-      html += '    <input class="goal-input" id="addDocName" placeholder="Add document\u2026" style="flex:1;font-size:12px;padding:6px 10px">';
-      html += '    <button class="init-btn" onclick="addDocument()" style="font-size:11px;padding:6px 12px">Add</button>';
+      html += '  <div class="ws-search-wrap">';
+      html += '    <svg class="ws-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>';
+      html += '    <input class="ws-search" id="wsSearch" placeholder="Search files\u2026" oninput="filterFiles(this.value)">';
       html += '  </div>';
       html += '</div>';
+
+      // File grid
+      html += '<div id="myFilesContainer" class="ws-file-grid"></div>';
 
       // Security note
-      html += '<div style="display:flex;align-items:center;gap:8px;padding:0 4px">';
+      html += '<div class="ws-secure">';
       html += '  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
-      html += '  <span style="font-size:11px;color:var(--muted)">Files are encrypted. Only you can access them.</span>';
+      html += '  <span>Your files are encrypted and only accessible by you.</span>';
       html += '</div>';
 
-      html += '</div>'; // ws-left
-
-      // ── RIGHT SIDE: File list + Viewer ──
-      html += '<div class="ws-right">';
-
-      // Search
-      html += '<div class="ws-search-wrap">';
-      html += '  <svg class="ws-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>';
-      html += '  <input class="ws-search" id="wsSearch" placeholder="Search files\u2026" oninput="filterFiles(this.value)">';
-      html += '</div>';
-
-      // File list
-      html += '<div id="myFilesContainer" class="ws-file-list" style="margin-bottom:12px"></div>';
-
-      // Document viewer
+      // Full-width viewer (hidden until a file is opened)
       html += '<div class="ws-viewer" id="wsViewer">';
-      html += '  <div class="ws-viewer-header" id="wsViewerHeader" style="display:none">';
+      html += '  <div class="ws-viewer-header" id="wsViewerHeader">';
       html += '    <span class="ws-viewer-title" id="wsViewerTitle"></span>';
-      html += '    <a class="ws-viewer-btn" id="wsViewerDl" href="#" target="_blank">Download</a>';
-      html += '    <button class="ws-viewer-btn" onclick="closeViewer()">Close</button>';
+      html += '    <a class="ws-viewer-btn" id="wsViewerDl" href="#" title="Download original"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>';
+      html += '    <button class="ws-viewer-btn" onclick="closeViewer()" title="Close">&times;</button>';
       html += '  </div>';
-      html += '  <div class="ws-viewer-body" id="wsViewerBody">';
-      html += '    <div class="ws-viewer-placeholder">';
-      html += '      <div class="ws-viewer-placeholder-icon">\uD83D\uDCC4</div>';
-      html += '      <div class="ws-viewer-placeholder-text">Select a file to view it here.<br>You can preview PDFs, images, Word documents, and text files.</div>';
-      html += '    </div>';
-      html += '  </div>';
+      html += '  <div class="ws-viewer-body" id="wsViewerBody"></div>';
       html += '</div>';
 
-      html += '</div>'; // ws-right
-      html += '</div>'; // ws-layout
       html += '</div>'; // panel-documents
 
       // ═══════════════════════════════

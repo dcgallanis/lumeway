@@ -6,6 +6,7 @@ flask-cors
 gunicorn
 markdown
 psycopg2-binary
+python-docx
 python-dotenv
 requests
 stripe
