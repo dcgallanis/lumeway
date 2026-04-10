@@ -35,7 +35,8 @@
     .btn-primary:hover { background: var(--accent-light); }
 
     /* Dashboard layout */
-    .dash { max-width: 1100px; margin: 0 auto; padding: 100px 24px 64px; }
+    .dash { max-width: 1100px; margin: 0 auto; padding: 100px 24px 64px; transition: max-width 0.2s; }
+    .dash.dash-wide { max-width: 100%; padding-left: 32px; padding-right: 32px; }
     .dash-header { margin-bottom: 32px; }
     .dash-greeting { font-family: 'Libre Baskerville', serif; font-size: clamp(32px, 5vw, 44px); font-weight: 300; line-height: 1.15; margin-bottom: 8px; }
     .dash-sub { font-size: 15px; font-weight: 300; color: var(--muted); }
@@ -176,6 +177,8 @@
     .init-btn:hover { background: var(--accent-light); }
 
     /* Goals */
+    .dash-grid > .dash-card { display: flex; flex-direction: column; }
+    .dash-grid > .dash-card .goal-add { margin-top: auto; }
     .goal-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .goal-item:last-child { border-bottom: none; }
     .goal-item.done .check-box { background: var(--green); border-color: var(--green); }
@@ -312,8 +315,8 @@
     .ws-sig-font-opt:hover { border-color: var(--gold); }
     .ws-sig-font-opt.active { border-color: var(--navy); background: rgba(44,74,94,0.04); }
     /* PDF annotation viewer */
-    .pdf-viewer { position: relative; padding: 20px; background: #525659; min-height: 400px; }
-    .pdf-page-wrap { position: relative; margin: 0 auto 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.25); background: white; }
+    .pdf-viewer { position: relative; padding: 20px; background: #525659; min-height: 400px; overflow-y: auto; max-height: calc(100vh - 200px); }
+    .pdf-page-wrap { position: relative; margin: 0 auto 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.25); background: white; max-width: 100%; }
     .pdf-page-wrap canvas { display: block; }
     .pdf-annot-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; }
     .pdf-annot-layer.sig-mode { cursor: none; }
@@ -331,6 +334,10 @@
     .pdf-toolbar-sep { width: 1px; height: 20px; background: var(--border); }
     .pdf-toolbar-info { font-size: 11px; color: var(--muted); font-weight: 300; margin-left: auto; }
     .pdf-sig-ghost { position: fixed; pointer-events: none; z-index: 1000; font-size: 24px; color: rgba(44,74,94,0.6); white-space: nowrap; display: none; }
+    /* Spreadsheet viewer */
+    #sheetTableWrap table { border-collapse: collapse; width: max-content; min-width: 100%; }
+    #sheetTableWrap td, #sheetTableWrap th { border: 1px solid var(--border); padding: 5px 10px; font-size: 12px; white-space: nowrap; min-width: 80px; }
+    #sheetTableWrap th { background: var(--cream); font-weight: 600; color: var(--navy); position: sticky; top: 0; z-index: 2; }
     /* Quill editor overrides */
     .ws-viewer-body .ql-toolbar { border: none; border-bottom: 1px solid var(--border); background: var(--cream); padding: 8px 16px; position: sticky; top: 0; z-index: 5; }
     .ws-viewer-body .ql-toolbar .ql-formats { margin-right: 10px; }
@@ -391,8 +398,9 @@
     .conv-msg.assistant { background: var(--warm-white); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
 
     /* Upcoming deadlines (compact) */
-    .upcoming-item { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 4px; }
+    .upcoming-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); gap: 10px; }
     .upcoming-item:last-child { border-bottom: none; }
+    .upcoming-left { flex: 1; }
     .upcoming-title { font-size: 13px; font-weight: 400; }
     .upcoming-date { font-size: 12px; color: var(--muted); white-space: nowrap; }
     .upcoming-overdue { color: var(--accent); font-weight: 500; }
@@ -778,6 +786,9 @@
       document.querySelectorAll('.tab-panel').forEach(function(p) {
         p.classList.toggle('active', p.id === 'panel-' + tab);
       });
+      // Expand to full width for workspace tab
+      var dashEl = document.querySelector('.dash');
+      if (dashEl) dashEl.classList.toggle('dash-wide', tab === 'documents');
     }
 
     // ═══════════════════════════════
@@ -3543,10 +3554,19 @@ guideLibrary['disability'] = {
     // ── File Upload Functions ──
     var userFiles = [];
 
-    function loadUserFiles() {
-      fetch('/api/files').then(function(r) { return r.json(); }).then(function(data) {
+    function loadUserFiles(retries) {
+      if (retries === undefined) retries = 2;
+      fetch('/api/files').then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }).then(function(data) {
         userFiles = data.files || [];
         renderUserFiles();
+      }).catch(function(err) {
+        console.warn('loadUserFiles failed:', err);
+        if (retries > 0) {
+          setTimeout(function() { loadUserFiles(retries - 1); }, 1500);
+        }
       });
     }
 
@@ -3780,6 +3800,58 @@ guideLibrary['disability'] = {
       });
     }
 
+    function loadSheetLibs(callback) {
+      if (typeof XLSX !== 'undefined') { callback(); return; }
+      var el = document.createElement('script');
+      el.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+      el.onload = callback;
+      document.head.appendChild(el);
+    }
+
+    function renderSpreadsheet(body, wb, fileId, fileName) {
+      var sheetNames = wb.SheetNames;
+      var activeSheet = sheetNames[0];
+      // Build tab bar + table container
+      var tabHtml = '';
+      if (sheetNames.length > 1) {
+        tabHtml = '<div style="display:flex;gap:2px;padding:8px 12px;background:var(--cream);border-bottom:1px solid var(--border);overflow-x:auto">';
+        sheetNames.forEach(function(name, i) {
+          tabHtml += '<button class="pdf-toolbar-btn' + (i === 0 ? ' active' : '') + '" data-sheet="' + name + '" onclick="switchSheet(this,\'' + name.replace(/'/g, "\\'") + '\')" style="font-size:11px;padding:4px 12px;white-space:nowrap">' + name + '</button>';
+        });
+        tabHtml += '</div>';
+      }
+      body.innerHTML = tabHtml + '<div id="sheetTableWrap" style="overflow:auto;max-height:calc(100vh - 240px);padding:0"></div>';
+      renderSheetTable(wb, activeSheet);
+    }
+
+    function renderSheetTable(wb, sheetName) {
+      var ws = wb.Sheets[sheetName];
+      if (!ws) return;
+      var html = XLSX.utils.sheet_to_html(ws, { editable: false });
+      var wrap = document.getElementById('sheetTableWrap');
+      if (!wrap) return;
+      wrap.innerHTML = html;
+      // Style the generated table
+      var table = wrap.querySelector('table');
+      if (table) {
+        table.style.cssText = 'border-collapse:collapse;width:100%;font-family:"Plus Jakarta Sans",sans-serif;font-size:12px';
+        table.querySelectorAll('td,th').forEach(function(cell) {
+          cell.style.cssText = 'border:1px solid var(--border);padding:6px 10px;text-align:left;white-space:nowrap;min-width:80px';
+        });
+        table.querySelectorAll('th').forEach(function(th) {
+          th.style.cssText += ';background:var(--cream);font-weight:600;color:var(--navy);position:sticky;top:0;z-index:2';
+        });
+      }
+      // Store ref for sheet switching
+      window._activeWb = wb;
+    }
+
+    window.switchSheet = function(btn, name) {
+      btn.parentElement.querySelectorAll('button').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      if (window._activeWb) renderSheetTable(window._activeWb, name);
+    };
+
     function loadPdfLibs(callback) {
       var needed = [];
       if (typeof pdfjsLib === 'undefined') needed.push('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
@@ -3890,15 +3962,20 @@ guideLibrary['disability'] = {
         });
       } else if (['jpg','jpeg','png','gif','webp'].indexOf(ext) >= 0) {
         body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;padding:20px"><img src="' + previewUrl + '" alt="' + file.original_name + '" style="max-width:100%;max-height:calc(100vh - 300px);object-fit:contain;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.08)"></div>';
-      } else if (['xlsx','xls'].indexOf(ext) >= 0) {
-        // Spreadsheet — show in iframe for preview or offer download
-        body.innerHTML = '<div class="ws-idle">'
-          + '<div style="font-size:40px;margin-bottom:16px">📊</div>'
-          + '<div class="ws-idle-quote">Spreadsheet preview</div>'
-          + '<div class="ws-idle-sub" style="margin-bottom:16px">' + file.original_name + '</div>'
-          + '<a href="/api/files/' + fileId + '/download" style="display:inline-block;padding:10px 20px;background:var(--navy);color:var(--cream);border-radius:8px;font-size:13px;text-decoration:none">Download to edit in Excel or Google Sheets</a>'
-          + '</div>';
-      } else if (['txt','csv'].indexOf(ext) >= 0) {
+      } else if (['xlsx','xls','csv'].indexOf(ext) >= 0) {
+        // Spreadsheet — render with SheetJS
+        body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Loading spreadsheet\u2026</div>';
+        loadSheetLibs(function() {
+          fetch(previewUrl).then(function(r) { return r.arrayBuffer(); }).then(function(buf) {
+            try {
+              var wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
+              renderSpreadsheet(body, wb, fileId, file.original_name);
+            } catch(e) {
+              body.innerHTML = '<div class="ws-idle"><div style="font-size:40px;margin-bottom:16px">\uD83D\uDCCA</div><div class="ws-idle-quote">Could not preview this spreadsheet.</div><a href="/api/files/' + fileId + '/download" style="color:var(--navy);font-size:13px">Download instead</a></div>';
+            }
+          });
+        });
+      } else if (ext === 'txt') {
         var saveBtn = document.createElement('button');
         saveBtn.id = 'wsExportBtn';
         saveBtn.className = 'ws-viewer-btn';
@@ -4099,46 +4176,60 @@ guideLibrary['disability'] = {
       opts.forEach(function(o) { o.textContent = name || 'Your Name'; });
     }
 
+    function insertQuillSignature(name, font) {
+      if (!wsQuill) return;
+      loadSigFonts(); // ensure font CSS loaded
+      var range = wsQuill.getSelection();
+      var idx = range ? range.index : wsQuill.getLength();
+      // Insert a newline, then the signature text with formatting
+      wsQuill.insertText(idx, '\n');
+      wsQuill.insertText(idx + 1, name, {
+        'color': '#2C4A5E',
+        'size': 'huge'
+      });
+      // Quill doesn't natively support arbitrary font-family via formats, so we also
+      // inject a style attribute directly on the inserted text node
+      setTimeout(function() {
+        var editor = wsQuill.root;
+        var spans = editor.querySelectorAll('.ql-size-huge');
+        for (var i = spans.length - 1; i >= 0; i--) {
+          if (spans[i].textContent === name) {
+            spans[i].style.fontFamily = "'" + font + "', cursive";
+            spans[i].style.fontSize = '24px';
+            break;
+          }
+        }
+      }, 50);
+    }
+
     function stampSignature() {
       var nameInput = document.getElementById('wsSigName');
       var name = nameInput ? nameInput.value.trim() : '';
       if (!name) { alert('Please type your name first.'); return; }
       var font = activeSigFont;
-      // Save for next time
       localStorage.setItem('lumeway_sig_name', name);
       savedSigName = name;
 
-      // Close dropdown
       var dd = document.getElementById('wsSigDropdown');
       var btn = document.getElementById('wsSigToggle');
       if (dd) dd.classList.remove('open');
       if (btn) btn.classList.remove('active');
 
       if (wsQuill) {
-        // Insert signature at cursor position in Quill editor
-        var sigHtml = '<p><span style="font-family:\'' + font + '\',cursive;font-size:24px;color:#2C4A5E">' + name + '</span></p>';
-        var range = wsQuill.getSelection();
-        var idx = range ? range.index : wsQuill.getLength();
-        wsQuill.clipboard.dangerouslyPasteHTML(idx, sigHtml);
+        insertQuillSignature(name, font);
       } else if (pdfDoc) {
-        // PDF mode — enter sig stamp mode
         togglePdfSigMode();
       }
     }
 
-    // Quick stamp — uses saved signature or opens dropdown if none saved
     function quickStampSignature() {
       if (savedSigName) {
         if (wsQuill) {
-          var sigHtml = '<p><span style="font-family:\'' + activeSigFont + '\',cursive;font-size:24px;color:#2C4A5E">' + savedSigName + '</span></p>';
-          var range = wsQuill.getSelection();
-          var idx = range ? range.index : wsQuill.getLength();
-          wsQuill.clipboard.dangerouslyPasteHTML(idx, sigHtml);
+          insertQuillSignature(savedSigName, activeSigFont);
         } else if (pdfDoc) {
           togglePdfSigMode();
         }
       } else {
-        // No saved signature — open dropdown to set one up
         toggleSigDropdown();
       }
     }
@@ -4173,8 +4264,15 @@ guideLibrary['disability'] = {
       body.innerHTML = '<div class="pdf-toolbar" id="pdfToolbar">'
         + '<button class="pdf-toolbar-btn" id="pdfAddTextBtn" onclick="togglePdfTextMode()" title="Click anywhere on the PDF to add text">'
         + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Add text</button>'
-        + '<button class="pdf-toolbar-btn" id="pdfSigBtn" onclick="togglePdfSigMode()" title="Click to place your signature">'
-        + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg> Stamp signature</button>'
+        + '<div class="pdf-toolbar-sep"></div>'
+        + '<label style="font-size:11px;color:var(--muted);margin-right:2px">Size</label>'
+        + '<select id="pdfFontSize" onchange="pdfAnnotFontSize=this.value" style="padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;background:var(--warm-white);font-family:inherit">'
+        + '<option value="11">11</option><option value="12">12</option><option value="14" selected>14</option><option value="16">16</option><option value="18">18</option><option value="20">20</option><option value="24">24</option>'
+        + '</select>'
+        + '<select id="pdfFontColor" onchange="pdfAnnotFontColor=this.value" style="padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;background:var(--warm-white);font-family:inherit">'
+        + '<option value="#2C3E50">Black</option><option value="#2C4A5E">Navy</option><option value="#C4704E">Terracotta</option><option value="#6B8F5E">Green</option><option value="#1a73e8">Blue</option><option value="#c62828">Red</option>'
+        + '</select>'
+        + '<button class="pdf-toolbar-btn" id="pdfBoldBtn" onclick="pdfAnnotBold=!pdfAnnotBold;this.classList.toggle(\'active\',pdfAnnotBold)" title="Bold" style="font-weight:700;padding:3px 8px">B</button>'
         + '<div class="pdf-toolbar-sep"></div>'
         + '<button class="pdf-toolbar-btn" id="pdfZoomOutBtn" onclick="pdfZoom(-0.15)">−</button>'
         + '<span class="pdf-toolbar-info" id="pdfZoomLevel">100%</span>'
@@ -4263,32 +4361,31 @@ guideLibrary['disability'] = {
 
     // ── PDF annotation modes ──
     var pdfTextMode = false;
+    var pdfAnnotFontSize = '14';
+    var pdfAnnotFontColor = '#2C3E50';
+    var pdfAnnotBold = false;
 
     function togglePdfTextMode() {
       pdfTextMode = !pdfTextMode;
-      pdfSigMode = false;
-      document.getElementById('pdfAddTextBtn').classList.toggle('active', pdfTextMode);
-      document.getElementById('pdfSigBtn').classList.remove('active');
+      if (pdfTextMode) { pdfSigMode = false; hidePdfSigGhost(); }
+      var btn = document.getElementById('pdfAddTextBtn');
+      if (btn) btn.classList.toggle('active', pdfTextMode);
       document.querySelectorAll('.pdf-annot-layer').forEach(function(l) {
         l.classList.remove('sig-mode');
         l.style.cursor = pdfTextMode ? 'text' : 'default';
       });
-      hidePdfSigGhost();
     }
 
     function togglePdfSigMode() {
       if (!savedSigName) {
-        // Open signature settings dropdown so they can set up signature first
         toggleSigDropdown();
         return;
       }
       pdfSigMode = !pdfSigMode;
-      pdfTextMode = false;
-      document.getElementById('pdfSigBtn').classList.toggle('active', pdfSigMode);
-      document.getElementById('pdfAddTextBtn').classList.remove('active');
+      if (pdfSigMode) { pdfTextMode = false; var tb = document.getElementById('pdfAddTextBtn'); if (tb) tb.classList.remove('active'); }
       document.querySelectorAll('.pdf-annot-layer').forEach(function(l) {
         l.classList.toggle('sig-mode', pdfSigMode);
-        l.style.cursor = pdfSigMode ? 'none' : 'default';
+        l.style.cursor = pdfSigMode ? 'none' : (pdfTextMode ? 'text' : 'default');
       });
       if (pdfSigMode) {
         showPdfSigGhost();
@@ -4336,10 +4433,10 @@ guideLibrary['disability'] = {
           text: savedSigName, font: activeSigFont
         });
         pdfMarkDirty();
-        // Stay in sig mode for multiple stamps
       } else if (pdfTextMode) {
         var annot = addPdfAnnotation(layer, pageNum, {
-          type: 'text', x: xPct, y: yPct, text: ''
+          type: 'text', x: xPct, y: yPct, text: '',
+          fontSize: pdfAnnotFontSize, color: pdfAnnotFontColor, bold: pdfAnnotBold
         });
         // Focus the text input
         var textEl = annot.querySelector('.pdf-annot-text');
@@ -4365,6 +4462,9 @@ guideLibrary['disability'] = {
         txt.className = 'pdf-annot-text';
         txt.contentEditable = true;
         txt.textContent = data.text || '';
+        if (data.fontSize) txt.style.fontSize = data.fontSize + 'px';
+        if (data.color) txt.style.color = data.color;
+        if (data.bold) txt.style.fontWeight = '700';
         txt.oninput = function() { pdfMarkDirty(); };
         txt.onblur = function() { pdfAutoSave(); };
         el.appendChild(txt);
@@ -4456,7 +4556,12 @@ guideLibrary['disability'] = {
             });
           } else if (textEl) {
             var val = textEl.textContent.trim();
-            if (val) annots.push({ type: 'text', x: xPct, y: yPct, text: val });
+            if (val) annots.push({
+              type: 'text', x: xPct, y: yPct, text: val,
+              fontSize: parseInt(textEl.style.fontSize) || 14,
+              color: textEl.style.color || '#2C3E50',
+              bold: textEl.style.fontWeight === '700'
+            });
           }
         });
         if (annots.length) pdfAnnotations[pageNum] = annots;
@@ -4524,11 +4629,19 @@ guideLibrary['disability'] = {
                   color: PDFLib.rgb(0.173, 0.29, 0.37)
                 });
               } else {
+                var sz = a.fontSize || 11;
+                var clr = PDFLib.rgb(0.173, 0.243, 0.314);
+                if (a.color) {
+                  try {
+                    var hex = a.color.replace('#','');
+                    clr = PDFLib.rgb(parseInt(hex.substring(0,2),16)/255, parseInt(hex.substring(2,4),16)/255, parseInt(hex.substring(4,6),16)/255);
+                  } catch(e) {}
+                }
                 page.drawText(a.text, {
                   x: x, y: y,
-                  size: 11,
+                  size: sz,
                   font: helvetica,
-                  color: PDFLib.rgb(0.173, 0.243, 0.314)
+                  color: clr
                 });
               }
             });
@@ -4620,7 +4733,7 @@ guideLibrary['disability'] = {
       if (w) { w.style.display = 'block'; return; }
       // If welcome was removed, rebuild a simplified version
       body.innerHTML = '<div class="ws-welcome" id="wsWelcome">'
-        + '<h2>Workspace guide</h2>'
+        + '<h2>Welcome to your workspace</h2>'
         + '<p>A private place to keep all your important documents organized. Upload, view, and edit files — everything auto-saves and stays encrypted.</p>'
         + '<div style="display:flex;align-items:flex-start;gap:10px;background:linear-gradient(135deg,#f0f7f0,#e8f4e8);border:1px solid #c4d9c4;border-radius:10px;padding:14px 16px;margin-bottom:20px">'
         + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F5E" stroke-width="2" style="flex-shrink:0;margin-top:2px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
@@ -4670,15 +4783,37 @@ guideLibrary['disability'] = {
         fetch('/api/dashboard/data').then(function(r) { return r.json(); }),
         fetch('/api/checklist').then(function(r) { return r.json(); }),
         fetch('/api/activity-log').then(function(r) { return r.json(); }),
-        fetch('/static/data/state-rules.json').then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; })
+        fetch('/static/data/state-rules.json').then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; }),
+        fetch('/api/files').then(function(r) { return r.ok ? r.json() : {files:[]}; }).catch(function() { return {files:[]}; })
       ]).then(function(results) {
         dashData = results[0];
         checklistItems = results[1].items || [];
         activityLog = results[2].entries || [];
         stateRulesData = results[3];
+        userFiles = (results[4] && results[4].files) || [];
         if (typeof gtag === 'function') gtag('event', 'dashboard_view', { tier: dashData.effective_tier || 'free' });
         renderDashboard();
-        loadUserFiles();
+        renderUserFiles();
+        // Delayed CBT reframe — shows after 20 minutes on the page
+        var incompleteCount = checklistItems.filter(function(i) { return !i.is_completed; }).length;
+        if (incompleteCount >= 5 && !sessionStorage.getItem('lumeway_cbt_dismissed')) {
+          setTimeout(function() {
+            var slot = document.getElementById('cbtReframeSlot');
+            if (!slot || sessionStorage.getItem('lumeway_cbt_dismissed')) return;
+            var reframes = [
+              'You don\'t have to do all of this today. Pick one task — just one — and that\'s enough.',
+              'This list looks long, but you have already been handling hard things. This just puts them in order.',
+              'Feeling overwhelmed is normal. The list stays here. You can come back to it anytime.',
+              'You are not behind. Everyone moves through this at their own pace.',
+              'This is a map, not a test. There are no wrong answers and no grades.'
+            ];
+            var reframe = reframes[Math.floor(Math.random() * reframes.length)];
+            slot.innerHTML = '<div class="cbt-reframe" style="animation:fadeIn 0.5s ease">'
+              + '<div class="cbt-reframe-text">' + reframe + '</div>'
+              + '<button class="cbt-reframe-dismiss" onclick="this.parentElement.remove();sessionStorage.setItem(\'lumeway_cbt_dismissed\',\'1\')">&times;</button>'
+              + '</div>';
+          }, 20 * 60 * 1000); // 20 minutes
+        }
         // Show onboarding for new users
         if (!localStorage.getItem('lumeway_onboarded')) {
           showOnboarding();
@@ -4831,13 +4966,14 @@ guideLibrary['disability'] = {
         upcomingDeadlines.forEach(function(d) {
           var days = daysUntil(d.deadline_date);
           var cls = days < 0 ? ' upcoming-overdue' : (days >= 0 && days <= 7) ? ' upcoming-urgent' : '';
-          var label = days < 0 ? (Math.abs(days) + ' days overdue') : days === 0 ? 'Today' : days <= 30 ? ('You have ' + days + ' day' + (days !== 1 ? 's' : '') + ' left') : (days + 'd left');
+          var label = days < 0 ? (Math.abs(days) + ' days overdue') : days === 0 ? 'Today' : ('You have ' + days + ' day' + (days !== 1 ? 's' : '') + ' left');
           html += '<div class="upcoming-item">';
-          html += '  <div class="upcoming-title">' + d.title + '</div>';
-          // Show consequence for items within 7 days
+          html += '  <div class="upcoming-left">';
+          html += '    <div class="upcoming-title">' + d.title + '</div>';
           var consequence = (days >= 0 && days <= 7) ? getDeadlineConsequence(d.title) : '';
           if (consequence) html += '<div class="upcoming-consequence">' + consequence + '</div>';
-          html += '  <div style="display:flex;align-items:center;gap:6px">';
+          html += '  </div>';
+          html += '  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">';
           html += '    <div class="upcoming-date' + cls + '">' + label + '</div>';
           html += '    <button class="item-del" onclick="event.stopPropagation();deleteDeadline(' + d.id + ')" title="Delete">&times;</button>';
           html += '  </div>';
@@ -5044,23 +5180,9 @@ guideLibrary['disability'] = {
       // ── CHECKLIST TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-checklist">';
+      // CBT reframe container — populated by delayed timer
+      html += '<div id="cbtReframeSlot"></div>';
       if (checklistItems.length > 0) {
-        // CBT reframe — show when many incomplete tasks to reduce overwhelm
-        var incompleteCount = checklistItems.filter(function(i) { return !i.is_completed; }).length;
-        if (incompleteCount >= 5 && !sessionStorage.getItem('lumeway_cbt_dismissed')) {
-          var reframes = [
-            'You don\'t have to do all of this today. Pick one task — just one — and that\'s enough.',
-            'This list looks long, but you have already been handling hard things. This just puts them in order.',
-            'Feeling overwhelmed is normal. The list stays here. You can come back to it anytime.',
-            'You are not behind. Everyone moves through this at their own pace.',
-            'This is a map, not a test. There are no wrong answers and no grades.'
-          ];
-          var reframe = reframes[Math.floor(Math.random() * reframes.length)];
-          html += '<div class="cbt-reframe">';
-          html += '  <div class="cbt-reframe-text">' + reframe + '</div>';
-          html += '  <button class="cbt-reframe-dismiss" onclick="this.parentElement.remove();sessionStorage.setItem(\'lumeway_cbt_dismissed\',\'1\')">&times;</button>';
-          html += '</div>';
-        }
 
         // Checklist layout: items on left, progress sidebar on right
         html += '<div style="display:grid;grid-template-columns:1fr 200px;gap:20px;align-items:start;">';
@@ -5390,12 +5512,12 @@ guideLibrary['disability'] = {
       html += '<div class="ws-viewer-body" id="wsViewerBody">';
       // Welcome content shown when no file is open
       html += '<div class="ws-welcome" id="wsWelcome">';
-      html += '  <h2>Your private document workspace</h2>';
+      html += '  <h2>Welcome to your workspace</h2>';
       html += '  <div style="display:flex;align-items:flex-start;gap:10px;background:linear-gradient(135deg,#f0f7f0,#e8f4e8);border:1px solid #c4d9c4;border-radius:10px;padding:14px 16px;margin-bottom:24px">';
       html += '    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F5E" stroke-width="2" style="flex-shrink:0;margin-top:2px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
       html += '    <div style="font-size:13px;font-weight:300;color:#2C3E50;line-height:1.5"><strong style="font-weight:500">Your files are encrypted and private.</strong> Only you can see them. Not even Lumeway staff can access your documents.</div>';
       html += '  </div>';
-      html += '  <p>Upload your important documents and keep them organized. Edit Word docs right in your browser with auto-save, add your signature to documents, and export when you are ready.</p>';
+      html += '  <p>Upload your important documents and keep them organized. Edit files right in your browser with auto-save, add text and signatures to PDFs, and export when you are ready.</p>';
       html += '  <h3>The filing system</h3>';
       html += '  <p>The sidebar sorts your files into folders — Legal, Financial, Insurance, Medical, Personal. Pick a category when you upload, or change it later. When a lawyer or accountant asks for a specific document, you will know exactly where it is.</p>';
       html += '  <h3>What to upload</h3>';
