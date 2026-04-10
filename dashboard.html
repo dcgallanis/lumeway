@@ -4825,22 +4825,21 @@ guideLibrary['disability'] = {
     function loadDashboard() {
       // Check auth first, then load everything
       fetch('/api/dashboard/data').then(function(r) {
-        if (r.status === 401) { window.location.href = '/login'; throw new Error('Not logged in'); }
+        if (r.status === 401) { window.location.href = '/login'; return Promise.reject('auth'); }
         return r.json();
       }).then(function(dash) {
+        dashData = dash;
         return Promise.all([
-          Promise.resolve(dash),
-          fetch('/api/checklist').then(function(r) { return r.json(); }),
-          fetch('/api/activity-log').then(function(r) { return r.json(); }),
+          fetch('/api/checklist').then(function(r) { return r.ok ? r.json() : {items:[]}; }).catch(function() { return {items:[]}; }),
+          fetch('/api/activity-log').then(function(r) { return r.ok ? r.json() : {entries:[]}; }).catch(function() { return {entries:[]}; }),
           fetch('/static/data/state-rules.json').then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; }),
-          fetch('/api/files').then(function(r) { return r.json(); }).catch(function() { return {files:[]}; })
+          fetch('/api/files').then(function(r) { return r.ok ? r.json() : {files:[]}; }).catch(function() { return {files:[]}; })
         ]);
       }).then(function(results) {
-        dashData = results[0];
-        checklistItems = results[1].items || [];
-        activityLog = results[2].entries || [];
-        stateRulesData = results[3];
-        userFiles = (results[4] && results[4].files) || [];
+        checklistItems = results[0].items || [];
+        activityLog = results[1].entries || [];
+        stateRulesData = results[2];
+        userFiles = (results[3] && results[3].files) || [];
         if (typeof gtag === 'function') gtag('event', 'dashboard_view', { tier: dashData.effective_tier || 'free' });
         renderDashboard();
         renderUserFiles();
@@ -4888,7 +4887,17 @@ guideLibrary['disability'] = {
           }
         }
       }).catch(function(err) {
-        document.getElementById('loadingState').textContent = 'Failed to load dashboard. Please refresh.';
+        if (err === 'auth') return;
+        console.error('Dashboard load error:', err);
+        var el = document.getElementById('loadingState');
+        if (el) el.textContent = 'Failed to load dashboard. Please refresh.';
+        // Try loading files even if rendering partially failed
+        if (userFiles.length === 0) {
+          fetch('/api/files').then(function(r) { return r.json(); }).then(function(d) {
+            userFiles = d.files || [];
+            renderUserFiles();
+          }).catch(function() {});
+        }
       });
     }
 
