@@ -36,9 +36,8 @@
     .btn-primary:hover { background: var(--accent-light); }
 
     /* Dashboard layout */
-    .dash { max-width: 100%; margin: 0 auto; padding: 100px 32px 64px; }
-    .dash-header, .dash-tabs { max-width: 1100px; }
-    .tab-panel:not(#panel-documents) { max-width: 1100px; }
+    .dash { max-width: 1100px; margin: 0 auto; padding: 100px 24px 64px; }
+    .dash.dash-wide { max-width: 100%; padding-left: 32px; padding-right: 32px; }
     .dash-header { margin-bottom: 32px; }
     .dash-greeting { font-family: 'Libre Baskerville', serif; font-size: clamp(32px, 5vw, 44px); font-weight: 300; line-height: 1.15; margin-bottom: 8px; }
     .dash-sub { font-size: 15px; font-weight: 300; color: var(--muted); }
@@ -337,9 +336,10 @@
     .pdf-annot-layer.text-mode { pointer-events: auto; cursor: text; }
     .pdf-annot-layer.sig-mode { pointer-events: auto; cursor: none; }
     .pdf-annot-layer .pdf-annot { pointer-events: auto; }
-    .pdf-text-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; opacity: 0.25; line-height: 1; }
-    .pdf-text-layer span { position: absolute; white-space: pre; color: transparent; pointer-events: all; }
-    .pdf-text-layer span::selection { background: rgba(0,100,200,0.3); }
+    .pdf-text-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; line-height: 1; }
+    .pdf-text-layer span { position: absolute; white-space: pre; color: transparent; pointer-events: all; cursor: text; }
+    .pdf-text-layer span::selection { background: rgba(0,100,200,0.35); }
+    .pdf-text-layer span.pdf-highlighted { background: rgba(255, 255, 0, 0.45) !important; }
     .pdf-text-layer.editing-mode { pointer-events: none; opacity: 0; }
     .pdf-annot { position: absolute; cursor: move; }
     .pdf-annot-text { border: 1.5px dashed transparent; padding: 2px 4px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #2C3E50; background: rgba(255,255,255,0.85); min-width: 60px; min-height: 22px; outline: none; border-radius: 2px; line-height: 1.4; }
@@ -362,42 +362,10 @@
     #sheetTableWrap td[contenteditable] { outline: none; cursor: text; }
     #sheetTableWrap td[contenteditable]:focus { background: #e8f0fe; box-shadow: inset 0 0 0 2px #1a73e8; }
     .ss-row-num { background: #f0f2f4 !important; color: var(--muted) !important; font-size: 10px !important; text-align: center !important; min-width: 36px !important; width: 36px !important; font-weight: 500 !important; user-select: none; cursor: default !important; }
-    /* Quill editor overrides */
-    .ws-viewer-body .ql-toolbar { border: none; border-bottom: 1px solid var(--border); background: var(--cream); padding: 8px 16px; position: sticky; top: 0; z-index: 5; }
-    .ws-viewer-body .ql-toolbar .ql-formats { margin-right: 10px; }
-    .ws-viewer-body .ql-container { border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; overflow-y: auto; max-height: calc(100vh - 280px); }
-    .ws-viewer-body .ql-editor { padding: 32px 40px; min-height: 400px; line-height: 1.8; color: var(--text); }
-    .ws-viewer-body .ql-editor h1 { font-family: 'Libre Baskerville', serif; color: var(--navy); font-size: 22px; margin-bottom: 8px; }
-    .ws-viewer-body .ql-editor table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-    .ws-viewer-body .ql-editor td, .ws-viewer-body .ql-editor th { border: 1px solid var(--border); padding: 8px 12px; font-size: 13px; vertical-align: top; min-width: 60px; }
-    .ws-viewer-body .ql-editor th { background: #f0f2f4; font-weight: 600; color: var(--navy); }
-    .ws-viewer-body .ql-editor tr:nth-child(even) td { background: #faf8f5; }
-    .ql-font-arial { font-family: Arial, sans-serif; }
-    .ql-font-times-new-roman { font-family: 'Times New Roman', Times, serif; }
-    .ql-font-georgia { font-family: Georgia, serif; }
-    .ql-font-verdana { font-family: Verdana, Geneva, sans-serif; }
-    .ql-font-courier-new { font-family: 'Courier New', Courier, monospace; }
-    .ql-font-trebuchet-ms { font-family: 'Trebuchet MS', Helvetica, sans-serif; }
-    .ql-font-serif { font-family: Georgia, serif; }
-    .ql-font-monospace { font-family: 'Courier New', monospace; }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="arial"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="arial"]::before { content: 'Arial'; font-family: Arial; }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="times-new-roman"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="times-new-roman"]::before { content: 'Times New Roman'; font-family: 'Times New Roman'; }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="georgia"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="georgia"]::before { content: 'Georgia'; font-family: Georgia; }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="verdana"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="verdana"]::before { content: 'Verdana'; font-family: Verdana; }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="courier-new"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="courier-new"]::before { content: 'Courier New'; font-family: 'Courier New'; }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="trebuchet-ms"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="trebuchet-ms"]::before { content: 'Trebuchet MS'; font-family: 'Trebuchet MS'; }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="serif"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="serif"]::before { content: 'Serif'; font-family: Georgia, serif; }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="monospace"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="monospace"]::before { content: 'Monospace'; font-family: 'Courier New', monospace; }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="sans-serif"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="sans-serif"]::before { content: 'Sans Serif'; }
-    .ws-viewer-body .ql-editor h2 { font-family: 'Libre Baskerville', serif; color: var(--navy); font-size: 18px; margin-bottom: 6px; }
-    .ws-viewer-body .ql-editor h3 { color: var(--navy); font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-    .ws-viewer-body .ql-editor p { margin-bottom: 10px; }
-    .ws-viewer-body .ql-editor a { color: var(--accent); }
-    .ws-viewer-body .ql-editor table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-    .ws-viewer-body .ql-editor td, .ws-viewer-body .ql-editor th { border: 1px solid var(--border); padding: 8px 10px; font-size: 13px; }
-    .ws-viewer-body .ql-snow .ql-stroke { stroke: var(--muted); }
-    .ws-viewer-body .ql-snow .ql-fill { fill: var(--muted); }
-    .ws-viewer-body .ql-snow .ql-picker { color: var(--muted); }
+    /* TinyMCE overrides */
+    .ws-viewer-body .tox-tinymce { border: none !important; border-radius: 0 !important; }
+    .ws-viewer-body .tox .tox-toolbar__primary { background: var(--cream) !important; border-bottom: 1px solid var(--border) !important; }
+    .ws-viewer-body .tox .tox-statusbar { background: var(--cream) !important; border-top: 1px solid var(--border) !important; }
 
     /* Notes */
     .note-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 10px; }
@@ -831,6 +799,9 @@
       document.querySelectorAll('.tab-panel').forEach(function(p) {
         p.classList.toggle('active', p.id === 'panel-' + tab);
       });
+      // Expand to full width for documents tab only
+      var dashEl = document.querySelector('.dash');
+      if (dashEl) dashEl.classList.toggle('dash-wide', tab === 'documents');
     }
 
     // ═══════════════════════════════
@@ -3819,19 +3790,11 @@ guideLibrary['disability'] = {
     var wsEditorDirty = false;
 
     function loadEditorLibs(callback) {
-      // Load Quill + mammoth + html-docx-js if needed
+      // Load TinyMCE + mammoth + html-docx-js if needed
       var needed = [];
-      if (typeof Quill === 'undefined') needed.push({src: 'https://cdn.quilljs.com/1.3.7/quill.min.js', type: 'js'});
+      if (typeof tinymce === 'undefined') needed.push({src: 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js', type: 'js'});
       if (typeof mammoth === 'undefined') needed.push({src: 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js', type: 'js'});
       if (typeof htmlDocx === 'undefined') needed.push({src: 'https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js', type: 'js'});
-      // Quill CSS
-      if (!document.getElementById('quillCSS')) {
-        var link = document.createElement('link');
-        link.id = 'quillCSS';
-        link.rel = 'stylesheet';
-        link.href = 'https://cdn.quilljs.com/1.3.7/quill.snow.css';
-        document.head.appendChild(link);
-      }
       if (needed.length === 0) { callback(); return; }
       var loaded = 0;
       needed.forEach(function(lib) {
@@ -3987,9 +3950,18 @@ guideLibrary['disability'] = {
       });
     }
 
+    function cleanupEditor() {
+      if (wsQuill && wsQuill._tinymce && typeof tinymce !== 'undefined') {
+        var ed = tinymce.get('wsDocEditor');
+        if (ed) ed.remove();
+      }
+      wsQuill = null;
+    }
+
     function openFileViewer(fileId) {
       // Save current edit before switching
       if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
+      cleanupEditor();
       cleanupPdfState();
       var file = userFiles.find(function(f) { return f.id === fileId; });
       if (!file) return;
@@ -4131,117 +4103,58 @@ guideLibrary['disability'] = {
       }
     }
 
-    function registerQuillTableFormats() {
-      if (window._quillTableRegistered) return;
-      window._quillTableRegistered = true;
-      var Block = Quill.import('blots/block');
-      var Container = Quill.import('blots/container');
-      var Inline = Quill.import('blots/inline');
-
-      // Table cell
-      class TableCell extends Block {
-        static create(value) {
-          var node = super.create();
-          if (value && value.colspan) node.setAttribute('colspan', value.colspan);
-          if (value && value.rowspan) node.setAttribute('rowspan', value.rowspan);
-          return node;
-        }
+    function initQuillEditor(body, html, fileId) {
+      body.innerHTML = '<div id="wsDocEditor" style="min-height:400px"></div>';
+      // Use TinyMCE for full Word-like editing with tables
+      if (typeof tinymce !== 'undefined') {
+        // Remove any existing TinyMCE instances
+        if (tinymce.get('wsDocEditor')) tinymce.get('wsDocEditor').remove();
+        tinymce.init({
+          selector: '#wsDocEditor',
+          height: 'calc(100vh - 200px)',
+          menubar: 'file edit view insert format table',
+          plugins: 'lists link table code wordcount searchreplace autolink',
+          toolbar: 'undo redo | fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link | removeformat code',
+          font_family_formats: 'Sans Serif=Plus Jakarta Sans,sans-serif; Arial=Arial,sans-serif; Times New Roman=Times New Roman,serif; Georgia=Georgia,serif; Verdana=Verdana,sans-serif; Courier New=Courier New,monospace; Trebuchet MS=Trebuchet MS,sans-serif; Calibri=Calibri,sans-serif',
+          font_size_formats: '8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 24pt 36pt',
+          content_style: 'body { font-family: Plus Jakarta Sans, Calibri, sans-serif; font-size: 11pt; line-height: 1.7; color: #2C3E50; padding: 32px 40px; } table { border-collapse: collapse; width: 100%; margin: 12px 0; } td, th { border: 1px solid #d0d7de; padding: 8px 12px; font-size: 11pt; vertical-align: top; } th { background: #f0f2f4; font-weight: 600; } h1 { font-size: 18pt; color: #2C4A5E; } h2 { font-size: 14pt; color: #2C4A5E; } h3 { font-size: 12pt; color: #2C4A5E; }',
+          promotion: false,
+          branding: false,
+          skin: 'oxide',
+          resize: false,
+          statusbar: true,
+          elementpath: false,
+          setup: function(editor) {
+            editor.on('init', function() {
+              editor.setContent(html);
+              wsEditorDirty = false;
+            });
+            editor.on('change keyup', function() {
+              wsEditorDirty = true;
+              updateSaveStatus('Saving\u2026');
+              clearTimeout(wsSaveTimer);
+              wsSaveTimer = setTimeout(function() { saveFileEdit(fileId); }, 2000);
+            });
+          }
+        });
+        // Store reference so other code can access it
+        wsQuill = { _tinymce: true };
       }
-      TableCell.blotName = 'table-cell';
-      TableCell.tagName = 'TD';
-
-      class TableHeader extends Block {
-        static create(value) {
-          var node = super.create();
-          if (value && value.colspan) node.setAttribute('colspan', value.colspan);
-          return node;
-        }
-      }
-      TableHeader.blotName = 'table-header';
-      TableHeader.tagName = 'TH';
-
-      class TableRow extends Container {
-        static create() { return super.create(); }
-      }
-      TableRow.blotName = 'table-row';
-      TableRow.tagName = 'TR';
-      TableRow.allowedChildren = [TableCell, TableHeader];
-
-      class TableBody extends Container {
-        static create() { return super.create(); }
-      }
-      TableBody.blotName = 'table-body';
-      TableBody.tagName = 'TBODY';
-      TableBody.allowedChildren = [TableRow];
-
-      class TableHead extends Container {
-        static create() { return super.create(); }
-      }
-      TableHead.blotName = 'table-head';
-      TableHead.tagName = 'THEAD';
-      TableHead.allowedChildren = [TableRow];
-
-      class Table extends Container {
-        static create() { return super.create(); }
-      }
-      Table.blotName = 'table-container';
-      Table.tagName = 'TABLE';
-      Table.allowedChildren = [TableHead, TableBody, TableRow];
-
-      Quill.register(TableCell);
-      Quill.register(TableHeader);
-      Quill.register(TableRow);
-      Quill.register(TableBody);
-      Quill.register(TableHead);
-      Quill.register(Table);
-
-      // Register font families
-      var Font = Quill.import('formats/font');
-      Font.whitelist = ['sans-serif', 'serif', 'monospace', 'arial', 'times-new-roman', 'georgia', 'verdana', 'courier-new', 'trebuchet-ms'];
-      Quill.register(Font, true);
     }
 
-    function initQuillEditor(body, html, fileId) {
-      registerQuillTableFormats();
-      body.innerHTML = '<div id="wsQuillToolbar"></div><div id="wsQuillEditor" style="min-height:300px"></div>';
-      // Style overrides for Quill in our design
-      var editorEl = document.getElementById('wsQuillEditor');
-      editorEl.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
-      editorEl.style.fontSize = '14px';
-      editorEl.style.lineHeight = '1.7';
-      editorEl.style.color = 'var(--text)';
-      editorEl.style.background = 'var(--warm-white)';
-      wsQuill = new Quill('#wsQuillEditor', {
-        theme: 'snow',
-        modules: {
-          toolbar: [
-            [{ 'font': ['sans-serif', 'serif', 'monospace', 'arial', 'times-new-roman', 'georgia', 'verdana', 'courier-new', 'trebuchet-ms'] }],
-            [{ 'header': [1, 2, 3, false] }],
-            [{ 'size': ['small', false, 'large', 'huge'] }],
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'color': [] }, { 'background': [] }],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            [{ 'align': [] }],
-            ['link'],
-            [{ 'indent': '-1' }, { 'indent': '+1' }],
-            ['clean']
-          ]
-        },
-        placeholder: 'Start typing to edit this document\u2026'
-      });
-      wsQuill.root.innerHTML = html;
-      wsEditorDirty = false;
-      // Auto-save on change (debounced)
-      wsQuill.on('text-change', function() {
-        wsEditorDirty = true;
-        var saveIndicator = document.getElementById('wsExportBtn');
-        if (saveIndicator && saveIndicator.textContent === 'Export as Word') {
-          // don't change export button text
-        }
-        updateSaveStatus('Saving\u2026');
-        clearTimeout(wsSaveTimer);
-        wsSaveTimer = setTimeout(function() { saveFileEdit(fileId); }, 2000);
-      });
+    // Helper to get editor HTML regardless of editor type
+    function getEditorHtml() {
+      if (wsQuill && wsQuill._tinymce && tinymce.activeEditor) {
+        return tinymce.activeEditor.getContent();
+      }
+      return '';
+    }
+
+    // Helper to insert content into editor
+    function insertEditorContent(htmlContent) {
+      if (wsQuill && wsQuill._tinymce && tinymce.activeEditor) {
+        tinymce.activeEditor.insertContent(htmlContent);
+      }
     }
 
     function updateSaveStatus(text) {
@@ -4259,7 +4172,7 @@ guideLibrary['disability'] = {
 
     function saveFileEdit(fileId) {
       if (!wsQuill) return;
-      var html = wsQuill.root.innerHTML;
+      var html = getEditorHtml();
       fetch('/api/files/' + fileId + '/edit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -4292,7 +4205,7 @@ guideLibrary['disability'] = {
 
     function exportAsDocx(originalName) {
       if (!wsQuill) return;
-      var html = wsQuill.root.innerHTML;
+      var html = getEditorHtml();
       // Wrap in a proper HTML document for conversion
       var fullHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.6;color:#333}h1{font-size:18pt;color:#2C4A5E}h2{font-size:14pt;color:#2C4A5E}h3{font-size:12pt;color:#2C4A5E}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px 10px}</style></head><body>' + html + '</body></html>';
       if (typeof htmlDocx !== 'undefined' && htmlDocx.asBlob) {
@@ -4385,28 +4298,9 @@ guideLibrary['disability'] = {
 
     function insertQuillSignature(name, font) {
       if (!wsQuill) return;
-      loadSigFonts(); // ensure font CSS loaded
-      var range = wsQuill.getSelection();
-      var idx = range ? range.index : wsQuill.getLength();
-      // Insert a newline, then the signature text with formatting
-      wsQuill.insertText(idx, '\n');
-      wsQuill.insertText(idx + 1, name, {
-        'color': '#2C4A5E',
-        'size': 'huge'
-      });
-      // Quill doesn't natively support arbitrary font-family via formats, so we also
-      // inject a style attribute directly on the inserted text node
-      setTimeout(function() {
-        var editor = wsQuill.root;
-        var spans = editor.querySelectorAll('.ql-size-huge');
-        for (var i = spans.length - 1; i >= 0; i--) {
-          if (spans[i].textContent === name) {
-            spans[i].style.fontFamily = "'" + font + "', cursive";
-            spans[i].style.fontSize = '24px';
-            break;
-          }
-        }
-      }, 50);
+      loadSigFonts();
+      var sigHtml = '<p><br></p><p style="font-family:\'' + font + '\', cursive; font-size: 24px; color: #2C4A5E;">' + name + '</p>';
+      insertEditorContent(sigHtml);
     }
 
     function stampSignature() {
@@ -4487,6 +4381,8 @@ guideLibrary['disability'] = {
         + '<button class="pdf-toolbar-btn" id="pdfZoomOutBtn" onclick="pdfZoom(-0.15)">−</button>'
         + '<span class="pdf-toolbar-info" id="pdfZoomLevel">120%</span>'
         + '<button class="pdf-toolbar-btn" id="pdfZoomInBtn" onclick="pdfZoom(0.15)">+</button>'
+        + '<div class="pdf-toolbar-sep"></div>'
+        + '<button class="pdf-toolbar-btn" id="pdfHighlightSelBtn" onclick="highlightPdfSelection()" title="Select text on the PDF, then click this to highlight it" style="background:rgba(255,255,0,0.3)">&#9652; Highlight selection</button>'
         + '<div class="pdf-toolbar-sep"></div>'
         + '<span class="pdf-toolbar-info" id="pdfPageInfo"></span>'
         + '</div>'
@@ -4595,6 +4491,29 @@ guideLibrary['disability'] = {
     var pdfAnnotFontColor = '#2C3E50';
     var pdfAnnotBold = false;
     var pdfAnnotHighlight = '';
+    var pdfHighlights = []; // saved highlights: [{pageNum, spans: [{left, top, width, height}], color}]
+
+    function highlightPdfSelection() {
+      var sel = window.getSelection();
+      if (!sel || sel.isCollapsed || !sel.toString().trim()) {
+        alert('Select some text on the PDF first, then click Highlight.');
+        return;
+      }
+      var range = sel.getRangeAt(0);
+      // Find all text layer spans in the selection
+      var container = document.getElementById('pdfViewer');
+      if (!container) return;
+      var textSpans = container.querySelectorAll('.pdf-text-layer span');
+      textSpans.forEach(function(span) {
+        if (sel.containsNode(span, true)) {
+          span.style.backgroundColor = 'rgba(255, 255, 0, 0.45)';
+          span.style.color = 'transparent';
+          span.classList.add('pdf-highlighted');
+        }
+      });
+      sel.removeAllRanges();
+      pdfMarkDirty();
+    }
 
     function togglePdfTextMode() {
       pdfTextMode = !pdfTextMode;
@@ -4911,9 +4830,10 @@ guideLibrary['disability'] = {
 
     function printCurrentFile() {
       if (wsQuill) {
-        // Print Quill editor content
+        // Print editor content
+        var editorHtml = getEditorHtml();
         var printWin = window.open('', '_blank');
-        printWin.document.write('<html><head><title>Print</title><style>body{font-family:Calibri,Arial,sans-serif;padding:40px;font-size:11pt;line-height:1.6;color:#333}h1{font-size:18pt}h2{font-size:14pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px 10px}</style></head><body>' + wsQuill.root.innerHTML + '</body></html>');
+        printWin.document.write('<html><head><title>Print</title><style>body{font-family:Calibri,Arial,sans-serif;padding:40px;font-size:11pt;line-height:1.6;color:#333}h1{font-size:18pt}h2{font-size:14pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px 10px}</style></head><body>' + editorHtml + '</body></html>');
         printWin.document.close();
         printWin.focus();
         setTimeout(function() { printWin.print(); }, 300);
@@ -5027,9 +4947,9 @@ guideLibrary['disability'] = {
 
     function closeViewer() {
       if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
+      cleanupEditor();
       cleanupPdfState();
       wsActiveFileId = null;
-      wsQuill = null;
       wsEditorDirty = false;
       renderUserFiles();
       var header = document.getElementById('wsViewerHeader');
@@ -6694,28 +6614,32 @@ guideLibrary['disability'] = {
     };
     function showCtxTips() {
       if (localStorage.getItem('lumeway_tips_dismissed')) return;
+      // Place all tips in a dedicated container at the top of the overview
+      var overview = document.getElementById('panel-overview');
+      if (!overview) return;
+      var existing = document.getElementById('ctxTipsContainer');
+      if (existing) return;
+      var container = document.createElement('div');
+      container.id = 'ctxTipsContainer';
+      container.style.cssText = 'margin-bottom:16px;display:flex;flex-direction:column;gap:6px';
       Object.keys(CTX_TIPS).forEach(function(key) {
         var tip = CTX_TIPS[key];
-        var target = null;
-        if (key === 'checklist') target = document.querySelector('#panel-overview .card-label');
-        else if (key === 'calendar') target = document.getElementById('calendarSection');
-        else if (key === 'guides') target = document.getElementById('panel-guides');
-        else if (key === 'workspace') target = document.getElementById('panel-files');
-        if (!target) return;
-        if (target.querySelector('.ctx-tip')) return;
         var el = document.createElement('div');
         el.className = 'ctx-tip';
         el.innerHTML = '<span class="ctx-tip-icon">' + tip.icon + '</span> ' + tip.text
           + ' <button class="ctx-tip-dismiss" onclick="dismissCtxTip(this)" title="Dismiss">&times;</button>';
-        target.insertBefore(el, target.firstChild);
+        container.appendChild(el);
       });
+      overview.insertBefore(container, overview.firstChild);
     }
     function dismissCtxTip(btn) {
       var tip = btn.closest('.ctx-tip');
       if (tip) tip.remove();
-      // If all tips dismissed, remember it
+      // If all tips dismissed, remember it and clean up container
       if (document.querySelectorAll('.ctx-tip').length === 0) {
         localStorage.setItem('lumeway_tips_dismissed', '1');
+        var c = document.getElementById('ctxTipsContainer');
+        if (c) c.remove();
       }
     }
 
