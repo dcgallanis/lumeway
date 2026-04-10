@@ -311,6 +311,26 @@
     .ws-sig-font-opt { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 18px; text-align: center; transition: all 0.15s; background: white; }
     .ws-sig-font-opt:hover { border-color: var(--gold); }
     .ws-sig-font-opt.active { border-color: var(--navy); background: rgba(44,74,94,0.04); }
+    /* PDF annotation viewer */
+    .pdf-viewer { position: relative; padding: 20px; background: #525659; min-height: 400px; }
+    .pdf-page-wrap { position: relative; margin: 0 auto 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.25); background: white; }
+    .pdf-page-wrap canvas { display: block; }
+    .pdf-annot-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; }
+    .pdf-annot-layer.sig-mode { cursor: none; }
+    .pdf-annot { position: absolute; cursor: move; }
+    .pdf-annot-text { border: 1.5px dashed transparent; padding: 2px 4px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #2C3E50; background: rgba(255,255,255,0.85); min-width: 60px; min-height: 22px; outline: none; border-radius: 2px; line-height: 1.4; }
+    .pdf-annot-text:focus, .pdf-annot-text:hover { border-color: var(--gold); background: rgba(255,255,255,0.95); }
+    .pdf-annot-sig { font-size: 24px; color: #2C4A5E; pointer-events: auto; user-select: none; white-space: nowrap; padding: 2px 6px; border: 1.5px dashed transparent; border-radius: 2px; }
+    .pdf-annot-sig:hover { border-color: var(--gold); }
+    .pdf-annot-delete { position: absolute; top: -10px; right: -10px; width: 20px; height: 20px; background: var(--accent); color: white; border: none; border-radius: 50%; font-size: 12px; line-height: 20px; text-align: center; cursor: pointer; display: none; z-index: 5; padding: 0; }
+    .pdf-annot:hover .pdf-annot-delete { display: block; }
+    .pdf-toolbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--cream); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .pdf-toolbar-btn { padding: 5px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 11px; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; background: var(--warm-white); color: var(--navy); transition: all 0.15s; display: flex; align-items: center; gap: 4px; }
+    .pdf-toolbar-btn:hover { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    .pdf-toolbar-btn.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    .pdf-toolbar-sep { width: 1px; height: 20px; background: var(--border); }
+    .pdf-toolbar-info { font-size: 11px; color: var(--muted); font-weight: 300; margin-left: auto; }
+    .pdf-sig-ghost { position: fixed; pointer-events: none; z-index: 1000; font-size: 24px; color: rgba(44,74,94,0.6); white-space: nowrap; display: none; }
     /* Quill editor overrides */
     .ws-viewer-body .ql-toolbar { border: none; border-bottom: 1px solid var(--border); background: var(--cream); padding: 8px 16px; position: sticky; top: 0; z-index: 5; }
     .ws-viewer-body .ql-toolbar .ql-formats { margin-right: 10px; }
@@ -3760,9 +3780,32 @@ guideLibrary['disability'] = {
       });
     }
 
+    function loadPdfLibs(callback) {
+      var needed = [];
+      if (typeof pdfjsLib === 'undefined') needed.push('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+      if (typeof PDFLib === 'undefined') needed.push('https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js');
+      if (needed.length === 0) { callback(); return; }
+      var loaded = 0;
+      needed.forEach(function(src) {
+        var el = document.createElement('script');
+        el.src = src;
+        el.onload = function() {
+          loaded++;
+          if (loaded === needed.length) {
+            if (typeof pdfjsLib !== 'undefined') {
+              pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            }
+            callback();
+          }
+        };
+        document.head.appendChild(el);
+      });
+    }
+
     function openFileViewer(fileId) {
       // Save current edit before switching
       if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
+      cleanupPdfState();
       var file = userFiles.find(function(f) { return f.id === fileId; });
       if (!file) return;
       wsActiveFileId = fileId;
@@ -3832,8 +3875,19 @@ guideLibrary['disability'] = {
           });
         });
       } else if (ext === 'pdf') {
-        // PDF viewed in browser's native viewer (supports text, print, save)
-        body.innerHTML = '<iframe id="wsPdfFrame" src="' + previewUrl + '" style="width:100%;height:100%;border:none"></iframe>';
+        // Show signature button + save button for PDFs
+        if (sigWrap) { sigWrap.style.display = 'block'; initSigFonts(); }
+        var pdfSaveBtn = document.createElement('button');
+        pdfSaveBtn.id = 'wsExportBtn';
+        pdfSaveBtn.className = 'ws-viewer-btn';
+        pdfSaveBtn.textContent = 'Saved';
+        pdfSaveBtn.style.opacity = '0.5';
+        header.insertBefore(pdfSaveBtn, dlBtn);
+        body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Loading PDF viewer\u2026</div>';
+        loadPdfLibs(function() {
+          loadSigFonts();
+          initPdfViewer(body, previewUrl, fileId);
+        });
       } else if (['jpg','jpeg','png','gif','webp'].indexOf(ext) >= 0) {
         body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;padding:20px"><img src="' + previewUrl + '" alt="' + file.original_name + '" style="max-width:100%;max-height:calc(100vh - 300px);object-fit:contain;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.08)"></div>';
       } else if (['xlsx','xls'].indexOf(ext) >= 0) {
@@ -4054,29 +4108,34 @@ guideLibrary['disability'] = {
       localStorage.setItem('lumeway_sig_name', name);
       savedSigName = name;
 
+      // Close dropdown
+      var dd = document.getElementById('wsSigDropdown');
+      var btn = document.getElementById('wsSigToggle');
+      if (dd) dd.classList.remove('open');
+      if (btn) btn.classList.remove('active');
+
       if (wsQuill) {
         // Insert signature at cursor position in Quill editor
         var sigHtml = '<p><span style="font-family:\'' + font + '\',cursive;font-size:24px;color:#2C4A5E">' + name + '</span></p>';
         var range = wsQuill.getSelection();
         var idx = range ? range.index : wsQuill.getLength();
         wsQuill.clipboard.dangerouslyPasteHTML(idx, sigHtml);
+      } else if (pdfDoc) {
+        // PDF mode — enter sig stamp mode
+        togglePdfSigMode();
       }
-      // Close dropdown
-      var dd = document.getElementById('wsSigDropdown');
-      var btn = document.getElementById('wsSigToggle');
-      if (dd) dd.classList.remove('open');
-      if (btn) btn.classList.remove('active');
     }
 
     // Quick stamp — uses saved signature or opens dropdown if none saved
     function quickStampSignature() {
       if (savedSigName) {
-        // Stamp immediately with saved settings
         if (wsQuill) {
           var sigHtml = '<p><span style="font-family:\'' + activeSigFont + '\',cursive;font-size:24px;color:#2C4A5E">' + savedSigName + '</span></p>';
           var range = wsQuill.getSelection();
           var idx = range ? range.index : wsQuill.getLength();
           wsQuill.clipboard.dangerouslyPasteHTML(idx, sigHtml);
+        } else if (pdfDoc) {
+          togglePdfSigMode();
         }
       } else {
         // No saved signature — open dropdown to set one up
@@ -4094,6 +4153,428 @@ guideLibrary['disability'] = {
         if (btn) btn.classList.remove('active');
       }
     });
+
+    // ── PDF Annotation Viewer ──
+    var pdfDoc = null;
+    var pdfAnnotations = {}; // { pageNum: [{type, x, y, text, font, ...}] }
+    var pdfActiveFileId = null;
+    var pdfSaveTimer = null;
+    var pdfDirty = false;
+    var pdfSigMode = false;
+    var pdfOriginalBytes = null;
+
+    function initPdfViewer(body, url, fileId) {
+      pdfActiveFileId = fileId;
+      pdfAnnotations = {};
+      pdfDirty = false;
+      pdfSigMode = false;
+
+      // Build toolbar + viewer container
+      body.innerHTML = '<div class="pdf-toolbar" id="pdfToolbar">'
+        + '<button class="pdf-toolbar-btn" id="pdfAddTextBtn" onclick="togglePdfTextMode()" title="Click anywhere on the PDF to add text">'
+        + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Add text</button>'
+        + '<button class="pdf-toolbar-btn" id="pdfSigBtn" onclick="togglePdfSigMode()" title="Click to place your signature">'
+        + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg> Stamp signature</button>'
+        + '<div class="pdf-toolbar-sep"></div>'
+        + '<button class="pdf-toolbar-btn" id="pdfZoomOutBtn" onclick="pdfZoom(-0.15)">−</button>'
+        + '<span class="pdf-toolbar-info" id="pdfZoomLevel">100%</span>'
+        + '<button class="pdf-toolbar-btn" id="pdfZoomInBtn" onclick="pdfZoom(0.15)">+</button>'
+        + '<div class="pdf-toolbar-sep"></div>'
+        + '<span class="pdf-toolbar-info" id="pdfPageInfo"></span>'
+        + '</div>'
+        + '<div class="pdf-viewer" id="pdfViewer"></div>'
+        + '<div class="pdf-sig-ghost" id="pdfSigGhost"></div>';
+
+      var pdfScale = 1.2;
+
+      // Fetch PDF bytes
+      fetch(url).then(function(r) { return r.arrayBuffer(); }).then(function(buf) {
+        pdfOriginalBytes = new Uint8Array(buf);
+        return pdfjsLib.getDocument({ data: pdfOriginalBytes.slice() }).promise;
+      }).then(function(doc) {
+        pdfDoc = doc;
+        document.getElementById('pdfPageInfo').textContent = doc.numPages + ' page' + (doc.numPages > 1 ? 's' : '');
+
+        // Load saved annotations
+        fetch('/api/files/' + fileId + '/edit').then(function(r) { return r.json(); }).then(function(d) {
+          if (d.html) {
+            try { pdfAnnotations = JSON.parse(d.html); } catch(e) { pdfAnnotations = {}; }
+          }
+          renderAllPdfPages(doc, pdfScale);
+        }).catch(function() { renderAllPdfPages(doc, pdfScale); });
+      }).catch(function(err) {
+        body.innerHTML = '<div class="ws-idle"><div class="ws-idle-quote">Could not load this PDF.</div><div class="ws-idle-sub">' + (err.message || '') + '</div><a href="/api/files/' + fileId + '/download" style="color:var(--navy);font-size:13px;margin-top:10px;display:inline-block">Download instead</a></div>';
+      });
+
+      // Make zoom available
+      window._pdfScale = pdfScale;
+      window._pdfSetScale = function(s) { window._pdfScale = s; };
+    }
+
+    function renderAllPdfPages(doc, scale) {
+      var viewer = document.getElementById('pdfViewer');
+      if (!viewer) return;
+      viewer.innerHTML = '';
+      var promises = [];
+      for (var p = 1; p <= doc.numPages; p++) {
+        (function(pageNum) {
+          promises.push(doc.getPage(pageNum).then(function(page) {
+            var viewport = page.getViewport({ scale: scale });
+            var wrap = document.createElement('div');
+            wrap.className = 'pdf-page-wrap';
+            wrap.style.width = viewport.width + 'px';
+            wrap.style.height = viewport.height + 'px';
+            wrap.dataset.page = pageNum;
+
+            var canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            wrap.appendChild(canvas);
+
+            // Annotation layer
+            var annotLayer = document.createElement('div');
+            annotLayer.className = 'pdf-annot-layer';
+            annotLayer.dataset.page = pageNum;
+            annotLayer.onclick = function(e) { handlePdfAnnotClick(e, pageNum, viewport); };
+            wrap.appendChild(annotLayer);
+
+            viewer.appendChild(wrap);
+
+            var ctx = canvas.getContext('2d');
+            return page.render({ canvasContext: ctx, viewport: viewport }).promise.then(function() {
+              // Restore saved annotations for this page
+              restorePdfAnnotations(pageNum, viewport);
+            });
+          }));
+        })(p);
+      }
+      Promise.all(promises).then(function() {
+        document.getElementById('pdfZoomLevel').textContent = Math.round(scale * 100) + '%';
+      });
+    }
+
+    function pdfZoom(delta) {
+      var newScale = Math.max(0.5, Math.min(3, window._pdfScale + delta));
+      window._pdfScale = newScale;
+      // Collect current annotations before re-render
+      collectAllPdfAnnotations();
+      renderAllPdfPages(pdfDoc, newScale);
+    }
+
+    // ── PDF annotation modes ──
+    var pdfTextMode = false;
+
+    function togglePdfTextMode() {
+      pdfTextMode = !pdfTextMode;
+      pdfSigMode = false;
+      document.getElementById('pdfAddTextBtn').classList.toggle('active', pdfTextMode);
+      document.getElementById('pdfSigBtn').classList.remove('active');
+      document.querySelectorAll('.pdf-annot-layer').forEach(function(l) {
+        l.classList.remove('sig-mode');
+        l.style.cursor = pdfTextMode ? 'text' : 'default';
+      });
+      hidePdfSigGhost();
+    }
+
+    function togglePdfSigMode() {
+      if (!savedSigName) {
+        // Open signature settings dropdown so they can set up signature first
+        toggleSigDropdown();
+        return;
+      }
+      pdfSigMode = !pdfSigMode;
+      pdfTextMode = false;
+      document.getElementById('pdfSigBtn').classList.toggle('active', pdfSigMode);
+      document.getElementById('pdfAddTextBtn').classList.remove('active');
+      document.querySelectorAll('.pdf-annot-layer').forEach(function(l) {
+        l.classList.toggle('sig-mode', pdfSigMode);
+        l.style.cursor = pdfSigMode ? 'none' : 'default';
+      });
+      if (pdfSigMode) {
+        showPdfSigGhost();
+      } else {
+        hidePdfSigGhost();
+      }
+    }
+
+    function showPdfSigGhost() {
+      var ghost = document.getElementById('pdfSigGhost');
+      if (!ghost) return;
+      ghost.style.fontFamily = "'" + activeSigFont + "', cursive";
+      ghost.textContent = savedSigName;
+      ghost.style.display = 'block';
+      document.addEventListener('mousemove', movePdfSigGhost);
+    }
+
+    function hidePdfSigGhost() {
+      var ghost = document.getElementById('pdfSigGhost');
+      if (ghost) ghost.style.display = 'none';
+      document.removeEventListener('mousemove', movePdfSigGhost);
+    }
+
+    function movePdfSigGhost(e) {
+      var ghost = document.getElementById('pdfSigGhost');
+      if (ghost) {
+        ghost.style.left = (e.clientX + 8) + 'px';
+        ghost.style.top = (e.clientY - 14) + 'px';
+      }
+    }
+
+    function handlePdfAnnotClick(e, pageNum, viewport) {
+      var layer = e.currentTarget;
+      if (e.target !== layer) return; // clicked on existing annotation
+      var rect = layer.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+      // Store as percentage of page for scale-independence
+      var xPct = x / rect.width;
+      var yPct = y / rect.height;
+
+      if (pdfSigMode && savedSigName) {
+        addPdfAnnotation(layer, pageNum, {
+          type: 'sig', x: xPct, y: yPct,
+          text: savedSigName, font: activeSigFont
+        });
+        pdfMarkDirty();
+        // Stay in sig mode for multiple stamps
+      } else if (pdfTextMode) {
+        var annot = addPdfAnnotation(layer, pageNum, {
+          type: 'text', x: xPct, y: yPct, text: ''
+        });
+        // Focus the text input
+        var textEl = annot.querySelector('.pdf-annot-text');
+        if (textEl) setTimeout(function() { textEl.focus(); }, 50);
+        pdfMarkDirty();
+      }
+    }
+
+    function addPdfAnnotation(layer, pageNum, data) {
+      var el = document.createElement('div');
+      el.className = 'pdf-annot';
+      el.style.left = (data.x * 100) + '%';
+      el.style.top = (data.y * 100) + '%';
+
+      if (data.type === 'sig') {
+        var sig = document.createElement('div');
+        sig.className = 'pdf-annot-sig';
+        sig.style.fontFamily = "'" + data.font + "', cursive";
+        sig.textContent = data.text;
+        el.appendChild(sig);
+      } else {
+        var txt = document.createElement('div');
+        txt.className = 'pdf-annot-text';
+        txt.contentEditable = true;
+        txt.textContent = data.text || '';
+        txt.oninput = function() { pdfMarkDirty(); };
+        txt.onblur = function() { pdfAutoSave(); };
+        el.appendChild(txt);
+      }
+
+      // Delete button
+      var del = document.createElement('button');
+      del.className = 'pdf-annot-delete';
+      del.innerHTML = '&times;';
+      del.onclick = function(e) {
+        e.stopPropagation();
+        el.remove();
+        pdfMarkDirty();
+        pdfAutoSave();
+      };
+      el.appendChild(del);
+
+      // Make draggable
+      makePdfAnnotDraggable(el, layer);
+
+      layer.appendChild(el);
+      return el;
+    }
+
+    function makePdfAnnotDraggable(el, layer) {
+      var startX, startY, origLeft, origTop, dragging = false;
+      el.addEventListener('mousedown', function(e) {
+        if (e.target.classList.contains('pdf-annot-text') || e.target.classList.contains('pdf-annot-delete')) return;
+        e.preventDefault();
+        dragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        origLeft = el.offsetLeft;
+        origTop = el.offsetTop;
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+      function onMove(e) {
+        if (!dragging) return;
+        var dx = e.clientX - startX;
+        var dy = e.clientY - startY;
+        var newLeft = origLeft + dx;
+        var newTop = origTop + dy;
+        // Constrain to layer bounds
+        var maxLeft = layer.offsetWidth - 20;
+        var maxTop = layer.offsetHeight - 20;
+        el.style.left = Math.max(0, Math.min(maxLeft, newLeft)) + 'px';
+        el.style.top = Math.max(0, Math.min(maxTop, newTop)) + 'px';
+      }
+      function onUp() {
+        if (dragging) {
+          dragging = false;
+          // Convert back to percentage
+          el.style.left = (el.offsetLeft / layer.offsetWidth * 100) + '%';
+          el.style.top = (el.offsetTop / layer.offsetHeight * 100) + '%';
+          pdfMarkDirty();
+          pdfAutoSave();
+        }
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+    }
+
+    function restorePdfAnnotations(pageNum, viewport) {
+      var annots = pdfAnnotations[pageNum];
+      if (!annots || !annots.length) return;
+      var layer = document.querySelector('.pdf-annot-layer[data-page="' + pageNum + '"]');
+      if (!layer) return;
+      annots.forEach(function(a) {
+        addPdfAnnotation(layer, pageNum, a);
+      });
+    }
+
+    function collectAllPdfAnnotations() {
+      pdfAnnotations = {};
+      document.querySelectorAll('.pdf-annot-layer').forEach(function(layer) {
+        var pageNum = parseInt(layer.dataset.page);
+        var annots = [];
+        layer.querySelectorAll('.pdf-annot').forEach(function(el) {
+          var xPct = parseFloat(el.style.left) / 100;
+          var yPct = parseFloat(el.style.top) / 100;
+          var sigEl = el.querySelector('.pdf-annot-sig');
+          var textEl = el.querySelector('.pdf-annot-text');
+          if (sigEl) {
+            annots.push({
+              type: 'sig', x: xPct, y: yPct,
+              text: sigEl.textContent,
+              font: sigEl.style.fontFamily.replace(/['"]/g, '').split(',')[0]
+            });
+          } else if (textEl) {
+            var val = textEl.textContent.trim();
+            if (val) annots.push({ type: 'text', x: xPct, y: yPct, text: val });
+          }
+        });
+        if (annots.length) pdfAnnotations[pageNum] = annots;
+      });
+      return pdfAnnotations;
+    }
+
+    function pdfMarkDirty() {
+      pdfDirty = true;
+      updateSaveStatus('Saving\u2026');
+      var btn = document.getElementById('wsExportBtn');
+      if (btn) { btn.textContent = 'Save PDF'; btn.style.opacity = '1'; btn.onclick = function() { exportAnnotatedPdf(); }; }
+    }
+
+    function pdfAutoSave() {
+      clearTimeout(pdfSaveTimer);
+      pdfSaveTimer = setTimeout(function() {
+        if (!pdfDirty || !pdfActiveFileId) return;
+        collectAllPdfAnnotations();
+        fetch('/api/files/' + pdfActiveFileId + '/edit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ html: JSON.stringify(pdfAnnotations) })
+        }).then(function(r) { return r.json(); }).then(function(d) {
+          if (d.ok) {
+            pdfDirty = false;
+            updateSaveStatus('Saved');
+            var btn = document.getElementById('wsExportBtn');
+            if (btn) { btn.textContent = 'Saved'; btn.style.opacity = '0.5'; btn.onclick = null; }
+            setTimeout(function() { updateSaveStatus(''); }, 2000);
+          }
+        });
+      }, 1500);
+    }
+
+    function exportAnnotatedPdf() {
+      if (!pdfOriginalBytes || typeof PDFLib === 'undefined') return;
+      collectAllPdfAnnotations();
+      var btn = document.getElementById('wsExportBtn');
+      if (btn) { btn.textContent = 'Exporting\u2026'; btn.style.opacity = '0.7'; }
+
+      PDFLib.PDFDocument.load(pdfOriginalBytes).then(function(pdfLibDoc) {
+        var pages = pdfLibDoc.getPages();
+        // Embed a standard font for text annotations
+        var helvetica;
+        return pdfLibDoc.embedFont(PDFLib.StandardFonts.Helvetica).then(function(font) {
+          helvetica = font;
+          // For each page with annotations
+          Object.keys(pdfAnnotations).forEach(function(pageKey) {
+            var pageNum = parseInt(pageKey);
+            var page = pages[pageNum - 1];
+            if (!page) return;
+            var pgW = page.getWidth();
+            var pgH = page.getHeight();
+            var annots = pdfAnnotations[pageKey];
+            annots.forEach(function(a) {
+              var x = a.x * pgW;
+              // PDF coordinate system: y=0 is bottom
+              var y = pgH - (a.y * pgH) - (a.type === 'sig' ? 6 : 4);
+              if (a.type === 'sig') {
+                page.drawText(a.text, {
+                  x: x, y: y,
+                  size: 18,
+                  font: helvetica,
+                  color: PDFLib.rgb(0.173, 0.29, 0.37)
+                });
+              } else {
+                page.drawText(a.text, {
+                  x: x, y: y,
+                  size: 11,
+                  font: helvetica,
+                  color: PDFLib.rgb(0.173, 0.243, 0.314)
+                });
+              }
+            });
+          });
+          return pdfLibDoc.save();
+        });
+      }).then(function(pdfBytes) {
+        var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        var link = document.createElement('a');
+        var fileName = (document.getElementById('wsViewerTitle').textContent || 'document').replace(/\.[^.]+$/, '') + '-annotated.pdf';
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        if (btn) { btn.textContent = 'Exported'; btn.style.opacity = '0.5'; }
+        setTimeout(function() {
+          if (btn) { btn.textContent = pdfDirty ? 'Save PDF' : 'Saved'; btn.style.opacity = pdfDirty ? '1' : '0.5'; }
+        }, 2000);
+      }).catch(function(err) {
+        console.error('PDF export error:', err);
+        if (btn) { btn.textContent = 'Export failed'; btn.style.opacity = '1'; }
+      });
+    }
+
+    // PDF-aware overrides are applied by modifying the original functions below
+
+    function cleanupPdfState() {
+      // Save PDF annotations before closing
+      if (pdfDoc && pdfDirty && pdfActiveFileId) {
+        collectAllPdfAnnotations();
+        fetch('/api/files/' + pdfActiveFileId + '/edit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ html: JSON.stringify(pdfAnnotations) })
+        });
+      }
+      pdfDoc = null;
+      pdfAnnotations = {};
+      pdfActiveFileId = null;
+      pdfDirty = false;
+      pdfSigMode = false;
+      pdfTextMode = false;
+      pdfOriginalBytes = null;
+      hidePdfSigGhost();
+      clearTimeout(pdfSaveTimer);
+    }
 
     var WS_IDLE_QUOTES = [
       'You got this.',
@@ -4149,7 +4630,7 @@ guideLibrary['disability'] = {
         + '<li>Upload PDFs, Word docs, images, spreadsheets, and text files</li>'
         + '<li>View any document right in your browser</li>'
         + '<li>Edit Word documents with a rich text editor (auto-saves)</li>'
-        + '<li>Add a typed signature and date stamp to documents</li>'
+        + '<li>Add text and signatures to PDFs — fill out forms right in your browser</li>'
         + '<li>Export edited documents back as Word files</li>'
         + '</ul>'
         + '<h3>How the filing system works</h3>'
@@ -4159,6 +4640,7 @@ guideLibrary['disability'] = {
 
     function closeViewer() {
       if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
+      cleanupPdfState();
       wsActiveFileId = null;
       wsQuill = null;
       wsEditorDirty = false;
