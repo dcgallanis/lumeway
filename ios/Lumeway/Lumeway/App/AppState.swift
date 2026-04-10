@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import Combine
 
 @MainActor
@@ -12,11 +13,16 @@ final class AppState: ObservableObject {
     @Published var activeTransitions: [String] = []
     @Published var needsOnboarding = false
 
+    let offlineRepo = OfflineRepository.shared
     private let authService = AuthService()
     private let dashboardService = DashboardService()
 
     init() {
         Task { await checkAuth() }
+    }
+
+    func configureModelContext(_ context: ModelContext) {
+        offlineRepo.configure(modelContext: context)
     }
 
     func checkAuth() async {

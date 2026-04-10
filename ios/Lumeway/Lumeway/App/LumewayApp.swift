@@ -3,6 +3,7 @@ import SwiftData
 
 @main
 struct LumewayApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var appState = AppState()
 
     var body: some Scene {
@@ -13,7 +14,9 @@ struct LumewayApp: App {
         .modelContainer(for: [
             CachedChecklistItem.self,
             CachedDeadline.self,
-            CachedNote.self
+            CachedNote.self,
+            CachedGuide.self,
+            PendingAction.self
         ])
     }
 }

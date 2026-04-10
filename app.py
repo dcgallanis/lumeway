@@ -448,6 +448,15 @@ def init_subscribers_db():
             updated_at TEXT NOT NULL,
             UNIQUE(user_id, file_id)
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS push_tokens (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            token TEXT NOT NULL,
+            platform TEXT DEFAULT 'ios',
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            UNIQUE(user_id, token)
+        )""")
     else:
         db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -606,6 +615,15 @@ def init_subscribers_db():
             html_content TEXT NOT NULL,
             updated_at TEXT NOT NULL,
             UNIQUE(user_id, file_id)
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS push_tokens (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            token TEXT NOT NULL,
+            platform TEXT DEFAULT 'ios',
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            UNIQUE(user_id, token)
         )""")
     conn.commit()
     # Tier columns migration (idempotent)
@@ -3991,6 +4009,30 @@ def auth_refresh_token():
     new_access = generate_jwt(user_id, JWT_ACCESS_EXPIRY)
     new_refresh = generate_jwt(user_id, JWT_REFRESH_EXPIRY)
     return jsonify({"ok": True, "token": new_access, "refresh_token": new_refresh})
+
+@app.route("/api/push/register", methods=["POST"])
+def register_push_token():
+    """Store a device push token for sending notifications."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    token = data.get("token", "").strip()
+    platform = data.get("platform", "ios").strip()
+    if not token:
+        return jsonify({"error": "Token required"}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+    # Upsert: update existing token or insert new
+    cur = db_execute(conn, f"SELECT id FROM push_tokens WHERE user_id = {param} AND token = {param}", (user["id"], token))
+    if cur.fetchone():
+        db_execute(conn, f"UPDATE push_tokens SET updated_at = {param} WHERE user_id = {param} AND token = {param}", (now, user["id"], token))
+    else:
+        db_execute(conn, f"INSERT INTO push_tokens (user_id, token, platform, created_at, updated_at) VALUES ({param},{param},{param},{param},{param})", (user["id"], token, platform, now, now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
 
 @app.route("/api/auth/me")
 def auth_me():

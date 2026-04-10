@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         Group {
@@ -17,6 +18,9 @@ struct ContentView: View {
         }
         .animation(.easeInOut(duration: 0.3), value: appState.isAuthenticated)
         .animation(.easeInOut(duration: 0.3), value: appState.isLoading)
+        .onAppear {
+            appState.configureModelContext(modelContext)
+        }
     }
 }
 
@@ -43,7 +47,22 @@ struct MainTabView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            TabView(selection: $selectedTab) {
+            VStack(spacing: 0) {
+                // Offline banner
+                if !appState.offlineRepo.isOnline {
+                    HStack(spacing: 6) {
+                        Image(systemName: "wifi.slash")
+                            .font(.system(size: 12))
+                        Text("You're offline. Changes will sync when you reconnect.")
+                            .font(.lumeSmall)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(Color.lumeMuted)
+                }
+
+                TabView(selection: $selectedTab) {
                 DashboardView()
                     .tabItem {
                         Label("Home", systemImage: "house")
@@ -75,6 +94,7 @@ struct MainTabView: View {
                     .tag(4)
             }
             .tint(.lumeAccent)
+            } // close VStack
 
             // Floating AI Navigator button
             Button {
@@ -96,6 +116,19 @@ struct MainTabView: View {
         }
         .task {
             await appState.loadDashboard()
+
+            // Set up notifications after dashboard loads
+            let pushManager = PushNotificationManager.shared
+            await pushManager.requestPermission()
+            if let deadlines = appState.dashboardData?.deadlines {
+                await pushManager.scheduleDeadlineReminders(deadlines: deadlines)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToChecklist)) { _ in
+            selectedTab = 1
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToDashboard)) { _ in
+            selectedTab = 0
         }
     }
 }
