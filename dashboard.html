@@ -207,6 +207,7 @@
     .cal-event.goal { background: rgba(184,151,126,0.2); color: #8B6914; }
     .cal-event.completed { opacity: 0.4; text-decoration: line-through; }
     .cal-event.important { background: rgba(27,58,92,0.1); color: var(--navy); }
+    .cal-event.activity { background: rgba(107,143,94,0.15); color: var(--green); }
 
     /* Day view modal */
     .day-modal { display: none; position: fixed; inset: 0; background: rgba(27,42,56,0.5); z-index: 200; padding: 24px; overflow-y: auto; }
@@ -3269,7 +3270,7 @@ guideLibrary['disability'] = {
         html += '  <ul class="guide-nav-sections">';
         t.categories.forEach(function(cat) {
           var catSlug = key + '-' + cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
-          html += '<li onclick="event.stopPropagation();switchGuideTransition(\'' + key + '\');setTimeout(function(){scrollToGuideSection(\'' + catSlug + '\')},100)">' + cat.name + '</li>';
+          html += '<li onclick="event.stopPropagation();scrollToGuideCategory(\'' + key + '\',\'' + catSlug + '\')">' + cat.name + '</li>';
         });
         html += '  </ul>';
         html += '</div>';
@@ -3310,6 +3311,17 @@ guideLibrary['disability'] = {
     function scrollToGuideSection(slug) {
       var el = document.getElementById('guide-cat-' + slug);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function scrollToGuideCategory(key, slug) {
+      if (activeGuideTransition === key) {
+        // Already on this transition — scroll immediately
+        scrollToGuideSection(slug);
+      } else {
+        // Switch transition first, then scroll after render
+        switchGuideTransition(key);
+        setTimeout(function() { scrollToGuideSection(slug); }, 120);
+      }
     }
 
     function renderGuideTransition(key) {
@@ -5187,6 +5199,7 @@ guideLibrary['disability'] = {
       html += '  <div class="guide-sidebar">';
       html += '    <div class="guide-mode-toggle" style="margin-bottom:12px">';
       html += '      <label onclick="toggleQuickMode()"><span class="guide-mode-switch" id="quickModeSwitch"></span> Quick mode</label>';
+      html += '      <div style="font-size:10px;font-weight:300;color:var(--muted);line-height:1.3;margin-top:2px">Hides detailed steps so you just see task titles and summaries</div>';
       html += '    </div>';
       html += '    <div class="guide-nav" id="guideTransitionNav"></div>';
       html += '  </div>';
@@ -5231,6 +5244,15 @@ guideLibrary['disability'] = {
           if (!calEvents[g.target_date]) calEvents[g.target_date] = [];
           calEvents[g.target_date].push({ type: 'goal', title: g.title, note: '', completed: g.is_completed, id: g.id });
         }
+      });
+      // Add activity log entries to calendar
+      var actIcons = { phone_call: '📞', form_submitted: '📋', appointment: '📅', email_sent: '✉️', document_filed: '📄', other: '•' };
+      activityLog.forEach(function(entry) {
+        if (!entry.date) return;
+        var dateStr = entry.date.substring(0, 10); // YYYY-MM-DD
+        if (!calEvents[dateStr]) calEvents[dateStr] = [];
+        var actLabel = (actIcons[entry.action_type] || '•') + ' ' + (entry.description || '').substring(0, 40);
+        calEvents[dateStr].push({ type: 'activity', title: actLabel, note: entry.contact_name ? ('Contact: ' + entry.contact_name) : '', completed: false, id: entry.id, source: 'activity' });
       });
     }
 
@@ -6312,6 +6334,14 @@ guideLibrary['disability'] = {
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.ok) {
+          var actToasts = [
+            'Logged. You are keeping a great record.',
+            'Documented. Future you will be grateful.',
+            'Got it. That\'s one more thing tracked.',
+            'Added to your log. You\'re on top of it.',
+            'Noted. Your paper trail is looking solid.'
+          ];
+          showCompletionToast(actToasts[Math.floor(Math.random() * actToasts.length)]);
           currentTab = 'activity';
           loadDashboard();
         }

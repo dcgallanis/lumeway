@@ -1,5 +1,8 @@
-// Lumeway Feedback Widget — auto-injects modal into any page
+// Lumeway Feedback Widget — only injects on chat and dashboard pages
 (function() {
+  // Only show feedback on dashboard and chat pages
+  var path = window.location.pathname;
+  if (path.indexOf('/dashboard') === -1 && path.indexOf('/chat') === -1) return;
   // Don't inject if modal already exists (landing page, transition pages have inline version)
   if (document.getElementById('fbOverlay')) return;
 
