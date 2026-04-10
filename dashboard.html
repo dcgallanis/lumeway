@@ -36,8 +36,9 @@
     .btn-primary:hover { background: var(--accent-light); }
 
     /* Dashboard layout */
-    .dash { max-width: 1100px; margin: 0 auto; padding: 100px 24px 64px; transition: max-width 0.2s; }
-    .dash.dash-wide { max-width: 100%; padding-left: 32px; padding-right: 32px; }
+    .dash { max-width: 100%; margin: 0 auto; padding: 100px 32px 64px; }
+    .dash-header, .dash-tabs { max-width: 1100px; }
+    .tab-panel:not(#panel-documents) { max-width: 1100px; }
     .dash-header { margin-bottom: 32px; }
     .dash-greeting { font-family: 'Libre Baskerville', serif; font-size: clamp(32px, 5vw, 44px); font-weight: 300; line-height: 1.15; margin-bottom: 8px; }
     .dash-sub { font-size: 15px; font-weight: 300; color: var(--muted); }
@@ -332,8 +333,14 @@
     .pdf-viewer { position: relative; padding: 20px; background: #525659; min-height: 400px; overflow-y: auto; max-height: calc(100vh - 200px); }
     .pdf-page-wrap { position: relative; margin: 0 auto 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.25); background: white; max-width: 100%; }
     .pdf-page-wrap canvas { display: block; }
-    .pdf-annot-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; }
-    .pdf-annot-layer.sig-mode { cursor: none; }
+    .pdf-annot-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+    .pdf-annot-layer.text-mode { pointer-events: auto; cursor: text; }
+    .pdf-annot-layer.sig-mode { pointer-events: auto; cursor: none; }
+    .pdf-annot-layer .pdf-annot { pointer-events: auto; }
+    .pdf-text-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; opacity: 0.25; line-height: 1; }
+    .pdf-text-layer span { position: absolute; white-space: pre; color: transparent; pointer-events: all; }
+    .pdf-text-layer span::selection { background: rgba(0,100,200,0.3); }
+    .pdf-text-layer.editing-mode { pointer-events: none; opacity: 0; }
     .pdf-annot { position: absolute; cursor: move; }
     .pdf-annot-text { border: 1.5px dashed transparent; padding: 2px 4px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #2C3E50; background: rgba(255,255,255,0.85); min-width: 60px; min-height: 22px; outline: none; border-radius: 2px; line-height: 1.4; }
     .pdf-annot-text:focus, .pdf-annot-text:hover { border-color: var(--gold); background: rgba(255,255,255,0.95); }
@@ -351,7 +358,7 @@
     /* Spreadsheet viewer */
     #sheetTableWrap table { border-collapse: collapse; width: max-content; min-width: 100%; }
     #sheetTableWrap td, #sheetTableWrap th { border: 1px solid #d0d7de; padding: 4px 8px; font-size: 12px; white-space: nowrap; min-width: 80px; font-family: 'Plus Jakarta Sans', sans-serif; }
-    #sheetTableWrap th { background: #f0f2f4; font-weight: 600; color: var(--navy); position: sticky; top: 0; z-index: 2; text-align: center; font-size: 11px; padding: 3px 8px; }
+    #sheetTableWrap th { background: #f0f2f4; font-weight: 600; color: var(--navy); position: sticky; top: 0; z-index: 2; text-align: center; font-size: 11px; padding: 3px 8px; resize: horizontal; overflow: hidden; }
     #sheetTableWrap td[contenteditable] { outline: none; cursor: text; }
     #sheetTableWrap td[contenteditable]:focus { background: #e8f0fe; box-shadow: inset 0 0 0 2px #1a73e8; }
     .ss-row-num { background: #f0f2f4 !important; color: var(--muted) !important; font-size: 10px !important; text-align: center !important; min-width: 36px !important; width: 36px !important; font-weight: 500 !important; user-select: none; cursor: default !important; }
@@ -361,6 +368,27 @@
     .ws-viewer-body .ql-container { border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; overflow-y: auto; max-height: calc(100vh - 280px); }
     .ws-viewer-body .ql-editor { padding: 32px 40px; min-height: 400px; line-height: 1.8; color: var(--text); }
     .ws-viewer-body .ql-editor h1 { font-family: 'Libre Baskerville', serif; color: var(--navy); font-size: 22px; margin-bottom: 8px; }
+    .ws-viewer-body .ql-editor table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+    .ws-viewer-body .ql-editor td, .ws-viewer-body .ql-editor th { border: 1px solid var(--border); padding: 8px 12px; font-size: 13px; vertical-align: top; min-width: 60px; }
+    .ws-viewer-body .ql-editor th { background: #f0f2f4; font-weight: 600; color: var(--navy); }
+    .ws-viewer-body .ql-editor tr:nth-child(even) td { background: #faf8f5; }
+    .ql-font-arial { font-family: Arial, sans-serif; }
+    .ql-font-times-new-roman { font-family: 'Times New Roman', Times, serif; }
+    .ql-font-georgia { font-family: Georgia, serif; }
+    .ql-font-verdana { font-family: Verdana, Geneva, sans-serif; }
+    .ql-font-courier-new { font-family: 'Courier New', Courier, monospace; }
+    .ql-font-trebuchet-ms { font-family: 'Trebuchet MS', Helvetica, sans-serif; }
+    .ql-font-serif { font-family: Georgia, serif; }
+    .ql-font-monospace { font-family: 'Courier New', monospace; }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="arial"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="arial"]::before { content: 'Arial'; font-family: Arial; }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="times-new-roman"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="times-new-roman"]::before { content: 'Times New Roman'; font-family: 'Times New Roman'; }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="georgia"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="georgia"]::before { content: 'Georgia'; font-family: Georgia; }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="verdana"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="verdana"]::before { content: 'Verdana'; font-family: Verdana; }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="courier-new"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="courier-new"]::before { content: 'Courier New'; font-family: 'Courier New'; }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="trebuchet-ms"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="trebuchet-ms"]::before { content: 'Trebuchet MS'; font-family: 'Trebuchet MS'; }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="serif"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="serif"]::before { content: 'Serif'; font-family: Georgia, serif; }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="monospace"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="monospace"]::before { content: 'Monospace'; font-family: 'Courier New', monospace; }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="sans-serif"]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="sans-serif"]::before { content: 'Sans Serif'; }
     .ws-viewer-body .ql-editor h2 { font-family: 'Libre Baskerville', serif; color: var(--navy); font-size: 18px; margin-bottom: 6px; }
     .ws-viewer-body .ql-editor h3 { color: var(--navy); font-size: 15px; font-weight: 600; margin-bottom: 4px; }
     .ws-viewer-body .ql-editor p { margin-bottom: 10px; }
@@ -803,9 +831,6 @@
       document.querySelectorAll('.tab-panel').forEach(function(p) {
         p.classList.toggle('active', p.id === 'panel-' + tab);
       });
-      // Expand to full width for workspace tab
-      var dashEl = document.querySelector('.dash');
-      if (dashEl) dashEl.classList.toggle('dash-wide', tab === 'documents');
     }
 
     // ═══════════════════════════════
@@ -3841,6 +3866,9 @@ guideLibrary['disability'] = {
       renderSheetTable(wb, activeSheet);
     }
 
+    var sheetSaveTimer = null;
+    var sheetDirty = false;
+
     function renderSheetTable(wb, sheetName) {
       var ws = wb.Sheets[sheetName];
       if (!ws) return;
@@ -3861,7 +3889,7 @@ guideLibrary['disability'] = {
         var colLetter = '';
         var n = c;
         while (n >= 0) { colLetter = String.fromCharCode(65 + (n % 26)) + colLetter; n = Math.floor(n / 26) - 1; }
-        html += '<th>' + colLetter + '</th>';
+        html += '<th style="min-width:80px;resize:horizontal;overflow:hidden">' + colLetter + '</th>';
       }
       html += '</tr></thead><tbody>';
       data.forEach(function(row, ri) {
@@ -3875,6 +3903,60 @@ guideLibrary['disability'] = {
       html += '</tbody></table>';
       wrap.innerHTML = html;
       window._activeWb = wb;
+      window._activeSheetName = sheetName;
+
+      // Add cell edit listeners for auto-save
+      wrap.querySelectorAll('td[contenteditable]').forEach(function(td) {
+        td.addEventListener('input', function() {
+          sheetDirty = true;
+          // Update the workbook in memory
+          var r = parseInt(td.dataset.r);
+          var c = parseInt(td.dataset.c);
+          var cellRef = XLSX.utils.encode_cell({ r: r, c: c });
+          var sheet = wb.Sheets[window._activeSheetName];
+          if (!sheet) return;
+          var val = td.textContent;
+          if (val === '') {
+            delete sheet[cellRef];
+          } else {
+            sheet[cellRef] = { t: 's', v: val };
+          }
+          // Debounced save
+          if (sheetSaveTimer) clearTimeout(sheetSaveTimer);
+          sheetSaveTimer = setTimeout(function() { saveSheetEdits(); }, 1500);
+        });
+      });
+    }
+
+    function saveSheetEdits() {
+      if (!sheetDirty || !window._activeWb || !wsActiveFileId) return;
+      // Serialize workbook to JSON for storage
+      var sheetsData = {};
+      window._activeWb.SheetNames.forEach(function(name) {
+        sheetsData[name] = XLSX.utils.sheet_to_json(window._activeWb.Sheets[name], { header: 1, defval: '' });
+      });
+      fetch('/api/files/' + wsActiveFileId + '/edit', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html: JSON.stringify({ _type: 'spreadsheet', sheets: sheetsData, sheetNames: window._activeWb.SheetNames }) })
+      }).then(function(r) {
+        if (r.ok) {
+          sheetDirty = false;
+          showSaveIndicator('Saved');
+        }
+      }).catch(function() {});
+    }
+
+    function showSaveIndicator(msg) {
+      var existing = document.getElementById('saveIndicator');
+      if (existing) existing.remove();
+      var el = document.createElement('div');
+      el.id = 'saveIndicator';
+      el.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--navy);color:var(--cream);padding:8px 16px;border-radius:8px;font-size:12px;font-weight:400;z-index:999;opacity:1;transition:opacity 0.3s;font-family:Plus Jakarta Sans,sans-serif';
+      el.textContent = msg || 'Saved';
+      document.body.appendChild(el);
+      setTimeout(function() { el.style.opacity = '0'; }, 1500);
+      setTimeout(function() { el.remove(); }, 2000);
     }
 
     window.switchSheet = function(btn, name) {
@@ -3960,7 +4042,7 @@ guideLibrary['disability'] = {
                   initQuillEditor(body, conv.html, fileId);
                 } else {
                   fetch(previewUrl).then(function(r) { return r.arrayBuffer(); }).then(function(buf) {
-                    mammoth.convertToHtml({ arrayBuffer: buf }).then(function(result) {
+                    mammoth.convertToHtml({ arrayBuffer: buf, styleMap: ['u => u', 'strike => s'] }).then(function(result) {
                       initQuillEditor(body, result.value, fileId);
                     }).catch(function() {
                       body.innerHTML = '<div class="ws-idle"><div class="ws-idle-quote">Could not open this document for editing.</div><a href="/api/files/' + fileId + '/download" style="color:var(--navy);font-size:13px">Download instead</a></div>';
@@ -3969,7 +4051,7 @@ guideLibrary['disability'] = {
                 }
               }).catch(function() {
                 fetch(previewUrl).then(function(r) { return r.arrayBuffer(); }).then(function(buf) {
-                  mammoth.convertToHtml({ arrayBuffer: buf }).then(function(result) {
+                  mammoth.convertToHtml({ arrayBuffer: buf, styleMap: ['u => u', 'strike => s'] }).then(function(result) {
                     initQuillEditor(body, result.value, fileId);
                   }).catch(function() {
                     body.innerHTML = '<div class="ws-idle"><div class="ws-idle-quote">Could not open this document for editing.</div><a href="/api/files/' + fileId + '/download" style="color:var(--navy);font-size:13px">Download instead</a></div>';
@@ -3999,9 +4081,28 @@ guideLibrary['disability'] = {
         // Spreadsheet — render with SheetJS
         body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Loading spreadsheet\u2026</div>';
         loadSheetLibs(function() {
-          fetch(previewUrl).then(function(r) { return r.arrayBuffer(); }).then(function(buf) {
+          // Check for saved edits first
+          Promise.all([
+            fetch(previewUrl).then(function(r) { return r.arrayBuffer(); }),
+            fetch('/api/files/' + fileId + '/edit').then(function(r) { return r.json(); }).catch(function() { return {}; })
+          ]).then(function(results) {
             try {
-              var wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
+              var wb = XLSX.read(new Uint8Array(results[0]), { type: 'array' });
+              // Apply saved edits if they exist
+              var saved = results[1];
+              if (saved && saved.html) {
+                try {
+                  var editData = JSON.parse(saved.html);
+                  if (editData._type === 'spreadsheet' && editData.sheets) {
+                    // Rebuild workbook from saved data
+                    editData.sheetNames.forEach(function(name) {
+                      if (editData.sheets[name]) {
+                        wb.Sheets[name] = XLSX.utils.aoa_to_sheet(editData.sheets[name]);
+                      }
+                    });
+                  }
+                } catch(e) {}
+              }
               renderSpreadsheet(body, wb, fileId, file.original_name);
             } catch(e) {
               body.innerHTML = '<div class="ws-idle"><div style="font-size:40px;margin-bottom:16px">\uD83D\uDCCA</div><div class="ws-idle-quote">Could not preview this spreadsheet.</div><a href="/api/files/' + fileId + '/download" style="color:var(--navy);font-size:13px">Download instead</a></div>';
@@ -4030,7 +4131,78 @@ guideLibrary['disability'] = {
       }
     }
 
+    function registerQuillTableFormats() {
+      if (window._quillTableRegistered) return;
+      window._quillTableRegistered = true;
+      var Block = Quill.import('blots/block');
+      var Container = Quill.import('blots/container');
+      var Inline = Quill.import('blots/inline');
+
+      // Table cell
+      class TableCell extends Block {
+        static create(value) {
+          var node = super.create();
+          if (value && value.colspan) node.setAttribute('colspan', value.colspan);
+          if (value && value.rowspan) node.setAttribute('rowspan', value.rowspan);
+          return node;
+        }
+      }
+      TableCell.blotName = 'table-cell';
+      TableCell.tagName = 'TD';
+
+      class TableHeader extends Block {
+        static create(value) {
+          var node = super.create();
+          if (value && value.colspan) node.setAttribute('colspan', value.colspan);
+          return node;
+        }
+      }
+      TableHeader.blotName = 'table-header';
+      TableHeader.tagName = 'TH';
+
+      class TableRow extends Container {
+        static create() { return super.create(); }
+      }
+      TableRow.blotName = 'table-row';
+      TableRow.tagName = 'TR';
+      TableRow.allowedChildren = [TableCell, TableHeader];
+
+      class TableBody extends Container {
+        static create() { return super.create(); }
+      }
+      TableBody.blotName = 'table-body';
+      TableBody.tagName = 'TBODY';
+      TableBody.allowedChildren = [TableRow];
+
+      class TableHead extends Container {
+        static create() { return super.create(); }
+      }
+      TableHead.blotName = 'table-head';
+      TableHead.tagName = 'THEAD';
+      TableHead.allowedChildren = [TableRow];
+
+      class Table extends Container {
+        static create() { return super.create(); }
+      }
+      Table.blotName = 'table-container';
+      Table.tagName = 'TABLE';
+      Table.allowedChildren = [TableHead, TableBody, TableRow];
+
+      Quill.register(TableCell);
+      Quill.register(TableHeader);
+      Quill.register(TableRow);
+      Quill.register(TableBody);
+      Quill.register(TableHead);
+      Quill.register(Table);
+
+      // Register font families
+      var Font = Quill.import('formats/font');
+      Font.whitelist = ['sans-serif', 'serif', 'monospace', 'arial', 'times-new-roman', 'georgia', 'verdana', 'courier-new', 'trebuchet-ms'];
+      Quill.register(Font, true);
+    }
+
     function initQuillEditor(body, html, fileId) {
+      registerQuillTableFormats();
       body.innerHTML = '<div id="wsQuillToolbar"></div><div id="wsQuillEditor" style="min-height:300px"></div>';
       // Style overrides for Quill in our design
       var editorEl = document.getElementById('wsQuillEditor');
@@ -4043,6 +4215,7 @@ guideLibrary['disability'] = {
         theme: 'snow',
         modules: {
           toolbar: [
+            [{ 'font': ['sans-serif', 'serif', 'monospace', 'arial', 'times-new-roman', 'georgia', 'verdana', 'courier-new', 'trebuchet-ms'] }],
             [{ 'header': [1, 2, 3, false] }],
             [{ 'size': ['small', false, 'large', 'huge'] }],
             ['bold', 'italic', 'underline', 'strike'],
@@ -4050,7 +4223,8 @@ guideLibrary['disability'] = {
             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
             [{ 'align': [] }],
             ['link'],
-            [{ 'indent': '-1' }, { 'indent': '+1' }]
+            [{ 'indent': '-1' }, { 'indent': '+1' }],
+            ['clean']
           ]
         },
         placeholder: 'Start typing to edit this document\u2026'
@@ -4311,7 +4485,7 @@ guideLibrary['disability'] = {
         + '</select>'
         + '<div class="pdf-toolbar-sep"></div>'
         + '<button class="pdf-toolbar-btn" id="pdfZoomOutBtn" onclick="pdfZoom(-0.15)">−</button>'
-        + '<span class="pdf-toolbar-info" id="pdfZoomLevel">100%</span>'
+        + '<span class="pdf-toolbar-info" id="pdfZoomLevel">120%</span>'
         + '<button class="pdf-toolbar-btn" id="pdfZoomInBtn" onclick="pdfZoom(0.15)">+</button>'
         + '<div class="pdf-toolbar-sep"></div>'
         + '<span class="pdf-toolbar-info" id="pdfPageInfo"></span>'
@@ -4374,8 +4548,28 @@ guideLibrary['disability'] = {
 
             viewer.appendChild(wrap);
 
+            // Text layer for text selection
+            var textLayerDiv = document.createElement('div');
+            textLayerDiv.className = 'pdf-text-layer';
+            if (pdfTextMode || pdfSigMode) textLayerDiv.classList.add('editing-mode');
+            wrap.insertBefore(textLayerDiv, annotLayer);
+
             var ctx = canvas.getContext('2d');
             return page.render({ canvasContext: ctx, viewport: viewport }).promise.then(function() {
+              // Render selectable text layer
+              return page.getTextContent();
+            }).then(function(textContent) {
+              // Manually position text spans for selection
+              textContent.items.forEach(function(item) {
+                var tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+                var span = document.createElement('span');
+                span.textContent = item.str;
+                span.style.left = tx[4] + 'px';
+                span.style.top = (tx[5] - item.height * viewport.scale * 0.8) + 'px';
+                span.style.fontSize = (item.height * viewport.scale * 0.82) + 'px';
+                span.style.fontFamily = item.fontName || 'sans-serif';
+                textLayerDiv.appendChild(span);
+              });
               // Restore saved annotations for this page
               restorePdfAnnotations(pageNum, viewport);
             });
@@ -4409,7 +4603,11 @@ guideLibrary['disability'] = {
       if (btn) btn.classList.toggle('active', pdfTextMode);
       document.querySelectorAll('.pdf-annot-layer').forEach(function(l) {
         l.classList.remove('sig-mode');
-        l.style.cursor = pdfTextMode ? 'text' : 'default';
+        l.classList.toggle('text-mode', pdfTextMode);
+      });
+      // Toggle text layers: hide when editing, show when reading
+      document.querySelectorAll('.pdf-text-layer').forEach(function(t) {
+        t.classList.toggle('editing-mode', pdfTextMode);
       });
     }
 
@@ -4422,7 +4620,10 @@ guideLibrary['disability'] = {
       if (pdfSigMode) { pdfTextMode = false; var tb = document.getElementById('pdfAddTextBtn'); if (tb) tb.classList.remove('active'); }
       document.querySelectorAll('.pdf-annot-layer').forEach(function(l) {
         l.classList.toggle('sig-mode', pdfSigMode);
-        l.style.cursor = pdfSigMode ? 'none' : (pdfTextMode ? 'text' : 'default');
+        l.classList.toggle('text-mode', false);
+      });
+      document.querySelectorAll('.pdf-text-layer').forEach(function(t) {
+        t.classList.toggle('editing-mode', pdfSigMode);
       });
       if (pdfSigMode) {
         showPdfSigGhost();
@@ -4505,6 +4706,7 @@ guideLibrary['disability'] = {
         if (data.highlight) txt.style.background = data.highlight;
         txt.oninput = function() { pdfMarkDirty(); };
         txt.onblur = function() { pdfAutoSave(); };
+        txt.onclick = function(e) { e.stopPropagation(); this.focus(); };
         el.appendChild(txt);
       }
 
@@ -4891,8 +5093,8 @@ guideLibrary['disability'] = {
               + '</div>';
           }, 20 * 60 * 1000); // 20 minutes
         }
-        // Show onboarding for new users
-        if (!localStorage.getItem('lumeway_onboarded')) {
+        // Show onboarding only for truly new users (no checklist, no sessions, never onboarded)
+        if (!localStorage.getItem('lumeway_onboarded') && checklistItems.length === 0 && sessions.length === 0) {
           showOnboarding();
         }
         // Show contextual tips for recently onboarded users
@@ -5073,21 +5275,30 @@ guideLibrary['disability'] = {
       }
       html += '</div>';
 
-      // Goals — single card, managed in checklist sidebar
+      // Personal Goals — always visible on overview, user-managed
+      html += '<div class="dash-card">';
+      html += '  <div class="card-label">My Goals</div>';
       var allGoalsOv = goals.filter(function(g) { return !g.is_completed; });
+      var completedGoals = goals.filter(function(g) { return g.is_completed; });
       if (allGoalsOv.length > 0) {
-        html += '<div class="dash-card">';
-        html += '  <div class="card-label">Active Goals</div>';
-        allGoalsOv.slice(0, 5).forEach(function(g) {
-          html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">';
+        allGoalsOv.forEach(function(g) {
+          html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">';
           html += '  <div class="check-box" onclick="toggleGoal(' + g.id + ', this.parentElement)" style="margin-top:2px"></div>';
           html += '  <div style="flex:1;font-size:13px">' + g.title + '</div>';
-          html += '  <span style="font-size:10px;color:var(--muted);white-space:nowrap">' + g.timeframe + '</span>';
+          html += '  <button class="item-del" onclick="deleteGoal(' + g.id + ')" style="font-size:13px;padding:0 4px" title="Remove">&times;</button>';
           html += '</div>';
         });
-        if (allGoalsOv.length > 5) html += '<div style="font-size:12px;color:var(--muted);margin-top:8px">' + (allGoalsOv.length - 5) + ' more on your checklist tab</div>';
-        html += '</div>';
+      } else {
+        html += '<p class="card-empty">Set a personal goal — something to work toward this week or month.</p>';
       }
+      if (completedGoals.length > 0) {
+        html += '<div style="margin-top:8px;font-size:11px;color:var(--muted)">' + completedGoals.length + ' completed</div>';
+      }
+      html += '<div style="display:flex;gap:6px;margin-top:10px">';
+      html += '  <input class="goal-input" id="ovGoalInput" placeholder="Add a goal\u2026" style="flex:1;font-size:12px;padding:7px 10px" onkeydown="if(event.key===\'Enter\')addGoal(\'personal\',\'ovGoalInput\')">';
+      html += '  <button class="init-btn" onclick="addGoal(\'personal\',\'ovGoalInput\')" style="font-size:11px;padding:6px 12px">Add</button>';
+      html += '</div>';
+      html += '</div>';
 
       // Important dates section
       html += '<div class="dash-card" style="margin-bottom:24px">';
@@ -7197,8 +7408,27 @@ guideLibrary['disability'] = {
     function pickOnboardTransition(key) {
       closeOnboarding();
       if (typeof gtag === 'function') gtag('event', 'onboard_transition_pick', { transition: key });
-      // Redirect to chat with the transition context
-      window.location.href = '/chat?topic=' + encodeURIComponent(key);
+      // Save the chosen transition context for later — stay on dashboard
+      sessionStorage.setItem('lumeway_onboard_transition', key);
+      // Show chat recommendation banner instead of redirecting
+      showChatRecommendBanner(key);
+    }
+    function showChatRecommendBanner(transitionKey) {
+      var transLabels = { 'estate': 'loss of a loved one', 'divorce': 'divorce or separation', 'job-loss': 'job loss', 'relocation': 'a move', 'disability': 'disability', 'retirement': 'retirement' };
+      var label = transLabels[transitionKey] || 'your transition';
+      // Remove existing banner if any
+      var old = document.getElementById('chatRecommendBanner');
+      if (old) old.remove();
+      var banner = document.createElement('div');
+      banner.id = 'chatRecommendBanner';
+      banner.style.cssText = 'background:linear-gradient(135deg,#f0f4f7,#e8eef3);border:1px solid #9db5c9;border-radius:12px;padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;animation:fadeIn 0.4s ease';
+      banner.innerHTML = '<div style="font-size:14px;color:var(--navy);line-height:1.5">We set up your dashboard for <strong>' + label + '</strong>. To get a personalized checklist and action plan, we recommend starting with a quick conversation.</div>'
+        + '<div style="display:flex;gap:10px;align-items:center;flex-shrink:0">'
+        + '<a href="/chat?topic=' + encodeURIComponent(transitionKey) + '" target="_blank" style="background:var(--accent);color:var(--cream);padding:10px 20px;border-radius:8px;font-size:13px;text-decoration:none;white-space:nowrap;font-weight:500">Start a chat</a>'
+        + '<button onclick="this.closest(\'#chatRecommendBanner\').remove()" style="background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer;padding:4px">&times;</button>'
+        + '</div>';
+      var tabs = document.querySelector('.dash-tabs');
+      if (tabs) tabs.after(banner);
     }
   </script>
 
