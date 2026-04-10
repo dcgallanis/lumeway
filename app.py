@@ -58,6 +58,7 @@ def validate_file_type(file_stream, filename):
         '.xls': [b'\xd0\xcf\x11\xe0'],  # OLE2
         '.csv': None,  # Text-based, skip magic byte check
         '.txt': None,  # Text-based, skip magic byte check
+        '.webp': [b'RIFF'],  # WebP image format
     }
 
     if ext not in signatures:

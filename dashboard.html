@@ -247,7 +247,7 @@
     .doc-desc { font-size: 12px; font-weight: 300; color: var(--muted); margin-top: 2px; }
 
     /* Document Workspace — folder sidebar + editor */
-    .ws-main { display: grid; grid-template-columns: 260px 1fr; gap: 0; min-height: calc(100vh - 200px); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); }
+    .ws-main { display: grid; grid-template-columns: 240px 1fr; gap: 0; min-height: calc(100vh - 160px); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
     @media (max-width: 768px) { .ws-main { grid-template-columns: 1fr; min-height: auto; } }
     .ws-sidebar { background: var(--cream); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
     .ws-sidebar-top { padding: 14px 14px 10px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
@@ -281,23 +281,40 @@
     .ws-viewer-body iframe { width: 100%; height: 100%; border: none; }
     .ws-viewer-body img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; margin: 20px auto; }
     .ws-viewer-body .ws-text-editor { width: 100%; height: 100%; border: none; padding: 24px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; line-height: 1.7; color: var(--text); background: var(--warm-white); resize: none; outline: none; }
-    .ws-welcome { padding: 48px 40px; max-width: 560px; margin: 0 auto; }
+    .ws-welcome { padding: 48px 40px; max-width: 600px; margin: 0 auto; }
     .ws-welcome h2 { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 400; color: var(--navy); margin-bottom: 12px; }
     .ws-welcome p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
     .ws-welcome h3 { font-size: 13px; font-weight: 600; color: var(--navy); margin: 20px 0 8px; }
     .ws-welcome ul { list-style: none; padding: 0; margin: 0 0 16px; }
     .ws-welcome li { font-size: 13px; font-weight: 300; color: var(--text); padding: 6px 0; padding-left: 20px; position: relative; line-height: 1.5; }
     .ws-welcome li:before { content: '\2713'; position: absolute; left: 0; color: var(--green); font-weight: 600; }
-    .ws-sig-bar { display: flex; align-items: center; gap: 8px; padding: 8px 18px; border-top: 1px solid var(--border); background: var(--cream); flex-shrink: 0; }
-    .ws-sig-input { flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--warm-white); }
+    /* Idle placeholder (no file open) */
+    .ws-idle { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 40px; }
+    .ws-idle-quote { font-family: 'Libre Baskerville', Georgia, serif; font-size: 18px; font-weight: 400; color: var(--navy); line-height: 1.6; max-width: 380px; margin-bottom: 12px; }
+    .ws-idle-sub { font-size: 13px; font-weight: 300; color: var(--muted); }
+    .ws-idle-hint { font-size: 12px; color: var(--muted); margin-top: 16px; cursor: pointer; transition: color 0.15s; }
+    .ws-idle-hint:hover { color: var(--navy); }
+    .ws-sig-bar { display: none; align-items: center; gap: 8px; padding: 8px 18px; border-top: 1px solid var(--border); background: var(--cream); flex-shrink: 0; }
+    .ws-sig-input { flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--warm-white); max-width: 160px; }
     .ws-sig-font { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 11px; background: var(--warm-white); cursor: pointer; font-family: inherit; }
-    .ws-sig-preview { font-size: 20px; color: var(--navy); min-width: 120px; text-align: center; padding: 4px 12px; border: 1px dashed var(--border); border-radius: 6px; background: white; min-height: 32px; }
-    .ws-sig-stamp { padding: 6px 14px; background: var(--navy); color: var(--cream); border: none; border-radius: 6px; font-size: 11px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .ws-sig-preview { font-size: 18px; color: var(--navy); min-width: 100px; text-align: center; padding: 4px 10px; border: 1px dashed var(--border); border-radius: 6px; background: white; min-height: 28px; }
+    .ws-sig-stamp { padding: 6px 14px; background: var(--navy); color: var(--cream); border: none; border-radius: 6px; font-size: 11px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; white-space: nowrap; }
     .ws-sig-stamp:hover { background: var(--accent); }
+    /* Signature toggle button in viewer header */
+    .ws-sig-toggle { position: relative; }
+    .ws-sig-toggle.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    .ws-sig-dropdown { position: absolute; top: 100%; right: 0; margin-top: 6px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 14px; box-shadow: 0 4px 16px rgba(44,74,94,0.12); z-index: 20; width: 320px; display: none; }
+    .ws-sig-dropdown.open { display: block; }
+    .ws-sig-dropdown label { font-size: 11px; font-weight: 500; color: var(--navy); display: block; margin-bottom: 6px; }
+    .ws-sig-fonts { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+    .ws-sig-font-opt { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 18px; text-align: center; transition: all 0.15s; background: white; }
+    .ws-sig-font-opt:hover { border-color: var(--gold); }
+    .ws-sig-font-opt.active { border-color: var(--navy); background: rgba(44,74,94,0.04); }
     /* Quill editor overrides */
-    .ws-viewer-body .ql-toolbar { border: none; border-bottom: 1px solid var(--border); background: var(--cream); padding: 8px 12px; }
+    .ws-viewer-body .ql-toolbar { border: none; border-bottom: 1px solid var(--border); background: var(--cream); padding: 8px 16px; }
+    .ws-viewer-body .ql-toolbar .ql-formats { margin-right: 12px; }
     .ws-viewer-body .ql-container { border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; flex: 1; }
-    .ws-viewer-body .ql-editor { padding: 32px 36px; min-height: 800px; line-height: 1.8; color: var(--text); }
+    .ws-viewer-body .ql-editor { padding: 32px 40px; min-height: 500px; line-height: 1.8; color: var(--text); }
     .ws-viewer-body .ql-editor h1 { font-family: 'Libre Baskerville', serif; color: var(--navy); font-size: 22px; margin-bottom: 8px; }
     .ws-viewer-body .ql-editor h2 { font-family: 'Libre Baskerville', serif; color: var(--navy); font-size: 18px; margin-bottom: 6px; }
     .ws-viewer-body .ql-editor h3 { color: var(--navy); font-size: 15px; font-weight: 600; margin-bottom: 4px; }
@@ -3748,15 +3765,17 @@ guideLibrary['disability'] = {
       // Remove old export button if any
       var oldExport = document.getElementById('wsExportBtn');
       if (oldExport) oldExport.remove();
+      // Hide sig dropdown + button by default
+      var sigWrap = document.getElementById('wsSigBtnWrap');
+      if (sigWrap) sigWrap.style.display = 'none';
+      var sigDd = document.getElementById('wsSigDropdown');
+      if (sigDd) sigDd.classList.remove('open');
+
       var ext = file.original_name.split('.').pop().toLowerCase();
       var previewUrl = '/api/files/' + fileId + '/preview';
-      var isEditable = ['doc','docx','txt','csv'].indexOf(ext) >= 0;
+      var isDocEditable = ['doc','docx'].indexOf(ext) >= 0;
 
-      // Hide sig bar by default
-      var sigBar = document.getElementById('wsSigBar');
-      if (sigBar) sigBar.style.display = 'none';
-
-      if (isEditable && ['doc','docx'].indexOf(ext) >= 0) {
+      if (isDocEditable) {
         // Add export button to header
         var exportBtn = document.createElement('button');
         exportBtn.id = 'wsExportBtn';
@@ -3764,36 +3783,32 @@ guideLibrary['disability'] = {
         exportBtn.textContent = 'Export as Word';
         exportBtn.onclick = function() { exportAsDocx(file.original_name); };
         header.insertBefore(exportBtn, dlBtn);
-        // Show signature bar
-        if (sigBar) sigBar.style.display = 'flex';
+        // Show signature button in header
+        if (sigWrap) { sigWrap.style.display = 'block'; initSigFonts(); }
         body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Loading editor\u2026</div>';
         loadEditorLibs(function() {
-          // Check for saved edit first
           fetch('/api/files/' + fileId + '/edit').then(function(r) { return r.json(); }).then(function(data) {
             if (data.html) {
               initQuillEditor(body, data.html, fileId);
             } else {
-              // Try server-side conversion first (better table support), fall back to mammoth
               fetch('/api/files/' + fileId + '/convert').then(function(r) { return r.json(); }).then(function(conv) {
                 if (conv.ok && conv.html) {
                   initQuillEditor(body, conv.html, fileId);
                 } else {
-                  // Fallback to mammoth.js
                   fetch(previewUrl).then(function(r) { return r.arrayBuffer(); }).then(function(buf) {
                     mammoth.convertToHtml({ arrayBuffer: buf }).then(function(result) {
                       initQuillEditor(body, result.value, fileId);
                     }).catch(function() {
-                      body.innerHTML = '<div class="ws-viewer-placeholder"><div class="ws-viewer-placeholder-text">Could not open this document for editing.<br><a href="/api/files/' + fileId + '/download" style="color:var(--navy)">Download instead</a></div></div>';
+                      body.innerHTML = '<div class="ws-idle"><div class="ws-idle-quote">Could not open this document for editing.</div><a href="/api/files/' + fileId + '/download" style="color:var(--navy);font-size:13px">Download instead</a></div>';
                     });
                   });
                 }
               }).catch(function() {
-                // Fallback to mammoth.js
                 fetch(previewUrl).then(function(r) { return r.arrayBuffer(); }).then(function(buf) {
                   mammoth.convertToHtml({ arrayBuffer: buf }).then(function(result) {
                     initQuillEditor(body, result.value, fileId);
                   }).catch(function() {
-                    body.innerHTML = '<div class="ws-viewer-placeholder"><div class="ws-viewer-placeholder-text">Could not open this document for editing.<br><a href="/api/files/' + fileId + '/download" style="color:var(--navy)">Download instead</a></div></div>';
+                    body.innerHTML = '<div class="ws-idle"><div class="ws-idle-quote">Could not open this document for editing.</div><a href="/api/files/' + fileId + '/download" style="color:var(--navy);font-size:13px">Download instead</a></div>';
                   });
                 });
               });
@@ -3801,11 +3816,20 @@ guideLibrary['disability'] = {
           });
         });
       } else if (ext === 'pdf') {
-        body.innerHTML = '<iframe src="' + previewUrl + '" style="width:100%;height:100%;border:none"></iframe>';
-      } else if (['jpg','jpeg','png','gif'].indexOf(ext) >= 0) {
-        body.innerHTML = '<img src="' + previewUrl + '" alt="' + file.original_name + '" style="max-width:100%;height:auto;display:block;margin:20px auto">';
+        // Show signature button for PDFs too
+        if (sigWrap) { sigWrap.style.display = 'block'; initSigFonts(); }
+        body.innerHTML = '<iframe id="wsPdfFrame" src="' + previewUrl + '" style="width:100%;height:100%;border:none"></iframe>';
+      } else if (['jpg','jpeg','png','gif','webp'].indexOf(ext) >= 0) {
+        body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;padding:20px"><img src="' + previewUrl + '" alt="' + file.original_name + '" style="max-width:100%;max-height:calc(100vh - 300px);object-fit:contain;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.08)"></div>';
+      } else if (['xlsx','xls'].indexOf(ext) >= 0) {
+        // Spreadsheet — show in iframe for preview or offer download
+        body.innerHTML = '<div class="ws-idle">'
+          + '<div style="font-size:40px;margin-bottom:16px">📊</div>'
+          + '<div class="ws-idle-quote">Spreadsheet preview</div>'
+          + '<div class="ws-idle-sub" style="margin-bottom:16px">' + file.original_name + '</div>'
+          + '<a href="/api/files/' + fileId + '/download" style="display:inline-block;padding:10px 20px;background:var(--navy);color:var(--cream);border-radius:8px;font-size:13px;text-decoration:none">Download to edit in Excel or Google Sheets</a>'
+          + '</div>';
       } else if (['txt','csv'].indexOf(ext) >= 0) {
-        // Add save button
         var saveBtn = document.createElement('button');
         saveBtn.id = 'wsExportBtn';
         saveBtn.className = 'ws-viewer-btn';
@@ -3823,7 +3847,7 @@ guideLibrary['disability'] = {
           });
         });
       } else {
-        body.innerHTML = '<div class="ws-viewer-placeholder"><div class="ws-viewer-placeholder-icon">' + getFileIcon(file.original_name) + '</div><div class="ws-viewer-placeholder-text">This file type can\'t be previewed in the browser.<br><a href="/api/files/' + fileId + '/download" style="color:var(--navy)">Download to view</a></div></div>';
+        body.innerHTML = '<div class="ws-idle"><div style="font-size:40px;margin-bottom:16px">' + getFileIcon(file.original_name) + '</div><div class="ws-idle-quote">This file type can\'t be previewed here.</div><a href="/api/files/' + fileId + '/download" style="color:var(--navy);font-size:13px">Download to view</a></div>';
       }
     }
 
@@ -3937,40 +3961,159 @@ guideLibrary['disability'] = {
 
     // ── Signature Tool ──
     var sigFontsLoaded = false;
+    var SIG_FONTS = [
+      { name: 'Dancing Script', label: 'Script' },
+      { name: 'Great Vibes', label: 'Formal' },
+      { name: 'Caveat', label: 'Casual' },
+      { name: 'Architects Daughter', label: 'Handwritten' },
+      { name: 'Libre Baskerville', label: 'Serif' }
+    ];
+    var activeSigFont = 'Dancing Script';
+
     function loadSigFonts() {
       if (sigFontsLoaded) return;
       sigFontsLoaded = true;
       var link = document.createElement('link');
-      link.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap';
+      link.href = 'https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@400;700&family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap';
       link.rel = 'stylesheet';
       document.head.appendChild(link);
     }
 
+    function initSigFonts() {
+      loadSigFonts();
+      var container = document.getElementById('wsSigFonts');
+      if (!container || container.children.length > 0) return;
+      SIG_FONTS.forEach(function(f) {
+        var div = document.createElement('div');
+        div.className = 'ws-sig-font-opt' + (f.name === activeSigFont ? ' active' : '');
+        div.style.fontFamily = "'" + f.name + "', cursive";
+        div.dataset.font = f.name;
+        div.textContent = 'Your Name';
+        div.title = f.label;
+        div.onclick = function() {
+          activeSigFont = f.name;
+          container.querySelectorAll('.ws-sig-font-opt').forEach(function(o) { o.classList.toggle('active', o.dataset.font === f.name); });
+          updateSigPreview();
+        };
+        container.appendChild(div);
+      });
+    }
+
+    function toggleSigDropdown() {
+      var dd = document.getElementById('wsSigDropdown');
+      var btn = document.getElementById('wsSigToggle');
+      if (dd) dd.classList.toggle('open');
+      if (btn) btn.classList.toggle('active', dd && dd.classList.contains('open'));
+    }
+
     function updateSigPreview() {
       loadSigFonts();
-      var name = document.getElementById('wsSigName').value || 'Your Name';
-      var font = document.getElementById('wsSigFont').value;
+      var nameInput = document.getElementById('wsSigName');
+      var name = nameInput ? (nameInput.value || 'Your Name') : 'Your Name';
       var preview = document.getElementById('wsSigPreview');
       if (preview) {
-        preview.style.fontFamily = "'" + font + "', cursive";
+        preview.style.fontFamily = "'" + activeSigFont + "', cursive";
         preview.textContent = name;
       }
+      // Also update font option previews with the typed name
+      var opts = document.querySelectorAll('.ws-sig-font-opt');
+      opts.forEach(function(o) { o.textContent = name || 'Your Name'; });
     }
 
     function stampSignature() {
-      if (!wsQuill) return;
       var name = document.getElementById('wsSigName').value.trim();
       if (!name) { alert('Please type your name first.'); return; }
-      var font = document.getElementById('wsSigFont').value;
+      var font = activeSigFont;
       var today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-      var sigHtml = '<p><br></p><p><br></p>'
-        + '<p style="border-top:1px solid #ccc;padding-top:8px;margin-top:20px">'
-        + '<span style="font-family:\'' + font + '\',cursive;font-size:24px;color:#2C4A5E">' + name + '</span>'
-        + '<br><span style="font-size:12px;color:#6B7B8D">Date: ' + today + '</span></p>';
-      // Insert at cursor or at end
-      var range = wsQuill.getSelection();
-      var idx = range ? range.index : wsQuill.getLength();
-      wsQuill.clipboard.dangerouslyPasteHTML(idx, sigHtml);
+
+      if (wsQuill) {
+        // Quill-based doc editor
+        var sigHtml = '<p><br></p>'
+          + '<p style="border-top:1px solid #ccc;padding-top:8px;margin-top:16px">'
+          + '<span style="font-family:\'' + font + '\',cursive;font-size:24px;color:#2C4A5E">' + name + '</span>'
+          + '<br><span style="font-size:12px;color:#6B7B8D">Date: ' + today + '</span></p>';
+        var range = wsQuill.getSelection();
+        var idx = range ? range.index : wsQuill.getLength();
+        wsQuill.clipboard.dangerouslyPasteHTML(idx, sigHtml);
+      }
+      // Close dropdown
+      var dd = document.getElementById('wsSigDropdown');
+      var btn = document.getElementById('wsSigToggle');
+      if (dd) dd.classList.remove('open');
+      if (btn) btn.classList.remove('active');
+    }
+
+    // Close sig dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      var dd = document.getElementById('wsSigDropdown');
+      var wrap = document.getElementById('wsSigBtnWrap');
+      if (dd && dd.classList.contains('open') && wrap && !wrap.contains(e.target)) {
+        dd.classList.remove('open');
+        var btn = document.getElementById('wsSigToggle');
+        if (btn) btn.classList.remove('active');
+      }
+    });
+
+    var WS_IDLE_QUOTES = [
+      'You got this.',
+      'Paperwork, schmaperwork.',
+      'One file at a time.',
+      'Look at you, getting organized.',
+      'Future you will thank present you.',
+      'Filing things like a pro.',
+      'Adulting level: expert.',
+      'Another document conquered.',
+      'Your filing cabinet is jealous.',
+      'Organized chaos is still organized.',
+      'That was easier than parallel parking.',
+      'Gold star for document management.',
+      'Who says paperwork can\'t be fun?',
+      'Everything in its right place.',
+      'You just out-organized Marie Kondo.'
+    ];
+
+    function getIdleQuote() {
+      return WS_IDLE_QUOTES[Math.floor(Math.random() * WS_IDLE_QUOTES.length)];
+    }
+
+    function showWsIdle(body) {
+      var hasFiles = userFiles && userFiles.length > 0;
+      if (hasFiles) {
+        body.innerHTML = '<div class="ws-idle">'
+          + '<div class="ws-idle-quote">' + getIdleQuote() + '</div>'
+          + '<div class="ws-idle-sub">Select a file from the sidebar to keep going.</div>'
+          + '<div class="ws-idle-hint" onclick="showWsWelcome()">View workspace guide</div>'
+          + '</div>';
+      } else {
+        // No files yet — show full welcome
+        showWsWelcome();
+      }
+    }
+
+    function showWsWelcome() {
+      var body = document.getElementById('wsViewerBody');
+      if (!body) return;
+      // Re-render the full welcome content
+      var w = document.getElementById('wsWelcome');
+      if (w) { w.style.display = 'block'; return; }
+      // If welcome was removed, rebuild a simplified version
+      body.innerHTML = '<div class="ws-welcome" id="wsWelcome">'
+        + '<h2>Workspace guide</h2>'
+        + '<p>A private place to keep all your important documents organized. Upload, view, and edit files — everything auto-saves and stays encrypted.</p>'
+        + '<div style="display:flex;align-items:flex-start;gap:10px;background:linear-gradient(135deg,#f0f7f0,#e8f4e8);border:1px solid #c4d9c4;border-radius:10px;padding:14px 16px;margin-bottom:20px">'
+        + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F5E" stroke-width="2" style="flex-shrink:0;margin-top:2px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
+        + '<div style="font-size:13px;font-weight:300;color:#2C3E50;line-height:1.5"><strong style="font-weight:500">Your files are safe.</strong> Every document is encrypted before storage. Only you can access them.</div>'
+        + '</div>'
+        + '<h3>What you can do</h3><ul>'
+        + '<li>Upload PDFs, Word docs, images, spreadsheets, and text files</li>'
+        + '<li>View any document right in your browser</li>'
+        + '<li>Edit Word documents with a rich text editor (auto-saves)</li>'
+        + '<li>Add a typed signature and date stamp to documents</li>'
+        + '<li>Export edited documents back as Word files</li>'
+        + '</ul>'
+        + '<h3>How the filing system works</h3>'
+        + '<p>Files are organized into folders by category — Legal, Financial, Insurance, Medical, Personal. Pick a category when uploading, or recategorize anytime. This makes it easy to find documents when a lawyer, accountant, or agency asks for them.</p>'
+        + '</div>';
     }
 
     function closeViewer() {
@@ -3981,14 +4124,12 @@ guideLibrary['disability'] = {
       renderUserFiles();
       var header = document.getElementById('wsViewerHeader');
       var body = document.getElementById('wsViewerBody');
-      var sigBar = document.getElementById('wsSigBar');
       var oldExport = document.getElementById('wsExportBtn');
       var oldStatus = document.getElementById('wsSaveStatus');
       if (oldExport) oldExport.remove();
       if (oldStatus) oldStatus.remove();
       if (header) header.style.display = 'none';
-      if (sigBar) sigBar.style.display = 'none';
-      if (body) body.innerHTML = '<div class="ws-welcome" id="wsWelcome"><h2>Welcome to your workspace</h2><p>Select a file from the sidebar to view or edit it here.</p></div>';
+      showWsIdle(body);
     }
 
     // Map dashboard transition keys to state-rules.json category keys
@@ -4678,7 +4819,7 @@ guideLibrary['disability'] = {
       html += '<div class="ws-sidebar">';
       html += '<div class="ws-sidebar-top">';
       html += '  <div class="ws-drop" id="dropZone" onclick="document.getElementById(\'fileUploadInput\').click()">';
-      html += '    <input type="file" id="fileUploadInput" style="display:none">';
+      html += '    <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.xls,.jpg,.jpeg,.png,.gif,.webp" style="display:none">';
       html += '    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
       html += '    <span id="dropZoneText">Upload file</span>';
       html += '  </div>';
@@ -4712,6 +4853,19 @@ guideLibrary['disability'] = {
       html += '<div class="ws-editor">';
       html += '<div class="ws-viewer-header" id="wsViewerHeader" style="display:none">';
       html += '  <span class="ws-viewer-title" id="wsViewerTitle"></span>';
+      html += '  <div id="wsSigBtnWrap" style="display:none;position:relative">';
+      html += '    <button class="ws-viewer-btn ws-sig-toggle" id="wsSigToggle" onclick="toggleSigDropdown()" title="Add signature">';
+      html += '      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg> Signature';
+      html += '    </button>';
+      html += '    <div class="ws-sig-dropdown" id="wsSigDropdown">';
+      html += '      <label>Type your name</label>';
+      html += '      <input class="ws-sig-input" id="wsSigName" placeholder="Your full name" oninput="updateSigPreview()" style="width:100%;max-width:none;margin-bottom:8px">';
+      html += '      <label>Choose a style</label>';
+      html += '      <div class="ws-sig-fonts" id="wsSigFonts"></div>';
+      html += '      <div class="ws-sig-preview" id="wsSigPreview" style="width:100%;margin-bottom:10px;min-height:40px;font-size:22px"></div>';
+      html += '      <button class="ws-sig-stamp" onclick="stampSignature()" style="width:100%;padding:10px;font-size:13px">Place signature</button>';
+      html += '    </div>';
+      html += '  </div>';
       html += '  <a class="ws-viewer-btn" id="wsViewerDl" href="#" title="Download"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>';
       html += '  <button class="ws-viewer-btn" onclick="closeViewer()">&times;</button>';
       html += '</div>';
@@ -4719,41 +4873,37 @@ guideLibrary['disability'] = {
       // Welcome content shown when no file is open
       html += '<div class="ws-welcome" id="wsWelcome">';
       html += '  <h2>Welcome to your workspace</h2>';
-      html += '  <p>This is where you manage all your important documents. Upload files, view and edit them right here, and keep everything organized by category.</p>';
-      html += '  <h3>What you can do</h3>';
+      html += '  <p>A private place to keep all your important documents organized. Upload, view, and edit files right here — everything auto-saves and stays encrypted.</p>';
+      html += '  <div style="display:flex;align-items:flex-start;gap:10px;background:linear-gradient(135deg,#f0f7f0,#e8f4e8);border:1px solid #c4d9c4;border-radius:10px;padding:14px 16px;margin-bottom:20px">';
+      html += '    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F5E" stroke-width="2" style="flex-shrink:0;margin-top:2px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+      html += '    <div style="font-size:13px;font-weight:300;color:#2C3E50;line-height:1.5"><strong style="font-weight:500">Your files are safe.</strong> Every document is encrypted before storage. Only you can access them — not even Lumeway staff can read your files.</div>';
+      html += '  </div>';
+      html += '  <h3>What you can do here</h3>';
       html += '  <ul>';
-      html += '    <li>Upload PDFs, Word docs, images, spreadsheets, and text files</li>';
-      html += '    <li>View documents directly in your browser</li>';
-      html += '    <li>Edit Word documents with a built-in text editor that auto-saves</li>';
-      html += '    <li>Export your edits back as a Word file</li>';
-      html += '    <li>Add a typed signature and date to documents</li>';
+      html += '    <li>Upload PDFs, Word docs, images, spreadsheets (.xlsx), and text files</li>';
+      html += '    <li>View any document right in your browser — no downloads needed</li>';
+      html += '    <li>Edit Word documents with a rich text editor (auto-saves as you type)</li>';
+      html += '    <li>Add a typed signature and date stamp to documents</li>';
+      html += '    <li>Export edited documents back as Word files</li>';
+      html += '    <li>Add text to PDFs (for filling out forms) and save your changes</li>';
       html += '  </ul>';
-      html += '  <h3>Documents to upload</h3>';
+      html += '  <h3>How the filing system works</h3>';
+      html += '  <p>The sidebar organizes your files into folders by category — Legal, Financial, Insurance, Medical, and Personal. When you upload a file, pick a category or let Lumeway guess from the filename. You can recategorize any file later. This makes it easy to find what you need when a lawyer, accountant, or agency asks for specific documents.</p>';
+      html += '  <h3>Good documents to upload</h3>';
       html += '  <ul>';
       html += '    <li>Insurance policies and benefit statements</li>';
-      html += '    <li>Legal documents (wills, deeds, court orders)</li>';
-      html += '    <li>Financial records (tax returns, bank statements)</li>';
-      html += '    <li>Medical records and prescriptions</li>';
-      html += '    <li>Letters you need to send or have received</li>';
+      html += '    <li>Legal documents (wills, deeds, court orders, custody agreements)</li>';
+      html += '    <li>Financial records (tax returns, bank statements, pay stubs)</li>';
+      html += '    <li>Medical records, prescriptions, and doctor\'s notes</li>';
+      html += '    <li>Letters you need to send, forms to fill out, and correspondence received</li>';
       html += '    <li>Completed Lumeway templates and worksheets</li>';
       html += '  </ul>';
       html += '  <p style="margin-top:24px;font-size:13px">Get started by uploading a file using the sidebar, or drag and drop one anywhere on this page.</p>';
       html += '</div>';
       html += '</div>'; // ws-viewer-body
 
-      // Signature bar (shown when editing doc/docx)
-      html += '<div class="ws-sig-bar" id="wsSigBar" style="display:none">';
-      html += '  <span style="font-size:11px;color:var(--muted);white-space:nowrap">Signature:</span>';
-      html += '  <input class="ws-sig-input" id="wsSigName" placeholder="Type your name" oninput="updateSigPreview()">';
-      html += '  <select class="ws-sig-font" id="wsSigFont" onchange="updateSigPreview()">';
-      html += '    <option value="Dancing Script" style="font-family:Dancing Script">Script</option>';
-      html += '    <option value="Great Vibes" style="font-family:Great Vibes">Formal</option>';
-      html += '    <option value="Caveat" style="font-family:Caveat">Casual</option>';
-      html += '    <option value="Libre Baskerville" style="font-family:Libre Baskerville">Serif</option>';
-      html += '  </select>';
-      html += '  <div class="ws-sig-preview" id="wsSigPreview"></div>';
-      html += '  <button class="ws-sig-stamp" onclick="stampSignature()">Stamp</button>';
-      html += '</div>';
+      // Signature bar (hidden, kept for compatibility)
+      html += '<div class="ws-sig-bar" id="wsSigBar" style="display:none"></div>';
 
       html += '</div>'; // ws-editor
       html += '</div>'; // ws-main
