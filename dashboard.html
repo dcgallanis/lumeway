@@ -837,6 +837,8 @@
       }
     }
 
+    var _notesDirty = false;
+
     function switchTab(tab) {
       currentTab = tab;
       trackEvent('tab_switch', { tab_name: tab });
@@ -848,7 +850,11 @@
       document.querySelectorAll('.tab-panel').forEach(function(p) {
         p.classList.toggle('active', p.id === 'panel-' + tab);
       });
-      // Documents tab uses full width via CSS, no class toggle needed
+      // Refresh notes tab if notes were added from sticky note / guides
+      if (tab === 'notes' && _notesDirty) {
+        _notesDirty = false;
+        loadDashboard();
+      }
     }
 
     // ═══════════════════════════════
@@ -3597,6 +3603,7 @@ guideLibrary['disability'] = {
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.ok) {
+          _notesDirty = true;
           var btn = document.querySelector('#guide-' + taskId + ' .guide-action-bar .guide-action-btn');
           if (btn) { btn.textContent = 'Note saved'; btn.style.color = 'var(--green)'; setTimeout(function() { btn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Save note'; btn.style.color = 'var(--navy)'; }, 2000); }
         }
@@ -4153,11 +4160,11 @@ guideLibrary['disability'] = {
         sheetsData[name] = XLSX.utils.sheet_to_json(window._activeWb.Sheets[name], { header: 1, defval: '' });
       });
       fetch('/api/files/' + wsActiveFileId + '/edit', {
-        method: 'PUT',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ html: JSON.stringify({ _type: 'spreadsheet', sheets: sheetsData, sheetNames: window._activeWb.SheetNames }) })
-      }).then(function(r) {
-        if (r.ok) {
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.ok) {
           sheetDirty = false;
           showSaveIndicator('Saved');
         }
@@ -4654,11 +4661,11 @@ guideLibrary['disability'] = {
         + '<button class="pdf-toolbar-btn" id="pdfHighlightToggle" onclick="togglePdfHighlightMode()" title="Toggle highlight mode: select text to highlight" style="padding:3px 8px">'
         + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>'
         + '<div class="pdf-hl-colors">'
-        + '<button class="pdf-hl-swatch active" data-color="#FFFF00" onclick="setPdfHlColor(this)" style="background:rgba(255,255,0,0.6)" title="Yellow"></button>'
-        + '<button class="pdf-hl-swatch" data-color="#90EE90" onclick="setPdfHlColor(this)" style="background:rgba(144,238,144,0.6)" title="Green"></button>'
-        + '<button class="pdf-hl-swatch" data-color="#87CEFA" onclick="setPdfHlColor(this)" style="background:rgba(135,206,250,0.6)" title="Blue"></button>'
-        + '<button class="pdf-hl-swatch" data-color="#FFB6C1" onclick="setPdfHlColor(this)" style="background:rgba(255,182,193,0.6)" title="Pink"></button>'
-        + '<button class="pdf-hl-swatch" data-color="#FFA500" onclick="setPdfHlColor(this)" style="background:rgba(255,165,0,0.6)" title="Orange"></button>'
+        + '<button class="pdf-hl-swatch active" data-color="#FFFF00" onclick="event.stopPropagation();setPdfHlColor(this)" style="background:rgba(255,255,0,0.6)" title="Yellow"></button>'
+        + '<button class="pdf-hl-swatch" data-color="#90EE90" onclick="event.stopPropagation();setPdfHlColor(this)" style="background:rgba(144,238,144,0.6)" title="Green"></button>'
+        + '<button class="pdf-hl-swatch" data-color="#87CEFA" onclick="event.stopPropagation();setPdfHlColor(this)" style="background:rgba(135,206,250,0.6)" title="Blue"></button>'
+        + '<button class="pdf-hl-swatch" data-color="#FFB6C1" onclick="event.stopPropagation();setPdfHlColor(this)" style="background:rgba(255,182,193,0.6)" title="Pink"></button>'
+        + '<button class="pdf-hl-swatch" data-color="#FFA500" onclick="event.stopPropagation();setPdfHlColor(this)" style="background:rgba(255,165,0,0.6)" title="Orange"></button>'
         + '</div>'
         + '<button class="pdf-toolbar-btn" id="pdfEraseHighlightBtn" onclick="toggleEraseHighlightMode()" title="Click highlighted text to erase" style="padding:3px 8px">'
         + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7L3 16c-.8-.8-.8-2 0-2.8L14.4 2l6.4 6.4L11.5 17.5"/><path d="M7 20l-4-4"/></svg></button>'
@@ -4802,6 +4809,9 @@ guideLibrary['disability'] = {
       pdfHlColorHex = btn.dataset.color;
       document.querySelectorAll('.pdf-hl-swatch').forEach(function(s) { s.classList.remove('active'); });
       btn.classList.add('active');
+      // Show selected color on the highlight toggle button
+      var hlBtn = document.getElementById('pdfHighlightToggle');
+      if (hlBtn) hlBtn.style.borderBottomColor = pdfHlColorHex;
     }
 
     function getHighlightColor() {
@@ -7735,6 +7745,8 @@ guideLibrary['disability'] = {
       .then(function(data) {
         if (data.ok) {
           ta.value = '';
+          // Flag notes as dirty so Notes tab refreshes when opened
+          _notesDirty = true;
           var status = document.getElementById('wsStickyStatus');
           if (status) { status.style.display = 'inline'; setTimeout(function() { status.style.display = 'none'; }, 2000); }
         }
