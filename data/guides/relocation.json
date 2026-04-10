@@ -1,0 +1,360 @@
+{
+  "label": "Moving & Relocation",
+  "categories": [
+    {
+      "name": "Legal & Identity Documents",
+      "tasks": [
+        {
+          "id": "rel-1-1",
+          "title": "Transfer Your Driver's License",
+          "what": "Update your driver's license with your new state's DMV within the required window.",
+          "why": "Driving on an out-of-state license past your state's deadline is a traffic violation and can affect insurance claims.",
+          "steps": [
+            "Look up your new state's DMV deadline — ranges from 10 days (Georgia) to 90 days (California, Texas).",
+            "Gather: proof of identity (passport or birth certificate), Social Security card, two proofs of new address, current license.",
+            "Visit usa.gov/motor-vehicle-services to schedule a DMV appointment.",
+            "Pay the license fee ($10–$89 depending on state) and surrender your old license if required.",
+            "Update accounts tied to your ID (TSA PreCheck, professional licenses)."
+          ],
+          "terms": [
+            {
+              "term": "REAL ID",
+              "def": "Federally compliant driver's license required for domestic flights and federal buildings as of May 2025."
+            },
+            {
+              "term": "Domicile",
+              "def": "Your permanent legal home state, determining which state's DMV has jurisdiction."
+            }
+          ],
+          "contacts": "Your new state's DMV • usa.gov/motor-vehicle-services • REAL ID info: dhs.gov/real-id",
+          "mistakes": [
+            "Waiting for mail before visiting the DMV — the clock starts when you move in.",
+            "Assuming your old license is valid indefinitely.",
+            "Forgetting to update professional or commercial licenses separately."
+          ]
+        },
+        {
+          "id": "rel-1-2",
+          "title": "Register Your Vehicle and Transfer the Title",
+          "what": "Register your car in your new state and transfer the title.",
+          "why": "Driving an out-of-state registered vehicle past the deadline can result in fines, and your insurance may deny claims if your registration doesn't match.",
+          "steps": [
+            "Check your new state's deadline — most require registration within 30–90 days.",
+            "Schedule a vehicle inspection or emissions test if required by your new state.",
+            "Visit the DMV with your title, proof of insurance, driver's license, and odometer statement.",
+            "Pay registration fees and any applicable use tax (can range from $0 to over $1,000).",
+            "Notify your auto insurer of the new garaging address before registration."
+          ],
+          "terms": [
+            {
+              "term": "Title Transfer",
+              "def": "The legal process of changing vehicle ownership records from one state to another."
+            },
+            {
+              "term": "Use Tax",
+              "def": "A tax some states charge when you bring a vehicle purchased in another state into their jurisdiction."
+            }
+          ],
+          "contacts": "Your new state's DMV • Your auto lender's title department • Your auto insurance agent",
+          "mistakes": [
+            "Not updating your insurance garaging address first — insurers can deny claims.",
+            "Missing the emissions inspection requirement.",
+            "Assuming title transfer is automatic with a lien."
+          ]
+        },
+        {
+          "id": "rel-1-3",
+          "title": "Update Voter Registration",
+          "what": "Register to vote at your new address.",
+          "why": "Voting at your old address after moving is illegal in most states.",
+          "steps": [
+            "Visit vote.gov to register online or find your state's portal.",
+            "Check your new state's registration deadline — some allow same-day, others require 15–30 days before an election.",
+            "Confirm registration was accepted at vote.gov/verify-voter-registration.",
+            "Update registration if you move within the same state as well."
+          ],
+          "terms": [
+            {
+              "term": "Automatic Voter Registration (AVR)",
+              "def": "Some states automatically register eligible citizens when they interact with the DMV."
+            }
+          ],
+          "contacts": "vote.gov • Your county election office • 1-866-OUR-VOTE for assistance",
+          "mistakes": [
+            "Assuming registration transferred with your license update — only AVR states link these.",
+            "Missing the registration deadline before an upcoming election."
+          ]
+        },
+        {
+          "id": "rel-1-4",
+          "title": "Update Will, Power of Attorney, and Legal Documents",
+          "crossRef": [
+            "Death & Estate"
+          ],
+          "what": "Review and update estate planning documents to ensure they comply with your new state's laws.",
+          "why": "Estate documents are governed by state law; a will or POA valid in one state may not comply with another's requirements.",
+          "steps": [
+            "Pull out your existing will, power of attorney, healthcare proxy, and advance directive.",
+            "Consult a licensed attorney in your new state (find one at americanbar.org).",
+            "Ask if your documents meet your new state's execution requirements (witnesses, notarization).",
+            "Re-execute documents that need updates with proper witnessing in your new state.",
+            "Update beneficiary designations on life insurance, retirement accounts, and bank accounts separately."
+          ],
+          "terms": [
+            {
+              "term": "Durable Power of Attorney",
+              "def": "Legal document authorizing someone to manage your financial affairs, remaining valid if you become incapacitated."
+            },
+            {
+              "term": "Advance Directive",
+              "def": "Document specifying your healthcare wishes if you cannot communicate them."
+            }
+          ],
+          "contacts": "State bar referral: americanbar.org • Your current estate planning attorney",
+          "mistakes": [
+            "Assuming documents from your old state are fully valid without review.",
+            "Forgetting to update beneficiary designations, which override your will."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Financial & Tax",
+      "tasks": [
+        {
+          "id": "rel-2-1",
+          "title": "File Part-Year Resident Tax Returns in Two States",
+          "what": "When moving mid-year, you typically owe income taxes in both states as a part-year resident.",
+          "why": "Failing to file in both states can result in penalties and back taxes; some states aggressively audit movers.",
+          "steps": [
+            "Determine your exact move date — this is when you established domicile in the new state.",
+            "Update your employer's payroll withholding to the new state immediately.",
+            "File a part-year resident return in your old state for income earned while you lived there.",
+            "File a part-year resident return in your new state for income earned after your move.",
+            "If working remotely, research whether your old state has a \"convenience of the employer\" rule (NY, CT, DE).",
+            "Keep documentation of your move date: lease, utility start dates, moving receipts."
+          ],
+          "terms": [
+            {
+              "term": "Part-Year Resident",
+              "def": "Tax filing status for someone who lived in a state for only part of the year due to moving."
+            },
+            {
+              "term": "Convenience of the Employer Rule",
+              "def": "Rule used by NY and some states to tax remote workers on all income if remote work was not employer-required."
+            }
+          ],
+          "contacts": "Your state's department of revenue • IRS.gov • Tax software: turbotax.com, hrblock.com",
+          "mistakes": [
+            "Only filing in one state — states share data through the Multi-State Tax Commission.",
+            "Not updating payroll withholding mid-year.",
+            "Ignoring convenience-of-the-employer rules for remote work."
+          ]
+        },
+        {
+          "id": "rel-2-2",
+          "title": "Update Financial Accounts and Insurance",
+          "what": "Update your address across all financial institutions and insurance policies.",
+          "why": "Outdated addresses cause missed tax forms, lapsed coverage, and insurance claims denied for wrong-address policies.",
+          "steps": [
+            "Update every financial account: checking, savings, credit cards, investments, 401(k), IRA, HSA.",
+            "Contact your health insurer — moving triggers a Special Enrollment Period (60 days) for plan changes.",
+            "Update auto insurance garaging address immediately — rates change by location.",
+            "Update or purchase homeowner's/renter's insurance for your new property.",
+            "Update your address with SSA at ssa.gov/myaccount if applicable.",
+            "Shop auto and home insurance rates — they vary significantly by state."
+          ],
+          "terms": [
+            {
+              "term": "Special Enrollment Period",
+              "def": "A window outside open enrollment for health plan changes, triggered by moving to a new state."
+            },
+            {
+              "term": "Garaging Address",
+              "def": "Where your vehicle is primarily kept overnight — determines auto insurance rates."
+            }
+          ],
+          "contacts": "healthcare.gov for plan updates • SSA: 1-800-772-1213 • Your insurance agents",
+          "mistakes": [
+            "Assuming bank accounts update with USPS forwarding — they require direct notification.",
+            "Forgetting to update HSA/FSA administrator.",
+            "Not shopping insurance rates after the move."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Housing",
+      "tasks": [
+        {
+          "id": "rel-3-1",
+          "title": "Break Your Lease or Manage Rental Exit",
+          "what": "Understand your lease termination rights and obligations before moving.",
+          "why": "Breaking a lease improperly can cost months of rent as penalty, damage your rental history, and result in collections.",
+          "steps": [
+            "Read your lease and locate the early termination clause — many allow exit with 30–60 days notice plus 1–2 months' rent.",
+            "Check for legal protections: military (SCRA), domestic violence, or uninhabitable conditions.",
+            "Notify your landlord in writing via certified mail or email with read receipt.",
+            "Research your state's landlord duty-to-mitigate law — most require reasonable re-renting efforts.",
+            "Document the unit's condition with timestamped photos before returning keys.",
+            "Request your security deposit back in writing — most states require return within 14–30 days."
+          ],
+          "terms": [
+            {
+              "term": "Duty to Mitigate",
+              "def": "Legal obligation requiring landlords to make reasonable re-renting efforts, reducing your financial liability."
+            },
+            {
+              "term": "SCRA",
+              "def": "Servicemembers Civil Relief Act — allows military personnel to break a lease without penalty with deployment orders."
+            }
+          ],
+          "contacts": "Local tenant rights organization • HUD: hud.gov/topics/rental_assistance • Your state attorney general",
+          "mistakes": [
+            "Stopping rent without a formal agreement — triggers eviction and credit damage.",
+            "Not getting written acknowledgment of your notice.",
+            "Failing to document unit condition at move-out."
+          ]
+        },
+        {
+          "id": "rel-3-2",
+          "title": "Set Up Utilities, Mail Forwarding, and Internet",
+          "what": "Establish essential services at your new address and redirect mail.",
+          "why": "Gaps in service cause missed bills, bounced payments, and lost tax documents.",
+          "steps": [
+            "File USPS Change of Address 1–2 weeks before moving at moversguide.usps.com ($1.10 fee). Forwarding lasts 12 months.",
+            "Contact new utility providers 2–4 weeks before move-in for electricity, gas, and water.",
+            "Research internet providers using allconnect.com — schedule installation 1–2 weeks ahead.",
+            "Update your address directly with important senders (IRS, banks, employer) — USPS forwarding is a backup.",
+            "Set up USPS Informed Delivery at informeddelivery.usps.com for digital mail previews."
+          ],
+          "terms": [
+            {
+              "term": "Mail Forwarding",
+              "def": "USPS service redirecting first-class mail for up to 12 months (magazines: 60 days)."
+            }
+          ],
+          "contacts": "USPS: moversguide.usps.com • allconnect.com for internet • Your new city's utilities department",
+          "mistakes": [
+            "Relying only on USPS forwarding for important mail.",
+            "Scheduling internet for move-in day with a 1–2 week backlog.",
+            "Forgetting to cancel utilities at your old address."
+          ],
+          "script": {
+            "intro": "When calling to set up or transfer utilities at your new address:",
+            "lines": [
+              "\"Hi, I'm moving to [new address] and I need to start [electric/gas/water] service. My move-in date is [date]. Can you set up a new account and schedule the service to begin that day?\"",
+              "\"I also need to cancel service at my current address, [old address], effective [date]. Can you do both on this call? And is there a deposit required for the new account?\""
+            ],
+            "note": "Call 2–4 weeks before moving. Ask about deposits (often waived if you transfer an existing account). Get confirmation numbers for both the start and stop of service."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Healthcare & Insurance",
+      "tasks": [
+        {
+          "id": "rel-4-1",
+          "title": "Transfer Medical Records and Find New Providers",
+          "what": "Request medical records and establish care with new providers before a health need arises.",
+          "why": "Waiting until you're sick can mean months-long waits for new patient appointments.",
+          "steps": [
+            "Contact each provider and request complete records. Under HIPAA, they must fulfill within 30 days.",
+            "Request records in electronic format for easy sharing.",
+            "Get a 90-day supply of maintenance medications before moving.",
+            "Find new providers using your insurance network directory, Zocdoc, or Healthgrades.",
+            "If you have a chronic condition, ask your current provider for a care transition letter.",
+            "Register with a new pharmacy and transfer prescription history."
+          ],
+          "terms": [
+            {
+              "term": "HIPAA",
+              "def": "Federal law giving patients the right to access and obtain copies of their medical records."
+            },
+            {
+              "term": "Care Transition Letter",
+              "def": "Summary from a departing provider documenting diagnoses, medications, and recommendations for new providers."
+            }
+          ],
+          "contacts": "Zocdoc: zocdoc.com • Healthgrades: healthgrades.com • SAMHSA mental health locator: findtreatment.gov",
+          "mistakes": [
+            "Waiting until you have a health crisis — new patient appointments have 4–12 week waits.",
+            "Not getting a 90-day prescription supply before moving.",
+            "Assuming records transfer automatically."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Family & Schools",
+      "tasks": [
+        {
+          "id": "rel-5-1",
+          "title": "Enroll Children in New Schools",
+          "what": "Research, select, and enroll your children, transferring academic and medical records in advance.",
+          "why": "Delayed enrollment disrupts learning, and IEP/504 services must legally resume within specific timeframes.",
+          "steps": [
+            "Research school districts 4–6 weeks before using greatschools.org.",
+            "Contact the new school for enrollment requirements: immunization records, birth certificate, proof of address, transcripts.",
+            "Request official records from your child's current school in writing.",
+            "If your child has an IEP or 504 Plan, notify the new school in writing before enrollment. They must provide comparable services from day one.",
+            "Confirm your new state's immunization requirements at cdc.gov/vaccines/imz-managers.",
+            "Visit the school before the first day if possible."
+          ],
+          "terms": [
+            {
+              "term": "IEP",
+              "def": "Individualized Education Program — legally binding document outlining special education services for students with disabilities."
+            },
+            {
+              "term": "504 Plan",
+              "def": "Accommodations plan for students with disabilities who need support but don't qualify for special education."
+            }
+          ],
+          "contacts": "GreatSchools: greatschools.org • New school district special ed coordinator • Wrightslaw: wrightslaw.com",
+          "mistakes": [
+            "Waiting until after the move to contact the school.",
+            "Assuming IEP services transfer seamlessly — proactive written notification is required.",
+            "Not verifying immunization requirements in the new state."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Employment",
+      "tasks": [
+        {
+          "id": "rel-6-1",
+          "title": "Notify Employer and Update Payroll",
+          "what": "Inform your employer, update state tax withholding, and handle remote work tax implications.",
+          "why": "Incorrect withholding creates tax liability, and your employer may not be registered to employ workers in your new state.",
+          "steps": [
+            "Notify HR in writing with your confirmed move date.",
+            "Submit a new state withholding certificate so taxes are withheld correctly.",
+            "Confirm your employer is registered in your new state — this can take 4–12 weeks if not.",
+            "If working remotely, ask about convenience-of-the-employer rules (NY, CT, DE, NE, PA).",
+            "Update your address in all employer systems: payroll, benefits, emergency contacts.",
+            "Review your employment agreement for geographic restrictions or noncompete clauses."
+          ],
+          "terms": [
+            {
+              "term": "Withholding Certificate",
+              "def": "State tax form directing your employer how much state income tax to withhold from each paycheck."
+            },
+            {
+              "term": "Nexus",
+              "def": "A connection between a business and a state requiring compliance with that state's tax and employment laws."
+            }
+          ],
+          "contacts": "Your HR or People Operations team • Your state's department of labor",
+          "mistakes": [
+            "Not telling your employer until after the move — creates weeks of incorrect withholding.",
+            "Assuming your employer is registered in your new state.",
+            "Not reviewing noncompete agreements before relocating."
+          ]
+        }
+      ]
+    }
+  ]
+}

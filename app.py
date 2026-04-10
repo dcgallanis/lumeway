@@ -22,6 +22,11 @@ import stripe
 import threading
 import uuid
 try:
+    import jwt as pyjwt
+    HAS_JWT = True
+except ImportError:
+    HAS_JWT = False
+try:
     import boto3
     from botocore.exceptions import ClientError
     HAS_BOTO3 = True
@@ -206,6 +211,32 @@ if app.secret_key == _FALLBACK_SECRET and not os.environ.get("FLASK_ENV") == "de
     warnings.warn("SECRET_KEY not set! Using fallback. Set SECRET_KEY env var in production.", stacklevel=2)
 app.permanent_session_lifetime = timedelta(days=7)
 CORS(app)
+
+# JWT config for mobile app auth
+JWT_SECRET = os.environ.get("JWT_SECRET", app.secret_key)
+JWT_ACCESS_EXPIRY = timedelta(hours=24)
+JWT_REFRESH_EXPIRY = timedelta(days=30)
+
+def generate_jwt(user_id, expiry=None):
+    """Generate a JWT access token for mobile auth."""
+    if not HAS_JWT:
+        return None
+    payload = {
+        "sub": str(user_id),
+        "iat": datetime.now(timezone.utc),
+        "exp": datetime.now(timezone.utc) + (expiry or JWT_ACCESS_EXPIRY),
+    }
+    return pyjwt.encode(payload, JWT_SECRET, algorithm="HS256")
+
+def decode_jwt(token):
+    """Decode and validate a JWT token. Returns user_id or None."""
+    if not HAS_JWT:
+        return None
+    try:
+        payload = pyjwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        return int(payload["sub"])
+    except (pyjwt.ExpiredSignatureError, pyjwt.InvalidTokenError, KeyError, ValueError):
+        return None
 
 
 @app.before_request
@@ -984,8 +1015,16 @@ ETSY_CODES = {
 }
 
 def get_current_user():
-    """Return user dict if logged in, else None."""
+    """Return user dict if logged in, else None. Supports session cookies and Bearer JWT."""
     user_id = flask_session.get("user_id")
+
+    # Also check Authorization: Bearer <token> for mobile app
+    if not user_id:
+        auth_header = request.headers.get("Authorization", "")
+        if auth_header.startswith("Bearer "):
+            token = auth_header[7:]
+            user_id = decode_jwt(token)
+
     if not user_id:
         return None
     conn = get_db()
@@ -3911,18 +3950,47 @@ def auth_verify_code():
     conn.commit()
     conn.close()
 
-    # Set session cookie
+    # Set session cookie (for web)
     flask_session["user_id"] = user_id
     flask_session.permanent = True
 
     audit_log(user_id, "login", "user", str(user_id), email)
 
-    return jsonify({"ok": True, "is_new": is_new, "user_id": user_id})
+    # Build user object for response
+    conn2 = get_db()
+    cur2 = db_execute(conn2, f"SELECT id, email, display_name, transition_type, us_state FROM users WHERE id = {param}", (user_id,))
+    u_row = cur2.fetchone()
+    conn2.close()
+    user_obj = None
+    if u_row:
+        user_obj = {"id": u_row[0], "email": u_row[1], "display_name": u_row[2], "transition_type": u_row[3], "us_state": u_row[4]}
+
+    # Generate JWT tokens for mobile clients
+    response_data = {"ok": True, "is_new": is_new, "user_id": user_id, "user": user_obj}
+    access_token = generate_jwt(user_id, JWT_ACCESS_EXPIRY)
+    refresh_token = generate_jwt(user_id, JWT_REFRESH_EXPIRY)
+    if access_token:
+        response_data["token"] = access_token
+        response_data["refresh_token"] = refresh_token
+
+    return jsonify(response_data)
 
 @app.route("/api/auth/logout", methods=["POST"])
 def auth_logout():
     flask_session.clear()
     return jsonify({"ok": True})
+
+@app.route("/api/auth/refresh", methods=["POST"])
+def auth_refresh_token():
+    """Exchange a refresh token for a new access token (mobile app)."""
+    data = request.json or {}
+    refresh = data.get("refresh_token", "")
+    user_id = decode_jwt(refresh)
+    if not user_id:
+        return jsonify({"error": "Invalid or expired refresh token."}), 401
+    new_access = generate_jwt(user_id, JWT_ACCESS_EXPIRY)
+    new_refresh = generate_jwt(user_id, JWT_REFRESH_EXPIRY)
+    return jsonify({"ok": True, "token": new_access, "refresh_token": new_refresh})
 
 @app.route("/api/auth/me")
 def auth_me():
@@ -4020,13 +4088,18 @@ def update_account_settings():
     data = request.json or {}
     display_name = data.get("display_name", "").strip()[:100]
     us_state = data.get("us_state", "").strip()[:5]
+    transition_type = data.get("transition_type", "").strip().lower()[:30]
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    db_execute(conn, f"UPDATE users SET display_name = {param}, us_state = {param} WHERE id = {param}",
-               (display_name or None, us_state or None, user["id"]))
+    if transition_type and transition_type in VALID_CATEGORIES:
+        db_execute(conn, f"UPDATE users SET display_name = {param}, us_state = {param}, transition_type = {param} WHERE id = {param}",
+                   (display_name or None, us_state or None, transition_type, user["id"]))
+    else:
+        db_execute(conn, f"UPDATE users SET display_name = {param}, us_state = {param} WHERE id = {param}",
+                   (display_name or None, us_state or None, user["id"]))
     conn.commit()
     conn.close()
-    audit_log(user["id"], "settings_update", "user", str(user["id"]), f"name={display_name}, state={us_state}")
+    audit_log(user["id"], "settings_update", "user", str(user["id"]), f"name={display_name}, state={us_state}, transition={transition_type}")
     return jsonify({"ok": True})
 
 @app.route("/dashboard")
@@ -4085,11 +4158,25 @@ def dashboard_data():
     cur = db_execute(conn, f"SELECT id, content, created_at, updated_at FROM user_notes WHERE user_id = {param} ORDER BY created_at DESC", (user["id"],))
     notes = [{"id": r[0], "content": r[1], "created_at": r[2], "updated_at": r[3]} for r in cur.fetchall()]
 
+    # Full checklist items (for mobile app)
+    cur = db_execute(conn, f"SELECT id, transition_type, phase, item_text, is_completed, completed_at, sort_order FROM checklist_items WHERE user_id = {param} ORDER BY sort_order, id", (user["id"],))
+    checklist_items = [{"id": r[0], "transition_type": r[1], "phase": r[2], "task_text": r[3], "completed": bool(r[4]), "completed_at": r[5], "sort_order": r[6]} for r in cur.fetchall()]
+
+    # Compute days_remaining for deadlines
+    now_dt = datetime.now(timezone.utc)
+    for d in deadlines:
+        if d.get("deadline_date"):
+            try:
+                due = datetime.fromisoformat(d["deadline_date"].replace("Z", "+00:00"))
+                d["days_remaining"] = max(0, (due - now_dt).days)
+            except (ValueError, TypeError):
+                d["days_remaining"] = None
+
     conn.close()
     return jsonify({
         "user": user,
         "sessions": sessions,
-        "checklist": {"total": total_items, "completed": completed_items},
+        "checklist": {"total": total_items, "completed": completed_items, "items": checklist_items},
         "purchases": purchases,
         "goals": goals,
         "deadlines": deadlines,
@@ -4203,6 +4290,51 @@ def init_checklist():
     conn.commit()
     conn.close()
     return jsonify({"ok": True, "message": "Checklist created"})
+
+# ── Guide Library API (serves guide content to mobile app) ──
+
+@app.route("/api/guides/<transition>")
+def get_guides(transition):
+    """Serve guide library content for a given transition type. Used by mobile app."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    if transition not in VALID_CATEGORIES:
+        return jsonify({"error": "Invalid transition type"}), 400
+
+    # Load guide data from JSON file
+    guide_path = os.path.join(os.path.dirname(__file__), "data", "guides", f"{transition}.json")
+    if os.path.exists(guide_path):
+        with open(guide_path, "r") as f:
+            guide_data = json.load(f)
+    else:
+        guide_data = {"categories": []}
+
+    # Check tier access
+    effective_tier = get_effective_tier(user)
+    cat_access = get_user_categories(user)
+    has_access = cat_access.get(transition) == "full" or effective_tier in ("unlimited", "all_transitions")
+
+    return jsonify({
+        "transition": transition,
+        "has_full_access": has_access,
+        "effective_tier": effective_tier,
+        "guide": guide_data,
+    })
+
+@app.route("/api/guides")
+def list_guides():
+    """List available guide transitions for the current user."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    cat_access = get_user_categories(user)
+    effective_tier = get_effective_tier(user)
+    transitions = []
+    for key, label in CATEGORY_LABELS.items():
+        has_access = cat_access.get(key) == "full" or effective_tier in ("unlimited", "all_transitions")
+        transitions.append({"key": key, "label": label, "has_access": has_access})
+    return jsonify({"transitions": transitions, "effective_tier": effective_tier})
 
 DEFAULT_CHECKLISTS = {
     # Emotional pacing: quick wins first within each phase (simpler tasks before complex ones)

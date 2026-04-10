@@ -1,0 +1,800 @@
+{
+  "label": "Divorce & Separation",
+  "categories": [
+    {
+      "name": "Financial Separation",
+      "tasks": [
+        {
+          "id": "dv-1-1",
+          "title": "Gather Complete Financial Picture",
+          "what": "A systematic inventory of every asset, debt, income source, and financial obligation you and your spouse hold.",
+          "why": "Courts divide assets based on a complete financial picture. Hidden assets discovered during divorce cost $15,000–$45,000 in legal fees to uncover. Missing even one account can shift the settlement by tens of thousands.",
+          "steps": [
+            "List all bank accounts (joint, individual, business) with balances and property classification.",
+            "List all investment accounts, including cryptocurrency, with cost basis and current value.",
+            "Gather 3 years of tax returns (personal and business).",
+            "Document all real property: primary residence, vacation homes, rental properties with mortgage balances.",
+            "Document all retirement accounts: 401(k), IRA, pensions, stock options, RSUs with vesting schedules.",
+            "List all debts: mortgages, car loans, credit cards, student loans, medical debt.",
+            "Calculate net income for both spouses from all sources.",
+            "Document all insurance policies (life, health, disability, auto, home)."
+          ],
+          "terms": [
+            {
+              "term": "Community property",
+              "def": "In 9 US states, assets acquired during marriage are owned equally by both spouses."
+            },
+            {
+              "term": "Equitable distribution",
+              "def": "In 41 states, assets are divided \"fairly\" but not necessarily 50/50."
+            },
+            {
+              "term": "Separate property",
+              "def": "Assets owned before marriage, gifts, or inheritances kept separate — belong to one spouse only."
+            },
+            {
+              "term": "Marital property",
+              "def": "Assets acquired during marriage with marital funds, regardless of whose name is on the account."
+            }
+          ],
+          "contacts": "State courts for divorce checklists • CPA familiar with divorce • Certified Financial Divorce Specialist through IDFA",
+          "mistakes": [
+            "Forgetting to value retirement accounts at current balance, not contribution amount.",
+            "Not accounting for tax implications (a $100K 401(k) is worth less than $100K in savings after taxes).",
+            "Hiding assets — courts impose sanctions and attorney fee penalties if discovered.",
+            "Assuming one spouse doesn't know about an account."
+          ]
+        },
+        {
+          "id": "dv-1-2",
+          "title": "Protect Your Credit During Divorce",
+          "what": "Steps to prevent your spouse from damaging your credit and to separate financial lives before the divorce is final.",
+          "why": "A spouse can open credit cards or stop paying joint debts, dropping your score 100+ points in weeks. In community property states, you remain liable for 50% of debt created during marriage even after divorce.",
+          "steps": [
+            "Place a fraud alert on your credit file with all three bureaus (Equifax, Experian, TransUnion).",
+            "Request free credit reports at annualcreditreport.com and check for unknown accounts.",
+            "Freeze your credit at all three bureaus — no new accounts without your PIN.",
+            "Change passwords on all financial accounts using a password manager.",
+            "Close joint credit cards once paid off; get written confirmation.",
+            "Remove your spouse as authorized user on your credit cards.",
+            "Separate utility accounts (gas, electric, water, internet, phone).",
+            "Screenshot every joint statement and save to cloud storage only you can access."
+          ],
+          "terms": [
+            {
+              "term": "Credit freeze",
+              "def": "A lock preventing new accounts from being opened in your name without your unique PIN."
+            },
+            {
+              "term": "Authorized user",
+              "def": "Someone with permission to use an account but not responsible for paying it."
+            },
+            {
+              "term": "Joint debt",
+              "def": "Debt both spouses agreed to; both remain liable even after divorce unless creditor releases you."
+            }
+          ],
+          "contacts": "Equifax (1-800-685-1111) • Experian (1-888-397-3742) • TransUnion (1-800-680-7289) • FTC (ftc.gov) for credit protection guides",
+          "mistakes": [
+            "Not freezing credit until after fraudulent accounts appear.",
+            "Assuming a settlement agreement releases you from joint debt — only the creditor can release you.",
+            "Closing accounts too early, lowering your credit score.",
+            "Not updating your address at the bank — mail can be intercepted."
+          ]
+        },
+        {
+          "id": "dv-1-3",
+          "title": "Understand Retirement Account Division and QDRO",
+          "what": "How 401(k)s, IRAs, pensions, and other retirement accounts are divided in divorce without tax penalties.",
+          "why": "Retirement accounts are often the largest marital asset. Dividing them wrong triggers 20% federal withholding + 10% early withdrawal penalty. A QDRO allows penalty-free transfer; without it, the owner faces immediate taxes.",
+          "steps": [
+            "Identify all retirement accounts in both names with balances and vesting schedules.",
+            "Determine how the account will be divided (typically 50/50 of the marital portion).",
+            "For 401(k)s and pensions: have your attorney draft a QDRO ($300–$800 per order).",
+            "Submit the QDRO to the plan administrator — review takes 30–90 days.",
+            "Receiving spouse rolls funds to their own IRA (no tax) or takes a distribution with 20% withholding.",
+            "For IRAs: use a direct trustee-to-trustee transfer (no QDRO needed).",
+            "Update beneficiaries on all retirement accounts after divorce — courts cannot override beneficiary designations."
+          ],
+          "terms": [
+            {
+              "term": "QDRO",
+              "def": "Qualified Domestic Relations Order — court order dividing retirement accounts without triggering the 10% early withdrawal penalty."
+            },
+            {
+              "term": "Vested",
+              "def": "Funds that legally belong to you; unvested employer contributions may be forfeited."
+            },
+            {
+              "term": "Marital portion",
+              "def": "The balance that accumulated during the marriage; pre-marital balances are separate property."
+            }
+          ],
+          "contacts": "Divorce attorney (drafts the QDRO) • Plan administrator (HR or third-party) • Certified Financial Planner for tax advice",
+          "mistakes": [
+            "Dividing a 401(k) without a QDRO — triggers a 30% tax and penalty hit.",
+            "Not updating beneficiaries after divorce — ex-spouse still receives proceeds.",
+            "Dividing Roth and Traditional IRAs equally without considering tax differences.",
+            "Assuming you can withdraw your ex-spouse's 401(k) and they'll roll it over."
+          ]
+        },
+        {
+          "id": "dv-1-4",
+          "title": "Divorce and Business Ownership",
+          "what": "How to value, protect, and divide a business owned by one or both spouses during divorce.",
+          "why": "Business valuations are contested 40% of the time. A $500K undervaluation shifts your settlement by $250K in a 50/50 state. Without a valuation, you don't know what you're trading away.",
+          "steps": [
+            "Determine the business structure (sole proprietorship, LLC, S-corp, C-corp) and ownership percentage.",
+            "Identify whether the business is marital or separate property (growth during marriage is marital).",
+            "Hire a business valuation expert ($3,000–$15,000) using income, asset, or market approach.",
+            "Gather 3–5 years of business tax returns.",
+            "Determine if the business will be sold, transferred to one spouse, or divided.",
+            "Document a post-divorce agreement with noncompete and confidentiality clauses.",
+            "Update all business documents and remove ex-spouse from signatory authority."
+          ],
+          "terms": [
+            {
+              "term": "Goodwill",
+              "def": "Business value beyond tangible assets (brand reputation, customer loyalty); can increase valuation significantly."
+            },
+            {
+              "term": "Buy-sell agreement",
+              "def": "Pre-existing agreement controlling what happens to ownership if a partner divorces or dies."
+            }
+          ],
+          "contacts": "Business valuation appraiser (asa.org) • CPA or tax attorney • Divorce attorney for post-divorce agreements",
+          "mistakes": [
+            "Using last year's tax return to value the business — doesn't account for trends.",
+            "Not accounting for owner's draw vs. retained earnings.",
+            "Keeping an ex-spouse on business loans or credit cards after divorce."
+          ]
+        },
+        {
+          "id": "dv-1-5",
+          "title": "Divorce Tax Implications",
+          "what": "Tax consequences of divorce: filing status changes, alimony deductibility, capital gains on the home, and QDRO treatment.",
+          "why": "The 2018 Tax Cuts and Jobs Act eliminated alimony deductions for post-2018 decrees. Mishandling the home sale can trigger $75K+ in capital gains taxes. Dividing retirement accounts incorrectly can double your tax liability.",
+          "steps": [
+            "Determine your filing status for the year of divorce (Single if divorced by Dec 31).",
+            "Decide who claims children as dependents — custodial parent gets the child tax credit ($2,000/child).",
+            "Understand post-2019 alimony: NOT deductible by payer, NOT taxable to receiver.",
+            "Value the primary residence and understand the $250K capital gains exclusion per spouse.",
+            "Document basis adjustments for all divided assets.",
+            "Update tax withholding on paychecks (use IRS W-4 calculator).",
+            "If non-custodial parent claims child, custodial parent must sign Form 8332."
+          ],
+          "terms": [
+            {
+              "term": "Alimony",
+              "def": "Spousal support paid after divorce. Post-2018 decrees: not deductible by payer, not taxable to receiver."
+            },
+            {
+              "term": "Capital gains",
+              "def": "Profit on sale of an asset. Long-term gains taxed at 0%, 15%, or 20% depending on income."
+            },
+            {
+              "term": "Basis",
+              "def": "Original cost of an asset used to calculate capital gains when sold."
+            }
+          ],
+          "contacts": "Tax attorney or CPA specializing in divorce • IRS Publication 504 (Divorced or Separated Individuals) • AAML (aaml.org) for attorney referrals",
+          "mistakes": [
+            "Treating alimony as deductible when the decree was finalized after 2018.",
+            "Underestimating capital gains taxes on the home.",
+            "Failing to request cost basis allocation when dividing investment accounts.",
+            "Not adjusting tax withholding to avoid a surprise tax bill."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Legal Process",
+      "tasks": [
+        {
+          "id": "dv-2-1",
+          "title": "Understand Your State's Divorce Process",
+          "what": "The step-by-step legal process for dissolving your marriage, from filing to final decree.",
+          "why": "Divorce varies dramatically by state. Uncontested divorces cost $500–$2,000 and take 2–4 months. Contested divorces average 18–24 months and $15,000–$50,000+ in legal fees.",
+          "steps": [
+            "Identify your state's laws: waiting period, community vs. equitable distribution, residency requirement.",
+            "Gather required documents: marriage certificate, ID, SSN, financial documents.",
+            "Decide uncontested (agreed on all terms) or contested (disputed terms).",
+            "File the divorce petition at your county court clerk ($200–$500 filing fee).",
+            "Serve your spouse with divorce papers ($75–$300 for process server).",
+            "Spouse files a response within 20–30 days.",
+            "If contested: enter discovery phase (4–12 months of exchanging documents).",
+            "Attend mediation or settlement conference (60–70% of cases settle here)."
+          ],
+          "terms": [
+            {
+              "term": "Uncontested divorce",
+              "def": "Both spouses agree on all terms; fast, cheap, minimal court involvement."
+            },
+            {
+              "term": "Contested divorce",
+              "def": "Spouses disagree on one or more terms; requires discovery, mediation, and possibly trial."
+            },
+            {
+              "term": "No-fault divorce",
+              "def": "Divorce based on irreconcilable differences; all 50 states allow this."
+            },
+            {
+              "term": "Discovery",
+              "def": "Legal process of exchanging documents and information before trial."
+            }
+          ],
+          "contacts": "State court website for divorce resources • State Bar Association for attorney referrals • Local legal aid office • DIY services (LawDepot, Nolo) for uncontested divorces",
+          "mistakes": [
+            "Not meeting your state's residency requirement before filing.",
+            "Filing without the other spouse's Social Security number.",
+            "Not serving your spouse properly — invalid service means dismissal or delay.",
+            "Assuming no-fault divorce means you don't have to disclose finances."
+          ],
+          "script": {
+            "intro": "When calling a family law attorney for an initial consultation:",
+            "lines": [
+              "\"Hi, I'm looking for a family law attorney for a divorce. I'd like to schedule an initial consultation. Can you tell me your consultation fee, if any, and what I should bring to the first meeting?\"",
+              "\"Here's my situation: we've been married [X years], we [do/don't] have children, and we [do/don't] agree on the major terms. We [own/rent] our home and have [brief description of assets]. I'm trying to understand my options and what this process would look like.\"",
+              "\"Can you give me a rough estimate of cost and timeline for my type of case? And do you handle mediation as well, or only litigation?\""
+            ],
+            "note": "Call 2–3 attorneys to compare. Many offer free 15–30 minute consultations. Bring your financial documents, marriage certificate, and a list of your questions. Don't sign a retainer at the first meeting — take time to decide."
+          }
+        },
+        {
+          "id": "dv-2-2",
+          "title": "Choose: Mediation vs. Collaborative vs. Litigation",
+          "what": "Three paths to divorce with different costs, timelines, and outcomes.",
+          "why": "Mediation costs $5K–$8K (2–4 months). Collaborative costs $25K–$50K (4–9 months). Litigation costs $78K–$200K+ (18–24+ months). Mediation couples are 40% more satisfied with outcomes.",
+          "steps": [
+            "Mediation: hire a neutral mediator ($150–$300/hr); 10–20 hours total; each spouse pays 50%.",
+            "Collaborative: both attorneys agree in writing to withdraw if case goes to trial ($25K–$50K/side).",
+            "Litigation: full court case with discovery and trial ($78K–$200K+).",
+            "Choose mediation if amicable, no abuse, and simple assets.",
+            "Choose collaborative if you want attorney guidance in a non-adversarial process.",
+            "Choose litigation if spouse hides assets, there's abuse, or you can't reach agreement.",
+            "Interview mediators or attorneys before hiring — ask about experience, approach, and fees.",
+            "Get a fee agreement in writing specifying hourly rate, retainer, and billing frequency."
+          ],
+          "terms": [
+            {
+              "term": "Mediation",
+              "def": "Neutral third party facilitates negotiation; non-binding until both parties sign settlement."
+            },
+            {
+              "term": "Collaborative divorce",
+              "def": "Both attorneys agree to withdraw if case goes to trial; incentivizes settlement."
+            },
+            {
+              "term": "Retainer",
+              "def": "Upfront payment to an attorney that they bill against as they work."
+            }
+          ],
+          "contacts": "Academy of Professional Mediators (mediate.org) • Collaborative Family Law Council (divorcecollaborative.org) • State Bar Association • Legal aid office",
+          "mistakes": [
+            "Choosing mediation when there's been abuse — mediator can't enforce power balance.",
+            "Not interviewing attorneys before hiring — quality and cost vary widely.",
+            "Not getting a fee agreement in writing.",
+            "Assuming collaborative is faster than mediation — it's usually slower."
+          ]
+        },
+        {
+          "id": "dv-2-3",
+          "title": "Custody and Parenting Plan",
+          "what": "A written agreement specifying custody type, visitation schedule, decision-making authority, and communication protocols.",
+          "why": "Courts prioritize \"best interest of the child.\" Lack of a clear plan leads to conflict, inconsistency, and children caught in the middle. Custody modifications cost $3,000–$10,000.",
+          "steps": [
+            "Understand custody types: sole legal, joint legal, joint legal and physical.",
+            "Determine the arrangement serving the child's best interest (age, health, school, parent relationships).",
+            "Draft a parenting schedule: weekday, weekend, holiday, and vacation schedules with specific times and locations.",
+            "Specify decision-making authority: medical, education, religious upbringing.",
+            "Include communication provisions: method, response time, emergency protocol.",
+            "Address conflict resolution: negotiation first, then mediator or family therapist.",
+            "Include provisions for schedule changes, makeup time, and documentation."
+          ],
+          "terms": [
+            {
+              "term": "Legal custody",
+              "def": "The right to make major decisions about the child's upbringing (education, medical, religious)."
+            },
+            {
+              "term": "Physical custody",
+              "def": "The right to have the child live with you and make day-to-day decisions."
+            },
+            {
+              "term": "Parenting time",
+              "def": "Modern term for visitation — the scheduled time a parent spends with the child."
+            }
+          ],
+          "contacts": "Family law attorney ($200–$500/hr) • Court self-help center for free parenting plan templates • Custody mediator • Co-parenting therapist",
+          "mistakes": [
+            "Creating a schedule that doesn't align with school/work calendars.",
+            "Not specifying holiday schedules — causes conflict every year.",
+            "Making child exchanges at home in high-conflict situations.",
+            "Assuming the non-custodial parent won't be involved — courts almost always order visitation."
+          ]
+        },
+        {
+          "id": "dv-2-4",
+          "title": "High-Conflict Divorce and Parallel Parenting",
+          "what": "Strategies for divorcing a high-conflict spouse while protecting yourself and limiting damage to children.",
+          "why": "High-conflict divorce affects 30–40% of divorces. Children in high-conflict households have 2–3× higher rates of anxiety and depression. Parallel parenting and structured tools reduce conflict.",
+          "steps": [
+            "Document everything: missed pickups, threatening messages, parental alienation, safety concerns.",
+            "Use a structured communication tool (OurFamilyWizard or Talking Parents — $100–$200/year) instead of direct contact.",
+            "Implement parallel parenting: each parent operates independently during their time; minimal communication.",
+            "Never badmouth the other parent, quiz children, or use them as messengers.",
+            "Request a parenting coordinator ($150–$300/hr) or guardian ad litem for severe conflict.",
+            "Document child safety concerns immediately and report to child protective services if needed.",
+            "File for a restraining order if there's abuse or threats (contact local domestic violence shelter)."
+          ],
+          "terms": [
+            {
+              "term": "Parallel parenting",
+              "def": "Each parent operates independently; minimal communication; only major decisions are shared."
+            },
+            {
+              "term": "Parental alienation",
+              "def": "One parent systematically turning the child against the other; courts may modify custody."
+            },
+            {
+              "term": "Guardian ad litem (GAL)",
+              "def": "Court-appointed advocate investigating custody disputes and recommending the child's best interest."
+            }
+          ],
+          "contacts": "National Domestic Violence Hotline: 1-800-799-7233 • Family law attorney • Parenting coordinator (afccnet.org) • Supervised visitation centers",
+          "mistakes": [
+            "Communicating directly with a high-conflict ex instead of using a structured tool.",
+            "Badmouthing the ex to the child — harms the child and can lead to custody loss.",
+            "Failing to document abuse or threats — hard to prove later.",
+            "Using children as messengers or spies."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Housing",
+      "tasks": [
+        {
+          "id": "dv-3-1",
+          "title": "Determine Housing Options",
+          "what": "A decision framework for the family home: who keeps it, refinancing, or selling and splitting proceeds.",
+          "why": "The home is often the largest marital asset ($400K–$600K average). A spouse who keeps the home must qualify for a refinance alone. Selling too quickly misses appreciation; waiting too long racks up carrying costs.",
+          "steps": [
+            "Get a professional appraisal ($300–$500) — don't rely on Zillow estimates.",
+            "Determine mortgage balance, interest rate, and monthly payment.",
+            "Calculate equity: Appraised Value − Mortgage Balance = equity to divide.",
+            "Evaluate Option A: one spouse keeps home and refinances (must qualify on own income, DTI ≤ 43%).",
+            "Evaluate Option B: sell the home and split proceeds (5–7% realtor commission, $250K capital gains exclusion per spouse).",
+            "Evaluate Option C: one moves out, sell later (stability for children, but ongoing conflict risk).",
+            "Protect the home during divorce: maintain insurance, keep paying mortgage, no unauthorized equity loans."
+          ],
+          "terms": [
+            {
+              "term": "Equity",
+              "def": "Difference between home value and mortgage balance; marital property to be divided."
+            },
+            {
+              "term": "Refinancing",
+              "def": "New mortgage to pay off the old one; allows one spouse to remove the other from the mortgage."
+            },
+            {
+              "term": "Debt-to-income ratio (DTI)",
+              "def": "Total monthly debt ÷ gross income; lenders allow up to 43–50%."
+            }
+          ],
+          "contacts": "Mortgage lender for pre-qualification • Real estate attorney • Real estate appraiser • Realtor (interview 2–3)",
+          "mistakes": [
+            "Not getting an appraisal and using an old tax assessment (off by 20%+).",
+            "Keeping the home without running refinance numbers first.",
+            "Agreeing to \"sell later\" without specific terms — leads to disputes.",
+            "Not addressing who pays property tax and maintenance."
+          ]
+        },
+        {
+          "id": "dv-3-2",
+          "title": "Renting After Divorce",
+          "what": "Steps to find and secure rental housing when you may have lower income, damaged credit, or limited savings.",
+          "why": "40% of divorced people move within 12 months. Landlords screen harder post-divorce. A damaged credit score or limited income can block you from renting. Strategic moves now set you up for approval.",
+          "steps": [
+            "Get your credit report (annualcreditreport.com) and dispute any errors.",
+            "Improve credit if below 600: pay bills on time, keep utilization under 30%, consider authorized user status.",
+            "Gather rental documents: photo ID, pay stubs, employment letter, bank statements, references.",
+            "Budget 30% of gross income for rent; landlords require income to be 3× the rent.",
+            "Apply strategically to 2–3 apartments at a time to avoid multiple hard credit inquiries.",
+            "Negotiate lease terms: month-to-month for flexibility, or 12-month for lowest rent.",
+            "Use a guarantor (co-signer) if needed — they must pass credit check too.",
+            "Build rental history with 12 months of on-time payments."
+          ],
+          "terms": [
+            {
+              "term": "Co-signer (guarantor)",
+              "def": "Someone who signs the lease and guarantees rent payment if you can't pay."
+            },
+            {
+              "term": "Hard inquiry",
+              "def": "Credit check that temporarily lowers your score by 5–10 points; recovers in 3–6 months."
+            },
+            {
+              "term": "Rental history",
+              "def": "Your record of on-time rent payments; good history makes future applications easier."
+            }
+          ],
+          "contacts": "Landlord association in your area • Local legal aid for tenant rights • NFCC (nfcc.org) for free credit counseling",
+          "mistakes": [
+            "Applying without gathered documents — landlord moves to next applicant.",
+            "Agreeing to unsustainable rent (over 40–50% of income).",
+            "Breaking the lease early — damages rental history for 2–3 years.",
+            "Not budgeting utilities separately from rent."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Children and Family",
+      "tasks": [
+        {
+          "id": "dv-4-1",
+          "title": "Notify Schools and Healthcare Providers",
+          "what": "Communicating your new family structure to schools, doctors, and service providers so records are updated and both parents have appropriate access.",
+          "why": "Without updated records, the wrong parent may be called in an emergency, or one parent may be denied access to school records and medical information.",
+          "steps": [
+            "Notify school (principal and teacher) with updated custody order, contacts, and any access restrictions.",
+            "Complete school records release forms for both parents (unless custody order restricts).",
+            "Update insurance and emergency contacts at school.",
+            "Notify pediatrician and dentist with custody order and both parents' contact information.",
+            "Update health insurance coverage for children and provide new insurance card to school and doctor.",
+            "Notify therapy providers, extracurriculars, and sports organizations.",
+            "Keep copies of all updated forms in a file for reference."
+          ],
+          "terms": [
+            {
+              "term": "FERPA",
+              "def": "Federal law controlling school record access; schools can release to both parents unless custody order says otherwise."
+            },
+            {
+              "term": "HIPAA",
+              "def": "Federal law controlling medical record access; doctors can release to both parents unless custody order restricts."
+            },
+            {
+              "term": "Custodial parent",
+              "def": "Parent with legal custody; automatically has access to school and medical records."
+            }
+          ],
+          "contacts": "School office (principal, registrar) • Pediatrician's office • Your lawyer if access is refused",
+          "mistakes": [
+            "Not providing school with a copy of the custody order.",
+            "Assuming both parents automatically have access to records.",
+            "Not updating insurance information — leads to billing errors.",
+            "Changing address but not notifying school and pediatrician."
+          ]
+        },
+        {
+          "id": "dv-4-2",
+          "title": "Pet Custody",
+          "what": "Determining who keeps the family pet and arranging care or split custody during and after divorce.",
+          "why": "67% of divorced couples dispute pet custody. In most states pets are property, but some states (California, Illinois, Alaska) now consider the animal's best interest. Pet care costs $1,500–$3,000/year; emergencies can cost $5,000–$15,000.",
+          "steps": [
+            "Check your state's pet custody law (search \"[state] pet custody law\").",
+            "Determine who should keep the pet: primary caregiver, stable housing, time/energy, child's bond.",
+            "Negotiate pet ownership in the divorce settlement: custody, visitation, vet costs, medical decisions.",
+            "If you can't agree, request a pet custody arrangement: primary, alternating, or split custody.",
+            "Create a pet agreement: vet authorization, microchip info, vaccination schedule, cost split.",
+            "Transfer microchip registration, vet records, and pet insurance to the owner."
+          ],
+          "terms": [
+            {
+              "term": "Joint custody (pet)",
+              "def": "Both spouses retain ownership and share custody; rare, requires high cooperation."
+            },
+            {
+              "term": "Microchip",
+              "def": "Pet ID chip implanted under the skin; contains owner contact info and can be scanned at any vet."
+            }
+          ],
+          "contacts": "Divorce attorney for settlement language • Veterinarian for care advice • State bar for pet custody law info",
+          "mistakes": [
+            "Not addressing pets in the divorce settlement — leads to disputes.",
+            "Not updating microchip and vet records — blocks emergency access.",
+            "Joint custody without a specific visitation schedule.",
+            "Assuming one spouse automatically gets the pet."
+          ]
+        },
+        {
+          "id": "dv-4-3",
+          "title": "Supporting Children Through Divorce",
+          "what": "Age-appropriate ways to talk to children about divorce, recognize distress, and access mental health support.",
+          "why": "Children in divorces have 2–3× higher rates of anxiety and depression, but with proper support, 80% adjust well within 2 years. Untreated childhood anxiety can lead to long-term academic and emotional problems.",
+          "steps": [
+            "Talk to children together (both parents) if possible — use simple, honest language; reassure it's not their fault.",
+            "Adjust by age: 2–5 (very simple), 6–11 (explain schedule and reassure about school/friends), 12+ (acknowledge difficulty, ask their concerns).",
+            "Recognize signs of distress: acting out, grade drops, withdrawal, sleep/appetite changes.",
+            "Enroll children in therapy: play therapy (ages 3–7) or CBT (ages 8+); $75–$150/hour.",
+            "Maintain stability and routine: same school, consistent custody schedule, both parents involved.",
+            "Never put children in the middle — no badmouthing, no using them as messengers or spies.",
+            "Monitor for serious issues: suicidal thoughts, self-harm, substance use — call pediatrician immediately.",
+            "Access support groups: DivorceCare for Kids, school counselors, NAMI (1-800-950-NAMI)."
+          ],
+          "terms": [
+            {
+              "term": "Play therapy",
+              "def": "Therapeutic approach using play and art to help young children process emotions."
+            },
+            {
+              "term": "Cognitive-behavioral therapy (CBT)",
+              "def": "Talk therapy teaching children to recognize thought patterns and develop coping strategies."
+            }
+          ],
+          "contacts": "Child therapist (Psychology Today's finder) • Pediatrician • School counselor (free) • DivorceCare for Kids (divorcecare.org) • NAMI: 1-800-950-NAMI",
+          "mistakes": [
+            "Not talking to children about the divorce — they find out from others.",
+            "Over-explaining or sharing adult conflict details.",
+            "Assuming children will bounce back without support.",
+            "Not maintaining routine and consistency."
+          ]
+        },
+        {
+          "id": "dv-4-4",
+          "title": "Co-Parenting Communication Protocols",
+          "what": "Structured communication tools and agreements to coordinate parenting, share information, and minimize conflict.",
+          "why": "Poor communication confuses children and creates logistical chaos. Structured tools reduce conflict by 30–50% and improve compliance with custody orders.",
+          "steps": [
+            "Choose a co-parenting app (OurFamilyWizard or Talking Parents; $100–$200/year) — all messages timestamped, archived, and court-admissible.",
+            "Create a communication agreement: method, 24-hour response time, emergency protocol, professional tone.",
+            "Set up a shared calendar with custody schedule, school events, medical appointments, holidays.",
+            "Track expenses in the app and agree on a cost-split with monthly settlement.",
+            "Create a custody exchange protocol: neutral location, exact time, 5-minute max, no lingering.",
+            "Create a holiday and vacation schedule with 30-day advance notice requirement.",
+            "Specify decision-making authority: medical (routine = either parent; major = both agree), education, activities."
+          ],
+          "terms": [
+            {
+              "term": "Communication app",
+              "def": "Dedicated co-parenting platform (OurFamilyWizard, Talking Parents); timestamped, archived, court-admissible."
+            },
+            {
+              "term": "Exchange protocol",
+              "def": "Agreed process for transferring child between parents: time, location, what's exchanged."
+            },
+            {
+              "term": "Makeup time",
+              "def": "Time owed to a parent if the other parent misses their scheduled custody time."
+            }
+          ],
+          "contacts": "Co-parenting app support • Family law attorney to draft communication agreement • Mediator or family therapist",
+          "mistakes": [
+            "Using personal text/email instead of a dedicated app.",
+            "Not specifying exchange location and time — leads to conflict every handoff.",
+            "Not tracking expenses — one parent resents unpaid reimbursements.",
+            "Changing the schedule informally without documenting it."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Military Divorce",
+      "tasks": [
+        {
+          "id": "dv-5-1",
+          "title": "Military Pension Division — USFSPA and 10/10 Rule",
+          "what": "How military pensions are divided in divorce and why the 10/10 rule determines whether ex-spouses receive direct payments.",
+          "why": "Military pensions average $20,000–$60,000/year. If the couple was married 10+ years during military service, the ex-spouse gets direct automatic payments from DFAS. Under 10 years, the service member must pay personally (often doesn't happen).",
+          "steps": [
+            "Verify USFSPA eligibility: married 10+ years, with 10+ years overlapping active military service.",
+            "If not 10/10 eligible: negotiate other assets of equal value or a QDRO-like court order.",
+            "Calculate pension division: (years married during service ÷ total service years) × 50%.",
+            "File for direct payment with DFAS after divorce is final (60–90 days processing).",
+            "Address Survivor Benefit Plan (SBP) in settlement — guarantees payments continue if service member dies.",
+            "Update beneficiary designations on the pension.",
+            "Track pension payments once they begin and verify DFAS calculation."
+          ],
+          "terms": [
+            {
+              "term": "USFSPA",
+              "def": "Uniformed Services Former Spouses' Protection Act — federal law governing military pension division."
+            },
+            {
+              "term": "10/10 rule",
+              "def": "If married 10+ years during military service, ex-spouse qualifies for direct pension payments from DFAS."
+            },
+            {
+              "term": "Survivor Benefit Plan (SBP)",
+              "def": "Optional military insurance guaranteeing pension payments continue to beneficiary after service member's death."
+            },
+            {
+              "term": "DFAS",
+              "def": "Defense Finance and Accounting Service — pays military pensions and handles division."
+            }
+          ],
+          "contacts": "Military Family Law attorney (critical) • DFAS: 1-800-321-1080 or dfas.mil • Veterans Service Officer (VFW, American Legion)",
+          "mistakes": [
+            "Not realizing the 10/10 rule applies and settling for less.",
+            "Not addressing SBP in settlement — leaves ex-spouse at risk.",
+            "Accepting less than 50% without understanding the direct payment benefit.",
+            "Assuming ex-spouse can't get pension if marriage was less than 10 years."
+          ]
+        },
+        {
+          "id": "dv-5-2",
+          "title": "TRICARE Eligibility for Ex-Spouses — 20/20/20 Rule",
+          "what": "The 20/20/20 rule determines whether an ex-spouse keeps TRICARE (military health insurance) after divorce.",
+          "why": "TRICARE costs $200–$500/year vs. $10,000–$15,000 for civilian insurance. The 20/20/20 rule is the difference between affordable coverage and financial hardship.",
+          "steps": [
+            "Check 20/20/20 eligibility: married 20+ years, with 20+ years overlapping military service.",
+            "If not eligible: ex-spouse gets 36-month TRICARE continuation (like COBRA).",
+            "Apply for TRICARE at milconnect.dmdc.osd.mil if eligible.",
+            "Plan for insurance alternatives after the 36-month continuation: marketplace, employer plan, Medicaid.",
+            "Update TRICARE for children — they stay on TRICARE even after divorce.",
+            "Address TRICARE explicitly in the divorce settlement."
+          ],
+          "terms": [
+            {
+              "term": "20/20/20 rule",
+              "def": "Ex-spouse keeps TRICARE permanently if married 20+ years during 20+ years of military service."
+            },
+            {
+              "term": "TRICARE Continued Coverage",
+              "def": "36-month continuation after divorce for ineligible ex-spouses; similar to civilian COBRA."
+            }
+          ],
+          "contacts": "TRICARE: 1-800-333-8387 or tricare.mil • Military Family Law attorney • Veterans Service Officer",
+          "mistakes": [
+            "Not realizing 20/20/20 applies and planning for loss of TRICARE.",
+            "Assuming children automatically keep TRICARE — custodial parent must be listed correctly.",
+            "Not addressing TRICARE in the settlement."
+          ]
+        },
+        {
+          "id": "dv-5-3",
+          "title": "PCS and Deployment Complications During Divorce",
+          "what": "How PCS (Permanent Change of Station) and deployment affect divorce proceedings, custody, and service.",
+          "why": "A service member can be PCS'd mid-divorce to another country, pausing proceedings. Deployment can delay divorce by months. Understanding military service rules prevents surprises.",
+          "steps": [
+            "Understand PCS timing and its impact on custody (child may not be able to follow).",
+            "If PCS'd: address it in custody plan — child remains with custodial parent or relocates.",
+            "Understand deployment holds — some states pause divorce during deployment.",
+            "Set up military allotment for automatic child support during deployment.",
+            "Address military service obligations and PCS notification requirements in the settlement.",
+            "Plan for post-deployment or post-retirement custody changes.",
+            "Get military power of attorney from JAG if needed for medical/educational decisions."
+          ],
+          "terms": [
+            {
+              "term": "PCS",
+              "def": "Permanent Change of Station — military reassignment to a new duty location."
+            },
+            {
+              "term": "Deployment",
+              "def": "Temporary absence for military operations; typically 4–12 months."
+            },
+            {
+              "term": "Military allotment",
+              "def": "Automatic deduction from military pay for child support or spousal support."
+            },
+            {
+              "term": "JAG",
+              "def": "Judge Advocate General — military legal services offering free advice to service members and family."
+            }
+          ],
+          "contacts": "Service member's JAG office (free legal advice) • Military Family Law attorney • State Bar for military divorce experience",
+          "mistakes": [
+            "Not realizing the service member can be PCS'd mid-divorce.",
+            "Assuming military allotment for child support happens automatically — it must be set up.",
+            "Not planning for post-retirement custody changes.",
+            "Serving divorce papers without accounting for deployment."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Financial Recovery",
+      "tasks": [
+        {
+          "id": "dv-6-1",
+          "title": "Financial Planning for Stay-at-Home Parents",
+          "what": "Strategies for lower-earning or stay-at-home spouses to rebuild financial independence post-divorce.",
+          "why": "Stay-at-home parents lose 10+ years of earning history and retirement savings. Spousal support (20–50% of income gap for 5–10 years) and Social Security ex-spouse benefits (up to 50% of ex's benefit at age 62+) are critical bridges to independence.",
+          "steps": [
+            "Understand spousal support types: temporary, rehabilitative (time-limited), indefinite, or reimbursement.",
+            "Negotiate support amount based on marriage length, income gap, and standard of living.",
+            "Plan workforce re-entry: assess skills, identify gaps, explore training ($5K–$25K covered by support).",
+            "Build employment history during rehabilitation period — start part-time and increase gradually.",
+            "Protect support payments in settlement: specify duration, termination events, enforcement mechanisms.",
+            "Plan for Social Security ex-spouse benefits at age 62+ (up to 50% of ex's PIA if married 10+ years).",
+            "Start building your own retirement savings: contribute to 401(k) or IRA as soon as possible."
+          ],
+          "terms": [
+            {
+              "term": "Alimony (spousal support)",
+              "def": "Payments from higher-earning spouse post-divorce; rehabilitative (time-limited) or indefinite."
+            },
+            {
+              "term": "Ex-spouse benefit",
+              "def": "Social Security benefit based on ex-spouse's work history; up to 50% of their PIA at age 62+."
+            },
+            {
+              "term": "Primary Insurance Amount (PIA)",
+              "def": "Baseline Social Security benefit calculated from 35 highest-earning years."
+            }
+          ],
+          "contacts": "Divorce attorney • Social Security: 1-800-772-1213 • Career counselor or workforce center • Certified Financial Planner for retirement planning",
+          "mistakes": [
+            "Not negotiating spousal support and relying on voluntary help.",
+            "Failing to plan for workforce re-entry and skills updates.",
+            "Not realizing Social Security ex-spouse benefits exist — $200K–$400K in lifetime benefits.",
+            "Accepting a lump sum when ongoing support is more secure."
+          ]
+        },
+        {
+          "id": "dv-6-2",
+          "title": "Name Changes and Document Updates",
+          "what": "The legal process of changing your name after divorce and updating all identification, financial, and legal documents.",
+          "why": "Name changes take 2–3 months and require updates to dozens of documents. Delays cause credit report issues, rejected tax filings, and passport renewal problems.",
+          "steps": [
+            "Petition for name change through your divorce (included in filing fee) or file separately ($150–$500).",
+            "Update state driver's license/ID at DMV with divorce decree ($20–$50).",
+            "Update passport with US State Department ($130; 2–3 months processing).",
+            "Update Social Security card (free; 1–2 weeks) — do this before other updates.",
+            "Update all financial accounts: banks, credit cards, investments, retirement, insurance.",
+            "Update employment and tax records: HR, IRS (Form SS-5), state tax office.",
+            "Update property and legal documents: deed, vehicle titles, wills, trusts, POA."
+          ],
+          "terms": [
+            {
+              "term": "Maiden name",
+              "def": "Your surname before marriage; often the name returned to after divorce."
+            },
+            {
+              "term": "Court order for name change",
+              "def": "Formal order from a judge authorizing your legal name change."
+            }
+          ],
+          "contacts": "County court clerk for name change petition • DMV for license and title updates • SSA: 1-800-772-1213 • Bank, credit card, insurance companies",
+          "mistakes": [
+            "Not updating Social Security first — all other name changes flow from your SSN.",
+            "Not filing a deed correction — home title remains in married name.",
+            "Updating financial accounts but not the IRS — causes tax return rejections.",
+            "Assuming name change happens automatically through divorce."
+          ]
+        },
+        {
+          "id": "dv-6-3",
+          "title": "Post-Divorce Financial Reset Checklist",
+          "what": "A comprehensive checklist to reorganize your financial and legal life post-divorce.",
+          "why": "An ex-spouse left on a will, life insurance beneficiary, or healthcare POA creates major problems. This checklist takes 4–6 hours but prevents years of unwanted entanglement.",
+          "steps": [
+            "Update all beneficiary designations: life insurance, retirement accounts, bank accounts, brokerage accounts.",
+            "Update your will (remove ex-spouse as executor/beneficiary; name guardian for minor children).",
+            "Update power of attorney and healthcare proxy — remove ex-spouse.",
+            "Review and rebalance retirement accounts; build a 3–6 month emergency fund.",
+            "Pull credit reports, dispute errors, and monitor monthly for 6–12 months.",
+            "Update insurance: health, auto, homeowners/renters, life, disability.",
+            "Update tax withholding to Single or Head of Household; use IRS W-4 calculator.",
+            "Update all records: driver's license, voter registration, passport, professional licenses, emergency contacts.",
+            "Audit digital accounts: change passwords, update recovery info, separate shared cloud storage."
+          ],
+          "terms": [
+            {
+              "term": "POD (Payable on Death)",
+              "def": "Bank account that transfers to a named beneficiary at death, bypassing probate."
+            },
+            {
+              "term": "Healthcare proxy",
+              "def": "Person authorized to make medical decisions if you're incapacitated."
+            },
+            {
+              "term": "Executor",
+              "def": "Person who manages and distributes your estate after death (named in your will)."
+            }
+          ],
+          "contacts": "Estate planning attorney ($500–$2,000) • CPA for tax withholding • Financial advisor • Insurance broker (free service)",
+          "mistakes": [
+            "Not updating beneficiaries — ex-spouse receives proceeds if they outlive you.",
+            "Not creating or updating a will — state decides who gets your assets.",
+            "Forgetting to update POA — ex-spouse still has authority over decisions.",
+            "Not adjusting tax withholding — surprise tax bill next year."
+          ]
+        }
+      ]
+    }
+  ]
+}

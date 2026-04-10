@@ -1,0 +1,419 @@
+{
+  "label": "Job Loss & Income Crisis",
+  "categories": [
+    {
+      "name": "Insurance Changes",
+      "risk": "medium",
+      "tasks": [
+        {
+          "id": "jl-1-1",
+          "title": "Evaluate COBRA vs. Marketplace vs. Spouse's Plan",
+          "risk": "medium",
+          "crossRef": [
+            "Estate & Survivor",
+            "Disability & Benefits"
+          ],
+          "what": "Comparing three health insurance routes after losing employer coverage — federal COBRA continuation, ACA marketplace plans, or coverage through a spouse/partner's employer.",
+          "why": "You have 60 days from job loss to elect COBRA, and marketplace open enrollment windows are limited. Missing either deadline locks you out for months. Choosing wrong costs $400–$800/month more than necessary.",
+          "steps": [
+            "Understand COBRA eligibility. You qualify if your former employer had 20+ employees. Your employer sends the COBRA election notice within 14 days of termination. You have 60 days to elect.",
+            "Calculate COBRA cost. Premiums are 102% of what the employer paid (100% + 2% admin fee). Typically $600–$1,200/month individual, $1,400–$2,200 family.",
+            "Check spouse's employer plan. Adding you counts as a qualifying life event — no waiting period. Usually cheaper than COBRA.",
+            "Research Healthcare.gov marketplace plans. Enter your income and household size. You likely qualify for subsidies if income drops below 400% of federal poverty level (~$63,000/year single).",
+            "Compare deductibles, not just premiums. Add annual premium + deductible + copays for your likely healthcare use. Lower premium does not mean lower total cost.",
+            "Check prescription coverage. Verify the marketplace plan's formulary covers your medications. COBRA keeps your old formulary.",
+            "Pick your coverage date. COBRA starts the day after employer coverage ends. Marketplace starts first of the month after enrollment. Buy short-term insurance ($50–$200/month) for any gap.",
+            "Document your election. Keep a dated copy of your COBRA election form and confirmation emails."
+          ],
+          "terms": [
+            {
+              "term": "COBRA",
+              "def": "Consolidated Omnibus Budget Reconciliation Act. Federal law letting you buy employer health coverage for 18 months after job loss at full cost."
+            },
+            {
+              "term": "Qualifying Life Event",
+              "def": "Job loss or loss of employer coverage. Lets you enroll in marketplace plans outside annual open enrollment."
+            },
+            {
+              "term": "Subsidies (Tax Credits)",
+              "def": "Government money that reduces marketplace premiums if income is below 400% of federal poverty level."
+            },
+            {
+              "term": "Formulary",
+              "def": "List of medications covered by the insurance plan and their copay tier."
+            },
+            {
+              "term": "Deductible",
+              "def": "Amount you pay out-of-pocket before insurance starts paying."
+            }
+          ],
+          "contacts": "Former employer HR/benefits for COBRA notice and cost • Healthcare.gov: 1-800-318-2596 • State insurance commissioner for COBRA disputes",
+          "mistakes": [
+            "Missing the 60-day COBRA election deadline and losing the option entirely.",
+            "Not comparing marketplace plans — marketplace + subsidy is often half the cost of COBRA.",
+            "Picking the cheapest plan without checking the deductible — Bronze plans have $9,100 deductibles.",
+            "Not reporting severance income to marketplace — this affects your subsidy amount."
+          ],
+          "script": {
+            "intro": "When calling your former employer's HR or benefits department about COBRA:",
+            "lines": [
+              "\"Hi, my name is [your name]. I was recently separated from the company and I'm calling about my COBRA continuation coverage. My last day was [date]. Can you tell me what my COBRA premium would be, when my current coverage ends, and when I should expect the COBRA election notice?\"",
+              "\"Can you also confirm whether the COBRA coverage would be the same plan I had, or if there are any changes? And is there a specific deadline I need to elect by?\""
+            ],
+            "note": "Write down the name of who you spoke to, the date, and what they told you. If they say they'll mail the COBRA notice, ask for a timeline."
+          }
+        },
+        {
+          "id": "jl-1-2",
+          "title": "Transfer Prescriptions and Ongoing Care",
+          "risk": "low",
+          "crossRef": [
+            "Disability & Benefits"
+          ],
+          "what": "Making sure your medications and ongoing doctor visits don't lapse when your insurance changes.",
+          "why": "A 30-day gap in medication (ADHD, diabetes, antidepressants) can trigger health crises. Transferring before coverage ends prevents ER visits and refill delays.",
+          "steps": [
+            "List all active prescriptions — name, dose, frequency, refills remaining, pharmacy.",
+            "Refill early before coverage ends. Call pharmacy 7 days before your last day. Get 30–90 day supply at current copays.",
+            "Get copies of recent test results from your doctor to avoid repeating tests with a new provider.",
+            "Transfer prescription records to your new pharmacy. Verify refill counts.",
+            "Update your doctor's office with your new insurance card number and effective date.",
+            "Schedule preventive visits (physicals, dental, eye exams) before old coverage ends — covered at 100%.",
+            "Request specialist referrals for your new insurance if needed.",
+            "Get a treatment summary letter from your therapist/psychiatrist if applicable."
+          ],
+          "terms": [
+            {
+              "term": "Formulary Tier",
+              "def": "Classification of medications by cost: Tier 1 (generic, ~$10), Tier 2 (brand-name, ~$35), Tier 3 (specialty, ~$100+)."
+            },
+            {
+              "term": "Prior Authorization",
+              "def": "Insurance approval required before the pharmacy fills the prescription. May take 3–5 days."
+            }
+          ],
+          "contacts": "Your current pharmacy for refills/transfers • Your doctor's office for records and referrals • New insurance website for in-network provider lists",
+          "mistakes": [
+            "Letting prescriptions lapse during coverage transition.",
+            "Not checking if your new plan covers the same drugs or requires different tiers.",
+            "Forgetting to schedule preventive visits before old coverage ends.",
+            "Not getting a treatment summary for mental health continuity."
+          ]
+        },
+        {
+          "id": "jl-1-3",
+          "title": "Understand Mini-COBRA (State Continuation)",
+          "risk": "medium",
+          "what": "Many states have continuation coverage laws for employers too small for federal COBRA (under 20 employees).",
+          "why": "If your employer had fewer than 20 employees, federal COBRA doesn't apply — but your state may have its own version with different rules and timelines.",
+          "steps": [
+            "Determine your employer's size — federal COBRA applies to 20+ employees.",
+            "If under 20, research your state's continuation coverage law.",
+            "Note the election period and coverage duration (varies by state — some offer only 3–6 months).",
+            "Compare state continuation with marketplace options — marketplace may be cheaper with subsidies."
+          ],
+          "terms": [
+            {
+              "term": "Mini-COBRA",
+              "def": "Informal name for state-level health insurance continuation laws covering smaller employers."
+            }
+          ],
+          "contacts": "Your state's Department of Insurance",
+          "mistakes": [
+            "Assuming you have no continuation options because your employer was small.",
+            "Not checking both state continuation AND marketplace to compare costs."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Financial Stabilization",
+      "risk": "high",
+      "tasks": [
+        {
+          "id": "jl-2-1",
+          "title": "Emergency Budget Reset",
+          "risk": "high",
+          "what": "Recalculating your monthly budget based on reduced or zero income.",
+          "why": "Most people have 3–6 months of expenses saved at best. Knowing exactly where you stand financially is the first step to making that money last.",
+          "steps": [
+            "Calculate total liquid savings (checking, savings, accessible investments — NOT retirement accounts).",
+            "List all fixed monthly expenses (rent/mortgage, utilities, insurance, minimum debt payments, subscriptions).",
+            "Identify expenses you can cut or pause immediately (streaming, gym, dining out, subscriptions).",
+            "Calculate your monthly \"burn rate\" — how much you need to survive each month.",
+            "Divide savings by burn rate = how many months you can sustain.",
+            "If less than 3 months, prioritize income replacement (unemployment + temp work) immediately."
+          ],
+          "terms": [
+            {
+              "term": "Burn Rate",
+              "def": "Your monthly minimum spend to cover essential expenses."
+            },
+            {
+              "term": "Liquid Savings",
+              "def": "Cash and investments you can access quickly without penalties (not retirement accounts)."
+            }
+          ],
+          "contacts": "Your bank for hardship programs • Credit card companies for hardship rate reductions • Utility companies for payment plans",
+          "mistakes": [
+            "Not cutting expenses fast enough after job loss.",
+            "Using credit cards to maintain pre-job-loss lifestyle.",
+            "Cashing out 401(k) early (10% penalty + income tax).",
+            "Not calling creditors about hardship programs — most will work with you."
+          ]
+        },
+        {
+          "id": "jl-2-2",
+          "title": "401(k) and Retirement Account Decisions",
+          "risk": "high",
+          "what": "Deciding what to do with your employer-sponsored retirement account after separation.",
+          "why": "You have four options, each with different tax and penalty implications. Making the wrong choice can cost you thousands in unnecessary taxes and penalties.",
+          "steps": [
+            "Get your 401(k) balance and vesting status from your plan administrator.",
+            "Understand your four options: leave it, roll to new employer's plan, roll to an IRA, or cash out.",
+            "If rolling over, request a direct rollover (trustee-to-trustee) to avoid mandatory 20% withholding.",
+            "Check for outstanding 401(k) loans — typically must be repaid within 60 days of separation or they become a taxable distribution.",
+            "If you have company stock, research \"net unrealized appreciation\" (NUA) before rolling over.",
+            "Never cash out unless you have absolutely no other option — you lose 10% penalty + income tax."
+          ],
+          "terms": [
+            {
+              "term": "Vesting",
+              "def": "The portion of employer contributions you're entitled to keep. You always own 100% of your own contributions."
+            },
+            {
+              "term": "Direct Rollover",
+              "def": "Funds transfer directly from one retirement account to another without you touching the money. No taxes or penalties."
+            },
+            {
+              "term": "Indirect Rollover",
+              "def": "The plan sends you a check. You have 60 days to deposit it in another retirement account or it becomes taxable. Plan withholds 20%."
+            }
+          ],
+          "contacts": "Your plan administrator (number on your 401(k) statement) • A brokerage for opening an IRA (Fidelity, Schwab, Vanguard)",
+          "mistakes": [
+            "Cashing out (10% early withdrawal penalty if under 59½ + income tax on full amount).",
+            "Doing an indirect rollover and missing the 60-day window.",
+            "Not checking your vesting schedule — you may not own all the employer match."
+          ]
+        },
+        {
+          "id": "jl-2-3",
+          "title": "Severance Package Review",
+          "risk": "high",
+          "crossRef": [
+            "Divorce & Separation"
+          ],
+          "what": "Understanding and potentially negotiating your severance offer before signing.",
+          "why": "Severance agreements are legally binding contracts. Once signed, you typically waive your right to sue. You may be able to negotiate better terms.",
+          "steps": [
+            "Read the entire agreement before signing — don't rush.",
+            "Note the severance amount (typically 1–2 weeks per year of service, but varies widely).",
+            "Check for a non-compete clause — what does it restrict, for how long, in what geography?",
+            "Check for a non-disparagement clause — can you leave honest reviews?",
+            "Note the deadline to sign. If you're over 40, federal law gives you 21 days to consider + 7 days to revoke (ADEA/OWBPA).",
+            "Consider negotiating: extended health benefits, outplacement services, reference letter, non-compete modifications.",
+            "Have an employment attorney review before signing — especially if the package includes a waiver of legal claims."
+          ],
+          "terms": [
+            {
+              "term": "ADEA/OWBPA",
+              "def": "If you're 40+, your employer must give you 21 days to consider a severance agreement and 7 days to revoke after signing."
+            },
+            {
+              "term": "Non-Compete",
+              "def": "A clause restricting you from working for competitors for a specified time and geography. Enforceability varies by state."
+            },
+            {
+              "term": "Release of Claims",
+              "def": "You agree not to sue your employer. Standard in severance agreements."
+            }
+          ],
+          "contacts": "An employment attorney (many offer free initial consultations for severance review)",
+          "mistakes": [
+            "Signing too quickly without reading everything.",
+            "Not negotiating — most employers expect some back-and-forth.",
+            "Not asking for COBRA premium coverage as part of the package."
+          ],
+          "script": {
+            "intro": "When negotiating severance with your employer or HR:",
+            "lines": [
+              "\"Thank you for presenting this. I'd like to take the full [21/45 days] to review it carefully. Before I do, can you walk me through the key terms — specifically the severance amount, the non-compete, and what happens with my health benefits?\"",
+              "\"I've been with the company for [X years] and I believe my contributions warrant [specific ask — e.g., additional weeks, extended health coverage, outplacement services]. Is there flexibility on [the term you want to negotiate]?\"",
+              "\"I'd also like to request [a neutral reference letter / modification of the non-compete geography / 3 additional months of COBRA premium coverage]. These are standard asks and I think they're reasonable given my tenure.\""
+            ],
+            "note": "Stay calm and professional. Don't say \"I'll sue\" — it closes doors. Framing as \"I think this is fair given my contributions\" works better. Have an employment attorney review before signing, especially if there's a release of claims."
+          }
+        },
+        {
+          "id": "jl-2-4",
+          "title": "Apply for Government Assistance Programs",
+          "risk": "medium",
+          "what": "Identifying and applying for all benefits programs you may now qualify for.",
+          "why": "Many people don't realize they qualify for assistance after a sudden income drop. These programs exist for exactly this situation.",
+          "steps": [
+            "File for unemployment insurance in week 1 — there's often a waiting week before benefits start.",
+            "Check SNAP (food assistance) eligibility at your state's SNAP office or benefits.gov.",
+            "Check utility assistance eligibility (LIHEAP — Low Income Home Energy Assistance Program).",
+            "If you have children, check for free/reduced school meals and CHIP (Children's Health Insurance Program).",
+            "Visit 211.org or call 211 for local emergency assistance resources."
+          ],
+          "contacts": "Your state unemployment office • Local SNAP office • 211.org or call 211 • Benefits.gov",
+          "mistakes": [
+            "Waiting too long to file for unemployment (benefits don't start until you file).",
+            "Being embarrassed to apply for assistance — these programs are for this exact situation.",
+            "Not reporting all qualifying dependents."
+          ],
+          "script": {
+            "intro": "When calling creditors about hardship programs:",
+            "lines": [
+              "\"Hi, I'm calling because I recently lost my job and I'm having difficulty making my payments. I'd like to find out if you have a hardship program or if there are any options to temporarily reduce or defer my payments while I look for work.\"",
+              "\"My account number is [number]. I've been a customer since [year] and I've always made payments on time. I'm not trying to avoid paying — I just need some flexibility for the next few months. What options do you have?\""
+            ],
+            "note": "Most credit card companies, mortgage servicers, and utility companies have hardship programs they don't advertise. Ask specifically for \"hardship\" or \"forbearance\" options. Get any agreement in writing or via email."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unemployment Benefits",
+      "risk": "high",
+      "tasks": [
+        {
+          "id": "jl-3-1",
+          "title": "File Your Initial Claim",
+          "risk": "high",
+          "what": "Applying for unemployment insurance benefits through your state.",
+          "why": "Benefits typically replace 40–50% of previous wages, up to a state maximum. Most states provide up to 26 weeks. Filing in week 1 is critical.",
+          "steps": [
+            "Gather: Social Security number, driver's license, last employer info, dates of employment, reason for separation, bank account for direct deposit.",
+            "File online at your state's unemployment website (fastest) or by phone.",
+            "Complete all weekly/biweekly certifications — you must certify you're actively looking for work.",
+            "Document all job search activities (most states require 3+ contacts per week).",
+            "Respond promptly to any requests for information from the unemployment office."
+          ],
+          "terms": [
+            {
+              "term": "Base Period",
+              "def": "The 12-month period used to calculate your benefit amount (typically first four of last five completed calendar quarters)."
+            },
+            {
+              "term": "Waiting Week",
+              "def": "Most states require a one-week waiting period after filing before benefits begin."
+            },
+            {
+              "term": "Weekly Certification",
+              "def": "Regular confirmation that you're still unemployed and actively seeking work."
+            }
+          ],
+          "contacts": "Your state's unemployment insurance office (search \"[state] unemployment\" for website)",
+          "mistakes": [
+            "Not filing immediately (you lose the waiting week).",
+            "Missing weekly certifications (claim gets suspended).",
+            "Not keeping detailed job search records.",
+            "Working part-time without reporting it (fraud risk)."
+          ],
+          "script": {
+            "intro": "If you need to call your state unemployment office (some states require phone filing):",
+            "lines": [
+              "\"I'm calling to file an initial unemployment insurance claim. My last day of employment was [date]. I was [laid off / my position was eliminated / the company did a reduction in force]. My employer was [company name] and I worked there for [X years].\"",
+              "\"I have my Social Security number, driver's license, and bank account information for direct deposit ready. Can you walk me through what I need to complete the claim?\""
+            ],
+            "note": "Be honest about why you left. Saying \"laid off\" vs. \"fired for cause\" affects eligibility. If you're unsure, say \"my position was eliminated.\" Get a confirmation number before hanging up."
+          }
+        },
+        {
+          "id": "jl-3-2",
+          "title": "Appeal a Denied Claim",
+          "risk": "high",
+          "what": "Contesting an unemployment benefits denial.",
+          "why": "Initial denials are common. Many denials are overturned on appeal, especially when there's a dispute about whether you were fired for cause or laid off.",
+          "steps": [
+            "Read the denial letter carefully — it states the reason and appeal deadline (typically 10–30 days).",
+            "File your appeal in writing before the deadline.",
+            "Gather evidence: termination letter, emails, performance reviews, documentation supporting your case.",
+            "Prepare a clear written statement explaining why you disagree with the denial.",
+            "Attend the hearing (usually by phone) — your former employer may also participate.",
+            "Consider legal aid if your case is complex — many legal aid organizations offer free help."
+          ],
+          "contacts": "Your state's unemployment appeals board • Local legal aid organization",
+          "mistakes": [
+            "Missing the appeal deadline.",
+            "Not attending the hearing.",
+            "Not preparing evidence.",
+            "Assuming a denial is final — many are overturned on appeal."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Job Search",
+      "risk": "low",
+      "tasks": [
+        {
+          "id": "jl-5-1",
+          "title": "Update Resume and LinkedIn",
+          "risk": "low",
+          "what": "Refreshing your professional materials for the current job market.",
+          "why": "A resume from even 2 years ago may not reflect current hiring patterns (AI screening, skills-based hiring). Updating now is critical.",
+          "steps": [
+            "Update LinkedIn headline and \"Open to Work\" settings.",
+            "Quantify accomplishments (“increased revenue by 15%,” “managed team of 12”).",
+            "Tailor your resume for each application using keywords from the job description.",
+            "Get your resume reviewed — many state workforce centers offer free reviews.",
+            "Activate your network — let people know you're looking."
+          ],
+          "contacts": "State workforce development center • CareerOneStop.org for local resources",
+          "mistakes": [
+            "Sending the same generic resume to every application.",
+            "Not using your network — most jobs are filled through referrals.",
+            "Applying only online."
+          ]
+        },
+        {
+          "id": "jl-5-2",
+          "title": "Access Free Job Training and Career Services",
+          "risk": "low",
+          "what": "Taking advantage of publicly funded career development resources.",
+          "steps": [
+            "Visit your local American Job Center (careeronestop.org to find locations).",
+            "Check if you qualify for WIOA (Workforce Innovation and Opportunity Act) training funds.",
+            "Explore state-specific retraining programs (many states have tech bootcamp partnerships).",
+            "Consider certifications that can increase your marketability quickly."
+          ],
+          "contacts": "Local American Job Center • State workforce agency • Community colleges",
+          "mistakes": [
+            "Not knowing these free services exist.",
+            "Paying for expensive bootcamps when free options are available."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Emotional & Mental Health",
+      "risk": "low",
+      "tasks": [
+        {
+          "id": "jl-6-1",
+          "title": "Build a Support System",
+          "risk": "low",
+          "what": "Addressing the emotional impact of job loss.",
+          "why": "Job loss is ranked as one of the top 10 most stressful life events. It affects identity, routine, social connections, and self-worth.",
+          "steps": [
+            "Acknowledge the grief — it's normal to feel angry, scared, or ashamed.",
+            "Maintain a daily routine (wake time, exercise, structured job search hours).",
+            "Tell people — isolation makes everything harder.",
+            "Check if your former employer offers an EAP (Employee Assistance Program) — many continue for 30–90 days post-termination.",
+            "If stress becomes overwhelming, contact SAMHSA helpline (1-800-662-4357) or 988 Suicide and Crisis Lifeline."
+          ],
+          "contacts": "Former employer for EAP access • Local support groups • 988 Lifeline (call or text 988)",
+          "mistakes": [
+            "Isolating yourself.",
+            "Not using EAP benefits that are still available.",
+            "Treating job search as 24/7 — burnout is real."
+          ]
+        }
+      ]
+    }
+  ]
+}

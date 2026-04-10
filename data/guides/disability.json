@@ -1,0 +1,424 @@
+{
+  "label": "Disability & Benefits",
+  "categories": [
+    {
+      "name": "SSDI Application Process",
+      "tasks": [
+        {
+          "id": "dis-1-1",
+          "title": "File Your Initial SSDI Application",
+          "crossRef": [
+            "Job Loss & Income Crisis"
+          ],
+          "what": "Submit your Social Security Disability Insurance application as soon as you become disabled.",
+          "why": "SSDI has a 5-month waiting period before benefits begin. Your application date sets your protective filing date — delaying even weeks can mean lost retroactive benefits.",
+          "steps": [
+            "Apply online at ssa.gov/apply or call SSA at 1-800-772-1213 to schedule an appointment at your local office.",
+            "Gather your Social Security number, birth certificate, W-2s or tax returns, and a complete list of your medical conditions and treatment providers.",
+            "Document your work history for the past 15 years, including job titles, duties, and physical/mental demands.",
+            "Complete the Adult Disability Report (SSA-3368) with detailed descriptions of how your conditions limit your ability to work.",
+            "List all medications, dosages, and prescribing doctors, along with all hospitalizations and surgeries.",
+            "Keep a copy of everything you submit and note the date and confirmation number for every SSA interaction."
+          ],
+          "terms": [
+            {
+              "term": "Protective Filing Date",
+              "def": "The date SSA records your intent to file, which determines how far back retroactive benefits are paid."
+            },
+            {
+              "term": "SGA (Substantial Gainful Activity)",
+              "def": "The earnings threshold ($1,620/month in 2025) above which SSA considers you capable of working."
+            }
+          ],
+          "contacts": "Social Security Administration: 1-800-772-1213 • ssa.gov • Local SSA office: ssa.gov/locator",
+          "mistakes": [
+            "Waiting until you are certain you cannot return to work — file immediately to protect your filing date.",
+            "Understating your limitations by describing your best days rather than typical or worst days.",
+            "Forgetting to report all medical conditions — SSA evaluates the combined effect of all impairments.",
+            "Failing to keep copies of submitted documents."
+          ],
+          "script": {
+            "intro": "When calling Social Security (1-800-772-1213) to start your disability application:",
+            "lines": [
+              "\"I'm calling to file an initial application for Social Security Disability Insurance. I became unable to work on [date] due to [brief description of conditions]. I'd like to set up my protective filing date today.\"",
+              "\"I have my Social Security number, birth certificate, medical records, and work history ready. Can I complete the application over the phone, or do I need to schedule an in-person appointment at my local office?\"",
+              "\"Can you also tell me what the expected timeline is for a decision, and what happens if my initial application is denied?\""
+            ],
+            "note": "Describe your WORST days, not your best. SSA needs to understand what you can't do. Be specific: \"I can't stand for more than 10 minutes\" is better than \"I have trouble standing.\" Ask for a confirmation number."
+          }
+        },
+        {
+          "id": "dis-1-2",
+          "title": "Gather Medical Evidence and Documentation",
+          "what": "Collect and organize all medical records, test results, and provider statements that support your disability claim.",
+          "why": "SSA denies approximately 67% of initial applications. The most common reason is insufficient medical evidence — thorough documentation dramatically improves approval odds.",
+          "steps": [
+            "Request complete medical records from every treating physician, specialist, and hospital for the past 12–24 months.",
+            "Ask each provider for office visit notes, lab results, imaging reports, and any functional assessments.",
+            "Obtain a detailed letter from your primary care physician summarizing your diagnosis, treatment history, and functional limitations.",
+            "Request RFC (Residual Functional Capacity) questionnaires from your treating doctors.",
+            "Document a daily symptom diary noting pain levels, fatigue, cognitive difficulties, and medication side effects.",
+            "Organize all records chronologically and create a master index."
+          ],
+          "terms": [
+            {
+              "term": "RFC (Residual Functional Capacity)",
+              "def": "An assessment of the most you can still do despite your impairments — used by SSA to determine if you can perform work."
+            },
+            {
+              "term": "Treating Source Opinion",
+              "def": "Medical opinion from a doctor with an ongoing treatment relationship — given significant weight in SSA evaluations."
+            }
+          ],
+          "contacts": "Your treating physicians and specialists • Hospital medical records departments • SSA Disability Determination Services: ssa.gov/disability",
+          "mistakes": [
+            "Assuming SSA will gather your records — proactively submit complete records rather than relying on SSA.",
+            "Gaps in treatment that SSA interprets as evidence your condition is not severe.",
+            "Not obtaining RFC questionnaires, which are among the most persuasive evidence.",
+            "Providing incomplete or illegible records."
+          ]
+        },
+        {
+          "id": "dis-1-3",
+          "title": "Understand the 5-Month Waiting Period",
+          "what": "Learn how SSA's mandatory 5-month waiting period affects when benefits begin and plan finances accordingly.",
+          "why": "No benefits are paid during the first 5 full months of disability. Total time before receiving a check can exceed a year when you include processing time.",
+          "steps": [
+            "Identify your established onset date (EOD) — this starts the waiting period clock.",
+            "Count forward 5 full calendar months from your EOD: your first SSDI payment covers the 6th month.",
+            "Recognize that SSA processing time (3–6 months) is separate from the waiting period — plan for 12–18 months.",
+            "Review whether any retroactive benefits are owed — SSA can pay up to 12 months of back pay prior to your application date.",
+            "Note that SSI has no 5-month waiting period and may provide faster interim income if you meet asset/income limits."
+          ],
+          "terms": [
+            {
+              "term": "Established Onset Date (EOD)",
+              "def": "The date SSA determines your disability began, starting the 5-month waiting period."
+            },
+            {
+              "term": "Retroactive Benefits",
+              "def": "Back payments for months prior to your application date (up to 12 months before filing, minus the waiting period)."
+            }
+          ],
+          "contacts": "SSA: 1-800-772-1213 • ssa.gov/myaccount to track application status",
+          "mistakes": [
+            "Expecting benefits within weeks — plan for 12–18 months before stable income.",
+            "Confusing SSI and SSDI timelines — SSI has no waiting period.",
+            "Not requesting an earlier onset date, which can increase retroactive back pay."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Financial Bridge",
+      "tasks": [
+        {
+          "id": "dis-2-1",
+          "title": "Build an Emergency Budget on Reduced Income",
+          "crossRef": [
+            "Job Loss & Income Crisis"
+          ],
+          "what": "Create a bare-bones budget covering essential expenses while waiting for benefits.",
+          "why": "Without a plan, savings deplete rapidly. Spending down below $2,000 may qualify you for SSI, but needs to be strategic.",
+          "steps": [
+            "List all monthly fixed expenses: rent/mortgage, utilities, insurance, minimum debt payments, prescriptions.",
+            "Identify which expenses are non-negotiable versus deferrable.",
+            "Contact each creditor and utility provider to request hardship deferment or reduced payment plans.",
+            "Apply for LIHEAP energy assistance at liheap.acf.hhs.gov or 1-866-674-6327.",
+            "Apply for SNAP at your state social services agency or benefits.gov.",
+            "Calculate your monthly survival budget and use it as your planning baseline."
+          ],
+          "terms": [
+            {
+              "term": "Forbearance",
+              "def": "A temporary pause or reduction in loan payments, typically deferred to later with possible interest accrual."
+            },
+            {
+              "term": "Asset Limit",
+              "def": "Maximum countable resources allowed for SSI — $2,000 for individuals, $3,000 for couples."
+            }
+          ],
+          "contacts": "LIHEAP: 1-866-674-6327 • SNAP: benefits.gov • 211 Helpline: dial 211 • NFCC: 1-800-388-2227",
+          "mistakes": [
+            "Not contacting creditors proactively — they have more options before you miss a payment.",
+            "Ignoring utility shutoff notices — assistance programs have lead times.",
+            "Cashing out retirement accounts (10% penalty + income tax)."
+          ]
+        },
+        {
+          "id": "dis-2-2",
+          "title": "Apply for Interim Assistance Programs",
+          "what": "Apply for SSI, Medicaid, SNAP, and other programs to bridge income while SSDI is pending.",
+          "why": "SSDI applicants wait 3–24 months for a decision — interim programs provide cash, healthcare, and food assistance during this period.",
+          "steps": [
+            "Apply for SSI at the same time as SSDI if your income and assets are low — SSI has no waiting period and pays up to $967/month.",
+            "Apply for Medicaid at your state agency or healthcare.gov.",
+            "Apply for SNAP online at your state's portal — a single person may qualify for up to $292/month.",
+            "Check eligibility for state disability programs (CA, HI, NJ, NY, RI, and WA have their own).",
+            "Contact 211 for local emergency assistance including food banks and rental assistance.",
+            "Re-evaluate eligibility for all programs every 6 months."
+          ],
+          "terms": [
+            {
+              "term": "SSI",
+              "def": "Supplemental Security Income — needs-based cash assistance for disabled individuals with limited income and resources."
+            },
+            {
+              "term": "SNAP",
+              "def": "Supplemental Nutrition Assistance Program — monthly electronic benefits for purchasing groceries."
+            }
+          ],
+          "contacts": "SSI/SSA: 1-800-772-1213 • Medicaid: medicaid.gov • SNAP: fns.usda.gov/snap • 211 Helpline • BenefitsCheckUp: benefitscheckup.org",
+          "mistakes": [
+            "Waiting until SSDI is approved to apply for other programs — apply simultaneously.",
+            "Not applying for SSI because you assume you earn too much.",
+            "Missing annual renewal deadlines for Medicaid and SNAP."
+          ]
+        },
+        {
+          "id": "dis-2-3",
+          "title": "File Employer Disability Insurance Claims",
+          "crossRef": [
+            "Job Loss & Income Crisis"
+          ],
+          "what": "File claims under your employer's short-term and long-term disability insurance policies.",
+          "why": "Employer disability insurance can replace 50–70% of salary, bridging the gap before SSDI — but claims have strict filing deadlines.",
+          "steps": [
+            "Contact HR on your first day unable to work to learn STD and LTD plan details and deadlines.",
+            "Obtain your Summary Plan Description (SPD) for both STD and LTD plans.",
+            "File STD immediately — most plans require notice within 30 days.",
+            "Understand your plan's elimination period (7–14 days for STD, 90–180 days for LTD).",
+            "When transitioning from STD to LTD, be aware the definition of disability often changes from \"own occupation\" to \"any occupation.\"",
+            "Most LTD plans offset benefits by SSDI — your total income may not increase but the insurer gets reimbursed."
+          ],
+          "terms": [
+            {
+              "term": "Elimination Period",
+              "def": "Waiting period before employer disability benefits start — typically 7–14 days for STD and 90–180 days for LTD."
+            },
+            {
+              "term": "ERISA",
+              "def": "Federal law governing employer benefit plans, setting appeal rights and procedures for denied disability claims."
+            }
+          ],
+          "contacts": "Your HR department • Plan insurer on your insurance card • DOL Employee Benefits: 1-866-444-3272",
+          "mistakes": [
+            "Missing the claim filing deadline — plans often deny claims filed even days late.",
+            "Assuming LTD approval guarantees SSDI approval — they use different standards.",
+            "Accepting an LTD denial without appealing."
+          ],
+          "script": {
+            "intro": "When calling your HR department about disability leave and benefits:",
+            "lines": [
+              "\"Hi, this is [your name] in [department]. I need to discuss a medical situation. My doctor has advised that I'm unable to work starting [date]. I need to understand my options for FMLA leave and how to file a short-term disability claim.\"",
+              "\"Can you send me the forms for both FMLA and short-term disability? What are the deadlines for filing each? I also want to understand what happens to my health insurance while I'm on leave.\"",
+              "\"If my condition extends beyond the short-term disability period, what's the process for transitioning to long-term disability? And who is the insurance carrier I need to contact?\""
+            ],
+            "note": "Call HR as soon as you know you'll be out. Even if you're not sure how long, starting the process protects your rights. Ask for everything in writing and keep a log of every HR conversation."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Insurance & Healthcare",
+      "tasks": [
+        {
+          "id": "dis-3-1",
+          "title": "Navigate the 29-Month Medicare Gap",
+          "crossRef": [
+            "Retirement Planning"
+          ],
+          "what": "Plan for the gap between SSDI approval and when Medicare coverage begins — approximately 29 months after disability onset.",
+          "why": "Medicare begins 24 months after your first SSDI benefit payment, plus the 5-month waiting period. A single hospital stay during this gap can result in tens of thousands in uninsured debt.",
+          "steps": [
+            "Know the timeline: Medicare begins 24 months after your first SSDI benefit payment month.",
+            "Apply for Medicaid immediately — this is the primary coverage option during the gap.",
+            "If you earn too much for Medicaid, explore ACA marketplace plans at healthcare.gov.",
+            "Track your 24-month Medicare countdown and set calendar reminders.",
+            "When Medicare begins, also apply for Part D (prescription drugs) and consider a Medigap policy."
+          ],
+          "terms": [
+            {
+              "term": "Medicare 24-Month Wait",
+              "def": "SSDI recipients must wait 24 months from their first benefit payment before Medicare begins — about 29 months from disability onset."
+            },
+            {
+              "term": "Dual Eligible",
+              "def": "Individuals qualifying for both Medicare and Medicaid — Medicaid can cover Medicare premiums and copays."
+            }
+          ],
+          "contacts": "Medicare: 1-800-633-4227 • medicare.gov • Medicaid: medicaid.gov • SHIP counselors: shiphelp.org",
+          "mistakes": [
+            "Assuming Medicare starts when SSDI is approved — there is always an additional 24-month wait.",
+            "Not applying for Medicaid — many states have expanded eligibility under the ACA.",
+            "Missing the Medicare Part B enrollment window (10% lifetime premium penalty per year late)."
+          ]
+        },
+        {
+          "id": "dis-3-2",
+          "title": "Maintain Prescription Access During Coverage Gaps",
+          "what": "Secure uninterrupted access to medications during insurance transitions using manufacturer programs and pharmacy resources.",
+          "why": "Stopping medications can cause serious health deterioration and undermine your SSDI claim.",
+          "steps": [
+            "Contact medication manufacturers' patient assistance programs (PAPs) — most offer free or reduced-cost medications.",
+            "Search NeedyMeds (needymeds.org) and RxAssist (rxassist.org) for assistance programs.",
+            "Use GoodRx or Cost Plus Drugs (costplusdrugs.com) for cash-price discounts.",
+            "Ask your physician about 90-day supplies and generic alternatives.",
+            "Apply for Extra Help (Low Income Subsidy) through SSA for Medicare Part D assistance once eligible."
+          ],
+          "terms": [
+            {
+              "term": "Patient Assistance Program (PAP)",
+              "def": "Manufacturer programs providing free or discounted medications to uninsured patients meeting income criteria."
+            },
+            {
+              "term": "Extra Help / LIS",
+              "def": "SSA program helping Medicare beneficiaries with limited income pay Part D costs — saves an average of $5,300/year."
+            }
+          ],
+          "contacts": "NeedyMeds: needymeds.org • RxAssist: rxassist.org • GoodRx: goodrx.com • Extra Help: 1-800-772-1213",
+          "mistakes": [
+            "Not applying for PAPs because you think you earn too much — thresholds vary widely.",
+            "Rationing or skipping doses to extend supplies.",
+            "Waiting until you run out to seek assistance — PAP applications take 2–4 weeks."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Appeals & Legal",
+      "tasks": [
+        {
+          "id": "dis-4-1",
+          "title": "Appeal an SSDI Denial Within 60 Days",
+          "what": "If denied, file a timely appeal through SSA's four-level review process.",
+          "why": "SSA denies 67% of initial applications, but 45–55% of applicants who appeal to an ALJ are ultimately approved — giving up means walking away from potentially $200,000+ in lifetime benefits.",
+          "steps": [
+            "You have 60 days from the denial letter date plus 5 mail days to file an appeal.",
+            "File online at ssa.gov/appeal or at your local SSA office.",
+            "The four levels: (1) Reconsideration, (2) ALJ Hearing, (3) Appeals Council, (4) Federal Court.",
+            "Submit new medical evidence addressing the specific reasons cited in your denial.",
+            "If Reconsideration is denied, request an ALJ hearing within 60 days — this is where most claims are won.",
+            "Prepare testimony about your daily functional limitations for the hearing."
+          ],
+          "terms": [
+            {
+              "term": "Reconsideration",
+              "def": "First appeal level — a review by a different SSA examiner. About 85% are denied at this stage."
+            },
+            {
+              "term": "Administrative Law Judge (ALJ)",
+              "def": "An SSA judge who conducts hearings on appeals — approval rates range from 45–55% nationally."
+            }
+          ],
+          "contacts": "SSA Appeals: 1-800-772-1213 • ssa.gov/appeal • NOSSCR (attorney referral): 1-800-431-2804",
+          "mistakes": [
+            "Missing the 60-day deadline — you must start the entire process over.",
+            "Not submitting new medical evidence with your appeal.",
+            "Giving up after Reconsideration — the ALJ hearing is where most appeals are won."
+          ]
+        },
+        {
+          "id": "dis-4-2",
+          "title": "Work with a Disability Attorney",
+          "what": "Retain a disability attorney to represent you through appeals at no upfront cost.",
+          "why": "Represented claimants are approved at significantly higher rates. Attorneys are paid only if you win — 25% of back pay, capped at $7,200.",
+          "steps": [
+            "Contact a disability attorney as early as possible — ideally before your ALJ hearing.",
+            "Understand the fee: 25% of back pay or $7,200 (whichever is less), paid by SSA from retroactive benefits.",
+            "Interview 2–3 attorneys and ask about their ALJ approval rate and experience.",
+            "Find attorneys through NOSSCR (nosscr.org) or your state bar association.",
+            "Be fully honest about your medical and work history — surprises at hearing can derail your case."
+          ],
+          "terms": [
+            {
+              "term": "Contingency Fee",
+              "def": "Attorney payment only if you win — 25% of back pay, capped at $7,200, paid directly by SSA."
+            },
+            {
+              "term": "Claimant Representative",
+              "def": "A person authorized to represent you before SSA — can be an attorney or non-attorney advocate."
+            }
+          ],
+          "contacts": "NOSSCR: 1-800-431-2804 • nosscr.org • State bar referral service • Legal Aid: lawhelp.org",
+          "mistakes": [
+            "Hiring an attorney who charges upfront — legitimate disability attorneys work on contingency only.",
+            "Waiting until the hearing date to seek legal help.",
+            "Assuming your attorney handles everything without your involvement."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Work & Accommodations",
+      "tasks": [
+        {
+          "id": "dis-5-1",
+          "title": "Request ADA Workplace Accommodations",
+          "crossRef": [
+            "Job Loss & Income Crisis"
+          ],
+          "what": "Use the ADA to request modifications to your job that allow you to continue working.",
+          "why": "Many people leave the workforce prematurely because they are unaware of their ADA rights. Accommodations can help you remain employed and avoid the SSDI process.",
+          "steps": [
+            "Confirm ADA coverage: applies to employers with 15+ employees; state laws may cover smaller employers.",
+            "Submit a written accommodation request to HR stating you have a medical condition requiring adjustment.",
+            "You do not need to disclose your specific diagnosis — only that you need accommodation.",
+            "Use the Job Accommodation Network (JAN) at askjan.org or 1-800-526-7234 for free guidance.",
+            "Engage in the interactive process with your employer and document all communications.",
+            "If denied, file a charge with the EEOC (eeoc.gov or 1-800-669-4000) within 180–300 days."
+          ],
+          "terms": [
+            {
+              "term": "Reasonable Accommodation",
+              "def": "Any modification to a job or environment that allows a qualified person with a disability to perform essential functions."
+            },
+            {
+              "term": "Interactive Process",
+              "def": "The required dialogue between employer and employee to identify effective accommodations."
+            }
+          ],
+          "contacts": "JAN: 1-800-526-7234 • askjan.org • EEOC: 1-800-669-4000 • eeoc.gov",
+          "mistakes": [
+            "Making only a verbal request — always follow up in writing.",
+            "Disclosing more medical information than necessary.",
+            "Waiting too long to file an EEOC charge if accommodation is denied."
+          ]
+        },
+        {
+          "id": "dis-5-2",
+          "title": "SSDI Trial Work Period and Ticket to Work",
+          "crossRef": [
+            "Retirement Planning"
+          ],
+          "what": "Understand SSA programs that let you test returning to work without losing SSDI benefits.",
+          "why": "Many SSDI recipients fear losing benefits if they try to work, but the Trial Work Period gives you 9 months to work while keeping full benefits.",
+          "steps": [
+            "Trial Work Period (TWP): work for 9 months within a 60-month window while receiving full SSDI, regardless of earnings.",
+            "In 2025, any month you earn $1,110+ counts as a TWP service month.",
+            "After 9 TWP months, you enter a 36-month Extended Period of Eligibility.",
+            "Enroll in Ticket to Work at choosework.ssa.gov or 1-866-968-7842 for free employment support.",
+            "Report all earnings to SSA monthly — failure to report is considered fraud.",
+            "Consult a free WIPA (Work Incentives Planning and Assistance) benefits counselor before starting work."
+          ],
+          "terms": [
+            {
+              "term": "Trial Work Period",
+              "def": "SSA program allowing 9 months of work within 5 years while receiving full SSDI benefits regardless of earnings."
+            },
+            {
+              "term": "Ticket to Work",
+              "def": "Free SSA program providing employment services to SSDI/SSI recipients ages 18–64."
+            }
+          ],
+          "contacts": "Ticket to Work: 1-866-968-7842 • choosework.ssa.gov • SSA Work Incentives: ssa.gov/work",
+          "mistakes": [
+            "Not reporting earnings to SSA — unreported earnings are treated as fraud.",
+            "Assuming any work will end SSDI immediately.",
+            "Not consulting a WIPA counselor before starting work."
+          ]
+        }
+      ]
+    }
+  ]
+}

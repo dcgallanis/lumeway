@@ -1,0 +1,881 @@
+{
+  "label": "Death & Estate",
+  "categories": [
+    {
+      "name": "Immediate Tasks — First 72 Hours",
+      "tasks": [
+        {
+          "id": "es-1-1",
+          "title": "First Steps After a Death",
+          "what": "The immediate next steps once a death has occurred — notifying family, contacting a funeral home, beginning documentation, and gathering important items.",
+          "why": "The first hours set the tone for everything that follows. How you handle these steps affects what documents you'll need and which agencies you'll interact with.",
+          "steps": [
+            "Notify immediate family by phone (not text). Keep messages brief.",
+            "If the death occurred at a hospital or facility, ask staff what steps come next and what paperwork they need from you.",
+            "Contact a funeral home to arrange transport — the hospital or facility can recommend one if you don't have a preference.",
+            "Request 10–15 certified death certificates immediately ($15–$30 each) — you will need these for banks, insurance, and government agencies.",
+            "Gather the deceased's phone, passwords, wallet, and any visible documents.",
+            "If the death was sudden or unattended, document details while they are fresh — write down what happened and when.",
+            "Secure the home if the deceased lived alone — lock doors, collect mail, adjust thermostats.",
+            "Take a breath. There is no deadline on grief. The paperwork can wait a day."
+          ],
+          "terms": [
+            {
+              "term": "Certified death certificate",
+              "def": "Official government document signed by a physician stating cause and place of death; required for legal and financial transactions."
+            },
+            {
+              "term": "Medical examiner",
+              "def": "Government official who investigates unexpected deaths to determine cause."
+            },
+            {
+              "term": "Unattended death",
+              "def": "Death outside a hospital or facility; may trigger a medical examiner investigation."
+            }
+          ],
+          "contacts": "Hospital/facility staff • Local funeral home • Medical examiner's office (if death was unattended)",
+          "mistakes": [
+            "Not ordering enough death certificates — you'll need 10–15.",
+            "Not documenting what happened in the first hours — details fade quickly.",
+            "Assuming you can access the deceased's phone or accounts immediately.",
+            "Trying to handle everything alone — ask a trusted person to help with calls and logistics."
+          ]
+        },
+        {
+          "id": "es-1-2",
+          "title": "Order Death Certificates (10–15 Copies)",
+          "what": "Ordering certified copies of the death certificate from the state vital records office for banks, insurance, real estate, and government agencies.",
+          "why": "You'll need multiple certified copies for different institutions. Ordering only 1–2 copies means 2–4 week delays each reorder. Ordering 10–15 upfront costs $150–$450 but saves weeks.",
+          "steps": [
+            "Obtain an unofficial copy from the hospital or medical examiner.",
+            "Find your state's vital records office (search \"[state] vital records death certificate\").",
+            "Order 10–15 certified copies — you'll need them for banks, insurance, pensions, and property transfers.",
+            "Order online or by mail with deceased's full name, DOB, date of death, and your relationship.",
+            "Ask the funeral home about bulk discounts — they often get cheaper rates.",
+            "Request expedited processing if time-sensitive ($25–$50 extra).",
+            "Keep originals secure; use photocopies for most submissions."
+          ],
+          "terms": [
+            {
+              "term": "Certified death certificate",
+              "def": "Official copy from the state vital records office bearing the state seal; required for most legal/financial transactions."
+            },
+            {
+              "term": "Vital records office",
+              "def": "Government agency maintaining official records of births, deaths, and marriages."
+            }
+          ],
+          "contacts": "State vital records office • Funeral home • County health office for in-person orders",
+          "mistakes": [
+            "Ordering too few copies and having to reorder multiple times.",
+            "Using uncertified hospital copies instead of certified copies from vital records.",
+            "Mailing original certified copies — keep originals, send photocopies.",
+            "Waiting to order until you know the exact count — order now; extras are cheap."
+          ]
+        },
+        {
+          "id": "es-1-3",
+          "title": "Funeral and Memorial Arrangements",
+          "what": "Planning the funeral, memorial service, or body disposition and understanding costs ($1,000 simple cremation to $15,000+ traditional burial).",
+          "why": "Making decisions without a plan or comparison-shopping costs $3,000–$5,000 in unnecessary expenses. The FTC requires funeral homes to provide itemized pricing.",
+          "steps": [
+            "Determine the deceased's wishes — check will, safe deposit box, or attorney's files.",
+            "Contact 2–3 funeral homes and ask for itemized price lists (FTC requires this).",
+            "Understand options: burial ($7K–$15K), cremation ($1K–$3K), or body donation (free to $400).",
+            "Decide on service type: traditional funeral, memorial, celebration of life, or no service.",
+            "Get itemized quotes — skip viewing, choose simpler casket, or bring your own flowers to save 30–50%.",
+            "Communicate final arrangements to key family members with date, time, and location.",
+            "Assign someone to manage logistics on the service day."
+          ],
+          "terms": [
+            {
+              "term": "Embalming",
+              "def": "Treating the body to slow decomposition for viewing; required only if there's a viewing."
+            },
+            {
+              "term": "Grave plot",
+              "def": "Designated cemetery location for burial; $1,000–$3,000."
+            },
+            {
+              "term": "Memorial service",
+              "def": "Gathering to remember the deceased, usually without the body present."
+            }
+          ],
+          "contacts": "Funeral homes (call 2–3 for quotes) • Religious institution • Cremation societies • Body donation programs",
+          "mistakes": [
+            "Not getting itemized quotes and comparing costs.",
+            "Assuming you must do a full traditional funeral — cremation and small memorials are valid.",
+            "Financing a funeral with credit cards when other options exist.",
+            "Not asking about less expensive options — funeral directors don't volunteer these."
+          ]
+        },
+        {
+          "id": "es-1-4",
+          "title": "Notify Immediate Family and Employer",
+          "what": "Systematic notification of family, the deceased's employer, and key contacts about the death.",
+          "why": "A thoughtful notification prevents rumors and begins the support process. Poor notification compounds grief with confusion.",
+          "steps": [
+            "Create a prioritized notification list: immediate family, employer, extended family, friends.",
+            "Call immediate family first (within 1–2 hours) — don't text or email for the first notification.",
+            "Write a family notification email within 24 hours with funeral details and a contact person.",
+            "Notify the deceased's employer within 24 hours — ask about company benefits and bereavement support.",
+            "Request workplace flexibility for the next 1–2 weeks.",
+            "Designate one person as the main contact for all questions.",
+            "Consider a memorial page or obituary for distant family and friends."
+          ],
+          "terms": [
+            {
+              "term": "Bereavement leave",
+              "def": "Time off from work after a family death; usually 3–5 days."
+            },
+            {
+              "term": "Obituary",
+              "def": "Written death announcement published in a newspaper or online; includes biography and funeral details."
+            }
+          ],
+          "contacts": "Immediate family by phone • Employer HR or direct manager • Funeral home for obituary placement",
+          "mistakes": [
+            "Notifying through text or social media instead of personal phone calls.",
+            "Waiting days to notify the employer — notify within 24 hours.",
+            "Not designating a main contact — causes chaos with conflicting information.",
+            "Providing too much detail in the initial notification."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Legal and Probate",
+      "tasks": [
+        {
+          "id": "es-2-1",
+          "title": "Locate the Will and Estate Documents",
+          "what": "Finding the deceased's will, trust documents, power of attorney, and other legal papers that control estate distribution.",
+          "why": "Without the will, the estate goes through intestate probate (6–18 months, $3K–$10K in fees). A trust can avoid probate entirely. Locating documents in the first week prevents delays.",
+          "steps": [
+            "Search the deceased's home: safe deposit box, home safe, filing cabinets, desk.",
+            "Check for a safe deposit box key — call the bank with the death certificate.",
+            "Contact the deceased's attorney for copies of will, trust, or POA.",
+            "Search online storage and cloud accounts (Google Drive, iCloud, Dropbox).",
+            "Look for previous wills or a revocable living trust that may supersede the will.",
+            "Search for a \"Letter of Intent\" or wishes document.",
+            "File the original will with probate court if it hasn't been filed."
+          ],
+          "terms": [
+            {
+              "term": "Will",
+              "def": "Legal document stating how the deceased wants their estate distributed; goes through probate court."
+            },
+            {
+              "term": "Revocable living trust",
+              "def": "Legal document holding assets and distributing them without probate; can be changed during life."
+            },
+            {
+              "term": "Executor",
+              "def": "Person named in the will to carry out the deceased's wishes."
+            },
+            {
+              "term": "Probate",
+              "def": "Court process for distributing a deceased's estate; can take 6–18 months."
+            }
+          ],
+          "contacts": "Deceased's attorney • Probate court in the deceased's county • Banks and investment firms • Family members",
+          "mistakes": [
+            "Not searching thoroughly and assuming no will exists.",
+            "Removing documents from a safe deposit box without legal guidance.",
+            "Not checking digital/cloud accounts for stored documents.",
+            "Not calling the attorney on old documents — they may have newer versions."
+          ]
+        },
+        {
+          "id": "es-2-2",
+          "title": "Open Probate or Use Small Estate Procedures",
+          "what": "Deciding whether to use formal probate (for large estates) or a faster small estate procedure (for estates under your state's threshold, typically $50K–$150K).",
+          "why": "Probate takes 6–18 months and costs $3K–$10K, but provides court oversight. Small estate procedures take 2–4 weeks and cost $200–$500. Choosing the wrong path wastes time or money.",
+          "steps": [
+            "Calculate the estate value roughly: house + bank accounts + investments + life insurance.",
+            "Find your state's small estate threshold (search \"[state] small estate\").",
+            "If below threshold, obtain small estate forms from probate court.",
+            "If above threshold, hire an estate attorney ($1,500–$3,000 flat fee for simple estates).",
+            "File documents with probate court (filing fees $200–$400).",
+            "Notify heirs and creditors as required by law.",
+            "Wait for creditor claims period (4–6 months) before distributing the estate."
+          ],
+          "terms": [
+            {
+              "term": "Small estate procedure",
+              "def": "Simplified process for estates below state threshold; faster and cheaper than full probate."
+            },
+            {
+              "term": "Intestate",
+              "def": "Died without a valid will; state law determines distribution."
+            },
+            {
+              "term": "Affidavit",
+              "def": "Sworn statement; in small estate context, confirms the estate qualifies for simplified procedure."
+            }
+          ],
+          "contacts": "Probate court clerk • Estate attorney • County law library for free research assistance",
+          "mistakes": [
+            "Assuming probate is always necessary — many estates qualify for small estate procedures.",
+            "Distributing the estate before creditor claims period is over.",
+            "Not filing the will with probate court — may lose legal validity.",
+            "Trying to handle complex probate without an attorney."
+          ]
+        },
+        {
+          "id": "es-2-3",
+          "title": "Manage Estate Taxes and Final Tax Returns",
+          "what": "Filing the deceased's final income tax return and understanding estate tax liability for large estates.",
+          "why": "The final return is due April 15 of the following year. Large estates (over $13.61M) owe 40% federal estate tax. Failing to file triggers penalties and interest.",
+          "steps": [
+            "Determine if a final tax return is required (income threshold: ~$14,600 for single filers).",
+            "Gather income documents: W-2s, 1099s, K-1s, rental income statements.",
+            "Hire a CPA for complex situations (business, significant investments, estate over $5M).",
+            "Understand stepped-up basis — inherited assets reset to fair market value at death, eliminating capital gains.",
+            "File final Form 1040 marked \"Deceased\" by April 15.",
+            "File estate income tax return (Form 1041) if estate income exceeds $600/year.",
+            "Determine if federal estate tax (Form 706) is owed — only if estate exceeds $13.61M."
+          ],
+          "terms": [
+            {
+              "term": "Stepped-up basis",
+              "def": "Inherited assets reset to date-of-death value, eliminating capital gains tax on appreciation during the deceased's lifetime."
+            },
+            {
+              "term": "Estate tax",
+              "def": "Federal tax (40%) on estates exceeding the exemption threshold ($13.61M in 2024)."
+            },
+            {
+              "term": "Form 706",
+              "def": "Federal estate tax return, required only if the estate exceeds the exemption."
+            }
+          ],
+          "contacts": "CPA or tax attorney • IRS Publication 559 for instructions • State tax office for state return requirements",
+          "mistakes": [
+            "Not filing a final return when required — triggers IRS penalties.",
+            "Not understanding stepped-up basis and triggering unnecessary capital gains taxes.",
+            "Assuming all estates owe estate tax — only very large estates (over $13.61M) do.",
+            "Paying estate taxes before consulting a CPA."
+          ]
+        },
+        {
+          "id": "es-2-4",
+          "title": "Estate with Debt — What Passes to Survivors",
+          "what": "Understanding which debts die with the deceased and which must be paid from the estate before heirs receive anything.",
+          "why": "Most debts die with the person; survivors aren't responsible unless they co-signed or are a spouse in a community property state. Understanding which debts are collectible prevents wrong decisions.",
+          "steps": [
+            "Know the general rule: debts don't pass to heirs — they're paid from estate assets.",
+            "Collect all debts: mortgage, auto loans, credit cards, medical bills, tax debt.",
+            "Understand exceptions: co-signed loans, community property state spouse liability, IRS debt.",
+            "Notify each creditor of the death via certified mail.",
+            "Prioritize debts: funeral expenses and taxes first, then secured debt, then unsecured.",
+            "Challenge invalid or time-barred debt — don't automatically pay creditors who call.",
+            "As executor, pay debts from estate assets, not from your own pocket."
+          ],
+          "terms": [
+            {
+              "term": "Secured debt",
+              "def": "Debt backed by collateral (house for mortgage, car for auto loan); creditor can seize the asset."
+            },
+            {
+              "term": "Unsecured debt",
+              "def": "Debt not backed by collateral (credit cards, medical bills); creditor must sue to collect."
+            },
+            {
+              "term": "Community property",
+              "def": "Property regime in some states where spouses are liable for each other's debts incurred during marriage."
+            }
+          ],
+          "contacts": "Estate attorney • State attorney general's office for debt collection rules • Creditors to verify amounts",
+          "mistakes": [
+            "Assuming surviving spouse is liable for all debts — varies by state.",
+            "Paying invalid or time-barred debt because a creditor demanded it.",
+            "Paying debts personally when you should pay from the estate.",
+            "Not opening probate, allowing creditors to sue heirs directly."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Financial & Benefits",
+      "tasks": [
+        {
+          "id": "es-3-1",
+          "title": "Claim Life Insurance Proceeds",
+          "what": "Filing claims for life insurance policies and understanding beneficiary designations and payout timelines.",
+          "why": "Life insurance proceeds are often the fastest money available (30–60 day payout) and aren't subject to probate. A typical $500K policy pays out quickly, but missing or outdated beneficiary forms cause months of delays.",
+          "steps": [
+            "Locate all policies: employer group life, individual policies, mortgage life insurance.",
+            "Identify the beneficiary on each policy by calling the insurance company.",
+            "Gather required documents: certified death certificate, completed claim form, beneficiary ID.",
+            "File the claim within 30–90 days of death (most policies require filing within 1 year).",
+            "Understand the 30–60 day payout timeline after submitting a complete claim.",
+            "If no beneficiary is named, the payout goes to the estate through probate (6–12 months delay)."
+          ],
+          "terms": [
+            {
+              "term": "Beneficiary",
+              "def": "Person named to receive the life insurance death benefit."
+            },
+            {
+              "term": "Contingent beneficiary",
+              "def": "Secondary beneficiary who receives the benefit if the primary is deceased."
+            },
+            {
+              "term": "Contestability period",
+              "def": "Period (usually 2 years) during which insurer can deny claim for misstatements on the application."
+            }
+          ],
+          "contacts": "Life insurance company • County vital records for death certificates • Insurance attorney if claim is denied",
+          "mistakes": [
+            "Not claiming promptly — delays cost survivors critical time without funds.",
+            "Assuming beneficiary designation is current — check for outdated names.",
+            "Not looking for employer group life insurance — many employees don't realize they have it.",
+            "Assuming life insurance is taxable — it's not (but interest on held funds is)."
+          ],
+          "script": {
+            "intro": "When calling a life insurance company to file a death claim:",
+            "lines": [
+              "\"I'm calling to file a death claim on policy number [number] for [deceased's full name]. I'm the named beneficiary. The policyholder passed away on [date] and I have the certified death certificate.\"",
+              "\"Can you walk me through your claims process? What forms do I need to complete, and what documents do you need from me? How long does the payout typically take once you have everything?\"",
+              "\"Can you also confirm the benefit amount and whether there are any other policies on file for this person? I want to make sure I'm not missing anything.\""
+            ],
+            "note": "If you don't know the policy number, provide the deceased's full name, date of birth, and SSN. The company can look it up. Ask for a claim number and direct phone line for follow-up."
+          }
+        },
+        {
+          "id": "es-3-2",
+          "title": "Access Joint and Individual Bank Accounts",
+          "what": "Understanding which accounts are accessible immediately (joint, transfer-on-death) and which are frozen pending probate.",
+          "why": "Joint accounts pass automatically to the surviving owner within 7–14 days. Individual accounts freeze and require Letters Testamentary (6–12 weeks). Knowing which are accessible prevents unnecessary delays.",
+          "steps": [
+            "Locate all bank accounts: check statements, tax documents, online banking.",
+            "Contact each bank with the death certificate to determine access options.",
+            "Access joint account funds immediately (3–7 days after reporting death).",
+            "Use small estate affidavit for individual accounts under your state's limit ($5K–$15K).",
+            "Obtain Letters Testamentary from probate court for larger individual accounts (6–12 weeks).",
+            "Create a separate estate account and keep meticulous records of all withdrawals.",
+            "Notify creditors and stop auto-payments from frozen accounts."
+          ],
+          "terms": [
+            {
+              "term": "Joint account",
+              "def": "Bank account with two or more names; passes automatically to surviving owner at death."
+            },
+            {
+              "term": "Transfer-on-death (TOD)",
+              "def": "Account with beneficiary designation; passes directly to beneficiary without probate."
+            },
+            {
+              "term": "Letters Testamentary",
+              "def": "Court order authorizing executor to manage and distribute estate assets."
+            }
+          ],
+          "contacts": "Bank (each account-holding institution) • County court clerk for small estate affidavit • Probate attorney for Letters Testamentary",
+          "mistakes": [
+            "Assuming all accounts are frozen — joint and TOD accounts are accessible immediately.",
+            "Not setting up a separate estate account — mixing personal and estate money causes legal problems.",
+            "Accessing individual account funds before probate is final — executor can be personally liable."
+          ]
+        },
+        {
+          "id": "es-3-3",
+          "title": "File for Social Security Survivor Benefits",
+          "what": "Claiming Social Security survivor benefits for surviving spouse, children, and dependents, plus the $255 lump-sum death payment.",
+          "why": "A family of three can receive $3,000–$5,000/month. Filing within 30–60 days ensures benefits start quickly; delaying costs months of lost income.",
+          "steps": [
+            "Verify the deceased was a Social Security beneficiary (call 1-800-772-1213).",
+            "Identify all eligible survivors: spouse 60+, children under 19, disabled adult children.",
+            "Calculate approximate monthly benefit (75–100% of deceased's benefit, split among survivors).",
+            "File within 60 days of death at ssa.gov or local SSA office.",
+            "Claim the one-time $255 lump-sum death payment.",
+            "Understand earnings limits if working while collecting ($21,756/year limit in 2026).",
+            "Update SSA if circumstances change (employment, remarriage, child ages out)."
+          ],
+          "terms": [
+            {
+              "term": "Primary Insurance Amount (PIA)",
+              "def": "Monthly benefit amount based on the deceased's earnings record."
+            },
+            {
+              "term": "Full Retirement Age (FRA)",
+              "def": "Age at which survivor receives full unreduced benefit; varies by birth year (66–67)."
+            },
+            {
+              "term": "Earnings limit",
+              "def": "Maximum amount a working survivor can earn before benefits are reduced."
+            }
+          ],
+          "contacts": "Social Security Administration: 1-800-772-1213 • Local SSA office (ssa.gov/locator) • State aging agency",
+          "mistakes": [
+            "Not filing within 60 days — lose back months of benefits.",
+            "Thinking only widow/widower gets benefits — children and dependent parents are also eligible.",
+            "Not understanding earnings limits while working and collecting.",
+            "Assuming child benefits continue automatically after age 19."
+          ],
+          "script": {
+            "intro": "When calling Social Security (1-800-772-1213) to report a death and file for survivor benefits:",
+            "lines": [
+              "\"I'm calling to report the death of [full name], Social Security number [XXX-XX-XXXX]. They passed away on [date]. I'm their [spouse/child/parent] and I need to file for survivor benefits.\"",
+              "\"I have the certified death certificate. Can you tell me what benefits I may be eligible for, and what documents I need to bring to file? I'd also like to apply for the $255 lump-sum death payment.\"",
+              "\"Can you also tell me what the deceased's monthly benefit amount was, so I can understand what my survivor benefit might be?\""
+            ],
+            "note": "Call early in the morning (8am local time) to avoid long hold times. Have the deceased's SSN, your SSN, the death certificate, and your marriage certificate ready. They may schedule an in-person appointment at your local office."
+          }
+        },
+        {
+          "id": "es-3-4",
+          "title": "Claim Pension and Retirement Account Benefits",
+          "what": "Accessing survivor benefits from 401(k), IRA, pension plans — understanding payout options and the 10-year distribution rule.",
+          "why": "Retirement accounts are often the largest estate asset. A $500K 401(k) with beneficiary designation pays out in 30–60 days. Mistakes trigger massive tax bills — incorrect treatment of an inherited IRA can cost $150K+ in unexpected taxes.",
+          "steps": [
+            "Locate all retirement accounts: check tax documents (1099-R, Form 5498), employer statements.",
+            "Identify named beneficiaries on each account — beneficiary designation overrides the will.",
+            "Understand payout rules: spouse can roll over to own IRA; non-spouse must withdraw within 10 years (SECURE Act).",
+            "For spouse beneficiaries: choose between rollover to own IRA (most tax-efficient) or beneficiary IRA.",
+            "For pension plans: choose survivor benefit option carefully — once chosen, it cannot be changed.",
+            "Claim inherited accounts promptly (30–60 day payout timeline).",
+            "Consult a CPA before taking any distributions — tax liability can exceed 30%."
+          ],
+          "terms": [
+            {
+              "term": "Beneficiary designation",
+              "def": "Named person receiving retirement account at death; overrides the will."
+            },
+            {
+              "term": "Rollover",
+              "def": "Moving retirement funds to a new account without triggering immediate tax."
+            },
+            {
+              "term": "SECURE Act",
+              "def": "Federal law requiring non-spouse beneficiaries to withdraw inherited accounts within 10 years."
+            },
+            {
+              "term": "QDRO",
+              "def": "Qualified Domestic Relations Order — court order dividing a retirement account between spouses."
+            }
+          ],
+          "contacts": "Plan administrator or account provider • Certified Financial Planner (CFP) • CPA before taking distributions • Estate attorney for disputes",
+          "mistakes": [
+            "Not updating beneficiary designations after divorce or remarriage.",
+            "Non-spouse rolling over inherited 401(k) to own name — triggers immediate full tax.",
+            "Not consulting a CPA before large distributions — unexpected 30%+ tax bills.",
+            "Spouse not rolling over to own IRA when it's the most tax-efficient option."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Insurance & Healthcare",
+      "tasks": [
+        {
+          "id": "es-4-1",
+          "title": "Continue or Replace Health Insurance",
+          "what": "Understanding health insurance options after a spouse's death — COBRA, marketplace special enrollment, and Medicare.",
+          "why": "Losing spouse's health insurance is critical — coverage ends within 30–60 days. COBRA allows continuation for 36 months (~$1,500–$2,500/month). Marketplace is cheaper ($200–$400/month after subsidies). Filing within 60 days ensures no gap.",
+          "steps": [
+            "Determine current health insurance and when coverage ends (call employer HR).",
+            "Understand COBRA: 36-month continuation at full premium cost + 2% admin fee.",
+            "Elect or decline COBRA within 60 days — once declined, you can't rejoin.",
+            "Explore marketplace insurance as a cheaper alternative (healthcare.gov).",
+            "Determine if Medicare applies (age 65+ — enroll at ssa.gov or call 1-800-772-1213).",
+            "Update beneficiaries and dependents on the new plan.",
+            "Plan for COBRA end date — transition to marketplace or Medicare 30–60 days before it expires."
+          ],
+          "terms": [
+            {
+              "term": "COBRA",
+              "def": "Continuation coverage allowing families to stay on employer health plan after death; must pay full premium."
+            },
+            {
+              "term": "Qualifying event",
+              "def": "Life event (death, divorce, job loss) that allows marketplace enrollment outside normal period."
+            },
+            {
+              "term": "Special enrollment period",
+              "def": "60-day window to enroll in marketplace coverage after a qualifying event."
+            }
+          ],
+          "contacts": "Employer HR/benefits • Healthcare.gov (1-800-318-2596) • Social Security (1-800-772-1213) for Medicare • State Medicaid office",
+          "mistakes": [
+            "Not electing COBRA within 60 days — lose the right to continue coverage.",
+            "Choosing COBRA without comparing marketplace cost — marketplace is often cheaper with subsidies.",
+            "Ignoring Medicare eligibility at age 65 — late enrollment triggers lifetime penalty."
+          ]
+        },
+        {
+          "id": "es-4-2",
+          "title": "Update or Cancel Insurance Policies",
+          "what": "Removing the deceased from auto, home, and other insurance policies and canceling unnecessary coverage.",
+          "why": "Policies continue in the deceased's name until explicitly canceled, creating unnecessary costs and liability. Updating to survivor-only coverage reduces costs by 10–30%.",
+          "steps": [
+            "Locate all active insurance policies: auto, home, renters, life, umbrella.",
+            "Contact auto insurer to remove deceased and update policy to survivor.",
+            "Transfer vehicle title to survivor before updating auto insurance.",
+            "Cancel vehicles from the policy if not being used.",
+            "Contact home/renters insurer to update policy to your name.",
+            "Plan insurance cancellation to coincide with property sale (don't cancel early).",
+            "Request pro-rata refunds for prepaid premiums on canceled policies.",
+            "Review whether survivor needs new life insurance coverage."
+          ],
+          "terms": [
+            {
+              "term": "Pro-rata refund",
+              "def": "Refund based on daily rate for the unused portion of a prepaid insurance policy."
+            },
+            {
+              "term": "Insurable interest",
+              "def": "Legal right to benefit from an insured asset; policyholder must own or have stake in the property."
+            }
+          ],
+          "contacts": "Auto/home insurance company • County registrar/DMV for title transfers • County clerk for deed transfer documentation",
+          "mistakes": [
+            "Canceling home insurance before deed is transferred — leaves property uninsured.",
+            "Not claiming refunds for canceled insurance — insurer won't refund automatically.",
+            "Not removing deceased from property title before changing insurance.",
+            "Continuing to pay for two drivers when only one remains."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Digital Estate",
+      "tasks": [
+        {
+          "id": "es-5-1",
+          "title": "Manage Digital Accounts and Online Presence",
+          "what": "Closing or memorializing digital accounts (email, social media, subscriptions, cloud storage) and preserving the digital legacy.",
+          "why": "Digital accounts accumulate passwords, personal files, and ongoing subscriptions that continue charging. Without access, survivors can't retrieve important documents or stop wasted spending ($20–$200/month if left running).",
+          "steps": [
+            "Locate the deceased's email accounts — these are the master keys to other accounts.",
+            "Attempt email access via password, recovery options, or provider request with death certificate.",
+            "Create a list of all digital accounts: social media, financial, subscriptions, cloud storage.",
+            "Search for passwords in a password manager, written notes, or browser saved passwords.",
+            "Download important documents, photos, and emails before memorializing or deleting accounts.",
+            "Memorialize or delete social media accounts (facebook.com/memorialization).",
+            "Cancel all ongoing subscriptions to stop recurring charges."
+          ],
+          "terms": [
+            {
+              "term": "Legacy contact",
+              "def": "Person designated to manage an account after the holder's death; available on Google and Facebook."
+            },
+            {
+              "term": "Memorialization",
+              "def": "Converting an active account to memorial status with an \"in memory\" badge."
+            },
+            {
+              "term": "Takeout",
+              "def": "Data export feature (Google Takeout, Apple Data Request) for downloading all account data."
+            }
+          ],
+          "contacts": "Email providers (Google, Microsoft, Yahoo) • Social media platforms for memorialization • Subscription services to cancel and refund",
+          "mistakes": [
+            "Not downloading important documents from cloud storage before accounts are closed.",
+            "Not canceling subscriptions promptly — can waste $200–$1,000/year.",
+            "Permanently deleting social media without downloading photos/videos first.",
+            "Trying to guess passwords too many times — accounts lock for security."
+          ]
+        },
+        {
+          "id": "es-5-2",
+          "title": "Handle Digital Assets and Cryptocurrency",
+          "what": "Locating and claiming cryptocurrency wallets, NFTs, digital business accounts, and domain names.",
+          "why": "Cryptocurrency without private keys or recovery phrases is irretrievable — dead money that heirs never claim. The same applies to NFTs, online businesses, and domain names that expire.",
+          "steps": [
+            "Search for evidence of crypto holdings: exchange accounts, hardware wallets, tax documents.",
+            "Understand centralized (Coinbase, Kraken — recoverable with death certificate) vs. decentralized wallets (need recovery phrase or funds are lost forever).",
+            "Search for private keys and recovery phrases in safes, written notes, and encrypted files.",
+            "Access centralized exchange accounts with email/password or formal account recovery.",
+            "Document NFT holdings and determine current value.",
+            "Identify digital business assets: websites, YouTube channels, e-commerce stores.",
+            "Renew domain names before expiration to prevent permanent loss."
+          ],
+          "terms": [
+            {
+              "term": "Recovery phrase (seed phrase)",
+              "def": "12–24 word backup phrase for a cryptocurrency wallet; if lost, the wallet is inaccessible forever."
+            },
+            {
+              "term": "Centralized exchange",
+              "def": "Cryptocurrency company holding your coins (Coinbase, Kraken); can reset password with proof of death."
+            },
+            {
+              "term": "Cold storage",
+              "def": "Offline cryptocurrency storage (hardware wallet); most secure but hardest to recover."
+            }
+          ],
+          "contacts": "Cryptocurrency exchange support • Domain registrar support • Cybersecurity expert for device access ($500–$5,000) • Estate attorney for substantial digital assets",
+          "mistakes": [
+            "Waiting too long to renew domains — they expire and are immediately resold.",
+            "Assuming cryptocurrency is insured — loss of private key means permanent loss.",
+            "Sharing recovery phrases with untrustworthy people.",
+            "Not documenting digital assets in a will or instructions."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Military Survivor Benefits",
+      "tasks": [
+        {
+          "id": "es-6-1",
+          "title": "File for VA Survivor Benefits",
+          "what": "Claiming Dependency and Indemnity Compensation (DIC), VA burial benefits, VA pension, and CHAMPVA healthcare for surviving families of veterans.",
+          "why": "VA benefits provide $1,500–$3,500/month and CHAMPVA healthcare. Burial benefits cover $2,000–$23,000+. Filing within 6–12 months maximizes retroactive payment to the death date.",
+          "steps": [
+            "Verify eligibility: service-connected death, 100% disability rating, or active duty death (call 1-800-827-1000).",
+            "File VA Form 21-534 for DIC ($1,594/month for widow/widower in 2026).",
+            "File for VA burial benefits ($2,000–$23,000+) within 2 years of death (VA Form 21P-530).",
+            "Enroll in CHAMPVA healthcare (no premium, no age limit) — call 1-800-733-8387.",
+            "Claim accrued benefits (back pay from death date to filing date).",
+            "Update VA if circumstances change (remarriage, child ages out, address change)."
+          ],
+          "terms": [
+            {
+              "term": "DIC",
+              "def": "Dependency and Indemnity Compensation — monthly benefit for families of service members who died from service-related conditions."
+            },
+            {
+              "term": "CHAMPVA",
+              "def": "Healthcare insurance for survivors of service-connected deaths; no premium, lifetime coverage."
+            },
+            {
+              "term": "DD-214",
+              "def": "Military discharge papers showing service dates, discharge status, and awards."
+            }
+          ],
+          "contacts": "VA: 1-800-827-1000 • CHAMPVA: 1-800-733-8387 • Local VA Regional Office (va.gov/find-locations) • Military Family Support Centers",
+          "mistakes": [
+            "Not filing within 6–12 months — delays reduce back pay.",
+            "Assuming DIC and pension are both available — usually only one applies.",
+            "Not claiming burial benefits — reimbursement is available but must be requested.",
+            "Remarrying before understanding DIC implications (stops if remarrying before age 57)."
+          ]
+        },
+        {
+          "id": "es-6-2",
+          "title": "Access Military Records and Honors",
+          "what": "Obtaining the DD-214, requesting military funeral honors, securing a VA headstone, and arranging burial in a VA National Cemetery.",
+          "why": "Military funeral honors are a solemn tribute provided free. VA burial benefits pay for much or all of burial costs. DD-214 is required for all VA benefits, so obtain it early.",
+          "steps": [
+            "Obtain the DD-214 online at archives.gov or ebenefits.va.gov (1–3 weeks by mail).",
+            "Request military funeral honors 48–72 hours before funeral (call 1-877-645-6779).",
+            "Apply for a free VA headstone or marker (VA Form 40-1330; 4–8 weeks processing).",
+            "Arrange burial in a VA National Cemetery if desired (free grave, headstone, maintenance).",
+            "Request replacement medals for framing or display ($5–$15 per medal).",
+            "Customize headstone inscription (rank, insignia, personal motto — up to 3 lines)."
+          ],
+          "terms": [
+            {
+              "term": "Military funeral honors",
+              "def": "Free ceremony with honor guard, flag presentation, rifle salute, and Taps."
+            },
+            {
+              "term": "VA National Cemetery",
+              "def": "Federal cemetery for veterans offering free grave, headstone, and perpetual maintenance."
+            },
+            {
+              "term": "Burial flag",
+              "def": "American flag folded and presented to next-of-kin of deceased service member."
+            }
+          ],
+          "contacts": "Military funeral honors office: 1-877-645-6779 • VA: 1-800-827-1000 • National Archives (archives.gov) for DD-214 • VA National Cemetery (cem.va.gov)",
+          "mistakes": [
+            "Not requesting military funeral honors early enough — must request 48–72 hours before funeral.",
+            "Not applying for the free VA headstone.",
+            "Not obtaining DD-214 early — needed for all VA benefits.",
+            "Throwing away or not displaying the burial flag respectfully."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Administrative Tasks",
+      "tasks": [
+        {
+          "id": "es-7-1",
+          "title": "File Final Tax Returns",
+          "what": "Filing the deceased's final federal and state returns (Form 1040), estate income tax (Form 1041), and estate tax (Form 706) if applicable.",
+          "why": "Final returns must be filed even if income was low — IRS penalties accrue. Estate income tax is required if estate income exceeds $600/year. Most estates don't owe federal estate tax (threshold: $13.61M+).",
+          "steps": [
+            "Determine if a final 1040 is required (income threshold: $13,850 single, $27,700 married in 2026).",
+            "Gather income documents: W-2s, 1099s, K-1s, rental income statements.",
+            "File final 1040 marked \"Deceased\" by April 15 (or request extension via Form 4868).",
+            "Understand stepped-up basis — saves heirs tens of thousands on appreciated assets.",
+            "File Form 1041 (estate income tax) if estate earns over $600/year during probate.",
+            "File Form 706 only if estate exceeds $13.61M (95%+ of estates don't).",
+            "Check state estate and inheritance tax requirements — rules vary widely.",
+            "Provide K-1 forms to beneficiaries showing their share of estate income."
+          ],
+          "terms": [
+            {
+              "term": "Final return",
+              "def": "Income tax return (Form 1040) for the year of death; reports income earned up to the death date."
+            },
+            {
+              "term": "Stepped-up basis",
+              "def": "Asset cost basis reset to fair market value at death; allows heirs to sell without capital gains tax."
+            },
+            {
+              "term": "K-1 form",
+              "def": "Statement showing each beneficiary's share of estate income; reported on personal tax return."
+            }
+          ],
+          "contacts": "CPA or tax professional • IRS: 1-800-829-1040 • State Department of Revenue • Estate attorney for complex situations",
+          "mistakes": [
+            "Not filing the final return — IRS penalties accrue even for low income.",
+            "Not taking the stepped-up basis on inherited assets.",
+            "Missing Form 1041 filing deadline — delays estate closure.",
+            "Not understanding that inherited retirement accounts have different tax rules."
+          ]
+        },
+        {
+          "id": "es-7-2",
+          "title": "Transfer Titles and Property",
+          "what": "Transferring legal ownership of real estate, vehicles, and other titled assets from the deceased to heirs.",
+          "why": "Titled property can't be transferred informally. Joint ownership and TOD designations transfer in days; others require full probate (months). Understanding which method applies prevents delays.",
+          "steps": [
+            "Identify all titled property: real estate, vehicles, boats, business interests.",
+            "Check for transfer-on-death (TOD) designations — transfers without probate.",
+            "For jointly held property, file death certificate with county clerk to update title.",
+            "Transfer real estate through probate if no TOD deed exists (6–12 weeks after probate).",
+            "Transfer vehicles through DMV with death certificate, title, and proof of inheritance ($15–$50).",
+            "Update homeowner's insurance, property tax records, and vehicle registration after transfer.",
+            "If selling property during probate, executor can petition court for sale authority."
+          ],
+          "terms": [
+            {
+              "term": "Transfer-on-death (TOD) deed",
+              "def": "Deed naming beneficiary to automatically receive real estate at death without probate."
+            },
+            {
+              "term": "Joint tenants with rights of survivorship",
+              "def": "Ownership where property automatically passes to surviving co-owner; no probate needed."
+            },
+            {
+              "term": "Tenancy by entirety",
+              "def": "Special joint ownership for married couples; property passes automatically to surviving spouse."
+            }
+          ],
+          "contacts": "County clerk's office for deed transfers • DMV for vehicle titles • Estate attorney • Property tax assessor",
+          "mistakes": [
+            "Not recording death certificate with property deeds — complicates future sales.",
+            "Assuming all property needs probate — joint and TOD property transfers without court.",
+            "Selling property before deed is recorded in heir's name.",
+            "Not paying off property loans before heir takes ownership."
+          ]
+        },
+        {
+          "id": "es-7-3",
+          "title": "Update Legal Documents for Surviving Family",
+          "what": "Updating the surviving spouse's will, powers of attorney, healthcare directives, and beneficiary designations after a death.",
+          "why": "An outdated will may name the deceased as executor (can't serve) or list them as beneficiary. Updating prevents mistakes and disputes if something happens to the survivor.",
+          "steps": [
+            "Review the surviving spouse's will — check if deceased is named as executor or beneficiary.",
+            "Draft an updated will with a new executor and current beneficiaries ($500–$2,000).",
+            "Update power of attorney to name a living agent (revoke old POA naming deceased).",
+            "Update healthcare directive to name a new healthcare agent.",
+            "Update all beneficiary designations: life insurance, retirement accounts, bank accounts.",
+            "Update trust documents if applicable — update trustee succession.",
+            "File updated documents and notify banks, doctors, and agents of new POA/directives."
+          ],
+          "terms": [
+            {
+              "term": "Power of attorney (POA)",
+              "def": "Document naming an agent to manage finances/property if you're unable; can be durable or limited."
+            },
+            {
+              "term": "Healthcare directive",
+              "def": "Document describing healthcare wishes and naming a healthcare agent if you're incapable of deciding."
+            },
+            {
+              "term": "Elective share",
+              "def": "Surviving spouse's right to take statutory minimum (usually ⅓ to ½) of deceased spouse's estate."
+            }
+          ],
+          "contacts": "Estate attorney for document updates • Banks and financial institutions • Insurance agent • Executor and POA agents",
+          "mistakes": [
+            "Not updating will after spouse's death — outdated provisions create confusion.",
+            "Not removing deceased from beneficiary designations.",
+            "Not updating POA agent — banks won't accept outdated POA.",
+            "Not informing banks of new POA/healthcare directives."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Grief & Practical Support",
+      "tasks": [
+        {
+          "id": "es-8-1",
+          "title": "Navigate Grief While Managing Estate Tasks",
+          "what": "Understanding the emotional toll of handling estate tasks while grieving and knowing when to delegate or seek support.",
+          "why": "The first 3–6 months are overwhelming. Many survivors make poor decisions (overpaying for funeral, accepting bad settlement terms) because they're exhausted. Grief support prevents burnout and ensures better decisions.",
+          "steps": [
+            "Understand grief cycles: acute grief (first 2–4 weeks), middle grief (1–6 months), late grief (6–12+ months).",
+            "Recognize caregiver burnout if you were the deceased's caregiver.",
+            "Delegate estate tasks to trusted family or friends — paperwork, phone calls, household tasks.",
+            "Prioritize ruthlessly: first 30 days (funeral, death certificates), 30–90 days (benefits, insurance), 3–6 months (probate, taxes).",
+            "Take care of physical health: sleep, eat regular meals, move daily, avoid substance abuse.",
+            "Access grief counseling: individual therapy ($75–$200/session), support groups (often free), or EAP.",
+            "Plan for grief triggers: anniversaries, birthdays, holidays, sensory reminders."
+          ],
+          "terms": [
+            {
+              "term": "Complicated grief",
+              "def": "Persistent intense grief lasting 12+ months with inability to function; requires specialized therapy."
+            },
+            {
+              "term": "Caregiver burnout",
+              "def": "Physical and emotional exhaustion from intensive caregiving; relief at death is normal, not shameful."
+            }
+          ],
+          "contacts": "Grief counselor or therapist • Hospice Foundation of America (hospicefoundation.org) • GriefShare (griefshare.org) • 988 Suicide & Crisis Lifeline • EAP through employer",
+          "mistakes": [
+            "Forcing yourself to function at 100% while grieving — accept reduced capacity for 3–6 months.",
+            "Isolating yourself — connection is healing.",
+            "Making major irreversible decisions in the first 6 months.",
+            "Not seeking help because you think you should be strong."
+          ]
+        },
+        {
+          "id": "es-8-2",
+          "title": "Communicate with Family About Estate Decisions",
+          "what": "Holding family meetings to discuss estate decisions, maintain transparency about finances and debts, and prevent disputes.",
+          "why": "Most estate disputes arise from lack of transparency, not money. Regular family meetings, openness about finances, and clear expectations prevent misunderstandings and preserve relationships.",
+          "steps": [
+            "Schedule an initial family meeting within 30 days of death with heirs and executor.",
+            "Be transparent about estate assets and liabilities — share lists and approximate values.",
+            "Discuss major decisions (selling the house, dividing property) before implementing them.",
+            "Manage expectations about inheritance amounts and timing.",
+            "Handle requests for early distribution carefully — probate takes 6–12 months.",
+            "Document all decisions with meeting minutes and written agreements.",
+            "Schedule regular updates (monthly or quarterly) to keep family informed."
+          ],
+          "terms": [
+            {
+              "term": "Interim distribution",
+              "def": "Early partial distribution of inheritance before estate is fully closed; requires heirs' agreement."
+            },
+            {
+              "term": "Will contest",
+              "def": "Legal challenge to a will's validity; expensive and destructive — better prevented through transparency."
+            },
+            {
+              "term": "Mediation",
+              "def": "Neutral third party helping resolve inheritance disputes; cheaper than litigation."
+            }
+          ],
+          "contacts": "Estate attorney for conflicts • Family mediator for sibling disputes • Family therapist • Probate judge (last resort)",
+          "mistakes": [
+            "Not telling family about major decisions until after they're done.",
+            "Hiding the will from heirs — creates suspicion.",
+            "Making decisions unilaterally when heirs should have input.",
+            "Not addressing family conflict early — small misunderstandings become major resentment."
+          ]
+        }
+      ]
+    }
+  ]
+}
