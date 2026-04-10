@@ -337,6 +337,7 @@
     .pdf-text-layer span::selection { background: rgba(0,100,200,0.35); }
     .pdf-text-layer span.pdf-highlighted { background: rgba(255, 255, 0, 0.45) !important; }
     .pdf-text-layer.editing-mode { pointer-events: none; opacity: 0; }
+    .erase-highlight-mode .pdf-highlighted { cursor: pointer !important; outline: 2px dashed var(--accent); outline-offset: 1px; }
     .pdf-annot-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
     .pdf-annot-layer.text-mode { pointer-events: auto; cursor: text; }
     .pdf-annot-layer.sig-mode { pointer-events: auto; cursor: none; }
@@ -4398,15 +4399,13 @@ guideLibrary['disability'] = {
         + '<option value="#2C3E50">Black</option><option value="#2C4A5E">Navy</option><option value="#C4704E">Terracotta</option><option value="#6B8F5E">Green</option><option value="#1a73e8">Blue</option><option value="#c62828">Red</option>'
         + '</select>'
         + '<button class="pdf-toolbar-btn" id="pdfBoldBtn" onclick="pdfAnnotBold=!pdfAnnotBold;this.classList.toggle(\'active\',pdfAnnotBold)" title="Bold" style="font-weight:700;padding:3px 8px">B</button>'
-        + '<select id="pdfHighlight" onchange="pdfAnnotHighlight=this.value" style="padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;background:var(--warm-white);font-family:inherit">'
-        + '<option value="">No highlight</option><option value="rgba(255,255,0,0.4)">Yellow</option><option value="rgba(0,255,0,0.25)">Green</option><option value="rgba(0,200,255,0.25)">Blue</option><option value="rgba(255,150,150,0.3)">Pink</option>'
-        + '</select>'
         + '<div class="pdf-toolbar-sep"></div>'
         + '<button class="pdf-toolbar-btn" id="pdfZoomOutBtn" onclick="pdfZoom(-0.15)">−</button>'
         + '<span class="pdf-toolbar-info" id="pdfZoomLevel">120%</span>'
         + '<button class="pdf-toolbar-btn" id="pdfZoomInBtn" onclick="pdfZoom(0.15)">+</button>'
         + '<div class="pdf-toolbar-sep"></div>'
-        + '<button class="pdf-toolbar-btn" id="pdfHighlightSelBtn" onclick="highlightPdfSelection()" title="Select text on the PDF, then click this to highlight it" style="background:rgba(255,255,0,0.3)">&#9652; Highlight selection</button>'
+        + '<button class="pdf-toolbar-btn" id="pdfHighlightSelBtn" onclick="highlightPdfSelection()" title="Select text on the PDF, then click this to highlight it" style="background:rgba(255,255,0,0.3)">&#9652; Highlight</button>'
+        + '<button class="pdf-toolbar-btn" id="pdfEraseHighlightBtn" onclick="toggleEraseHighlightMode()" title="Click on highlighted text to remove the highlight">&#9003; Erase highlight</button>'
         + '<div class="pdf-toolbar-sep"></div>'
         + '<span class="pdf-toolbar-info" id="pdfPageInfo"></span>'
         + '</div>'
@@ -4517,26 +4516,86 @@ guideLibrary['disability'] = {
     var pdfAnnotHighlight = '';
     var pdfHighlights = []; // saved highlights: [{pageNum, spans: [{left, top, width, height}], color}]
 
+    var pdfEraseMode = false;
+
     function highlightPdfSelection() {
       var sel = window.getSelection();
       if (!sel || sel.isCollapsed || !sel.toString().trim()) {
         alert('Select some text on the PDF first, then click Highlight.');
         return;
       }
+      // Use the browser's range to find exactly which text nodes are selected
       var range = sel.getRangeAt(0);
-      // Find all text layer spans in the selection
-      var container = document.getElementById('pdfViewer');
-      if (!container) return;
-      var textSpans = container.querySelectorAll('.pdf-text-layer span');
-      textSpans.forEach(function(span) {
-        if (sel.containsNode(span, true)) {
+
+      // Get all text nodes within the range
+      var textNodes = [];
+      var walker = document.createTreeWalker(
+        range.commonAncestorContainer.nodeType === 1 ? range.commonAncestorContainer : range.commonAncestorContainer.parentElement,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+      var node;
+      while (node = walker.nextNode()) {
+        if (range.intersectsNode(node)) {
+          var parent = node.parentElement;
+          if (parent && parent.closest('.pdf-text-layer')) {
+            textNodes.push(node);
+          }
+        }
+      }
+
+      if (textNodes.length === 0) {
+        sel.removeAllRanges();
+        return;
+      }
+
+      // Single text node — just highlight the parent span
+      if (textNodes.length === 1) {
+        var span = textNodes[0].parentElement;
+        if (span && span.tagName === 'SPAN') {
           span.style.backgroundColor = 'rgba(255, 255, 0, 0.45)';
-          span.style.color = 'transparent';
           span.classList.add('pdf-highlighted');
         }
-      });
+      } else {
+        // Multiple text nodes — highlight each parent span
+        textNodes.forEach(function(tn) {
+          var span = tn.parentElement;
+          if (span && span.tagName === 'SPAN' && span.closest('.pdf-text-layer')) {
+            span.style.backgroundColor = 'rgba(255, 255, 0, 0.45)';
+            span.classList.add('pdf-highlighted');
+          }
+        });
+      }
+
       sel.removeAllRanges();
       pdfMarkDirty();
+    }
+
+    function toggleEraseHighlightMode() {
+      pdfEraseMode = !pdfEraseMode;
+      var btn = document.getElementById('pdfEraseHighlightBtn');
+      if (btn) btn.classList.toggle('active', pdfEraseMode);
+      // Toggle click listeners on highlighted spans
+      var container = document.getElementById('pdfViewer');
+      if (!container) return;
+      if (pdfEraseMode) {
+        container.classList.add('erase-highlight-mode');
+        container.addEventListener('click', eraseHighlightClick);
+      } else {
+        container.classList.remove('erase-highlight-mode');
+        container.removeEventListener('click', eraseHighlightClick);
+      }
+    }
+
+    function eraseHighlightClick(e) {
+      var span = e.target.closest('.pdf-highlighted');
+      if (span) {
+        e.stopPropagation();
+        e.preventDefault();
+        span.style.backgroundColor = '';
+        span.classList.remove('pdf-highlighted');
+        pdfMarkDirty();
+      }
     }
 
     function togglePdfTextMode() {
