@@ -3502,7 +3502,7 @@ guideLibrary['disability'] = {
       content.innerHTML = html;
 
       // Show upgrade prompt once per session for free users
-      if (isFree) maybeShowUpgradePrompt(content);
+      if (tier === 'free') maybeShowUpgradePrompt(content);
     }
 
     var quickModeActive = false;
