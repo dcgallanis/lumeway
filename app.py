@@ -76,14 +76,25 @@ def validate_file_type(file_stream, filename):
 
 
 def get_encryption_key():
-    """Get or create file encryption key. In production, use a KMS."""
+    """Get file encryption key from env var, then local file fallback."""
+    # Prefer environment variable (survives Railway deploys)
+    env_key = os.environ.get("FILE_ENCRYPTION_KEY")
+    if env_key:
+        return env_key.encode() if isinstance(env_key, str) else env_key
+    # Fallback: local file (works in dev, but ephemeral on Railway)
     key_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".file_encryption_key")
     if os.path.exists(key_path):
         with open(key_path, "rb") as f:
-            return f.read()
+            key = f.read()
+        # Print it so you can save it as env var
+        print(f"[IMPORTANT] FILE_ENCRYPTION_KEY not set. Using local key: {key.decode()}")
+        print(f"[IMPORTANT] Set this as FILE_ENCRYPTION_KEY env var to persist across deploys!")
+        return key
     key = Fernet.generate_key()
     with open(key_path, "wb") as f:
         f.write(key)
+    print(f"[IMPORTANT] Generated new encryption key: {key.decode()}")
+    print(f"[IMPORTANT] Set FILE_ENCRYPTION_KEY={key.decode()} in your environment!")
     return key
 
 FILE_ENCRYPTION_KEY = get_encryption_key()
