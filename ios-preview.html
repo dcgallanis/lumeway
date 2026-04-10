@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumeway iOS App Preview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --cream: #FAF7F2;
+    --warm-white: #FFFFFF;
+    --text: #2C2C2C;
+    --muted: #8E8E93;
+    --navy: #2C4A5E;
+    --gold: #B8977E;
+    --accent: #C4704E;
+    --accent-light: #D4956E;
+    --border: #E5E5EA;
+    --green: #34C759;
+    --serif: 'Libre Baskerville', serif;
+    --sans: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  h1.preview-title {
+    font-family: var(--sans);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.6;
+  }
+
+  .screen-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .screen-nav button {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: 1px solid #444;
+    background: #2a2a2a;
+    color: #ccc;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .screen-nav button.active {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: #fff;
+  }
+  .screen-nav button:hover { border-color: #666; }
+
+  /* iPhone frame */
+  .phone-frame {
+    width: 390px;
+    height: 844px;
+    background: var(--cream);
+    border-radius: 48px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    border: 8px solid #1c1c1e;
+  }
+
+  .phone-frame .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 34px;
+    background: #1c1c1e;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+
+  .phone-frame .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 28px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    height: 54px;
+    position: relative;
+    z-index: 50;
+  }
+
+  .screen {
+    display: none;
+    height: calc(100% - 54px);
+    overflow-y: auto;
+    position: relative;
+  }
+  .screen.active { display: flex; flex-direction: column; }
+
+  .screen-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 90px;
+  }
+
+  /* Tab bar */
+  .tab-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 83px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-top: 0.5px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    padding-top: 8px;
+    z-index: 90;
+  }
+  .tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .tab-item svg { width: 24px; height: 24px; fill: var(--muted); }
+  .tab-item.active svg { fill: var(--accent); }
+  .tab-item span {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .tab-item.active span { color: var(--accent); }
+
+  /* Floating chat button */
+  .fab-chat {
+    position: absolute;
+    bottom: 96px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    background: var(--navy);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 95;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .fab-chat:hover { transform: scale(1.05); }
+  .fab-chat svg { width: 22px; height: 22px; fill: #fff; }
+
+  /* Common */
+  .card {
+    background: var(--warm-white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 20px;
+  }
+  .heading-sm { font-family: var(--serif); font-size: 22px; color: var(--text); font-weight: 400; }
+  .heading-md { font-family: var(--serif); font-size: 26px; color: var(--text); font-weight: 400; }
+  .body { font-size: 15px; color: var(--text); line-height: 1.5; }
+  .caption { font-size: 13px; color: var(--text); }
+  .caption-light { font-size: 13px; color: var(--muted); }
+  .small { font-size: 11px; color: var(--muted); }
+  .logo-text { font-family: var(--sans); font-size: 18px; font-weight: 600; letter-spacing: 3px; color: var(--navy); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 16px 32px;
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+
+  /* ===== WELCOME SCREEN ===== */
+  #welcome .screen-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 32px;
+  }
+  .welcome-logo { margin-bottom: 48px; }
+  .welcome-logo .sun { font-size: 56px; color: var(--accent); margin-bottom: 12px; }
+  .welcome-headline { margin-bottom: 16px; }
+  .welcome-sub {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 0;
+    padding: 0 8px;
+  }
+  .welcome-ctas {
+    position: absolute;
+    bottom: 48px;
+    left: 32px;
+    right: 32px;
+  }
+  .btn-text {
+    background: none;
+    border: none;
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--navy);
+    cursor: pointer;
+    padding: 14px;
+    width: 100%;
+  }
+
+  /* ===== LOGIN SCREEN ===== */
+  #login .screen-content {
+    padding: 0 32px;
+    padding-top: 40px;
+  }
+  .login-header { text-align: center; margin-bottom: 40px; }
+  .login-header .sun { font-size: 36px; color: var(--accent); margin-bottom: 16px; }
+  .login-input {
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--warm-white);
+    outline: none;
+    margin-bottom: 16px;
+  }
+  .login-input:focus { border-color: var(--navy); border-width: 2px; }
+
+  /* ===== VERIFY CODE ===== */
+  #verify .screen-content { padding: 0 32px; padding-top: 20px; }
+  .verify-header { text-align: center; margin-bottom: 40px; }
+  .code-inputs { display: flex; gap: 10px; justify-content: center; margin-bottom: 16px; }
+  .code-digit {
+    width: 48px;
+    height: 56px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-align: center;
+    font-family: monospace;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--warm-white);
+  }
+  .code-digit:nth-child(1) { border-color: var(--navy); border-width: 2px; }
+  .resend { text-align: center; margin-top: 32px; }
+
+  /* ===== ONBOARDING ===== */
+  #onboarding .screen-content { padding: 0 24px; padding-top: 20px; }
+  .onboarding-header { text-align: center; margin-bottom: 32px; }
+  .transition-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .transition-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .transition-card.selected {
+    background: rgba(44,74,94,0.06);
+    border-color: var(--navy);
+    border-width: 2px;
+  }
+  .transition-card .emoji { font-size: 28px; margin-bottom: 8px; }
+  .transition-card .label { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; }
+  .transition-card .desc { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* ===== DASHBOARD ===== */
+  #dashboard .screen-content { padding: 0; }
+  .dash-nav {
+    text-align: center;
+    padding: 8px 0 12px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .dash-greeting { padding: 16px 24px 0; }
+  .dash-greeting .caption-light { margin-bottom: 4px; }
+  .dash-section { padding: 0 24px; margin-top: 24px; }
+
+  .progress-card .bar-track {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .progress-card .bar-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 4px;
+    width: 35%;
+    transition: width 0.5s;
+  }
+
+  .next-task-card {
+    background: rgba(184,151,126,0.06);
+    border: 1px solid rgba(184,151,126,0.3);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .next-task-card .label { font-size: 11px; color: var(--gold); font-weight: 500; margin-bottom: 8px; }
+
+  .deadline-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: var(--warm-white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .deadline-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  /* ===== CHECKLIST ===== */
+  #checklist .screen-content { padding: 0; }
+  .checklist-title { padding: 16px 24px 4px; }
+  .checklist-title h1 { font-size: 34px; font-weight: 700; color: var(--text); }
+  .checklist-progress { padding: 8px 24px 16px; }
+  .progress-bar-sm { display: flex; align-items: center; gap: 8px; }
+  .progress-bar-sm .track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-bar-sm .fill { height: 100%; background: var(--gold); border-radius: 3px; }
+
+  .phase-card {
+    margin: 0 24px 16px;
+    background: var(--warm-white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .phase-header {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  .phase-header .count { font-size: 11px; color: var(--muted); }
+  .phase-items { border-top: 1px solid var(--border); }
+  .checklist-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+  .check-icon { font-size: 22px; flex-shrink: 0; margin-top: -1px; }
+  .check-icon.done { color: var(--green); }
+  .check-icon.pending { color: var(--border); }
+  .checklist-row .title { font-size: 13px; color: var(--text); flex: 1; }
+  .checklist-row .title.done { color: var(--muted); text-decoration: line-through; }
+  .skip-btn { font-size: 11px; color: var(--muted); background: none; border: none; cursor: pointer; }
+
+  /* ===== GUIDES ===== */
+  #guides .screen-content { padding: 0; }
+  .guides-title { padding: 16px 24px 4px; }
+  .guides-title h1 { font-size: 34px; font-weight: 700; color: var(--text); }
+  .guides-search {
+    margin: 8px 24px 16px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: rgba(118,118,128,0.12);
+    border: none;
+    width: calc(100% - 48px);
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+  }
+  .guides-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 24px 24px;
+  }
+  .guide-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .guide-card:hover { border-color: var(--navy); }
+  .guide-card .icon { font-size: 28px; color: var(--navy); margin-bottom: 8px; }
+  .guide-card .name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .guide-card .count { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .risk-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 8px;
+    margin-top: 6px;
+  }
+  .risk-badge.high { color: var(--accent); background: rgba(196,112,78,0.1); }
+  .risk-badge.medium { color: var(--gold); background: rgba(184,151,126,0.1); }
+
+  /* ===== CHAT ===== */
+  #chat .screen-content { padding: 0; display: flex; flex-direction: column; }
+  .chat-header {
+    text-align: center;
+    padding: 8px 0 12px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .chat-header .name { font-size: 15px; font-weight: 500; color: var(--text); }
+  .chat-header .sub { font-size: 11px; color: var(--muted); }
+  .chat-messages { flex: 1; padding: 24px 16px; overflow-y: auto; }
+  .bubble {
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .bubble.assistant {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    color: var(--text);
+    align-self: flex-start;
+  }
+  .bubble.user {
+    background: var(--navy);
+    color: #fff;
+    align-self: flex-end;
+    margin-left: auto;
+  }
+  .chat-input-bar {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: var(--cream);
+  }
+  .chat-input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--warm-white);
+    font-family: var(--sans);
+    font-size: 15px;
+    outline: none;
+  }
+  .send-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--navy);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .send-btn svg { width: 16px; height: 16px; fill: #fff; }
+
+  /* Toast */
+  .toast {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--warm-white);
+    padding: 12px 24px;
+    border-radius: 24px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    font-size: 15px;
+    color: var(--text);
+    z-index: 99;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+
+  /* SVG icons */
+  .sf-icon { display: inline-block; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<h1 class="preview-title">Lumeway iOS App Preview</h1>
+
+<div class="screen-nav">
+  <button class="active" onclick="showScreen('welcome')">Welcome</button>
+  <button onclick="showScreen('login')">Login</button>
+  <button onclick="showScreen('verify')">Verify</button>
+  <button onclick="showScreen('onboarding')">Onboarding</button>
+  <button onclick="showScreen('dashboard')">Dashboard</button>
+  <button onclick="showScreen('checklist')">Checklist</button>
+  <button onclick="showScreen('guides')">Guides</button>
+  <button onclick="showScreen('chat')">Chat</button>
+</div>
+
+<div class="phone-frame">
+  <div class="notch"></div>
+  <div class="status-bar">
+    <span>9:41</span>
+    <span style="display:flex;gap:4px;align-items:center;">
+      <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="9" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+      <svg width="24" height="12" viewBox="0 0 24 12"><rect x="0" y="0" width="22" height="12" rx="3" stroke="currentColor" stroke-width="1" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1" fill="currentColor"/><rect x="1.5" y="1.5" width="14" height="9" rx="2" fill="currentColor"/></svg>
+    </span>
+  </div>
+
+  <!-- WELCOME -->
+  <div id="welcome" class="screen active">
+    <div class="screen-content">
+      <div class="welcome-logo">
+        <div class="sun">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+            <circle cx="28" cy="28" r="11" stroke="#C4704E" stroke-width="1.5"/>
+            <line x1="28" y1="2" x2="28" y2="10" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="28" y1="46" x2="28" y2="54" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="2" y1="28" x2="10" y2="28" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="46" y1="28" x2="54" y2="28" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="9.6" y1="9.6" x2="15.3" y2="15.3" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="40.7" y1="40.7" x2="46.4" y2="46.4" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="9.6" y1="46.4" x2="15.3" y2="40.7" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="40.7" y1="15.3" x2="46.4" y2="9.6" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="logo-text">LUMEWAY</div>
+      </div>
+      <div class="welcome-headline">
+        <div class="heading-md">When life changes,</div>
+        <div style="font-family:var(--serif);font-size:26px;color:var(--accent-light);font-style:italic;margin-top:8px;">find your way through.</div>
+      </div>
+      <p class="welcome-sub">Step-by-step guidance for life's hardest transitions. Job loss, estate, divorce, disability, and more.</p>
+      <div class="welcome-ctas">
+        <button class="btn-primary" onclick="showScreen('login')">Get started</button>
+        <button class="btn-text" onclick="showScreen('login')">Sign in</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="login" class="screen">
+    <div class="screen-content">
+      <div class="login-header">
+        <div>
+          <svg width="36" height="36" viewBox="0 0 56 56" fill="none" style="margin-bottom:8px;">
+            <circle cx="28" cy="28" r="11" stroke="#C4704E" stroke-width="1.5"/>
+            <line x1="28" y1="2" x2="28" y2="10" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="28" y1="46" x2="28" y2="54" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="2" y1="28" x2="10" y2="28" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="46" y1="28" x2="54" y2="28" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="9.6" y1="9.6" x2="15.3" y2="15.3" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="40.7" y1="40.7" x2="46.4" y2="46.4" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="9.6" y1="46.4" x2="15.3" y2="40.7" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="40.7" y1="15.3" x2="46.4" y2="9.6" stroke="#C4704E" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="heading-sm">Enter your email</div>
+        <p class="caption-light" style="margin-top:8px;line-height:1.5;">We'll send you a code to sign in.<br>No password needed.</p>
+      </div>
+      <input class="login-input" type="email" placeholder="your@email.com" value="carol@lumeway.co">
+      <button class="btn-primary" onclick="showScreen('verify')" style="margin-top:4px;">Send code</button>
+    </div>
+  </div>
+
+  <!-- VERIFY CODE -->
+  <div id="verify" class="screen">
+    <div class="screen-content">
+      <div class="verify-header">
+        <div class="heading-sm">Check your email</div>
+        <p class="caption-light" style="margin-top:8px;">We sent a 6-digit code to</p>
+        <p class="caption" style="color:var(--navy);">carol@lumeway.co</p>
+      </div>
+      <div class="code-inputs">
+        <input class="code-digit" maxlength="1" value="4">
+        <input class="code-digit" maxlength="1" value="8">
+        <input class="code-digit" maxlength="1" value="2">
+        <input class="code-digit" maxlength="1" value="">
+        <input class="code-digit" maxlength="1" value="">
+        <input class="code-digit" maxlength="1" value="">
+      </div>
+      <div class="resend">
+        <span class="caption-light">Resend in 24s</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div id="onboarding" class="screen">
+    <div class="screen-content">
+      <div class="onboarding-header">
+        <div class="heading-md" style="font-size:24px;">What are you<br>going through?</div>
+        <p class="caption-light" style="margin-top:8px;">This helps us show you the right steps.</p>
+      </div>
+      <div class="transition-grid">
+        <div class="transition-card" onclick="selectTransition(this)">
+          <div class="emoji">&#x1F4BC;</div>
+          <div class="label">Job Loss &amp; Income Crisis</div>
+          <div class="desc">Laid off, fired, or furloughed</div>
+        </div>
+        <div class="transition-card selected" onclick="selectTransition(this)">
+          <div class="emoji">&#x1F54A;&#xFE0F;</div>
+          <div class="label">Death &amp; Estate</div>
+          <div class="desc">Navigating loss and estate settlement</div>
+        </div>
+        <div class="transition-card" onclick="selectTransition(this)">
+          <div class="emoji">&#x2696;&#xFE0F;</div>
+          <div class="label">Divorce &amp; Separation</div>
+          <div class="desc">Ending a marriage or partnership</div>
+        </div>
+        <div class="transition-card" onclick="selectTransition(this)">
+          <div class="emoji">&#x1FA7A;</div>
+          <div class="label">Disability &amp; Benefits</div>
+          <div class="desc">New diagnosis or disability claim</div>
+        </div>
+        <div class="transition-card" onclick="selectTransition(this)">
+          <div class="emoji">&#x1F3E0;</div>
+          <div class="label">Moving &amp; Relocation</div>
+          <div class="desc">Moving to a new city or state</div>
+        </div>
+        <div class="transition-card" onclick="selectTransition(this)">
+          <div class="emoji">&#x1F305;</div>
+          <div class="label">Retirement Planning</div>
+          <div class="desc">Planning your next chapter</div>
+        </div>
+        <div class="transition-card" onclick="selectTransition(this)">
+          <div class="emoji">&#x1FAC2;</div>
+          <div class="label">Addiction &amp; Recovery</div>
+          <div class="desc">Supporting a loved one</div>
+        </div>
+      </div>
+      <div style="padding:0 8px;">
+        <button class="btn-primary" onclick="showScreen('dashboard')">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="screen">
+    <div class="screen-content">
+      <div class="dash-nav">
+        <span class="logo-text">LUMEWAY</span>
+      </div>
+      <div class="dash-greeting">
+        <div class="caption-light">Good morning,</div>
+        <div class="heading-sm" style="font-size:20px;">Carol</div>
+      </div>
+      <div class="dash-section">
+        <div class="card progress-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span class="caption" style="font-weight:500;">Your progress</span>
+            <span class="caption-light">7 of 20</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill"></div></div>
+        </div>
+      </div>
+      <div class="dash-section">
+        <div class="next-task-card">
+          <div class="label">&#x27A1;&#xFE0F; Next step</div>
+          <div class="caption" style="font-weight:500;">Contact life insurance companies to file claims</div>
+          <div class="small" style="margin-top:4px;">First Week</div>
+        </div>
+      </div>
+      <div class="dash-section">
+        <div class="caption" style="font-weight:500;margin-bottom:12px;">Upcoming deadlines</div>
+        <div class="deadline-row">
+          <div class="deadline-dot" style="background:var(--accent);"></div>
+          <div>
+            <div class="caption">File life insurance claim</div>
+            <div class="small">You have 5 days left</div>
+          </div>
+        </div>
+        <div class="deadline-row">
+          <div class="deadline-dot" style="background:var(--gold);"></div>
+          <div>
+            <div class="caption">COBRA election deadline</div>
+            <div class="small">You have 12 days left</div>
+          </div>
+        </div>
+        <div class="deadline-row">
+          <div class="deadline-dot" style="background:var(--green);"></div>
+          <div>
+            <div class="caption">Probate filing deadline</div>
+            <div class="small">You have 28 days left</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fab-chat" onclick="showScreen('chat')">
+      <svg viewBox="0 0 24 24"><path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10c-1.875 0-3.632-.516-5.134-1.414L2 22l1.414-4.866A9.953 9.953 0 012 12z"/></svg>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-item active" onclick="showScreen('dashboard')">
+        <svg viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span>Home</span>
+      </div>
+      <div class="tab-item" onclick="showScreen('checklist')">
+        <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span>Checklist</span>
+      </div>
+      <div class="tab-item" onclick="showScreen('guides')">
+        <svg viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span>Guides</span>
+      </div>
+      <div class="tab-item">
+        <svg viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span>Files</span>
+      </div>
+      <div class="tab-item">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="6" r="1" fill="currentColor"/><circle cx="12" cy="18" r="1" fill="currentColor"/></svg>
+        <span>More</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div id="checklist" class="screen">
+    <div class="screen-content">
+      <div class="checklist-title"><h1>Checklist</h1></div>
+      <div class="checklist-progress">
+        <div class="progress-bar-sm">
+          <span class="caption" style="font-weight:500;">Progress</span>
+          <div class="track"><div class="fill" style="width:35%;"></div></div>
+          <span class="small">7 of 20</span>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div>
+            <div class="caption" style="font-weight:500;">First 24 Hours <span style="color:var(--green);font-size:14px;">&#x2713;</span></div>
+            <div class="count">5 of 5 complete</div>
+          </div>
+          <span class="small">&#9650;</span>
+        </div>
+        <div class="phase-items">
+          <div class="checklist-row"><span class="check-icon done">&#x2713;</span><span class="title done">Notify immediate family and close friends</span></div>
+          <div class="checklist-row"><span class="check-icon done">&#x2713;</span><span class="title done">Secure the deceased's home and property</span></div>
+          <div class="checklist-row"><span class="check-icon done">&#x2713;</span><span class="title done">Contact the funeral home or cremation service</span></div>
+          <div class="checklist-row"><span class="check-icon done">&#x2713;</span><span class="title done">Obtain the death certificate (request 10+ copies)</span></div>
+          <div class="checklist-row"><span class="check-icon done">&#x2713;</span><span class="title done">Locate the will and estate planning documents</span></div>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div>
+            <div class="caption" style="font-weight:500;">First Week</div>
+            <div class="count">2 of 5 complete</div>
+          </div>
+          <span class="small">&#9650;</span>
+        </div>
+        <div class="phase-items">
+          <div class="checklist-row"><span class="check-icon done">&#x2713;</span><span class="title done">Notify the post office to forward mail</span></div>
+          <div class="checklist-row"><span class="check-icon done">&#x2713;</span><span class="title done">Contact utility companies about accounts</span></div>
+          <div class="checklist-row">
+            <span class="check-icon pending">&#x25CB;</span>
+            <span class="title">Notify employer and request final paycheck</span>
+            <button class="skip-btn">Skip</button>
+          </div>
+          <div class="checklist-row">
+            <span class="check-icon pending">&#x25CB;</span>
+            <span class="title">Contact Social Security (1-800-772-1213)</span>
+            <button class="skip-btn">Skip</button>
+          </div>
+          <div class="checklist-row">
+            <span class="check-icon pending">&#x25CB;</span>
+            <span class="title">Contact life insurance companies to file claims</span>
+            <button class="skip-btn">Skip</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-header">
+          <div>
+            <div class="caption" style="font-weight:500;">First Month</div>
+            <div class="count">0 of 5 complete</div>
+          </div>
+          <span class="small">&#9660;</span>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-header">
+          <div>
+            <div class="caption" style="font-weight:500;">Months 2-3</div>
+            <div class="count">0 of 5 complete</div>
+          </div>
+          <span class="small">&#9660;</span>
+        </div>
+      </div>
+    </div>
+    <div class="toast" id="toast">One less thing to worry about.</div>
+    <div class="fab-chat" onclick="showScreen('chat')">
+      <svg viewBox="0 0 24 24"><path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10c-1.875 0-3.632-.516-5.134-1.414L2 22l1.414-4.866A9.953 9.953 0 012 12z"/></svg>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-item" onclick="showScreen('dashboard')">
+        <svg viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span>Home</span>
+      </div>
+      <div class="tab-item active" onclick="showScreen('checklist')">
+        <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span>Checklist</span>
+      </div>
+      <div class="tab-item" onclick="showScreen('guides')">
+        <svg viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span>Guides</span>
+      </div>
+      <div class="tab-item">
+        <svg viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span>Files</span>
+      </div>
+      <div class="tab-item">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="6" r="1" fill="currentColor"/><circle cx="12" cy="18" r="1" fill="currentColor"/></svg>
+        <span>More</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GUIDES -->
+  <div id="guides" class="screen">
+    <div class="screen-content">
+      <div class="guides-title"><h1>Guides</h1></div>
+      <input class="guides-search" placeholder="Search guides">
+      <div class="guides-grid">
+        <div class="guide-card">
+          <div class="icon">&#x1F551;</div>
+          <div class="name">First 72 Hours</div>
+          <div class="count">3 guides</div>
+          <div class="risk-badge high">High</div>
+        </div>
+        <div class="guide-card">
+          <div class="icon">&#x1F4C4;</div>
+          <div class="name">Death Certificate</div>
+          <div class="count">3 guides</div>
+          <div class="risk-badge high">High</div>
+        </div>
+        <div class="guide-card">
+          <div class="icon">&#x1F511;</div>
+          <div class="name">Executor Duties</div>
+          <div class="count">4 guides</div>
+          <div class="risk-badge medium">Medium</div>
+        </div>
+        <div class="guide-card">
+          <div class="icon">&#x1F3DB;</div>
+          <div class="name">Probate Process</div>
+          <div class="count">3 guides</div>
+          <div class="risk-badge medium">Medium</div>
+        </div>
+        <div class="guide-card">
+          <div class="icon">&#x1F4B0;</div>
+          <div class="name">Financial Accounts</div>
+          <div class="count">3 guides</div>
+        </div>
+        <div class="guide-card">
+          <div class="icon">&#x1F3E0;</div>
+          <div class="name">Property &amp; Assets</div>
+          <div class="count">2 guides</div>
+        </div>
+        <div class="guide-card">
+          <div class="icon">&#x1F4B3;</div>
+          <div class="name">Debts &amp; Creditors</div>
+          <div class="count">3 guides</div>
+        </div>
+        <div class="guide-card">
+          <div class="icon">&#x1F517;</div>
+          <div class="name">Resources</div>
+          <div class="count">2 guides</div>
+        </div>
+      </div>
+    </div>
+    <div class="fab-chat" onclick="showScreen('chat')">
+      <svg viewBox="0 0 24 24"><path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10c-1.875 0-3.632-.516-5.134-1.414L2 22l1.414-4.866A9.953 9.953 0 012 12z"/></svg>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-item" onclick="showScreen('dashboard')">
+        <svg viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span>Home</span>
+      </div>
+      <div class="tab-item" onclick="showScreen('checklist')">
+        <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span>Checklist</span>
+      </div>
+      <div class="tab-item active" onclick="showScreen('guides')">
+        <svg viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span>Guides</span>
+      </div>
+      <div class="tab-item">
+        <svg viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span>Files</span>
+      </div>
+      <div class="tab-item">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="6" r="1" fill="currentColor"/><circle cx="12" cy="18" r="1" fill="currentColor"/></svg>
+        <span>More</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+  <div id="chat" class="screen">
+    <div class="screen-content" style="display:flex;flex-direction:column;">
+      <div class="chat-header">
+        <div class="name">Navigator</div>
+        <div class="sub">AI Assistant</div>
+      </div>
+      <div class="chat-messages" style="display:flex;flex-direction:column;">
+        <div class="bubble assistant">
+          <strong>Hi, I'm your Lumeway Navigator.</strong><br><br>
+          I can help you understand your checklist, explain next steps, or answer questions about your transition. What would you like to know?
+        </div>
+        <div class="bubble user">
+          What should I do first with the life insurance claim?
+        </div>
+        <div class="bubble assistant">
+          Start by gathering the death certificate (you'll need an original certified copy, not a photocopy). Then contact the insurance company's claims department directly. Most companies have a dedicated bereavement line.<br><br>
+          You'll need the policy number, the deceased's Social Security number, and your ID as beneficiary. The insurer will send you claim forms. Most claims are processed within 30-60 days once paperwork is complete.
+        </div>
+      </div>
+      <div class="chat-input-bar">
+        <input class="chat-input" placeholder="Ask anything...">
+        <button class="send-btn">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.screen-nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.screen-nav button').forEach(b => {
+    if (b.textContent.toLowerCase().includes(id.substring(0,4))) b.classList.add('active');
+  });
+}
+
+function selectTransition(el) {
+  document.querySelectorAll('.transition-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function togglePhase(el) {
+  const items = el.parentElement.querySelector('.phase-items');
+  if (items) items.style.display = items.style.display === 'none' ? '' : 'none';
+}
+
+// Demo: show toast when clicking a pending checklist item
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('pending')) {
+    const row = e.target.closest('.checklist-row');
+    e.target.textContent = '\u2713';
+    e.target.classList.remove('pending');
+    e.target.classList.add('done');
+    row.querySelector('.title').classList.add('done');
+    const skip = row.querySelector('.skip-btn');
+    if (skip) skip.remove();
+    const toast = document.getElementById('toast');
+    const messages = [
+      "One less thing to worry about.",
+      "That one's done. Take a breath.",
+      "Handled. You're making progress.",
+      "Nice. One step closer.",
+      "Done. You're moving forward.",
+    ];
+    toast.textContent = messages[Math.floor(Math.random() * messages.length)];
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+});
+</script>
+</body>
+</html>

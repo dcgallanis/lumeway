@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct ChecklistView: View {
     @EnvironmentObject var appState: AppState
@@ -141,18 +142,32 @@ struct ChecklistView: View {
                 // Reload to get fresh state
                 await loadChecklist()
 
-                // Show toast if marking complete (not un-completing)
+                // Show toast + haptic if marking complete (not un-completing)
                 if !wasCompleted && response.isCompleted == true {
+                    let generator = UIImpactFeedbackGenerator(style: .medium)
+                    generator.impactOccurred()
                     showToast(completionMessages.randomElement() ?? "Done.")
+
+                    // Check if phase is now fully complete for milestone haptic
+                    let phase = item.phase ?? "Other"
+                    if let group = groupedPhases.first(where: { $0.phase == phase }),
+                       group.items.allSatisfy(\.isCompleted) {
+                        let notify = UINotificationFeedbackGenerator()
+                        notify.notificationOccurred(.success)
+                    }
                 }
             }
         } catch {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.error)
             print("Toggle error: \(error)")
         }
     }
 
     private func skipItem(_ item: FullChecklistItem) async {
         do {
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.impactOccurred()
             _ = try await service.skipItem(id: item.id)
             showToast("No pressure. This task will be here when you're ready.")
             await loadChecklist()

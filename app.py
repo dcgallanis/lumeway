@@ -4034,6 +4034,64 @@ def register_push_token():
     conn.close()
     return jsonify({"ok": True})
 
+# ── In-App Purchase verification ──
+
+# Map App Store product IDs to transition categories
+IAP_PRODUCT_MAP = {
+    "co.lumeway.pass.estate": "estate",
+    "co.lumeway.pass.divorce": "divorce",
+    "co.lumeway.pass.jobloss": "job-loss",
+    "co.lumeway.pass.disability": "disability",
+    "co.lumeway.pass.relocation": "relocation",
+    "co.lumeway.pass.retirement": "retirement",
+    "co.lumeway.pass.addiction": "addiction",
+    "co.lumeway.bundle.pick3": "__pick3__",
+    "co.lumeway.bundle.all": "__all__",
+}
+
+@app.route("/api/iap/verify", methods=["POST"])
+def verify_iap():
+    """Verify an in-app purchase and grant access."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json or {}
+    product_id = data.get("product_id", "")
+    transaction_id = data.get("transaction_id", "")
+
+    if product_id not in IAP_PRODUCT_MAP:
+        return jsonify({"error": "Unknown product"}), 400
+
+    category = IAP_PRODUCT_MAP[product_id]
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Grant access based on product type
+    active = user.get("active_transitions") or []
+    if category == "__all__":
+        # All transitions access
+        active = list(VALID_CATEGORIES)
+    elif category == "__pick3__":
+        # Pick 3 — user chooses later, for now grant a flag
+        pass  # handled client-side
+    else:
+        if category not in active:
+            active.append(category)
+
+    active_json = json.dumps(active)
+    db_execute(conn, f"UPDATE users SET active_transitions = {param} WHERE id = {param}", (active_json, user["id"]))
+
+    # Log the purchase
+    db_execute(conn, f"INSERT INTO purchases (email, product_id, product_name, amount, purchased_at, download_token) VALUES ({param},{param},{param},{param},{param},{param})",
+               (user["email"], product_id, product_id, 0, now, transaction_id))
+
+    conn.commit()
+    conn.close()
+
+    audit_log(user["id"], "iap_purchase", "purchase", product_id, f"txn={transaction_id}")
+    return jsonify({"ok": True, "active_transitions": active})
+
 @app.route("/api/auth/me")
 def auth_me():
     user = get_current_user()
@@ -4248,6 +4306,54 @@ def dashboard_history_detail(session_id):
     messages = [{"role": r[0], "content": r[1], "created_at": r[2]} for r in cur.fetchall()]
     conn.close()
     return jsonify({"messages": messages})
+
+# ── Help Resources (professional referrals per transition) ──
+
+HELP_RESOURCES = {
+    "estate": [
+        {"name": "American Bar Association", "url": "https://www.americanbar.org", "desc": "Find an estate attorney in your area"},
+        {"name": "LawHelp.org", "url": "https://www.lawhelp.org", "desc": "Free legal aid for low-income individuals"},
+        {"name": "National Academy of Elder Law Attorneys", "url": "https://www.naela.org", "desc": "Attorneys specializing in elder law and estate planning"},
+    ],
+    "divorce": [
+        {"name": "ABA Family Law Section", "url": "https://www.americanbar.org/groups/family_law", "desc": "Find a family law attorney"},
+        {"name": "WomensLaw.org", "url": "https://www.womenslaw.org", "desc": "Legal information for domestic violence survivors"},
+        {"name": "LawHelp.org", "url": "https://www.lawhelp.org", "desc": "Free legal aid resources"},
+    ],
+    "job-loss": [
+        {"name": "CareerOneStop", "url": "https://www.careeronestop.org", "desc": "Job search and career resources"},
+        {"name": "Department of Labor", "url": "https://www.dol.gov/unemployment", "desc": "Unemployment insurance information by state"},
+        {"name": "USA.gov Benefits", "url": "https://www.usa.gov/benefits", "desc": "Government benefit programs you may qualify for"},
+    ],
+    "disability": [
+        {"name": "Social Security Administration", "url": "https://www.ssa.gov/disability", "desc": "Apply for SSDI or SSI benefits"},
+        {"name": "NOSSCR", "url": "https://www.nosscr.org", "desc": "Find a Social Security disability attorney"},
+        {"name": "Disability Rights", "url": "https://www.disabilityrightsca.org", "desc": "Know your rights under the ADA"},
+    ],
+    "relocation": [
+        {"name": "USPS Change of Address", "url": "https://www.usps.com/manage/forward.htm", "desc": "Forward your mail to your new address"},
+        {"name": "Moving.org", "url": "https://www.moving.org", "desc": "Licensed mover directory and moving resources"},
+    ],
+    "retirement": [
+        {"name": "SSA Retirement", "url": "https://www.ssa.gov/retirement", "desc": "Social Security retirement benefit calculator"},
+        {"name": "FINRA Investor Tools", "url": "https://www.finra.org/investors", "desc": "Investment education and broker verification"},
+        {"name": "Medicare.gov", "url": "https://www.medicare.gov", "desc": "Medicare enrollment and coverage information"},
+    ],
+    "addiction": [
+        {"name": "SAMHSA Helpline", "url": "https://www.samhsa.gov/find-help/national-helpline", "desc": "Free 24/7 referral service: 1-800-662-4357"},
+        {"name": "FindTreatment.gov", "url": "https://findtreatment.gov", "desc": "Search for treatment facilities near you"},
+        {"name": "Al-Anon", "url": "https://al-anon.org", "desc": "Support groups for families of people with addiction"},
+    ],
+}
+
+@app.route("/api/help/resources/<transition>")
+def get_help_resources(transition):
+    """Return professional help resources for a transition type."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    resources = HELP_RESOURCES.get(transition, [])
+    return jsonify({"transition": transition, "resources": resources})
 
 # ── Checklist API ──
 
