@@ -293,6 +293,19 @@
     .ws-welcome ul { list-style: none; padding: 0; margin: 0 0 16px; }
     .ws-welcome li { font-size: 13px; font-weight: 300; color: var(--text); padding: 6px 0; padding-left: 20px; position: relative; line-height: 1.5; }
     .ws-welcome li:before { content: '\2713'; position: absolute; left: 0; color: var(--green); font-weight: 600; }
+    .ws-trouble { margin-top: 28px; border-top: 1px solid var(--border); padding-top: 20px; }
+    .ws-trouble-toggle { display: flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--muted); padding: 0; transition: color 0.15s; }
+    .ws-trouble-toggle:hover { color: var(--navy); }
+    .ws-trouble-toggle svg { transition: transform 0.2s; }
+    .ws-trouble-toggle.open svg { transform: rotate(90deg); }
+    .ws-trouble-body { display: none; margin-top: 12px; }
+    .ws-trouble-body.open { display: block; }
+    .ws-trouble-body p { font-size: 12px; font-weight: 300; color: var(--muted); line-height: 1.6; margin-bottom: 10px; }
+    .ws-trouble-body ul { list-style: none; padding: 0; margin: 0 0 12px; }
+    .ws-trouble-body li { font-size: 12px; font-weight: 300; color: var(--text); padding: 5px 0; padding-left: 18px; position: relative; line-height: 1.5; }
+    .ws-trouble-body li:before { content: '\2022'; position: absolute; left: 4px; color: var(--accent); font-weight: 600; }
+    .ws-trouble-contact { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 400; color: var(--accent); text-decoration: none; transition: color 0.15s; }
+    .ws-trouble-contact:hover { color: var(--navy); }
     /* Idle placeholder (no file open) */
     .ws-idle { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 40px; }
     .ws-idle-quote { font-family: 'Libre Baskerville', Georgia, serif; font-size: 18px; font-weight: 400; color: var(--navy); line-height: 1.6; max-width: 380px; margin-bottom: 12px; }
@@ -4793,6 +4806,20 @@ guideLibrary['disability'] = {
         + '</ul>'
         + '<h3>How the filing system works</h3>'
         + '<p>Files are organized into folders by category — Legal, Financial, Insurance, Medical, Personal. Pick a category when uploading, or recategorize anytime. This makes it easy to find documents when a lawyer, accountant, or agency asks for them.</p>'
+        + '<div class="ws-trouble">'
+        + '<button class="ws-trouble-toggle" onclick="this.classList.toggle(\'open\');this.nextElementSibling.classList.toggle(\'open\')">'
+        + '<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"/></svg>'
+        + ' Having trouble with files?</button>'
+        + '<div class="ws-trouble-body">'
+        + '<p>If your files are not loading or seem to have disappeared, try these steps first:</p>'
+        + '<ul><li>Refresh the page (Ctrl+R on Windows, Cmd+R on Mac)</li>'
+        + '<li>Clear your browser cache or open the page in a private/incognito window</li>'
+        + '<li>Log out and log back in</li>'
+        + '<li>If you uploaded files before April 9, 2026, those files may have been affected by a storage update. New uploads are fully protected.</li></ul>'
+        + '<p>If things still are not working right, we want to know.</p>'
+        + '<a class="ws-trouble-contact" href="mailto:support@lumeway.co?subject=File%20loading%20issue">'
+        + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>'
+        + ' Contact support</a></div></div>'
         + '</div>';
     }
 
@@ -5503,9 +5530,12 @@ guideLibrary['disability'] = {
       // Folder list (rendered by JS)
       html += '<div class="ws-folders" id="wsFolders"></div>';
 
-      html += '<div class="ws-sidebar-footer">';
-      html += '  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
-      html += '  Encrypted \u00B7 Only you can access';
+      html += '<div class="ws-sidebar-footer" style="justify-content:space-between">';
+      html += '  <span style="display:flex;align-items:center;gap:6px">';
+      html += '    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+      html += '    Encrypted \u00B7 Private';
+      html += '  </span>';
+      html += '  <a href="mailto:support@lumeway.co?subject=File%20issue" style="color:var(--muted);font-size:10px;text-decoration:none;transition:color 0.15s" onmouseover="this.style.color=\'var(--accent)\'" onmouseout="this.style.color=\'var(--muted)\'">Need help?</a>';
       html += '</div>';
       html += '</div>'; // ws-sidebar
 
@@ -5556,6 +5586,26 @@ guideLibrary['disability'] = {
       html += '  <h3>Supported files</h3>';
       html += '  <p>PDF, Word (.doc, .docx), Excel (.xlsx), images (.jpg, .png), text files (.txt, .csv)</p>';
       html += '  <p style="margin-top:20px;font-size:13px;color:var(--navy)"><strong>To get started</strong>, upload a file using the sidebar or drag and drop one anywhere on this page.</p>';
+      html += '  <div class="ws-trouble">';
+      html += '    <button class="ws-trouble-toggle" onclick="this.classList.toggle(\'open\');this.nextElementSibling.classList.toggle(\'open\')">';
+      html += '      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"/></svg>';
+      html += '      Having trouble with files?';
+      html += '    </button>';
+      html += '    <div class="ws-trouble-body">';
+      html += '      <p>If your files are not loading or seem to have disappeared, try these steps first:</p>';
+      html += '      <ul>';
+      html += '        <li>Refresh the page (Ctrl+R on Windows, Cmd+R on Mac)</li>';
+      html += '        <li>Clear your browser cache or open the page in a private/incognito window</li>';
+      html += '        <li>Log out and log back in</li>';
+      html += '        <li>If you uploaded files before April 9, 2026, those files may have been affected by a storage update. New uploads are fully protected.</li>';
+      html += '      </ul>';
+      html += '      <p>If things still are not working right, we want to know.</p>';
+      html += '      <a class="ws-trouble-contact" href="mailto:support@lumeway.co?subject=File%20loading%20issue">';
+      html += '        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>';
+      html += '        Contact support';
+      html += '      </a>';
+      html += '    </div>';
+      html += '  </div>';
       html += '</div>';
       html += '</div>'; // ws-viewer-body
 
