@@ -955,7 +955,7 @@ conversation_log.init_db()
 
 # ── Auth helpers ──
 
-VALID_CATEGORIES = ["job-loss", "estate", "divorce", "disability", "relocation", "retirement"]
+VALID_CATEGORIES = ["job-loss", "estate", "divorce", "disability", "relocation", "retirement", "addiction"]
 CATEGORY_LABELS = {
     "job-loss": "Job Loss & Income Crisis",
     "estate": "Death & Estate",
@@ -963,6 +963,7 @@ CATEGORY_LABELS = {
     "disability": "Disability & Benefits",
     "relocation": "Moving & Relocation",
     "retirement": "Retirement Planning",
+    "addiction": "Addiction & Recovery",
 }
 
 # Promo codes — grants full access to everything
@@ -978,6 +979,7 @@ ETSY_CODES = {
     "LUMEWAY-DISABILITY6": {"category": "disability", "credit_cents": 1600},
     "LUMEWAY-RELOCATION4": {"category": "relocation", "credit_cents": 1600},
     "LUMEWAY-RETIREMENT3": {"category": "retirement", "credit_cents": 1600},
+    "LUMEWAY-ADDICTION7": {"category": "addiction", "credit_cents": 1600},
     "LUMEWAY-LIFE1": {"category": "master", "credit_cents": 6500},
 }
 
@@ -1183,7 +1185,7 @@ YOUR BOUNDARIES:
   [professional] can give you the specific guidance you need."
 
 LIFE TRANSITIONS YOU COVER:
-Job Loss, Estate & Survivor, Divorce, Disability, Relocation, Retirement
+Job Loss, Estate & Survivor, Divorce, Disability, Relocation, Retirement, Addiction & Recovery
 
 OPENING CONVERSATION FLOW:
 When a user starts a new conversation, follow this sequence:
@@ -1314,6 +1316,23 @@ really worth talking to a financial advisor or CPA about. They can walk you
 through the options for your specific situation. What I can tell you is that
 addressing retirement accounts is typically one of the steps in the Month
 1-3 window after [event]. Would you like to see the full timeline?"
+
+ADDICTION & RECOVERY SPECIFIC RULES:
+- This category is for SUPPORTERS — people helping someone they love through addiction.
+- NEVER provide medical advice, treatment recommendations for specific individuals, or therapeutic interventions.
+- ALWAYS recommend the SAMHSA helpline (1-800-662-4357) as a first resource.
+- ALWAYS recommend Al-Anon for supporters dealing with alcohol addiction, Nar-Anon for drug addiction.
+- If someone is in immediate medical danger, direct them to call 911.
+- Acknowledge the pain of being a supporter. Validate their experience.
+- Focus on what THEY can control — their boundaries, their self-care, their education about the disease.
+- Never say "just leave" or make relationship decisions for them.
+- Recognize that denial is a clinical feature of addiction, not a character flaw.
+- NEVER recommend a specific treatment center or program.
+- NEVER suggest medication or dosages.
+- NEVER diagnose or assess the severity of someone's addiction.
+- NEVER tell the supporter to do an intervention — you can explain what one is, but cannot recommend doing one.
+- NEVER provide legal advice about commitment, custody, or financial liability.
+- NEVER say "they need to hit rock bottom" — this is an outdated and harmful myth.
 
 MEDICAL / MENTAL HEALTH BOUNDARY:
 You MUST NOT:
@@ -1806,6 +1825,7 @@ TRANSITION_CATEGORIES = {
     "relocation": ["Relocation", "Moving"],
     "disability": ["Disability", "Benefits"],
     "retirement": ["Retirement"],
+    "addiction": ["Addiction", "Recovery", "Substance Use", "Rehab"],
 }
 
 def inject_related_posts(html_file, categories):
@@ -1864,6 +1884,10 @@ def disability():
 @app.route("/retirement")
 def retirement():
     return inject_related_posts("retirement.html", TRANSITION_CATEGORIES["retirement"])
+
+@app.route("/addiction")
+def addiction():
+    return inject_related_posts("addiction.html", TRANSITION_CATEGORIES["addiction"])
 
 @app.route("/research")
 def research():
@@ -2030,6 +2054,24 @@ PRODUCTS = {
         ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Medicare and Social Security planning tools", "Pension and retirement account comparison worksheets", "Legacy and estate preparation documents", "First 24 Hours action guide"],
         "transition_page": "/retirement"},
+    "addiction": {"name": "Addiction & Recovery Guide", "price": 1800, "desc": "10 guides for supporting someone through addiction",
+        "headline": "You Don't Have to Navigate This Alone.",
+        "emoji": "\ud83e\udec2", "count": "10",
+        "long_desc": "Step-by-step guidance for supporters \u2014 understanding addiction, having the conversation, navigating treatment options, taking care of yourself, and building a path forward.",
+        "includes": [
+            ("First 24 Hours: Someone You Love Is in Crisis", "What to do \u2014 and what not to do \u2014 when you first discover or confront a loved one\u2019s substance use."),
+            ("Understanding Addiction", "The brain science, the spectrum of severity, and why willpower alone is rarely enough."),
+            ("Signs and Red Flags", "Behavioral, physical, and financial warning signs to watch for."),
+            ("How to Talk to Someone About Their Addiction", "When to bring it up, what to say, and what to expect \u2014 including conversation scripts."),
+            ("Taking Care of Yourself", "Why self-care is essential, not selfish \u2014 and how to maintain your health while supporting someone."),
+            ("Treatment Options & How to Choose", "Detox, inpatient, outpatient, PHP, IOP, MAT, and sober living \u2014 what each means and how to evaluate programs."),
+            ("Health Complications & Comorbidities", "Medical risks to watch for and when to seek emergency care."),
+            ("Legal & Financial Considerations", "Protecting your finances, understanding involuntary commitment laws, and navigating legal issues."),
+            ("After Treatment: Recovery & Relapse", "What to expect, warning signs, and how to support long-term recovery."),
+            ("Resource Directory", "Hotlines, support groups, treatment locators, and tools for supporters."),
+        ],
+        "features": ["10 in-depth guides written for supporters and families", "Phase-based checklist system with 50 tasks", "Glossary of 19 addiction and recovery terms", "Resource directory with hotlines and organizations", "AI Navigator trained for addiction-related queries"],
+        "transition_page": "/addiction"},
 }
 
 # Pass products ($39 each — full dashboard for 1 life change)
@@ -2046,6 +2088,8 @@ PASS_PRODUCTS = {
         "desc": "Full dashboard access for Moving & Relocation — checklists, content library, scripts, state-specific guidance."},
     "pass-retirement": {"name": "Retirement Pass", "price": 3900, "transition": "retirement",
         "desc": "Full dashboard access for Retirement Planning — checklists, content library, scripts, state-specific guidance."},
+    "pass-addiction": {"name": "Addiction Pass", "price": 3900, "transition": "addiction",
+        "desc": "Full dashboard access for Addiction & Recovery — checklists, content library, scripts, resource directories."},
 }
 
 # Subscription removed — all purchases are one-time
@@ -5882,6 +5926,7 @@ BOUNDARY_KEYWORDS = {
     "medical": [
         "should i take", "diagnose", "medication", "dosage",
         "what treatment", "therapy technique",
+        "detox protocol", "which rehab", "what medication for addiction",
     ],
     "form_completion": [
         "help me fill out", "complete this form", "fill in this",
