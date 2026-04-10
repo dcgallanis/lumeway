@@ -248,7 +248,7 @@
     .doc-desc { font-size: 12px; font-weight: 300; color: var(--muted); margin-top: 2px; }
 
     /* Document Workspace — folder sidebar + editor */
-    .ws-main { display: grid; grid-template-columns: 240px 1fr; gap: 0; min-height: calc(100vh - 160px); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
+    .ws-main { display: grid; grid-template-columns: 200px 1fr; gap: 0; min-height: calc(100vh - 160px); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
     @media (max-width: 768px) { .ws-main { grid-template-columns: 1fr; min-height: auto; } }
     .ws-sidebar { background: var(--cream); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
     .ws-sidebar-top { padding: 14px 14px 10px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
@@ -312,10 +312,10 @@
     .ws-sig-font-opt:hover { border-color: var(--gold); }
     .ws-sig-font-opt.active { border-color: var(--navy); background: rgba(44,74,94,0.04); }
     /* Quill editor overrides */
-    .ws-viewer-body .ql-toolbar { border: none; border-bottom: 1px solid var(--border); background: var(--cream); padding: 8px 16px; }
-    .ws-viewer-body .ql-toolbar .ql-formats { margin-right: 12px; }
-    .ws-viewer-body .ql-container { border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; flex: 1; }
-    .ws-viewer-body .ql-editor { padding: 32px 40px; min-height: 500px; line-height: 1.8; color: var(--text); }
+    .ws-viewer-body .ql-toolbar { border: none; border-bottom: 1px solid var(--border); background: var(--cream); padding: 8px 16px; position: sticky; top: 0; z-index: 5; }
+    .ws-viewer-body .ql-toolbar .ql-formats { margin-right: 10px; }
+    .ws-viewer-body .ql-container { border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; overflow-y: auto; max-height: calc(100vh - 280px); }
+    .ws-viewer-body .ql-editor { padding: 32px 40px; min-height: 400px; line-height: 1.8; color: var(--text); }
     .ws-viewer-body .ql-editor h1 { font-family: 'Libre Baskerville', serif; color: var(--navy); font-size: 22px; margin-bottom: 8px; }
     .ws-viewer-body .ql-editor h2 { font-family: 'Libre Baskerville', serif; color: var(--navy); font-size: 18px; margin-bottom: 6px; }
     .ws-viewer-body .ql-editor h3 { color: var(--navy); font-size: 15px; font-weight: 600; margin-bottom: 4px; }
@@ -3261,32 +3261,28 @@ guideLibrary['disability'] = {
         return;
       }
 
-      // Build sidebar nav with transition pills + category section links
+      // Build sidebar nav — only show section subheaders for active transition
       accessibleKeys.forEach(function(key) {
         var t = guideLibrary[key];
         var isActive = activeGuideTransition === key || (!activeGuideTransition && key === accessibleKeys[0]);
         html += '<div class="guide-nav-item' + (isActive ? ' active' : '') + '" data-key="' + key + '" onclick="switchGuideTransition(\'' + key + '\')">';
         html += '  <span class="guide-nav-label">' + t.label + '</span>';
-        html += '  <ul class="guide-nav-sections">';
-        t.categories.forEach(function(cat) {
-          var catSlug = key + '-' + cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
-          html += '<li onclick="event.stopPropagation();scrollToGuideCategory(\'' + key + '\',\'' + catSlug + '\')">' + cat.name + '</li>';
-        });
-        html += '  </ul>';
+        if (isActive) {
+          html += '  <ul class="guide-nav-sections">';
+          t.categories.forEach(function(cat) {
+            var catSlug = key + '-' + cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
+            html += '<li onclick="event.stopPropagation();scrollToGuideCategory(\'' + key + '\',\'' + catSlug + '\')">' + cat.name + '</li>';
+          });
+          html += '  </ul>';
+        }
         html += '</div>';
       });
 
-      // Locked transitions
+      // Locked transitions — just show name, no sections
       transitionKeys.forEach(function(key) {
         if (accessibleKeys.indexOf(key) === -1) {
-          var t = guideLibrary[key];
           html += '<div class="guide-nav-item locked" title="Upgrade to access">';
-          html += '  <span class="guide-nav-label">' + t.label + '<span class="guide-nav-lock">🔒</span></span>';
-          html += '  <ul class="guide-nav-sections">';
-          t.categories.forEach(function(cat) {
-            html += '<li>' + cat.name + '</li>';
-          });
-          html += '  </ul>';
+          html += '  <span class="guide-nav-label">' + guideLibrary[key].label + '<span class="guide-nav-lock">🔒</span></span>';
           html += '</div>';
         }
       });
@@ -3310,17 +3306,18 @@ guideLibrary['disability'] = {
 
     function scrollToGuideSection(slug) {
       var el = document.getElementById('guide-cat-' + slug);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (!el) return;
+      // Slow, gentle scroll
+      var targetY = el.getBoundingClientRect().top + window.pageYOffset - 100;
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
     }
 
     function scrollToGuideCategory(key, slug) {
       if (activeGuideTransition === key) {
-        // Already on this transition — scroll immediately
         scrollToGuideSection(slug);
       } else {
-        // Switch transition first, then scroll after render
         switchGuideTransition(key);
-        setTimeout(function() { scrollToGuideSection(slug); }, 120);
+        setTimeout(function() { scrollToGuideSection(slug); }, 200);
       }
     }
 
@@ -3335,6 +3332,12 @@ guideLibrary['disability'] = {
       var hasFullForThis = isAllAccess || catAccess[key] === 'full';
 
       var html = '';
+
+      // Show guide transition title at top (useful when multiple guides accessible)
+      var accessibleCount = Object.keys(guideLibrary).filter(function(k) { return isAllAccess || catAccess[k] === 'full'; }).length;
+      if (accessibleCount > 1) {
+        html += '<h2 style="font-family:Libre Baskerville,serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:16px">' + t.label + '</h2>';
+      }
 
       // State-specific callout (if user has a state set and we have data)
       var userState = dashData && dashData.user && dashData.user.us_state;
@@ -3591,8 +3594,9 @@ guideLibrary['disability'] = {
           } else {
             files.forEach(function(f) {
               var fActive = wsActiveFileId === f.id ? ' active' : '';
-              html += '<div class="ws-folder-file' + fActive + '" onclick="event.stopPropagation();openFileViewer(' + f.id + ')" title="' + f.original_name + '">';
-              html += getFileIcon(f.original_name) + ' ' + f.original_name;
+              html += '<div class="ws-folder-file' + fActive + '" style="display:flex;align-items:center;gap:4px" onclick="event.stopPropagation();openFileViewer(' + f.id + ')" title="' + f.original_name + '">';
+              html += '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + getFileIcon(f.original_name) + ' ' + f.original_name + '</span>';
+              html += '<button onclick="event.stopPropagation();deleteFile(' + f.id + ')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0 2px;opacity:0.4;flex-shrink:0" title="Delete" onmouseover="this.style.opacity=1;this.style.color=\'var(--accent)\'" onmouseout="this.style.opacity=0.4;this.style.color=\'var(--muted)\'">&times;</button>';
               html += '</div>';
             });
           }
@@ -3828,8 +3832,7 @@ guideLibrary['disability'] = {
           });
         });
       } else if (ext === 'pdf') {
-        // Show signature button for PDFs too
-        if (sigWrap) { sigWrap.style.display = 'block'; initSigFonts(); }
+        // PDF viewed in browser's native viewer (supports text, print, save)
         body.innerHTML = '<iframe id="wsPdfFrame" src="' + previewUrl + '" style="width:100%;height:100%;border:none"></iframe>';
       } else if (['jpg','jpeg','png','gif','webp'].indexOf(ext) >= 0) {
         body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;padding:20px"><img src="' + previewUrl + '" alt="' + file.original_name + '" style="max-width:100%;max-height:calc(100vh - 300px);object-fit:contain;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.08)"></div>';
@@ -3877,13 +3880,16 @@ guideLibrary['disability'] = {
         modules: {
           toolbar: [
             [{ 'header': [1, 2, 3, false] }],
-            ['bold', 'italic', 'underline'],
+            [{ 'size': ['small', false, 'large', 'huge'] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'color': [] }, { 'background': [] }],
             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'align': [] }],
             ['link'],
-            ['clean']
+            [{ 'indent': '-1' }, { 'indent': '+1' }]
           ]
         },
-        placeholder: 'Start editing\u2026'
+        placeholder: 'Start typing to edit this document\u2026'
       });
       wsQuill.root.innerHTML = html;
       wsEditorDirty = false;
@@ -3980,7 +3986,9 @@ guideLibrary['disability'] = {
       { name: 'Architects Daughter', label: 'Handwritten' },
       { name: 'Libre Baskerville', label: 'Serif' }
     ];
-    var activeSigFont = 'Dancing Script';
+    // Remember signature preferences
+    var activeSigFont = localStorage.getItem('lumeway_sig_font') || 'Dancing Script';
+    var savedSigName = localStorage.getItem('lumeway_sig_name') || '';
 
     function loadSigFonts() {
       if (sigFontsLoaded) return;
@@ -3995,20 +4003,25 @@ guideLibrary['disability'] = {
       loadSigFonts();
       var container = document.getElementById('wsSigFonts');
       if (!container || container.children.length > 0) return;
+      // Pre-fill saved name
+      var nameInput = document.getElementById('wsSigName');
+      if (nameInput && savedSigName) { nameInput.value = savedSigName; }
       SIG_FONTS.forEach(function(f) {
         var div = document.createElement('div');
         div.className = 'ws-sig-font-opt' + (f.name === activeSigFont ? ' active' : '');
         div.style.fontFamily = "'" + f.name + "', cursive";
         div.dataset.font = f.name;
-        div.textContent = 'Your Name';
+        div.textContent = savedSigName || 'Your Name';
         div.title = f.label;
         div.onclick = function() {
           activeSigFont = f.name;
+          localStorage.setItem('lumeway_sig_font', f.name);
           container.querySelectorAll('.ws-sig-font-opt').forEach(function(o) { o.classList.toggle('active', o.dataset.font === f.name); });
           updateSigPreview();
         };
         container.appendChild(div);
       });
+      updateSigPreview();
     }
 
     function toggleSigDropdown() {
@@ -4033,17 +4046,17 @@ guideLibrary['disability'] = {
     }
 
     function stampSignature() {
-      var name = document.getElementById('wsSigName').value.trim();
+      var nameInput = document.getElementById('wsSigName');
+      var name = nameInput ? nameInput.value.trim() : '';
       if (!name) { alert('Please type your name first.'); return; }
       var font = activeSigFont;
-      var today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      // Save for next time
+      localStorage.setItem('lumeway_sig_name', name);
+      savedSigName = name;
 
       if (wsQuill) {
-        // Quill-based doc editor
-        var sigHtml = '<p><br></p>'
-          + '<p style="border-top:1px solid #ccc;padding-top:8px;margin-top:16px">'
-          + '<span style="font-family:\'' + font + '\',cursive;font-size:24px;color:#2C4A5E">' + name + '</span>'
-          + '<br><span style="font-size:12px;color:#6B7B8D">Date: ' + today + '</span></p>';
+        // Insert signature at cursor position in Quill editor
+        var sigHtml = '<p><span style="font-family:\'' + font + '\',cursive;font-size:24px;color:#2C4A5E">' + name + '</span></p>';
         var range = wsQuill.getSelection();
         var idx = range ? range.index : wsQuill.getLength();
         wsQuill.clipboard.dangerouslyPasteHTML(idx, sigHtml);
@@ -4053,6 +4066,22 @@ guideLibrary['disability'] = {
       var btn = document.getElementById('wsSigToggle');
       if (dd) dd.classList.remove('open');
       if (btn) btn.classList.remove('active');
+    }
+
+    // Quick stamp — uses saved signature or opens dropdown if none saved
+    function quickStampSignature() {
+      if (savedSigName) {
+        // Stamp immediately with saved settings
+        if (wsQuill) {
+          var sigHtml = '<p><span style="font-family:\'' + activeSigFont + '\',cursive;font-size:24px;color:#2C4A5E">' + savedSigName + '</span></p>';
+          var range = wsQuill.getSelection();
+          var idx = range ? range.index : wsQuill.getLength();
+          wsQuill.clipboard.dangerouslyPasteHTML(idx, sigHtml);
+        }
+      } else {
+        // No saved signature — open dropdown to set one up
+        toggleSigDropdown();
+      }
     }
 
     // Close sig dropdown when clicking outside
@@ -4246,21 +4275,13 @@ guideLibrary['disability'] = {
       if (prog.total > 0) html += ' <span class="tab-badge">' + prog.completed + '/' + prog.total + '</span>';
       html += '</button>';
       if (hasFullAccess || hasSomeFullCat) {
-        html += '  <button class="dash-tab" data-tab="calendar" onclick="switchTab(\'calendar\')">Calendar';
-        if (deadlines.length > 0) html += ' <span class="tab-badge">' + deadlines.filter(function(d){return !d.is_completed;}).length + '</span>';
-        html += '</button>';
-        html += '  <button class="dash-tab" data-tab="documents" onclick="switchTab(\'documents\')">Files & Templates';
-        var ftBadge = userFiles.length;
-        if (ftBadge > 0) html += ' <span class="tab-badge">' + ftBadge + '</span>';
-        html += '</button>';
+        html += '  <button class="dash-tab" data-tab="calendar" onclick="switchTab(\'calendar\')">Calendar</button>';
+        html += '  <button class="dash-tab" data-tab="documents" onclick="switchTab(\'documents\')">Files & Templates</button>';
         html += '  <button class="dash-tab" data-tab="notes" onclick="switchTab(\'notes\')">Notes</button>';
         html += '  <button class="dash-tab" data-tab="guides" onclick="switchTab(\'guides\')">Guides</button>';
         html += '  <button class="dash-tab" data-tab="activity" onclick="switchTab(\'activity\')">Activity Log';
-        if (activityLog.length > 0) html += ' <span class="tab-badge">' + activityLog.length + '</span>';
         html += '</button>';
-        html += '  <button class="dash-tab" data-tab="history" onclick="switchTab(\'history\')">History';
-        if (sessions.length > 0) html += ' <span class="tab-badge">' + sessions.length + '</span>';
-        html += '</button>';
+        html += '  <button class="dash-tab" data-tab="history" onclick="switchTab(\'history\')">History</button>';
       }
       html += '  <button class="dash-tab" data-tab="account" onclick="switchTab(\'account\')" style="margin-left:auto">⚙ Account Settings</button>';
       html += '</div>';
@@ -4866,9 +4887,12 @@ guideLibrary['disability'] = {
       html += '<div class="ws-viewer-header" id="wsViewerHeader" style="display:none">';
       html += '  <span class="ws-viewer-title" id="wsViewerTitle"></span>';
       html += '  <div id="wsSigBtnWrap" style="display:none;position:relative">';
-      html += '    <button class="ws-viewer-btn ws-sig-toggle" id="wsSigToggle" onclick="toggleSigDropdown()" title="Add signature">';
-      html += '      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg> Signature';
-      html += '    </button>';
+      html += '    <div style="display:flex;align-items:center;border:1px solid var(--border);border-radius:6px;overflow:hidden">';
+      html += '      <button class="ws-viewer-btn" id="wsSigQuickBtn" onclick="quickStampSignature()" title="Place signature" style="border:none;border-radius:0;border-right:1px solid var(--border)">';
+      html += '        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg> Signature';
+      html += '      </button>';
+      html += '      <button class="ws-viewer-btn ws-sig-toggle" id="wsSigToggle" onclick="toggleSigDropdown()" title="Signature settings" style="border:none;border-radius:0;padding:4px 6px">&#9662;</button>';
+      html += '    </div>';
       html += '    <div class="ws-sig-dropdown" id="wsSigDropdown">';
       html += '      <label>Type your name</label>';
       html += '      <input class="ws-sig-input" id="wsSigName" placeholder="Your full name" oninput="updateSigPreview()" style="width:100%;max-width:none;margin-bottom:8px">';
@@ -4884,33 +4908,26 @@ guideLibrary['disability'] = {
       html += '<div class="ws-viewer-body" id="wsViewerBody">';
       // Welcome content shown when no file is open
       html += '<div class="ws-welcome" id="wsWelcome">';
-      html += '  <h2>Welcome to your workspace</h2>';
-      html += '  <p>A private place to keep all your important documents organized. Upload, view, and edit files right here — everything auto-saves and stays encrypted.</p>';
-      html += '  <div style="display:flex;align-items:flex-start;gap:10px;background:linear-gradient(135deg,#f0f7f0,#e8f4e8);border:1px solid #c4d9c4;border-radius:10px;padding:14px 16px;margin-bottom:20px">';
+      html += '  <h2>Your private document workspace</h2>';
+      html += '  <div style="display:flex;align-items:flex-start;gap:10px;background:linear-gradient(135deg,#f0f7f0,#e8f4e8);border:1px solid #c4d9c4;border-radius:10px;padding:14px 16px;margin-bottom:24px">';
       html += '    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F5E" stroke-width="2" style="flex-shrink:0;margin-top:2px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
-      html += '    <div style="font-size:13px;font-weight:300;color:#2C3E50;line-height:1.5"><strong style="font-weight:500">Your files are safe.</strong> Every document is encrypted before storage. Only you can access them — not even Lumeway staff can read your files.</div>';
+      html += '    <div style="font-size:13px;font-weight:300;color:#2C3E50;line-height:1.5"><strong style="font-weight:500">Your files are encrypted and private.</strong> Only you can see them. Not even Lumeway staff can access your documents.</div>';
       html += '  </div>';
-      html += '  <h3>What you can do here</h3>';
+      html += '  <p>Upload your important documents and keep them organized. Edit Word docs right in your browser with auto-save, add your signature to documents, and export when you are ready.</p>';
+      html += '  <h3>The filing system</h3>';
+      html += '  <p>The sidebar sorts your files into folders — Legal, Financial, Insurance, Medical, Personal. Pick a category when you upload, or change it later. When a lawyer or accountant asks for a specific document, you will know exactly where it is.</p>';
+      html += '  <h3>What to upload</h3>';
       html += '  <ul>';
-      html += '    <li>Upload PDFs, Word docs, images, spreadsheets (.xlsx), and text files</li>';
-      html += '    <li>View any document right in your browser — no downloads needed</li>';
-      html += '    <li>Edit Word documents with a rich text editor (auto-saves as you type)</li>';
-      html += '    <li>Add a typed signature and date stamp to documents</li>';
-      html += '    <li>Export edited documents back as Word files</li>';
-      html += '    <li>Add text to PDFs (for filling out forms) and save your changes</li>';
-      html += '  </ul>';
-      html += '  <h3>How the filing system works</h3>';
-      html += '  <p>The sidebar organizes your files into folders by category — Legal, Financial, Insurance, Medical, and Personal. When you upload a file, pick a category or let Lumeway guess from the filename. You can recategorize any file later. This makes it easy to find what you need when a lawyer, accountant, or agency asks for specific documents.</p>';
-      html += '  <h3>Good documents to upload</h3>';
-      html += '  <ul>';
-      html += '    <li>Insurance policies and benefit statements</li>';
-      html += '    <li>Legal documents (wills, deeds, court orders, custody agreements)</li>';
-      html += '    <li>Financial records (tax returns, bank statements, pay stubs)</li>';
+      html += '    <li>Insurance policies, benefit letters, and coverage summaries</li>';
+      html += '    <li>Legal documents — wills, deeds, court orders, custody agreements</li>';
+      html += '    <li>Financial records — tax returns, bank statements, pay stubs</li>';
       html += '    <li>Medical records, prescriptions, and doctor\'s notes</li>';
-      html += '    <li>Letters you need to send, forms to fill out, and correspondence received</li>';
-      html += '    <li>Completed Lumeway templates and worksheets</li>';
+      html += '    <li>Forms you need to fill out, letters to send, and correspondence</li>';
+      html += '    <li>Lumeway templates and worksheets you have completed</li>';
       html += '  </ul>';
-      html += '  <p style="margin-top:24px;font-size:13px">Get started by uploading a file using the sidebar, or drag and drop one anywhere on this page.</p>';
+      html += '  <h3>Supported files</h3>';
+      html += '  <p>PDF, Word (.doc, .docx), Excel (.xlsx), images (.jpg, .png), text files (.txt, .csv)</p>';
+      html += '  <p style="margin-top:20px;font-size:13px;color:var(--navy)"><strong>To get started</strong>, upload a file using the sidebar or drag and drop one anywhere on this page.</p>';
       html += '</div>';
       html += '</div>'; // ws-viewer-body
 
@@ -4981,7 +4998,7 @@ guideLibrary['disability'] = {
       html += '    </div>';
       html += '    <div style="display:flex;flex-direction:column;gap:4px;min-width:140px">';
       html += '      <label style="font-size:11px;color:var(--muted)">Date</label>';
-      html += '      <input type="date" id="activityDate" value="' + new Date().toISOString().split('T')[0] + '">';
+      html += '      <input type="date" id="activityDate" value="' + new Date().toISOString().split('T')[0] + '" max="' + new Date().toISOString().split('T')[0] + '">';
       html += '    </div>';
       html += '    <div style="display:flex;flex-direction:column;gap:4px;justify-content:flex-end">';
       html += '      <button class="init-btn" onclick="addActivityLog()">Add</button>';
@@ -5195,12 +5212,12 @@ guideLibrary['disability'] = {
       html += '  <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Guides</h2>';
       html += '  <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Step-by-step guidance for what you\'re going through. Click any task to expand the full walkthrough.</p>';
       html += '</div>';
+      html += '<div class="guide-mode-toggle" style="margin-bottom:16px">';
+      html += '  <label onclick="toggleQuickMode()"><span class="guide-mode-switch" id="quickModeSwitch"></span> Quick mode</label>';
+      html += '  <span style="font-size:11px;font-weight:300;color:var(--muted)">Hides detailed steps — just titles and summaries</span>';
+      html += '</div>';
       html += '<div class="guide-layout">';
       html += '  <div class="guide-sidebar">';
-      html += '    <div class="guide-mode-toggle" style="margin-bottom:12px">';
-      html += '      <label onclick="toggleQuickMode()"><span class="guide-mode-switch" id="quickModeSwitch"></span> Quick mode</label>';
-      html += '      <div style="font-size:10px;font-weight:300;color:var(--muted);line-height:1.3;margin-top:2px">Hides detailed steps so you just see task titles and summaries</div>';
-      html += '    </div>';
       html += '    <div class="guide-nav" id="guideTransitionNav"></div>';
       html += '  </div>';
       html += '  <div class="guide-main">';
