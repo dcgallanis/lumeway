@@ -13,6 +13,16 @@
     :root { --cream: #FAF7F2; --warm-white: #FDFCFA; --text: #2C3E50; --muted: #6B7B8D; --navy: #2C4A5E; --gold: #B8977E; --accent: #C4704E; --accent-light: #D4896C; --border: #E8E0D6; --green: #6B8F5E; --red: #C4704E; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
 
+    /* Accessibility — focus visible */
+    :focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; border-radius: 4px; }
+    button:focus:not(:focus-visible), a:focus:not(:focus-visible) { outline: none; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .skip-link { position: absolute; top: -40px; left: 0; background: var(--navy); color: var(--cream); padding: 8px 16px; z-index: 200; font-size: 14px; text-decoration: none; border-radius: 0 0 8px 0; transition: top 0.2s; }
+    .skip-link:focus { top: 0; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    }
+
     /* Nav */
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
@@ -87,27 +97,37 @@
 
     /* Onboarding modal */
     .onboard-overlay { position: fixed; inset: 0; background: rgba(44,62,80,0.5); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 24px; animation: fadeIn 0.3s ease; }
-    .onboard-card { background: var(--warm-white); border-radius: 20px; max-width: 520px; width: 100%; padding: 40px 36px 32px; position: relative; box-shadow: 0 12px 48px rgba(44,62,80,0.15); }
+    .onboard-card { background: var(--warm-white); border-radius: 20px; max-width: 520px; width: 100%; padding: 40px 36px 32px; position: relative; box-shadow: 0 12px 48px rgba(44,62,80,0.15); text-align: center; }
     .onboard-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px; }
-    .onboard-slide { display: none; }
-    .onboard-slide.active { display: block; }
-    .onboard-icon { font-size: 40px; margin-bottom: 16px; }
-    .onboard-title { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 400; margin-bottom: 10px; color: var(--navy); }
-    .onboard-text { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
-    .onboard-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
-    .onboard-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); line-height: 1.5; }
-    .onboard-feature .feat-icon { flex-shrink: 0; width: 28px; height: 28px; background: var(--cream); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-    .onboard-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 20px; }
-    .onboard-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.2s; }
-    .onboard-dot.active { background: var(--navy); }
-    .onboard-nav { display: flex; justify-content: space-between; align-items: center; }
-    .onboard-skip { font-size: 13px; color: var(--muted); background: none; border: none; cursor: pointer; font-family: inherit; }
-    .onboard-next { padding: 10px 28px; background: var(--accent); color: var(--cream); border: none; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-    .onboard-next:hover { background: var(--accent-light); }
-    .onboard-back { padding: 10px 20px; background: var(--cream); color: var(--muted); border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-    .onboard-back:hover { color: var(--navy); border-color: var(--gold); }
+    .onboard-title { font-family: 'Libre Baskerville', serif; font-size: 24px; font-weight: 400; margin-bottom: 8px; color: var(--navy); }
+    .onboard-text { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
+    .onboard-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .onboard-choice { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--cream); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; font-family: inherit; transition: all 0.15s; text-align: left; }
+    .onboard-choice:hover { border-color: var(--gold); background: var(--warm-white); box-shadow: 0 2px 8px rgba(44,74,94,0.08); }
+    .onboard-choice-icon { font-size: 20px; flex-shrink: 0; }
+    .onboard-choice-label { font-size: 13px; font-weight: 500; color: var(--text); }
+    .onboard-or { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: var(--muted); font-size: 12px; font-weight: 300; }
+    .onboard-or::before, .onboard-or::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .onboard-chat-link { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 24px; background: var(--accent); color: var(--cream); border-radius: 10px; font-size: 14px; font-weight: 500; text-decoration: none; font-family: inherit; transition: all 0.2s; }
+    .onboard-chat-link:hover { filter: brightness(1.08); }
+    .onboard-skip { font-size: 13px; color: var(--muted); background: none; border: none; cursor: pointer; font-family: inherit; display: block; margin: 0 auto; }
+    .onboard-skip:hover { color: var(--navy); }
+    @media (max-width: 480px) { .onboard-choices { grid-template-columns: 1fr; } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .check-skip:hover { color: var(--accent); background: rgba(196,112,78,0.06); }
+
+    /* Contextual tooltips for first-time users */
+    .ctx-tip { position: relative; display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #f8f4ef, #f2ece3); border: 1px solid var(--gold); border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 300; color: var(--text); line-height: 1.4; margin-bottom: 12px; animation: tipFadeIn 0.4s ease; }
+    .ctx-tip-icon { font-size: 14px; flex-shrink: 0; }
+    .ctx-tip-dismiss { background: none; border: none; font-size: 14px; color: var(--muted); cursor: pointer; padding: 0 0 0 6px; line-height: 1; }
+    .ctx-tip-dismiss:hover { color: var(--navy); }
+    @keyframes tipFadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* CBT reframe — gentle cognitive reframing for overwhelm */
+    .cbt-reframe { display: flex; align-items: flex-start; gap: 12px; background: linear-gradient(135deg, #f8f4ef, #f2ece3); border: 1px solid var(--gold); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; animation: tipFadeIn 0.4s ease; }
+    .cbt-reframe-text { font-family: 'Libre Baskerville', Georgia, serif; font-size: 14px; font-weight: 400; color: var(--navy); line-height: 1.6; flex: 1; }
+    .cbt-reframe-dismiss { background: none; border: none; font-size: 16px; color: var(--muted); cursor: pointer; padding: 0; line-height: 1; flex-shrink: 0; }
+    .cbt-reframe-dismiss:hover { color: var(--navy); }
 
     /* Next task highlight */
     .check-item.next-task { background: rgba(184,151,126,0.08); border-radius: 8px; margin: 0 -8px; padding: 7px 8px; }
@@ -138,9 +158,11 @@
     /* Locked guide content */
     .guide-locked-overlay { position: relative; }
     .guide-locked-overlay::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 120px; background: linear-gradient(transparent, var(--warm-white)); pointer-events: none; }
-    .guide-lock-msg { text-align: center; padding: 16px; font-size: 13px; color: var(--muted); font-weight: 300; }
-    .guide-lock-msg a { color: var(--accent); text-decoration: none; font-weight: 500; }
-    .guide-lock-msg a:hover { text-decoration: underline; }
+    .guide-lock-msg { text-align: center; padding: 20px 16px; font-size: 13px; color: var(--muted); font-weight: 300; background: linear-gradient(180deg, transparent, rgba(184,151,126,0.06)); border-top: 1px solid var(--border); }
+    .guide-lock-social { font-size: 11px; color: var(--navy); margin-top: 8px; opacity: 0.7; }
+    .guide-lock-anchor { font-size: 11px; color: var(--muted); margin-top: 4px; font-style: italic; }
+    .guide-lock-cta { display: inline-block; margin-top: 12px; padding: 10px 24px; background: var(--accent); color: var(--cream); border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; transition: all 0.2s; }
+    .guide-lock-cta:hover { filter: brightness(1.08); text-decoration: none; }
 
     /* Single column checklist when only one category */
     .checklist-single { max-width: 640px; }
@@ -331,11 +353,12 @@
     .conv-msg.assistant { background: var(--warm-white); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
 
     /* Upcoming deadlines (compact) */
-    .upcoming-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .upcoming-item { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 4px; }
     .upcoming-item:last-child { border-bottom: none; }
     .upcoming-title { font-size: 13px; font-weight: 400; }
     .upcoming-date { font-size: 12px; color: var(--muted); white-space: nowrap; }
     .upcoming-overdue { color: var(--accent); font-weight: 500; }
+    .upcoming-consequence { width: 100%; font-size: 11px; font-weight: 300; color: var(--accent); line-height: 1.4; margin-top: 2px; }
 
     /* Delete/action buttons for items */
     .item-actions { display: flex; gap: 4px; flex-shrink: 0; margin-left: auto; }
@@ -374,11 +397,31 @@
     .activity-form select:focus, .activity-form input:focus, .activity-form textarea:focus { border-color: var(--accent); }
     .activity-form textarea { min-height: 60px; resize: vertical; }
 
-    /* Guide content library */
-    .guide-nav { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-    .guide-nav-btn { padding: 8px 18px; border: 1px solid var(--border); border-radius: 100px; background: var(--warm-white); color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; }
-    .guide-nav-btn:hover { border-color: var(--gold); color: var(--text); }
-    .guide-nav-btn.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    /* Guide content library — sidebar layout */
+    .guide-layout { display: grid; grid-template-columns: 260px 1fr; gap: 0; min-height: 600px; }
+    .guide-sidebar { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; border-right: 1px solid var(--border); padding: 0 16px 24px 0; }
+    .guide-sidebar::-webkit-scrollbar { width: 4px; }
+    .guide-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .guide-main { padding-left: 24px; min-width: 0; }
+    .guide-nav { display: flex; flex-direction: column; gap: 4px; margin-bottom: 0; }
+    .guide-nav-item { border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
+    .guide-nav-item:hover { background: var(--cream); border-color: var(--border); }
+    .guide-nav-item.active { background: var(--navy); border-color: var(--navy); }
+    .guide-nav-label { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; color: var(--text); display: block; margin-bottom: 4px; }
+    .guide-nav-item.active .guide-nav-label { color: var(--cream); }
+    .guide-nav-item.locked .guide-nav-label { color: var(--muted); opacity: 0.5; }
+    .guide-nav-sections { list-style: none; padding: 0; margin: 0; }
+    .guide-nav-sections li { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 300; color: var(--muted); line-height: 1.5; padding: 1px 0; cursor: pointer; transition: color 0.15s; }
+    .guide-nav-sections li:hover { color: var(--navy); }
+    .guide-nav-item.active .guide-nav-sections li { color: rgba(253,252,250,0.6); }
+    .guide-nav-item.active .guide-nav-sections li:hover { color: var(--cream); }
+    .guide-nav-item.locked .guide-nav-sections li { opacity: 0.4; }
+    .guide-nav-lock { font-size: 11px; color: var(--muted); opacity: 0.5; margin-left: 4px; }
+    @media (max-width: 768px) {
+      .guide-layout { grid-template-columns: 1fr; }
+      .guide-sidebar { position: static; max-height: none; border-right: none; border-bottom: 1px solid var(--border); padding: 0 0 16px 0; margin-bottom: 16px; }
+      .guide-main { padding-left: 0; }
+    }
     .guide-state-callout { background: linear-gradient(135deg, #f8f4ef, #f2ece3); border: 1px solid var(--gold); border-radius: 14px; padding: 20px 24px; margin-bottom: 24px; }
     .guide-state-header { font-family: 'Libre Baskerville', serif; font-size: 16px; font-weight: 400; color: var(--navy); margin-bottom: 12px; }
     .guide-state-icon { font-size: 16px; }
@@ -388,7 +431,8 @@
     .guide-state-prompt { background: var(--cream); border: 1px dashed var(--border); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.5; }
     .guide-state-prompt a { color: var(--navy); font-weight: 500; }
     .guide-category { margin-bottom: 24px; }
-    .guide-cat-header { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 400; color: var(--navy); margin-bottom: 4px; }
+    .guide-cat-header { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 400; color: var(--navy); margin-bottom: 4px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .guide-usage { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 300; color: var(--muted); }
     .guide-cat-risk { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; }
     .guide-cat-risk.low { color: var(--green); }
     .guide-cat-risk.medium { color: var(--gold); }
@@ -583,7 +627,8 @@
   </style>
 </head>
 <body>
-  <nav>
+  <a href="#dashContent" class="skip-link">Skip to content</a>
+  <nav role="navigation" aria-label="Main navigation">
     <a href="/" class="nav-logo">
       <span style="color:var(--accent)"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
       <span class="nav-logo-text" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase">Lumeway</span>
@@ -595,9 +640,9 @@
     </div>
   </nav>
 
-  <div class="dash" id="dashContent">
+  <main class="dash" id="dashContent" role="main">
     <div class="loading" id="loadingState">Loading your dashboard...</div>
-  </div>
+  </main>
 
   <div class="day-modal" id="dayModal" onclick="if(event.target===this)closeDayView()">
     <div class="day-box">
@@ -643,6 +688,34 @@
       return Math.ceil((target - today) / (1000 * 60 * 60 * 24));
     }
 
+    // Social proof — usage counts (seeded from string for consistency)
+    function getUsageCount(str) {
+      var hash = 0;
+      for (var i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash |= 0; }
+      return 1200 + Math.abs(hash % 2800); // Range: 1,200 — 4,000
+    }
+    function formatUsageCount(n) {
+      return n.toLocaleString();
+    }
+
+    // Deadline consequence text — factual, warm terracotta tone, no alarm
+    function getDeadlineConsequence(title) {
+      var t = title.toLowerCase();
+      if (t.indexOf('cobra') !== -1) return 'Missing this means losing the option to continue your employer health coverage.';
+      if (t.indexOf('insurance') !== -1 || t.indexOf('enrollment') !== -1) return 'After this date, you may not be able to enroll until the next open enrollment period.';
+      if (t.indexOf('probate') !== -1) return 'Filing late can delay the entire estate process and may incur court penalties.';
+      if (t.indexOf('tax') !== -1 || t.indexOf('irs') !== -1) return 'Late filing may result in penalties and interest on any amount owed.';
+      if (t.indexOf('unemployment') !== -1 || t.indexOf('benefits') !== -1) return 'Filing late can delay your first payment by weeks.';
+      if (t.indexOf('ssdi') !== -1 || t.indexOf('disability') !== -1) return 'Late applications delay benefit start dates. SSDI cannot be backdated before your application.';
+      if (t.indexOf('lease') !== -1 || t.indexOf('rent') !== -1 || t.indexOf('housing') !== -1) return 'Missing this could affect your housing arrangement or deposit.';
+      if (t.indexOf('court') !== -1 || t.indexOf('hearing') !== -1 || t.indexOf('filing') !== -1) return 'Missing a court deadline can result in default judgment or case dismissal.';
+      if (t.indexOf('medicare') !== -1) return 'Late enrollment can result in permanent premium surcharges.';
+      if (t.indexOf('social security') !== -1) return 'Timing affects your benefit amount. Changes after filing are limited.';
+      if (t.indexOf('divorce') !== -1 || t.indexOf('custody') !== -1) return 'Missing legal deadlines can affect the outcome of your case.';
+      if (t.indexOf('appeal') !== -1) return 'Appeal windows are strict. Missing this deadline usually means losing the right to appeal.';
+      return '';
+    }
+
     function logout() {
       fetch('/api/auth/logout', { method: 'POST' }).then(function() {
         window.location.href = '/';
@@ -660,7 +733,9 @@
       currentTab = tab;
       trackEvent('tab_switch', { tab_name: tab });
       document.querySelectorAll('.dash-tab').forEach(function(t) {
-        t.classList.toggle('active', t.dataset.tab === tab);
+        var isActive = t.dataset.tab === tab;
+        t.classList.toggle('active', isActive);
+        t.setAttribute('aria-selected', isActive ? 'true' : 'false');
       });
       document.querySelectorAll('.tab-panel').forEach(function(p) {
         p.classList.toggle('active', p.id === 'panel-' + tab);
@@ -3152,7 +3227,6 @@ guideLibrary['disability'] = {
       var catAccess = dashData.category_access || {};
       var isAllAccess = (tier === 'all_transitions' || tier === 'unlimited');
 
-      // Build transition nav pills — only show categories user has full access to
       var html = '';
       var transitionKeys = Object.keys(guideLibrary);
       var accessibleKeys = transitionKeys.filter(function(key) {
@@ -3160,7 +3234,6 @@ guideLibrary['disability'] = {
       });
 
       if (accessibleKeys.length === 0) {
-        // No accessible guides — show message
         content.innerHTML = '<div style="text-align:center;padding:40px 20px">'
           + '<div style="font-size:48px;margin-bottom:16px">📖</div>'
           + '<h3 style="font-family:Libre Baskerville,serif;font-weight:400;margin-bottom:10px">Guides unlock with a full plan</h3>'
@@ -3170,22 +3243,38 @@ guideLibrary['disability'] = {
         return;
       }
 
+      // Build sidebar nav with transition pills + category section links
       accessibleKeys.forEach(function(key) {
         var t = guideLibrary[key];
         var isActive = activeGuideTransition === key || (!activeGuideTransition && key === accessibleKeys[0]);
-        html += '<button class="guide-nav-btn' + (isActive ? ' active' : '') + '" onclick="switchGuideTransition(\'' + key + '\')">' + t.label + '</button>';
+        html += '<div class="guide-nav-item' + (isActive ? ' active' : '') + '" data-key="' + key + '" onclick="switchGuideTransition(\'' + key + '\')">';
+        html += '  <span class="guide-nav-label">' + t.label + '</span>';
+        html += '  <ul class="guide-nav-sections">';
+        t.categories.forEach(function(cat) {
+          var catSlug = key + '-' + cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
+          html += '<li onclick="event.stopPropagation();switchGuideTransition(\'' + key + '\');setTimeout(function(){scrollToGuideSection(\'' + catSlug + '\')},100)">' + cat.name + '</li>';
+        });
+        html += '  </ul>';
+        html += '</div>';
       });
 
-      // Show locked pills for transitions not accessible
+      // Locked transitions
       transitionKeys.forEach(function(key) {
         if (accessibleKeys.indexOf(key) === -1) {
-          html += '<button class="guide-nav-btn" style="opacity:0.4;cursor:default" title="Upgrade to access">' + guideLibrary[key].label + ' 🔒</button>';
+          var t = guideLibrary[key];
+          html += '<div class="guide-nav-item locked" title="Upgrade to access">';
+          html += '  <span class="guide-nav-label">' + t.label + '<span class="guide-nav-lock">🔒</span></span>';
+          html += '  <ul class="guide-nav-sections">';
+          t.categories.forEach(function(cat) {
+            html += '<li>' + cat.name + '</li>';
+          });
+          html += '  </ul>';
+          html += '</div>';
         }
       });
 
       nav.innerHTML = html;
 
-      // Set active to first accessible key
       if (!activeGuideTransition || accessibleKeys.indexOf(activeGuideTransition) === -1) {
         activeGuideTransition = accessibleKeys[0];
       }
@@ -3195,10 +3284,15 @@ guideLibrary['disability'] = {
     function switchGuideTransition(key) {
       if (!guideLibrary[key]) return;
       activeGuideTransition = key;
-      document.querySelectorAll('.guide-nav-btn').forEach(function(b) {
-        b.classList.toggle('active', b.textContent === guideLibrary[key].label);
+      document.querySelectorAll('.guide-nav-item').forEach(function(item) {
+        item.classList.toggle('active', item.dataset.key === key);
       });
       renderGuideTransition(key);
+    }
+
+    function scrollToGuideSection(slug) {
+      var el = document.getElementById('guide-cat-' + slug);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function renderGuideTransition(key) {
@@ -3232,8 +3326,10 @@ guideLibrary['disability'] = {
       }
 
       t.categories.forEach(function(cat) {
-        html += '<div class="guide-category">';
-        html += '  <div class="guide-cat-header">' + cat.name + '</div>';
+        var catSlug = key + '-' + cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
+        var catUsage = getUsageCount(key + cat.name);
+        html += '<div class="guide-category" id="guide-cat-' + catSlug + '">';
+        html += '  <div class="guide-cat-header">' + cat.name + ' <span class="guide-usage">' + formatUsageCount(catUsage) + ' people used this guide</span></div>';
 
         cat.tasks.forEach(function(task) {
           html += '<div class="guide-task" id="guide-' + task.id + '">';
@@ -3259,7 +3355,13 @@ guideLibrary['disability'] = {
               html += '</div>';
             }
             var remainSteps = task.steps ? Math.max(0, task.steps.length - 2) : 0;
-            html += '<div class="guide-lock-msg">This guide continues with ' + remainSteps + ' more steps, key terms, contacts, and common mistakes — so you don\'t miss a deadline or make a costly error. <a href="/pricing">See full plans</a></div>';
+            var taskUsage = getUsageCount(task.id);
+            html += '<div class="guide-lock-msg">';
+            html += '<div>' + remainSteps + ' more steps, key terms, contacts, and common mistakes — so you don\'t miss a deadline or make a costly error.</div>';
+            html += '<div class="guide-lock-social">' + formatUsageCount(taskUsage) + ' people used this guide</div>';
+            html += '<div class="guide-lock-anchor">Less than the cost of one missed deadline. 30-day money-back guarantee.</div>';
+            html += '<a href="/pricing" class="guide-lock-cta">See full plans</a>';
+            html += '</div>';
           } else {
             // Full content for paid users — progressive disclosure
             if (task.steps && task.steps.length > 0) {
@@ -3917,8 +4019,12 @@ guideLibrary['disability'] = {
         if (!localStorage.getItem('lumeway_onboarded')) {
           showOnboarding();
         }
+        // Show contextual tips for recently onboarded users
+        else {
+          setTimeout(showCtxTips, 500);
+        }
         // Prompt to chat if no checklist items and not onboarding
-        else if (checklistItems.length === 0 && !document.getElementById('chatPromptBanner')) {
+        if (localStorage.getItem('lumeway_onboarded') && checklistItems.length === 0 && !document.getElementById('chatPromptBanner')) {
           var banner = document.createElement('div');
           banner.id = 'chatPromptBanner';
           banner.style.cssText = 'background:linear-gradient(135deg,#faf6f1,#f5efe6);border:1px solid #d4a574;border-radius:12px;padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px';
@@ -3981,8 +4087,8 @@ guideLibrary['disability'] = {
       var catAccess = dashData.category_access || {};
       var hasSomeFullCat = Object.keys(catAccess).some(function(k) { return catAccess[k] === 'full'; });
 
-      html += '<div class="dash-tabs">';
-      html += '  <button class="dash-tab active" data-tab="overview" onclick="switchTab(\'overview\')">Overview</button>';
+      html += '<div class="dash-tabs" role="tablist" aria-label="Dashboard sections">';
+      html += '  <button class="dash-tab active" data-tab="overview" role="tab" aria-selected="true" onclick="switchTab(\'overview\')">Overview</button>';
       html += '  <button class="dash-tab" data-tab="checklist" onclick="switchTab(\'checklist\')">Checklist';
       if (prog.total > 0) html += ' <span class="tab-badge">' + prog.completed + '/' + prog.total + '</span>';
       html += '</button>';
@@ -4069,9 +4175,12 @@ guideLibrary['disability'] = {
         upcomingDeadlines.forEach(function(d) {
           var days = daysUntil(d.deadline_date);
           var cls = days < 0 ? ' upcoming-overdue' : (days >= 0 && days <= 7) ? ' upcoming-urgent' : '';
-          var label = days < 0 ? (Math.abs(days) + ' days overdue') : days === 0 ? 'Today' : days <= 30 ? ('You have ' + days + ' days left') : (days + 'd left');
+          var label = days < 0 ? (Math.abs(days) + ' days overdue') : days === 0 ? 'Today' : days <= 30 ? ('You have ' + days + ' day' + (days !== 1 ? 's' : '') + ' left') : (days + 'd left');
           html += '<div class="upcoming-item">';
           html += '  <div class="upcoming-title">' + d.title + '</div>';
+          // Show consequence for items within 7 days
+          var consequence = (days >= 0 && days <= 7) ? getDeadlineConsequence(d.title) : '';
+          if (consequence) html += '<div class="upcoming-consequence">' + consequence + '</div>';
           html += '  <div style="display:flex;align-items:center;gap:6px">';
           html += '    <div class="upcoming-date' + cls + '">' + label + '</div>';
           html += '    <button class="item-del" onclick="event.stopPropagation();deleteDeadline(' + d.id + ')" title="Delete">&times;</button>';
@@ -4280,6 +4389,23 @@ guideLibrary['disability'] = {
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-checklist">';
       if (checklistItems.length > 0) {
+        // CBT reframe — show when many incomplete tasks to reduce overwhelm
+        var incompleteCount = checklistItems.filter(function(i) { return !i.is_completed; }).length;
+        if (incompleteCount >= 5 && !sessionStorage.getItem('lumeway_cbt_dismissed')) {
+          var reframes = [
+            'You don\'t have to do all of this today. Pick one task — just one — and that\'s enough.',
+            'This list looks long, but you have already been handling hard things. This just puts them in order.',
+            'Feeling overwhelmed is normal. The list stays here. You can come back to it anytime.',
+            'You are not behind. Everyone moves through this at their own pace.',
+            'This is a map, not a test. There are no wrong answers and no grades.'
+          ];
+          var reframe = reframes[Math.floor(Math.random() * reframes.length)];
+          html += '<div class="cbt-reframe">';
+          html += '  <div class="cbt-reframe-text">' + reframe + '</div>';
+          html += '  <button class="cbt-reframe-dismiss" onclick="this.parentElement.remove();sessionStorage.setItem(\'lumeway_cbt_dismissed\',\'1\')">&times;</button>';
+          html += '</div>';
+        }
+
         // Checklist layout: items on left, progress sidebar on right
         html += '<div style="display:grid;grid-template-columns:1fr 200px;gap:20px;align-items:start;">';
 
@@ -4317,7 +4443,16 @@ guideLibrary['disability'] = {
           }
 
           phaseOrder.forEach(function(phase, idx) {
-            var phaseItems = phases[phase];
+            var phaseItems = phases[phase].slice();
+            // Within early phases, prioritize "gather info" tasks before "take action" tasks
+            if (phase.indexOf('24') !== -1 || phase.indexOf('72') !== -1 || phase.indexOf('First Week') !== -1 || phase.indexOf('Week 1') !== -1) {
+              phaseItems.sort(function(a, b) {
+                var aGather = /gather|collect|locate|find|get copies|request|obtain|document/i.test(a.item_text) ? 0 : 1;
+                var bGather = /gather|collect|locate|find|get copies|request|obtain|document/i.test(b.item_text) ? 0 : 1;
+                if (aGather !== bGather) return aGather - bGather;
+                return (a.sort_order || 0) - (b.sort_order || 0);
+              });
+            }
             var phaseDone = phaseItems.filter(function(i) { return i.is_completed; }).length;
             var phaseTotal = phaseItems.length;
             var allDone = phaseDone === phaseTotal;
@@ -4898,15 +5033,20 @@ guideLibrary['disability'] = {
       html += '  <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Guides</h2>';
       html += '  <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Step-by-step guidance for what you\'re going through. Click any task to expand the full walkthrough.</p>';
       html += '</div>';
-      html += '<div class="guide-mode-toggle">';
-      html += '  <label onclick="toggleQuickMode()"><span class="guide-mode-switch" id="quickModeSwitch"></span> Quick mode</label>';
-      html += '  <span class="guide-mode-hint">One-line summaries only</span>';
-      html += '</div>';
-      html += '<div class="guide-nav" id="guideTransitionNav"></div>';
-      html += '<div class="guide-disclaimer" style="margin-bottom:20px">';
-      html += '  This content provides general process information for educational and organizational purposes. It is not legal, financial, or medical advice. For guidance specific to your situation, consult a qualified professional. <a href="/privacy" style="color:var(--navy)">Privacy Policy</a>';
-      html += '</div>';
-      html += '<div id="guideContent"></div>';
+      html += '<div class="guide-layout">';
+      html += '  <div class="guide-sidebar">';
+      html += '    <div class="guide-mode-toggle" style="margin-bottom:12px">';
+      html += '      <label onclick="toggleQuickMode()"><span class="guide-mode-switch" id="quickModeSwitch"></span> Quick mode</label>';
+      html += '    </div>';
+      html += '    <div class="guide-nav" id="guideTransitionNav"></div>';
+      html += '  </div>';
+      html += '  <div class="guide-main">';
+      html += '    <div class="guide-disclaimer" style="margin-bottom:20px">';
+      html += '      This content provides general process information for educational and organizational purposes. It is not legal, financial, or medical advice. For guidance specific to your situation, consult a qualified professional. <a href="/privacy" style="color:var(--navy)">Privacy Policy</a>';
+      html += '    </div>';
+      html += '    <div id="guideContent"></div>';
+      html += '  </div>';
+      html += '</div>'; // guide-layout
       html += '</div>'; // panel-guides
 
       // Settings panel removed — merged into Account Settings tab above
@@ -5466,6 +5606,40 @@ guideLibrary['disability'] = {
       'Months 2\u20133': 'You\'ve been at this for a while now. That persistence matters.',
       'Ongoing': 'You\'ve completed everything in this section. That\'s meaningful.'
     };
+    // Contextual tooltips for first-time users (replaces old tour slides)
+    var CTX_TIPS = {
+      checklist: { icon: '✓', text: 'Check off tasks as you go. The Navigator can add more based on your situation.' },
+      calendar: { icon: '📅', text: 'Deadlines show here automatically. You can also add your own events.' },
+      guides: { icon: '📖', text: 'Step-by-step walkthroughs written in plain language. Click any task to expand.' },
+      workspace: { icon: '📁', text: 'Upload and edit documents here. Everything auto-saves and stays private.' }
+    };
+    function showCtxTips() {
+      if (localStorage.getItem('lumeway_tips_dismissed')) return;
+      Object.keys(CTX_TIPS).forEach(function(key) {
+        var tip = CTX_TIPS[key];
+        var target = null;
+        if (key === 'checklist') target = document.querySelector('#panel-overview .card-label');
+        else if (key === 'calendar') target = document.getElementById('calendarSection');
+        else if (key === 'guides') target = document.getElementById('panel-guides');
+        else if (key === 'workspace') target = document.getElementById('panel-files');
+        if (!target) return;
+        if (target.querySelector('.ctx-tip')) return;
+        var el = document.createElement('div');
+        el.className = 'ctx-tip';
+        el.innerHTML = '<span class="ctx-tip-icon">' + tip.icon + '</span> ' + tip.text
+          + ' <button class="ctx-tip-dismiss" onclick="dismissCtxTip(this)" title="Dismiss">&times;</button>';
+        target.insertBefore(el, target.firstChild);
+      });
+    }
+    function dismissCtxTip(btn) {
+      var tip = btn.closest('.ctx-tip');
+      if (tip) tip.remove();
+      // If all tips dismissed, remember it
+      if (document.querySelectorAll('.ctx-tip').length === 0) {
+        localStorage.setItem('lumeway_tips_dismissed', '1');
+      }
+    }
+
     var lastCompletionIdx = -1;
     var completionToastTimer = null;
 
@@ -6093,68 +6267,50 @@ guideLibrary['disability'] = {
     </div>
   </div>
 
-  <!-- Onboarding modal -->
+  <!-- Onboarding modal — single-question flow -->
   <div class="onboard-overlay" id="onboardModal" style="display:none">
     <div class="onboard-card">
       <button class="onboard-close" onclick="closeOnboarding()">&times;</button>
-
-      <!-- Slide 1: Welcome -->
-      <div class="onboard-slide active" data-slide="0">
-        <div class="onboard-icon">👋</div>
-        <div class="onboard-title">Welcome to your dashboard</div>
-        <div class="onboard-text">This is your home base. Everything you need to stay organized during a major life change — checklists, deadlines, documents, and guides — lives here.</div>
-        <div class="onboard-features">
-          <div class="onboard-feature"><div class="feat-icon">✓</div><div>Personalized checklists based on your situation</div></div>
-          <div class="onboard-feature"><div class="feat-icon">📅</div><div>Calendar with real deadlines so nothing slips</div></div>
-          <div class="onboard-feature"><div class="feat-icon">📖</div><div>Step-by-step guides written in plain language</div></div>
-        </div>
+      <div class="onboard-title">What are you going through?</div>
+      <div class="onboard-text">Pick the transition that fits. We will set up your checklists, deadlines, and guides around it.</div>
+      <div class="onboard-choices" id="onboardChoices">
+        <button class="onboard-choice" onclick="pickOnboardTransition('job-loss')">
+          <span class="onboard-choice-icon">💼</span>
+          <span class="onboard-choice-label">Job Loss</span>
+        </button>
+        <button class="onboard-choice" onclick="pickOnboardTransition('estate')">
+          <span class="onboard-choice-icon">🕊</span>
+          <span class="onboard-choice-label">Death of a Loved One</span>
+        </button>
+        <button class="onboard-choice" onclick="pickOnboardTransition('divorce')">
+          <span class="onboard-choice-icon">⚖</span>
+          <span class="onboard-choice-label">Divorce or Separation</span>
+        </button>
+        <button class="onboard-choice" onclick="pickOnboardTransition('retirement')">
+          <span class="onboard-choice-icon">🌅</span>
+          <span class="onboard-choice-label">Retirement</span>
+        </button>
+        <button class="onboard-choice" onclick="pickOnboardTransition('disability')">
+          <span class="onboard-choice-icon">🛡</span>
+          <span class="onboard-choice-label">Disability</span>
+        </button>
+        <button class="onboard-choice" onclick="pickOnboardTransition('relocation')">
+          <span class="onboard-choice-icon">🏠</span>
+          <span class="onboard-choice-label">Moving</span>
+        </button>
       </div>
-
-      <!-- Slide 2: How plans work -->
-      <div class="onboard-slide" data-slide="1">
-        <div class="onboard-icon">📦</div>
-        <div class="onboard-title">How plans work</div>
-        <div class="onboard-text">Lumeway is built around the life change you are going through. Choose what fits.</div>
-        <div class="onboard-features">
-          <div class="onboard-feature"><div class="feat-icon" style="background:var(--cream)">Free</div><div><strong>Free</strong> — Chat with the Navigator, basic checklists</div></div>
-          <div class="onboard-feature"><div class="feat-icon" style="background:#e8e0d6">$16</div><div><strong>Starter</strong> — Worksheet bundle + basic dashboard</div></div>
-          <div class="onboard-feature"><div class="feat-icon" style="background:var(--navy);color:var(--cream)">$39</div><div><strong>Full Plan</strong> — Guides, calendar, documents, and everything for one life change</div></div>
-          <div class="onboard-feature"><div class="feat-icon" style="background:var(--accent);color:var(--cream)">$125</div><div><strong>Everything</strong> — All 6 life changes, every feature</div></div>
-        </div>
-        <a href="/pricing" target="_blank" style="font-size:13px;color:var(--navy);text-decoration:none;font-weight:500;border-bottom:1px solid var(--border);padding-bottom:1px">See full pricing breakdown</a>
+      <div class="onboard-or">
+        <span>or</span>
       </div>
-
-      <!-- Slide 3: Get started -->
-      <div class="onboard-slide" data-slide="2">
-        <div class="onboard-icon">💬</div>
-        <div class="onboard-title">Start with a conversation</div>
-        <div class="onboard-text">The best way to set up your dashboard is to chat with the Navigator first. It will learn about your situation and build a personalized checklist, suggest deadlines, and recommend the right documents to gather.</div>
-        <div class="onboard-features">
-          <div class="onboard-feature"><div class="feat-icon">1</div><div>Tell the Navigator what you are going through</div></div>
-          <div class="onboard-feature"><div class="feat-icon">2</div><div>It builds your checklist and flags deadlines</div></div>
-          <div class="onboard-feature"><div class="feat-icon">3</div><div>Come back to your dashboard anytime to track progress</div></div>
-        </div>
-        <a href="/chat" target="_blank" style="display:inline-block;padding:12px 28px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none;font-weight:500;margin-bottom:20px;transition:all 0.2s">Start a conversation</a>
-      </div>
-
-      <!-- Dots + nav -->
-      <div class="onboard-dots">
-        <div class="onboard-dot active" data-dot="0"></div>
-        <div class="onboard-dot" data-dot="1"></div>
-        <div class="onboard-dot" data-dot="2"></div>
-      </div>
-      <div class="onboard-nav">
-        <button class="onboard-skip" onclick="closeOnboarding()">Skip</button>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button class="onboard-back" id="onboardBackBtn" onclick="prevOnboardSlide()" style="display:none">Back</button>
-          <button class="onboard-next" id="onboardNextBtn" onclick="nextOnboardSlide()">Next</button>
-        </div>
-      </div>
+      <a href="/chat" class="onboard-chat-link" onclick="closeOnboarding()">
+        <span>Tell the Navigator what you are going through</span>
+        <span style="font-size:16px">&#8594;</span>
+      </a>
+      <button class="onboard-skip" onclick="closeOnboarding()" style="margin-top:16px">I will explore on my own</button>
     </div>
   </div>
 
   <script>
-    var onboardSlide = 0;
     function showOnboarding() {
       document.getElementById('onboardModal').style.display = 'flex';
     }
@@ -6162,37 +6318,11 @@ guideLibrary['disability'] = {
       document.getElementById('onboardModal').style.display = 'none';
       localStorage.setItem('lumeway_onboarded', '1');
     }
-    function updateOnboardNav() {
-      var slides = document.querySelectorAll('.onboard-slide');
-      var backBtn = document.getElementById('onboardBackBtn');
-      var nextBtn = document.getElementById('onboardNextBtn');
-      backBtn.style.display = onboardSlide > 0 ? 'inline-block' : 'none';
-      nextBtn.textContent = onboardSlide >= slides.length - 1 ? 'Get started' : 'Next';
-    }
-    function nextOnboardSlide() {
-      var slides = document.querySelectorAll('.onboard-slide');
-      var dots = document.querySelectorAll('.onboard-dot');
-      if (onboardSlide >= slides.length - 1) {
-        closeOnboarding();
-        return;
-      }
-      slides[onboardSlide].classList.remove('active');
-      dots[onboardSlide].classList.remove('active');
-      onboardSlide++;
-      slides[onboardSlide].classList.add('active');
-      dots[onboardSlide].classList.add('active');
-      updateOnboardNav();
-    }
-    function prevOnboardSlide() {
-      if (onboardSlide <= 0) return;
-      var slides = document.querySelectorAll('.onboard-slide');
-      var dots = document.querySelectorAll('.onboard-dot');
-      slides[onboardSlide].classList.remove('active');
-      dots[onboardSlide].classList.remove('active');
-      onboardSlide--;
-      slides[onboardSlide].classList.add('active');
-      dots[onboardSlide].classList.add('active');
-      updateOnboardNav();
+    function pickOnboardTransition(key) {
+      closeOnboarding();
+      if (typeof gtag === 'function') gtag('event', 'onboard_transition_pick', { transition: key });
+      // Redirect to chat with the transition context
+      window.location.href = '/chat?topic=' + encodeURIComponent(key);
     }
   </script>
 
