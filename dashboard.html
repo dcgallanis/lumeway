@@ -332,18 +332,20 @@
     .pdf-viewer { position: relative; padding: 20px; background: #525659; min-height: 400px; overflow-y: auto; max-height: calc(100vh - 200px); }
     .pdf-page-wrap { position: relative; margin: 0 auto 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.25); background: white; max-width: 100%; }
     .pdf-page-wrap canvas { display: block; }
-    .pdf-annot-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-    .pdf-annot-layer.text-mode { pointer-events: auto; cursor: text; }
-    .pdf-annot-layer.sig-mode { pointer-events: auto; cursor: none; }
-    .pdf-annot-layer .pdf-annot { pointer-events: auto; }
-    .pdf-text-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; line-height: 1; }
+    .pdf-text-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; line-height: 1; z-index: 1; }
     .pdf-text-layer span { position: absolute; white-space: pre; color: transparent; pointer-events: all; cursor: text; }
     .pdf-text-layer span::selection { background: rgba(0,100,200,0.35); }
     .pdf-text-layer span.pdf-highlighted { background: rgba(255, 255, 0, 0.45) !important; }
     .pdf-text-layer.editing-mode { pointer-events: none; opacity: 0; }
-    .pdf-annot { position: absolute; cursor: move; }
-    .pdf-annot-text { border: 1.5px dashed transparent; padding: 2px 4px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #2C3E50; background: rgba(255,255,255,0.85); min-width: 60px; min-height: 22px; outline: none; border-radius: 2px; line-height: 1.4; }
+    .pdf-annot-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+    .pdf-annot-layer.text-mode { pointer-events: auto; cursor: text; }
+    .pdf-annot-layer.sig-mode { pointer-events: auto; cursor: none; }
+    .pdf-annot { position: absolute; cursor: move; pointer-events: auto; z-index: 3; }
+    .pdf-annot-text { cursor: text; }
+    .pdf-annot-text { border: 1.5px dashed transparent; padding: 2px 4px 2px 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #2C3E50; background: rgba(255,255,255,0.85); min-width: 60px; min-height: 22px; outline: none; border-radius: 2px; line-height: 1.4; cursor: text; }
     .pdf-annot-text:focus, .pdf-annot-text:hover { border-color: var(--gold); background: rgba(255,255,255,0.95); }
+    .pdf-annot-drag { position: absolute; left: 0; top: 0; width: 14px; height: 100%; cursor: move; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 8px; opacity: 0; transition: opacity 0.15s; user-select: none; letter-spacing: 1px; }
+    .pdf-annot:hover .pdf-annot-drag { opacity: 0.6; }
     .pdf-annot-sig { font-size: 24px; color: #2C4A5E; pointer-events: auto; user-select: none; white-space: nowrap; padding: 2px 6px; border: 1.5px dashed transparent; border-radius: 2px; }
     .pdf-annot-sig:hover { border-color: var(--gold); }
     .pdf-annot-delete { position: absolute; top: -10px; right: -10px; width: 20px; height: 20px; background: var(--accent); color: white; border: none; border-radius: 50%; font-size: 12px; line-height: 20px; text-align: center; cursor: pointer; display: none; z-index: 5; padding: 0; }
@@ -355,13 +357,11 @@
     .pdf-toolbar-sep { width: 1px; height: 20px; background: var(--border); }
     .pdf-toolbar-info { font-size: 11px; color: var(--muted); font-weight: 300; margin-left: auto; }
     .pdf-sig-ghost { position: fixed; pointer-events: none; z-index: 1000; font-size: 24px; color: rgba(44,74,94,0.6); white-space: nowrap; display: none; }
-    /* Spreadsheet viewer */
-    #sheetTableWrap table { border-collapse: collapse; width: max-content; min-width: 100%; }
-    #sheetTableWrap td, #sheetTableWrap th { border: 1px solid #d0d7de; padding: 4px 8px; font-size: 12px; white-space: nowrap; min-width: 80px; font-family: 'Plus Jakarta Sans', sans-serif; }
-    #sheetTableWrap th { background: #f0f2f4; font-weight: 600; color: var(--navy); position: sticky; top: 0; z-index: 2; text-align: center; font-size: 11px; padding: 3px 8px; resize: horizontal; overflow: hidden; }
-    #sheetTableWrap td[contenteditable] { outline: none; cursor: text; }
-    #sheetTableWrap td[contenteditable]:focus { background: #e8f0fe; box-shadow: inset 0 0 0 2px #1a73e8; }
-    .ss-row-num { background: #f0f2f4 !important; color: var(--muted) !important; font-size: 10px !important; text-align: center !important; min-width: 36px !important; width: 36px !important; font-weight: 500 !important; user-select: none; cursor: default !important; }
+    /* Spreadsheet viewer (jspreadsheet) */
+    #sheetTableWrap { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; }
+    #sheetTableWrap .jexcel { font-size: 12px; }
+    #sheetTableWrap .jexcel td { font-family: 'Plus Jakarta Sans', sans-serif; }
+    #sheetTableWrap .jexcel_content { max-height: calc(100vh - 260px); }
     /* TinyMCE overrides */
     .ws-viewer-body .tox-tinymce { border: none !important; border-radius: 0 !important; }
     .ws-viewer-body .tox .tox-toolbar__primary { background: var(--cream) !important; border-bottom: 1px solid var(--border) !important; }
@@ -3806,11 +3806,28 @@ guideLibrary['disability'] = {
     }
 
     function loadSheetLibs(callback) {
-      if (typeof XLSX !== 'undefined') { callback(); return; }
-      var el = document.createElement('script');
-      el.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-      el.onload = callback;
-      document.head.appendChild(el);
+      var needed = [];
+      if (typeof XLSX === 'undefined') needed.push({ src: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', type: 'js' });
+      if (typeof jspreadsheet === 'undefined') {
+        needed.push({ src: 'https://cdn.jsdelivr.net/npm/jspreadsheet-ce@4.13.4/dist/jspreadsheet.min.js', type: 'js' });
+        needed.push({ src: 'https://cdn.jsdelivr.net/npm/jsuites@5.5.1/dist/jsuites.min.js', type: 'js' });
+        // CSS
+        if (!document.getElementById('jspreadsheetCSS')) {
+          var link1 = document.createElement('link'); link1.id = 'jspreadsheetCSS'; link1.rel = 'stylesheet'; link1.href = 'https://cdn.jsdelivr.net/npm/jspreadsheet-ce@4.13.4/dist/jspreadsheet.min.css'; document.head.appendChild(link1);
+          var link2 = document.createElement('link'); link2.rel = 'stylesheet'; link2.href = 'https://cdn.jsdelivr.net/npm/jsuites@5.5.1/dist/jsuites.min.css'; document.head.appendChild(link2);
+        }
+      }
+      if (needed.length === 0) { callback(); return; }
+      var loaded = 0;
+      // Load sequentially (jsuites must load before jspreadsheet)
+      function loadNext() {
+        if (loaded >= needed.length) { callback(); return; }
+        var el = document.createElement('script');
+        el.src = needed[loaded].src;
+        el.onload = function() { loaded++; loadNext(); };
+        document.head.appendChild(el);
+      }
+      loadNext();
     }
 
     function renderSpreadsheet(body, wb, fileId, fileName) {
@@ -3831,6 +3848,7 @@ guideLibrary['disability'] = {
 
     var sheetSaveTimer = null;
     var sheetDirty = false;
+    var activeJspreadsheet = null;
 
     function renderSheetTable(wb, sheetName) {
       var ws = wb.Sheets[sheetName];
@@ -3838,56 +3856,56 @@ guideLibrary['disability'] = {
       var wrap = document.getElementById('sheetTableWrap');
       if (!wrap) return;
 
+      // Destroy previous instance
+      if (activeJspreadsheet) {
+        try { jspreadsheet.destroy(wrap); } catch(e) {}
+        activeJspreadsheet = null;
+      }
+      wrap.innerHTML = '';
+
       // Get data as array of arrays
       var data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
       if (!data.length) { wrap.innerHTML = '<p style="padding:20px;color:var(--muted)">Empty sheet</p>'; return; }
 
-      // Find max columns
+      // Ensure all rows have same number of columns
       var maxCols = 0;
       data.forEach(function(row) { if (row.length > maxCols) maxCols = row.length; });
       if (maxCols === 0) maxCols = 1;
-
-      var html = '<table><thead><tr><th class="ss-row-num"></th>';
-      for (var c = 0; c < maxCols; c++) {
-        var colLetter = '';
-        var n = c;
-        while (n >= 0) { colLetter = String.fromCharCode(65 + (n % 26)) + colLetter; n = Math.floor(n / 26) - 1; }
-        html += '<th style="min-width:80px;resize:horizontal;overflow:hidden">' + colLetter + '</th>';
-      }
-      html += '</tr></thead><tbody>';
-      data.forEach(function(row, ri) {
-        html += '<tr><td class="ss-row-num">' + (ri + 1) + '</td>';
-        for (var ci = 0; ci < maxCols; ci++) {
-          var val = (row[ci] !== undefined && row[ci] !== null) ? String(row[ci]) : '';
-          html += '<td contenteditable="true" data-r="' + ri + '" data-c="' + ci + '">' + val.replace(/</g, '&lt;') + '</td>';
-        }
-        html += '</tr>';
+      data = data.map(function(row) {
+        while (row.length < maxCols) row.push('');
+        return row.map(function(cell) { return cell !== null && cell !== undefined ? String(cell) : ''; });
       });
-      html += '</tbody></table>';
-      wrap.innerHTML = html;
+
+      // Build column config with auto-width
+      var columns = [];
+      for (var c = 0; c < maxCols; c++) {
+        columns.push({ width: 120 });
+      }
+
       window._activeWb = wb;
       window._activeSheetName = sheetName;
 
-      // Add cell edit listeners for auto-save
-      wrap.querySelectorAll('td[contenteditable]').forEach(function(td) {
-        td.addEventListener('input', function() {
+      activeJspreadsheet = jspreadsheet(wrap, {
+        data: data,
+        columns: columns,
+        rowResize: true,
+        columnResize: true,
+        columnDrag: true,
+        tableOverflow: true,
+        tableWidth: '100%',
+        tableHeight: (window.innerHeight - 260) + 'px',
+        defaultColWidth: 120,
+        minDimensions: [maxCols, data.length],
+        onchange: function() {
           sheetDirty = true;
-          // Update the workbook in memory
-          var r = parseInt(td.dataset.r);
-          var c = parseInt(td.dataset.c);
-          var cellRef = XLSX.utils.encode_cell({ r: r, c: c });
-          var sheet = wb.Sheets[window._activeSheetName];
-          if (!sheet) return;
-          var val = td.textContent;
-          if (val === '') {
-            delete sheet[cellRef];
-          } else {
-            sheet[cellRef] = { t: 's', v: val };
+          // Sync changes back to workbook
+          if (activeJspreadsheet) {
+            var newData = activeJspreadsheet.getData();
+            wb.Sheets[sheetName] = XLSX.utils.aoa_to_sheet(newData);
           }
-          // Debounced save
           if (sheetSaveTimer) clearTimeout(sheetSaveTimer);
           sheetSaveTimer = setTimeout(function() { saveSheetEdits(); }, 1500);
-        });
+        }
       });
     }
 
@@ -4615,6 +4633,13 @@ guideLibrary['disability'] = {
         sig.textContent = data.text;
         el.appendChild(sig);
       } else {
+        // Drag handle on the left side
+        var grip = document.createElement('div');
+        grip.className = 'pdf-annot-drag';
+        grip.innerHTML = '&#8942;';
+        grip.title = 'Drag to move';
+        el.appendChild(grip);
+
         var txt = document.createElement('div');
         txt.className = 'pdf-annot-text';
         txt.contentEditable = true;
@@ -4651,7 +4676,11 @@ guideLibrary['disability'] = {
     function makePdfAnnotDraggable(el, layer) {
       var startX, startY, origLeft, origTop, dragging = false;
       el.addEventListener('mousedown', function(e) {
-        if (e.target.classList.contains('pdf-annot-text') || e.target.classList.contains('pdf-annot-delete')) return;
+        // Only drag from the grip handle, signature element, or the annot container itself
+        var isDragHandle = e.target.classList.contains('pdf-annot-drag');
+        var isSig = e.target.classList.contains('pdf-annot-sig');
+        var isContainer = e.target === el;
+        if (!isDragHandle && !isSig && !isContainer) return;
         e.preventDefault();
         dragging = true;
         startX = e.clientX;
@@ -6607,30 +6636,26 @@ guideLibrary['disability'] = {
     };
     // Contextual tooltips for first-time users (replaces old tour slides)
     var CTX_TIPS = {
-      checklist: { icon: '✓', text: 'Check off tasks as you go. The Navigator can add more based on your situation.' },
-      calendar: { icon: '📅', text: 'Deadlines show here automatically. You can also add your own events.' },
-      guides: { icon: '📖', text: 'Step-by-step walkthroughs written in plain language. Click any task to expand.' },
-      workspace: { icon: '📁', text: 'Upload and edit documents here. Everything auto-saves and stays private.' }
+      checklist: { icon: '✓', text: 'Check off tasks as you go. The Navigator can add more based on your situation.', panel: 'panel-checklist' },
+      calendar: { icon: '📅', text: 'Deadlines show here automatically. You can also add your own events.', panel: 'panel-calendar' },
+      guides: { icon: '📖', text: 'Step-by-step walkthroughs written in plain language. Click any task to expand.', panel: 'panel-guides' },
+      workspace: { icon: '📁', text: 'Upload and edit documents here. Everything auto-saves and stays private.', panel: 'panel-documents' }
     };
     function showCtxTips() {
       if (localStorage.getItem('lumeway_tips_dismissed')) return;
-      // Place all tips in a dedicated container at the top of the overview
-      var overview = document.getElementById('panel-overview');
-      if (!overview) return;
-      var existing = document.getElementById('ctxTipsContainer');
-      if (existing) return;
-      var container = document.createElement('div');
-      container.id = 'ctxTipsContainer';
-      container.style.cssText = 'margin-bottom:16px;display:flex;flex-direction:column;gap:6px';
+      // Place each tip at the top of its own tab panel
       Object.keys(CTX_TIPS).forEach(function(key) {
         var tip = CTX_TIPS[key];
+        var panel = document.getElementById(tip.panel);
+        if (!panel) return;
+        if (panel.querySelector('.ctx-tip')) return;
         var el = document.createElement('div');
         el.className = 'ctx-tip';
+        el.style.marginBottom = '12px';
         el.innerHTML = '<span class="ctx-tip-icon">' + tip.icon + '</span> ' + tip.text
           + ' <button class="ctx-tip-dismiss" onclick="dismissCtxTip(this)" title="Dismiss">&times;</button>';
-        container.appendChild(el);
+        panel.insertBefore(el, panel.firstChild);
       });
-      overview.insertBefore(container, overview.firstChild);
     }
     function dismissCtxTip(btn) {
       var tip = btn.closest('.ctx-tip');
