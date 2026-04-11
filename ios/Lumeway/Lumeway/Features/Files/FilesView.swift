@@ -50,7 +50,8 @@ struct FilesView: View {
                                     .font(.lumeCaption)
                                     .foregroundColor(.white.opacity(0.6))
                             }
-                            .padding(.vertical, 28)
+                            .padding(.top, 60)
+                            .padding(.bottom, 28)
                         }
                         .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
 
@@ -331,7 +332,7 @@ struct DocumentsNeededList: View {
                     }
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Documents for your transition")
+                        Text("Documents you'll need")
                             .font(.lumeBodyMedium)
                             .foregroundColor(.lumeNavy)
                         Text("\(obtained) of \(docs.count) gathered")
@@ -411,7 +412,7 @@ struct DocumentsNeededList: View {
                     .font(.lumeDisplaySmall)
                     .foregroundColor(.lumeNavy)
 
-                Text("Once you start your transition, we'll\nlist every document you need — all\nin one place, nothing to guess.")
+                Text("Once you get started, we'll list\nevery document you need — all\nin one place, nothing to guess.")
                     .font(.lumeBody)
                     .foregroundColor(.lumeMuted)
                     .multilineTextAlignment(.center)
@@ -500,7 +501,7 @@ struct UploadedFilesContent: View {
                     .font(.lumeDisplaySmall)
                     .foregroundColor(.lumeNavy)
 
-                Text("Upload photos of documents, IDs,\nforms, or anything you need to keep\ntrack of during your transition.")
+                Text("Upload photos of documents, IDs,\nforms, or anything you need to\nkeep track of along the way.")
                     .font(.lumeBody)
                     .foregroundColor(.lumeMuted)
                     .multilineTextAlignment(.center)

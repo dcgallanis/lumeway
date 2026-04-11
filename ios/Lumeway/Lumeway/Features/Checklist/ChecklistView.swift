@@ -66,13 +66,6 @@ struct ChecklistView: View {
                                 Color.lumeNavy
 
                                 VStack(spacing: 10) {
-                                    if let transition = appState.user?.transitionType {
-                                        Text(transition.replacingOccurrences(of: "-", with: " ").uppercased())
-                                            .font(.lumeSmall)
-                                            .foregroundColor(.lumeAccent)
-                                            .tracking(1)
-                                    }
-
                                     Text("Your Checklist")
                                         .font(.lumeDisplayMedium)
                                         .foregroundColor(.white)
@@ -97,7 +90,8 @@ struct ChecklistView: View {
                                     .frame(height: 6)
                                     .padding(.horizontal, 20)
                                 }
-                                .padding(.vertical, 28)
+                                .padding(.top, 60)
+                                .padding(.bottom, 28)
                             }
                             .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
 
@@ -285,7 +279,7 @@ struct CollapsiblePhaseSection: View {
                         .foregroundColor(color)
                 }
                 .padding(16)
-                .background(color.opacity(0.06))
+                .background(color.opacity(0.05))
             }
 
             if isExpanded {
@@ -300,18 +294,19 @@ struct CollapsiblePhaseSection: View {
 
                         if item.id != items.last?.id {
                             Divider()
-                                .padding(.leading, 54)
+                                .padding(.leading, 48)
                         }
                     }
                 }
                 .padding(.bottom, 4)
+                .background(color.opacity(0.03))
             }
         }
         .background(Color.lumeWarmWhite)
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(color.opacity(0.15), lineWidth: 1)
+                .stroke(color.opacity(0.12), lineWidth: 1)
         )
     }
 }
@@ -325,47 +320,47 @@ struct ChecklistItemRow: View {
     let onSkip: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
-            // Toggle circle
+        HStack(spacing: 10) {
+            // Smaller toggle circle
             Button(action: onToggle) {
                 ZStack {
                     Circle()
-                        .stroke(item.isCompleted ? Color.clear : color.opacity(0.3), lineWidth: 2)
-                        .frame(width: 26, height: 26)
+                        .stroke(item.isCompleted ? Color.clear : color.opacity(0.25), lineWidth: 1.5)
+                        .frame(width: 20, height: 20)
 
                     if item.isCompleted {
                         Circle()
-                            .fill(color)
-                            .frame(width: 26, height: 26)
+                            .fill(color.opacity(0.8))
+                            .frame(width: 20, height: 20)
                         Image(systemName: "checkmark")
-                            .font(.system(size: 11, weight: .bold))
+                            .font(.system(size: 9, weight: .bold))
                             .foregroundColor(.white)
                     }
                 }
             }
 
             Text(item.title)
-                .font(.lumeCaption)
-                .foregroundColor(item.isCompleted ? .lumeMuted : .lumeNavy)
+                .font(.lumeBody)
+                .foregroundColor(item.isCompleted ? .lumeMuted : .lumeText)
                 .strikethrough(item.isCompleted)
-                .opacity(item.isCompleted ? 0.6 : 1)
+                .opacity(item.isCompleted ? 0.5 : 1)
 
             Spacer()
 
             if !item.isCompleted {
                 Button(action: onSkip) {
-                    Text("Skip")
+                    Text("Later")
                         .font(.lumeSmall)
-                        .foregroundColor(.lumeMuted)
+                        .foregroundColor(color.opacity(0.7))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
-                        .background(Color.lumeBorder.opacity(0.4))
+                        .background(color.opacity(0.06))
                         .cornerRadius(8)
                 }
             }
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 11)
+        .padding(.vertical, 10)
     }
 }
 

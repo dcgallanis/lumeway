@@ -210,7 +210,7 @@ struct WelcomeBubble: View {
                 Text("Hi, I'm your Lumeway Navigator.")
                     .font(.lumeBodyMedium)
                     .foregroundColor(.lumeText)
-                Text("I can help you understand your checklist, explain next steps, or answer questions about your transition. What would you like to know?")
+                Text("I can help you understand your checklist, explain next steps, or answer any questions. What would you like to know?")
                     .font(.lumeBody)
                     .foregroundColor(.lumeMuted)
             }

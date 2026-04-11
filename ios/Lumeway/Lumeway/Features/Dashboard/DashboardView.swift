@@ -204,7 +204,7 @@ struct ActiveTransitionCard: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("ACTIVE TRANSITION")
+                    Text("YOUR JOURNEY")
                         .font(.lumeSmall)
                         .foregroundColor(.white.opacity(0.5))
                         .tracking(1)

@@ -115,7 +115,8 @@ struct MoreView: View {
                                         )
                                 }
                             }
-                            .padding(.vertical, 32)
+                            .padding(.top, 60)
+                            .padding(.bottom, 32)
                         }
                         .cornerRadius(24, corners: [.bottomLeft, .bottomRight])
 
@@ -464,7 +465,8 @@ struct AccountSettingsView: View {
                                 .font(.lumeDisplaySmall)
                                 .foregroundColor(.white)
                         }
-                        .padding(.vertical, 28)
+                        .padding(.top, 60)
+                        .padding(.bottom, 28)
                     }
                     .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
 
@@ -639,7 +641,8 @@ struct NotificationsSettingsView: View {
                                 .font(.lumeDisplaySmall)
                                 .foregroundColor(.white)
                         }
-                        .padding(.vertical, 28)
+                        .padding(.top, 60)
+                        .padding(.bottom, 28)
                     }
                     .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
 

@@ -68,13 +68,14 @@ struct GuidesView: View {
                                         .font(.lumeDisplayMedium)
                                         .foregroundColor(.white)
 
-                                    if let transition = appState.user?.transitionType {
-                                        Text(transition.replacingOccurrences(of: "-", with: " ").capitalized)
+                                    if let bundle = appState.user?.transitionType {
+                                        Text(bundle.replacingOccurrences(of: "-", with: " ").capitalized)
                                             .font(.lumeCaption)
                                             .foregroundColor(.white.opacity(0.6))
                                     }
                                 }
-                                .padding(.vertical, 28)
+                                .padding(.top, 60)
+                                .padding(.bottom, 28)
                             }
                             .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
 
@@ -132,7 +133,7 @@ struct GuidesView: View {
                         Text("Your Guide Library")
                             .font(.lumeDisplaySmall)
                             .foregroundColor(.lumeNavy)
-                        Text("Guides are tailored to your\ntransition type.")
+                        Text("Guides are tailored to\nyour specific needs.")
                             .font(.lumeBodyLight)
                             .foregroundColor(.lumeMuted)
                             .multilineTextAlignment(.center)
@@ -330,7 +331,8 @@ struct GuideCategoryDetailView: View {
                                 .font(.lumeCaption)
                                 .foregroundColor(.white.opacity(0.6))
                         }
-                        .padding(.vertical, 28)
+                        .padding(.top, 60)
+                        .padding(.bottom, 28)
                     }
                     .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
 
