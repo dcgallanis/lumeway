@@ -1,133 +1,392 @@
 import SwiftUI
 
+// Avatar icons users can pick from
+private let avatarIcons: [(icon: String, color: Color)] = [
+    ("sun.max.fill", Color(hex: "C4704E")),       // terracotta sun
+    ("sun.min.fill", Color(hex: "B8977E")),        // gold sun
+    ("sunrise.fill", Color(hex: "D4896C")),        // warm sunrise
+    ("sparkles", Color(hex: "7B6B8D")),            // purple sparkles
+    ("moon.stars.fill", Color(hex: "2C4A5E")),     // navy moon
+    ("star.fill", Color(hex: "B8977E")),           // gold star
+    ("leaf.fill", Color(hex: "4A7C59")),           // green leaf
+    ("flame.fill", Color(hex: "C4704E")),          // terracotta flame
+    ("bolt.fill", Color(hex: "5E8C9A")),           // teal bolt
+    ("heart.fill", Color(hex: "D4896C")),          // blush heart
+    ("cloud.sun.fill", Color(hex: "2C4A5E")),      // navy cloud
+    ("wand.and.stars", Color(hex: "7B6B8D")),      // purple wand
+]
+
 struct MoreView: View {
     @EnvironmentObject var appState: AppState
     @State private var showLogoutConfirm = false
+    @State private var showAvatarPicker = false
+    @AppStorage("selectedAvatarIndex") private var selectedAvatarIndex = 0
+
+    private var selectedAvatar: (icon: String, color: Color) {
+        avatarIcons[selectedAvatarIndex % avatarIcons.count]
+    }
+
+    /// Convert tier string to Roman numeral display
+    private var tierDisplay: String {
+        guard let tier = appState.user?.tier, !tier.isEmpty else {
+            return "Tier I"
+        }
+        switch tier.lowercased() {
+        case "free": return "Tier I"
+        case "starter": return "Tier II"
+        case "pass": return "Tier III"
+        case "unlimited": return "Tier IV"
+        default: return "Tier I"
+        }
+    }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.lumeCream.ignoresSafeArea()
+                // Subtle gradient background instead of flat cream
+                LinearGradient(
+                    colors: [Color(hex: "F5F0EA"), Color(hex: "FAF7F2"), Color(hex: "F0EDE8")],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
 
-                List {
-                    // Account section
-                    Section {
-                        if let user = appState.user {
-                            HStack(spacing: 12) {
-                                Circle()
-                                    .fill(Color.lumeNavy.opacity(0.1))
-                                    .frame(width: 44, height: 44)
-                                    .overlay(
-                                        Text(initials(for: user))
-                                            .font(.lumeBodyMedium)
-                                            .foregroundColor(.lumeNavy)
-                                    )
+                ScrollView {
+                    VStack(spacing: 0) {
+                        // Color-blocked profile header
+                        ZStack {
+                            LinearGradient(
+                                colors: [Color.lumeNavy, Color(hex: "3A5A6E")],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
 
-                                VStack(alignment: .leading, spacing: 2) {
+                            VStack(spacing: 14) {
+                                // Tappable avatar
+                                Button {
+                                    showAvatarPicker = true
+                                } label: {
+                                    ZStack {
+                                        Circle()
+                                            .fill(selectedAvatar.color.opacity(0.2))
+                                            .frame(width: 76, height: 76)
+                                        Circle()
+                                            .stroke(Color.white.opacity(0.3), lineWidth: 2)
+                                            .frame(width: 76, height: 76)
+                                        Image(systemName: selectedAvatar.icon)
+                                            .font(.system(size: 30))
+                                            .foregroundColor(.white)
+
+                                        // Edit badge
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color.lumeGold)
+                                                .frame(width: 22, height: 22)
+                                            Image(systemName: "pencil")
+                                                .font(.system(size: 10, weight: .bold))
+                                                .foregroundColor(.white)
+                                        }
+                                        .offset(x: 28, y: 28)
+                                    }
+                                }
+
+                                if let user = appState.user {
                                     Text(user.displayName ?? "Your Account")
-                                        .font(.lumeBodyMedium)
-                                        .foregroundColor(.lumeText)
-                                    Text(user.email ?? "")
+                                        .font(.lumeDisplaySmall)
+                                        .foregroundColor(.white)
+
+                                    Text(user.email)
+                                        .font(.lumeCaption)
+                                        .foregroundColor(.white.opacity(0.6))
+
+                                    // Tier pill with Roman numeral
+                                    Text(tierDisplay)
                                         .font(.lumeSmall)
-                                        .foregroundColor(.lumeMuted)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.lumeGold)
+                                        .tracking(1)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 6)
+                                        .background(Color.white.opacity(0.1))
+                                        .cornerRadius(20)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .stroke(Color.lumeGold.opacity(0.3), lineWidth: 1)
+                                        )
                                 }
                             }
-                            .padding(.vertical, 4)
+                            .padding(.vertical, 32)
                         }
-                    }
+                        .cornerRadius(24, corners: [.bottomLeft, .bottomRight])
 
-                    // Settings
-                    Section("Settings") {
-                        NavigationLink {
-                            AccountSettingsView()
-                        } label: {
-                            Label("Account Settings", systemImage: "person.circle")
-                        }
+                        // Settings sections
+                        VStack(spacing: 20) {
+                            // Account section
+                            VStack(spacing: 0) {
+                                SettingSectionHeader(title: "ACCOUNT")
 
-                        NavigationLink {
-                            NotificationsSettingsView()
-                        } label: {
-                            Label("Notifications", systemImage: "bell")
-                        }
-                    }
+                                VStack(spacing: 0) {
+                                    NavigationLink {
+                                        AccountSettingsView(selectedAvatarIndex: $selectedAvatarIndex)
+                                    } label: {
+                                        ProfileSettingRow(
+                                            icon: "person.crop.circle",
+                                            label: "Edit Profile",
+                                            iconColor: Color(hex: "2C4A5E"),
+                                            bgColor: Color(hex: "E4E8EE")
+                                        )
+                                    }
 
-                    // Support
-                    Section("Support") {
-                        NavigationLink {
-                            HelpView()
-                        } label: {
-                            Label("Help & FAQ", systemImage: "questionmark.circle")
-                        }
+                                    Divider().padding(.leading, 62)
 
-                        NavigationLink {
-                            ContactView()
-                        } label: {
-                            Label("Contact Us", systemImage: "envelope")
-                        }
-                    }
+                                    NavigationLink {
+                                        NotificationsSettingsView()
+                                    } label: {
+                                        ProfileSettingRow(
+                                            icon: "bell.badge.fill",
+                                            label: "Notifications",
+                                            iconColor: Color(hex: "C4704E"),
+                                            bgColor: Color(hex: "F0EAE0")
+                                        )
+                                    }
+                                }
+                                .background(Color.lumeWarmWhite)
+                                .cornerRadius(16)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.lumeBorder, lineWidth: 1)
+                                )
+                            }
 
-                    // Legal
-                    Section("Legal") {
-                        NavigationLink {
-                            LegalWebView(title: "Terms of Service", path: "/terms")
-                        } label: {
-                            Label("Terms of Service", systemImage: "doc.text")
-                        }
+                            // Support section
+                            VStack(spacing: 0) {
+                                SettingSectionHeader(title: "SUPPORT")
 
-                        NavigationLink {
-                            LegalWebView(title: "Privacy Policy", path: "/privacy")
-                        } label: {
-                            Label("Privacy Policy", systemImage: "hand.raised")
-                        }
-                    }
+                                VStack(spacing: 0) {
+                                    ProfileSettingRow(
+                                        icon: "lifepreserver.fill",
+                                        label: "Help & FAQ",
+                                        iconColor: Color(hex: "4A7C59"),
+                                        bgColor: Color(hex: "E8F0E4")
+                                    )
 
-                    // Sign out
-                    Section {
-                        Button(role: .destructive) {
-                            showLogoutConfirm = true
-                        } label: {
-                            Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+                                    Divider().padding(.leading, 62)
+
+                                    ProfileSettingRow(
+                                        icon: "paperplane.fill",
+                                        label: "Contact Us",
+                                        iconColor: Color(hex: "5E8C9A"),
+                                        bgColor: Color(hex: "E0EDF0")
+                                    )
+
+                                    Divider().padding(.leading, 62)
+
+                                    ProfileSettingRow(
+                                        icon: "hand.raised.fill",
+                                        label: "Privacy Policy",
+                                        iconColor: Color(hex: "7B6B8D"),
+                                        bgColor: Color(hex: "EDE8F0")
+                                    )
+                                }
+                                .background(Color.lumeWarmWhite)
+                                .cornerRadius(16)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.lumeBorder, lineWidth: 1)
+                                )
+                            }
+
+                            // App section
+                            VStack(spacing: 0) {
+                                SettingSectionHeader(title: "APP")
+
+                                VStack(spacing: 0) {
+                                    ProfileSettingRow(
+                                        icon: "sparkles",
+                                        label: "Rate Lumeway",
+                                        iconColor: Color(hex: "B8977E"),
+                                        bgColor: Color(hex: "F0EAE0")
+                                    )
+
+                                    Divider().padding(.leading, 62)
+
+                                    ProfileSettingRow(
+                                        icon: "heart.circle.fill",
+                                        label: "Share with a friend",
+                                        iconColor: Color(hex: "D4896C"),
+                                        bgColor: Color(hex: "F5EAE4")
+                                    )
+                                }
+                                .background(Color.lumeWarmWhite)
+                                .cornerRadius(16)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.lumeBorder, lineWidth: 1)
+                                )
+                            }
+
+                            // Sign out
+                            Button {
+                                showLogoutConfirm = true
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                                        .font(.system(size: 14))
+                                    Text("Sign Out")
+                                        .font(.lumeBodyMedium)
+                                }
+                                .foregroundColor(.lumeAccent)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(Color.lumeAccent.opacity(0.06))
+                                .cornerRadius(14)
+                            }
+
+                            // Version
+                            Text("Lumeway v1.0")
+                                .font(.lumeSmall)
+                                .foregroundColor(.lumeMuted)
+                                .padding(.bottom, 100)
                         }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
                     }
                 }
-                .listStyle(.insetGrouped)
-                .scrollContentBackground(.hidden)
+                .ignoresSafeArea(edges: .top)
             }
-            .navigationTitle("More")
-            .navigationBarTitleDisplayMode(.large)
-            .alert("Sign out?", isPresented: $showLogoutConfirm) {
-                Button("Sign Out", role: .destructive) {
+            .navigationBarHidden(true)
+            .confirmationDialog("Sign out?", isPresented: $showLogoutConfirm) {
+                Button("Sign out", role: .destructive) {
                     appState.logout()
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("You can always sign back in with your email.")
             }
+            .sheet(isPresented: $showAvatarPicker) {
+                AvatarPickerSheet(selectedIndex: $selectedAvatarIndex)
+                    .presentationDetents([.medium])
+            }
         }
-    }
-
-    private func initials(for user: User) -> String {
-        if let name = user.displayName, !name.isEmpty {
-            let parts = name.split(separator: " ")
-            let first = parts.first.map { String($0.prefix(1)).uppercased() } ?? ""
-            let last = parts.count > 1 ? String(parts.last!.prefix(1)).uppercased() : ""
-            return first + last
-        }
-        if let email = user.email {
-            return String(email.prefix(1)).uppercased()
-        }
-        return "?"
     }
 }
 
-// MARK: - Account Settings
+// MARK: - Avatar Picker
+
+struct AvatarPickerSheet: View {
+    @Binding var selectedIndex: Int
+    @Environment(\.dismiss) var dismiss
+
+    let columns = [GridItem(.adaptive(minimum: 64), spacing: 16)]
+
+    var body: some View {
+        VStack(spacing: 20) {
+            HStack {
+                Text("Choose your icon")
+                    .font(.lumeDisplaySmall)
+                    .foregroundColor(.lumeNavy)
+                Spacer()
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 24))
+                        .foregroundColor(.lumeMuted)
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 20)
+
+            LazyVGrid(columns: columns, spacing: 16) {
+                ForEach(Array(avatarIcons.enumerated()), id: \.offset) { idx, avatar in
+                    Button {
+                        selectedIndex = idx
+                        dismiss()
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .fill(avatar.color.opacity(selectedIndex == idx ? 0.25 : 0.1))
+                                .frame(width: 60, height: 60)
+                            if selectedIndex == idx {
+                                Circle()
+                                    .stroke(avatar.color, lineWidth: 2.5)
+                                    .frame(width: 60, height: 60)
+                            }
+                            Image(systemName: avatar.icon)
+                                .font(.system(size: 24))
+                                .foregroundColor(avatar.color)
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 24)
+
+            Spacer()
+        }
+    }
+}
+
+// MARK: - Setting Components
+
+struct SettingSectionHeader: View {
+    let title: String
+
+    var body: some View {
+        HStack {
+            Text(title)
+                .font(.lumeSmall)
+                .fontWeight(.semibold)
+                .foregroundColor(.lumeMuted)
+                .tracking(1)
+            Spacer()
+        }
+        .padding(.horizontal, 4)
+        .padding(.bottom, 8)
+    }
+}
+
+struct ProfileSettingRow: View {
+    let icon: String
+    let label: String
+    let iconColor: Color
+    let bgColor: Color
+
+    var body: some View {
+        HStack(spacing: 14) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(bgColor)
+                    .frame(width: 36, height: 36)
+                Image(systemName: icon)
+                    .font(.system(size: 15))
+                    .foregroundColor(iconColor)
+            }
+
+            Text(label)
+                .font(.lumeBody)
+                .foregroundColor(.lumeNavy)
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(.lumeBorder)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 13)
+    }
+}
+
+// MARK: - Account Settings (Edit Profile)
 
 struct AccountSettingsView: View {
     @EnvironmentObject var appState: AppState
+    @Binding var selectedAvatarIndex: Int
     @State private var displayName = ""
     @State private var usState = ""
     @State private var isSaving = false
     @State private var showSaved = false
+    @State private var showAvatarPicker = false
 
     private let service = DashboardService()
 
@@ -138,86 +397,220 @@ struct AccountSettingsView: View {
         "VA","WA","WV","WI","WY","DC"
     ]
 
+    private var selectedAvatar: (icon: String, color: Color) {
+        avatarIcons[selectedAvatarIndex % avatarIcons.count]
+    }
+
+    /// Convert tier string to Roman numeral display
+    private var tierDisplay: String {
+        guard let tier = appState.user?.tier, !tier.isEmpty else {
+            return "Tier I"
+        }
+        switch tier.lowercased() {
+        case "free": return "Tier I"
+        case "starter": return "Tier II"
+        case "pass": return "Tier III"
+        case "unlimited": return "Tier IV"
+        default: return "Tier I"
+        }
+    }
+
+    private var tierLabel: String {
+        guard let tier = appState.user?.tier, !tier.isEmpty else {
+            return "Free"
+        }
+        return tier.capitalized
+    }
+
     var body: some View {
         ZStack {
-            Color.lumeCream.ignoresSafeArea()
+            Color(hex: "F0EDE8").ignoresSafeArea()
 
-            List {
-                Section("Profile") {
-                    HStack {
-                        Text("Display Name")
-                            .font(.lumeCaption)
-                        Spacer()
-                        TextField("Your name", text: $displayName)
-                            .font(.lumeBody)
-                            .multilineTextAlignment(.trailing)
-                    }
+            ScrollView {
+                VStack(spacing: 0) {
+                    // Color-blocked header
+                    ZStack {
+                        Color.lumeNavy
 
-                    Picker("State", selection: $usState) {
-                        Text("Select state").tag("")
-                        ForEach(usStates.dropFirst(), id: \.self) { state in
-                            Text(state).tag(state)
-                        }
-                    }
-                }
+                        VStack(spacing: 12) {
+                            // Tappable avatar
+                            Button {
+                                showAvatarPicker = true
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(selectedAvatar.color.opacity(0.2))
+                                        .frame(width: 68, height: 68)
+                                    Circle()
+                                        .stroke(Color.white.opacity(0.3), lineWidth: 2)
+                                        .frame(width: 68, height: 68)
+                                    Image(systemName: selectedAvatar.icon)
+                                        .font(.system(size: 26))
+                                        .foregroundColor(.white)
 
-                if let transition = appState.user?.transitionType {
-                    Section("Transition") {
-                        HStack {
-                            Text("Current transition")
-                                .font(.lumeCaption)
-                            Spacer()
-                            Text(transition.replacingOccurrences(of: "-", with: " ").capitalized)
-                                .font(.lumeCaption)
-                                .foregroundColor(.lumeMuted)
-                        }
-                    }
-                }
-
-                Section {
-                    Button {
-                        Task { await save() }
-                    } label: {
-                        HStack {
-                            Spacer()
-                            if isSaving {
-                                ProgressView().tint(.white)
-                            } else {
-                                Text(showSaved ? "Saved" : "Save Changes")
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.lumeGold)
+                                            .frame(width: 20, height: 20)
+                                        Image(systemName: "pencil")
+                                            .font(.system(size: 9, weight: .bold))
+                                            .foregroundColor(.white)
+                                    }
+                                    .offset(x: 24, y: 24)
+                                }
                             }
-                            Spacer()
+
+                            Text("Edit Profile")
+                                .font(.lumeDisplaySmall)
+                                .foregroundColor(.white)
                         }
+                        .padding(.vertical, 28)
                     }
-                    .listRowBackground(Color.lumeNavy)
-                    .foregroundColor(.white)
-                    .fontWeight(.semibold)
+                    .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
+
+                    // Form fields
+                    VStack(spacing: 18) {
+                        // Display name
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Display Name")
+                                .font(.lumeCaption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.lumeNavy)
+
+                            TextField("Your name", text: $displayName)
+                                .font(.lumeBody)
+                                .foregroundColor(.lumeText)
+                                .padding(14)
+                                .background(Color.lumeWarmWhite)
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.lumeBorder, lineWidth: 1)
+                                )
+                        }
+
+                        // US State
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("State")
+                                .font(.lumeCaption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.lumeNavy)
+
+                            Picker("State", selection: $usState) {
+                                Text("Select state").tag("")
+                                ForEach(usStates.filter { !$0.isEmpty }, id: \.self) { state in
+                                    Text(state).tag(state)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .padding(10)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                            )
+                        }
+
+                        // Bundle / Tier (read-only)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Your Plan")
+                                .font(.lumeCaption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.lumeNavy)
+
+                            HStack(spacing: 10) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.lumeGold.opacity(0.1))
+                                        .frame(width: 32, height: 32)
+                                    Image(systemName: "crown.fill")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.lumeGold)
+                                }
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(tierDisplay)
+                                        .font(.lumeBodyMedium)
+                                        .foregroundColor(.lumeNavy)
+                                    Text("\(tierLabel) Plan")
+                                        .font(.lumeSmall)
+                                        .foregroundColor(.lumeMuted)
+                                }
+
+                                Spacer()
+
+                                Text("Manage")
+                                    .font(.lumeSmall)
+                                    .foregroundColor(.lumeAccent)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 5)
+                                    .background(Color.lumeAccent.opacity(0.08))
+                                    .cornerRadius(8)
+                            }
+                            .padding(14)
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                            )
+                        }
+
+                        // Save button
+                        Button {
+                            Task { await saveSettings() }
+                        } label: {
+                            if isSaving {
+                                ProgressView()
+                                    .tint(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                            } else {
+                                Text(showSaved ? "Saved!" : "Save Changes")
+                                    .font(.lumeBodySemibold)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                            }
+                        }
+                        .foregroundColor(.white)
+                        .background(
+                            RoundedRectangle(cornerRadius: 28)
+                                .fill(showSaved ? Color.lumeGreen : Color.lumeAccent)
+                        )
+                        .disabled(isSaving)
+                    }
+                    .padding(24)
                 }
             }
-            .listStyle(.insetGrouped)
-            .scrollContentBackground(.hidden)
+            .ignoresSafeArea(edges: .top)
         }
-        .navigationTitle("Account")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             displayName = appState.user?.displayName ?? ""
             usState = appState.user?.usState ?? ""
         }
+        .sheet(isPresented: $showAvatarPicker) {
+            AvatarPickerSheet(selectedIndex: $selectedAvatarIndex)
+                .presentationDetents([.medium])
+        }
     }
 
-    private func save() async {
+    private func saveSettings() async {
         isSaving = true
+        defer { isSaving = false }
         do {
             try await service.updateSettings(
                 displayName: displayName,
                 usState: usState
             )
-            showSaved = true
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
-            showSaved = false
-        } catch {
-            // Silently fail for now
-        }
-        isSaving = false
+            withAnimation { showSaved = true }
+            Task {
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                withAnimation { showSaved = false }
+            }
+        } catch {}
     }
 }
 
@@ -225,100 +618,125 @@ struct AccountSettingsView: View {
 
 struct NotificationsSettingsView: View {
     @State private var dailyReminder = true
-    @State private var reminderHour = 9
+    @State private var reminderTime = Date()
     @State private var deadlineAlerts = true
 
     var body: some View {
         ZStack {
-            Color.lumeCream.ignoresSafeArea()
+            Color(hex: "F0EDE8").ignoresSafeArea()
 
-            List {
-                Section("Daily Check-in") {
-                    Toggle("Daily reminder", isOn: $dailyReminder)
-                        .tint(.lumeNavy)
+            ScrollView {
+                VStack(spacing: 0) {
+                    // Color-blocked header
+                    ZStack {
+                        Color.lumeNavy
 
-                    if dailyReminder {
-                        Picker("Reminder time", selection: $reminderHour) {
-                            ForEach(6..<22, id: \.self) { hour in
-                                Text(formatHour(hour)).tag(hour)
+                        VStack(spacing: 10) {
+                            Image(systemName: "bell.badge.fill")
+                                .font(.system(size: 28))
+                                .foregroundColor(.lumeGold)
+                            Text("Notifications")
+                                .font(.lumeDisplaySmall)
+                                .foregroundColor(.white)
+                        }
+                        .padding(.vertical, 28)
+                    }
+                    .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
+
+                    VStack(spacing: 16) {
+                        // Daily reminder
+                        VStack(spacing: 0) {
+                            HStack {
+                                HStack(spacing: 10) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color(hex: "F0EAE0"))
+                                            .frame(width: 32, height: 32)
+                                        Image(systemName: "sun.max.fill")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(Color(hex: "C4704E"))
+                                    }
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Daily Check-in")
+                                            .font(.lumeBodyMedium)
+                                            .foregroundColor(.lumeNavy)
+                                        Text("A gentle nudge to review your tasks")
+                                            .font(.lumeSmall)
+                                            .foregroundColor(.lumeMuted)
+                                    }
+                                }
+                                Spacer()
+                                Toggle("", isOn: $dailyReminder)
+                                    .tint(.lumeGreen)
+                            }
+                            .padding(16)
+
+                            if dailyReminder {
+                                Divider().padding(.horizontal, 16)
+                                HStack {
+                                    Text("Time")
+                                        .font(.lumeCaption)
+                                        .foregroundColor(.lumeNavy)
+                                    Spacer()
+                                    DatePicker("", selection: $reminderTime, displayedComponents: .hourAndMinute)
+                                        .labelsHidden()
+                                }
+                                .padding(16)
                             }
                         }
-                    }
-                }
+                        .background(Color.lumeWarmWhite)
+                        .cornerRadius(14)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(Color.lumeBorder, lineWidth: 1)
+                        )
 
-                Section("Deadlines") {
-                    Toggle("Deadline alerts", isOn: $deadlineAlerts)
-                        .tint(.lumeNavy)
-
-                    Text("Get notified 3 days before and on the day of upcoming deadlines.")
-                        .font(.lumeSmall)
-                        .foregroundColor(.lumeMuted)
-                }
-
-                Section {
-                    Button("Save Preferences") {
-                        Task {
-                            let manager = PushNotificationManager.shared
-                            await manager.scheduleDailyReminder(enabled: dailyReminder, hour: reminderHour)
+                        // Deadline alerts
+                        HStack {
+                            HStack(spacing: 10) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color(hex: "E8F0E4"))
+                                        .frame(width: 32, height: 32)
+                                    Image(systemName: "calendar.badge.clock")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(Color(hex: "4A7C59"))
+                                }
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Deadline Alerts")
+                                        .font(.lumeBodyMedium)
+                                        .foregroundColor(.lumeNavy)
+                                    Text("Get notified before important deadlines")
+                                        .font(.lumeSmall)
+                                        .foregroundColor(.lumeMuted)
+                                }
+                            }
+                            Spacer()
+                            Toggle("", isOn: $deadlineAlerts)
+                                .tint(.lumeGreen)
                         }
+                        .padding(16)
+                        .background(Color.lumeWarmWhite)
+                        .cornerRadius(14)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(Color.lumeBorder, lineWidth: 1)
+                        )
                     }
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(.lumeNavy)
-                    .fontWeight(.semibold)
+                    .padding(24)
                 }
             }
-            .listStyle(.insetGrouped)
-            .scrollContentBackground(.hidden)
+            .ignoresSafeArea(edges: .top)
         }
-        .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private func formatHour(_ hour: Int) -> String {
-        let h = hour > 12 ? hour - 12 : hour
-        let ampm = hour >= 12 ? "PM" : "AM"
-        return "\(h):00 \(ampm)"
-    }
-}
-
-struct HelpView: View {
-    var body: some View {
-        ZStack {
-            Color.lumeCream.ignoresSafeArea()
-            Text("Help & FAQ coming soon")
-                .font(.lumeBody)
-                .foregroundColor(.lumeMuted)
+        .onChange(of: dailyReminder) { _, enabled in
+            if enabled {
+                let hour = Calendar.current.component(.hour, from: reminderTime)
+                let minute = Calendar.current.component(.minute, from: reminderTime)
+                Task {
+                    await PushNotificationManager.shared.scheduleDailyReminder(enabled: enabled, hour: hour, minute: minute)
+                }
+            }
         }
-        .navigationTitle("Help")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-struct ContactView: View {
-    var body: some View {
-        ZStack {
-            Color.lumeCream.ignoresSafeArea()
-            Text("Contact support coming soon")
-                .font(.lumeBody)
-                .foregroundColor(.lumeMuted)
-        }
-        .navigationTitle("Contact")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-struct LegalWebView: View {
-    let title: String
-    let path: String
-
-    var body: some View {
-        ZStack {
-            Color.lumeCream.ignoresSafeArea()
-            Text("Loading \(title)...")
-                .font(.lumeBody)
-                .foregroundColor(.lumeMuted)
-        }
-        .navigationTitle(title)
-        .navigationBarTitleDisplayMode(.inline)
     }
 }

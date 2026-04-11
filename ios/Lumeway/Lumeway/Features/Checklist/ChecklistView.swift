@@ -1,16 +1,25 @@
 import SwiftUI
 import UIKit
 
+// Phase colors for color coding
+private let phaseColors: [Color] = [
+    Color(hex: "C4704E"), // terracotta
+    Color(hex: "2C4A5E"), // navy
+    Color(hex: "B8977E"), // gold
+    Color(hex: "4A7C59"), // green
+    Color(hex: "7B6B8D"), // purple
+    Color(hex: "5E8C9A"), // teal
+]
+
 struct ChecklistView: View {
     @EnvironmentObject var appState: AppState
-    @State private var expandedPhase: String?
     @State private var items: [FullChecklistItem] = []
     @State private var isLoading = true
     @State private var toastMessage: String?
+    @State private var expandedPhases: Set<String> = []
 
     private let service = ChecklistService()
 
-    // Warm completion messages (matches web dashboard psychology)
     private let completionMessages = [
         "One less thing to worry about.",
         "That one's done. Take a breath.",
@@ -25,79 +34,134 @@ struct ChecklistView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.lumeCream.ignoresSafeArea()
+                // Subtle warm gradient
+                LinearGradient(
+                    colors: [Color(hex: "F5F2ED"), Color(hex: "FAF7F2")],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
 
                 if isLoading {
                     ProgressView()
                         .tint(.lumeAccent)
                 } else if items.isEmpty {
                     VStack(spacing: 16) {
-                        Image(systemName: "checklist")
+                        Image(systemName: "sun.max.fill")
                             .font(.system(size: 48, weight: .light))
-                            .foregroundColor(.lumeMuted)
+                            .foregroundColor(.lumeGold)
                         Text("Your checklist will appear here")
-                            .font(.lumeBody)
-                            .foregroundColor(.lumeMuted)
+                            .font(.lumeDisplaySmall)
+                            .foregroundColor(.lumeNavy)
                         Text("Complete onboarding to get your\npersonalized action plan.")
-                            .font(.lumeCaptionLight)
+                            .font(.lumeBodyLight)
                             .foregroundColor(.lumeMuted)
                             .multilineTextAlignment(.center)
                     }
                 } else {
                     ScrollView {
-                        VStack(spacing: 16) {
-                            // Progress bar
-                            ChecklistProgressBar(
-                                completed: items.filter(\.isCompleted).count,
-                                total: items.count
-                            )
-                            .padding(.horizontal, 24)
+                        VStack(spacing: 0) {
+                            // Color-blocked header
+                            ZStack {
+                                Color.lumeNavy
 
-                            ForEach(groupedPhases, id: \.phase) { group in
-                                PhaseSection(
-                                    phase: group.phase,
-                                    items: group.items,
-                                    isExpanded: expandedPhase == group.phase,
-                                    onToggle: {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                            expandedPhase = expandedPhase == group.phase ? nil : group.phase
-                                        }
-                                    },
-                                    onToggleItem: { item in
-                                        Task { await toggleItem(item) }
-                                    },
-                                    onSkipItem: { item in
-                                        Task { await skipItem(item) }
+                                VStack(spacing: 10) {
+                                    if let transition = appState.user?.transitionType {
+                                        Text(transition.replacingOccurrences(of: "-", with: " ").uppercased())
+                                            .font(.lumeSmall)
+                                            .foregroundColor(.lumeAccent)
+                                            .tracking(1)
                                     }
-                                )
-                            }
 
-                            Spacer().frame(height: 32)
+                                    Text("Your Checklist")
+                                        .font(.lumeDisplayMedium)
+                                        .foregroundColor(.white)
+
+                                    let completed = items.filter(\.isCompleted).count
+                                    Text("\(completed) of \(items.count) completed")
+                                        .font(.lumeCaption)
+                                        .foregroundColor(.white.opacity(0.6))
+
+                                    // Progress bar
+                                    GeometryReader { geo in
+                                        ZStack(alignment: .leading) {
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .fill(Color.white.opacity(0.15))
+                                                .frame(height: 6)
+
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .fill(Color.lumeGreen)
+                                                .frame(width: items.count > 0 ? geo.size.width * CGFloat(completed) / CGFloat(items.count) : 0, height: 6)
+                                        }
+                                    }
+                                    .frame(height: 6)
+                                    .padding(.horizontal, 20)
+                                }
+                                .padding(.vertical, 28)
+                            }
+                            .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
+
+                            // Collapsible phase sections
+                            VStack(spacing: 12) {
+                                ForEach(Array(groupedPhases.enumerated()), id: \.element.phase) { idx, group in
+                                    let color = phaseColors[idx % phaseColors.count]
+
+                                    CollapsiblePhaseSection(
+                                        phase: group.phase,
+                                        items: group.items,
+                                        color: color,
+                                        isExpanded: expandedPhases.contains(group.phase),
+                                        onToggleExpand: {
+                                            withAnimation(.easeInOut(duration: 0.25)) {
+                                                if expandedPhases.contains(group.phase) {
+                                                    expandedPhases.remove(group.phase)
+                                                } else {
+                                                    expandedPhases.insert(group.phase)
+                                                }
+                                            }
+                                        },
+                                        onToggleItem: { item in
+                                            Task { await toggleItem(item) }
+                                        },
+                                        onSkipItem: { item in
+                                            Task { await skipItem(item) }
+                                        }
+                                    )
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.top, 16)
+
+                            Spacer().frame(height: 100)
                         }
-                        .padding(.top, 16)
                     }
+                    .ignoresSafeArea(edges: .top)
                 }
 
                 // Toast overlay
                 if let toast = toastMessage {
                     VStack {
                         Spacer()
-                        Text(toast)
-                            .font(.lumeBody)
-                            .foregroundColor(.lumeText)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 14)
-                            .background(Color.lumeWarmWhite)
-                            .cornerRadius(24)
-                            .shadow(color: .black.opacity(0.1), radius: 12, y: 4)
-                            .padding(.bottom, 32)
+                        HStack(spacing: 8) {
+                            Image(systemName: "sun.max.fill")
+                                .font(.system(size: 14))
+                                .foregroundColor(.lumeGold)
+                            Text(toast)
+                                .font(.lumeBody)
+                                .foregroundColor(.lumeText)
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 14)
+                        .background(Color.lumeWarmWhite)
+                        .cornerRadius(24)
+                        .shadow(color: .black.opacity(0.12), radius: 12, y: 4)
+                        .padding(.bottom, 32)
                     }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .zIndex(10)
                 }
             }
-            .navigationTitle("Checklist")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarHidden(true)
             .task { await loadChecklist() }
             .refreshable { await loadChecklist() }
         }
@@ -111,7 +175,11 @@ struct ChecklistView: View {
             if dict[phase] == nil { order.append(phase) }
             dict[phase, default: []].append(item)
         }
-        return order.map { (phase: $0, items: dict[$0]!) }
+        return order.map { phase in
+            let phaseItems = dict[phase]!
+            let sorted = phaseItems.filter { !$0.isCompleted } + phaseItems.filter(\.isCompleted)
+            return (phase: phase, items: sorted)
+        }
     }
 
     private func loadChecklist() async {
@@ -122,15 +190,15 @@ struct ChecklistView: View {
                 isLoading = false
             }
             // Auto-expand first incomplete phase
-            if expandedPhase == nil {
-                let phases = groupedPhases
-                expandedPhase = phases.first(where: { group in
+            if expandedPhases.isEmpty {
+                if let firstIncomplete = groupedPhases.first(where: { group in
                     group.items.contains(where: { !$0.isCompleted })
-                })?.phase ?? phases.first?.phase
+                }) {
+                    expandedPhases.insert(firstIncomplete.phase)
+                }
             }
         } catch {
             isLoading = false
-            print("Checklist load error: \(error)")
         }
     }
 
@@ -139,197 +207,182 @@ struct ChecklistView: View {
             let response = try await service.toggleItem(id: item.id)
             if let idx = items.firstIndex(where: { $0.id == item.id }) {
                 let wasCompleted = items[idx].isCompleted
-                // Reload to get fresh state
                 await loadChecklist()
-
-                // Show toast + haptic if marking complete (not un-completing)
                 if !wasCompleted && response.isCompleted == true {
-                    let generator = UIImpactFeedbackGenerator(style: .medium)
-                    generator.impactOccurred()
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     showToast(completionMessages.randomElement() ?? "Done.")
-
-                    // Check if phase is now fully complete for milestone haptic
-                    let phase = item.phase ?? "Other"
-                    if let group = groupedPhases.first(where: { $0.phase == phase }),
-                       group.items.allSatisfy(\.isCompleted) {
-                        let notify = UINotificationFeedbackGenerator()
-                        notify.notificationOccurred(.success)
-                    }
                 }
             }
         } catch {
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.error)
-            print("Toggle error: \(error)")
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
         }
     }
 
     private func skipItem(_ item: FullChecklistItem) async {
         do {
-            let generator = UIImpactFeedbackGenerator(style: .light)
-            generator.impactOccurred()
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
             _ = try await service.skipItem(id: item.id)
-            showToast("No pressure. This task will be here when you're ready.")
+            showToast("No pressure. It'll be here when you're ready.")
             await loadChecklist()
-        } catch {
-            print("Skip error: \(error)")
-        }
+        } catch {}
     }
 
     private func showToast(_ message: String) {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            toastMessage = message
-        }
+        withAnimation(.easeInOut(duration: 0.3)) { toastMessage = message }
         Task {
             try? await Task.sleep(nanoseconds: 3_000_000_000)
-            withAnimation(.easeInOut(duration: 0.3)) {
-                toastMessage = nil
-            }
+            withAnimation(.easeInOut(duration: 0.3)) { toastMessage = nil }
         }
     }
 }
 
-// MARK: - Progress Bar
+// MARK: - Collapsible Phase Section
 
-struct ChecklistProgressBar: View {
-    let completed: Int
-    let total: Int
-
-    var body: some View {
-        VStack(spacing: 8) {
-            HStack {
-                Text("Progress")
-                    .font(.lumeCaption)
-                    .foregroundColor(.lumeText)
-                Spacer()
-                Text("\(completed) of \(total)")
-                    .font(.lumeSmall)
-                    .foregroundColor(.lumeMuted)
-            }
-
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.lumeBorder)
-                        .frame(height: 6)
-
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.lumeGold)
-                        .frame(width: total > 0 ? geo.size.width * CGFloat(completed) / CGFloat(total) : 0, height: 6)
-                        .animation(.easeInOut(duration: 0.3), value: completed)
-                }
-            }
-            .frame(height: 6)
-        }
-    }
-}
-
-// MARK: - Phase Section
-
-struct PhaseSection: View {
+struct CollapsiblePhaseSection: View {
     let phase: String
     let items: [FullChecklistItem]
+    let color: Color
     let isExpanded: Bool
-    let onToggle: () -> Void
+    let onToggleExpand: () -> Void
     let onToggleItem: (FullChecklistItem) -> Void
     let onSkipItem: (FullChecklistItem) -> Void
 
-    private var completedCount: Int {
-        items.filter(\.isCompleted).count
-    }
-
-    private var allComplete: Bool {
-        completedCount == items.count
-    }
+    private var completedCount: Int { items.filter(\.isCompleted).count }
+    private var allDone: Bool { completedCount == items.count }
 
     var body: some View {
         VStack(spacing: 0) {
-            // Phase header
-            Button(action: onToggle) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
+            // Phase header — color coded
+            Button(action: onToggleExpand) {
+                HStack(spacing: 12) {
+                    // Color bar
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(color)
+                        .frame(width: 5, height: 36)
+
+                    VStack(alignment: .leading, spacing: 3) {
                         HStack(spacing: 8) {
                             Text(phase)
                                 .font(.lumeBodyMedium)
-                                .foregroundColor(.lumeText)
-                            if allComplete {
-                                Image(systemName: "checkmark.seal.fill")
+                                .foregroundColor(.lumeNavy)
+
+                            if allDone {
+                                Image(systemName: "checkmark.circle.fill")
                                     .font(.system(size: 14))
                                     .foregroundColor(.lumeGreen)
                             }
                         }
-                        Text("\(completedCount) of \(items.count) complete")
+
+                        Text("\(completedCount)/\(items.count) complete")
                             .font(.lumeSmall)
                             .foregroundColor(.lumeMuted)
                     }
+
                     Spacer()
+
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.lumeMuted)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(color)
                 }
                 .padding(16)
+                .background(color.opacity(0.06))
             }
 
             if isExpanded {
-                Divider().padding(.horizontal, 16)
+                VStack(spacing: 0) {
+                    ForEach(items) { item in
+                        ChecklistItemRow(
+                            item: item,
+                            color: color,
+                            onToggle: { onToggleItem(item) },
+                            onSkip: { onSkipItem(item) }
+                        )
 
-                ForEach(items) { item in
-                    ChecklistRow(
-                        item: item,
-                        onToggle: { onToggleItem(item) },
-                        onSkip: { onSkipItem(item) }
-                    )
+                        if item.id != items.last?.id {
+                            Divider()
+                                .padding(.leading, 54)
+                        }
+                    }
                 }
+                .padding(.bottom, 4)
             }
         }
         .background(Color.lumeWarmWhite)
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.lumeBorder, lineWidth: 1)
+                .stroke(color.opacity(0.15), lineWidth: 1)
         )
-        .padding(.horizontal, 24)
     }
 }
 
-// MARK: - Checklist Row
+// MARK: - Checklist Item Row
 
-struct ChecklistRow: View {
+struct ChecklistItemRow: View {
     let item: FullChecklistItem
+    let color: Color
     let onToggle: () -> Void
     let onSkip: () -> Void
-    @State private var showActions = false
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            // Toggle button
+        HStack(spacing: 12) {
+            // Toggle circle
             Button(action: onToggle) {
-                Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 22))
-                    .foregroundColor(item.isCompleted ? .lumeGreen : .lumeBorder)
+                ZStack {
+                    Circle()
+                        .stroke(item.isCompleted ? Color.clear : color.opacity(0.3), lineWidth: 2)
+                        .frame(width: 26, height: 26)
+
+                    if item.isCompleted {
+                        Circle()
+                            .fill(color)
+                            .frame(width: 26, height: 26)
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                }
             }
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(item.title)
-                    .font(.lumeCaption)
-                    .foregroundColor(item.isCompleted ? .lumeMuted : .lumeText)
-                    .strikethrough(item.isCompleted)
-            }
+            Text(item.title)
+                .font(.lumeCaption)
+                .foregroundColor(item.isCompleted ? .lumeMuted : .lumeNavy)
+                .strikethrough(item.isCompleted)
+                .opacity(item.isCompleted ? 0.6 : 1)
 
             Spacer()
 
-            // Skip button (only for incomplete items)
             if !item.isCompleted {
-                Button {
-                    onSkip()
-                } label: {
+                Button(action: onSkip) {
                     Text("Skip")
                         .font(.lumeSmall)
                         .foregroundColor(.lumeMuted)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(Color.lumeBorder.opacity(0.4))
+                        .cornerRadius(8)
                 }
             }
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.vertical, 11)
+    }
+}
+
+// MARK: - Rounded Corner Helper
+
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
+    }
+}
+
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
     }
 }

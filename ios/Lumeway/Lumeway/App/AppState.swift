@@ -12,6 +12,7 @@ final class AppState: ObservableObject {
     @Published var categoryAccess: [String: String] = [:]
     @Published var activeTransitions: [String] = []
     @Published var needsOnboarding = false
+    @Published var justLoggedIn = false
 
     let offlineRepo = OfflineRepository.shared
     private let authService = AuthService()
@@ -56,6 +57,7 @@ final class AppState: ObservableObject {
         self.user = user
         self.isAuthenticated = true
         self.needsOnboarding = user.transitionType == nil
+        self.justLoggedIn = true
     }
 
     func logout() {

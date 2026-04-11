@@ -1,6 +1,7 @@
 import SwiftUI
+import UIKit
 
-// MARK: - Colors (from dashboard.html CSS variables)
+// MARK: - Colors (Sunrise palette)
 extension Color {
     static let lumeCream = Color(hex: "FAF7F2")
     static let lumeWarmWhite = Color(hex: "FDFCFA")
@@ -12,6 +13,8 @@ extension Color {
     static let lumeAccentLight = Color(hex: "D4896C")
     static let lumeBorder = Color(hex: "E8E0D6")
     static let lumeGreen = Color(hex: "4A7C59")
+    static let lumeBlush = Color(hex: "E8CFC0")
+    static let lumeSage = Color(hex: "8BA888")
 
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
@@ -30,14 +33,21 @@ extension Color {
 }
 
 // MARK: - Typography
+
 extension Font {
-    // Libre Baskerville — serif, used for headings
+    // DM Serif Display — bold, fun heading font
+    static let lumeDisplayLarge = Font.custom("DMSerifDisplay-Regular", size: 34, relativeTo: .largeTitle)
+    static let lumeDisplayMedium = Font.custom("DMSerifDisplay-Regular", size: 26, relativeTo: .title2)
+    static let lumeDisplaySmall = Font.custom("DMSerifDisplay-Regular", size: 20, relativeTo: .headline)
+    static let lumeDisplayItalic = Font.custom("DMSerifDisplay-Italic", size: 26, relativeTo: .title2)
+
+    // Libre Baskerville — elegant serif for subheadings
     static let lumeHeadingLarge = Font.custom("LibreBaskerville-Regular", size: 32, relativeTo: .largeTitle)
     static let lumeHeadingMedium = Font.custom("LibreBaskerville-Regular", size: 24, relativeTo: .title2)
     static let lumeHeadingSmall = Font.custom("LibreBaskerville-Regular", size: 18, relativeTo: .headline)
     static let lumeHeadingItalic = Font.custom("LibreBaskerville-Italic", size: 24, relativeTo: .title2)
 
-    // Plus Jakarta Sans — sans-serif, used for body and UI
+    // Plus Jakarta Sans — clean sans-serif body
     static let lumeBody = Font.custom("PlusJakartaSans-Regular", size: 15, relativeTo: .body)
     static let lumeBodyLight = Font.custom("PlusJakartaSans-Light", size: 15, relativeTo: .body)
     static let lumeBodyMedium = Font.custom("PlusJakartaSans-Medium", size: 15, relativeTo: .body)
@@ -46,10 +56,19 @@ extension Font {
     static let lumeCaptionLight = Font.custom("PlusJakartaSans-Light", size: 13, relativeTo: .caption)
     static let lumeSmall = Font.custom("PlusJakartaSans-Regular", size: 11, relativeTo: .caption2)
     static let lumeLogoText = Font.custom("PlusJakartaSans-SemiBold", size: 16, relativeTo: .headline)
+}
 
-    // Fallbacks if custom fonts not loaded
-    static let lumeFallbackBody = Font.system(size: 15, weight: .regular)
-    static let lumeFallbackHeading = Font.system(size: 24, weight: .light, design: .serif)
+// Debug: print all available custom fonts — call once to verify font names
+func debugPrintFonts() {
+    for family in UIFont.familyNames.sorted() {
+        let names = UIFont.fontNames(forFamilyName: family)
+        if !names.isEmpty && (family.contains("Libre") || family.contains("Jakarta") || family.contains("DM") || family.contains("Serif")) {
+            print("Font family: \(family)")
+            for name in names {
+                print("  - \(name)")
+            }
+        }
+    }
 }
 
 // MARK: - Shared Component Styles
@@ -69,12 +88,12 @@ struct LumeCardStyle: ViewModifier {
 struct LumePrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.lumeBodyMedium)
+            .font(.lumeBodySemibold)
             .foregroundColor(.white)
             .padding(.horizontal, 24)
             .padding(.vertical, 14)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 28)
                     .fill(configuration.isPressed ? Color.lumeAccentLight : Color.lumeAccent)
             )
     }
@@ -88,7 +107,7 @@ struct LumeSecondaryButtonStyle: ButtonStyle {
             .padding(.horizontal, 24)
             .padding(.vertical, 14)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 28)
                     .stroke(Color.lumeBorder, lineWidth: 1.5)
             )
     }

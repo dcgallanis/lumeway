@@ -46,5 +46,17 @@
 	<string>Lumeway needs photo access to upload documents from your photo library.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Fonts/LibreBaskerville-Regular.ttf</string>
+		<string>Fonts/LibreBaskerville-Italic.ttf</string>
+		<string>Fonts/LibreBaskerville-Bold.ttf</string>
+		<string>Fonts/PlusJakartaSans-Light.ttf</string>
+		<string>Fonts/PlusJakartaSans-Regular.ttf</string>
+		<string>Fonts/PlusJakartaSans-Medium.ttf</string>
+		<string>Fonts/PlusJakartaSans-SemiBold.ttf</string>
+		<string>Fonts/DMSerifDisplay-Regular.ttf</string>
+		<string>Fonts/DMSerifDisplay-Italic.ttf</string>
+	</array>
 </dict>
 </plist>

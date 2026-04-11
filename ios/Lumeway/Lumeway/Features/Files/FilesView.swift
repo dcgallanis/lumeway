@@ -23,32 +23,86 @@ struct FilesView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.lumeCream.ignoresSafeArea()
+                // Cool blue-cream gradient
+                LinearGradient(
+                    colors: [Color(hex: "EFF2F5"), Color(hex: "FAF7F2")],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
 
-                VStack(spacing: 0) {
-                    // Segmented control
-                    Picker("", selection: $selectedTab) {
-                        ForEach(FileTab.allCases, id: \.self) { tab in
-                            Text(tab.rawValue).tag(tab)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 8)
+                ScrollView {
+                    VStack(spacing: 0) {
+                        // Color-blocked header
+                        ZStack {
+                            Color.lumeNavy
 
-                    switch selectedTab {
-                    case .documents:
-                        DocumentsNeededList()
-                    case .uploads:
-                        UploadedFilesList(
-                            files: uploads,
-                            isLoading: isLoadingUploads,
-                            onDelete: { file in
-                                Task { await deleteUpload(file) }
+                            VStack(spacing: 10) {
+                                Image(systemName: "folder.fill")
+                                    .font(.system(size: 28))
+                                    .foregroundColor(.lumeGold)
+
+                                Text("Your Files")
+                                    .font(.lumeDisplayMedium)
+                                    .foregroundColor(.white)
+
+                                Text("Keep everything in one place.")
+                                    .font(.lumeCaption)
+                                    .foregroundColor(.white.opacity(0.6))
                             }
-                        )
+                            .padding(.vertical, 28)
+                        }
+                        .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
+
+                        // Tab picker
+                        HStack(spacing: 0) {
+                            ForEach(FileTab.allCases, id: \.self) { tab in
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        selectedTab = tab
+                                    }
+                                } label: {
+                                    VStack(spacing: 6) {
+                                        HStack(spacing: 6) {
+                                            Image(systemName: tab == .documents ? "doc.text" : "arrow.up.doc")
+                                                .font(.system(size: 13))
+                                            Text(tab.rawValue)
+                                                .font(.lumeBodyMedium)
+                                        }
+                                        .foregroundColor(selectedTab == tab ? .lumeNavy : .lumeMuted)
+
+                                        Rectangle()
+                                            .fill(selectedTab == tab ? Color.lumeAccent : Color.clear)
+                                            .frame(height: 2)
+                                    }
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 16)
+
+                        // Content
+                        switch selectedTab {
+                        case .documents:
+                            DocumentsNeededList()
+                        case .uploads:
+                            UploadedFilesContent(
+                                files: uploads,
+                                isLoading: isLoadingUploads,
+                                onDelete: { file in
+                                    Task { await deleteUpload(file) }
+                                },
+                                selectedPhoto: $selectedPhoto,
+                                onAddCamera: { showCamera = true },
+                                onAddFile: { showUploadSheet = true }
+                            )
+                        }
+
+                        Spacer().frame(height: 100)
                     }
                 }
+                .ignoresSafeArea(edges: .top)
 
                 // Upload progress overlay
                 if isUploading {
@@ -74,51 +128,26 @@ struct FilesView: View {
                 if let toast = uploadToast {
                     VStack {
                         Spacer()
-                        Text(toast)
-                            .font(.lumeBody)
-                            .foregroundColor(.lumeText)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 14)
-                            .background(Color.lumeWarmWhite)
-                            .cornerRadius(24)
-                            .shadow(color: .black.opacity(0.1), radius: 12, y: 4)
-                            .padding(.bottom, 32)
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 14))
+                                .foregroundColor(.lumeGreen)
+                            Text(toast)
+                                .font(.lumeBody)
+                                .foregroundColor(.lumeText)
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 14)
+                        .background(Color.lumeWarmWhite)
+                        .cornerRadius(24)
+                        .shadow(color: .black.opacity(0.1), radius: 12, y: 4)
+                        .padding(.bottom, 32)
                     }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .zIndex(10)
                 }
             }
-            .navigationTitle("Files")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                if selectedTab == .uploads {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Menu {
-                            PhotosPicker(
-                                selection: $selectedPhoto,
-                                matching: .any(of: [.images, .screenshots])
-                            ) {
-                                Label("Choose from Photos", systemImage: "photo.on.rectangle")
-                            }
-
-                            Button {
-                                showCamera = true
-                            } label: {
-                                Label("Take Photo", systemImage: "camera")
-                            }
-
-                            Button {
-                                showUploadSheet = true
-                            } label: {
-                                Label("Browse Files", systemImage: "folder")
-                            }
-                        } label: {
-                            Image(systemName: "plus")
-                                .foregroundColor(.lumeNavy)
-                        }
-                    }
-                }
-            }
+            .navigationBarHidden(true)
             .onChange(of: selectedPhoto) { _, newItem in
                 if let newItem {
                     Task { await handlePhotoPick(newItem) }
@@ -205,7 +234,7 @@ struct FilesView: View {
 
     private func deleteUpload(_ file: UploadedFile) async {
         do {
-            try await api.delete("/api/files/\(file.id)") as EmptyResponse
+            let _: EmptyResponse = try await api.delete("/api/files/\(file.id)")
             let generator = UIImpactFeedbackGenerator(style: .medium)
             generator.impactOccurred()
             await loadUploads()
@@ -287,131 +316,321 @@ struct DocumentsNeededList: View {
 
     var body: some View {
         if let docs = appState.dashboardData?.documentsNeeded, !docs.isEmpty {
-            ScrollView {
-                VStack(spacing: 12) {
-                    ForEach(docs, id: \.id) { doc in
-                        HStack(spacing: 12) {
-                            Image(systemName: doc.obtained == true ? "checkmark.circle.fill" : "doc")
-                                .font(.system(size: 20))
-                                .foregroundColor(doc.obtained == true ? .lumeGreen : .lumeNavy)
+            let obtained = docs.filter { $0.obtained == true }.count
 
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(doc.name ?? "")
-                                    .font(.lumeCaption)
-                                    .foregroundColor(.lumeText)
-                                if let note = doc.note, !note.isEmpty {
-                                    Text(note)
-                                        .font(.lumeSmall)
-                                        .foregroundColor(.lumeMuted)
-                                }
-                            }
-                            Spacer()
-                        }
-                        .padding(16)
-                        .background(Color.lumeWarmWhite)
-                        .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.lumeBorder, lineWidth: 1)
-                        )
+            VStack(spacing: 12) {
+                // Progress summary
+                HStack(spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(Color(hex: "E8F0E4"))
+                            .frame(width: 40, height: 40)
+                        Image(systemName: "doc.text.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(Color(hex: "4A7C59"))
                     }
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Documents for your transition")
+                            .font(.lumeBodyMedium)
+                            .foregroundColor(.lumeNavy)
+                        Text("\(obtained) of \(docs.count) gathered")
+                            .font(.lumeSmall)
+                            .foregroundColor(.lumeMuted)
+                    }
+                    Spacer()
                 }
-                .padding(24)
+                .padding(16)
+                .background(Color.lumeWarmWhite)
+                .cornerRadius(14)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(Color.lumeBorder, lineWidth: 1)
+                )
+
+                ForEach(docs, id: \.id) { doc in
+                    HStack(spacing: 14) {
+                        ZStack {
+                            Circle()
+                                .fill(doc.obtained == true ? Color(hex: "E8F0E4") : Color(hex: "F0EAE0"))
+                                .frame(width: 36, height: 36)
+                            Image(systemName: doc.obtained == true ? "checkmark.circle.fill" : "doc")
+                                .font(.system(size: 15))
+                                .foregroundColor(doc.obtained == true ? Color(hex: "4A7C59") : Color(hex: "C4704E"))
+                        }
+
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(doc.name ?? "")
+                                .font(.lumeBodyMedium)
+                                .foregroundColor(doc.obtained == true ? .lumeMuted : .lumeNavy)
+                                .strikethrough(doc.obtained == true)
+                            if let note = doc.note, !note.isEmpty {
+                                Text(note)
+                                    .font(.lumeSmall)
+                                    .foregroundColor(.lumeMuted)
+                            }
+                        }
+                        Spacer()
+
+                        if doc.obtained == true {
+                            Text("Done")
+                                .font(.lumeSmall)
+                                .foregroundColor(Color(hex: "4A7C59"))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(Color(hex: "E8F0E4"))
+                                .cornerRadius(8)
+                        }
+                    }
+                    .padding(16)
+                    .background(Color.lumeWarmWhite)
+                    .cornerRadius(14)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(Color.lumeBorder, lineWidth: 1)
+                    )
+                }
             }
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
         } else {
-            VStack(spacing: 16) {
-                Spacer()
-                Image(systemName: "doc.text")
-                    .font(.system(size: 48, weight: .light))
-                    .foregroundColor(.lumeMuted)
-                Text("No documents needed yet")
+            // Empty state — warm, website-matching placeholder
+            VStack(spacing: 20) {
+                Spacer().frame(height: 40)
+
+                ZStack {
+                    Circle()
+                        .fill(Color(hex: "F0EAE0"))
+                        .frame(width: 80, height: 80)
+                    Image(systemName: "doc.text.fill")
+                        .font(.system(size: 32, weight: .light))
+                        .foregroundColor(Color(hex: "C4704E"))
+                }
+
+                Text("No documents yet")
+                    .font(.lumeDisplaySmall)
+                    .foregroundColor(.lumeNavy)
+
+                Text("Once you start your transition, we'll\nlist every document you need — all\nin one place, nothing to guess.")
                     .font(.lumeBody)
                     .foregroundColor(.lumeMuted)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(3)
+
+                HStack(spacing: 16) {
+                    VStack(spacing: 6) {
+                        Image(systemName: "list.clipboard")
+                            .font(.system(size: 18))
+                            .foregroundColor(Color(hex: "4A7C59"))
+                        Text("Track")
+                            .font(.lumeSmall)
+                            .foregroundColor(.lumeMuted)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color(hex: "E8F0E4"))
+                    .cornerRadius(12)
+
+                    VStack(spacing: 6) {
+                        Image(systemName: "checkmark.shield")
+                            .font(.system(size: 18))
+                            .foregroundColor(Color(hex: "2C4A5E"))
+                        Text("Organize")
+                            .font(.lumeSmall)
+                            .foregroundColor(.lumeMuted)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color(hex: "E4E8EE"))
+                    .cornerRadius(12)
+
+                    VStack(spacing: 6) {
+                        Image(systemName: "heart.fill")
+                            .font(.system(size: 18))
+                            .foregroundColor(Color(hex: "C4704E"))
+                        Text("Breathe")
+                            .font(.lumeSmall)
+                            .foregroundColor(.lumeMuted)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color(hex: "F0EAE0"))
+                    .cornerRadius(12)
+                }
+                .padding(.horizontal, 20)
+
                 Spacer()
             }
         }
     }
 }
 
-// MARK: - Uploaded Files List
+// MARK: - Uploaded Files Content
 
-struct UploadedFilesList: View {
+struct UploadedFilesContent: View {
     let files: [UploadedFile]
     let isLoading: Bool
     let onDelete: (UploadedFile) -> Void
+    @Binding var selectedPhoto: PhotosPickerItem?
+    let onAddCamera: () -> Void
+    let onAddFile: () -> Void
 
     var body: some View {
         if isLoading {
-            VStack {
-                Spacer()
+            VStack(spacing: 16) {
+                Spacer().frame(height: 60)
                 ProgressView().tint(.lumeAccent)
                 Spacer()
             }
         } else if files.isEmpty {
-            VStack(spacing: 16) {
-                Spacer()
-                Image(systemName: "folder")
-                    .font(.system(size: 48, weight: .light))
-                    .foregroundColor(.lumeMuted)
-                Text("No uploads yet")
+            // Empty state — warm, inviting
+            VStack(spacing: 20) {
+                Spacer().frame(height: 40)
+
+                ZStack {
+                    Circle()
+                        .fill(Color(hex: "E4E8EE"))
+                        .frame(width: 80, height: 80)
+                    Image(systemName: "arrow.up.doc.fill")
+                        .font(.system(size: 32, weight: .light))
+                        .foregroundColor(Color(hex: "2C4A5E"))
+                }
+
+                Text("Your secure file vault")
+                    .font(.lumeDisplaySmall)
+                    .foregroundColor(.lumeNavy)
+
+                Text("Upload photos of documents, IDs,\nforms, or anything you need to keep\ntrack of during your transition.")
                     .font(.lumeBody)
                     .foregroundColor(.lumeMuted)
-                Text("Use the + button to upload documents\nlike IDs, forms, or receipts.")
-                    .font(.lumeCaptionLight)
-                    .foregroundColor(.lumeMuted)
                     .multilineTextAlignment(.center)
+                    .lineSpacing(3)
+
+                // Upload action buttons
+                VStack(spacing: 10) {
+                    Button(action: onAddFile) {
+                        HStack(spacing: 10) {
+                            Image(systemName: "folder.fill")
+                                .font(.system(size: 15))
+                            Text("Browse Files")
+                                .font(.lumeBodyMedium)
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.lumeNavy)
+                        .cornerRadius(12)
+                    }
+
+                    HStack(spacing: 10) {
+                        Button(action: onAddCamera) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "camera.fill")
+                                    .font(.system(size: 14))
+                                Text("Camera")
+                                    .font(.lumeBodyMedium)
+                            }
+                            .foregroundColor(.lumeNavy)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                            )
+                        }
+
+                        PhotosPicker(
+                            selection: $selectedPhoto,
+                            matching: .any(of: [.images, .screenshots])
+                        ) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "photo.fill")
+                                    .font(.system(size: 14))
+                                Text("Photos")
+                                    .font(.lumeBodyMedium)
+                            }
+                            .foregroundColor(.lumeNavy)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                            )
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+
                 Spacer()
             }
         } else {
-            ScrollView {
-                VStack(spacing: 12) {
-                    ForEach(files) { file in
-                        HStack(spacing: 12) {
+            VStack(spacing: 12) {
+                // File count header
+                HStack {
+                    Text("\(files.count) file\(files.count == 1 ? "" : "s") uploaded")
+                        .font(.lumeSmall)
+                        .foregroundColor(.lumeMuted)
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+
+                ForEach(files) { file in
+                    HStack(spacing: 14) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color(hex: "E4E8EE"))
+                                .frame(width: 40, height: 40)
                             Image(systemName: file.iconName)
-                                .font(.system(size: 20))
+                                .font(.system(size: 16))
                                 .foregroundColor(.lumeNavy)
-                                .frame(width: 28)
+                        }
 
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(file.displayName)
-                                    .font(.lumeCaption)
-                                    .foregroundColor(.lumeText)
-                                    .lineLimit(1)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(file.displayName)
+                                .font(.lumeBodyMedium)
+                                .foregroundColor(.lumeText)
+                                .lineLimit(1)
 
-                                HStack(spacing: 8) {
-                                    if !file.formattedSize.isEmpty {
-                                        Text(file.formattedSize)
-                                            .font(.lumeSmall)
-                                            .foregroundColor(.lumeMuted)
-                                    }
-                                    if let date = file.createdAt {
-                                        Text(formatDate(date))
-                                            .font(.lumeSmall)
-                                            .foregroundColor(.lumeMuted)
-                                    }
+                            HStack(spacing: 8) {
+                                if !file.formattedSize.isEmpty {
+                                    Text(file.formattedSize)
+                                        .font(.lumeSmall)
+                                        .foregroundColor(.lumeMuted)
+                                }
+                                if let date = file.createdAt {
+                                    Text(formatDate(date))
+                                        .font(.lumeSmall)
+                                        .foregroundColor(.lumeMuted)
                                 }
                             }
-
-                            Spacer()
-
-                            Button {
-                                onDelete(file)
-                            } label: {
-                                Image(systemName: "trash")
-                                    .font(.system(size: 14))
-                                    .foregroundColor(.lumeMuted)
-                            }
                         }
-                        .padding(16)
-                        .background(Color.lumeWarmWhite)
-                        .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.lumeBorder, lineWidth: 1)
-                        )
+
+                        Spacer()
+
+                        Button {
+                            onDelete(file)
+                        } label: {
+                            Image(systemName: "trash")
+                                .font(.system(size: 14))
+                                .foregroundColor(.lumeMuted)
+                                .padding(8)
+                        }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Color.lumeWarmWhite)
+                    .cornerRadius(14)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(Color.lumeBorder, lineWidth: 1)
+                    )
                 }
-                .padding(24)
+                .padding(.horizontal, 20)
             }
         }
     }

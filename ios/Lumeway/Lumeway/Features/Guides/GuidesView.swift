@@ -1,62 +1,152 @@
 import SwiftUI
 
+// Pastel card backgrounds
+private let categoryBgColors: [Color] = [
+    Color(hex: "E8F0E4"), // sage
+    Color(hex: "DAE8E0"), // seafoam
+    Color(hex: "E4E8EE"), // blue-gray
+    Color(hex: "F0EAE0"), // warm cream
+    Color(hex: "E0E8E4"), // mint
+    Color(hex: "EAE4E0"), // blush
+    Color(hex: "E4EAE8"), // light teal
+    Color(hex: "EEE8E0"), // linen
+]
+
+private let categoryAccentColors: [Color] = [
+    Color(hex: "2C4A5E"), // navy
+    Color(hex: "4A7C59"), // green
+    Color(hex: "5E8C9A"), // teal
+    Color(hex: "C4704E"), // terracotta
+    Color(hex: "6B8E6B"), // sage
+    Color(hex: "B8977E"), // gold
+    Color(hex: "7B6B8D"), // purple
+    Color(hex: "9B7653"), // brown
+]
+
+// Varied bullet icons per category instead of all suns
+private let categoryBullets: [String] = [
+    "leaf.fill", "shield.fill", "building.2.fill", "heart.fill",
+    "graduationcap.fill", "briefcase.fill", "house.fill", "star.fill"
+]
+
 struct GuidesView: View {
     @EnvironmentObject var appState: AppState
     @State private var guideData: GuideDetailResponse?
     @State private var isLoading = true
     @State private var searchText = ""
+    @State private var expandedTransitions: Set<String> = []
 
     private let service = GuideService()
 
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.lumeCream.ignoresSafeArea()
+                // Soft sage-cream gradient
+                LinearGradient(
+                    colors: [Color(hex: "F2F5F0"), Color(hex: "FAF7F2")],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
 
                 if isLoading {
                     ProgressView()
                         .tint(.lumeAccent)
                 } else if let guide = guideData, !guide.guide.categories.isEmpty {
                     ScrollView {
-                        LazyVGrid(columns: [
-                            GridItem(.flexible(), spacing: 12),
-                            GridItem(.flexible(), spacing: 12)
-                        ], spacing: 12) {
-                            ForEach(filteredCategories) { cat in
-                                NavigationLink {
-                                    GuideCategoryDetailView(
-                                        category: cat,
-                                        hasFullAccess: guide.hasFullAccess
-                                    )
-                                } label: {
-                                    GuideCategoryCard(
-                                        label: cat.name,
-                                        taskCount: cat.tasks.count
-                                    )
+                        VStack(spacing: 0) {
+                            // Color-blocked header
+                            ZStack {
+                                Color.lumeNavy
+
+                                VStack(spacing: 10) {
+                                    Image(systemName: "book.fill")
+                                        .font(.system(size: 28))
+                                        .foregroundColor(.lumeGold)
+
+                                    Text("Your Guides")
+                                        .font(.lumeDisplayMedium)
+                                        .foregroundColor(.white)
+
+                                    if let transition = appState.user?.transitionType {
+                                        Text(transition.replacingOccurrences(of: "-", with: " ").capitalized)
+                                            .font(.lumeCaption)
+                                            .foregroundColor(.white.opacity(0.6))
+                                    }
                                 }
+                                .padding(.vertical, 28)
                             }
+                            .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
+
+                            // Search bar — warm cream
+                            HStack(spacing: 10) {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.lumeMuted)
+
+                                TextField("Search guides...", text: $searchText)
+                                    .font(.lumeBody)
+                                    .foregroundColor(.lumeText)
+                            }
+                            .padding(12)
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                            )
+                            .padding(.horizontal, 20)
+                            .padding(.top, 16)
+                            .padding(.bottom, 8)
+
+                            // Transition sections — collapsible
+                            if let transition = appState.user?.transitionType {
+                                TransitionGuideSection(
+                                    transitionName: transition.replacingOccurrences(of: "-", with: " ").capitalized,
+                                    categories: filteredCategories,
+                                    hasFullAccess: guide.hasFullAccess,
+                                    isExpanded: expandedTransitions.contains(transition),
+                                    onToggle: {
+                                        withAnimation(.easeInOut(duration: 0.25)) {
+                                            if expandedTransitions.contains(transition) {
+                                                expandedTransitions.remove(transition)
+                                            } else {
+                                                expandedTransitions.insert(transition)
+                                            }
+                                        }
+                                    }
+                                )
+                                .padding(.horizontal, 20)
+                                .padding(.top, 8)
+                            }
+
+                            Spacer().frame(height: 100)
                         }
-                        .padding(24)
                     }
+                    .ignoresSafeArea(edges: .top)
                 } else {
                     VStack(spacing: 16) {
-                        Image(systemName: "book")
+                        Image(systemName: "book.fill")
                             .font(.system(size: 48, weight: .light))
-                            .foregroundColor(.lumeMuted)
-                        Text("Your guide library will appear here")
-                            .font(.lumeBody)
-                            .foregroundColor(.lumeMuted)
+                            .foregroundColor(.lumeGold)
+                        Text("Your Guide Library")
+                            .font(.lumeDisplaySmall)
+                            .foregroundColor(.lumeNavy)
                         Text("Guides are tailored to your\ntransition type.")
-                            .font(.lumeCaptionLight)
+                            .font(.lumeBodyLight)
                             .foregroundColor(.lumeMuted)
                             .multilineTextAlignment(.center)
                     }
                 }
             }
-            .navigationTitle("Guides")
-            .navigationBarTitleDisplayMode(.large)
-            .searchable(text: $searchText, prompt: "Search guides")
-            .task { await loadGuides() }
+            .navigationBarHidden(true)
+            .task {
+                await loadGuides()
+                // Auto-expand current transition
+                if let t = appState.user?.transitionType {
+                    expandedTransitions.insert(t)
+                }
+            }
             .refreshable { await loadGuides() }
         }
     }
@@ -80,7 +170,73 @@ struct GuidesView: View {
             isLoading = false
         } catch {
             isLoading = false
-            print("Guide load error: \(error)")
+        }
+    }
+}
+
+// MARK: - Transition Guide Section (collapsible)
+
+struct TransitionGuideSection: View {
+    let transitionName: String
+    let categories: [GuideCategory]
+    let hasFullAccess: Bool
+    let isExpanded: Bool
+    let onToggle: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Collapsible transition header
+            Button(action: onToggle) {
+                HStack(spacing: 12) {
+                    Image(systemName: "sun.max.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(.lumeGold)
+
+                    Text(transitionName)
+                        .font(.lumeDisplaySmall)
+                        .foregroundColor(.lumeNavy)
+
+                    Spacer()
+
+                    Text("\(categories.count) categories")
+                        .font(.lumeSmall)
+                        .foregroundColor(.lumeMuted)
+
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.lumeNavy)
+                }
+                .padding(18)
+                .background(Color.lumeWarmWhite)
+                .cornerRadius(16)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.lumeBorder, lineWidth: 1)
+                )
+            }
+
+            if isExpanded {
+                VStack(spacing: 10) {
+                    ForEach(Array(categories.enumerated()), id: \.element.id) { idx, cat in
+                        NavigationLink {
+                            GuideCategoryDetailView(
+                                category: cat,
+                                hasFullAccess: hasFullAccess,
+                                themeColor: categoryAccentColors[idx % categoryAccentColors.count]
+                            )
+                        } label: {
+                            GuideCategoryCard(
+                                label: cat.name,
+                                taskCount: cat.tasks.count,
+                                bgColor: categoryBgColors[idx % categoryBgColors.count],
+                                accentColor: categoryAccentColors[idx % categoryAccentColors.count],
+                                bulletIcon: categoryBullets[idx % categoryBullets.count]
+                            )
+                        }
+                    }
+                }
+                .padding(.top, 10)
+            }
         }
     }
 }
@@ -90,31 +246,41 @@ struct GuidesView: View {
 struct GuideCategoryCard: View {
     let label: String
     let taskCount: Int
+    let bgColor: Color
+    let accentColor: Color
+    let bulletIcon: String
 
     var body: some View {
-        VStack(spacing: 8) {
-            Text(label)
-                .font(.lumeCaption)
-                .fontWeight(.medium)
-                .foregroundColor(.lumeText)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
+        HStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .fill(accentColor.opacity(0.12))
+                    .frame(width: 36, height: 36)
+                Image(systemName: bulletIcon)
+                    .font(.system(size: 15))
+                    .foregroundColor(accentColor)
+            }
 
-            Text("\(taskCount) guide\(taskCount == 1 ? "" : "s")")
-                .font(.lumeSmall)
-                .foregroundColor(.lumeMuted)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(label)
+                    .font(.lumeBodyMedium)
+                    .foregroundColor(.lumeNavy)
 
+                Text("\(taskCount) guide\(taskCount == 1 ? "" : "s")")
+                    .font(.lumeSmall)
+                    .foregroundColor(.lumeMuted)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(accentColor.opacity(0.5))
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
-        .padding(.horizontal, 12)
-        .background(Color.lumeWarmWhite)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.lumeBorder, lineWidth: 1)
-        )
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(bgColor)
+        .cornerRadius(14)
     }
 }
 
@@ -123,21 +289,91 @@ struct GuideCategoryCard: View {
 struct GuideCategoryDetailView: View {
     let category: GuideCategory
     let hasFullAccess: Bool
+    let themeColor: Color
+
+    // Pastel version of the theme color for backgrounds
+    private var pastelBg: Color {
+        themeColor.opacity(0.08)
+    }
 
     var body: some View {
         ZStack {
-            Color.lumeCream.ignoresSafeArea()
+            LinearGradient(
+                colors: [Color(hex: "F2F5F0"), Color(hex: "FAF7F2")],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: 16) {
-                    ForEach(category.tasks) { task in
-                        GuideTaskCard(task: task, hasFullAccess: hasFullAccess)
+                VStack(spacing: 0) {
+                    // Navy color-blocked header
+                    ZStack {
+                        Color.lumeNavy
+
+                        VStack(spacing: 10) {
+                            // Category icon in pastel circle
+                            ZStack {
+                                Circle()
+                                    .fill(Color.white.opacity(0.12))
+                                    .frame(width: 48, height: 48)
+                                Image(systemName: "book.fill")
+                                    .font(.system(size: 20))
+                                    .foregroundColor(.lumeGold)
+                            }
+
+                            Text(category.name)
+                                .font(.lumeDisplaySmall)
+                                .foregroundColor(.white)
+
+                            Text("\(category.tasks.count) guide\(category.tasks.count == 1 ? "" : "s")")
+                                .font(.lumeCaption)
+                                .foregroundColor(.white.opacity(0.6))
+                        }
+                        .padding(.vertical, 28)
                     }
+                    .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
+
+                    // Pastel category banner
+                    HStack(spacing: 12) {
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(themeColor)
+                            .frame(width: 4, height: 28)
+
+                        Text(category.name)
+                            .font(.lumeHeadingSmall)
+                            .foregroundColor(.lumeNavy)
+
+                        Spacer()
+                    }
+                    .padding(16)
+                    .background(pastelBg)
+                    .cornerRadius(14)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(themeColor.opacity(0.12), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+
+                    VStack(spacing: 12) {
+                        ForEach(Array(category.tasks.enumerated()), id: \.element.id) { idx, task in
+                            GuideTaskCard(
+                                task: task,
+                                hasFullAccess: hasFullAccess,
+                                themeColor: themeColor,
+                                pastelBg: categoryBgColors[idx % categoryBgColors.count],
+                                bulletIcon: categoryBullets[idx % categoryBullets.count]
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
+                    .padding(.bottom, 100)
                 }
-                .padding(24)
             }
+            .ignoresSafeArea(edges: .top)
         }
-        .navigationTitle(category.name)
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -147,135 +383,154 @@ struct GuideCategoryDetailView: View {
 struct GuideTaskCard: View {
     let task: GuideTask
     let hasFullAccess: Bool
+    let themeColor: Color
+    let pastelBg: Color
+    let bulletIcon: String
     @State private var isExpanded = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Header (always visible)
+            // Collapsible header
             Button {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     isExpanded.toggle()
                 }
             } label: {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(task.title)
-                            .font(.lumeBodyMedium)
-                            .foregroundColor(.lumeText)
-                            .multilineTextAlignment(.leading)
+                HStack(alignment: .center, spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(themeColor.opacity(0.1))
+                            .frame(width: 32, height: 32)
+                        Image(systemName: bulletIcon)
+                            .font(.system(size: 13))
+                            .foregroundColor(themeColor)
+                    }
 
-                        }
+                    Text(task.title)
+                        .font(.lumeDisplaySmall)
+                        .foregroundColor(.lumeNavy)
+                        .multilineTextAlignment(.leading)
+
                     Spacer()
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.lumeMuted)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(themeColor)
                 }
                 .padding(16)
+                .background(pastelBg.opacity(0.6))
             }
 
             if isExpanded {
-                Divider().padding(.horizontal, 16)
+                // Color accent bar
+                Rectangle()
+                    .fill(themeColor)
+                    .frame(height: 2)
+                    .padding(.horizontal, 16)
 
-                VStack(alignment: .leading, spacing: 16) {
-                    // What
+                VStack(alignment: .leading, spacing: 18) {
                     if let what = task.what, !what.isEmpty {
-                        GuideSection(title: "What", content: what)
+                        GuideSectionBlock(title: "What", content: what, color: .lumeNavy)
                     }
 
-                    // Why
                     if let why = task.why, !why.isEmpty {
-                        GuideSection(title: "Why it matters", content: why)
+                        GuideSectionBlock(title: "Why it matters", content: why, color: .lumeNavy)
                     }
 
-                    // Steps (gated for free users)
                     if hasFullAccess {
                         if let steps = task.steps, !steps.isEmpty {
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 10) {
                                 Text("Steps")
-                                    .font(.lumeCaption)
-                                    .fontWeight(.semibold)
+                                    .font(.lumeHeadingSmall)
                                     .foregroundColor(.lumeNavy)
 
                                 ForEach(Array(steps.enumerated()), id: \.offset) { idx, step in
-                                    HStack(alignment: .top, spacing: 8) {
-                                        Text("\(idx + 1).")
-                                            .font(.lumeCaption)
-                                            .foregroundColor(.lumeGold)
-                                            .frame(width: 20, alignment: .trailing)
+                                    HStack(alignment: .top, spacing: 10) {
+                                        ZStack {
+                                            Circle()
+                                                .fill(themeColor.opacity(0.1))
+                                                .frame(width: 26, height: 26)
+                                            Text("\(idx + 1)")
+                                                .font(.lumeSmall)
+                                                .fontWeight(.bold)
+                                                .foregroundColor(themeColor)
+                                        }
                                         Text(step)
                                             .font(.lumeBody)
                                             .foregroundColor(.lumeText)
+                                            .lineSpacing(3)
                                     }
                                 }
                             }
                         }
 
-                        // Terms
                         if let terms = task.terms, !terms.isEmpty {
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 10) {
                                 Text("Key terms")
-                                    .font(.lumeCaption)
-                                    .fontWeight(.semibold)
+                                    .font(.lumeHeadingSmall)
                                     .foregroundColor(.lumeNavy)
 
                                 ForEach(terms) { term in
-                                    VStack(alignment: .leading, spacing: 2) {
+                                    VStack(alignment: .leading, spacing: 3) {
                                         Text(term.term)
-                                            .font(.lumeCaption)
-                                            .fontWeight(.medium)
-                                            .foregroundColor(.lumeText)
+                                            .font(.lumeBodyMedium)
+                                            .foregroundColor(.lumeNavy)
                                         Text(term.def)
-                                            .font(.lumeSmall)
+                                            .font(.lumeBody)
                                             .foregroundColor(.lumeMuted)
+                                            .lineSpacing(2)
                                     }
+                                    .padding(14)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(pastelBg.opacity(0.5))
+                                    .cornerRadius(12)
                                 }
                             }
                         }
 
-                        // Mistakes
                         if let mistakes = task.mistakes, !mistakes.isEmpty {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Common mistakes")
-                                    .font(.lumeCaption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.lumeAccent)
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("Good to know")
+                                    .font(.lumeHeadingSmall)
+                                    .foregroundColor(.lumeGold)
 
                                 ForEach(mistakes, id: \.self) { mistake in
-                                    HStack(alignment: .top, spacing: 8) {
-                                        Image(systemName: "exclamationmark.triangle.fill")
+                                    HStack(alignment: .top, spacing: 10) {
+                                        Image(systemName: "lightbulb.fill")
                                             .font(.system(size: 12))
-                                            .foregroundColor(.lumeAccent)
+                                            .foregroundColor(.lumeGold)
+                                            .padding(.top, 2)
                                         Text(mistake)
-                                            .font(.lumeSmall)
+                                            .font(.lumeBody)
                                             .foregroundColor(.lumeText)
+                                            .lineSpacing(2)
                                     }
                                 }
                             }
                         }
 
-                        // Script
                         if let script = task.script {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Script")
-                                    .font(.lumeCaption)
-                                    .fontWeight(.semibold)
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("What to say")
+                                    .font(.lumeHeadingSmall)
                                     .foregroundColor(.lumeNavy)
 
                                 if let intro = script.intro {
                                     Text(intro)
-                                        .font(.lumeSmall)
+                                        .font(.lumeBodyLight)
                                         .foregroundColor(.lumeMuted)
                                         .italic()
                                 }
 
                                 if let lines = script.lines {
                                     ForEach(lines, id: \.self) { line in
-                                        Text("\"" + line + "\"")
+                                        Text("\"\(line)\"")
                                             .font(.lumeBody)
                                             .foregroundColor(.lumeText)
-                                            .padding(12)
-                                            .background(Color.lumeNavy.opacity(0.04))
-                                            .cornerRadius(8)
+                                            .italic()
+                                            .padding(14)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .background(pastelBg.opacity(0.5))
+                                            .cornerRadius(12)
                                     }
                                 }
 
@@ -288,47 +543,45 @@ struct GuideTaskCard: View {
                             }
                         }
 
-                        // Contacts
                         if let contacts = task.contacts, !contacts.isEmpty {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Contact")
-                                    .font(.lumeCaption)
-                                    .fontWeight(.semibold)
+                                    .font(.lumeHeadingSmall)
                                     .foregroundColor(.lumeNavy)
                                 Text(contacts)
-                                    .font(.lumeSmall)
+                                    .font(.lumeBody)
                                     .foregroundColor(.lumeMuted)
                             }
                         }
                     } else {
-                        // Upgrade prompt for free users
-                        UpgradePromptCard()
+                        UpgradePromptCard(themeColor: themeColor)
                     }
                 }
                 .padding(16)
+                .background(Color.lumeWarmWhite)
             }
         }
         .background(Color.lumeWarmWhite)
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.lumeBorder, lineWidth: 1)
+                .stroke(themeColor.opacity(0.12), lineWidth: 1)
         )
     }
 }
 
 // MARK: - Helper Views
 
-struct GuideSection: View {
+struct GuideSectionBlock: View {
     let title: String
     let content: String
+    let color: Color
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(title)
-                .font(.lumeCaption)
-                .fontWeight(.semibold)
-                .foregroundColor(.lumeNavy)
+                .font(.lumeHeadingSmall)
+                .foregroundColor(color)
             Text(content)
                 .font(.lumeBody)
                 .foregroundColor(.lumeText)
@@ -338,27 +591,28 @@ struct GuideSection: View {
 }
 
 struct UpgradePromptCard: View {
+    let themeColor: Color
+
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
             Image(systemName: "lock.fill")
                 .font(.system(size: 20))
                 .foregroundColor(.lumeGold)
-            Text("Full guide content")
-                .font(.lumeCaption)
-                .fontWeight(.medium)
-                .foregroundColor(.lumeText)
-            Text("Unlock step-by-step instructions, scripts, and expert tips.")
+            Text("Unlock full guide")
+                .font(.lumeBodyMedium)
+                .foregroundColor(.lumeNavy)
+            Text("Get step-by-step instructions,\nscripts, and expert tips.")
                 .font(.lumeSmall)
                 .foregroundColor(.lumeMuted)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .padding(20)
-        .background(Color.lumeGold.opacity(0.06))
-        .cornerRadius(12)
+        .padding(24)
+        .background(themeColor.opacity(0.04))
+        .cornerRadius(14)
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.lumeGold.opacity(0.3), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(themeColor.opacity(0.15), lineWidth: 1)
         )
     }
 }

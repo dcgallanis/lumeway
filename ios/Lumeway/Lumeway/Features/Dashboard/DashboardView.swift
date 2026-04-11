@@ -3,177 +3,360 @@ import SwiftUI
 struct DashboardView: View {
     @EnvironmentObject var appState: AppState
     @State private var checklistItems: [FullChecklistItem] = []
+    @State private var funGreeting: String = ""
+    @State private var selectedQuickAction: Int? = nil
 
     private let checklistService = ChecklistService()
+
+    private let funGreetings = [
+        "Let's make today count.",
+        "One step at a time, champ.",
+        "You've totally got this.",
+        "Small steps, big wins.",
+        "Progress looks great on you.",
+        "You showed up. That's huge.",
+        "Your future self says thanks.",
+        "Let's check something off today.",
+        "Every step forward matters.",
+        "You're doing better than you think.",
+        "Ready to crush it?",
+        "Look at you, showing up again.",
+    ]
 
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.lumeCream.ignoresSafeArea()
+                // Warm gradient background
+                LinearGradient(
+                    colors: [Color(hex: "FAF7F2"), Color(hex: "F5F0EA")],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: 24) {
-                        // Greeting
-                        if let user = appState.user {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(greeting)
-                                        .font(.lumeCaptionLight)
-                                        .foregroundColor(.lumeMuted)
-                                    Text(user.displayName ?? "there")
-                                        .font(.lumeHeadingSmall)
-                                        .foregroundColor(.lumeText)
+                    VStack(spacing: 20) {
+                        // Fun greeting - BIG bold display font
+                        HStack {
+                            VStack(alignment: .leading, spacing: 6) {
+                                if let user = appState.user {
+                                    Text("Hey, \(user.displayName ?? "there") 👋")
+                                        .font(.lumeDisplayMedium)
+                                        .foregroundColor(.lumeNavy)
                                 }
-                                Spacer()
+
+                                Text(funGreeting)
+                                    .font(.lumeBodyLight)
+                                    .foregroundColor(.lumeAccent)
+                                    .italic()
                             }
-                            .padding(.horizontal, 24)
-                            .padding(.top, 16)
+
+                            Spacer()
+
+                            // Avatar
+                            if let user = appState.user {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.lumeGreen.opacity(0.15))
+                                        .frame(width: 42, height: 42)
+                                    Text(String((user.displayName ?? user.email).prefix(1)).uppercased())
+                                        .font(.lumeBodySemibold)
+                                        .foregroundColor(.lumeGreen)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.top, 20)
+
+                        // Active Transition Card
+                        if let transition = appState.user?.transitionType {
+                            ActiveTransitionCard(
+                                transition: transition,
+                                completed: checklistItems.filter(\.isCompleted).count,
+                                total: checklistItems.count,
+                                urgentCount: urgentTaskCount
+                            )
+                            .padding(.horizontal, 20)
                         }
 
-                        // Progress summary card
-                        if let stats = appState.dashboardData?.checklist {
-                            ProgressCard(stats: stats)
+                        // Quick Actions — colorful pills
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("QUICK ACTIONS")
+                                .font(.lumeSmall)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.lumeMuted)
+                                .tracking(1)
                                 .padding(.horizontal, 24)
+
+                            LazyVGrid(columns: [
+                                GridItem(.flexible(), spacing: 12),
+                                GridItem(.flexible(), spacing: 12)
+                            ], spacing: 12) {
+                                QuickActionPill(
+                                    icon: "checkmark",
+                                    label: "My Checklist",
+                                    bgColor: Color.lumeGreen.opacity(0.1),
+                                    iconColor: .lumeGreen,
+                                    action: { selectedQuickAction = 1 }
+                                )
+                                QuickActionPill(
+                                    icon: "book.fill",
+                                    label: "Guides",
+                                    bgColor: Color.lumeAccent.opacity(0.1),
+                                    iconColor: .lumeAccent,
+                                    action: { selectedQuickAction = 2 }
+                                )
+                                QuickActionPill(
+                                    icon: "folder.fill",
+                                    label: "My Files",
+                                    bgColor: Color.lumeNavy.opacity(0.08),
+                                    iconColor: .lumeNavy,
+                                    action: { selectedQuickAction = 3 }
+                                )
+                                QuickActionPill(
+                                    icon: "sun.max.fill",
+                                    label: "Resources",
+                                    bgColor: Color.lumeGold.opacity(0.12),
+                                    iconColor: .lumeGold,
+                                    action: {}
+                                )
+                            }
+                            .padding(.horizontal, 20)
                         }
 
-                        // Next task highlight
+                        // Today's Focus - sage green card
                         if let nextTask = checklistItems.first(where: { !$0.isCompleted }) {
-                            NextTaskCard(task: nextTask)
-                                .padding(.horizontal, 24)
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("TODAY'S FOCUS")
+                                    .font(.lumeSmall)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.lumeMuted)
+                                    .tracking(1)
+                                    .padding(.horizontal, 24)
+
+                                TodayFocusCard(task: nextTask)
+                                    .padding(.horizontal, 20)
+                            }
                         }
 
                         // Upcoming deadlines
                         if let deadlines = appState.dashboardData?.deadlines,
                            !deadlines.isEmpty {
-                            DeadlineSection(deadlines: Array(deadlines.prefix(3)))
-                                .padding(.horizontal, 24)
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("DEADLINES")
+                                    .font(.lumeSmall)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.lumeMuted)
+                                    .tracking(1)
+                                    .padding(.horizontal, 24)
+
+                                DeadlineSection(deadlines: Array(deadlines.prefix(3)))
+                                    .padding(.horizontal, 20)
+                            }
                         }
 
-                        // Recent chat sessions
-                        if let sessions = appState.dashboardData?.sessions,
-                           !sessions.isEmpty {
-                            RecentChatsSection(sessions: Array(sessions.prefix(3)))
-                                .padding(.horizontal, 24)
-                        }
-
-                        Spacer().frame(height: 32)
+                        Spacer().frame(height: 100)
                     }
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("LUMEWAY")
-                        .font(.lumeLogoText)
-                        .foregroundColor(.lumeNavy)
-                }
-            }
+            .navigationBarHidden(true)
             .refreshable {
                 await appState.loadDashboard()
                 await loadChecklist()
+                funGreeting = funGreetings.randomElement() ?? ""
             }
-            .task { await loadChecklist() }
+            .task {
+                await loadChecklist()
+                funGreeting = funGreetings.randomElement() ?? ""
+            }
+            .onChange(of: selectedQuickAction) { _, tab in
+                if let tab = tab {
+                    NotificationCenter.default.post(name: .switchToTab, object: nil, userInfo: ["tab": tab])
+                    selectedQuickAction = nil
+                }
+            }
         }
     }
 
-    private var greeting: String {
-        let hour = Calendar.current.component(.hour, from: Date())
-        if hour < 12 { return "Good morning," }
-        if hour < 17 { return "Good afternoon," }
-        return "Good evening,"
+    private var urgentTaskCount: Int {
+        let incomplete = checklistItems.filter { !$0.isCompleted }
+        guard let phase = incomplete.first?.phase else { return 0 }
+        return incomplete.filter { $0.phase == phase }.count
     }
 
     private func loadChecklist() async {
         do {
             let response = try await checklistService.getChecklist()
             checklistItems = response.items
-        } catch {
-            // Silently fail — dashboard still works without checklist
-        }
+        } catch {}
     }
 }
 
-// MARK: - Progress Card
+// MARK: - Active Transition Card
 
-struct ProgressCard: View {
-    let stats: ChecklistStats
+struct ActiveTransitionCard: View {
+    let transition: String
+    let completed: Int
+    let total: Int
+    let urgentCount: Int
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text("Your progress")
-                    .font(.lumeBodyMedium)
-                    .foregroundColor(.lumeText)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("ACTIVE TRANSITION")
+                        .font(.lumeSmall)
+                        .foregroundColor(.white.opacity(0.5))
+                        .tracking(1)
+
+                    Text(transition.replacingOccurrences(of: "-", with: " ").capitalized)
+                        .font(.lumeDisplaySmall)
+                        .foregroundColor(.white)
+                }
+
                 Spacer()
-                Text("\(stats.completed ?? 0) of \(stats.total ?? 0)")
-                    .font(.lumeCaption)
-                    .foregroundColor(.lumeMuted)
-            }
 
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.lumeBorder)
-                        .frame(height: 8)
+                // Sun-like progress circle
+                ZStack {
+                    Circle()
+                        .stroke(Color.white.opacity(0.15), lineWidth: 3)
+                        .frame(width: 52, height: 52)
 
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.lumeGold)
-                        .frame(width: progressWidth(total: geo.size.width), height: 8)
-                        .animation(.easeInOut(duration: 0.5), value: stats.completed)
+                    Circle()
+                        .trim(from: 0, to: total > 0 ? CGFloat(completed) / CGFloat(total) : 0)
+                        .stroke(Color.lumeGold, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                        .frame(width: 52, height: 52)
+                        .rotationEffect(.degrees(-90))
+
+                    VStack(spacing: 0) {
+                        Text("\(completed)")
+                            .font(.lumeBodySemibold)
+                            .foregroundColor(.white)
+                        Text("of \(total)")
+                            .font(.system(size: 9))
+                            .foregroundColor(.white.opacity(0.6))
+                    }
                 }
             }
-            .frame(height: 8)
-        }
-        .padding(20)
-        .background(Color.lumeWarmWhite)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.lumeBorder, lineWidth: 1)
-        )
-    }
 
-    private func progressWidth(total: CGFloat) -> CGFloat {
-        let done = stats.completed ?? 0
-        let all = stats.total ?? 1
-        guard all > 0 else { return 0 }
-        return total * CGFloat(done) / CGFloat(all)
+            // Green progress bar
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(Color.white.opacity(0.15))
+                        .frame(height: 5)
+
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(Color.lumeGreen)
+                        .frame(width: total > 0 ? geo.size.width * CGFloat(completed) / CGFloat(total) : 0, height: 5)
+                }
+            }
+            .frame(height: 5)
+
+            HStack {
+                if urgentCount > 0 {
+                    Text("\(urgentCount) urgent task\(urgentCount == 1 ? "" : "s")")
+                        .font(.lumeSmall)
+                        .foregroundColor(.lumeGreen)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.lumeGreen.opacity(0.15))
+                        .cornerRadius(10)
+                }
+                Spacer()
+                HStack(spacing: 4) {
+                    Text("View all")
+                        .font(.lumeSmall)
+                        .foregroundColor(.white.opacity(0.6))
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 10))
+                        .foregroundColor(.white.opacity(0.4))
+                }
+            }
+        }
+        .padding(22)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(
+                    LinearGradient(
+                        colors: [Color.lumeNavy, Color(hex: "1E3A4C")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        )
     }
 }
 
-// MARK: - Next Task Card
+// MARK: - Quick Action Pill (colorful)
 
-struct NextTaskCard: View {
+struct QuickActionPill: View {
+    let icon: String
+    let label: String
+    let bgColor: Color
+    let iconColor: Color
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: icon)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(iconColor)
+                Text(label)
+                    .font(.lumeCaption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.lumeNavy)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(bgColor)
+            .cornerRadius(14)
+        }
+    }
+}
+
+// MARK: - Today's Focus Card
+
+struct TodayFocusCard: View {
     let task: FullChecklistItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 6) {
-                Image(systemName: "arrow.right.circle.fill")
-                    .font(.system(size: 14))
-                    .foregroundColor(.lumeGold)
-                Text("Next step")
-                    .font(.lumeSmall)
-                    .foregroundColor(.lumeGold)
+        HStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .fill(Color.lumeAccent.opacity(0.12))
+                    .frame(width: 38, height: 38)
+                Image(systemName: "exclamationmark")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.lumeAccent)
             }
 
-            Text(task.title)
-                .font(.lumeBodyMedium)
-                .foregroundColor(.lumeText)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(task.title)
+                    .font(.lumeBodyMedium)
+                    .foregroundColor(.lumeNavy)
 
-            if let phase = task.phase {
-                Text(phase)
-                    .font(.lumeSmall)
-                    .foregroundColor(.lumeMuted)
+                if let phase = task.phase {
+                    Text(phase)
+                        .font(.lumeSmall)
+                        .foregroundColor(.lumeMuted)
+                }
             }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(.lumeMuted)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(Color.lumeGold.opacity(0.06))
+        .background(Color.lumeAccent.opacity(0.06))
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.lumeGold.opacity(0.3), lineWidth: 1)
+                .stroke(Color.lumeAccent.opacity(0.12), lineWidth: 1)
         )
     }
 }
@@ -184,30 +367,26 @@ struct DeadlineSection: View {
     let deadlines: [Deadline]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Upcoming deadlines")
-                .font(.lumeBodyMedium)
-                .foregroundColor(.lumeText)
-
+        VStack(spacing: 10) {
             ForEach(deadlines, id: \.id) { deadline in
                 HStack(spacing: 12) {
-                    Circle()
+                    RoundedRectangle(cornerRadius: 2)
                         .fill(urgencyColor(deadline))
-                        .frame(width: 8, height: 8)
+                        .frame(width: 4, height: 32)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(deadline.title ?? "")
                             .font(.lumeCaption)
-                            .foregroundColor(.lumeText)
+                            .foregroundColor(.lumeNavy)
                         if let days = deadline.daysRemaining {
-                            Text("You have \(days) day\(days == 1 ? "" : "s") left")
+                            Text(deadlineText(days))
                                 .font(.lumeSmall)
-                                .foregroundColor(.lumeMuted)
+                                .foregroundColor(days <= 3 ? .lumeAccent : .lumeMuted)
                         }
                     }
                     Spacer()
                 }
-                .padding(16)
+                .padding(14)
                 .background(Color.lumeWarmWhite)
                 .cornerRadius(12)
                 .overlay(
@@ -216,55 +395,19 @@ struct DeadlineSection: View {
                 )
             }
         }
+    }
+
+    private func deadlineText(_ days: Int) -> String {
+        if days < 0 { return "This was due \(abs(days)) day\(abs(days) == 1 ? "" : "s") ago" }
+        if days == 0 { return "Due today" }
+        if days <= 3 { return "Due in \(days) day\(days == 1 ? "" : "s")" }
+        return "You have \(days) days left"
     }
 
     private func urgencyColor(_ deadline: Deadline) -> Color {
         guard let days = deadline.daysRemaining else { return .lumeMuted }
-        if days <= 7 { return .lumeAccent }
+        if days <= 3 { return .lumeAccent }
         if days <= 14 { return .lumeGold }
         return .lumeGreen
-    }
-}
-
-// MARK: - Recent Chats Section
-
-struct RecentChatsSection: View {
-    let sessions: [ChatSessionSummary]
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Recent conversations")
-                .font(.lumeBodyMedium)
-                .foregroundColor(.lumeText)
-
-            ForEach(sessions) { session in
-                HStack(spacing: 12) {
-                    Image(systemName: "bubble.left")
-                        .font(.system(size: 16))
-                        .foregroundColor(.lumeNavy)
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        if let cat = session.transitionCategory {
-                            Text(cat.replacingOccurrences(of: "-", with: " ").capitalized)
-                                .font(.lumeCaption)
-                                .foregroundColor(.lumeText)
-                        }
-                        if let count = session.messageCount {
-                            Text("\(count) messages")
-                                .font(.lumeSmall)
-                                .foregroundColor(.lumeMuted)
-                        }
-                    }
-                    Spacer()
-                }
-                .padding(12)
-                .background(Color.lumeWarmWhite)
-                .cornerRadius(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.lumeBorder, lineWidth: 1)
-                )
-            }
-        }
     }
 }
