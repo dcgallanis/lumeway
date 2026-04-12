@@ -124,6 +124,14 @@
     .community-pin-badge { font-size: 11px; color: var(--gold); }
     .community-read-only-banner { background: linear-gradient(135deg, #faf6f1, #f5efe6); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .community-read-only-banner p { font-size: 13px; color: var(--navy); font-weight: 300; }
+    .community-gate { max-width: 560px; margin: 40px auto; text-align: center; }
+    .community-gate-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 40px 32px; }
+    .community-gate-card h3 { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 400; color: var(--navy); margin-bottom: 12px; }
+    .community-gate-card p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+    .community-rules-list { text-align: left; margin: 20px 0; padding: 0; list-style: none; }
+    .community-rules-list li { font-size: 13px; font-weight: 300; color: var(--text); line-height: 1.6; padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-start; }
+    .community-rules-list li:last-child { border-bottom: none; }
+    .community-rules-num { font-size: 12px; font-weight: 600; color: var(--navy); min-width: 20px; }
 
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
@@ -982,7 +990,7 @@
       }
       // Load community posts when switching to community tab
       if (tab === 'community') {
-        loadCommunityPosts();
+        showCommunityGate();
       }
     }
 
@@ -8694,7 +8702,7 @@ guideLibrary['disability'] = {
     function loadCommunityPosts() {
       var el = document.getElementById('communityList');
       if (!el) return;
-      var canPost = el.dataset.canPost === '1';
+      var canPost = el.dataset.canPost === '1' && !window._communityDeclined;
       var url = '/api/community/posts?page=' + _communityPage;
       if (_communityFilter) url += '&category=' + encodeURIComponent(_communityFilter);
       if (_communityTransition) url += '&transition=' + encodeURIComponent(_communityTransition);
@@ -8801,10 +8809,90 @@ guideLibrary['disability'] = {
 
     var _communityReplyTo = null; // {id, name} if replying to a specific reply
 
+    function showCommunityGate() {
+      var root = document.getElementById('communityRoot');
+      if (!root) { loadCommunityPosts(); return; }
+      var tier = (dashData && dashData.effective_tier) || 'free';
+      var isFree = tier === 'free';
+      var accepted = localStorage.getItem('lumeway_community_accepted');
+      var declined = localStorage.getItem('lumeway_community_declined');
+
+      // Free users: show read-only gate first time
+      if (isFree && !localStorage.getItem('lumeway_community_free_seen')) {
+        localStorage.setItem('lumeway_community_free_seen', '1');
+        var el = document.getElementById('communityList');
+        if (!el) { loadCommunityPosts(); return; }
+        // Show free user popup over the content
+        var overlay = document.createElement('div');
+        overlay.className = 'community-modal-overlay';
+        overlay.id = 'communityFreeGate';
+        overlay.innerHTML = '<div class="community-gate-card" style="max-width:480px">' +
+          '<h3>Welcome to the community</h3>' +
+          '<p>As a free member, you can browse and read all posts and replies. To join the conversation — post, reply, and like — upgrade to a paid plan.</p>' +
+          '<div style="display:flex;gap:10px;justify-content:center;margin-top:20px">' +
+          '  <button class="community-new-btn" onclick="document.getElementById(\'communityFreeGate\').remove()">Browse community</button>' +
+          '  <a href="/pricing" style="padding:8px 20px;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);text-decoration:none;display:inline-flex;align-items:center;font-family:inherit">See plans</a>' +
+          '</div></div>';
+        document.body.appendChild(overlay);
+        loadCommunityPosts();
+        return;
+      }
+
+      // Paid users: show rules if not yet accepted
+      if (!isFree && !accepted) {
+        // Show rules popup
+        var rulesHtml = '<div class="community-modal-overlay" id="communityRulesModal">';
+        rulesHtml += '<div class="community-gate-card" style="max-width:520px;text-align:left">';
+        rulesHtml += '<h3 style="text-align:center">Community Guidelines</h3>';
+        rulesHtml += '<p style="text-align:center">Before you post, please take a moment to read our guidelines.</p>';
+        rulesHtml += '<ul class="community-rules-list">';
+        rulesHtml += '<li><span class="community-rules-num">1</span><span><strong>Be kind and respectful.</strong> Everyone here is going through something difficult. Lead with empathy.</span></li>';
+        rulesHtml += '<li><span class="community-rules-num">2</span><span><strong>No professional advice.</strong> Share your experience, but don\'t present opinions as legal, medical, or financial advice.</span></li>';
+        rulesHtml += '<li><span class="community-rules-num">3</span><span><strong>Protect your privacy.</strong> Don\'t share personal details like full names, addresses, or case numbers — yours or anyone else\'s.</span></li>';
+        rulesHtml += '<li><span class="community-rules-num">4</span><span><strong>No spam or self-promotion.</strong> This is a support space, not a marketplace.</span></li>';
+        rulesHtml += '<li><span class="community-rules-num">5</span><span><strong>If you are in crisis, call for help.</strong> National Suicide Prevention Lifeline: <strong>988</strong>. Crisis Text Line: text <strong>HOME</strong> to <strong>741741</strong>.</span></li>';
+        rulesHtml += '</ul>';
+        rulesHtml += '<p style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px">This community is moderated. Posts that violate these guidelines will be removed.</p>';
+        rulesHtml += '<div style="display:flex;gap:10px;justify-content:center;margin-top:20px">';
+        rulesHtml += '  <button class="community-new-btn" onclick="acceptCommunityRules()">I agree</button>';
+        rulesHtml += '  <button class="btn-ghost" onclick="declineCommunityRules()">Decline</button>';
+        rulesHtml += '</div>';
+        rulesHtml += '</div></div>';
+        document.body.insertAdjacentHTML('beforeend', rulesHtml);
+        // Still load posts in background so they can read
+        loadCommunityPosts();
+        return;
+      }
+
+      // If declined, disable posting
+      if (declined) {
+        window._communityDeclined = true;
+      }
+
+      loadCommunityPosts();
+    }
+
+    function acceptCommunityRules() {
+      localStorage.setItem('lumeway_community_accepted', '1');
+      localStorage.removeItem('lumeway_community_declined');
+      window._communityDeclined = false;
+      var m = document.getElementById('communityRulesModal');
+      if (m) m.remove();
+    }
+
+    function declineCommunityRules() {
+      localStorage.setItem('lumeway_community_declined', '1');
+      window._communityDeclined = true;
+      var m = document.getElementById('communityRulesModal');
+      if (m) m.remove();
+      // Reload to hide post buttons
+      loadCommunityPosts();
+    }
+
     function openCommunityPost(postId) {
       var root = document.getElementById('communityRoot');
       if (!root) return;
-      var canPostVal = (dashData && dashData.effective_tier && dashData.effective_tier !== 'free');
+      var canPostVal = (dashData && dashData.effective_tier && dashData.effective_tier !== 'free') && !window._communityDeclined;
       _communityReplyTo = null;
       root.innerHTML = '<p style="color:var(--muted);font-size:13px">Loading...</p>';
       fetch('/api/community/posts/' + postId)
