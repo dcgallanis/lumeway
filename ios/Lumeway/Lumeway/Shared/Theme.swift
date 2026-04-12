@@ -33,43 +33,46 @@ extension Color {
 }
 
 // MARK: - Typography
+// Cormorant Garamond — elegant display/heading serif
+// Libre Baskerville — warm serif for section titles & subheadings
+// Montserrat — clean modern sans-serif for body & UI
 
 extension Font {
-    // DM Serif Display — bold, fun heading font
-    static let lumeDisplayLarge = Font.custom("DMSerifDisplay-Regular", size: 34, relativeTo: .largeTitle)
-    static let lumeDisplayMedium = Font.custom("DMSerifDisplay-Regular", size: 26, relativeTo: .title2)
-    static let lumeDisplaySmall = Font.custom("DMSerifDisplay-Regular", size: 20, relativeTo: .headline)
-    static let lumeDisplayItalic = Font.custom("DMSerifDisplay-Italic", size: 26, relativeTo: .title2)
+    // Cormorant Garamond — hero display headings
+    static let lumeDisplayLarge = Font.custom("CormorantGaramond-Bold", size: 36, relativeTo: .largeTitle)
+    static let lumeDisplayMedium = Font.custom("CormorantGaramond-SemiBold", size: 28, relativeTo: .title2)
+    static let lumeDisplaySmall = Font.custom("CormorantGaramond-SemiBold", size: 22, relativeTo: .headline)
+    static let lumeDisplayItalic = Font.custom("CormorantGaramond-Italic", size: 28, relativeTo: .title2)
 
-    // Libre Baskerville — elegant serif for subheadings
-    static let lumeHeadingLarge = Font.custom("LibreBaskerville-Regular", size: 32, relativeTo: .largeTitle)
-    static let lumeHeadingMedium = Font.custom("LibreBaskerville-Regular", size: 24, relativeTo: .title2)
-    static let lumeHeadingSmall = Font.custom("LibreBaskerville-Regular", size: 18, relativeTo: .headline)
-    static let lumeHeadingItalic = Font.custom("LibreBaskerville-Italic", size: 24, relativeTo: .title2)
+    // Libre Baskerville — section headings & subheadings
+    static let lumeHeadingLarge = Font.custom("LibreBaskerville-Regular", size: 30, relativeTo: .largeTitle)
+    static let lumeHeadingMedium = Font.custom("LibreBaskerville-Regular", size: 22, relativeTo: .title2)
+    static let lumeHeadingSmall = Font.custom("LibreBaskerville-Regular", size: 17, relativeTo: .headline)
+    static let lumeHeadingItalic = Font.custom("LibreBaskerville-Italic", size: 22, relativeTo: .title2)
 
     // Libre Baskerville — section subheadings
     static let lumeSectionTitle = Font.custom("LibreBaskerville-Regular", size: 15, relativeTo: .subheadline)
     static let lumeSectionTitleBold = Font.custom("LibreBaskerville-Bold", size: 15, relativeTo: .subheadline)
 
-    // Plus Jakarta Sans — clean sans-serif body
-    static let lumeBody = Font.custom("PlusJakartaSans-Regular", size: 15, relativeTo: .body)
-    static let lumeBodyLight = Font.custom("PlusJakartaSans-Light", size: 15, relativeTo: .body)
-    static let lumeBodyMedium = Font.custom("PlusJakartaSans-Medium", size: 15, relativeTo: .body)
-    static let lumeBodySemibold = Font.custom("PlusJakartaSans-SemiBold", size: 15, relativeTo: .body)
-    static let lumeCaption = Font.custom("PlusJakartaSans-Regular", size: 13, relativeTo: .caption)
-    static let lumeCaptionLight = Font.custom("PlusJakartaSans-Light", size: 13, relativeTo: .caption)
-    static let lumeSmall = Font.custom("PlusJakartaSans-Regular", size: 11, relativeTo: .caption2)
-    static let lumeLogoText = Font.custom("PlusJakartaSans-SemiBold", size: 16, relativeTo: .headline)
+    // Montserrat — body text
+    static let lumeBody = Font.custom("Montserrat-Regular", size: 15, relativeTo: .body)
+    static let lumeBodyLight = Font.custom("Montserrat-Light", size: 15, relativeTo: .body)
+    static let lumeBodyMedium = Font.custom("Montserrat-Medium", size: 15, relativeTo: .body)
+    static let lumeBodySemibold = Font.custom("Montserrat-SemiBold", size: 15, relativeTo: .body)
+    static let lumeCaption = Font.custom("Montserrat-Regular", size: 13, relativeTo: .caption)
+    static let lumeCaptionLight = Font.custom("Montserrat-Light", size: 13, relativeTo: .caption)
+    static let lumeSmall = Font.custom("Montserrat-Regular", size: 11, relativeTo: .caption2)
+    static let lumeLogoText = Font.custom("CormorantGaramond-SemiBold", size: 18, relativeTo: .headline)
 
-    // DM Serif — accent display for emphasis
-    static let lumeAccentSerif = Font.custom("DMSerifDisplay-Regular", size: 16, relativeTo: .subheadline)
+    // Cormorant Garamond — accent display for emphasis
+    static let lumeAccentSerif = Font.custom("CormorantGaramond-Regular", size: 18, relativeTo: .subheadline)
 }
 
 // Debug: print all available custom fonts — call once to verify font names
 func debugPrintFonts() {
     for family in UIFont.familyNames.sorted() {
         let names = UIFont.fontNames(forFamilyName: family)
-        if !names.isEmpty && (family.contains("Libre") || family.contains("Jakarta") || family.contains("DM") || family.contains("Serif")) {
+        if !names.isEmpty && (family.contains("Libre") || family.contains("Montserrat") || family.contains("Cormorant")) {
             print("Font family: \(family)")
             for name in names {
                 print("  - \(name)")

@@ -8,6 +8,8 @@ struct NavigatorChatView: View {
     @State private var inputText = ""
     @State private var isStreaming = false
     @State private var scrollToBottom = false
+    @State private var sessionId: String? = nil
+    @State private var conversationHistory: [[String: String]] = []
 
     private let api = APIClient.shared
 
@@ -111,6 +113,8 @@ struct NavigatorChatView: View {
                     Button {
                         messages = []
                         inputText = ""
+                        sessionId = nil
+                        conversationHistory = []
                     } label: {
                         Image(systemName: "arrow.counterclockwise.circle.fill")
                             .foregroundColor(.lumeMuted)
@@ -149,10 +153,33 @@ struct NavigatorChatView: View {
         var accumulated = ""
 
         do {
-            let body: [String: Any] = ["message": question]
-            let stream = api.stream("/api/chat", body: body)
+            // Build request matching the site chat API format
+            var body: [String: Any] = [
+                "message": question,
+                "history": conversationHistory.map { $0 as [String: Any] }
+            ]
+            if let sid = sessionId {
+                body["session_id"] = sid
+            }
+
+            let stream = api.stream("/chat", body: body)
 
             for try await chunk in stream {
+                // Check for [DONE] with session info
+                if chunk.hasPrefix("[DONE]") {
+                    let jsonStr = String(chunk.dropFirst(6))
+                    if let data = jsonStr.data(using: .utf8),
+                       let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        if let sid = json["session_id"] as? String {
+                            sessionId = sid
+                        }
+                        if let history = json["history"] as? [[String: String]] {
+                            conversationHistory = history
+                        }
+                    }
+                    continue
+                }
+
                 accumulated += chunk
                 // Update or create the assistant message
                 if let idx = messages.firstIndex(where: { $0.id == assistantId }) {

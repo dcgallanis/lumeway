@@ -6,6 +6,7 @@ struct CalendarView: View {
     @State private var isLoading = true
     @State private var showAddSheet = false
     @State private var selectedMonth = Date()
+    @State private var selectedDate: Date? = nil
 
     private let service = CalendarService()
     private let calendar = Calendar.current
@@ -22,68 +23,146 @@ struct CalendarView: View {
                             .padding(.horizontal, 20)
                             .padding(.top, 12)
 
-                        // Mini calendar grid
-                        MiniCalendarGrid(
+                        // Calendar grid with clickable days
+                        InteractiveCalendarGrid(
                             selectedMonth: selectedMonth,
-                            deadlines: deadlines
+                            deadlines: deadlines,
+                            selectedDate: $selectedDate
                         )
                         .padding(.horizontal, 20)
 
-                        // Grouped deadline sections
-                        VStack(alignment: .leading, spacing: 14) {
-                            if activeDeadlines.isEmpty && !isLoading {
-                                VStack(spacing: 12) {
-                                    Image(systemName: "calendar.badge.plus")
-                                        .font(.system(size: 36))
-                                        .foregroundColor(.lumeBorder)
-                                    Text("No upcoming deadlines")
-                                        .font(.lumeBody)
-                                        .foregroundColor(.lumeMuted)
-                                    Text("Add important dates to keep track of filing deadlines, court dates, and more.")
-                                        .font(.lumeCaption)
-                                        .foregroundColor(.lumeMuted)
-                                        .multilineTextAlignment(.center)
-                                        .padding(.horizontal, 40)
+                        // Selected day event popup
+                        if let date = selectedDate {
+                            let eventsForDay = deadlinesForDate(date)
+                            if !eventsForDay.isEmpty {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    HStack {
+                                        Text(formatFullDate(date))
+                                            .font(.lumeHeadingSmall)
+                                            .foregroundColor(.lumeNavy)
+                                        Spacer()
+                                        Button {
+                                            withAnimation { selectedDate = nil }
+                                        } label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .font(.system(size: 18))
+                                                .foregroundColor(.lumeMuted)
+                                        }
+                                    }
+
+                                    ForEach(eventsForDay) { deadline in
+                                        HStack(spacing: 12) {
+                                            RoundedRectangle(cornerRadius: 2)
+                                                .fill(urgencyColor(deadline))
+                                                .frame(width: 4, height: 36)
+
+                                            VStack(alignment: .leading, spacing: 3) {
+                                                Text(deadline.title ?? "Deadline")
+                                                    .font(.lumeBodyMedium)
+                                                    .foregroundColor(.lumeNavy)
+                                                if let notes = deadline.notes, !notes.isEmpty {
+                                                    Text(notes)
+                                                        .font(.lumeSmall)
+                                                        .foregroundColor(.lumeMuted)
+                                                        .lineLimit(2)
+                                                }
+                                            }
+
+                                            Spacer()
+
+                                            Button {
+                                                toggleDeadline(deadline)
+                                            } label: {
+                                                ZStack {
+                                                    Circle()
+                                                        .stroke(deadline.completed ?? false ? Color.lumeGreen : urgencyColor(deadline), lineWidth: 2)
+                                                        .frame(width: 24, height: 24)
+                                                    if deadline.completed ?? false {
+                                                        Image(systemName: "checkmark")
+                                                            .font(.system(size: 11, weight: .bold))
+                                                            .foregroundColor(.lumeGreen)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        .padding(14)
+                                        .background(Color.lumeWarmWhite)
+                                        .cornerRadius(12)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color.lumeBorder, lineWidth: 1)
+                                        )
+                                    }
                                 }
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 32)
+                                .padding(16)
+                                .background(Color.lumeAccent.opacity(0.04))
+                                .cornerRadius(16)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.lumeAccent.opacity(0.12), lineWidth: 1)
+                                )
+                                .padding(.horizontal, 20)
+                                .transition(.opacity.combined(with: .move(edge: .top)))
                             }
+                        }
 
-                            // Overdue
-                            if !overdueDeadlines.isEmpty {
-                                DeadlineGroup(title: "OVERDUE", deadlines: overdueDeadlines,
-                                              onToggle: toggleDeadline, onDelete: deleteDeadline)
-                            }
+                        // Key deadlines — simplified, just title + date
+                        if !majorDeadlines.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Key Deadlines")
+                                    .font(.lumeSectionTitle)
+                                    .foregroundColor(.lumeNavy)
+                                    .padding(.horizontal, 24)
 
-                            // Today
-                            if !todayDeadlines.isEmpty {
-                                DeadlineGroup(title: "TODAY", deadlines: todayDeadlines,
-                                              onToggle: toggleDeadline, onDelete: deleteDeadline)
-                            }
+                                ForEach(majorDeadlines) { deadline in
+                                    HStack(spacing: 14) {
+                                        RoundedRectangle(cornerRadius: 2)
+                                            .fill(urgencyColor(deadline))
+                                            .frame(width: 4, height: 32)
 
-                            // Tomorrow
-                            if !tomorrowDeadlines.isEmpty {
-                                DeadlineGroup(title: "TOMORROW", deadlines: tomorrowDeadlines,
-                                              onToggle: toggleDeadline, onDelete: deleteDeadline)
-                            }
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(deadline.title ?? "Deadline")
+                                                .font(.lumeBodyMedium)
+                                                .foregroundColor(deadline.completed ?? false ? .lumeMuted : .lumeNavy)
+                                                .strikethrough(deadline.completed ?? false)
 
-                            // This week
-                            if !thisWeekDeadlines.isEmpty {
-                                DeadlineGroup(title: "THIS WEEK", deadlines: thisWeekDeadlines,
-                                              onToggle: toggleDeadline, onDelete: deleteDeadline)
-                            }
+                                            if let dueDate = deadline.dueDate {
+                                                HStack(spacing: 6) {
+                                                    Text(formatDateShort(dueDate))
+                                                        .font(.lumeSmall)
+                                                        .foregroundColor(.lumeMuted)
+                                                    if let days = deadline.daysRemaining, !(deadline.completed ?? false) {
+                                                        Text(daysText(days))
+                                                            .font(.lumeSmall)
+                                                            .foregroundColor(days <= 3 ? .lumeAccent : .lumeMuted)
+                                                    }
+                                                }
+                                            }
+                                        }
 
-                            // Later
-                            if !laterDeadlines.isEmpty {
-                                DeadlineGroup(title: "LATER", deadlines: laterDeadlines,
-                                              onToggle: toggleDeadline, onDelete: deleteDeadline)
+                                        Spacer()
+                                    }
+                                    .padding(.horizontal, 20)
+                                }
                             }
+                        }
 
-                            // Completed section
-                            if !completedDeadlines.isEmpty {
-                                DeadlineGroup(title: "COMPLETED", deadlines: completedDeadlines,
-                                              onToggle: toggleDeadline, onDelete: deleteDeadline, dimmed: true)
+                        if majorDeadlines.isEmpty && !isLoading {
+                            VStack(spacing: 12) {
+                                Image(systemName: "calendar.badge.plus")
+                                    .font(.system(size: 36))
+                                    .foregroundColor(.lumeBorder)
+                                Text("No upcoming deadlines")
+                                    .font(.lumeBody)
+                                    .foregroundColor(.lumeMuted)
+                                Text("Add important dates to keep track of filing deadlines, court dates, and more.")
+                                    .font(.lumeCaption)
+                                    .foregroundColor(.lumeMuted)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 40)
                             }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 32)
                         }
 
                         Spacer().frame(height: 100)
@@ -125,33 +204,47 @@ struct CalendarView: View {
         }
     }
 
-    private var activeDeadlines: [DeadlineItem] {
+    // Only show active (not completed) deadlines in the key list
+    private var majorDeadlines: [DeadlineItem] {
         deadlines.filter { !($0.completed ?? false) }
             .sorted { ($0.daysRemaining ?? 999) < ($1.daysRemaining ?? 999) }
     }
 
-    private var completedDeadlines: [DeadlineItem] {
-        deadlines.filter { $0.completed ?? false }
+    private func deadlinesForDate(_ date: Date) -> [DeadlineItem] {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let dateStr = formatter.string(from: date)
+        return deadlines.filter { $0.dueDate?.prefix(10) == dateStr }
     }
 
-    private var overdueDeadlines: [DeadlineItem] {
-        activeDeadlines.filter { ($0.daysRemaining ?? 0) < 0 }
+    private func urgencyColor(_ deadline: DeadlineItem) -> Color {
+        guard let days = deadline.daysRemaining, !(deadline.completed ?? false) else { return .lumeMuted }
+        if days < 0 { return .lumeAccent }
+        if days <= 3 { return .lumeAccent }
+        if days <= 14 { return .lumeGold }
+        return .lumeGreen
     }
 
-    private var todayDeadlines: [DeadlineItem] {
-        activeDeadlines.filter { $0.daysRemaining == 0 }
+    private func daysText(_ days: Int) -> String {
+        if days < 0 { return "Overdue" }
+        if days == 0 { return "Due today" }
+        if days == 1 { return "Due tomorrow" }
+        return "in \(days) days"
     }
 
-    private var tomorrowDeadlines: [DeadlineItem] {
-        activeDeadlines.filter { $0.daysRemaining == 1 }
+    private func formatDateShort(_ dateStr: String) -> String {
+        let input = DateFormatter()
+        input.dateFormat = "yyyy-MM-dd"
+        guard let date = input.date(from: String(dateStr.prefix(10))) else { return dateStr }
+        let output = DateFormatter()
+        output.dateFormat = "MMM d, yyyy"
+        return output.string(from: date)
     }
 
-    private var thisWeekDeadlines: [DeadlineItem] {
-        activeDeadlines.filter { ($0.daysRemaining ?? 999) >= 2 && ($0.daysRemaining ?? 999) <= 7 }
-    }
-
-    private var laterDeadlines: [DeadlineItem] {
-        activeDeadlines.filter { ($0.daysRemaining ?? 999) > 7 }
+    private func formatFullDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMMM d"
+        return formatter.string(from: date)
     }
 
     private func loadDeadlines() async {
@@ -240,11 +333,12 @@ struct MonthHeader: View {
     }
 }
 
-// MARK: - Mini Calendar Grid
+// MARK: - Interactive Calendar Grid (clickable days)
 
-struct MiniCalendarGrid: View {
+struct InteractiveCalendarGrid: View {
     let selectedMonth: Date
     let deadlines: [DeadlineItem]
+    @Binding var selectedDate: Date?
 
     private let calendar = Calendar.current
     private let dayLabels = ["S", "M", "T", "W", "T", "F", "S"]
@@ -264,7 +358,7 @@ struct MiniCalendarGrid: View {
         return days
     }
 
-    private var deadlineDates: Set<String> {
+    private var deadlineDateSet: Set<String> {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         return Set(deadlines.compactMap { $0.dueDate?.prefix(10).description })
@@ -292,31 +386,47 @@ struct MiniCalendarGrid: View {
                         let formatter = DateFormatter()
                         let _ = formatter.dateFormat = "yyyy-MM-dd"
                         let dateStr = formatter.string(from: date)
-                        let hasDeadline = deadlineDates.contains(dateStr)
+                        let hasDeadline = deadlineDateSet.contains(dateStr)
                         let isToday = calendar.isDateInToday(date)
+                        let isSelected = selectedDate.map { calendar.isDate($0, inSameDayAs: date) } ?? false
 
-                        ZStack {
-                            if isToday {
-                                Circle()
-                                    .fill(Color.lumeNavy)
-                                    .frame(width: 32, height: 32)
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                if isSelected {
+                                    selectedDate = nil
+                                } else if hasDeadline {
+                                    selectedDate = date
+                                }
                             }
+                        } label: {
+                            ZStack {
+                                if isSelected {
+                                    Circle()
+                                        .fill(Color.lumeAccent)
+                                        .frame(width: 34, height: 34)
+                                } else if isToday {
+                                    Circle()
+                                        .fill(Color.lumeNavy)
+                                        .frame(width: 34, height: 34)
+                                }
 
-                            Text("\(dayNum)")
-                                .font(.lumeCaption)
-                                .foregroundColor(isToday ? .white : .lumeText)
+                                Text("\(dayNum)")
+                                    .font(.lumeCaption)
+                                    .foregroundColor(isSelected || isToday ? .white : .lumeText)
 
-                            if hasDeadline {
-                                Circle()
-                                    .fill(Color.lumeAccent)
-                                    .frame(width: 5, height: 5)
-                                    .offset(y: 14)
+                                if hasDeadline && !isSelected {
+                                    Circle()
+                                        .fill(Color.lumeAccent)
+                                        .frame(width: 6, height: 6)
+                                        .offset(y: 15)
+                                }
                             }
+                            .frame(height: 38)
                         }
-                        .frame(height: 36)
+                        .buttonStyle(.plain)
                     } else {
                         Text("")
-                            .frame(height: 36)
+                            .frame(height: 38)
                     }
                 }
             }
@@ -328,137 +438,6 @@ struct MiniCalendarGrid: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.lumeBorder, lineWidth: 1)
         )
-    }
-}
-
-// MARK: - Deadline Row
-
-struct DeadlineRow: View {
-    let deadline: DeadlineItem
-    let onToggle: () -> Void
-    let onDelete: () -> Void
-
-    @State private var showDelete = false
-
-    private var daysText: String {
-        guard let days = deadline.daysRemaining else { return "" }
-        if deadline.completed ?? false { return "Done" }
-        if days < 0 { return "Overdue by \(abs(days))d" }
-        if days == 0 { return "Due today" }
-        if days <= 7 { return "Due in \(days) day\(days == 1 ? "" : "s")" }
-        return "You have \(days) days"
-    }
-
-    private var urgencyColor: Color {
-        guard let days = deadline.daysRemaining, !(deadline.completed ?? false) else { return .lumeMuted }
-        if days <= 3 { return .lumeAccent }
-        if days <= 14 { return .lumeGold }
-        return .lumeGreen
-    }
-
-    var body: some View {
-        HStack(spacing: 14) {
-            // Toggle button
-            Button(action: onToggle) {
-                ZStack {
-                    Circle()
-                        .stroke(deadline.completed ?? false ? Color.lumeGreen : urgencyColor, lineWidth: 2)
-                        .frame(width: 24, height: 24)
-                    if deadline.completed ?? false {
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.lumeGreen)
-                    }
-                }
-            }
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(deadline.title ?? "Deadline")
-                    .font(.lumeBodyMedium)
-                    .foregroundColor(.lumeNavy)
-                    .strikethrough(deadline.completed ?? false)
-
-                HStack(spacing: 8) {
-                    if let dueDate = deadline.dueDate {
-                        Text(formatDate(dueDate))
-                            .font(.lumeSmall)
-                            .foregroundColor(.lumeMuted)
-                    }
-                    Text(daysText)
-                        .font(.lumeSmall)
-                        .foregroundColor(urgencyColor)
-                }
-            }
-
-            Spacer()
-
-            // Urgency bar
-            if !(deadline.completed ?? false) {
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(urgencyColor)
-                    .frame(width: 4, height: 28)
-            }
-        }
-        .padding(16)
-        .background(Color.lumeWarmWhite)
-        .cornerRadius(14)
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(Color.lumeBorder, lineWidth: 1)
-        )
-        .swipeActions(edge: .trailing) {
-            Button(role: .destructive) {
-                onDelete()
-            } label: {
-                Label("Delete", systemImage: "trash")
-            }
-        }
-    }
-
-    private func formatDate(_ dateStr: String) -> String {
-        let input = DateFormatter()
-        input.dateFormat = "yyyy-MM-dd"
-        guard let date = input.date(from: String(dateStr.prefix(10))) else { return dateStr }
-        let output = DateFormatter()
-        output.dateFormat = "MMM d"
-        return output.string(from: date)
-    }
-}
-
-// MARK: - Deadline Group (Today/Tomorrow/This Week/Later)
-
-struct DeadlineGroup: View {
-    let title: String
-    let deadlines: [DeadlineItem]
-    let onToggle: (DeadlineItem) -> Void
-    let onDelete: (DeadlineItem) -> Void
-    var dimmed: Bool = false
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text(title)
-                    .font(.lumeSmall)
-                    .fontWeight(.semibold)
-                    .foregroundColor(title == "OVERDUE" ? .lumeAccent : .lumeMuted)
-                    .tracking(1)
-                Spacer()
-                Text("\(deadlines.count)")
-                    .font(.lumeSmall)
-                    .foregroundColor(.lumeMuted)
-            }
-            .padding(.horizontal, 24)
-
-            ForEach(deadlines) { deadline in
-                DeadlineRow(
-                    deadline: deadline,
-                    onToggle: { onToggle(deadline) },
-                    onDelete: { onDelete(deadline) }
-                )
-                .padding(.horizontal, 20)
-                .opacity(dimmed ? 0.6 : 1)
-            }
-        }
     }
 }
 

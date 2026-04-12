@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 
 struct MoreView: View {
     @EnvironmentObject var appState: AppState
@@ -147,30 +148,48 @@ struct MoreView: View {
                                 SettingSectionHeader(title: "SUPPORT")
 
                                 VStack(spacing: 0) {
-                                    ProfileSettingRow(
-                                        icon: "lifepreserver.fill",
-                                        label: "Help & FAQ",
-                                        iconColor: Color(hex: "4A7C59"),
-                                        bgColor: Color(hex: "E8F0E4")
-                                    )
+                                    Button {
+                                        if let url = URL(string: "https://lumeway.co/faq") {
+                                            UIApplication.shared.open(url)
+                                        }
+                                    } label: {
+                                        ProfileSettingRow(
+                                            icon: "lifepreserver.fill",
+                                            label: "Help & FAQ",
+                                            iconColor: Color(hex: "4A7C59"),
+                                            bgColor: Color(hex: "E8F0E4")
+                                        )
+                                    }
 
                                     Divider().padding(.leading, 62)
 
-                                    ProfileSettingRow(
-                                        icon: "paperplane.fill",
-                                        label: "Contact Us",
-                                        iconColor: Color(hex: "5E8C9A"),
-                                        bgColor: Color(hex: "E0EDF0")
-                                    )
+                                    Button {
+                                        if let url = URL(string: "mailto:support@lumeway.co") {
+                                            UIApplication.shared.open(url)
+                                        }
+                                    } label: {
+                                        ProfileSettingRow(
+                                            icon: "paperplane.fill",
+                                            label: "Contact Us",
+                                            iconColor: Color(hex: "5E8C9A"),
+                                            bgColor: Color(hex: "E0EDF0")
+                                        )
+                                    }
 
                                     Divider().padding(.leading, 62)
 
-                                    ProfileSettingRow(
-                                        icon: "hand.raised.fill",
-                                        label: "Privacy Policy",
-                                        iconColor: Color(hex: "7B6B8D"),
-                                        bgColor: Color(hex: "EDE8F0")
-                                    )
+                                    Button {
+                                        if let url = URL(string: "https://lumeway.co/privacy") {
+                                            UIApplication.shared.open(url)
+                                        }
+                                    } label: {
+                                        ProfileSettingRow(
+                                            icon: "hand.raised.fill",
+                                            label: "Privacy Policy",
+                                            iconColor: Color(hex: "7B6B8D"),
+                                            bgColor: Color(hex: "EDE8F0")
+                                        )
+                                    }
                                 }
                                 .background(Color.lumeWarmWhite)
                                 .cornerRadius(16)
@@ -185,21 +204,30 @@ struct MoreView: View {
                                 SettingSectionHeader(title: "APP")
 
                                 VStack(spacing: 0) {
-                                    ProfileSettingRow(
-                                        icon: "sparkles",
-                                        label: "Rate Lumeway",
-                                        iconColor: Color(hex: "B8977E"),
-                                        bgColor: Color(hex: "F0EAE0")
-                                    )
+                                    Button {
+                                        // Open App Store review page (replace with actual ID when live)
+                                        if let url = URL(string: "https://apps.apple.com/app/lumeway") {
+                                            UIApplication.shared.open(url)
+                                        }
+                                    } label: {
+                                        ProfileSettingRow(
+                                            icon: "sparkles",
+                                            label: "Rate Lumeway",
+                                            iconColor: Color(hex: "B8977E"),
+                                            bgColor: Color(hex: "F0EAE0")
+                                        )
+                                    }
 
                                     Divider().padding(.leading, 62)
 
-                                    ProfileSettingRow(
-                                        icon: "heart.circle.fill",
-                                        label: "Share with a friend",
-                                        iconColor: Color(hex: "D4896C"),
-                                        bgColor: Color(hex: "F5EAE4")
-                                    )
+                                    ShareLink(item: URL(string: "https://lumeway.co")!) {
+                                        ProfileSettingRow(
+                                            icon: "heart.circle.fill",
+                                            label: "Share with a friend",
+                                            iconColor: Color(hex: "D4896C"),
+                                            bgColor: Color(hex: "F5EAE4")
+                                        )
+                                    }
                                 }
                                 .background(Color.lumeWarmWhite)
                                 .cornerRadius(16)
@@ -733,9 +761,11 @@ struct AccountSettingsView: View {
 // MARK: - Notifications Settings
 
 struct NotificationsSettingsView: View {
+    @State private var notificationsAllowed = false
     @State private var dailyReminder = true
     @State private var reminderTime = Date()
     @State private var deadlineAlerts = true
+    @State private var hasCheckedPermission = false
 
     var body: some View {
         ZStack {
@@ -761,6 +791,48 @@ struct NotificationsSettingsView: View {
                     .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
 
                     VStack(spacing: 16) {
+                        // Permission status
+                        if hasCheckedPermission && !notificationsAllowed {
+                            HStack(spacing: 12) {
+                                Image(systemName: "bell.slash.fill")
+                                    .font(.system(size: 18))
+                                    .foregroundColor(.lumeAccent)
+
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text("Notifications are off")
+                                        .font(.lumeBodyMedium)
+                                        .foregroundColor(.lumeNavy)
+                                    Text("Enable notifications to get reminders about deadlines and daily check-ins.")
+                                        .font(.lumeSmall)
+                                        .foregroundColor(.lumeMuted)
+                                }
+
+                                Spacer()
+
+                                Button {
+                                    Task {
+                                        await requestNotificationPermission()
+                                    }
+                                } label: {
+                                    Text("Enable")
+                                        .font(.lumeCaption)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                        .background(Color.lumeAccent)
+                                        .cornerRadius(20)
+                                }
+                            }
+                            .padding(16)
+                            .background(Color.lumeAccent.opacity(0.06))
+                            .cornerRadius(14)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color.lumeAccent.opacity(0.15), lineWidth: 1)
+                            )
+                        }
+
                         // Daily reminder
                         VStack(spacing: 0) {
                             HStack {
@@ -846,6 +918,9 @@ struct NotificationsSettingsView: View {
             .ignoresSafeArea(edges: .top)
         }
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await checkNotificationPermission()
+        }
         .onChange(of: dailyReminder) { _, enabled in
             if enabled {
                 let hour = Calendar.current.component(.hour, from: reminderTime)
@@ -855,5 +930,32 @@ struct NotificationsSettingsView: View {
                 }
             }
         }
+    }
+
+    private func checkNotificationPermission() async {
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+        await MainActor.run {
+            notificationsAllowed = settings.authorizationStatus == .authorized
+            hasCheckedPermission = true
+        }
+    }
+
+    private func requestNotificationPermission() async {
+        let center = UNUserNotificationCenter.current()
+        do {
+            let granted = try await center.requestAuthorization(options: [.alert, .badge, .sound])
+            await MainActor.run {
+                notificationsAllowed = granted
+            }
+            if !granted {
+                // Open system settings if denied
+                await MainActor.run {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+            }
+        } catch {}
     }
 }

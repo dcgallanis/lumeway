@@ -7,30 +7,8 @@ struct NotesView: View {
     @State private var editingNote: NoteItem?
     @State private var editorContent = ""
     @State private var searchText = ""
-    @State private var selectedFilter: NoteFilter = .all
 
     private let service = NotesService()
-
-    enum NoteFilter: String, CaseIterable {
-        case all = "All"
-        case chatSaved = "Chat Saved"
-        case personal = "Personal"
-    }
-
-    private var filteredNotes: [NoteItem] {
-        var result = notes
-        switch selectedFilter {
-        case .all: break
-        case .chatSaved:
-            result = result.filter { $0.content.hasPrefix("From Navigator chat:") }
-        case .personal:
-            result = result.filter { !$0.content.hasPrefix("From Navigator chat:") }
-        }
-        if !searchText.isEmpty {
-            result = result.filter { $0.content.localizedCaseInsensitiveContains(searchText) }
-        }
-        return result
-    }
 
     var body: some View {
         NavigationStack {
@@ -45,8 +23,8 @@ struct NotesView: View {
                             .font(.system(size: 48, weight: .light))
                             .foregroundColor(.lumeMuted)
                         Text("No notes yet")
-                            .font(.lumeBody)
-                            .foregroundColor(.lumeMuted)
+                            .font(.lumeDisplaySmall)
+                            .foregroundColor(.lumeNavy)
                         Text("Tap + to jot down thoughts,\nreminders, or questions.")
                             .font(.lumeCaptionLight)
                             .foregroundColor(.lumeMuted)
@@ -72,52 +50,37 @@ struct NotesView: View {
                                     .stroke(Color.lumeBorder, lineWidth: 1)
                             )
 
-                            // Filter pills
-                            HStack(spacing: 8) {
-                                ForEach(NoteFilter.allCases, id: \.self) { filter in
-                                    Button {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                            selectedFilter = filter
-                                        }
-                                    } label: {
-                                        Text(filter.rawValue)
-                                            .font(.lumeCaption)
-                                            .foregroundColor(selectedFilter == filter ? .white : .lumeNavy)
-                                            .padding(.horizontal, 14)
-                                            .padding(.vertical, 7)
-                                            .background(selectedFilter == filter ? Color.lumeAccent : Color.lumeWarmWhite)
-                                            .cornerRadius(20)
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 20)
-                                                    .stroke(selectedFilter == filter ? Color.clear : Color.lumeBorder, lineWidth: 1)
-                                            )
-                                    }
-                                }
-                                Spacer()
-                            }
+                            // Notes grid — two-column masonry-style like site
+                            let columns = [
+                                GridItem(.flexible(), spacing: 12),
+                                GridItem(.flexible(), spacing: 12)
+                            ]
 
-                            // Notes list
-                            ForEach(filteredNotes) { note in
-                                NoteCard(note: note) {
-                                    editingNote = note
-                                    editorContent = note.content
-                                    showEditor = true
+                            LazyVGrid(columns: columns, spacing: 12) {
+                                ForEach(filteredNotes) { note in
+                                    NoteCard(note: note) {
+                                        editingNote = note
+                                        editorContent = note.content
+                                        showEditor = true
+                                    }
                                 }
                             }
 
                             if filteredNotes.isEmpty {
-                                Text("No notes match your filter.")
+                                Text("No notes match your search.")
                                     .font(.lumeBody)
                                     .foregroundColor(.lumeMuted)
                                     .padding(.top, 20)
                             }
                         }
-                        .padding(24)
+                        .padding(20)
                     }
                 }
             }
             .navigationTitle("Notes")
             .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(Color.lumeCream, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -145,6 +108,11 @@ struct NotesView: View {
             .task { await loadNotes() }
             .refreshable { await loadNotes() }
         }
+    }
+
+    private var filteredNotes: [NoteItem] {
+        if searchText.isEmpty { return notes }
+        return notes.filter { $0.content.localizedCaseInsensitiveContains(searchText) }
     }
 
     private func loadNotes() async {
@@ -178,7 +146,7 @@ struct NotesView: View {
     }
 }
 
-// MARK: - Note Card
+// MARK: - Note Card (compact, site-style)
 
 struct NoteCard: View {
     let note: NoteItem
@@ -190,7 +158,7 @@ struct NoteCard: View {
                 Text(note.content)
                     .font(.lumeBody)
                     .foregroundColor(.lumeText)
-                    .lineLimit(4)
+                    .lineLimit(6)
                     .multilineTextAlignment(.leading)
 
                 if let date = note.createdAt {
@@ -200,11 +168,11 @@ struct NoteCard: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(16)
+            .padding(14)
             .background(Color.lumeWarmWhite)
-            .cornerRadius(16)
+            .cornerRadius(14)
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: 14)
                     .stroke(Color.lumeBorder, lineWidth: 1)
             )
         }
@@ -214,8 +182,7 @@ struct NoteCard: View {
         let formatter = ISO8601DateFormatter()
         guard let date = formatter.date(from: isoString) else { return isoString }
         let display = DateFormatter()
-        display.dateStyle = .medium
-        display.timeStyle = .short
+        display.dateFormat = "MMM d"
         return display.string(from: date)
     }
 }

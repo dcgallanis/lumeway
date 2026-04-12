@@ -47,7 +47,8 @@ struct CommunityView: View {
     @State private var posts: [CommunityPost] = []
     @State private var isLoading = true
     @State private var showNewPost = false
-    @State private var selectedPost: CommunityPost? = nil
+    @State private var selectedPostId: Int? = nil
+    @State private var showPostDetail = false
     @State private var selectedCategory: String = "all"
 
     private let service = CommunityService()
@@ -108,14 +109,12 @@ struct CommunityView: View {
                         }
 
                         ForEach(filteredPosts) { post in
-                            Button {
-                                selectedPost = post
-                            } label: {
-                                CommunityPostCard(post: post, onLike: {
-                                    likePost(post)
-                                })
-                            }
-                            .buttonStyle(.plain)
+                            CommunityPostCard(post: post, onLike: {
+                                likePost(post)
+                            }, onTap: {
+                                selectedPostId = post.id
+                                showPostDetail = true
+                            })
                             .padding(.horizontal, 20)
                         }
 
@@ -156,10 +155,12 @@ struct CommunityView: View {
                 })
                 .presentationDetents([.large])
             }
-            .sheet(item: $selectedPost) { post in
-                PostDetailSheet(postId: post.id, onDismiss: {
-                    Task { await loadPosts() }
-                })
+            .sheet(isPresented: $showPostDetail) {
+                if let postId = selectedPostId {
+                    PostDetailSheet(postId: postId, onDismiss: {
+                        Task { await loadPosts() }
+                    })
+                }
             }
         }
     }
@@ -224,9 +225,6 @@ struct CommunityAvatar: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                if isCaraPost(displayName) {
-                    // Team badge for Cara only
-                }
             }
         } else {
             // Regular user: emoji on colored circle
@@ -280,96 +278,100 @@ struct CommunityWelcomeCard: View {
 struct CommunityPostCard: View {
     let post: CommunityPost
     let onLike: () -> Void
+    let onTap: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Author row
-            HStack(spacing: 10) {
-                CommunityAvatar(icon: post.icon, displayName: post.displayName, size: 34)
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 12) {
+                // Author row
+                HStack(spacing: 10) {
+                    CommunityAvatar(icon: post.icon, displayName: post.displayName, size: 34)
 
-                VStack(alignment: .leading, spacing: 1) {
-                    HStack(spacing: 4) {
-                        Text(post.displayName ?? "Anonymous")
-                            .font(.lumeCaption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.lumeNavy)
-                        if isCaraPost(post.displayName) {
-                            Text("Team")
-                                .font(.system(size: 9, weight: .semibold))
-                                .foregroundColor(.lumeGold)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 1)
-                                .background(Color.lumeGold.opacity(0.12))
-                                .cornerRadius(4)
+                    VStack(alignment: .leading, spacing: 1) {
+                        HStack(spacing: 4) {
+                            Text(post.displayName ?? "Anonymous")
+                                .font(.lumeCaption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.lumeNavy)
+                            if isCaraPost(post.displayName) {
+                                Text("Team")
+                                    .font(.system(size: 9, weight: .semibold))
+                                    .foregroundColor(.lumeGold)
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 1)
+                                    .background(Color.lumeGold.opacity(0.12))
+                                    .cornerRadius(4)
+                            }
                         }
+                        Text(timeAgo(post.createdAt))
+                            .font(.lumeSmall)
+                            .foregroundColor(.lumeMuted)
                     }
-                    Text(timeAgo(post.createdAt))
-                        .font(.lumeSmall)
+
+                    Spacer()
+
+                    if post.isPinned ?? false {
+                        Image(systemName: "pin.fill")
+                            .font(.system(size: 10))
+                            .foregroundColor(.lumeGold)
+                    }
+
+                    if let cat = post.category {
+                        Text(cat.capitalized)
+                            .font(.lumeSmall)
+                            .foregroundColor(.lumeAccent)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(Color.lumeAccent.opacity(0.08))
+                            .cornerRadius(8)
+                    }
+                }
+
+                // Title & body
+                Text(post.title ?? "")
+                    .font(.lumeBodyMedium)
+                    .foregroundColor(.lumeNavy)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+
+                Text(post.body ?? "")
+                    .font(.lumeCaptionLight)
+                    .foregroundColor(.lumeMuted)
+                    .lineLimit(3)
+                    .multilineTextAlignment(.leading)
+
+                // Actions
+                HStack(spacing: 20) {
+                    Button(action: onLike) {
+                        HStack(spacing: 5) {
+                            Image(systemName: "heart")
+                                .font(.system(size: 13))
+                            Text("\(post.likeCount ?? 0)")
+                                .font(.lumeSmall)
+                        }
                         .foregroundColor(.lumeMuted)
-                }
+                    }
 
-                Spacer()
-
-                if post.isPinned ?? false {
-                    Image(systemName: "pin.fill")
-                        .font(.system(size: 10))
-                        .foregroundColor(.lumeGold)
-                }
-
-                if let cat = post.category {
-                    Text(cat.capitalized)
-                        .font(.lumeSmall)
-                        .foregroundColor(.lumeAccent)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(Color.lumeAccent.opacity(0.08))
-                        .cornerRadius(8)
-                }
-            }
-
-            // Title & body
-            Text(post.title ?? "")
-                .font(.lumeBodyMedium)
-                .foregroundColor(.lumeNavy)
-                .lineLimit(2)
-                .multilineTextAlignment(.leading)
-
-            Text(post.body ?? "")
-                .font(.lumeCaptionLight)
-                .foregroundColor(.lumeMuted)
-                .lineLimit(3)
-                .multilineTextAlignment(.leading)
-
-            // Actions
-            HStack(spacing: 20) {
-                Button(action: onLike) {
                     HStack(spacing: 5) {
-                        Image(systemName: "heart")
+                        Image(systemName: "bubble.left")
                             .font(.system(size: 13))
-                        Text("\(post.likeCount ?? 0)")
+                        Text("\(post.replyCount ?? 0)")
                             .font(.lumeSmall)
                     }
                     .foregroundColor(.lumeMuted)
-                }
 
-                HStack(spacing: 5) {
-                    Image(systemName: "bubble.left")
-                        .font(.system(size: 13))
-                    Text("\(post.replyCount ?? 0)")
-                        .font(.lumeSmall)
+                    Spacer()
                 }
-                .foregroundColor(.lumeMuted)
-
-                Spacer()
             }
+            .padding(16)
+            .background(Color.lumeWarmWhite)
+            .cornerRadius(16)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.lumeBorder, lineWidth: 1)
+            )
         }
-        .padding(16)
-        .background(Color.lumeWarmWhite)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.lumeBorder, lineWidth: 1)
-        )
+        .buttonStyle(.plain)
     }
 }
 

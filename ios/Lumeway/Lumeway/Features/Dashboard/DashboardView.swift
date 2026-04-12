@@ -45,7 +45,7 @@ struct DashboardView: View {
                                 }
 
                                 Text(funGreeting)
-                                    .font(.custom("LibreBaskerville-Italic", size: 14))
+                                    .font(.custom("CormorantGaramond-Italic", size: 16))
                                     .foregroundColor(.lumeAccent)
                             }
 
@@ -188,6 +188,7 @@ struct DashboardView: View {
                 funGreeting = funGreetings.randomElement() ?? ""
             }
             .task {
+                snapshotTasks = [] // Reset snapshot on appear
                 await loadChecklist()
                 funGreeting = funGreetings.randomElement() ?? ""
             }
@@ -200,18 +201,34 @@ struct DashboardView: View {
         }
     }
 
-    /// Tasks in current phase that aren't completed
+    /// Tasks in current phase — includes recently checked items so they don't vanish
     private var thisWeekTasks: [FullChecklistItem] {
+        // If we have snapshotted tasks from initial load, show those
+        if !snapshotTasks.isEmpty { return snapshotTasks }
         let incomplete = checklistItems.filter { !$0.isCompleted }
         guard let currentPhase = incomplete.first?.phase else { return [] }
-        return incomplete.filter { $0.phase == currentPhase }
+        return checklistItems.filter { $0.phase == currentPhase }
     }
+
+    @State private var snapshotTasks: [FullChecklistItem] = []
 
     private func toggleTask(_ task: FullChecklistItem) {
         Task {
             do {
                 _ = try await checklistService.toggleItem(id: task.id)
-                await loadChecklist()
+                // Reload data but keep snapshot so tasks stay visible
+                let response = try await checklistService.getChecklist()
+                checklistItems = response.items
+                // Update snapshot: find same phase, show all items (completed stay visible)
+                if snapshotTasks.isEmpty {
+                    // First toggle — snapshot the current phase tasks
+                    let phase = task.phase
+                    snapshotTasks = checklistItems.filter { $0.phase == phase }
+                } else {
+                    // Update existing snapshot with new completion states
+                    let phase = snapshotTasks.first?.phase
+                    snapshotTasks = checklistItems.filter { $0.phase == phase }
+                }
             } catch {}
         }
     }

@@ -51,12 +51,14 @@
 		<string>Fonts/LibreBaskerville-Regular.ttf</string>
 		<string>Fonts/LibreBaskerville-Italic.ttf</string>
 		<string>Fonts/LibreBaskerville-Bold.ttf</string>
-		<string>Fonts/PlusJakartaSans-Light.ttf</string>
-		<string>Fonts/PlusJakartaSans-Regular.ttf</string>
-		<string>Fonts/PlusJakartaSans-Medium.ttf</string>
-		<string>Fonts/PlusJakartaSans-SemiBold.ttf</string>
-		<string>Fonts/DMSerifDisplay-Regular.ttf</string>
-		<string>Fonts/DMSerifDisplay-Italic.ttf</string>
+		<string>Fonts/CormorantGaramond-Regular.ttf</string>
+		<string>Fonts/CormorantGaramond-Italic.ttf</string>
+		<string>Fonts/CormorantGaramond-SemiBold.ttf</string>
+		<string>Fonts/CormorantGaramond-Bold.ttf</string>
+		<string>Fonts/Montserrat-Light.ttf</string>
+		<string>Fonts/Montserrat-Regular.ttf</string>
+		<string>Fonts/Montserrat-Medium.ttf</string>
+		<string>Fonts/Montserrat-SemiBold.ttf</string>
 	</array>
 </dict>
 </plist>
