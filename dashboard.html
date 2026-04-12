@@ -3739,6 +3739,12 @@ guideLibrary['disability'] = {
       .then(function() { window.location.href = '/cart'; });
     }
 
+    function upgradePickedStarter(price) {
+      var picked = document.querySelector('input[name="starterUpgrade"]:checked');
+      if (!picked) { alert('Please select a transition to upgrade.'); return; }
+      upgradeStarterToFull(picked.value, price);
+    }
+
     function redeemCode() {
       var code = document.getElementById('redeemCodeInput').value.trim();
       var result = document.getElementById('redeemResult');
@@ -7205,14 +7211,30 @@ guideLibrary['disability'] = {
         html += '  </div>';
       } else if (tier === 'starter') {
         var upgradePrice = Math.max(0, (3900 - creditCents) / 100).toFixed(0);
-        // Find which category they already have starter access for
-        var starterCategory = starterCats.length > 0 ? starterCats[0] : 'job-loss';
-        var starterLabel = transLabels[starterCategory] || starterCategory;
         html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have your template bundle. Upgrade for the full dashboard — guides, calendar, tools, and more.</p>';
-        html += '  <div style="display:flex;gap:10px;flex-wrap:wrap">';
-        html += '    <button onclick="upgradeStarterToFull(\'' + starterCategory + '\',' + upgradePrice + ')" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border:none;border-radius:8px;font-size:14px;text-decoration:none;font-weight:500;cursor:pointer;font-family:Plus Jakarta Sans,sans-serif">Upgrade — $' + upgradePrice + '</button>';
-        html += '    <a href="/pricing" style="display:inline-block;padding:10px 24px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:14px;text-decoration:none">See all plans</a>';
-        html += '  </div>';
+        if (starterCats.length === 1) {
+          // Single starter category — direct upgrade
+          html += '  <div style="display:flex;gap:10px;flex-wrap:wrap">';
+          html += '    <button onclick="upgradeStarterToFull(\'' + starterCats[0] + '\',' + upgradePrice + ')" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border:none;border-radius:8px;font-size:14px;text-decoration:none;font-weight:500;cursor:pointer;font-family:Plus Jakarta Sans,sans-serif">Upgrade — $' + upgradePrice + '</button>';
+          html += '    <a href="/pricing" style="display:inline-block;padding:10px 24px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:14px;text-decoration:none">See all plans</a>';
+          html += '  </div>';
+        } else {
+          // Multiple starter categories — let them pick which to upgrade
+          html += '  <p style="font-size:13px;color:var(--text);font-weight:400;margin-bottom:12px">Which transition do you want the full dashboard for?</p>';
+          html += '  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px" id="starterUpgradePicker">';
+          starterCats.forEach(function(c, i) {
+            var checked = i === 0 ? ' checked' : '';
+            html += '<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:14px;font-weight:300;background:var(--warm-white);transition:all 0.15s">';
+            html += '  <input type="radio" name="starterUpgrade" value="' + c + '"' + checked + ' style="accent-color:var(--accent)">';
+            html += '  ' + (transLabels[c] || c);
+            html += '</label>';
+          });
+          html += '  </div>';
+          html += '  <div style="display:flex;gap:10px;flex-wrap:wrap">';
+          html += '    <button onclick="upgradePickedStarter(' + upgradePrice + ')" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border:none;border-radius:8px;font-size:14px;text-decoration:none;font-weight:500;cursor:pointer;font-family:Plus Jakarta Sans,sans-serif">Upgrade — $' + upgradePrice + '</button>';
+          html += '    <a href="/pricing" style="display:inline-block;padding:10px 24px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:14px;text-decoration:none">See all plans</a>';
+          html += '  </div>';
+        }
       } else if (tier === 'one_transition' || tier === 'pass') {
         html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6">You have full access to your plan.</p>';
       } else if (tier === 'all_transitions' || tier === 'unlimited') {
