@@ -256,18 +256,25 @@
     /* Document Workspace — folder sidebar + editor */
     .ws-main { display: grid; grid-template-columns: 25% 1fr; gap: 0; min-height: calc(100vh - 160px); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
     @media (max-width: 768px) { .ws-main { grid-template-columns: 1fr; min-height: auto; } }
-    .ws-sticky-note { position: fixed; z-index: 999; width: 240px; min-height: 120px; background: #FFF9C4; border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1); display: none; flex-direction: column; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .ws-sticky-note { position: fixed; z-index: 999; width: 280px; min-height: 40px; background: #FFF9C4; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1); display: none; flex-direction: column; font-family: 'Plus Jakarta Sans', sans-serif; resize: both; overflow: auto; min-width: 200px; max-width: 500px; }
     .ws-sticky-note.open { display: flex; }
-    .ws-sticky-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; cursor: move; user-select: none; border-bottom: 1px solid rgba(0,0,0,0.08); }
+    .ws-sticky-note.collapsed { height: auto !important; min-height: 40px; resize: none; overflow: hidden; }
+    .ws-sticky-note.collapsed .ws-sticky-body,
+    .ws-sticky-note.collapsed .ws-sticky-footer { display: none; }
+    .ws-sticky-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; cursor: move; user-select: none; border-bottom: 1px solid rgba(0,0,0,0.08); gap: 6px; }
+    .ws-sticky-note.collapsed .ws-sticky-header { border-bottom: none; }
     .ws-sticky-header span { font-size: 11px; font-weight: 600; color: #5D4037; }
+    .ws-sticky-header-btns { display: flex; gap: 4px; align-items: center; }
+    .ws-sticky-collapse { background: none; border: none; cursor: pointer; color: #8D6E63; font-size: 12px; padding: 0 2px; }
+    .ws-sticky-collapse:hover { color: #3E2723; }
     .ws-sticky-close { background: none; border: none; cursor: pointer; color: #8D6E63; font-size: 14px; padding: 0 2px; }
     .ws-sticky-close:hover { color: #3E2723; }
     .ws-sticky-body { flex: 1; padding: 0; }
-    .ws-sticky-body textarea { width: 100%; height: 100%; min-height: 80px; border: none; background: transparent; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 300; color: #3E2723; padding: 8px 10px; resize: none; outline: none; line-height: 1.5; }
-    .ws-sticky-footer { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-top: 1px solid rgba(0,0,0,0.08); }
+    .ws-sticky-body textarea { width: 100%; height: 100%; min-height: 100px; border: none; background: transparent; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 300; color: #3E2723; padding: 8px 10px; resize: none; outline: none; line-height: 1.5; }
+    .ws-sticky-footer { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; border-top: 1px solid rgba(0,0,0,0.08); }
     .ws-sticky-footer a { font-size: 10px; color: #8D6E63; text-decoration: none; }
     .ws-sticky-footer a:hover { color: #5D4037; }
-    .ws-sticky-save { background: #5D4037; color: #FFF9C4; border: none; border-radius: 4px; font-size: 10px; font-weight: 600; padding: 3px 10px; cursor: pointer; font-family: inherit; }
+    .ws-sticky-save { background: #5D4037; color: #FFF9C4; border: none; border-radius: 4px; font-size: 10px; font-weight: 600; padding: 4px 12px; cursor: pointer; font-family: inherit; }
     .ws-sticky-save:hover { background: #3E2723; }
     .ws-sticky-saved { font-size: 10px; color: #6B8F5E; font-weight: 500; display: none; }
     .ws-note-hint { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 6px; background: var(--navy); color: var(--cream); font-size: 11px; font-weight: 500; padding: 8px 14px; border-radius: 8px; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 30; animation: noteHintPulse 2s ease infinite; }
@@ -415,28 +422,38 @@
     .ws-viewer-body .tox .tox-statusbar { background: var(--cream) !important; border-top: 1px solid var(--border) !important; }
 
     /* Notes */
-    .note-category-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 16px; overflow: hidden; }
-    .note-category-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; user-select: none; transition: background 0.15s; }
+    .note-category-box { background: var(--warm-white); border-radius: 14px; margin-bottom: 16px; overflow: hidden; border-left: 4px solid var(--border); }
+    .note-category-box[data-catcolor="guide"] { border-left-color: var(--navy); }
+    .note-category-box[data-catcolor="financial"] { border-left-color: #B8977E; }
+    .note-category-box[data-catcolor="insurance"] { border-left-color: #6B8F5E; }
+    .note-category-box[data-catcolor="legal"] { border-left-color: #7B6BA8; }
+    .note-category-box[data-catcolor="medical"] { border-left-color: #C4704E; }
+    .note-category-box[data-catcolor="housing"] { border-left-color: #D4896C; }
+    .note-category-box[data-catcolor="employment"] { border-left-color: #4A7C9B; }
+    .note-category-box[data-catcolor="personal"] { border-left-color: #E8CFC0; }
+    .note-category-box[data-catcolor="file"] { border-left-color: #8BA888; }
+    .note-category-box[data-catcolor="other"] { border-left-color: var(--muted); }
+    .note-category-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; user-select: none; transition: background 0.15s; border: 1px solid var(--border); border-left: none; border-radius: 0 14px 14px 0; }
     .note-category-header:hover { background: var(--cream); }
-    .note-category-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--navy); }
-    .note-category-count { font-size: 11px; font-weight: 500; color: var(--muted); background: var(--cream); padding: 2px 8px; border-radius: 10px; }
+    .note-category-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--navy); }
+    .note-category-count { font-size: 10px; font-weight: 600; color: var(--warm-white); background: var(--navy); padding: 2px 8px; border-radius: 10px; min-width: 20px; text-align: center; }
     .note-category-chevron { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
     .note-category-box.open .note-category-chevron { transform: rotate(90deg); }
-    .note-category-body { display: none; border-top: 1px solid var(--border); }
+    .note-category-body { display: none; }
     .note-category-box.open .note-category-body { display: block; }
-    .note-card { background: transparent; border-bottom: 1px solid var(--border); padding: 14px 18px; transition: background 0.15s; }
+    .note-card { background: transparent; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 16px 18px; transition: background 0.15s; }
     .note-card:last-child { border-bottom: none; }
     .note-card:hover { background: rgba(0,0,0,0.015); }
-    .note-content { font-size: 14px; font-weight: 300; line-height: 1.6; white-space: pre-wrap; }
+    .note-content { font-size: 15px; font-weight: 400; line-height: 1.65; white-space: pre-wrap; color: var(--text); }
     .note-content.truncated { max-height: 3.4em; overflow: hidden; position: relative; }
     .note-content.truncated::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1.2em; background: linear-gradient(transparent, var(--warm-white)); }
     .note-card:hover .note-content.truncated::after { background: linear-gradient(transparent, #fdfcfb); }
     .note-expand { background: none; border: none; color: var(--accent); font-size: 12px; font-weight: 500; cursor: pointer; padding: 4px 0; font-family: inherit; }
     .note-expand:hover { text-decoration: underline; }
-    .note-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
-    .note-date { font-size: 11px; color: var(--muted); }
+    .note-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; margin-top: 8px; }
+    .note-date { font-size: 11px; color: var(--muted); font-weight: 300; }
     .note-actions { display: flex; gap: 8px; }
-    .note-action { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; padding: 2px 6px; }
+    .note-action { background: none; border: none; color: var(--muted); font-size: 11px; cursor: pointer; padding: 2px 6px; font-weight: 400; }
     .note-action:hover { color: var(--navy); }
     .note-textarea { width: 100%; min-height: 100px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 300; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--cream); color: var(--text); resize: vertical; outline: none; line-height: 1.6; }
     .note-textarea:focus { border-color: var(--accent); }
@@ -3438,6 +3455,7 @@ guideLibrary['disability'] = {
             craft: {
               title: 'The CRAFT Method',
               subtitle: 'Community Reinforcement and Family Training \u2014 the most evidence-based approach for families',
+              intro: 'CRAFT was developed by Dr. Robert Meyers at the University of New Mexico. Unlike traditional interventions that rely on confrontation, CRAFT teaches you to change the dynamics around the person\'s substance use \u2014 making sobriety more rewarding and substance use less comfortable. It is typically taught across 6 sessions with a trained therapist, but the core principles can be applied on your own. CRAFT works because it focuses on the one person you can actually control: you. By changing how you respond to their drinking or drug use, you shift the environment in a way that nudges them toward treatment. Use CRAFT when you have tried talking and it has not worked, when they refuse to acknowledge the problem, or when you feel stuck between enabling and cutting them off. It is designed for exactly that in-between space.',
               steps: [
                 { label: 'Stop enabling', desc: 'Identify the ways you shield them from consequences \u2014 calling in sick for them, paying their bills, cleaning up after them \u2014 and gradually stop.' },
                 { label: 'Reinforce sobriety', desc: 'When they are sober, make it rewarding \u2014 spend quality time, express affection, do enjoyable activities. When they are using, calmly withdraw those rewards. No punishment, no lectures.' },
@@ -3864,6 +3882,9 @@ guideLibrary['disability'] = {
               html += '<div class="craft-chart">';
               html += '<div class="craft-chart-title">' + task.craft.title + '</div>';
               html += '<div class="craft-chart-sub">' + task.craft.subtitle + '</div>';
+              if (task.craft.intro) {
+                html += '<div style="font-size:13px;font-weight:300;color:var(--text);line-height:1.7;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)">' + task.craft.intro + '</div>';
+              }
               html += '<div class="craft-flow">';
               task.craft.steps.forEach(function(cs, idx) {
                 html += '<div class="craft-step">';
@@ -4066,42 +4087,25 @@ guideLibrary['disability'] = {
     }
 
     function saveGuideHighlightToNote(text) {
-      // Open sticky note and populate with highlighted text
+      // Open sticky note, uncollapse it, and add text as bullet point
       var el = document.getElementById('wsStickyNote');
       if (!el || !el.classList.contains('open')) toggleStickyNote();
+      el.classList.remove('collapsed');
       var ta = document.getElementById('wsStickyText');
       if (ta) {
-        if (ta.value.trim()) ta.value += '\n\n' + text;
-        else ta.value = text;
+        var bullet = '\u2022 ' + text;
+        if (ta.value.trim()) ta.value += '\n' + bullet;
+        else ta.value = bullet;
+        ta.scrollTop = ta.scrollHeight;
       }
 
-      // Auto-tag with guide context and save
-      var ctx = '';
-      var activeNav = document.querySelector('.guide-nav-item.active .guide-nav-label');
-      if (activeNav) ctx = '[Guide: ' + activeNav.textContent.trim() + '] ';
-      var content = ctx + text;
-
-      fetch('/api/notes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: content })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.ok) {
-          _notesDirty = true;
-          // Show saved status on sticky note
-          var status = document.getElementById('wsStickyStatus');
-          if (status) { status.style.display = 'inline'; setTimeout(function() { status.style.display = 'none'; }, 2000); }
-          // Flash confirmation on tooltip
-          if (guideSaveTooltip) {
-            guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Saved';
-            guideSaveTooltip.style.background = 'var(--green)';
-            setTimeout(function() { hideGuideSaveTooltip(); }, 1500);
-          }
-          window.getSelection().removeAllRanges();
-        }
-      });
+      // Flash confirmation on tooltip — does NOT save yet, just copies to sticky
+      if (guideSaveTooltip) {
+        guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Added';
+        guideSaveTooltip.style.background = 'var(--green)';
+        setTimeout(function() { hideGuideSaveTooltip(); }, 1200);
+      }
+      window.getSelection().removeAllRanges();
     }
 
     function toggleGuideTask(id) {
@@ -6731,7 +6735,19 @@ guideLibrary['disability'] = {
         groupOrder.forEach(function(key) {
           var groupNotes = noteGroups[key];
           var icon = groupIcons[key] || '\uD83D\uDCCC';
-          html += '<div class="note-category-box open" data-catkey="' + key.replace(/"/g, '&quot;') + '">';
+          // Determine color theme for this category
+          var catColor = 'other';
+          var lk = key.toLowerCase();
+          if (lk.startsWith('guide')) catColor = 'guide';
+          else if (lk.startsWith('file')) catColor = 'file';
+          else if (lk === 'financial') catColor = 'financial';
+          else if (lk === 'insurance') catColor = 'insurance';
+          else if (lk === 'legal') catColor = 'legal';
+          else if (lk === 'medical') catColor = 'medical';
+          else if (lk === 'housing') catColor = 'housing';
+          else if (lk === 'employment') catColor = 'employment';
+          else if (lk === 'personal') catColor = 'personal';
+          html += '<div class="note-category-box open" data-catkey="' + key.replace(/"/g, '&quot;') + '" data-catcolor="' + catColor + '">';
           html += '  <div class="note-category-header" onclick="this.parentElement.classList.toggle(\'open\')">';
           html += '    <div class="note-category-title">' + icon + ' ' + key + ' <span class="note-category-count">' + groupNotes.length + '</span></div>';
           html += '    <span class="note-category-chevron">&#9654;</span>';
@@ -7042,7 +7058,10 @@ guideLibrary['disability'] = {
       html += '<div class="ws-sticky-note" id="wsStickyNote" style="top:160px;right:40px">';
       html += '  <div class="ws-sticky-header" id="wsStickyDrag">';
       html += '    <span>Quick Note</span>';
-      html += '    <button class="ws-sticky-close" onclick="toggleStickyNote()">&times;</button>';
+      html += '    <div class="ws-sticky-header-btns">';
+      html += '      <button class="ws-sticky-collapse" onclick="event.stopPropagation();document.getElementById(\'wsStickyNote\').classList.toggle(\'collapsed\')" title="Collapse">&#9472;</button>';
+      html += '      <button class="ws-sticky-close" onclick="toggleStickyNote()">&times;</button>';
+      html += '    </div>';
       html += '  </div>';
       html += '  <div class="ws-sticky-body">';
       html += '    <select id="wsStickyCategory" style="width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;margin-bottom:6px;background:var(--warm-white);color:var(--navy)">';
