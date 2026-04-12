@@ -7264,7 +7264,7 @@ guideLibrary['disability'] = {
       html += '</div>';
 
       // Community Profile card
-      var comName = localStorage.getItem('lumeway_community_name') || '';
+      var comName = localStorage.getItem('lumeway_community_name') || 'Anonymous';
       var comIcon = localStorage.getItem('lumeway_community_icon') || '😊';
       var iconOptions = ['😊','🌟','🌿','🦋','🌊','🔥','💜','🌸','☀️','🍀','🐾','🎯','💡','🌙','🪴','✨'];
       html += '<div class="dash-card" style="margin-top:20px">';
@@ -8932,6 +8932,7 @@ guideLibrary['disability'] = {
         rulesHtml += '<li><span class="community-rules-num">5</span><span><strong>In crisis?</strong> Call <strong>988</strong> (Suicide & Crisis Lifeline) or text <strong>HOME</strong> to <strong>741741</strong>.</span></li>';
         rulesHtml += '</ul>';
         rulesHtml += '<p style="font-size:12px;color:var(--muted);text-align:center;margin-top:4px;margin-bottom:0">This community is moderated. Posts that break these rules will be removed.</p>';
+        rulesHtml += '<p style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;margin-bottom:0">You\'ll appear as Anonymous by default. You can change your name and icon anytime in <a href="#" onclick="document.getElementById(\'communityRulesModal\').remove();switchTab(\'account\');return false" style="color:var(--navy)">Account Settings</a>.</p>';
         rulesHtml += '<div style="display:flex;gap:10px;justify-content:center;margin-top:24px">';
         rulesHtml += '  <button class="community-new-btn" style="padding:10px 28px;border-radius:10px;font-size:14px" onclick="acceptCommunityRules()">I agree</button>';
         rulesHtml += '  <button class="btn-ghost" style="padding:10px 28px;border-radius:10px;font-size:14px" onclick="declineCommunityRules()">Decline</button>';
@@ -9150,15 +9151,8 @@ guideLibrary['disability'] = {
     }
 
     function showNewPostModal() {
-      var savedName = localStorage.getItem('lumeway_community_name') || '';
+      var savedName = localStorage.getItem('lumeway_community_name') || 'Anonymous';
       var savedIcon = localStorage.getItem('lumeway_community_icon') || '😊';
-      if (!savedName) {
-        if (confirm('Set up your community profile first? Pick a name and icon in Account Settings.')) {
-          switchTab('account');
-          setTimeout(function() { var el = document.getElementById('comNameInput'); if (el) { el.scrollIntoView({behavior:'smooth'}); el.focus(); } }, 300);
-        }
-        return;
-      }
       var html = '<div class="community-modal-overlay" id="communityModal" onclick="if(event.target===this)closeCommunityModal()">';
       html += '  <div class="community-modal">';
       html += '    <h3>New Post</h3>';
@@ -9205,7 +9199,7 @@ guideLibrary['disability'] = {
     }
 
     function submitCommunityPost() {
-      var name = localStorage.getItem('lumeway_community_name') || '';
+      var name = localStorage.getItem('lumeway_community_name') || 'Anonymous';
       var cat = document.getElementById('communityPostCat').value;
       var transition = document.getElementById('communityPostTransition').value;
       var title = (document.getElementById('communityPostTitle').value || '').trim();
@@ -9231,14 +9225,7 @@ guideLibrary['disability'] = {
     function submitCommunityReply(postId, asCaraOverride) {
       var body = (document.getElementById('communityReplyText').value || '').trim();
       if (!body) return;
-      var name = asCaraOverride ? 'Cara' : (localStorage.getItem('lumeway_community_name') || '');
-      if (!asCaraOverride && !name) {
-        if (confirm('You haven\'t set up your community profile yet. Go to Account Settings to pick a name and icon?')) {
-          switchTab('account');
-          setTimeout(function() { var el = document.getElementById('comNameInput'); if (el) { el.scrollIntoView({behavior:'smooth'}); el.focus(); } }, 300);
-        }
-        return;
-      }
+      var name = asCaraOverride ? 'Cara' : (localStorage.getItem('lumeway_community_name') || 'Anonymous');
       var icon = asCaraOverride ? '✨' : (localStorage.getItem('lumeway_community_icon') || '😊');
       var parentId = _communityReplyTo ? _communityReplyTo.id : null;
       fetch('/api/community/posts/' + postId + '/replies', {
