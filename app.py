@@ -896,6 +896,8 @@ def init_subscribers_db():
     for alter_sql in [
         "ALTER TABLE community_posts ADD COLUMN transition_category TEXT",
         "ALTER TABLE community_replies ADD COLUMN parent_reply_id INTEGER",
+        "ALTER TABLE community_posts ADD COLUMN icon TEXT DEFAULT '😊'",
+        "ALTER TABLE community_replies ADD COLUMN icon TEXT DEFAULT '😊'",
     ]:
         try:
             conn_alt = get_db()
@@ -940,25 +942,25 @@ def init_subscribers_db():
             from datetime import timedelta
             now = datetime.utcnow()
             seeds = [
-                {"name": "Cara", "cat": "general", "trans": None, "title": "Welcome to the Lumeway community",
+                {"name": "Cara", "icon": "✨", "cat": "general", "trans": None, "title": "Welcome to the Lumeway community",
                  "body": "Hey, so glad you are here.\n\nI built Lumeway because when I was going through my own life transition, I kept wishing someone would just tell me what to do next. Not in a preachy way, just like a friend who had been through it and could walk me through the steps.\n\nThat is what this community is for. Whether you are dealing with a divorce, a job loss, an estate, or something else entirely — you are not alone and there are people here who genuinely get it.\n\nNo question is too small, no vent is too messy. Jump in whenever you are ready.", "pin": 1, "ago": timedelta(days=3)},
-                {"name": "Sarah", "cat": "emotional-support", "trans": "divorce", "title": "How do you handle the loneliness?",
+                {"name": "Sarah", "icon": "🌸", "cat": "emotional-support", "trans": "divorce", "title": "How do you handle the loneliness?",
                  "body": "I am about three months into my separation and the evenings are the hardest. The house feels so quiet. I know it gets better but some days it is really hard to believe that.\n\nAnyone else going through this? What has helped you?", "pin": 0, "ago": timedelta(days=2, hours=8)},
-                {"name": "James", "cat": "financial", "trans": "job-loss", "title": "Negotiating severance - what I wish I knew",
+                {"name": "James", "icon": "🌊", "cat": "financial", "trans": "job-loss", "title": "Negotiating severance - what I wish I knew",
                  "body": "Just went through a layoff and wanted to share something I learned the hard way. Your initial severance offer is almost always negotiable. I asked for an extra two weeks and they said yes immediately.\n\nThings worth asking about: extended health insurance coverage, outplacement services, a neutral reference letter, and keeping your laptop.\n\nHas anyone else had luck negotiating? Would love to hear what worked for you.", "pin": 0, "ago": timedelta(days=2)},
-                {"name": "Maria", "cat": "legal-questions", "trans": "estate", "title": "Probate timeline - how long did yours take?",
+                {"name": "Maria", "icon": "🌿", "cat": "legal-questions", "trans": "estate", "title": "Probate timeline - how long did yours take?",
                  "body": "My mom passed away two months ago and the attorney said probate could take 6 to 12 months. That feels like forever when you are trying to handle everything.\n\nHow long did the process take for others? Any tips for keeping things moving?", "pin": 0, "ago": timedelta(days=1, hours=14)},
-                {"name": "David", "cat": "success-stories", "trans": "job-loss", "title": "Landed a new role after 4 months",
+                {"name": "David", "icon": "🎯", "cat": "success-stories", "trans": "job-loss", "title": "Landed a new role after 4 months",
                  "body": "Just wanted to share some hope for anyone in the thick of a job search. I was laid off in December and it was honestly one of the lowest points of my life. But I just accepted an offer that is actually a better fit than my old job.\n\nWhat helped me most was having a system. The checklist on here kept me from spiraling and just taking it one task at a time made a huge difference.\n\nHang in there. It does get better.", "pin": 0, "ago": timedelta(days=1, hours=4)},
-                {"name": "Anonymous", "cat": "ask-cara", "trans": "divorce", "title": "Do I need a lawyer if we agree on everything?",
+                {"name": "Anonymous", "icon": "🦋", "cat": "ask-cara", "trans": "divorce", "title": "Do I need a lawyer if we agree on everything?",
                  "body": "My spouse and I are splitting amicably. We have already agreed on how to divide everything and we do not have kids. Do we still need to hire lawyers or can we just file the paperwork ourselves?\n\nTrying to keep costs down but also do not want to make a mistake.", "pin": 0, "ago": timedelta(hours=18)},
             ]
             seed_post_ids = []
             for s in seeds:
                 ts = (now - s["ago"]).isoformat()
-                db_execute(conn_seed, f"""INSERT INTO community_posts (user_id, display_name, category, transition_category, title, body, is_pinned, created_at)
-                    VALUES ({param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s})""",
-                    (0, s["name"], s["cat"], s["trans"], s["title"], s["body"], s["pin"], ts))
+                db_execute(conn_seed, f"""INSERT INTO community_posts (user_id, display_name, category, transition_category, title, body, is_pinned, icon, created_at)
+                    VALUES ({param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s})""",
+                    (0, s["name"], s["cat"], s["trans"], s["title"], s["body"], s["pin"], s["icon"], ts))
             conn_seed.commit()
             for s in seeds:
                 cur_s = db_execute(conn_seed, f"SELECT id FROM community_posts WHERE title = {param_s} ORDER BY id DESC LIMIT 1", (s["title"],))
@@ -993,14 +995,16 @@ def init_subscribers_db():
                     {"name": "David", "body": "We did ours without lawyers and regretted it later when we realized we missed some retirement account stuff. Definitely get at least a consultation.", "ago": timedelta(hours=8)},
                 ],
             }
+            seed_icons = {"Cara": "✨", "Sarah": "🌸", "James": "🌊", "Maria": "🌿", "David": "🎯", "Anonymous": "🦋"}
             for idx, reply_list in seed_replies.items():
                 pid = seed_post_ids[idx] if idx < len(seed_post_ids) else None
                 if pid:
                     for rpl in reply_list:
                         ts = (now - rpl["ago"]).isoformat()
-                        db_execute(conn_seed, f"""INSERT INTO community_replies (post_id, user_id, display_name, body, created_at)
-                            VALUES ({param_s}, {param_s}, {param_s}, {param_s}, {param_s})""",
-                            (pid, 0, rpl["name"], rpl["body"], ts))
+                        rpl_icon = seed_icons.get(rpl["name"], "😊")
+                        db_execute(conn_seed, f"""INSERT INTO community_replies (post_id, user_id, display_name, body, icon, created_at)
+                            VALUES ({param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s})""",
+                            (pid, 0, rpl["name"], rpl["body"], rpl_icon, ts))
             conn_seed.commit()
             print("[community] Seeded 6 starter conversations with replies (v2)")
         conn_seed.close()
@@ -1013,6 +1017,32 @@ def init_subscribers_db():
     conn.close()
 
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "re_17DAfkrF_3mB4pCdStfmYHiNQoeKrxaWe")
+
+def send_community_notification(event_type, display_name, title, body_preview, post_id):
+    """Send notification email to admin when new community post or reply is created."""
+    if not RESEND_API_KEY:
+        return
+    subject = f"Community {event_type}: {title[:60]}" if event_type == "post" else f"Community reply on: {title[:60]}"
+    preview = body_preview[:200] + "..." if len(body_preview) > 200 else body_preview
+    dashboard_url = f"https://lumeway.co/dashboard"
+    html = email_wrap(f"""
+<p style="{_e_hi}">New community {event_type}</p>
+<p style="{_e_p}"><strong>{display_name}</strong> {"posted" if event_type == "post" else "replied to"}: <em>{title}</em></p>
+<p style="{_e_p}">{preview}</p>
+{_e_btn(dashboard_url, 'View in Dashboard')}""")
+    try:
+        http_requests.post("https://api.resend.com/emails", json={
+            "from": "Lumeway <hello@lumeway.co>",
+            "to": ["hello@lumeway.co"],
+            "subject": subject,
+            "html": html,
+        }, headers={
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        })
+    except Exception as e:
+        print(f"[community] Notification email error: {e}")
+
 
 def send_purchase_email(to_email, product_id, product_name, download_token):
     """Send purchase confirmation with download link via Resend."""
@@ -4712,7 +4742,8 @@ def community_list_posts():
                p.is_pinned, p.created_at, p.updated_at,
                (SELECT COUNT(*) FROM community_replies r WHERE r.post_id = p.id AND r.is_hidden = 0) as reply_count,
                p.transition_category,
-               (SELECT COUNT(*) FROM community_likes l WHERE l.post_id = p.id AND l.reply_id IS NULL) as like_count
+               (SELECT COUNT(*) FROM community_likes l WHERE l.post_id = p.id AND l.reply_id IS NULL) as like_count,
+               p.icon
         FROM community_posts p {where}
         ORDER BY p.is_pinned DESC, p.created_at DESC
         LIMIT {param} OFFSET {param}
@@ -4724,6 +4755,7 @@ def community_list_posts():
             "title": r[4], "body": r[5], "is_pinned": bool(r[6]),
             "created_at": r[7], "updated_at": r[8], "reply_count": r[9],
             "transition_category": r[10], "like_count": r[11],
+            "icon": r[12] or "😊",
             "is_author": r[1] == user["id"]
         })
     conn.close()
@@ -4746,6 +4778,7 @@ def community_create_post():
     category = data.get("category", "general")
     transition_category = (data.get("transition_category") or "").strip() or None
     display_name = (data.get("display_name") or "").strip()
+    icon = (data.get("icon") or "😊").strip()
     if not title or not body:
         return jsonify({"error": "Title and body are required."}), 400
     if len(title) > 200:
@@ -4765,11 +4798,16 @@ def community_create_post():
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
     now = datetime.utcnow().isoformat()
-    db_execute(conn, f"""INSERT INTO community_posts (user_id, display_name, category, transition_category, title, body, created_at)
-        VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param})""",
-        (user["id"], display_name, category, transition_category, title, body, now))
+    db_execute(conn, f"""INSERT INTO community_posts (user_id, display_name, category, transition_category, title, body, icon, created_at)
+        VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param}, {param})""",
+        (user["id"], display_name, category, transition_category, title, body, icon, now))
     conn.commit()
     conn.close()
+    # Notify admin of new post
+    try:
+        send_community_notification("post", display_name, title, body, 0)
+    except Exception:
+        pass
     return jsonify({"ok": True})
 
 
@@ -4781,7 +4819,7 @@ def community_get_post(post_id):
         return jsonify({"error": "Not logged in"}), 401
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    cur = db_execute(conn, f"""SELECT id, user_id, display_name, category, title, body, is_pinned, created_at, updated_at, transition_category
+    cur = db_execute(conn, f"""SELECT id, user_id, display_name, category, title, body, is_pinned, created_at, updated_at, transition_category, icon
         FROM community_posts WHERE id = {param} AND is_hidden = 0""", (post_id,))
     row = cur.fetchone()
     if not row:
@@ -4791,6 +4829,7 @@ def community_get_post(post_id):
         "id": row[0], "user_id": row[1], "display_name": row[2], "category": row[3],
         "title": row[4], "body": row[5], "is_pinned": bool(row[6]),
         "created_at": row[7], "updated_at": row[8], "transition_category": row[9],
+        "icon": row[10] or "😊",
         "is_author": row[1] == user["id"]
     }
     # Get post like count + whether current user liked it
@@ -4800,7 +4839,7 @@ def community_get_post(post_id):
     post["user_liked"] = cur.fetchone()[0] > 0
 
     # Get replies
-    cur = db_execute(conn, f"""SELECT id, user_id, display_name, body, created_at, parent_reply_id
+    cur = db_execute(conn, f"""SELECT id, user_id, display_name, body, created_at, parent_reply_id, icon
         FROM community_replies WHERE post_id = {param} AND is_hidden = 0 ORDER BY created_at""", (post_id,))
     replies = []
     for r in cur.fetchall():
@@ -4813,6 +4852,7 @@ def community_get_post(post_id):
         replies.append({
             "id": rid, "user_id": r[1], "display_name": r[2], "body": r[3],
             "created_at": r[4], "parent_reply_id": r[5],
+            "icon": r[6] or "😊",
             "is_author": r[1] == user["id"],
             "like_count": rlike_count, "user_liked": ruser_liked
         })
@@ -4832,6 +4872,7 @@ def community_create_reply(post_id):
     data = request.get_json()
     body = (data.get("body") or "").strip()
     display_name = (data.get("display_name") or "").strip()
+    icon = (data.get("icon") or "😊").strip()
     parent_reply_id = data.get("parent_reply_id")  # For threaded replies
     if not body:
         return jsonify({"error": "Reply cannot be empty."}), 400
@@ -4841,17 +4882,24 @@ def community_create_reply(post_id):
         display_name = user.get("display_name") or "Anonymous"
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    # Verify post exists
-    cur = db_execute(conn, f"SELECT id FROM community_posts WHERE id = {param} AND is_hidden = 0", (post_id,))
-    if not cur.fetchone():
+    # Verify post exists and get title for notification
+    cur = db_execute(conn, f"SELECT id, title FROM community_posts WHERE id = {param} AND is_hidden = 0", (post_id,))
+    post_row = cur.fetchone()
+    if not post_row:
         conn.close()
         return jsonify({"error": "Post not found"}), 404
+    post_title = post_row[1]
     now = datetime.utcnow().isoformat()
-    db_execute(conn, f"""INSERT INTO community_replies (post_id, parent_reply_id, user_id, display_name, body, created_at)
-        VALUES ({param}, {param}, {param}, {param}, {param}, {param})""",
-        (post_id, parent_reply_id, user["id"], display_name, body, now))
+    db_execute(conn, f"""INSERT INTO community_replies (post_id, parent_reply_id, user_id, display_name, body, icon, created_at)
+        VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param})""",
+        (post_id, parent_reply_id, user["id"], display_name, body, icon, now))
     conn.commit()
     conn.close()
+    # Notify admin of new reply
+    try:
+        send_community_notification("reply", display_name, post_title, body, post_id)
+    except Exception:
+        pass
     return jsonify({"ok": True})
 
 
@@ -5051,23 +5099,23 @@ def community_seed():
         return jsonify({"ok": True, "message": "Posts already exist, skipping seed."})
     now = datetime.utcnow().isoformat()
     seeds = [
-        {"name": "Cara", "cat": "general", "trans": None, "title": "Welcome to the Lumeway community",
+        {"name": "Cara", "icon": "✨", "cat": "general", "trans": None, "title": "Welcome to the Lumeway community",
          "body": "Hey, so glad you are here.\n\nI built Lumeway because when I was going through my own life transition, I kept wishing someone would just tell me what to do next. Not in a preachy way, just like a friend who had been through it and could walk me through the steps.\n\nThat is what this community is for. Whether you are dealing with a divorce, a job loss, an estate, or something else entirely — you are not alone and there are people here who genuinely get it.\n\nNo question is too small, no vent is too messy. Jump in whenever you are ready.", "pin": 1},
-        {"name": "Sarah", "cat": "emotional-support", "trans": "divorce", "title": "How do you handle the loneliness?",
+        {"name": "Sarah", "icon": "🌸", "cat": "emotional-support", "trans": "divorce", "title": "How do you handle the loneliness?",
          "body": "I am about three months into my separation and the evenings are the hardest. The house feels so quiet. I know it gets better but some days it is really hard to believe that.\n\nAnyone else going through this? What has helped you?", "pin": 0},
-        {"name": "James", "cat": "financial", "trans": "job-loss", "title": "Negotiating severance - what I wish I knew",
+        {"name": "James", "icon": "🌊", "cat": "financial", "trans": "job-loss", "title": "Negotiating severance - what I wish I knew",
          "body": "Just went through a layoff and wanted to share something I learned the hard way. Your initial severance offer is almost always negotiable. I asked for an extra two weeks and they said yes immediately.\n\nThings worth asking about: extended health insurance coverage, outplacement services, a neutral reference letter, and keeping your laptop.\n\nHas anyone else had luck negotiating? Would love to hear what worked for you.", "pin": 0},
-        {"name": "Maria", "cat": "legal-questions", "trans": "estate", "title": "Probate timeline - how long did yours take?",
+        {"name": "Maria", "icon": "🌿", "cat": "legal-questions", "trans": "estate", "title": "Probate timeline - how long did yours take?",
          "body": "My mom passed away two months ago and the attorney said probate could take 6 to 12 months. That feels like forever when you are trying to handle everything.\n\nHow long did the process take for others? Any tips for keeping things moving?", "pin": 0},
-        {"name": "David", "cat": "success-stories", "trans": "job-loss", "title": "Landed a new role after 4 months",
+        {"name": "David", "icon": "🎯", "cat": "success-stories", "trans": "job-loss", "title": "Landed a new role after 4 months",
          "body": "Just wanted to share some hope for anyone in the thick of a job search. I was laid off in December and it was honestly one of the lowest points of my life. But I just accepted an offer that is actually a better fit than my old job.\n\nWhat helped me most was having a system. The checklist on here kept me from spiraling and just taking it one task at a time made a huge difference.\n\nHang in there. It does get better.", "pin": 0},
-        {"name": "Anonymous", "cat": "ask-cara", "trans": "divorce", "title": "Do I need a lawyer if we agree on everything?",
+        {"name": "Anonymous", "icon": "🦋", "cat": "ask-cara", "trans": "divorce", "title": "Do I need a lawyer if we agree on everything?",
          "body": "My spouse and I are splitting amicably. We have already agreed on how to divide everything and we do not have kids. Do we still need to hire lawyers or can we just file the paperwork ourselves?\n\nTrying to keep costs down but also do not want to make a mistake.", "pin": 0},
     ]
     for s in seeds:
-        db_execute(conn, f"""INSERT INTO community_posts (user_id, display_name, category, transition_category, title, body, is_pinned, created_at)
-            VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param}, {param})""",
-            (user["id"], s["name"], s["cat"], s["trans"], s["title"], s["body"], s["pin"], now))
+        db_execute(conn, f"""INSERT INTO community_posts (user_id, display_name, category, transition_category, title, body, is_pinned, icon, created_at)
+            VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param}, {param}, {param})""",
+            (user["id"], s["name"], s["cat"], s["trans"], s["title"], s["body"], s["pin"], s["icon"], now))
     conn.commit()
     # Get seed post IDs by title
     seed_post_ids = []
@@ -5104,13 +5152,15 @@ def community_seed():
             {"name": "David", "body": "We did ours without lawyers and regretted it later when we realized we missed some retirement account stuff. Definitely get at least a consultation."},
         ],
     }
+    seed_icons = {"Cara": "✨", "Sarah": "🌸", "James": "🌊", "Maria": "🌿", "David": "🎯", "Anonymous": "🦋"}
     for idx, reply_list in seed_replies.items():
         pid = seed_post_ids[idx] if idx < len(seed_post_ids) else None
         if pid:
             for rpl in reply_list:
-                db_execute(conn, f"""INSERT INTO community_replies (post_id, user_id, display_name, body, created_at)
-                    VALUES ({param}, {param}, {param}, {param}, {param})""",
-                    (pid, user["id"], rpl["name"], rpl["body"], now))
+                rpl_icon = seed_icons.get(rpl["name"], "😊")
+                db_execute(conn, f"""INSERT INTO community_replies (post_id, user_id, display_name, body, icon, created_at)
+                    VALUES ({param}, {param}, {param}, {param}, {param}, {param})""",
+                    (pid, user["id"], rpl["name"], rpl["body"], rpl_icon, now))
     conn.commit()
     conn.close()
     return jsonify({"ok": True, "message": "Seeded 6 conversations with replies."})

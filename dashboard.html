@@ -4265,6 +4265,42 @@ guideLibrary['disability'] = {
       });
     }
 
+    function pickCommunityIcon(icon) {
+      localStorage.setItem('lumeway_community_icon', icon);
+      var preview = document.getElementById('comIconPreview');
+      if (preview) preview.textContent = icon;
+      var previewIcon = document.getElementById('comPreviewIcon');
+      if (previewIcon) previewIcon.textContent = icon;
+      var picker = document.getElementById('comIconPicker');
+      if (picker) picker.style.display = 'none';
+    }
+
+    function saveCommunityProfile() {
+      var nameInput = document.getElementById('comNameInput');
+      var name = nameInput ? nameInput.value.trim() : '';
+      if (!name) {
+        nameInput.style.borderColor = 'var(--accent)';
+        nameInput.focus();
+        return;
+      }
+      nameInput.style.borderColor = 'var(--border)';
+      localStorage.setItem('lumeway_community_name', name);
+      var icon = localStorage.getItem('lumeway_community_icon') || '😊';
+      localStorage.setItem('lumeway_community_icon', icon);
+      var previewName = document.getElementById('comPreviewName');
+      if (previewName) previewName.textContent = name;
+      var saved = document.getElementById('comProfileSaved');
+      if (saved) { saved.style.opacity = '1'; setTimeout(function(){ saved.style.opacity = '0'; }, 2000); }
+    }
+
+    // Live preview for community name input
+    document.addEventListener('input', function(e) {
+      if (e.target && e.target.id === 'comNameInput') {
+        var previewName = document.getElementById('comPreviewName');
+        if (previewName) previewName.textContent = e.target.value.trim() || 'Your Name';
+      }
+    });
+
     // ── File Upload Functions ──
     var userFiles = [];
 
@@ -7227,6 +7263,45 @@ guideLibrary['disability'] = {
       html += '  </form>';
       html += '</div>';
 
+      // Community Profile card
+      var comName = localStorage.getItem('lumeway_community_name') || '';
+      var comIcon = localStorage.getItem('lumeway_community_icon') || '😊';
+      var iconOptions = ['😊','🌟','🌿','🦋','🌊','🔥','💜','🌸','☀️','🍀','🐾','🎯','💡','🌙','🪴','✨'];
+      html += '<div class="dash-card" style="margin-top:20px">';
+      html += '  <div class="card-label">Community Profile</div>';
+      html += '  <p style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px">This is how you appear in the community. Use your name, a nickname, or stay anonymous.</p>';
+      html += '  <div style="display:flex;gap:16px;align-items:flex-start">';
+      // Icon picker
+      html += '    <div style="text-align:center">';
+      html += '      <div id="comIconPreview" style="width:52px;height:52px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;position:relative" onclick="document.getElementById(\'comIconPicker\').style.display=document.getElementById(\'comIconPicker\').style.display===\'grid\'?\'none\':\'grid\'">' + comIcon + '</div>';
+      html += '      <span style="font-size:11px;color:var(--muted);margin-top:4px;display:block">Your icon</span>';
+      html += '      <div id="comIconPicker" style="display:none;grid-template-columns:repeat(4,1fr);gap:6px;position:absolute;background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:10px;box-shadow:0 4px 16px rgba(0,0,0,0.1);z-index:10;margin-top:6px">';
+      iconOptions.forEach(function(ic) {
+        html += '<button onclick="pickCommunityIcon(\'' + ic + '\')" style="font-size:20px;width:36px;height:36px;border:none;background:' + (ic === comIcon ? 'var(--cream)' : 'transparent') + ';border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center">' + ic + '</button>';
+      });
+      html += '      </div>';
+      html += '    </div>';
+      // Name input
+      html += '    <div style="flex:1">';
+      html += '      <label style="font-size:13px;font-weight:500;color:var(--text);display:block;margin-bottom:6px">Community Name</label>';
+      html += '      <input type="text" id="comNameInput" value="' + escapeHtml(comName) + '" placeholder="Pick a name or nickname" maxlength="30" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;background:var(--warm-white);color:var(--text)">';
+      html += '      <p style="font-size:11px;color:var(--muted);margin-top:4px">This shows on your posts and replies.</p>';
+      html += '    </div>';
+      html += '  </div>';
+      // Preview
+      html += '  <div style="margin-top:16px;padding:14px;background:var(--cream);border-radius:12px;display:flex;align-items:center;gap:12px">';
+      html += '    <div id="comPreviewIcon" style="width:36px;height:36px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">' + comIcon + '</div>';
+      html += '    <div>';
+      html += '      <div id="comPreviewName" style="font-size:14px;font-weight:500;color:var(--text)">' + escapeHtml(comName || 'Your Name') + '</div>';
+      html += '      <div style="font-size:12px;color:var(--muted)">This is how others see you in the community</div>';
+      html += '    </div>';
+      html += '  </div>';
+      html += '  <div style="margin-top:14px;display:flex;align-items:center;gap:12px">';
+      html += '    <button onclick="saveCommunityProfile()" class="btn-primary" style="padding:10px 28px">Save</button>';
+      html += '    <span id="comProfileSaved" style="font-size:13px;color:var(--green);opacity:0;transition:opacity 0.3s">✓ Saved</span>';
+      html += '  </div>';
+      html += '</div>';
+
       // Right column: Your Plan + Buy More
       html += '<div>';
 
@@ -8699,6 +8774,7 @@ guideLibrary['disability'] = {
     var _communityDisplayName = '';
 
     function communityInitial(name) { return name ? name.charAt(0).toUpperCase() : '?'; }
+    function communityAvatar(icon, name) { return icon || communityInitial(name); }
 
     function loadCommunityPosts() {
       var el = document.getElementById('communityList');
@@ -8755,7 +8831,7 @@ guideLibrary['disability'] = {
             html += '<div class="community-post-card' + (p.is_pinned ? ' pinned' : '') + '" onclick="openCommunityPost(' + p.id + ')">';
             html += '  <div class="community-post-title">' + (p.is_pinned ? '<span class="community-pin-badge">📌 </span>' : '') + escapeHtml(p.title) + '</div>';
             html += '  <div class="community-post-meta">';
-            html += '    <span style="font-weight:500;color:var(--navy)">' + escapeHtml(p.display_name) + '</span>';
+            html += '    <span style="font-weight:500;color:var(--navy)">' + (p.icon || '') + ' ' + escapeHtml(p.display_name) + '</span>';
             html += '    <span>' + communityTimeAgo(p.created_at) + '</span>';
             if (catLabel) html += '<span class="community-post-cat">' + catLabel + '</span>';
             if (p.transition_category && transMap[p.transition_category]) {
@@ -8916,7 +8992,7 @@ guideLibrary['disability'] = {
 
         // Original post — chat style with avatar on side
         html += '<div class="community-op">';
-        html += '  <div class="community-op-avatar">' + communityInitial(post.display_name) + '</div>';
+        html += '  <div class="community-op-avatar">' + communityAvatar(post.icon, post.display_name) + '</div>';
         html += '  <div class="community-op-content">';
         html += '    <div class="community-op-name">' + escapeHtml(post.display_name) + '</div>';
         html += '    <div class="community-op-time">' + communityTimeAgo(post.created_at) + '</div>';
@@ -8942,7 +9018,7 @@ guideLibrary['disability'] = {
           replies.forEach(function(r) {
             var indent = r.parent_reply_id ? ' style="margin-left:44px"' : '';
             html += '<div class="community-msg"' + indent + '>';
-            html += '  <div class="community-msg-avatar" style="background:' + (r.display_name === post.display_name ? 'var(--navy)' : 'var(--gold)') + '">' + communityInitial(r.display_name) + '</div>';
+            html += '  <div class="community-msg-avatar" style="background:' + (r.display_name === post.display_name ? 'var(--navy)' : 'var(--gold)') + '">' + communityAvatar(r.icon, r.display_name) + '</div>';
             html += '  <div>';
             // Show who they are replying to
             if (r.parent_reply_id && replyMap[r.parent_reply_id]) {
@@ -9075,12 +9151,22 @@ guideLibrary['disability'] = {
 
     function showNewPostModal() {
       var savedName = localStorage.getItem('lumeway_community_name') || '';
+      var savedIcon = localStorage.getItem('lumeway_community_icon') || '😊';
+      if (!savedName) {
+        if (confirm('Set up your community profile first? Pick a name and icon in Account Settings.')) {
+          switchTab('account');
+          setTimeout(function() { var el = document.getElementById('comNameInput'); if (el) { el.scrollIntoView({behavior:'smooth'}); el.focus(); } }, 300);
+        }
+        return;
+      }
       var html = '<div class="community-modal-overlay" id="communityModal" onclick="if(event.target===this)closeCommunityModal()">';
       html += '  <div class="community-modal">';
       html += '    <h3>New Post</h3>';
-      html += '    <label for="communityPostName">Your display name</label>';
-      html += '    <input type="text" id="communityPostName" placeholder="Enter a name or nickname" value="' + escapeHtml(savedName) + '" maxlength="50" />';
-      html += '    <p style="font-size:11px;color:var(--muted);margin:-12px 0 16px">Use your real name or a pseudonym — your choice.</p>';
+      html += '    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 14px;background:var(--cream);border-radius:10px">';
+      html += '      <span style="font-size:20px">' + savedIcon + '</span>';
+      html += '      <span style="font-size:14px;font-weight:500">' + escapeHtml(savedName) + '</span>';
+      html += '      <a href="#" onclick="closeCommunityModal();switchTab(\'account\');return false" style="margin-left:auto;font-size:11px;color:var(--muted)">Edit profile</a>';
+      html += '    </div>';
       html += '    <label for="communityPostCat">Topic</label>';
       html += '    <select id="communityPostCat">';
       html += '      <option value="general">General</option>';
@@ -9119,17 +9205,16 @@ guideLibrary['disability'] = {
     }
 
     function submitCommunityPost() {
-      var name = (document.getElementById('communityPostName').value || '').trim();
+      var name = localStorage.getItem('lumeway_community_name') || '';
       var cat = document.getElementById('communityPostCat').value;
       var transition = document.getElementById('communityPostTransition').value;
       var title = (document.getElementById('communityPostTitle').value || '').trim();
       var body = (document.getElementById('communityPostBody').value || '').trim();
       if (!title || !body) { alert('Please enter a title and post body.'); return; }
-      if (name) localStorage.setItem('lumeway_community_name', name);
       fetch('/api/community/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: title, body: body, category: cat, transition_category: transition || null, display_name: name })
+        body: JSON.stringify({ title: title, body: body, category: cat, transition_category: transition || null, display_name: name, icon: localStorage.getItem('lumeway_community_icon') || '😊' })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
@@ -9147,11 +9232,19 @@ guideLibrary['disability'] = {
       var body = (document.getElementById('communityReplyText').value || '').trim();
       if (!body) return;
       var name = asCaraOverride ? 'Cara' : (localStorage.getItem('lumeway_community_name') || '');
+      if (!asCaraOverride && !name) {
+        if (confirm('You haven\'t set up your community profile yet. Go to Account Settings to pick a name and icon?')) {
+          switchTab('account');
+          setTimeout(function() { var el = document.getElementById('comNameInput'); if (el) { el.scrollIntoView({behavior:'smooth'}); el.focus(); } }, 300);
+        }
+        return;
+      }
+      var icon = asCaraOverride ? '✨' : (localStorage.getItem('lumeway_community_icon') || '😊');
       var parentId = _communityReplyTo ? _communityReplyTo.id : null;
       fetch('/api/community/posts/' + postId + '/replies', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ body: body, display_name: name, parent_reply_id: parentId })
+        body: JSON.stringify({ body: body, display_name: name, icon: icon, parent_reply_id: parentId })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
