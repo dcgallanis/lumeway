@@ -7958,7 +7958,7 @@ guideLibrary['disability'] = {
       calendar: { icon: '📅', text: 'Deadlines show here automatically. You can also add your own events.', panel: 'panel-calendar' },
       guides: { icon: '📖', text: 'Step-by-step walkthroughs written in plain language. Click any task to expand.', panel: 'panel-guides' },
       workspace: { icon: '📁', text: 'Upload and edit documents here. Use the colored dots next to each file to track its status — to-do, in progress, or done.', panel: 'panel-documents' },
-      notes: { icon: '✏️', text: 'Use the pencil icon on any tab to open a sticky note. Jot things down as you go — highlights from guides, reminders, or anything you want to remember. Save when you are ready.', panel: 'panel-notes' }
+      notes: { icon: '✏️', text: 'Jot things down as you go. Use the pencil icon on the Files tab to add a note, or switch to Note Mode in Guides to capture highlights. Everything saves here.', panel: 'panel-notes' }
     };
     function showCtxTips() {
       if (localStorage.getItem('lumeway_tips_dismissed')) return;
@@ -8722,7 +8722,7 @@ guideLibrary['disability'] = {
         html += '<div class="community-sidebar">';
         html += '  <div class="community-sidebar-label">Topics</div>';
         html += '  <button class="community-filter-btn' + (!_communityFilter ? ' active' : '') + '" onclick="filterCommunity(\'\')">All Topics</button>';
-        var catColors = {'general':'#6B7B8D','emotional-support':'#B8977E','legal-questions':'#2C4A5E','financial':'#6B8F5E','success-stories':'#C4704E','ask-carol':'#9B6B9E'};
+        var catColors = {'general':'#6B7B8D','emotional-support':'#B8977E','legal-questions':'#2C4A5E','financial':'#6B8F5E','success-stories':'#C4704E','ask-cara':'#9B6B9E'};
         cats.forEach(function(c) {
           html += '<button class="community-filter-btn' + (_communityFilter === c.id ? ' active' : '') + '" onclick="filterCommunity(\'' + c.id + '\')">';
           html += '<span class="community-filter-dot" style="background:' + (catColors[c.id] || '#6B7B8D') + '"></span>' + c.label + '</button>';
@@ -8838,8 +8838,8 @@ guideLibrary['disability'] = {
         return;
       }
 
-      // Paid users: show rules if not yet accepted
-      if (!isFree && !accepted) {
+      // Paid users: show rules if not yet accepted (or previously declined)
+      if (!isFree && (!accepted || declined)) {
         // Show rules popup
         var rulesHtml = '<div class="community-modal-overlay" id="communityRulesModal">';
         rulesHtml += '<div class="community-gate-card" style="max-width:520px;text-align:left">';
@@ -8862,11 +8862,6 @@ guideLibrary['disability'] = {
         // Still load posts in background so they can read
         loadCommunityPosts();
         return;
-      }
-
-      // If declined, disable posting
-      if (declined) {
-        window._communityDeclined = true;
       }
 
       loadCommunityPosts();
@@ -8901,7 +8896,7 @@ guideLibrary['disability'] = {
         var post = data.post;
         var replies = data.replies || [];
         var transLabels = {"job-loss":"Job Loss & Income Crisis","estate":"Death & Estate","divorce":"Divorce & Separation","disability":"Disability & Benefits","relocation":"Moving & Relocation","retirement":"Retirement Planning"};
-        var cats = [{"id":"general","label":"General"},{"id":"emotional-support","label":"Emotional Support"},{"id":"legal-questions","label":"Legal Questions"},{"id":"financial","label":"Financial"},{"id":"success-stories","label":"Success Stories"},{"id":"ask-carol","label":"Ask Carol"}];
+        var cats = [{"id":"general","label":"General"},{"id":"emotional-support","label":"Emotional Support"},{"id":"legal-questions","label":"Legal Questions"},{"id":"financial","label":"Financial"},{"id":"success-stories","label":"Success Stories"},{"id":"ask-cara","label":"Ask Cara"}];
         var catLabel = '';
         cats.forEach(function(c) { if (c.id === post.category) catLabel = c.label; });
 
@@ -8927,7 +8922,7 @@ guideLibrary['disability'] = {
         html += '    <div class="community-op-actions">';
         html += '      <button class="community-like-btn' + (post.user_liked ? ' liked' : '') + '" onclick="toggleCommunityLike(' + post.id + ',null,this)">♥ ' + (post.like_count || 0) + '</button>';
         if (canPostVal) html += '<button class="community-reply-btn" onclick="setCommunityReplyTo(null,\'' + escapeHtml(post.display_name).replace(/'/g,'\\\'') + '\')">Reply</button>';
-        if (post.is_author) html += '<button class="community-action-btn" onclick="deleteCommunityPost(' + post.id + ')">Delete</button>';
+        if (post.is_author || (dashData && dashData.is_admin)) html += '<button class="community-action-btn" onclick="deleteCommunityPost(' + post.id + ')">Delete</button>';
         html += '    </div>';
         html += '  </div>';
         html += '</div>';
@@ -8958,7 +8953,7 @@ guideLibrary['disability'] = {
             html += '      <span>' + communityTimeAgo(r.created_at) + '</span>';
             html += '      <button class="community-like-btn' + (r.user_liked ? ' liked' : '') + '" onclick="toggleCommunityLike(null,' + r.id + ',this)">♥ ' + (r.like_count || 0) + '</button>';
             if (canPostVal) html += '<button class="community-reply-btn" onclick="setCommunityReplyTo(' + r.id + ',\'' + escapeHtml(r.display_name).replace(/'/g,'\\\'') + '\')">Reply</button>';
-            if (r.is_author) html += '<button class="community-action-btn" onclick="deleteCommunityReply(' + r.id + ',' + post.id + ')">Delete</button>';
+            if (r.is_author || (dashData && dashData.is_admin)) html += '<button class="community-action-btn" onclick="deleteCommunityReply(' + r.id + ',' + post.id + ')">Delete</button>';
             html += '    </div>';
             html += '  </div>';
             html += '</div>';
@@ -8969,9 +8964,17 @@ guideLibrary['disability'] = {
         // Reply form
         if (canPostVal) {
           html += '<div id="communityReplyContext" style="margin-top:16px"></div>';
+          if (dashData && dashData.is_admin) {
+            html += '<div style="margin-bottom:8px"><button class="community-action-btn" style="background:var(--navy);color:var(--cream);padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer" onclick="generateCaraReply(' + post.id + ')">Generate Cara reply</button><span id="caraGenStatus" style="margin-left:8px;font-size:12px;color:var(--muted)"></span></div>';
+          }
           html += '<div class="community-reply-form">';
           html += '  <textarea id="communityReplyText" placeholder="Write a reply..." oninput="this.style.height=\'auto\';this.style.height=this.scrollHeight+\'px\'"></textarea>';
-          html += '  <button class="community-new-btn" onclick="submitCommunityReply(' + post.id + ')">Send</button>';
+          html += '  <div style="display:flex;gap:8px">';
+          html += '    <button class="community-new-btn" onclick="submitCommunityReply(' + post.id + ')">Send</button>';
+          if (dashData && dashData.is_admin) {
+            html += '    <button class="community-new-btn" style="background:var(--navy)" onclick="submitCommunityReply(' + post.id + ',true)">Post as Cara</button>';
+          }
+          html += '  </div>';
           html += '</div>';
         }
 
@@ -9017,6 +9020,34 @@ guideLibrary['disability'] = {
       });
     }
 
+    function generateCaraReply(postId) {
+      var statusEl = document.getElementById('caraGenStatus');
+      if (statusEl) statusEl.textContent = 'Generating...';
+      fetch('/api/community/generate-reply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: postId })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (statusEl) statusEl.textContent = '';
+        if (data.ok && data.reply) {
+          var ta = document.getElementById('communityReplyText');
+          if (ta) {
+            ta.value = data.reply;
+            ta.style.height = 'auto';
+            ta.style.height = ta.scrollHeight + 'px';
+            ta.focus();
+          }
+        } else {
+          if (statusEl) statusEl.textContent = data.error || 'Could not generate reply.';
+        }
+      })
+      .catch(function() {
+        if (statusEl) statusEl.textContent = 'Something went wrong.';
+      });
+    }
+
     function backToCommunityList() {
       var root = document.getElementById('communityRoot');
       if (!root) return;
@@ -9054,7 +9085,7 @@ guideLibrary['disability'] = {
       html += '      <option value="legal-questions">Legal Questions</option>';
       html += '      <option value="financial">Financial</option>';
       html += '      <option value="success-stories">Success Stories</option>';
-      html += '      <option value="ask-carol">Ask Carol</option>';
+      html += '      <option value="ask-cara">Ask Cara</option>';
       html += '    </select>';
       html += '    <label for="communityPostTransition">Life transition (optional)</label>';
       html += '    <select id="communityPostTransition">';
@@ -9109,10 +9140,10 @@ guideLibrary['disability'] = {
       .catch(function() { alert('Something went wrong. Please try again.'); });
     }
 
-    function submitCommunityReply(postId) {
+    function submitCommunityReply(postId, asCaraOverride) {
       var body = (document.getElementById('communityReplyText').value || '').trim();
       if (!body) return;
-      var name = localStorage.getItem('lumeway_community_name') || '';
+      var name = asCaraOverride ? 'Cara' : (localStorage.getItem('lumeway_community_name') || '');
       var parentId = _communityReplyTo ? _communityReplyTo.id : null;
       fetch('/api/community/posts/' + postId + '/replies', {
         method: 'POST',

@@ -907,16 +907,16 @@ def init_subscribers_db():
                 conn_alt.close()
             except Exception:
                 pass
-    # Auto-seed community if empty
+    # Auto-seed community if empty — check for Cara welcome post
     try:
         conn_seed = get_db()
         param_s = "%s" if USE_POSTGRES else "?"
-        cur_s = db_execute(conn_seed, f"SELECT COUNT(*) FROM community_posts WHERE display_name = {param_s} AND title = {param_s}", ("Carol", "Welcome to the Lumeway community"))
+        cur_s = db_execute(conn_seed, f"SELECT COUNT(*) FROM community_posts WHERE title = {param_s}", ("Welcome to the Lumeway community",))
         if cur_s.fetchone()[0] == 0:
             from datetime import timedelta
             now = datetime.utcnow()
             seeds = [
-                {"name": "Carol", "cat": "general", "trans": None, "title": "Welcome to the Lumeway community",
+                {"name": "Cara", "cat": "general", "trans": None, "title": "Welcome to the Lumeway community",
                  "body": "Hi everyone. This is a space for anyone going through a major life change to connect, ask questions, and share what you are learning along the way.\n\nThere are no dumb questions here. Whether you are dealing with a loss, a divorce, a job change, or something else entirely, you are not alone in this.\n\nFeel free to introduce yourself or jump into any conversation. I am here too and happy to help where I can.", "pin": 1, "ago": timedelta(days=3)},
                 {"name": "Sarah M.", "cat": "emotional-support", "trans": "divorce", "title": "How do you handle the loneliness?",
                  "body": "I am about three months into my separation and the evenings are the hardest. The house feels so quiet. I know it gets better but some days it is really hard to believe that.\n\nAnyone else going through this? What has helped you?", "pin": 0, "ago": timedelta(days=2, hours=8)},
@@ -926,35 +926,38 @@ def init_subscribers_db():
                  "body": "My mom passed away two months ago and the attorney said probate could take 6 to 12 months. That feels like forever when you are trying to handle everything.\n\nHow long did the process take for others? Any tips for keeping things moving?", "pin": 0, "ago": timedelta(days=1, hours=14)},
                 {"name": "David R.", "cat": "success-stories", "trans": "job-loss", "title": "Landed a new role after 4 months",
                  "body": "Just wanted to share some hope for anyone in the thick of a job search. I was laid off in December and it was honestly one of the lowest points of my life. But I just accepted an offer that is actually a better fit than my old job.\n\nWhat helped me most was having a system. The checklist on here kept me from spiraling and just taking it one task at a time made a huge difference.\n\nHang in there. It does get better.", "pin": 0, "ago": timedelta(days=1, hours=4)},
-                {"name": "Anonymous", "cat": "ask-carol", "trans": "divorce", "title": "Do I need a lawyer if we agree on everything?",
+                {"name": "Anonymous", "cat": "ask-cara", "trans": "divorce", "title": "Do I need a lawyer if we agree on everything?",
                  "body": "My spouse and I are splitting amicably. We have already agreed on how to divide everything and we do not have kids. Do we still need to hire lawyers or can we just file the paperwork ourselves?\n\nTrying to keep costs down but also do not want to make a mistake.", "pin": 0, "ago": timedelta(hours=18)},
             ]
-            # Use user_id=0 for seed data (system)
+            # Use user_id=0 for seed data (system) — track inserted IDs
+            seed_post_ids = []
             for s in seeds:
                 ts = (now - s["ago"]).isoformat()
                 db_execute(conn_seed, f"""INSERT INTO community_posts (user_id, display_name, category, transition_category, title, body, is_pinned, created_at)
                     VALUES ({param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s})""",
                     (0, s["name"], s["cat"], s["trans"], s["title"], s["body"], s["pin"], ts))
             conn_seed.commit()
-            # Get inserted post IDs
-            cur_s = db_execute(conn_seed, "SELECT id FROM community_posts ORDER BY id")
-            post_ids = [r[0] for r in cur_s.fetchall()]
+            # Get ONLY the seed post IDs (by matching titles)
+            for s in seeds:
+                cur_s = db_execute(conn_seed, f"SELECT id FROM community_posts WHERE title = {param_s} ORDER BY id DESC LIMIT 1", (s["title"],))
+                row = cur_s.fetchone()
+                seed_post_ids.append(row[0] if row else None)
             seed_replies = {
                 0: [  # Welcome post
                     {"name": "Sarah M.", "body": "Thank you for creating this space. It means a lot to know other people understand what this is like.", "ago": timedelta(days=2, hours=20)},
                     {"name": "James K.", "body": "Really glad this exists. Sometimes you just need to talk to people who get it.", "ago": timedelta(days=2, hours=16)},
                 ],
                 1: [  # Loneliness post
-                    {"name": "Carol", "body": "The evenings are so hard, you are not imagining that. A few things that have helped others: keeping a small routine for after dinner, even just a walk or a podcast. And being gentle with yourself about the timeline. Three months is still very early.", "ago": timedelta(days=2, hours=2)},
+                    {"name": "Cara", "body": "The evenings are so hard, you are not imagining that. A few things that have helped others: keeping a small routine for after dinner, even just a walk or a podcast. And being gentle with yourself about the timeline. Three months is still very early.", "ago": timedelta(days=2, hours=2)},
                     {"name": "David R.", "body": "I went through something similar after my divorce. What helped me was finding one thing to look forward to each evening, even something small. A show, a call with a friend, cooking something new. It does get easier.", "ago": timedelta(days=1, hours=20)},
                 ],
                 5: [  # Lawyer question
-                    {"name": "Carol", "body": "Great question. Even in an amicable split, I would recommend at least a consultation with a family law attorney. Many offer a one-time session for a flat fee. They can review your agreement to make sure nothing is missed, especially around things like retirement accounts, tax implications, and property transfers.\n\nYou might not need full representation, but having a professional look things over can save a lot of headaches later.", "ago": timedelta(hours=12)},
+                    {"name": "Cara", "body": "Great question. Even in an amicable split, I would recommend at least a consultation with a family law attorney. Many offer a one-time session for a flat fee. They can review your agreement to make sure nothing is missed, especially around things like retirement accounts, tax implications, and property transfers.\n\nYou might not need full representation, but having a professional look things over can save a lot of headaches later.", "ago": timedelta(hours=12)},
                 ],
             }
             for idx, reply_list in seed_replies.items():
-                if idx < len(post_ids):
-                    pid = post_ids[idx]
+                pid = seed_post_ids[idx] if idx < len(seed_post_ids) else None
+                if pid:
                     for rpl in reply_list:
                         ts = (now - rpl["ago"]).isoformat()
                         db_execute(conn_seed, f"""INSERT INTO community_replies (post_id, user_id, display_name, body, created_at)
@@ -4604,6 +4607,7 @@ def dashboard_data():
         "category_access": get_user_categories(user),
         "credit_cents": user.get("credit_cents", 0),
         "active_transitions": user.get("active_transitions", []),
+        "is_admin": user.get("email") in ["hello@lumeway.co", "lumeway.co@gmail.com"],
     })
 
     # Subscription management removed — all purchases are one-time
@@ -4633,7 +4637,7 @@ COMMUNITY_CATEGORIES = [
     {"id": "legal-questions", "label": "Legal Questions"},
     {"id": "financial", "label": "Financial"},
     {"id": "success-stories", "label": "Success Stories"},
-    {"id": "ask-carol", "label": "Ask Carol"},
+    {"id": "ask-cara", "label": "Ask Cara"},
 ]
 
 @app.route("/api/community/posts", methods=["GET"])
@@ -4922,6 +4926,61 @@ def community_delete_reply(reply_id):
     conn.commit()
     conn.close()
     return jsonify({"ok": True})
+
+
+@app.route("/api/community/generate-reply", methods=["POST"])
+def community_generate_reply():
+    """Generate a reply using Claude. Admin only."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    is_admin = user.get("email") in ["hello@lumeway.co", "lumeway.co@gmail.com"]
+    if not is_admin:
+        return jsonify({"error": "Not authorized"}), 403
+    data = request.get_json()
+    post_id = data.get("post_id")
+    reply_id = data.get("reply_id")  # If replying to a specific reply
+    if not post_id:
+        return jsonify({"error": "post_id required"}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    # Get the post
+    cur = db_execute(conn, f"SELECT title, body, category, transition_category FROM community_posts WHERE id = {param}", (post_id,))
+    post_row = cur.fetchone()
+    if not post_row:
+        conn.close()
+        return jsonify({"error": "Post not found"}), 404
+    # Get all replies for context
+    cur = db_execute(conn, f"SELECT display_name, body FROM community_replies WHERE post_id = {param} AND is_hidden = 0 ORDER BY created_at", (post_id,))
+    replies = [{"name": r[0], "body": r[1]} for r in cur.fetchall()]
+    conn.close()
+    # Build context for Claude
+    context = f"Post title: {post_row[0]}\nPost body: {post_row[1]}"
+    if post_row[2]:
+        context += f"\nCategory: {post_row[2]}"
+    if post_row[3]:
+        trans_label = CATEGORY_LABELS.get(post_row[3], post_row[3])
+        context += f"\nLife transition: {trans_label}"
+    if replies:
+        context += "\n\nExisting replies:"
+        for r in replies:
+            context += f"\n{r['name']}: {r['body']}"
+    if reply_id:
+        # Find the specific reply being responded to
+        for r in replies:
+            pass  # Context already includes all replies
+    try:
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=600,
+            system="You are Cara, the founder of Lumeway — a platform that helps people navigate major life transitions like divorce, job loss, estate management, and disability. You respond to community forum posts with warmth, practical advice, and empathy. Your tone is calm, knowledgeable, and supportive — never clinical or corporate. You speak like a trusted friend who has helped many people through similar situations. Keep replies concise (2-4 short paragraphs). Never use exclamation points. Use plain language. If the question involves legal, medical, or financial specifics, gently suggest consulting a professional while still being helpful with general guidance.",
+            messages=[{"role": "user", "content": f"Write a reply to this community forum post as Cara. Be warm and helpful.\n\n{context}"}]
+        )
+        generated = response.content[0].text
+        return jsonify({"ok": True, "reply": generated})
+    except Exception as e:
+        print(f"[community] Claude generate error: {e}")
+        return jsonify({"error": "Could not generate reply. Please try again."}), 500
 
 
 @app.route("/api/community/seed", methods=["POST"])
