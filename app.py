@@ -892,6 +892,83 @@ def init_subscribers_db():
             conn_cm.close()
         except Exception:
             pass
+    # Community column migrations (idempotent — for tables created before these columns existed)
+    for alter_sql in [
+        "ALTER TABLE community_posts ADD COLUMN transition_category TEXT",
+        "ALTER TABLE community_replies ADD COLUMN parent_reply_id INTEGER",
+    ]:
+        try:
+            conn_alt = get_db()
+            db_execute(conn_alt, alter_sql)
+            conn_alt.commit()
+            conn_alt.close()
+        except Exception:
+            try:
+                conn_alt.close()
+            except Exception:
+                pass
+    # Auto-seed community if empty
+    try:
+        conn_seed = get_db()
+        param_s = "%s" if USE_POSTGRES else "?"
+        cur_s = db_execute(conn_seed, "SELECT COUNT(*) FROM community_posts")
+        if cur_s.fetchone()[0] == 0:
+            from datetime import timedelta
+            now = datetime.utcnow()
+            seeds = [
+                {"name": "Carol", "cat": "general", "trans": None, "title": "Welcome to the Lumeway community",
+                 "body": "Hi everyone. This is a space for anyone going through a major life change to connect, ask questions, and share what you are learning along the way.\n\nThere are no dumb questions here. Whether you are dealing with a loss, a divorce, a job change, or something else entirely, you are not alone in this.\n\nFeel free to introduce yourself or jump into any conversation. I am here too and happy to help where I can.", "pin": 1, "ago": timedelta(days=3)},
+                {"name": "Sarah M.", "cat": "emotional-support", "trans": "divorce", "title": "How do you handle the loneliness?",
+                 "body": "I am about three months into my separation and the evenings are the hardest. The house feels so quiet. I know it gets better but some days it is really hard to believe that.\n\nAnyone else going through this? What has helped you?", "pin": 0, "ago": timedelta(days=2, hours=8)},
+                {"name": "James K.", "cat": "financial", "trans": "job-loss", "title": "Negotiating severance - what I wish I knew",
+                 "body": "Just went through a layoff and wanted to share something I learned the hard way. Your initial severance offer is almost always negotiable. I asked for an extra two weeks and they said yes immediately.\n\nThings worth asking about: extended health insurance coverage, outplacement services, a neutral reference letter, and keeping your laptop.\n\nHas anyone else had luck negotiating? Would love to hear what worked for you.", "pin": 0, "ago": timedelta(days=2)},
+                {"name": "Maria L.", "cat": "legal-questions", "trans": "estate", "title": "Probate timeline - how long did yours take?",
+                 "body": "My mom passed away two months ago and the attorney said probate could take 6 to 12 months. That feels like forever when you are trying to handle everything.\n\nHow long did the process take for others? Any tips for keeping things moving?", "pin": 0, "ago": timedelta(days=1, hours=14)},
+                {"name": "David R.", "cat": "success-stories", "trans": "job-loss", "title": "Landed a new role after 4 months",
+                 "body": "Just wanted to share some hope for anyone in the thick of a job search. I was laid off in December and it was honestly one of the lowest points of my life. But I just accepted an offer that is actually a better fit than my old job.\n\nWhat helped me most was having a system. The checklist on here kept me from spiraling and just taking it one task at a time made a huge difference.\n\nHang in there. It does get better.", "pin": 0, "ago": timedelta(days=1, hours=4)},
+                {"name": "Anonymous", "cat": "ask-carol", "trans": "divorce", "title": "Do I need a lawyer if we agree on everything?",
+                 "body": "My spouse and I are splitting amicably. We have already agreed on how to divide everything and we do not have kids. Do we still need to hire lawyers or can we just file the paperwork ourselves?\n\nTrying to keep costs down but also do not want to make a mistake.", "pin": 0, "ago": timedelta(hours=18)},
+            ]
+            # Use user_id=0 for seed data (system)
+            for s in seeds:
+                ts = (now - s["ago"]).isoformat()
+                db_execute(conn_seed, f"""INSERT INTO community_posts (user_id, display_name, category, transition_category, title, body, is_pinned, created_at)
+                    VALUES ({param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s}, {param_s})""",
+                    (0, s["name"], s["cat"], s["trans"], s["title"], s["body"], s["pin"], ts))
+            conn_seed.commit()
+            # Get inserted post IDs
+            cur_s = db_execute(conn_seed, "SELECT id FROM community_posts ORDER BY id")
+            post_ids = [r[0] for r in cur_s.fetchall()]
+            seed_replies = {
+                0: [  # Welcome post
+                    {"name": "Sarah M.", "body": "Thank you for creating this space. It means a lot to know other people understand what this is like.", "ago": timedelta(days=2, hours=20)},
+                    {"name": "James K.", "body": "Really glad this exists. Sometimes you just need to talk to people who get it.", "ago": timedelta(days=2, hours=16)},
+                ],
+                1: [  # Loneliness post
+                    {"name": "Carol", "body": "The evenings are so hard, you are not imagining that. A few things that have helped others: keeping a small routine for after dinner, even just a walk or a podcast. And being gentle with yourself about the timeline. Three months is still very early.", "ago": timedelta(days=2, hours=2)},
+                    {"name": "David R.", "body": "I went through something similar after my divorce. What helped me was finding one thing to look forward to each evening, even something small. A show, a call with a friend, cooking something new. It does get easier.", "ago": timedelta(days=1, hours=20)},
+                ],
+                5: [  # Lawyer question
+                    {"name": "Carol", "body": "Great question. Even in an amicable split, I would recommend at least a consultation with a family law attorney. Many offer a one-time session for a flat fee. They can review your agreement to make sure nothing is missed, especially around things like retirement accounts, tax implications, and property transfers.\n\nYou might not need full representation, but having a professional look things over can save a lot of headaches later.", "ago": timedelta(hours=12)},
+                ],
+            }
+            for idx, reply_list in seed_replies.items():
+                if idx < len(post_ids):
+                    pid = post_ids[idx]
+                    for rpl in reply_list:
+                        ts = (now - rpl["ago"]).isoformat()
+                        db_execute(conn_seed, f"""INSERT INTO community_replies (post_id, user_id, display_name, body, created_at)
+                            VALUES ({param_s}, {param_s}, {param_s}, {param_s}, {param_s})""",
+                            (pid, 0, rpl["name"], rpl["body"], ts))
+            conn_seed.commit()
+            print("[community] Seeded 6 starter conversations with replies")
+        conn_seed.close()
+    except Exception as e:
+        print(f"[community] Seed error (non-fatal): {e}")
+        try:
+            conn_seed.close()
+        except Exception:
+            pass
     conn.close()
 
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "re_17DAfkrF_3mB4pCdStfmYHiNQoeKrxaWe")
