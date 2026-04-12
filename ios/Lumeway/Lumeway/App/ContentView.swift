@@ -268,10 +268,119 @@ struct WelcomeStatRow: View {
 
 // MARK: - Main Tab View
 
+// All navigable pages (excluding Home and Hub which are always fixed)
+enum NavPage: String, CaseIterable, Identifiable {
+    case checklist = "checklist"
+    case community = "community"
+    case chat = "chat"
+    case calendar = "calendar"
+    case activityLog = "activity_log"
+    case notes = "notes"
+    case guides = "guides"
+    case files = "files"
+    case profile = "profile"
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .checklist: return "Checklist"
+        case .community: return "Community"
+        case .chat: return "Chat"
+        case .calendar: return "Calendar"
+        case .activityLog: return "Activity"
+        case .notes: return "Notes"
+        case .guides: return "Guides"
+        case .files: return "Files"
+        case .profile: return "Profile"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .checklist: return "checklist"
+        case .community: return "bubble.left.and.bubble.right"
+        case .chat: return "message"
+        case .calendar: return "calendar"
+        case .activityLog: return "note.text"
+        case .notes: return "pencil.line"
+        case .guides: return "book.fill"
+        case .files: return "folder.fill"
+        case .profile: return "person.fill"
+        }
+    }
+
+    var filledIcon: String {
+        switch self {
+        case .checklist: return "checklist.checked"
+        case .community: return "bubble.left.and.bubble.right.fill"
+        case .chat: return "message.fill"
+        case .calendar: return "calendar"
+        case .activityLog: return "note.text"
+        case .notes: return "pencil.line"
+        case .guides: return "book.fill"
+        case .files: return "folder.fill"
+        case .profile: return "person.fill"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .checklist: return .lumeGreen
+        case .community: return .lumeAccent
+        case .chat: return .lumeNavy
+        case .calendar: return .lumeAccent
+        case .activityLog: return .lumeGreen
+        case .notes: return Color(hex: "5E8C9A")
+        case .guides: return .lumeGold
+        case .files: return .lumeNavy
+        case .profile: return Color(hex: "7B6B8D")
+        }
+    }
+
+    var subtitle: String {
+        switch self {
+        case .checklist: return "Your tasks"
+        case .community: return "Connect & share"
+        case .chat: return "AI assistant"
+        case .calendar: return "Deadlines & dates"
+        case .activityLog: return "Track your actions"
+        case .notes: return "Your thoughts"
+        case .guides: return "Step-by-step help"
+        case .files: return "Your documents"
+        case .profile: return "Account & settings"
+        }
+    }
+
+    @ViewBuilder
+    var destination: some View {
+        switch self {
+        case .checklist: ChecklistView()
+        case .community: CommunityView()
+        case .chat: NavigatorChatView()
+        case .calendar: CalendarView()
+        case .activityLog: ActivityLogView()
+        case .notes: NotesView()
+        case .guides: GuidesView()
+        case .files: FilesView()
+        case .profile: MoreView()
+        }
+    }
+}
+
+/// Default tab bar pages (besides Home=0 and Hub=4)
+let defaultTabPages: [NavPage] = [.checklist, .community, .chat]
+
 struct MainTabView: View {
     @EnvironmentObject var appState: AppState
     @State private var selectedTab = 0
     @State private var hubNavigationId = UUID()
+    @AppStorage("tabBarPages") private var tabBarPagesRaw: String = "checklist,community,chat"
+
+    var tabPages: [NavPage] {
+        let keys = tabBarPagesRaw.split(separator: ",").map(String.init)
+        return keys.compactMap { NavPage(rawValue: $0) }
+    }
 
     init() {
         // Clean tab bar appearance — removes gray/orange bars on scroll
@@ -315,26 +424,15 @@ struct MainTabView: View {
                     }
                     .tag(0)
 
-                ChecklistView()
-                    .tabItem {
-                        Image(systemName: selectedTab == 1 ? "checklist.checked" : "checklist")
-                        Text("Checklist")
-                    }
-                    .tag(1)
-
-                CommunityView()
-                    .tabItem {
-                        Image(systemName: selectedTab == 2 ? "bubble.left.and.bubble.right.fill" : "bubble.left.and.bubble.right")
-                        Text("Community")
-                    }
-                    .tag(2)
-
-                NavigatorChatView()
-                    .tabItem {
-                        Image(systemName: selectedTab == 3 ? "message.fill" : "message")
-                        Text("Chat")
-                    }
-                    .tag(3)
+                // Dynamic middle tabs (user-configurable)
+                ForEach(Array(tabPages.enumerated()), id: \.element.id) { idx, page in
+                    page.destination
+                        .tabItem {
+                            Image(systemName: selectedTab == (idx + 1) ? page.filledIcon : page.icon)
+                            Text(page.label)
+                        }
+                        .tag(idx + 1)
+                }
 
                 HubView()
                     .id(hubNavigationId)
@@ -361,7 +459,10 @@ struct MainTabView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .navigateToChecklist)) { _ in
-            selectedTab = 1
+            // Find Checklist in dynamic tabs
+            if let idx = tabPages.firstIndex(of: .checklist) {
+                selectedTab = idx + 1
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .navigateToDashboard)) { _ in
             selectedTab = 0
@@ -378,9 +479,17 @@ struct MainTabView: View {
 
 struct HubView: View {
     @EnvironmentObject var appState: AppState
+    @AppStorage("tabBarPages") private var tabBarPagesRaw: String = "checklist,community,chat"
+    @State private var showPersonalize = false
 
     private var isFree: Bool {
         appState.effectiveTier == "free"
+    }
+
+    /// Pages NOT currently in the tab bar — these show in the Hub grid
+    private var hubPages: [NavPage] {
+        let tabKeys = Set(tabBarPagesRaw.split(separator: ",").map(String.init))
+        return NavPage.allCases.filter { !tabKeys.contains($0.rawValue) }
     }
 
     var body: some View {
@@ -395,89 +504,71 @@ struct HubView: View {
 
                 ScrollView {
                     VStack(spacing: 20) {
-                        // User greeting
+                        // Header with personalize button
                         HStack {
                             Text("Your Hub")
                                 .font(.lumeHeadingLarge)
                                 .foregroundColor(.lumeNavy)
                             Spacer()
+                            Button {
+                                showPersonalize = true
+                            } label: {
+                                HStack(spacing: 5) {
+                                    Image(systemName: "slider.horizontal.3")
+                                        .font(.system(size: 13))
+                                    Text("Personalize")
+                                        .font(.lumeSmall)
+                                }
+                                .foregroundColor(.lumeAccent)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 7)
+                                .background(Color.lumeAccent.opacity(0.08))
+                                .cornerRadius(20)
+                            }
                         }
                         .padding(.horizontal, 24)
                         .padding(.top, 20)
 
-                        // Tools grid
+                        // Tools grid — only pages not in tab bar
+                        let pages = hubPages
                         VStack(spacing: 14) {
-                            HStack(spacing: 14) {
-                                NavigationLink {
-                                    CalendarView()
-                                } label: {
-                                    HubTile(
-                                        icon: "calendar",
-                                        title: "Calendar",
-                                        subtitle: "Deadlines & dates",
-                                        color: .lumeAccent
-                                    )
-                                }
+                            // Pair up pages into rows of 2
+                            ForEach(0..<((pages.count + 1) / 2), id: \.self) { rowIdx in
+                                HStack(spacing: 14) {
+                                    let firstIdx = rowIdx * 2
+                                    if firstIdx < pages.count {
+                                        let page = pages[firstIdx]
+                                        NavigationLink {
+                                            page.destination
+                                        } label: {
+                                            HubTile(
+                                                icon: page.icon,
+                                                title: page.label,
+                                                subtitle: lockedSubtitle(for: page),
+                                                color: page.color,
+                                                isLocked: isPageLocked(page)
+                                            )
+                                        }
+                                    }
 
-                                NavigationLink {
-                                    ActivityLogView()
-                                } label: {
-                                    HubTile(
-                                        icon: "note.text",
-                                        title: "Activity Log",
-                                        subtitle: "Track your actions",
-                                        color: .lumeGreen
-                                    )
-                                }
-                            }
-
-                            HStack(spacing: 14) {
-                                NavigationLink {
-                                    NotesView()
-                                } label: {
-                                    HubTile(
-                                        icon: "pencil.line",
-                                        title: "Notes",
-                                        subtitle: "Your thoughts",
-                                        color: Color(hex: "5E8C9A")
-                                    )
-                                }
-
-                                NavigationLink {
-                                    GuidesView()
-                                } label: {
-                                    HubTile(
-                                        icon: "book.fill",
-                                        title: "Guides",
-                                        subtitle: isFree ? "Upgrade to unlock" : "Step-by-step help",
-                                        color: .lumeGold,
-                                        isLocked: isFree
-                                    )
-                                }
-                            }
-
-                            HStack(spacing: 14) {
-                                NavigationLink {
-                                    FilesView()
-                                } label: {
-                                    HubTile(
-                                        icon: "folder.fill",
-                                        title: "Files",
-                                        subtitle: isFree ? "Upgrade to unlock" : "Your documents",
-                                        color: .lumeNavy,
-                                        isLocked: isFree
-                                    )
-                                }
-
-                                NavigationLink {
-                                    MoreView()
-                                } label: {
-                                    HubTile(
-                                        icon: "person.fill",
-                                        title: "Profile",
-                                        subtitle: "Account & settings",
-                                        color: Color(hex: "7B6B8D")
-                                    )
+                                    let secondIdx = firstIdx + 1
+                                    if secondIdx < pages.count {
+                                        let page = pages[secondIdx]
+                                        NavigationLink {
+                                            page.destination
+                                        } label: {
+                                            HubTile(
+                                                icon: page.icon,
+                                                title: page.label,
+                                                subtitle: lockedSubtitle(for: page),
+                                                color: page.color,
+                                                isLocked: isPageLocked(page)
+                                            )
+                                        }
+                                    } else {
+                                        // Empty spacer for odd count
+                                        Color.clear.frame(maxWidth: .infinity)
+                                    }
                                 }
                             }
                         }
@@ -488,7 +579,20 @@ struct HubView: View {
                 }
             }
             .navigationBarHidden(true)
+            .sheet(isPresented: $showPersonalize) {
+                PersonalizeTabsSheet(tabBarPagesRaw: $tabBarPagesRaw)
+                    .presentationDetents([.medium, .large])
+            }
         }
+    }
+
+    private func isPageLocked(_ page: NavPage) -> Bool {
+        isFree && (page == .guides || page == .files)
+    }
+
+    private func lockedSubtitle(for page: NavPage) -> String {
+        if isPageLocked(page) { return "Upgrade to unlock" }
+        return page.subtitle
     }
 }
 
@@ -539,6 +643,200 @@ struct HubTile: View {
                     .cornerRadius(8)
                     .padding(10)
             }
+        }
+    }
+}
+
+// MARK: - Personalize Tabs Sheet
+
+struct PersonalizeTabsSheet: View {
+    @Binding var tabBarPagesRaw: String
+    @Environment(\.dismiss) var dismiss
+    @State private var selectedPages: [NavPage] = []
+
+    private let maxTabs = 3
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                // Header
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Personalize Navigation")
+                            .font(.lumeDisplaySmall)
+                            .foregroundColor(.lumeNavy)
+                        Text("Choose 3 pages for your bottom nav bar. The rest will appear in Hub.")
+                            .font(.lumeSmall)
+                            .foregroundColor(.lumeMuted)
+                    }
+                    Spacer()
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.lumeMuted)
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 20)
+
+                // Current tab bar preview
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("TAB BAR")
+                        .font(.lumeSmall)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.lumeMuted)
+                        .tracking(1)
+
+                    HStack(spacing: 0) {
+                        // Fixed Home
+                        VStack(spacing: 4) {
+                            Image(systemName: "house.fill")
+                                .font(.system(size: 16))
+                            Text("Home")
+                                .font(.system(size: 9))
+                        }
+                        .foregroundColor(.lumeAccent)
+                        .frame(maxWidth: .infinity)
+
+                        ForEach(selectedPages, id: \.id) { page in
+                            VStack(spacing: 4) {
+                                Image(systemName: page.filledIcon)
+                                    .font(.system(size: 16))
+                                Text(page.label)
+                                    .font(.system(size: 9))
+                            }
+                            .foregroundColor(.lumeMuted)
+                            .frame(maxWidth: .infinity)
+                        }
+
+                        // Show placeholders for remaining slots
+                        ForEach(0..<(maxTabs - selectedPages.count), id: \.self) { _ in
+                            VStack(spacing: 4) {
+                                Image(systemName: "plus.circle.dotted")
+                                    .font(.system(size: 16))
+                                Text("Choose")
+                                    .font(.system(size: 9))
+                            }
+                            .foregroundColor(.lumeBorder)
+                            .frame(maxWidth: .infinity)
+                        }
+
+                        // Fixed Hub
+                        VStack(spacing: 4) {
+                            Image(systemName: "square.grid.2x2.fill")
+                                .font(.system(size: 16))
+                            Text("Hub")
+                                .font(.system(size: 9))
+                        }
+                        .foregroundColor(.lumeAccent)
+                        .frame(maxWidth: .infinity)
+                    }
+                    .padding(.vertical, 12)
+                    .background(Color.lumeWarmWhite)
+                    .cornerRadius(12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.lumeBorder, lineWidth: 1)
+                    )
+                }
+                .padding(.horizontal, 24)
+
+                // All pages list
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("AVAILABLE PAGES")
+                        .font(.lumeSmall)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.lumeMuted)
+                        .tracking(1)
+
+                    ForEach(NavPage.allCases) { page in
+                        let isSelected = selectedPages.contains(page)
+                        Button {
+                            togglePage(page)
+                        } label: {
+                            HStack(spacing: 14) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(page.color.opacity(0.12))
+                                        .frame(width: 36, height: 36)
+                                    Image(systemName: page.icon)
+                                        .font(.system(size: 15))
+                                        .foregroundColor(page.color)
+                                }
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(page.label)
+                                        .font(.lumeBodyMedium)
+                                        .foregroundColor(.lumeNavy)
+                                    Text(isSelected ? "In tab bar" : "In Hub")
+                                        .font(.lumeSmall)
+                                        .foregroundColor(.lumeMuted)
+                                }
+
+                                Spacer()
+
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(isSelected ? Color.lumeAccent : Color.lumeBorder.opacity(0.3))
+                                        .frame(width: 28, height: 28)
+                                    if isSelected {
+                                        Image(systemName: "checkmark")
+                                            .font(.system(size: 12, weight: .bold))
+                                            .foregroundColor(.white)
+                                    }
+                                }
+                            }
+                            .padding(12)
+                            .background(isSelected ? Color.lumeAccent.opacity(0.04) : Color.lumeWarmWhite)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(isSelected ? Color.lumeAccent.opacity(0.2) : Color.lumeBorder, lineWidth: 1)
+                            )
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
+
+                // Save button
+                Button {
+                    tabBarPagesRaw = selectedPages.map(\.rawValue).joined(separator: ",")
+                    dismiss()
+                } label: {
+                    Text("Save")
+                        .font(.lumeBodySemibold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.lumeAccent)
+                        .cornerRadius(28)
+                }
+                .padding(.horizontal, 24)
+                .disabled(selectedPages.count != maxTabs)
+                .opacity(selectedPages.count == maxTabs ? 1 : 0.5)
+
+                if selectedPages.count != maxTabs {
+                    Text("Select exactly 3 pages for your tab bar")
+                        .font(.lumeSmall)
+                        .foregroundColor(.lumeAccent)
+                }
+
+                Spacer().frame(height: 20)
+            }
+        }
+        .onAppear {
+            let keys = tabBarPagesRaw.split(separator: ",").map(String.init)
+            selectedPages = keys.compactMap { NavPage(rawValue: $0) }
+        }
+    }
+
+    private func togglePage(_ page: NavPage) {
+        if let idx = selectedPages.firstIndex(of: page) {
+            selectedPages.remove(at: idx)
+        } else if selectedPages.count < maxTabs {
+            selectedPages.append(page)
         }
     }
 }

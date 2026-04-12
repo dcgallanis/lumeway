@@ -4363,6 +4363,8 @@ def auth_send_code():
 
     return jsonify({"ok": True, "message": "Code sent! Check your email."})
 
+DEMO_EMAIL = "demo@lumeway.co"
+
 @app.route("/api/auth/verify-code", methods=["POST"])
 def auth_verify_code():
     data = request.json or {}
@@ -4403,6 +4405,29 @@ def auth_verify_code():
         cur = db_execute(conn, f"SELECT id FROM users WHERE email = {param}", (email,))
         user_id = cur.fetchone()[0]
 
+    # Demo account: full reset on every login so it feels like a fresh free user
+    if email == DEMO_EMAIL and not is_new:
+        # Clear all user data
+        db_execute(conn, f"DELETE FROM community_replies WHERE post_id IN (SELECT id FROM community_posts WHERE user_id = {param})", (user_id,))
+        db_execute(conn, f"DELETE FROM community_replies WHERE user_id = {param}", (user_id,))
+        for table in ["community_posts", "checklist_items", "user_deadlines", "user_documents_needed", "user_goals", "user_notes", "chat_sessions"]:
+            db_execute(conn, f"DELETE FROM {table} WHERE user_id = {param}", (user_id,))
+        try:
+            db_execute(conn, f"DELETE FROM user_files WHERE user_id = {param}", (user_id,))
+        except Exception:
+            pass
+        try:
+            db_execute(conn, f"DELETE FROM etsy_redemptions WHERE user_id = {param}", (user_id,))
+        except Exception:
+            pass
+        try:
+            db_execute(conn, f"DELETE FROM activity_log WHERE user_id = {param}", (user_id,))
+        except Exception:
+            pass
+        # Reset user back to free tier with no transition selected
+        db_execute(conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL, active_transitions = '[]', transition_type = NULL, display_name = NULL, us_state = NULL WHERE id = {param}", (user_id,))
+        is_new = True  # Force onboarding flow
+
     # Claim anonymous chat session if provided
     if claim_session_id:
         db_execute(conn, f"UPDATE chat_sessions SET user_id = {param} WHERE id = {param} AND user_id IS NULL", (user_id, claim_session_id))
@@ -4426,7 +4451,8 @@ def auth_verify_code():
         user_obj = {"id": u_row[0], "email": u_row[1], "display_name": u_row[2], "transition_type": u_row[3], "us_state": u_row[4]}
 
     # Generate JWT tokens for mobile clients
-    response_data = {"ok": True, "is_new": is_new, "user_id": user_id, "user": user_obj}
+    response_data = {"ok": True, "is_new": is_new, "user_id": user_id, "user": user_obj,
+                     "needs_onboarding": is_new or (user_obj and not user_obj.get("transition_type"))}
     access_token = generate_jwt(user_id, JWT_ACCESS_EXPIRY)
     refresh_token = generate_jwt(user_id, JWT_REFRESH_EXPIRY)
     if access_token:
@@ -4434,8 +4460,6 @@ def auth_verify_code():
         response_data["refresh_token"] = refresh_token
 
     return jsonify(response_data)
-
-DEMO_EMAIL = "demo@lumeway.co"
 
 @app.route("/api/auth/logout", methods=["POST"])
 def auth_logout():

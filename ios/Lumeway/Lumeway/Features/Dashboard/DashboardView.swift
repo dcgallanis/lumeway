@@ -4,7 +4,6 @@ struct DashboardView: View {
     @EnvironmentObject var appState: AppState
     @State private var checklistItems: [FullChecklistItem] = []
     @State private var funGreeting: String = ""
-    @State private var selectedQuickAction: Int? = nil
     @State private var showChat = false
 
     private let checklistService = ChecklistService()
@@ -116,26 +115,18 @@ struct DashboardView: View {
                                 GridItem(.flexible(), spacing: 12),
                                 GridItem(.flexible(), spacing: 12)
                             ], spacing: 12) {
-                                // Tab-based navigation
-                                QuickLinkTile(
-                                    icon: "checklist",
-                                    label: "Checklist",
-                                    color: .lumeGreen
-                                ) { selectedQuickAction = 1 }
+                                NavigationLink { ChecklistView() } label: {
+                                    QuickLinkContent(icon: "checklist", label: "Checklist", color: .lumeGreen)
+                                }
 
-                                QuickLinkTile(
-                                    icon: "bubble.left.and.bubble.right",
-                                    label: "Community",
-                                    color: .lumeAccent
-                                ) { selectedQuickAction = 2 }
+                                NavigationLink { CommunityView() } label: {
+                                    QuickLinkContent(icon: "bubble.left.and.bubble.right", label: "Community", color: .lumeAccent)
+                                }
 
-                                QuickLinkTile(
-                                    icon: "message",
-                                    label: "Chat",
-                                    color: .lumeNavy
-                                ) { selectedQuickAction = 3 }
+                                NavigationLink { NavigatorChatView() } label: {
+                                    QuickLinkContent(icon: "message", label: "Chat", color: .lumeNavy)
+                                }
 
-                                // Direct NavigationLink to actual pages
                                 NavigationLink { CalendarView() } label: {
                                     QuickLinkContent(icon: "calendar", label: "Calendar", color: .lumeGold)
                                 }
@@ -209,12 +200,6 @@ struct DashboardView: View {
                 snapshotTasks = [] // Reset snapshot on appear
                 await loadChecklist()
                 funGreeting = funGreetings.randomElement() ?? ""
-            }
-            .onChange(of: selectedQuickAction) { _, tab in
-                if let tab = tab {
-                    NotificationCenter.default.post(name: .switchToTab, object: nil, userInfo: ["tab": tab])
-                    selectedQuickAction = nil
-                }
             }
         }
     }
@@ -402,42 +387,6 @@ struct ThisWeekTaskRow: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.lumeBorder, lineWidth: 1)
         )
-    }
-}
-
-// MARK: - Quick Link Tile (compact 3-column)
-
-struct QuickLinkTile: View {
-    let icon: String
-    let label: String
-    let color: Color
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(color.opacity(0.1))
-                        .frame(width: 36, height: 36)
-                    Image(systemName: icon)
-                        .font(.system(size: 15))
-                        .foregroundColor(color)
-                }
-
-                Text(label)
-                    .font(.lumeSmall)
-                    .foregroundColor(.lumeNavy)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .background(Color.lumeWarmWhite)
-            .cornerRadius(14)
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(Color.lumeBorder, lineWidth: 1)
-            )
-        }
     }
 }
 
