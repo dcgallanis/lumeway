@@ -58,6 +58,54 @@
     .tab-locked-preview p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
     .tab-locked-preview .locked-cta { display: inline-block; padding: 10px 24px; background: var(--accent); color: var(--cream); border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; }
     .tab-locked-preview .locked-cta:hover { filter: brightness(1.08); }
+
+    /* Community forum */
+    .community-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 16px; flex-wrap: wrap; }
+    .community-cats { display: flex; gap: 6px; flex-wrap: wrap; }
+    .community-cat-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; background: var(--warm-white); font-family: inherit; font-size: 12px; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+    .community-cat-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .community-cat-btn.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    .community-new-btn { padding: 8px 20px; border: none; border-radius: 8px; background: var(--accent); color: var(--cream); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .community-new-btn:hover { background: var(--accent-light); }
+    .community-post-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 12px; cursor: pointer; transition: all 0.15s; }
+    .community-post-card:hover { border-color: var(--navy); transform: translateY(-1px); }
+    .community-post-card.pinned { border-left: 3px solid var(--gold); }
+    .community-post-title { font-family: 'Libre Baskerville', serif; font-size: 16px; font-weight: 400; margin-bottom: 6px; color: var(--text); }
+    .community-post-meta { display: flex; gap: 12px; align-items: center; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+    .community-post-cat { padding: 2px 8px; border-radius: 10px; background: var(--cream); font-size: 11px; color: var(--navy); }
+    .community-post-preview { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.5; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .community-reply-count { display: flex; align-items: center; gap: 4px; }
+    .community-detail { max-width: 720px; margin: 0 auto; }
+    .community-detail-back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; border: none; background: none; font-family: inherit; margin-bottom: 20px; padding: 0; }
+    .community-detail-back:hover { color: var(--navy); }
+    .community-detail-title { font-family: 'Libre Baskerville', serif; font-size: 24px; font-weight: 400; margin-bottom: 8px; }
+    .community-detail-body { font-size: 14px; font-weight: 300; line-height: 1.7; color: var(--text); white-space: pre-wrap; margin-bottom: 24px; }
+    .community-detail-meta { font-size: 12px; color: var(--muted); margin-bottom: 24px; display: flex; gap: 12px; align-items: center; }
+    .community-reply { background: var(--cream); border-radius: 10px; padding: 16px 20px; margin-bottom: 10px; }
+    .community-reply-author { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 4px; }
+    .community-reply-body { font-size: 13px; font-weight: 300; line-height: 1.6; white-space: pre-wrap; }
+    .community-reply-meta { font-size: 11px; color: var(--muted); margin-top: 6px; display: flex; gap: 10px; align-items: center; }
+    .community-reply-form { margin-top: 20px; }
+    .community-reply-form textarea { width: 100%; font-family: inherit; font-size: 14px; font-weight: 300; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--warm-white); color: var(--text); resize: vertical; min-height: 80px; outline: none; }
+    .community-reply-form textarea:focus { border-color: var(--navy); }
+    .community-reply-form button { margin-top: 8px; }
+    .community-actions { display: flex; gap: 8px; align-items: center; }
+    .community-action-btn { font-size: 11px; color: var(--muted); cursor: pointer; border: none; background: none; font-family: inherit; padding: 2px 4px; }
+    .community-action-btn:hover { color: var(--accent); }
+    .community-empty { text-align: center; padding: 48px 24px; color: var(--muted); font-size: 14px; font-weight: 300; }
+    .community-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .community-modal { background: var(--warm-white); border-radius: 16px; padding: 32px; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .community-modal h3 { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 400; margin-bottom: 20px; }
+    .community-modal label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .community-modal input, .community-modal textarea, .community-modal select { width: 100%; font-family: inherit; font-size: 14px; font-weight: 300; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); color: var(--text); outline: none; margin-bottom: 16px; }
+    .community-modal input:focus, .community-modal textarea:focus, .community-modal select:focus { border-color: var(--navy); }
+    .community-modal textarea { resize: vertical; min-height: 120px; }
+    .community-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .community-name-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; color: var(--navy); }
+    .community-pin-badge { font-size: 11px; color: var(--gold); }
+    .community-read-only-banner { background: linear-gradient(135deg, #faf6f1, #f5efe6); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .community-read-only-banner p { font-size: 13px; color: var(--navy); font-weight: 300; }
+
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
@@ -912,6 +960,10 @@
       if (tab === 'notes' && _notesDirty) {
         _notesDirty = false;
         loadDashboard();
+      }
+      // Load community posts when switching to community tab
+      if (tab === 'community') {
+        loadCommunityPosts();
       }
     }
 
@@ -6166,6 +6218,7 @@ guideLibrary['disability'] = {
       html += '  <button class="dash-tab' + (!unlocked ? ' locked' : '') + '" data-tab="notes" onclick="switchTab(\'notes\')">Notes' + (!unlocked ? lockIcon : '') + '</button>';
       html += '  <button class="dash-tab' + (!unlocked ? ' locked' : '') + '" data-tab="activity" onclick="switchTab(\'activity\')">Activity Log' + (!unlocked ? lockIcon : '') + '</button>';
       html += '  <button class="dash-tab' + (!unlocked ? ' locked' : '') + '" data-tab="history" onclick="switchTab(\'history\')">History' + (!unlocked ? lockIcon : '') + '</button>';
+      html += '  <button class="dash-tab" data-tab="community" onclick="switchTab(\'community\')">Community</button>';
       html += '  <button class="dash-tab" data-tab="account" onclick="switchTab(\'account\')" style="margin-left:auto">⚙ Account Settings</button>';
       html += '</div>';
 
@@ -7027,6 +7080,26 @@ guideLibrary['disability'] = {
         html += '</div>';
       }
       html += '</div>'; // panel-history
+
+      // ═══════════════════════════════
+      // ── COMMUNITY TAB ──
+      // ═══════════════════════════════
+      html += '<div class="tab-panel" id="panel-community">';
+      html += '<div id="communityRoot">';
+      html += '  <div style="margin-bottom:8px">';
+      html += '    <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Community</h2>';
+      html += '    <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Ask questions, share experiences, and connect with others going through life transitions.</p>';
+      html += '  </div>';
+      var canPost = tier !== 'free';
+      if (!canPost) {
+        html += '<div class="community-read-only-banner">';
+        html += '  <p>You\'re browsing as a free member. Upgrade to join the conversation.</p>';
+        html += '  <a href="/pricing" style="padding:6px 16px;background:var(--accent);color:var(--cream);border-radius:6px;font-size:12px;font-weight:500;text-decoration:none;white-space:nowrap">See plans</a>';
+        html += '</div>';
+      }
+      html += '  <div id="communityList" data-can-post="' + (canPost ? '1' : '0') + '"><p style="color:var(--muted);font-size:13px">Loading community...</p></div>';
+      html += '</div>';
+      html += '</div>'; // panel-community
 
       // ═══════════════════════════════
       // ── PURCHASES TAB ──
@@ -8538,7 +8611,316 @@ guideLibrary['disability'] = {
       document.getElementById('convModal').classList.remove('open');
     }
 
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeConv(); closeDayView(); } });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeConv(); closeDayView(); closeCommunityModal(); } });
+
+    // ═══════════════════════════════
+    // ── COMMUNITY FORUM ──
+    // ═══════════════════════════════
+    var _communityFilter = '';
+    var _communityPage = 1;
+    var _communityDisplayName = '';
+
+    function loadCommunityPosts() {
+      var el = document.getElementById('communityList');
+      if (!el) return;
+      var canPost = el.dataset.canPost === '1';
+      var url = '/api/community/posts?page=' + _communityPage;
+      if (_communityFilter) url += '&category=' + encodeURIComponent(_communityFilter);
+      fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var cats = data.categories || [];
+        var posts = data.posts || [];
+        var total = data.total || 0;
+        var html = '';
+
+        // Category filter + new post button
+        html += '<div class="community-header">';
+        html += '  <div class="community-cats">';
+        html += '    <button class="community-cat-btn' + (!_communityFilter ? ' active' : '') + '" onclick="filterCommunity(\'\')">All</button>';
+        cats.forEach(function(c) {
+          html += '<button class="community-cat-btn' + (_communityFilter === c.id ? ' active' : '') + '" onclick="filterCommunity(\'' + c.id + '\')">' + c.label + '</button>';
+        });
+        html += '  </div>';
+        if (canPost) {
+          html += '<button class="community-new-btn" onclick="showNewPostModal()">New Post</button>';
+        }
+        html += '</div>';
+
+        // Posts list
+        if (posts.length === 0) {
+          html += '<div class="community-empty">';
+          if (_communityFilter) {
+            html += '<p>No posts in this category yet.</p>';
+          } else {
+            html += '<p>No posts yet. Be the first to start a conversation.</p>';
+          }
+          html += '</div>';
+        } else {
+          posts.forEach(function(p) {
+            var catLabel = '';
+            cats.forEach(function(c) { if (c.id === p.category) catLabel = c.label; });
+            html += '<div class="community-post-card' + (p.is_pinned ? ' pinned' : '') + '" onclick="openCommunityPost(' + p.id + ')">';
+            html += '  <div class="community-post-title">' + (p.is_pinned ? '<span class="community-pin-badge">📌 </span>' : '') + escapeHtml(p.title) + '</div>';
+            html += '  <div class="community-post-meta">';
+            html += '    <span class="community-name-badge">' + escapeHtml(p.display_name) + '</span>';
+            html += '    <span>' + communityTimeAgo(p.created_at) + '</span>';
+            if (catLabel) html += '<span class="community-post-cat">' + catLabel + '</span>';
+            html += '    <span class="community-reply-count">💬 ' + p.reply_count + '</span>';
+            html += '  </div>';
+            var preview = p.body.length > 150 ? p.body.substring(0, 150) + '...' : p.body;
+            html += '  <div class="community-post-preview">' + escapeHtml(preview) + '</div>';
+            html += '</div>';
+          });
+        }
+
+        // Pagination
+        var totalPages = Math.ceil(total / (data.per_page || 20));
+        if (totalPages > 1) {
+          html += '<div style="display:flex;justify-content:center;gap:8px;margin-top:20px">';
+          if (_communityPage > 1) html += '<button class="community-cat-btn" onclick="communityGoPage(' + (_communityPage - 1) + ')">← Previous</button>';
+          html += '<span style="font-size:13px;color:var(--muted);padding:6px 10px">Page ' + _communityPage + ' of ' + totalPages + '</span>';
+          if (_communityPage < totalPages) html += '<button class="community-cat-btn" onclick="communityGoPage(' + (_communityPage + 1) + ')">Next →</button>';
+          html += '</div>';
+        }
+
+        el.innerHTML = html;
+      })
+      .catch(function() {
+        el.innerHTML = '<p style="color:var(--muted);font-size:13px">Could not load community posts.</p>';
+      });
+    }
+
+    function filterCommunity(cat) {
+      _communityFilter = cat;
+      _communityPage = 1;
+      loadCommunityPosts();
+    }
+
+    function communityGoPage(p) {
+      _communityPage = p;
+      loadCommunityPosts();
+    }
+
+    function openCommunityPost(postId) {
+      var root = document.getElementById('communityRoot');
+      if (!root) return;
+      var canPost = (document.getElementById('communityList') || {}).dataset;
+      var canPostVal = canPost && canPost.canPost === '1';
+      root.innerHTML = '<p style="color:var(--muted);font-size:13px">Loading...</p>';
+      fetch('/api/community/posts/' + postId)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var post = data.post;
+        var replies = data.replies || [];
+        var html = '';
+        html += '<div class="community-detail">';
+        html += '  <button class="community-detail-back" onclick="backToCommunityList()">← Back to Community</button>';
+        html += '  <div class="community-detail-meta">';
+        html += '    <span class="community-name-badge">' + escapeHtml(post.display_name) + '</span>';
+        html += '    <span>' + communityTimeAgo(post.created_at) + '</span>';
+        var cats = [{"id":"general","label":"General"},{"id":"emotional-support","label":"Emotional Support"},{"id":"legal-questions","label":"Legal Questions"},{"id":"financial","label":"Financial"},{"id":"success-stories","label":"Success Stories"},{"id":"ask-carol","label":"Ask Carol"}];
+        var catLabel = '';
+        cats.forEach(function(c) { if (c.id === post.category) catLabel = c.label; });
+        if (catLabel) html += '<span class="community-post-cat">' + catLabel + '</span>';
+        html += '    <div class="community-actions">';
+        if (post.is_author) {
+          html += '<button class="community-action-btn" onclick="deleteCommunityPost(' + post.id + ')">Delete</button>';
+        } else {
+          html += '<button class="community-action-btn" onclick="reportCommunity(' + post.id + ', null)">Report</button>';
+        }
+        html += '    </div>';
+        html += '  </div>';
+        html += '  <h2 class="community-detail-title">' + escapeHtml(post.title) + '</h2>';
+        html += '  <div class="community-detail-body">' + escapeHtml(post.body) + '</div>';
+
+        // Replies section
+        html += '  <div style="border-top:1px solid var(--border);padding-top:20px;margin-top:8px">';
+        html += '    <h3 style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:16px">' + replies.length + ' ' + (replies.length === 1 ? 'Reply' : 'Replies') + '</h3>';
+        replies.forEach(function(r) {
+          html += '<div class="community-reply">';
+          html += '  <div style="display:flex;justify-content:space-between;align-items:center">';
+          html += '    <span class="community-reply-author">' + escapeHtml(r.display_name) + '</span>';
+          html += '    <div class="community-actions">';
+          if (r.is_author) {
+            html += '<button class="community-action-btn" onclick="deleteCommunityReply(' + r.id + ',' + post.id + ')">Delete</button>';
+          } else {
+            html += '<button class="community-action-btn" onclick="reportCommunity(null, ' + r.id + ')">Report</button>';
+          }
+          html += '    </div>';
+          html += '  </div>';
+          html += '  <div class="community-reply-body">' + escapeHtml(r.body) + '</div>';
+          html += '  <div class="community-reply-meta"><span>' + communityTimeAgo(r.created_at) + '</span></div>';
+          html += '</div>';
+        });
+
+        // Reply form (paid users only)
+        if (canPostVal) {
+          html += '<div class="community-reply-form">';
+          html += '  <textarea id="communityReplyText" placeholder="Write a reply..."></textarea>';
+          html += '  <button class="community-new-btn" onclick="submitCommunityReply(' + post.id + ')">Reply</button>';
+          html += '</div>';
+        }
+        html += '  </div>'; // replies section
+        html += '</div>'; // community-detail
+        root.innerHTML = html;
+      })
+      .catch(function() {
+        root.innerHTML = '<p style="color:var(--muted);font-size:13px">Could not load this post.</p>';
+      });
+    }
+
+    function backToCommunityList() {
+      var root = document.getElementById('communityRoot');
+      if (!root) return;
+      // Rebuild the skeleton
+      var canPost = (dashData && dashData.effective_tier && dashData.effective_tier !== 'free');
+      var html = '';
+      html += '<div style="margin-bottom:8px">';
+      html += '  <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Community</h2>';
+      html += '  <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Ask questions, share experiences, and connect with others going through life transitions.</p>';
+      html += '</div>';
+      if (!canPost) {
+        html += '<div class="community-read-only-banner">';
+        html += '  <p>You\'re browsing as a free member. Upgrade to join the conversation.</p>';
+        html += '  <a href="/pricing" style="padding:6px 16px;background:var(--accent);color:var(--cream);border-radius:6px;font-size:12px;font-weight:500;text-decoration:none;white-space:nowrap">See plans</a>';
+        html += '</div>';
+      }
+      html += '<div id="communityList" data-can-post="' + (canPost ? '1' : '0') + '"><p style="color:var(--muted);font-size:13px">Loading community...</p></div>';
+      root.innerHTML = html;
+      loadCommunityPosts();
+    }
+
+    function showNewPostModal() {
+      var savedName = localStorage.getItem('lumeway_community_name') || '';
+      var html = '<div class="community-modal-overlay" id="communityModal" onclick="if(event.target===this)closeCommunityModal()">';
+      html += '  <div class="community-modal">';
+      html += '    <h3>New Post</h3>';
+      html += '    <label for="communityPostName">Your display name</label>';
+      html += '    <input type="text" id="communityPostName" placeholder="Enter a name or nickname" value="' + escapeHtml(savedName) + '" maxlength="50" />';
+      html += '    <p style="font-size:11px;color:var(--muted);margin:-12px 0 16px">Use your real name or a pseudonym — your choice.</p>';
+      html += '    <label for="communityPostCat">Category</label>';
+      html += '    <select id="communityPostCat">';
+      html += '      <option value="general">General</option>';
+      html += '      <option value="emotional-support">Emotional Support</option>';
+      html += '      <option value="legal-questions">Legal Questions</option>';
+      html += '      <option value="financial">Financial</option>';
+      html += '      <option value="success-stories">Success Stories</option>';
+      html += '      <option value="ask-carol">Ask Carol</option>';
+      html += '    </select>';
+      html += '    <label for="communityPostTitle">Title</label>';
+      html += '    <input type="text" id="communityPostTitle" placeholder="What\'s on your mind?" maxlength="200" />';
+      html += '    <label for="communityPostBody">Your post</label>';
+      html += '    <textarea id="communityPostBody" placeholder="Share your thoughts, questions, or experiences..." maxlength="5000"></textarea>';
+      html += '    <div class="community-modal-actions">';
+      html += '      <button class="btn-ghost" onclick="closeCommunityModal()">Cancel</button>';
+      html += '      <button class="community-new-btn" onclick="submitCommunityPost()">Post</button>';
+      html += '    </div>';
+      html += '  </div>';
+      html += '</div>';
+      document.body.insertAdjacentHTML('beforeend', html);
+    }
+
+    function closeCommunityModal() {
+      var m = document.getElementById('communityModal');
+      if (m) m.remove();
+    }
+
+    function submitCommunityPost() {
+      var name = (document.getElementById('communityPostName').value || '').trim();
+      var cat = document.getElementById('communityPostCat').value;
+      var title = (document.getElementById('communityPostTitle').value || '').trim();
+      var body = (document.getElementById('communityPostBody').value || '').trim();
+      if (!title || !body) { alert('Please enter a title and post body.'); return; }
+      if (name) localStorage.setItem('lumeway_community_name', name);
+      fetch('/api/community/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: title, body: body, category: cat, display_name: name })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          closeCommunityModal();
+          loadCommunityPosts();
+        } else {
+          alert(data.error || 'Could not create post.');
+        }
+      })
+      .catch(function() { alert('Something went wrong. Please try again.'); });
+    }
+
+    function submitCommunityReply(postId) {
+      var body = (document.getElementById('communityReplyText').value || '').trim();
+      if (!body) return;
+      var name = localStorage.getItem('lumeway_community_name') || '';
+      fetch('/api/community/posts/' + postId + '/replies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ body: body, display_name: name })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          openCommunityPost(postId); // Reload the post
+        } else {
+          alert(data.error || 'Could not post reply.');
+        }
+      })
+      .catch(function() { alert('Something went wrong. Please try again.'); });
+    }
+
+    function deleteCommunityPost(postId) {
+      if (!confirm('Delete this post? This cannot be undone.')) return;
+      fetch('/api/community/posts/' + postId, { method: 'DELETE' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) backToCommunityList();
+        else alert(data.error || 'Could not delete.');
+      });
+    }
+
+    function deleteCommunityReply(replyId, postId) {
+      if (!confirm('Delete this reply?')) return;
+      fetch('/api/community/replies/' + replyId, { method: 'DELETE' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) openCommunityPost(postId);
+        else alert(data.error || 'Could not delete.');
+      });
+    }
+
+    function reportCommunity(postId, replyId) {
+      var reason = prompt('Why are you reporting this? (brief description)');
+      if (!reason) return;
+      fetch('/api/community/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: postId, reply_id: replyId, reason: reason })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) alert('Thank you. We\'ll review this shortly.');
+        else alert(data.error || 'Could not submit report.');
+      });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function communityTimeAgo(dateStr) {
+      if (!dateStr) return '';
+      var now = new Date();
+      var d = new Date(dateStr + (dateStr.indexOf('Z') < 0 && dateStr.indexOf('+') < 0 ? 'Z' : ''));
+      var diff = Math.floor((now - d) / 1000);
+      if (diff < 60) return 'just now';
+      if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+      if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+      if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
 
     loadDashboard();
 

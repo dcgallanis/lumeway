@@ -625,6 +625,35 @@ def init_subscribers_db():
             updated_at TEXT NOT NULL,
             UNIQUE(user_id, token)
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS community_posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            display_name TEXT NOT NULL,
+            category TEXT NOT NULL DEFAULT 'general',
+            title TEXT NOT NULL,
+            body TEXT NOT NULL,
+            is_pinned INTEGER DEFAULT 0,
+            is_hidden INTEGER DEFAULT 0,
+            created_at TEXT NOT NULL,
+            updated_at TEXT
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS community_replies (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            post_id INTEGER NOT NULL REFERENCES community_posts(id),
+            user_id INTEGER NOT NULL,
+            display_name TEXT NOT NULL,
+            body TEXT NOT NULL,
+            is_hidden INTEGER DEFAULT 0,
+            created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS community_reports (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            reporter_user_id INTEGER NOT NULL,
+            post_id INTEGER,
+            reply_id INTEGER,
+            reason TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )""")
     conn.commit()
     # Tier columns migration (idempotent)
     for alter_sql in [
@@ -4427,6 +4456,260 @@ def dashboard_history_detail(session_id):
     messages = [{"role": r[0], "content": r[1], "created_at": r[2]} for r in cur.fetchall()]
     conn.close()
     return jsonify({"messages": messages})
+
+# ── Community Forum API ──
+
+COMMUNITY_CATEGORIES = [
+    {"id": "general", "label": "General"},
+    {"id": "emotional-support", "label": "Emotional Support"},
+    {"id": "legal-questions", "label": "Legal Questions"},
+    {"id": "financial", "label": "Financial"},
+    {"id": "success-stories", "label": "Success Stories"},
+    {"id": "ask-carol", "label": "Ask Carol"},
+]
+
+@app.route("/api/community/posts", methods=["GET"])
+def community_list_posts():
+    """List community posts. All logged-in users can read."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    category = request.args.get("category", "")
+    page = max(1, int(request.args.get("page", 1)))
+    per_page = 20
+    offset = (page - 1) * per_page
+
+    # Build query
+    where = "WHERE p.is_hidden = 0"
+    params = []
+    if category:
+        where += f" AND p.category = {param}"
+        params.append(category)
+
+    # Count total
+    cur = db_execute(conn, f"SELECT COUNT(*) FROM community_posts p {where}", tuple(params))
+    total = cur.fetchone()[0]
+
+    # Fetch posts with reply counts
+    cur = db_execute(conn, f"""
+        SELECT p.id, p.user_id, p.display_name, p.category, p.title, p.body,
+               p.is_pinned, p.created_at, p.updated_at,
+               (SELECT COUNT(*) FROM community_replies r WHERE r.post_id = p.id AND r.is_hidden = 0) as reply_count
+        FROM community_posts p {where}
+        ORDER BY p.is_pinned DESC, p.created_at DESC
+        LIMIT {param} OFFSET {param}
+    """, tuple(params + [per_page, offset]))
+    posts = []
+    for r in cur.fetchall():
+        posts.append({
+            "id": r[0], "user_id": r[1], "display_name": r[2], "category": r[3],
+            "title": r[4], "body": r[5], "is_pinned": bool(r[6]),
+            "created_at": r[7], "updated_at": r[8], "reply_count": r[9],
+            "is_author": r[1] == user["id"]
+        })
+    conn.close()
+    return jsonify({"posts": posts, "total": total, "page": page, "per_page": per_page, "categories": COMMUNITY_CATEGORIES})
+
+
+@app.route("/api/community/posts", methods=["POST"])
+def community_create_post():
+    """Create a new community post. Requires paid tier."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    tier = get_effective_tier(user)
+    if tier == "free":
+        return jsonify({"error": "Upgrade your plan to post in the community."}), 403
+    data = request.get_json()
+    title = (data.get("title") or "").strip()
+    body = (data.get("body") or "").strip()
+    category = data.get("category", "general")
+    display_name = (data.get("display_name") or "").strip()
+    if not title or not body:
+        return jsonify({"error": "Title and body are required."}), 400
+    if len(title) > 200:
+        return jsonify({"error": "Title is too long (max 200 characters)."}), 400
+    if len(body) > 5000:
+        return jsonify({"error": "Post is too long (max 5000 characters)."}), 400
+    if not display_name:
+        display_name = user.get("display_name") or "Anonymous"
+    # Validate category
+    valid_cats = [c["id"] for c in COMMUNITY_CATEGORIES]
+    if category not in valid_cats:
+        category = "general"
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.utcnow().isoformat()
+    db_execute(conn, f"""INSERT INTO community_posts (user_id, display_name, category, title, body, created_at)
+        VALUES ({param}, {param}, {param}, {param}, {param}, {param})""",
+        (user["id"], display_name, category, title, body, now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/community/posts/<int:post_id>", methods=["GET"])
+def community_get_post(post_id):
+    """Get a single post with its replies."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"""SELECT id, user_id, display_name, category, title, body, is_pinned, created_at, updated_at
+        FROM community_posts WHERE id = {param} AND is_hidden = 0""", (post_id,))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "Post not found"}), 404
+    post = {
+        "id": row[0], "user_id": row[1], "display_name": row[2], "category": row[3],
+        "title": row[4], "body": row[5], "is_pinned": bool(row[6]),
+        "created_at": row[7], "updated_at": row[8], "is_author": row[1] == user["id"]
+    }
+    # Get replies
+    cur = db_execute(conn, f"""SELECT id, user_id, display_name, body, created_at
+        FROM community_replies WHERE post_id = {param} AND is_hidden = 0 ORDER BY created_at""", (post_id,))
+    replies = []
+    for r in cur.fetchall():
+        replies.append({
+            "id": r[0], "user_id": r[1], "display_name": r[2], "body": r[3],
+            "created_at": r[4], "is_author": r[1] == user["id"]
+        })
+    conn.close()
+    return jsonify({"post": post, "replies": replies})
+
+
+@app.route("/api/community/posts/<int:post_id>/replies", methods=["POST"])
+def community_create_reply(post_id):
+    """Reply to a community post. Requires paid tier."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    tier = get_effective_tier(user)
+    if tier == "free":
+        return jsonify({"error": "Upgrade your plan to reply in the community."}), 403
+    data = request.get_json()
+    body = (data.get("body") or "").strip()
+    display_name = (data.get("display_name") or "").strip()
+    if not body:
+        return jsonify({"error": "Reply cannot be empty."}), 400
+    if len(body) > 3000:
+        return jsonify({"error": "Reply is too long (max 3000 characters)."}), 400
+    if not display_name:
+        display_name = user.get("display_name") or "Anonymous"
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    # Verify post exists
+    cur = db_execute(conn, f"SELECT id FROM community_posts WHERE id = {param} AND is_hidden = 0", (post_id,))
+    if not cur.fetchone():
+        conn.close()
+        return jsonify({"error": "Post not found"}), 404
+    now = datetime.utcnow().isoformat()
+    db_execute(conn, f"""INSERT INTO community_replies (post_id, user_id, display_name, body, created_at)
+        VALUES ({param}, {param}, {param}, {param}, {param})""",
+        (post_id, user["id"], display_name, body, now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/community/report", methods=["POST"])
+def community_report():
+    """Report a post or reply for moderation."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.get_json()
+    post_id = data.get("post_id")
+    reply_id = data.get("reply_id")
+    reason = (data.get("reason") or "").strip()
+    if not post_id and not reply_id:
+        return jsonify({"error": "Must specify post_id or reply_id"}), 400
+    if not reason:
+        return jsonify({"error": "Please provide a reason for reporting."}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.utcnow().isoformat()
+    db_execute(conn, f"""INSERT INTO community_reports (reporter_user_id, post_id, reply_id, reason, created_at)
+        VALUES ({param}, {param}, {param}, {param}, {param})""",
+        (user["id"], post_id, reply_id, reason, now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "message": "Thank you for reporting. We'll review this shortly."})
+
+
+@app.route("/api/community/posts/<int:post_id>", methods=["DELETE"])
+def community_delete_post(post_id):
+    """Delete (hide) a post. Author or admin only."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT user_id FROM community_posts WHERE id = {param}", (post_id,))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "Post not found"}), 404
+    # Allow author or admin (Carol)
+    is_admin = user.get("email") in ["hello@lumeway.co", "lumeway.co@gmail.com"]
+    if row[0] != user["id"] and not is_admin:
+        conn.close()
+        return jsonify({"error": "Not authorized"}), 403
+    db_execute(conn, f"UPDATE community_posts SET is_hidden = 1 WHERE id = {param}", (post_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/community/replies/<int:reply_id>", methods=["DELETE"])
+def community_delete_reply(reply_id):
+    """Delete (hide) a reply. Author or admin only."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT user_id FROM community_replies WHERE id = {param}", (reply_id,))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "Reply not found"}), 404
+    is_admin = user.get("email") in ["hello@lumeway.co", "lumeway.co@gmail.com"]
+    if row[0] != user["id"] and not is_admin:
+        conn.close()
+        return jsonify({"error": "Not authorized"}), 403
+    db_execute(conn, f"UPDATE community_replies SET is_hidden = 1 WHERE id = {param}", (reply_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/community/posts/<int:post_id>/pin", methods=["POST"])
+def community_pin_post(post_id):
+    """Pin/unpin a post. Admin only."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    is_admin = user.get("email") in ["hello@lumeway.co", "lumeway.co@gmail.com"]
+    if not is_admin:
+        return jsonify({"error": "Not authorized"}), 403
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT is_pinned FROM community_posts WHERE id = {param}", (post_id,))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "Post not found"}), 404
+    new_val = 0 if row[0] else 1
+    db_execute(conn, f"UPDATE community_posts SET is_pinned = {param} WHERE id = {param}", (new_val, post_id))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "is_pinned": bool(new_val)})
+
 
 # ── Help Resources (professional referrals per transition) ──
 
