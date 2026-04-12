@@ -3668,6 +3668,25 @@ guideLibrary['disability'] = {
       ]
     };
 
+    function upgradeStarterToFull(category, price) {
+      var catLabels = { 'job-loss': 'Job Loss', estate: 'Estate', divorce: 'Divorce', disability: 'Disability', relocation: 'Relocation', retirement: 'Retirement' };
+      var label = catLabels[category] || category;
+      fetch('/api/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_id: 'plan-' + category,
+          name: label + ' Full Plan',
+          price: price,
+          type: 'plan',
+          purchase_type: 'one_transition',
+          category: category
+        })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function() { window.location.href = '/cart'; });
+    }
+
     function redeemCode() {
       var code = document.getElementById('redeemCodeInput').value.trim();
       var result = document.getElementById('redeemResult');
@@ -6101,7 +6120,8 @@ guideLibrary['disability'] = {
 
       var html = '';
       html += '<div class="dash-header">';
-      html += '  <h1 class="dash-greeting">Welcome back, ' + name + '</h1>';
+      var isNewUser = !localStorage.getItem('lumeway_onboarded') || (checklistItems.length === 0 && sessions.length === 0);
+      html += '  <h1 class="dash-greeting">' + (isNewUser ? 'Welcome, ' : 'Welcome back, ') + name + '</h1>';
       html += '  <p class="dash-sub">' + u.email + '</p>';
       html += '</div>';
 
@@ -7093,10 +7113,13 @@ guideLibrary['disability'] = {
         html += '  </div>';
       } else if (tier === 'starter') {
         var upgradePrice = Math.max(0, (3900 - creditCents) / 100).toFixed(0);
+        // Find which category they already have starter access for
+        var starterCategory = starterCats.length > 0 ? starterCats[0] : 'job-loss';
+        var starterLabel = transLabels[starterCategory] || starterCategory;
         html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">You have your template bundle. Upgrade for the full dashboard — guides, calendar, tools, and more.</p>';
         html += '  <div style="display:flex;gap:10px;flex-wrap:wrap">';
-        html += '    <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:14px;text-decoration:none;font-weight:500">Upgrade — $' + upgradePrice + '</a>';
-        html += '    <a href="/templates" style="display:inline-block;padding:10px 24px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:14px;text-decoration:none">Shop Templates</a>';
+        html += '    <button onclick="upgradeStarterToFull(\'' + starterCategory + '\',' + upgradePrice + ')" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border:none;border-radius:8px;font-size:14px;text-decoration:none;font-weight:500;cursor:pointer;font-family:Plus Jakarta Sans,sans-serif">Upgrade — $' + upgradePrice + '</button>';
+        html += '    <a href="/pricing" style="display:inline-block;padding:10px 24px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:14px;text-decoration:none">See all plans</a>';
         html += '  </div>';
       } else if (tier === 'one_transition' || tier === 'pass') {
         html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6">You have full access to your plan.</p>';

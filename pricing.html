@@ -472,6 +472,12 @@
       .catch(function() {});
 
     function showTransitionSelector() {
+      // If user already has starter access for a category, skip the modal and go straight to checkout
+      var starterCats = Object.keys(userAccess).filter(function(k) { return userAccess[k] === 'starter'; });
+      if (starterCats.length > 0) {
+        purchaseTransition(starterCats[0], 'one_transition');
+        return;
+      }
       showCategoryModal('one_transition', 'What are you going through?', 'Choose one. You\'ll get the full guide, checklists, and templates.');
     }
 
