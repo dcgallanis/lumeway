@@ -457,6 +457,36 @@ def init_subscribers_db():
             updated_at TEXT NOT NULL,
             UNIQUE(user_id, token)
         )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS community_posts (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            display_name TEXT NOT NULL,
+            category TEXT NOT NULL DEFAULT 'general',
+            transition_category TEXT,
+            title TEXT NOT NULL,
+            body TEXT NOT NULL,
+            is_pinned INTEGER DEFAULT 0,
+            is_hidden INTEGER DEFAULT 0,
+            created_at TEXT NOT NULL,
+            updated_at TEXT
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS community_replies (
+            id SERIAL PRIMARY KEY,
+            post_id INTEGER NOT NULL REFERENCES community_posts(id),
+            user_id INTEGER NOT NULL,
+            display_name TEXT NOT NULL,
+            body TEXT NOT NULL,
+            is_hidden INTEGER DEFAULT 0,
+            created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS community_reports (
+            id SERIAL PRIMARY KEY,
+            reporter_user_id INTEGER NOT NULL,
+            post_id INTEGER,
+            reply_id INTEGER,
+            reason TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )""")
     else:
         db_execute(conn, """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -799,6 +829,42 @@ def init_subscribers_db():
     except Exception:
         try:
             conn_eq.close()
+        except Exception:
+            pass
+    # Community forum tables (idempotent migration)
+    try:
+        conn_cm = get_db()
+        if USE_POSTGRES:
+            db_execute(conn_cm, """CREATE TABLE IF NOT EXISTS community_posts (
+                id SERIAL PRIMARY KEY, user_id INTEGER NOT NULL, display_name TEXT NOT NULL,
+                category TEXT NOT NULL DEFAULT 'general', transition_category TEXT,
+                title TEXT NOT NULL, body TEXT NOT NULL, is_pinned INTEGER DEFAULT 0,
+                is_hidden INTEGER DEFAULT 0, created_at TEXT NOT NULL, updated_at TEXT)""")
+            db_execute(conn_cm, """CREATE TABLE IF NOT EXISTS community_replies (
+                id SERIAL PRIMARY KEY, post_id INTEGER NOT NULL REFERENCES community_posts(id),
+                user_id INTEGER NOT NULL, display_name TEXT NOT NULL, body TEXT NOT NULL,
+                is_hidden INTEGER DEFAULT 0, created_at TEXT NOT NULL)""")
+            db_execute(conn_cm, """CREATE TABLE IF NOT EXISTS community_reports (
+                id SERIAL PRIMARY KEY, reporter_user_id INTEGER NOT NULL,
+                post_id INTEGER, reply_id INTEGER, reason TEXT NOT NULL, created_at TEXT NOT NULL)""")
+        else:
+            db_execute(conn_cm, """CREATE TABLE IF NOT EXISTS community_posts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, display_name TEXT NOT NULL,
+                category TEXT NOT NULL DEFAULT 'general', transition_category TEXT,
+                title TEXT NOT NULL, body TEXT NOT NULL, is_pinned INTEGER DEFAULT 0,
+                is_hidden INTEGER DEFAULT 0, created_at TEXT NOT NULL, updated_at TEXT)""")
+            db_execute(conn_cm, """CREATE TABLE IF NOT EXISTS community_replies (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, post_id INTEGER NOT NULL REFERENCES community_posts(id),
+                user_id INTEGER NOT NULL, display_name TEXT NOT NULL, body TEXT NOT NULL,
+                is_hidden INTEGER DEFAULT 0, created_at TEXT NOT NULL)""")
+            db_execute(conn_cm, """CREATE TABLE IF NOT EXISTS community_reports (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, reporter_user_id INTEGER NOT NULL,
+                post_id INTEGER, reply_id INTEGER, reason TEXT NOT NULL, created_at TEXT NOT NULL)""")
+        conn_cm.commit()
+        conn_cm.close()
+    except Exception:
+        try:
+            conn_cm.close()
         except Exception:
             pass
     conn.close()
@@ -4487,6 +4553,10 @@ def community_list_posts():
     if category:
         where += f" AND p.category = {param}"
         params.append(category)
+    transition = request.args.get("transition", "")
+    if transition:
+        where += f" AND p.transition_category = {param}"
+        params.append(transition)
 
     # Count total
     cur = db_execute(conn, f"SELECT COUNT(*) FROM community_posts p {where}", tuple(params))
@@ -4496,7 +4566,8 @@ def community_list_posts():
     cur = db_execute(conn, f"""
         SELECT p.id, p.user_id, p.display_name, p.category, p.title, p.body,
                p.is_pinned, p.created_at, p.updated_at,
-               (SELECT COUNT(*) FROM community_replies r WHERE r.post_id = p.id AND r.is_hidden = 0) as reply_count
+               (SELECT COUNT(*) FROM community_replies r WHERE r.post_id = p.id AND r.is_hidden = 0) as reply_count,
+               p.transition_category
         FROM community_posts p {where}
         ORDER BY p.is_pinned DESC, p.created_at DESC
         LIMIT {param} OFFSET {param}
@@ -4507,10 +4578,12 @@ def community_list_posts():
             "id": r[0], "user_id": r[1], "display_name": r[2], "category": r[3],
             "title": r[4], "body": r[5], "is_pinned": bool(r[6]),
             "created_at": r[7], "updated_at": r[8], "reply_count": r[9],
+            "transition_category": r[10],
             "is_author": r[1] == user["id"]
         })
     conn.close()
-    return jsonify({"posts": posts, "total": total, "page": page, "per_page": per_page, "categories": COMMUNITY_CATEGORIES})
+    transition_labels = [{"id": k, "label": v} for k, v in CATEGORY_LABELS.items()]
+    return jsonify({"posts": posts, "total": total, "page": page, "per_page": per_page, "categories": COMMUNITY_CATEGORIES, "transitions": transition_labels})
 
 
 @app.route("/api/community/posts", methods=["POST"])
@@ -4526,6 +4599,7 @@ def community_create_post():
     title = (data.get("title") or "").strip()
     body = (data.get("body") or "").strip()
     category = data.get("category", "general")
+    transition_category = (data.get("transition_category") or "").strip() or None
     display_name = (data.get("display_name") or "").strip()
     if not title or not body:
         return jsonify({"error": "Title and body are required."}), 400
@@ -4539,12 +4613,16 @@ def community_create_post():
     valid_cats = [c["id"] for c in COMMUNITY_CATEGORIES]
     if category not in valid_cats:
         category = "general"
+    # Validate transition category
+    valid_transitions = list(CATEGORY_LABELS.keys())
+    if transition_category and transition_category not in valid_transitions:
+        transition_category = None
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
     now = datetime.utcnow().isoformat()
-    db_execute(conn, f"""INSERT INTO community_posts (user_id, display_name, category, title, body, created_at)
-        VALUES ({param}, {param}, {param}, {param}, {param}, {param})""",
-        (user["id"], display_name, category, title, body, now))
+    db_execute(conn, f"""INSERT INTO community_posts (user_id, display_name, category, transition_category, title, body, created_at)
+        VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param})""",
+        (user["id"], display_name, category, transition_category, title, body, now))
     conn.commit()
     conn.close()
     return jsonify({"ok": True})
@@ -4558,7 +4636,7 @@ def community_get_post(post_id):
         return jsonify({"error": "Not logged in"}), 401
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    cur = db_execute(conn, f"""SELECT id, user_id, display_name, category, title, body, is_pinned, created_at, updated_at
+    cur = db_execute(conn, f"""SELECT id, user_id, display_name, category, title, body, is_pinned, created_at, updated_at, transition_category
         FROM community_posts WHERE id = {param} AND is_hidden = 0""", (post_id,))
     row = cur.fetchone()
     if not row:
@@ -4567,7 +4645,8 @@ def community_get_post(post_id):
     post = {
         "id": row[0], "user_id": row[1], "display_name": row[2], "category": row[3],
         "title": row[4], "body": row[5], "is_pinned": bool(row[6]),
-        "created_at": row[7], "updated_at": row[8], "is_author": row[1] == user["id"]
+        "created_at": row[7], "updated_at": row[8], "transition_category": row[9],
+        "is_author": row[1] == user["id"]
     }
     # Get replies
     cur = db_execute(conn, f"""SELECT id, user_id, display_name, body, created_at

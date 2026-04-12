@@ -8617,6 +8617,7 @@ guideLibrary['disability'] = {
     // ── COMMUNITY FORUM ──
     // ═══════════════════════════════
     var _communityFilter = '';
+    var _communityTransition = '';
     var _communityPage = 1;
     var _communityDisplayName = '';
 
@@ -8626,10 +8627,12 @@ guideLibrary['disability'] = {
       var canPost = el.dataset.canPost === '1';
       var url = '/api/community/posts?page=' + _communityPage;
       if (_communityFilter) url += '&category=' + encodeURIComponent(_communityFilter);
+      if (_communityTransition) url += '&transition=' + encodeURIComponent(_communityTransition);
       fetch(url)
       .then(function(r) { return r.json(); })
       .then(function(data) {
         var cats = data.categories || [];
+        var transitions = data.transitions || [];
         var posts = data.posts || [];
         var total = data.total || 0;
         var html = '';
@@ -8637,7 +8640,7 @@ guideLibrary['disability'] = {
         // Category filter + new post button
         html += '<div class="community-header">';
         html += '  <div class="community-cats">';
-        html += '    <button class="community-cat-btn' + (!_communityFilter ? ' active' : '') + '" onclick="filterCommunity(\'\')">All</button>';
+        html += '    <button class="community-cat-btn' + (!_communityFilter ? ' active' : '') + '" onclick="filterCommunity(\'\')">All Topics</button>';
         cats.forEach(function(c) {
           html += '<button class="community-cat-btn' + (_communityFilter === c.id ? ' active' : '') + '" onclick="filterCommunity(\'' + c.id + '\')">' + c.label + '</button>';
         });
@@ -8647,16 +8650,27 @@ guideLibrary['disability'] = {
         }
         html += '</div>';
 
+        // Transition filter row
+        html += '<div style="margin-bottom:16px;display:flex;gap:6px;flex-wrap:wrap">';
+        html += '  <button class="community-cat-btn' + (!_communityTransition ? ' active' : '') + '" onclick="filterCommunityTransition(\'\')">All Transitions</button>';
+        transitions.forEach(function(t) {
+          html += '<button class="community-cat-btn' + (_communityTransition === t.id ? ' active' : '') + '" onclick="filterCommunityTransition(\'' + t.id + '\')" style="font-size:11px">' + t.label + '</button>';
+        });
+        html += '</div>';
+
         // Posts list
         if (posts.length === 0) {
           html += '<div class="community-empty">';
-          if (_communityFilter) {
-            html += '<p>No posts in this category yet.</p>';
+          if (_communityFilter || _communityTransition) {
+            html += '<p>No posts matching these filters yet.</p>';
           } else {
             html += '<p>No posts yet. Be the first to start a conversation.</p>';
           }
           html += '</div>';
         } else {
+          // Build transition label lookup
+          var transMap = {};
+          transitions.forEach(function(t) { transMap[t.id] = t.label; });
           posts.forEach(function(p) {
             var catLabel = '';
             cats.forEach(function(c) { if (c.id === p.category) catLabel = c.label; });
@@ -8666,6 +8680,9 @@ guideLibrary['disability'] = {
             html += '    <span class="community-name-badge">' + escapeHtml(p.display_name) + '</span>';
             html += '    <span>' + communityTimeAgo(p.created_at) + '</span>';
             if (catLabel) html += '<span class="community-post-cat">' + catLabel + '</span>';
+            if (p.transition_category && transMap[p.transition_category]) {
+              html += '<span class="community-post-cat" style="background:var(--navy);color:var(--cream)">' + transMap[p.transition_category] + '</span>';
+            }
             html += '    <span class="community-reply-count">💬 ' + p.reply_count + '</span>';
             html += '  </div>';
             var preview = p.body.length > 150 ? p.body.substring(0, 150) + '...' : p.body;
@@ -8697,6 +8714,12 @@ guideLibrary['disability'] = {
       loadCommunityPosts();
     }
 
+    function filterCommunityTransition(t) {
+      _communityTransition = t;
+      _communityPage = 1;
+      loadCommunityPosts();
+    }
+
     function communityGoPage(p) {
       _communityPage = p;
       loadCommunityPosts();
@@ -8720,9 +8743,13 @@ guideLibrary['disability'] = {
         html += '    <span class="community-name-badge">' + escapeHtml(post.display_name) + '</span>';
         html += '    <span>' + communityTimeAgo(post.created_at) + '</span>';
         var cats = [{"id":"general","label":"General"},{"id":"emotional-support","label":"Emotional Support"},{"id":"legal-questions","label":"Legal Questions"},{"id":"financial","label":"Financial"},{"id":"success-stories","label":"Success Stories"},{"id":"ask-carol","label":"Ask Carol"}];
+        var transLabels = {"job-loss":"Job Loss & Income Crisis","estate":"Death & Estate","divorce":"Divorce & Separation","disability":"Disability & Benefits","relocation":"Moving & Relocation","retirement":"Retirement Planning"};
         var catLabel = '';
         cats.forEach(function(c) { if (c.id === post.category) catLabel = c.label; });
         if (catLabel) html += '<span class="community-post-cat">' + catLabel + '</span>';
+        if (post.transition_category && transLabels[post.transition_category]) {
+          html += '<span class="community-post-cat" style="background:var(--navy);color:var(--cream)">' + transLabels[post.transition_category] + '</span>';
+        }
         html += '    <div class="community-actions">';
         if (post.is_author) {
           html += '<button class="community-action-btn" onclick="deleteCommunityPost(' + post.id + ')">Delete</button>';
@@ -8799,7 +8826,7 @@ guideLibrary['disability'] = {
       html += '    <label for="communityPostName">Your display name</label>';
       html += '    <input type="text" id="communityPostName" placeholder="Enter a name or nickname" value="' + escapeHtml(savedName) + '" maxlength="50" />';
       html += '    <p style="font-size:11px;color:var(--muted);margin:-12px 0 16px">Use your real name or a pseudonym — your choice.</p>';
-      html += '    <label for="communityPostCat">Category</label>';
+      html += '    <label for="communityPostCat">Topic</label>';
       html += '    <select id="communityPostCat">';
       html += '      <option value="general">General</option>';
       html += '      <option value="emotional-support">Emotional Support</option>';
@@ -8807,6 +8834,16 @@ guideLibrary['disability'] = {
       html += '      <option value="financial">Financial</option>';
       html += '      <option value="success-stories">Success Stories</option>';
       html += '      <option value="ask-carol">Ask Carol</option>';
+      html += '    </select>';
+      html += '    <label for="communityPostTransition">Life transition (optional)</label>';
+      html += '    <select id="communityPostTransition">';
+      html += '      <option value="">None — general post</option>';
+      html += '      <option value="job-loss">Job Loss & Income Crisis</option>';
+      html += '      <option value="estate">Death & Estate</option>';
+      html += '      <option value="divorce">Divorce & Separation</option>';
+      html += '      <option value="disability">Disability & Benefits</option>';
+      html += '      <option value="relocation">Moving & Relocation</option>';
+      html += '      <option value="retirement">Retirement Planning</option>';
       html += '    </select>';
       html += '    <label for="communityPostTitle">Title</label>';
       html += '    <input type="text" id="communityPostTitle" placeholder="What\'s on your mind?" maxlength="200" />';
@@ -8829,6 +8866,7 @@ guideLibrary['disability'] = {
     function submitCommunityPost() {
       var name = (document.getElementById('communityPostName').value || '').trim();
       var cat = document.getElementById('communityPostCat').value;
+      var transition = document.getElementById('communityPostTransition').value;
       var title = (document.getElementById('communityPostTitle').value || '').trim();
       var body = (document.getElementById('communityPostBody').value || '').trim();
       if (!title || !body) { alert('Please enter a title and post body.'); return; }
@@ -8836,7 +8874,7 @@ guideLibrary['disability'] = {
       fetch('/api/community/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: title, body: body, category: cat, display_name: name })
+        body: JSON.stringify({ title: title, body: body, category: cat, transition_category: transition || null, display_name: name })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
