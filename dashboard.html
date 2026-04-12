@@ -577,12 +577,23 @@
     .guide-what { font-size: 14px; font-weight: 300; line-height: 1.7; color: var(--text); margin-bottom: 8px; }
     .guide-why { font-size: 14px; font-weight: 400; line-height: 1.7; color: var(--navy); background: rgba(44,74,94,0.04); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
     .guide-section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin: 16px 0 8px; }
-    .guide-steps { list-style: none; counter-reset: steps; padding: 0; display: flex; flex-direction: column; gap: 0; position: relative; }
-    .guide-steps::before { content: ''; position: absolute; left: 15px; top: 28px; bottom: 28px; width: 2px; background: linear-gradient(to bottom, var(--border), var(--gold), var(--border)); border-radius: 1px; z-index: 0; }
-    .guide-steps li { counter-increment: steps; font-size: 14px; font-weight: 300; line-height: 1.7; padding: 12px 16px 12px 44px; position: relative; background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; z-index: 1; transition: box-shadow 0.2s, border-color 0.2s; }
-    .guide-steps li:last-child { margin-bottom: 0; }
-    .guide-steps li:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-color: var(--gold); }
-    .guide-steps li::before { content: counter(steps); position: absolute; left: 10px; top: 12px; width: 24px; height: 24px; background: var(--navy); border: 2px solid var(--warm-white); border-radius: 50%; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; color: var(--cream); box-shadow: 0 1px 4px rgba(0,0,0,0.1); z-index: 2; }
+    .guide-steps { list-style: none; counter-reset: steps; padding: 0; }
+    .guide-steps li { counter-increment: steps; font-size: 14px; font-weight: 300; line-height: 1.7; padding: 8px 0 8px 32px; border-bottom: 1px solid var(--border); position: relative; }
+    .guide-steps li:last-child { border-bottom: none; }
+    .guide-steps li::before { content: counter(steps); position: absolute; left: 0; top: 8px; width: 22px; height: 22px; background: var(--cream); border: 1px solid var(--border); border-radius: 50%; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; color: var(--navy); }
+    /* CRAFT method visual chart */
+    .craft-chart { background: linear-gradient(135deg, #F5F0EA, #FAF7F2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-top: 12px; }
+    .craft-chart-title { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+    .craft-chart-sub { font-size: 12px; color: var(--muted); font-weight: 300; margin-bottom: 16px; }
+    .craft-flow { display: flex; flex-direction: column; gap: 0; position: relative; }
+    .craft-flow::before { content: ''; position: absolute; left: 17px; top: 20px; bottom: 20px; width: 2px; background: linear-gradient(to bottom, var(--gold), var(--accent)); border-radius: 1px; }
+    .craft-step { display: flex; gap: 14px; align-items: flex-start; padding: 10px 0; position: relative; z-index: 1; }
+    .craft-step-num { width: 36px; height: 36px; min-width: 36px; background: var(--navy); color: var(--cream); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; border: 3px solid var(--warm-white); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .craft-step-body { flex: 1; }
+    .craft-step-label { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+    .craft-step-desc { font-size: 13px; font-weight: 300; color: var(--text); line-height: 1.6; }
+    .craft-stat { text-align: center; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); font-weight: 300; }
+    .craft-stat strong { color: var(--navy); font-weight: 600; }
     .guide-terms { display: grid; gap: 8px; }
     .guide-term { background: var(--cream); border-radius: 8px; padding: 10px 14px; }
     .guide-term strong { font-size: 13px; font-weight: 600; color: var(--navy); }
@@ -3422,15 +3433,21 @@ guideLibrary['disability'] = {
               'Express concern, not ultimatums (unless you are prepared to follow through). "I love you and I am scared" opens more doors than "If you do not stop, I am leaving."',
               'Prepare for denial, anger, or deflection. This is normal. Your goal is to plant a seed, not win an argument.',
               'Have resources ready to offer if they are open: SAMHSA number, a treatment center you have researched, an Al-Anon meeting for yourself.',
-              'Know when to stop. If the conversation escalates, it is okay to say "I love you. We can talk about this again when we are both ready."',
-              'Learn the CRAFT method (Community Reinforcement and Family Training). CRAFT is the most evidence-based approach for families — studies show 64-74% of families using CRAFT get their loved one into treatment, compared to about 30% with other methods.',
-              'CRAFT step 1: Stop enabling. Identify the ways you are shielding them from consequences (calling in sick for them, paying their bills, cleaning up after them) and gradually stop.',
-              'CRAFT step 2: Reinforce sober behavior. When they are sober, make it rewarding — spend quality time, express affection, do activities they enjoy. When they are using, withdraw those rewards without punishment or lectures.',
-              'CRAFT step 3: Let natural consequences happen. If they miss work because of drinking, let them deal with the fallout. This is not cruelty — it is allowing reality to make the case for change.',
-              'CRAFT step 4: Identify treatment-ready moments. These are windows when they express regret, fear, or openness. Have a treatment option researched and ready to suggest in that moment — "I found a program. Can I tell you about it?"',
-              'CRAFT step 5: Take care of yourself throughout. CRAFT is not about suffering in silence — it is about strategic, compassionate action while maintaining your own health.',
-              'Consider working with a CRAFT-trained therapist who can guide you through the process. Find one at motivationandchange.com or the CRAFT website at robertjmeyersphd.com.'
+              'Know when to stop. If the conversation escalates, it is okay to say "I love you. We can talk about this again when we are both ready."'
             ],
+            craft: {
+              title: 'The CRAFT Method',
+              subtitle: 'Community Reinforcement and Family Training \u2014 the most evidence-based approach for families',
+              steps: [
+                { label: 'Stop enabling', desc: 'Identify the ways you shield them from consequences \u2014 calling in sick for them, paying their bills, cleaning up after them \u2014 and gradually stop.' },
+                { label: 'Reinforce sobriety', desc: 'When they are sober, make it rewarding \u2014 spend quality time, express affection, do enjoyable activities. When they are using, calmly withdraw those rewards. No punishment, no lectures.' },
+                { label: 'Allow natural consequences', desc: 'If they miss work because of drinking, let them deal with the fallout. This is not cruelty \u2014 it is allowing reality to make the case for change.' },
+                { label: 'Spot treatment-ready moments', desc: 'Watch for windows when they express regret, fear, or openness. Have a treatment option researched and ready: "I found a program. Can I tell you about it?"' },
+                { label: 'Take care of yourself', desc: 'CRAFT is not about suffering in silence. It is strategic, compassionate action while maintaining your own health. Your wellbeing matters throughout this process.' }
+              ],
+              stat: 'Studies show <strong>64\u201374%</strong> of families using CRAFT get their loved one into treatment, compared to about 30% with other approaches.',
+              footer: 'Consider working with a CRAFT-trained therapist. Find one at motivationandchange.com or robertjmeyersphd.com.'
+            },
             terms: [
               { term: 'CRAFT', def: 'Community Reinforcement and Family Training. A 6-session evidence-based program teaching families to reduce enabling, reinforce sobriety, let natural consequences occur, and identify treatment-ready moments. Success rate of 64-74% for getting loved ones into treatment.' },
               { term: 'Natural Consequences', def: 'Allowing someone to experience the real-world results of their substance use — missed work, damaged relationships, financial problems — rather than shielding them.' },
@@ -3837,6 +3854,32 @@ guideLibrary['disability'] = {
               task.steps.forEach(function(s) { html += '<li>' + s + '</li>'; });
               html += '</ol>';
             }
+            // CRAFT method — expandable visual chart
+            if (task.craft) {
+              var craftId = 'craft-' + task.id;
+              html += '<button class="guide-reveal-btn" onclick="event.stopPropagation();this.classList.toggle(\'open\')" aria-expanded="false">';
+              html += '  <span class="reveal-icon">&#9654;</span> The CRAFT method — step-by-step strategy';
+              html += '</button>';
+              html += '<div class="guide-reveal-content">';
+              html += '<div class="craft-chart">';
+              html += '<div class="craft-chart-title">' + task.craft.title + '</div>';
+              html += '<div class="craft-chart-sub">' + task.craft.subtitle + '</div>';
+              html += '<div class="craft-flow">';
+              task.craft.steps.forEach(function(cs, idx) {
+                html += '<div class="craft-step">';
+                html += '  <div class="craft-step-num">' + (idx + 1) + '</div>';
+                html += '  <div class="craft-step-body">';
+                html += '    <div class="craft-step-label">' + cs.label + '</div>';
+                html += '    <div class="craft-step-desc">' + cs.desc + '</div>';
+                html += '  </div>';
+                html += '</div>';
+              });
+              html += '</div>';
+              html += '<div class="craft-stat">' + task.craft.stat + '</div>';
+              html += '<div style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted);font-weight:300">' + task.craft.footer + '</div>';
+              html += '</div>';
+              html += '</div>';
+            }
             // Script — collapsed behind reveal button
             if (task.script) {
               var scriptId = 'script-' + task.id;
@@ -4023,7 +4066,16 @@ guideLibrary['disability'] = {
     }
 
     function saveGuideHighlightToNote(text) {
-      // Auto-tag with current guide context and save directly
+      // Open sticky note and populate with highlighted text
+      var el = document.getElementById('wsStickyNote');
+      if (!el || !el.classList.contains('open')) toggleStickyNote();
+      var ta = document.getElementById('wsStickyText');
+      if (ta) {
+        if (ta.value.trim()) ta.value += '\n\n' + text;
+        else ta.value = text;
+      }
+
+      // Auto-tag with guide context and save
       var ctx = '';
       var activeNav = document.querySelector('.guide-nav-item.active .guide-nav-label');
       if (activeNav) ctx = '[Guide: ' + activeNav.textContent.trim() + '] ';
@@ -4038,9 +4090,12 @@ guideLibrary['disability'] = {
       .then(function(data) {
         if (data.ok) {
           _notesDirty = true;
+          // Show saved status on sticky note
+          var status = document.getElementById('wsStickyStatus');
+          if (status) { status.style.display = 'inline'; setTimeout(function() { status.style.display = 'none'; }, 2000); }
           // Flash confirmation on tooltip
           if (guideSaveTooltip) {
-            guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Saved to notes';
+            guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Saved';
             guideSaveTooltip.style.background = 'var(--green)';
             setTimeout(function() { hideGuideSaveTooltip(); }, 1500);
           }
