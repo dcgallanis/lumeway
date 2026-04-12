@@ -214,7 +214,7 @@ struct CalendarView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         let dateStr = formatter.string(from: date)
-        return deadlines.filter { $0.dueDate?.prefix(10) == dateStr }
+        return deadlines.filter { $0.dueDate.map { String($0.prefix(10)) } == dateStr }
     }
 
     private func urgencyColor(_ deadline: DeadlineItem) -> Color {
