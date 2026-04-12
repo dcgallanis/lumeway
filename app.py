@@ -911,7 +911,7 @@ def init_subscribers_db():
     try:
         conn_seed = get_db()
         param_s = "%s" if USE_POSTGRES else "?"
-        cur_s = db_execute(conn_seed, "SELECT COUNT(*) FROM community_posts")
+        cur_s = db_execute(conn_seed, f"SELECT COUNT(*) FROM community_posts WHERE display_name = {param_s} AND title = {param_s}", ("Carol", "Welcome to the Lumeway community"))
         if cur_s.fetchone()[0] == 0:
             from datetime import timedelta
             now = datetime.utcnow()

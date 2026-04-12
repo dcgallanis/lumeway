@@ -6929,6 +6929,7 @@ guideLibrary['disability'] = {
         var noteGroups = {};
         var groupOrder = [];
         var groupIcons = {};
+        var noteCatColors = {};
         notes.forEach(function(n) {
           var tagMatch = n.content.match(/^\[(File|Guide): ([^\]]+)\]/);
           var catMatch = !tagMatch ? n.content.match(/^\[([A-Za-z]+)\]\s*/) : null;
@@ -6944,17 +6945,9 @@ guideLibrary['disability'] = {
             groupKey = 'Other';
             icon = '\uD83D\uDCCC';
           }
-          if (!noteGroups[groupKey]) { noteGroups[groupKey] = []; groupOrder.push(groupKey); groupIcons[groupKey] = icon; }
-          noteGroups[groupKey].push(n);
-        });
-
-        // Render each category as a collapsible box
-        groupOrder.forEach(function(key) {
-          var groupNotes = noteGroups[key];
-          var icon = groupIcons[key] || '\uD83D\uDCCC';
-          // Determine color theme for this category
+          // Determine color theme
           var catColor = 'other';
-          var lk = key.toLowerCase();
+          var lk = groupKey.toLowerCase();
           if (lk.startsWith('guide')) catColor = 'guide';
           else if (lk.startsWith('file')) catColor = 'file';
           else if (lk === 'financial') catColor = 'financial';
@@ -6964,8 +6957,38 @@ guideLibrary['disability'] = {
           else if (lk === 'housing') catColor = 'housing';
           else if (lk === 'employment') catColor = 'employment';
           else if (lk === 'personal') catColor = 'personal';
+          noteCatColors[groupKey] = catColor;
+          if (!noteGroups[groupKey]) { noteGroups[groupKey] = []; groupOrder.push(groupKey); groupIcons[groupKey] = icon; }
+          noteGroups[groupKey].push(n);
+        });
+
+        // Sidebar filter colors
+        var noteSidebarColors = {guide:'#2C4A5E',file:'#8BA888',financial:'#B8977E',insurance:'#6B8F5E',legal:'#7B6BA8',medical:'#C4704E',housing:'#D4896C',employment:'#4A7C9B',personal:'#E8CFC0',other:'#6B7B8D'};
+
+        // Layout: sidebar + notes
+        html += '<div class="community-layout">';
+
+        // Sidebar
+        html += '<div class="community-sidebar">';
+        html += '  <div class="community-sidebar-label">Categories</div>';
+        html += '  <button class="community-filter-btn active" onclick="filterNotes(this,\'all\')">All Notes <span style="font-size:11px;color:var(--muted);margin-left:auto">' + notes.length + '</span></button>';
+        groupOrder.forEach(function(key) {
+          var color = noteSidebarColors[noteCatColors[key]] || '#6B7B8D';
+          html += '<button class="community-filter-btn" onclick="filterNotes(this,\'' + key.replace(/'/g,'\\\'') + '\')">';
+          html += '<span class="community-filter-dot" style="background:' + color + '"></span>';
+          html += key + ' <span style="font-size:11px;color:var(--muted);margin-left:auto">' + noteGroups[key].length + '</span></button>';
+        });
+        html += '</div>';
+
+        // Notes content
+        html += '<div class="community-main">';
+        // Render each category as a collapsible box
+        groupOrder.forEach(function(key) {
+          var groupNotes = noteGroups[key];
+          var icon = groupIcons[key] || '\uD83D\uDCCC';
+          var catColor = noteCatColors[key];
           var isFirstGroup = (key === groupOrder[0]);
-          html += '<div class="note-category-box' + (isFirstGroup ? ' open' : '') + '" data-catkey="' + key.replace(/"/g, '&quot;') + '" data-catcolor="' + catColor + '">';
+          html += '<div class="note-category-box open" data-catkey="' + key.replace(/"/g, '&quot;') + '" data-catcolor="' + catColor + '">';
           html += '  <div class="note-category-header" onclick="this.parentElement.classList.toggle(\'open\')">';
           html += '    <div class="note-category-title">' + icon + ' ' + key + ' <span class="note-category-count">' + groupNotes.length + '</span></div>';
           html += '    <span class="note-category-chevron">&#9654;</span>';
@@ -6996,6 +7019,8 @@ guideLibrary['disability'] = {
           html += '  </div>';
           html += '</div>';
         });
+        html += '</div>'; // community-main
+        html += '</div>'; // community-layout
       }
       html += '</div>'; // notesContent wrapper
       html += '</div>'; // panel-notes
@@ -9034,6 +9059,28 @@ guideLibrary['disability'] = {
       .then(function(data) {
         if (data.ok) openCommunityPost(postId);
         else alert(data.error || 'Could not delete.');
+      });
+    }
+
+    function filterNotes(btn, key) {
+      // Toggle active state on sidebar buttons
+      btn.parentElement.querySelectorAll('.community-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      // Show/hide note category boxes
+      var boxes = document.querySelectorAll('.note-category-box');
+      boxes.forEach(function(box) {
+        if (key === 'all') {
+          box.style.display = '';
+          box.classList.add('open');
+        } else {
+          var catKey = box.getAttribute('data-catkey');
+          if (catKey === key) {
+            box.style.display = '';
+            box.classList.add('open');
+          } else {
+            box.style.display = 'none';
+          }
+        }
       });
     }
 
