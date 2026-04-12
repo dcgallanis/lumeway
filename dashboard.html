@@ -6132,6 +6132,7 @@ guideLibrary['disability'] = {
       var hasSomeFullCat = Object.keys(catAccess).some(function(k) { return catAccess[k] === 'full'; });
       var hasStarterCat = Object.keys(catAccess).some(function(k) { return catAccess[k] === 'starter'; });
       var unlocked = hasFullAccess || hasSomeFullCat;
+      window._dashUnlocked = unlocked;
       // Starter/Etsy users: unlock files tab (templates only) but not other gated tabs
       var filesUnlocked = unlocked || hasStarterCat;
       var lockIcon = '<span class="tab-lock">🔒</span>';
@@ -7794,9 +7795,12 @@ guideLibrary['disability'] = {
     };
     function showCtxTips() {
       if (localStorage.getItem('lumeway_tips_dismissed')) return;
+      // Only show tips on unlocked panels
+      var lockedPanels = window._dashUnlocked ? [] : ['panel-calendar', 'panel-guides', 'panel-documents', 'panel-notes'];
       // Place each tip at the top of its own tab panel
       Object.keys(CTX_TIPS).forEach(function(key) {
         var tip = CTX_TIPS[key];
+        if (lockedPanels.indexOf(tip.panel) >= 0) return;
         var panel = document.getElementById(tip.panel);
         if (!panel) return;
         if (panel.querySelector('.ctx-tip')) return;
