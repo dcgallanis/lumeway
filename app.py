@@ -473,11 +473,20 @@ def init_subscribers_db():
         db_execute(conn, """CREATE TABLE IF NOT EXISTS community_replies (
             id SERIAL PRIMARY KEY,
             post_id INTEGER NOT NULL REFERENCES community_posts(id),
+            parent_reply_id INTEGER,
             user_id INTEGER NOT NULL,
             display_name TEXT NOT NULL,
             body TEXT NOT NULL,
             is_hidden INTEGER DEFAULT 0,
             created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS community_likes (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            post_id INTEGER,
+            reply_id INTEGER,
+            created_at TEXT NOT NULL,
+            UNIQUE(user_id, post_id, reply_id)
         )""")
         db_execute(conn, """CREATE TABLE IF NOT EXISTS community_reports (
             id SERIAL PRIMARY KEY,
@@ -660,6 +669,7 @@ def init_subscribers_db():
             user_id INTEGER NOT NULL,
             display_name TEXT NOT NULL,
             category TEXT NOT NULL DEFAULT 'general',
+            transition_category TEXT,
             title TEXT NOT NULL,
             body TEXT NOT NULL,
             is_pinned INTEGER DEFAULT 0,
@@ -670,11 +680,20 @@ def init_subscribers_db():
         db_execute(conn, """CREATE TABLE IF NOT EXISTS community_replies (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             post_id INTEGER NOT NULL REFERENCES community_posts(id),
+            parent_reply_id INTEGER,
             user_id INTEGER NOT NULL,
             display_name TEXT NOT NULL,
             body TEXT NOT NULL,
             is_hidden INTEGER DEFAULT 0,
             created_at TEXT NOT NULL
+        )""")
+        db_execute(conn, """CREATE TABLE IF NOT EXISTS community_likes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            post_id INTEGER,
+            reply_id INTEGER,
+            created_at TEXT NOT NULL,
+            UNIQUE(user_id, post_id, reply_id)
         )""")
         db_execute(conn, """CREATE TABLE IF NOT EXISTS community_reports (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -842,8 +861,11 @@ def init_subscribers_db():
                 is_hidden INTEGER DEFAULT 0, created_at TEXT NOT NULL, updated_at TEXT)""")
             db_execute(conn_cm, """CREATE TABLE IF NOT EXISTS community_replies (
                 id SERIAL PRIMARY KEY, post_id INTEGER NOT NULL REFERENCES community_posts(id),
-                user_id INTEGER NOT NULL, display_name TEXT NOT NULL, body TEXT NOT NULL,
+                parent_reply_id INTEGER, user_id INTEGER NOT NULL, display_name TEXT NOT NULL, body TEXT NOT NULL,
                 is_hidden INTEGER DEFAULT 0, created_at TEXT NOT NULL)""")
+            db_execute(conn_cm, """CREATE TABLE IF NOT EXISTS community_likes (
+                id SERIAL PRIMARY KEY, user_id INTEGER NOT NULL, post_id INTEGER,
+                reply_id INTEGER, created_at TEXT NOT NULL, UNIQUE(user_id, post_id, reply_id))""")
             db_execute(conn_cm, """CREATE TABLE IF NOT EXISTS community_reports (
                 id SERIAL PRIMARY KEY, reporter_user_id INTEGER NOT NULL,
                 post_id INTEGER, reply_id INTEGER, reason TEXT NOT NULL, created_at TEXT NOT NULL)""")
@@ -855,8 +877,11 @@ def init_subscribers_db():
                 is_hidden INTEGER DEFAULT 0, created_at TEXT NOT NULL, updated_at TEXT)""")
             db_execute(conn_cm, """CREATE TABLE IF NOT EXISTS community_replies (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, post_id INTEGER NOT NULL REFERENCES community_posts(id),
-                user_id INTEGER NOT NULL, display_name TEXT NOT NULL, body TEXT NOT NULL,
+                parent_reply_id INTEGER, user_id INTEGER NOT NULL, display_name TEXT NOT NULL, body TEXT NOT NULL,
                 is_hidden INTEGER DEFAULT 0, created_at TEXT NOT NULL)""")
+            db_execute(conn_cm, """CREATE TABLE IF NOT EXISTS community_likes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, post_id INTEGER,
+                reply_id INTEGER, created_at TEXT NOT NULL, UNIQUE(user_id, post_id, reply_id))""")
             db_execute(conn_cm, """CREATE TABLE IF NOT EXISTS community_reports (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, reporter_user_id INTEGER NOT NULL,
                 post_id INTEGER, reply_id INTEGER, reason TEXT NOT NULL, created_at TEXT NOT NULL)""")
@@ -4567,7 +4592,8 @@ def community_list_posts():
         SELECT p.id, p.user_id, p.display_name, p.category, p.title, p.body,
                p.is_pinned, p.created_at, p.updated_at,
                (SELECT COUNT(*) FROM community_replies r WHERE r.post_id = p.id AND r.is_hidden = 0) as reply_count,
-               p.transition_category
+               p.transition_category,
+               (SELECT COUNT(*) FROM community_likes l WHERE l.post_id = p.id AND l.reply_id IS NULL) as like_count
         FROM community_posts p {where}
         ORDER BY p.is_pinned DESC, p.created_at DESC
         LIMIT {param} OFFSET {param}
@@ -4578,7 +4604,7 @@ def community_list_posts():
             "id": r[0], "user_id": r[1], "display_name": r[2], "category": r[3],
             "title": r[4], "body": r[5], "is_pinned": bool(r[6]),
             "created_at": r[7], "updated_at": r[8], "reply_count": r[9],
-            "transition_category": r[10],
+            "transition_category": r[10], "like_count": r[11],
             "is_author": r[1] == user["id"]
         })
     conn.close()
@@ -4648,14 +4674,28 @@ def community_get_post(post_id):
         "created_at": row[7], "updated_at": row[8], "transition_category": row[9],
         "is_author": row[1] == user["id"]
     }
+    # Get post like count + whether current user liked it
+    cur = db_execute(conn, f"SELECT COUNT(*) FROM community_likes WHERE post_id = {param} AND reply_id IS NULL", (post_id,))
+    post["like_count"] = cur.fetchone()[0]
+    cur = db_execute(conn, f"SELECT COUNT(*) FROM community_likes WHERE post_id = {param} AND reply_id IS NULL AND user_id = {param}", (post_id, user["id"]))
+    post["user_liked"] = cur.fetchone()[0] > 0
+
     # Get replies
-    cur = db_execute(conn, f"""SELECT id, user_id, display_name, body, created_at
+    cur = db_execute(conn, f"""SELECT id, user_id, display_name, body, created_at, parent_reply_id
         FROM community_replies WHERE post_id = {param} AND is_hidden = 0 ORDER BY created_at""", (post_id,))
     replies = []
     for r in cur.fetchall():
+        rid = r[0]
+        # Like counts for this reply
+        cur2 = db_execute(conn, f"SELECT COUNT(*) FROM community_likes WHERE reply_id = {param}", (rid,))
+        rlike_count = cur2.fetchone()[0]
+        cur2 = db_execute(conn, f"SELECT COUNT(*) FROM community_likes WHERE reply_id = {param} AND user_id = {param}", (rid, user["id"]))
+        ruser_liked = cur2.fetchone()[0] > 0
         replies.append({
-            "id": r[0], "user_id": r[1], "display_name": r[2], "body": r[3],
-            "created_at": r[4], "is_author": r[1] == user["id"]
+            "id": rid, "user_id": r[1], "display_name": r[2], "body": r[3],
+            "created_at": r[4], "parent_reply_id": r[5],
+            "is_author": r[1] == user["id"],
+            "like_count": rlike_count, "user_liked": ruser_liked
         })
     conn.close()
     return jsonify({"post": post, "replies": replies})
@@ -4673,6 +4713,7 @@ def community_create_reply(post_id):
     data = request.get_json()
     body = (data.get("body") or "").strip()
     display_name = (data.get("display_name") or "").strip()
+    parent_reply_id = data.get("parent_reply_id")  # For threaded replies
     if not body:
         return jsonify({"error": "Reply cannot be empty."}), 400
     if len(body) > 3000:
@@ -4687,9 +4728,9 @@ def community_create_reply(post_id):
         conn.close()
         return jsonify({"error": "Post not found"}), 404
     now = datetime.utcnow().isoformat()
-    db_execute(conn, f"""INSERT INTO community_replies (post_id, user_id, display_name, body, created_at)
-        VALUES ({param}, {param}, {param}, {param}, {param})""",
-        (post_id, user["id"], display_name, body, now))
+    db_execute(conn, f"""INSERT INTO community_replies (post_id, parent_reply_id, user_id, display_name, body, created_at)
+        VALUES ({param}, {param}, {param}, {param}, {param}, {param})""",
+        (post_id, parent_reply_id, user["id"], display_name, body, now))
     conn.commit()
     conn.close()
     return jsonify({"ok": True})
@@ -4718,6 +4759,45 @@ def community_report():
     conn.commit()
     conn.close()
     return jsonify({"ok": True, "message": "Thank you for reporting. We'll review this shortly."})
+
+
+@app.route("/api/community/like", methods=["POST"])
+def community_like():
+    """Like or unlike a post or reply."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.get_json()
+    post_id = data.get("post_id")
+    reply_id = data.get("reply_id")
+    if not post_id and not reply_id:
+        return jsonify({"error": "Must specify post_id or reply_id"}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    # Check if already liked
+    if reply_id:
+        cur = db_execute(conn, f"SELECT id FROM community_likes WHERE user_id = {param} AND reply_id = {param}", (user["id"], reply_id))
+    else:
+        cur = db_execute(conn, f"SELECT id FROM community_likes WHERE user_id = {param} AND post_id = {param} AND reply_id IS NULL", (user["id"], post_id))
+    existing = cur.fetchone()
+    if existing:
+        # Unlike
+        db_execute(conn, f"DELETE FROM community_likes WHERE id = {param}", (existing[0],))
+        conn.commit()
+        conn.close()
+        return jsonify({"ok": True, "liked": False})
+    else:
+        # Like
+        now = datetime.utcnow().isoformat()
+        try:
+            db_execute(conn, f"""INSERT INTO community_likes (user_id, post_id, reply_id, created_at)
+                VALUES ({param}, {param}, {param}, {param})""",
+                (user["id"], post_id, reply_id, now))
+            conn.commit()
+        except Exception:
+            conn.rollback()
+        conn.close()
+        return jsonify({"ok": True, "liked": True})
 
 
 @app.route("/api/community/posts/<int:post_id>", methods=["DELETE"])
@@ -4765,6 +4845,70 @@ def community_delete_reply(reply_id):
     conn.commit()
     conn.close()
     return jsonify({"ok": True})
+
+
+@app.route("/api/community/seed", methods=["POST"])
+def community_seed():
+    """Seed starter conversations. Admin only."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    is_admin = user.get("email") in ["hello@lumeway.co", "lumeway.co@gmail.com"]
+    if not is_admin:
+        return jsonify({"error": "Not authorized"}), 403
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    # Check if any posts exist already
+    cur = db_execute(conn, "SELECT COUNT(*) FROM community_posts")
+    if cur.fetchone()[0] > 0:
+        conn.close()
+        return jsonify({"ok": True, "message": "Posts already exist, skipping seed."})
+    now = datetime.utcnow().isoformat()
+    seeds = [
+        {"name": "Carol", "cat": "general", "trans": None, "title": "Welcome to the Lumeway community",
+         "body": "Hi everyone. This is a space for anyone going through a major life change to connect, ask questions, and share what you are learning along the way.\n\nThere are no dumb questions here. Whether you are dealing with a loss, a divorce, a job change, or something else entirely, you are not alone in this.\n\nFeel free to introduce yourself or jump into any conversation. I am here too and happy to help where I can.", "pin": 1},
+        {"name": "Sarah M.", "cat": "emotional-support", "trans": "divorce", "title": "How do you handle the loneliness?",
+         "body": "I am about three months into my separation and the evenings are the hardest. The house feels so quiet. I know it gets better but some days it is really hard to believe that.\n\nAnyone else going through this? What has helped you?", "pin": 0},
+        {"name": "James K.", "cat": "financial", "trans": "job-loss", "title": "Negotiating severance - what I wish I knew",
+         "body": "Just went through a layoff and wanted to share something I learned the hard way. Your initial severance offer is almost always negotiable. I asked for an extra two weeks and they said yes immediately.\n\nThings worth asking about: extended health insurance coverage, outplacement services, a neutral reference letter, and keeping your laptop.\n\nHas anyone else had luck negotiating? Would love to hear what worked for you.", "pin": 0},
+        {"name": "Maria L.", "cat": "legal-questions", "trans": "estate", "title": "Probate timeline - how long did yours take?",
+         "body": "My mom passed away two months ago and the attorney said probate could take 6 to 12 months. That feels like forever when you are trying to handle everything.\n\nHow long did the process take for others? Any tips for keeping things moving?", "pin": 0},
+        {"name": "David R.", "cat": "success-stories", "trans": "job-loss", "title": "Landed a new role after 4 months",
+         "body": "Just wanted to share some hope for anyone in the thick of a job search. I was laid off in December and it was honestly one of the lowest points of my life. But I just accepted an offer that is actually a better fit than my old job.\n\nWhat helped me most was having a system. The checklist on here kept me from spiraling and just taking it one task at a time made a huge difference.\n\nHang in there. It does get better.", "pin": 0},
+        {"name": "Anonymous", "cat": "ask-carol", "trans": "divorce", "title": "Do I need a lawyer if we agree on everything?",
+         "body": "My spouse and I are splitting amicably. We have already agreed on how to divide everything and we do not have kids. Do we still need to hire lawyers or can we just file the paperwork ourselves?\n\nTrying to keep costs down but also do not want to make a mistake.", "pin": 0},
+    ]
+    seed_replies = {
+        1: [  # Welcome post
+            {"name": "Sarah M.", "body": "Thank you for creating this space. It means a lot to know other people understand what this is like."},
+            {"name": "James K.", "body": "Really glad this exists. Sometimes you just need to talk to people who get it."},
+        ],
+        2: [  # Loneliness post
+            {"name": "Carol", "body": "The evenings are so hard, you are not imagining that. A few things that have helped others: keeping a small routine for after dinner, even just a walk or a podcast. And being gentle with yourself about the timeline. Three months is still very early."},
+            {"name": "David R.", "body": "I went through something similar after my divorce. What helped me was finding one thing to look forward to each evening, even something small. A show, a call with a friend, cooking something new. It does get easier."},
+        ],
+        6: [  # Lawyer question
+            {"name": "Carol", "body": "Great question. Even in an amicable split, I would recommend at least a consultation with a family law attorney. Many offer a one-time session for a flat fee. They can review your agreement to make sure nothing is missed, especially around things like retirement accounts, tax implications, and property transfers.\n\nYou might not need full representation, but having a professional look things over can save a lot of headaches later."},
+        ],
+    }
+    for i, s in enumerate(seeds, 1):
+        db_execute(conn, f"""INSERT INTO community_posts (user_id, display_name, category, transition_category, title, body, is_pinned, created_at)
+            VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param}, {param})""",
+            (user["id"], s["name"], s["cat"], s["trans"], s["title"], s["body"], s["pin"], now))
+    conn.commit()
+    # Add replies
+    cur = db_execute(conn, "SELECT id FROM community_posts ORDER BY id")
+    post_ids = [r[0] for r in cur.fetchall()]
+    for idx_key, reply_list in seed_replies.items():
+        if idx_key <= len(post_ids):
+            pid = post_ids[idx_key - 1]
+            for rpl in reply_list:
+                db_execute(conn, f"""INSERT INTO community_replies (post_id, user_id, display_name, body, created_at)
+                    VALUES ({param}, {param}, {param}, {param}, {param})""",
+                    (pid, user["id"], rpl["name"], rpl["body"], now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "message": "Seeded 6 conversations with replies."})
 
 
 @app.route("/api/community/posts/<int:post_id>/pin", methods=["POST"])

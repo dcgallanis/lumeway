@@ -60,38 +60,58 @@
     .tab-locked-preview .locked-cta:hover { filter: brightness(1.08); }
 
     /* Community forum */
-    .community-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 16px; flex-wrap: wrap; }
-    .community-cats { display: flex; gap: 6px; flex-wrap: wrap; }
-    .community-cat-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; background: var(--warm-white); font-family: inherit; font-size: 12px; color: var(--muted); cursor: pointer; transition: all 0.15s; }
-    .community-cat-btn:hover { border-color: var(--navy); color: var(--navy); }
-    .community-cat-btn.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    .community-layout { display: grid; grid-template-columns: 200px 1fr; gap: 24px; }
+    @media (max-width: 768px) { .community-layout { grid-template-columns: 1fr; } }
+    .community-sidebar { display: flex; flex-direction: column; gap: 4px; }
+    .community-sidebar-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; margin-top: 12px; }
+    .community-sidebar-label:first-child { margin-top: 0; }
+    .community-filter-btn { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: none; border-radius: 8px; background: none; font-family: inherit; font-size: 13px; font-weight: 300; color: var(--muted); cursor: pointer; transition: all 0.12s; text-align: left; width: 100%; }
+    .community-filter-btn:hover { background: var(--warm-white); color: var(--text); }
+    .community-filter-btn.active { background: var(--navy); color: var(--cream); font-weight: 400; }
+    .community-filter-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .community-main { min-width: 0; }
+    .community-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; }
     .community-new-btn { padding: 8px 20px; border: none; border-radius: 8px; background: var(--accent); color: var(--cream); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
     .community-new-btn:hover { background: var(--accent-light); }
-    .community-post-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 12px; cursor: pointer; transition: all 0.15s; }
+    .community-post-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s; }
     .community-post-card:hover { border-color: var(--navy); transform: translateY(-1px); }
     .community-post-card.pinned { border-left: 3px solid var(--gold); }
-    .community-post-title { font-family: 'Libre Baskerville', serif; font-size: 16px; font-weight: 400; margin-bottom: 6px; color: var(--text); }
-    .community-post-meta { display: flex; gap: 12px; align-items: center; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+    .community-post-title { font-family: 'Libre Baskerville', serif; font-size: 15px; font-weight: 400; margin-bottom: 6px; color: var(--text); }
+    .community-post-meta { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
     .community-post-cat { padding: 2px 8px; border-radius: 10px; background: var(--cream); font-size: 11px; color: var(--navy); }
-    .community-post-preview { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.5; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .community-reply-count { display: flex; align-items: center; gap: 4px; }
+    .community-post-preview { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.5; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .community-post-stats { display: flex; gap: 12px; align-items: center; font-size: 12px; color: var(--muted); margin-top: 8px; }
     .community-detail { max-width: 720px; margin: 0 auto; }
     .community-detail-back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; border: none; background: none; font-family: inherit; margin-bottom: 20px; padding: 0; }
     .community-detail-back:hover { color: var(--navy); }
-    .community-detail-title { font-family: 'Libre Baskerville', serif; font-size: 24px; font-weight: 400; margin-bottom: 8px; }
-    .community-detail-body { font-size: 14px; font-weight: 300; line-height: 1.7; color: var(--text); white-space: pre-wrap; margin-bottom: 24px; }
-    .community-detail-meta { font-size: 12px; color: var(--muted); margin-bottom: 24px; display: flex; gap: 12px; align-items: center; }
-    .community-reply { background: var(--cream); border-radius: 10px; padding: 16px 20px; margin-bottom: 10px; }
-    .community-reply-author { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 4px; }
-    .community-reply-body { font-size: 13px; font-weight: 300; line-height: 1.6; white-space: pre-wrap; }
-    .community-reply-meta { font-size: 11px; color: var(--muted); margin-top: 6px; display: flex; gap: 10px; align-items: center; }
-    .community-reply-form { margin-top: 20px; }
-    .community-reply-form textarea { width: 100%; font-family: inherit; font-size: 14px; font-weight: 300; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--warm-white); color: var(--text); resize: vertical; min-height: 80px; outline: none; }
+    .community-op { display: flex; gap: 16px; margin-bottom: 24px; }
+    .community-op-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--navy); color: var(--cream); display: flex; align-items: center; justify-content: center; font-family: 'Libre Baskerville', serif; font-size: 16px; font-weight: 500; flex-shrink: 0; }
+    .community-op-content { flex: 1; min-width: 0; }
+    .community-op-name { font-size: 14px; font-weight: 500; color: var(--navy); margin-bottom: 2px; }
+    .community-op-time { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+    .community-op-title { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 400; margin-bottom: 8px; line-height: 1.3; }
+    .community-op-body { font-size: 14px; font-weight: 300; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+    .community-op-actions { display: flex; gap: 12px; align-items: center; margin-top: 12px; }
+    .community-like-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); cursor: pointer; border: none; background: none; font-family: inherit; padding: 4px 8px; border-radius: 6px; transition: all 0.15s; }
+    .community-like-btn:hover { background: var(--cream); color: var(--accent); }
+    .community-like-btn.liked { color: var(--accent); }
+    .community-reply-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); cursor: pointer; border: none; background: none; font-family: inherit; padding: 4px 8px; border-radius: 6px; transition: all 0.15s; }
+    .community-reply-btn:hover { background: var(--cream); color: var(--navy); }
+    .community-action-btn { font-size: 11px; color: var(--muted); cursor: pointer; border: none; background: none; font-family: inherit; padding: 4px 8px; border-radius: 6px; }
+    .community-action-btn:hover { color: var(--accent); background: var(--cream); }
+    .community-msg { display: flex; gap: 12px; margin-bottom: 6px; }
+    .community-msg-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--gold); color: var(--cream); display: flex; align-items: center; justify-content: center; font-family: 'Libre Baskerville', serif; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+    .community-msg-bubble { background: var(--warm-white); border: 1px solid var(--border); border-radius: 4px 14px 14px 14px; padding: 12px 16px; max-width: 85%; }
+    .community-msg-name { font-size: 12px; font-weight: 500; color: var(--navy); margin-bottom: 3px; }
+    .community-msg-body { font-size: 13px; font-weight: 300; line-height: 1.6; white-space: pre-wrap; color: var(--text); }
+    .community-msg-footer { display: flex; gap: 10px; align-items: center; margin-top: 6px; font-size: 11px; color: var(--muted); }
+    .community-msg-replying { font-size: 11px; color: var(--gold); margin-bottom: 4px; font-style: italic; }
+    .community-reply-form { margin-top: 16px; display: flex; gap: 10px; align-items: flex-start; }
+    .community-reply-form textarea { flex: 1; font-family: inherit; font-size: 13px; font-weight: 300; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--warm-white); color: var(--text); resize: none; min-height: 44px; max-height: 120px; outline: none; }
     .community-reply-form textarea:focus { border-color: var(--navy); }
-    .community-reply-form button { margin-top: 8px; }
-    .community-actions { display: flex; gap: 8px; align-items: center; }
-    .community-action-btn { font-size: 11px; color: var(--muted); cursor: pointer; border: none; background: none; font-family: inherit; padding: 2px 4px; }
-    .community-action-btn:hover { color: var(--accent); }
+    .community-reply-form button { padding: 10px 18px; margin-top: 0; }
+    .community-replying-to { font-size: 12px; color: var(--navy); background: var(--cream); padding: 6px 12px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .community-replying-to button { border: none; background: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0; }
     .community-empty { text-align: center; padding: 48px 24px; color: var(--muted); font-size: 14px; font-weight: 300; }
     .community-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 24px; }
     .community-modal { background: var(--warm-white); border-radius: 16px; padding: 32px; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; }
@@ -101,9 +121,8 @@
     .community-modal input:focus, .community-modal textarea:focus, .community-modal select:focus { border-color: var(--navy); }
     .community-modal textarea { resize: vertical; min-height: 120px; }
     .community-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
-    .community-name-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; color: var(--navy); }
     .community-pin-badge { font-size: 11px; color: var(--gold); }
-    .community-read-only-banner { background: linear-gradient(135deg, #faf6f1, #f5efe6); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .community-read-only-banner { background: linear-gradient(135deg, #faf6f1, #f5efe6); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .community-read-only-banner p { font-size: 13px; color: var(--navy); font-weight: 300; }
 
     .tab-panel { display: none; }
@@ -7092,9 +7111,11 @@ guideLibrary['disability'] = {
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-community">';
       html += '<div id="communityRoot">';
-      html += '  <div style="margin-bottom:8px">';
-      html += '    <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Community</h2>';
-      html += '    <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Ask questions, share experiences, and connect with others going through life transitions.</p>';
+      html += '  <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px">';
+      html += '    <div>';
+      html += '      <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Community</h2>';
+      html += '      <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Ask questions, share experiences, and connect with others going through life transitions.</p>';
+      html += '    </div>';
       html += '  </div>';
       var canPost = tier !== 'free';
       if (!canPost) {
@@ -8643,6 +8664,8 @@ guideLibrary['disability'] = {
     var _communityPage = 1;
     var _communityDisplayName = '';
 
+    function communityInitial(name) { return name ? name.charAt(0).toUpperCase() : '?'; }
+
     function loadCommunityPosts() {
       var el = document.getElementById('communityList');
       if (!el) return;
@@ -8659,38 +8682,37 @@ guideLibrary['disability'] = {
         var total = data.total || 0;
         var html = '';
 
-        // Category filter + new post button
-        html += '<div class="community-header">';
-        html += '  <div class="community-cats">';
-        html += '    <button class="community-cat-btn' + (!_communityFilter ? ' active' : '') + '" onclick="filterCommunity(\'\')">All Topics</button>';
+        // Sidebar + main layout
+        html += '<div class="community-layout">';
+
+        // Sidebar filters
+        html += '<div class="community-sidebar">';
+        html += '  <div class="community-sidebar-label">Topics</div>';
+        html += '  <button class="community-filter-btn' + (!_communityFilter ? ' active' : '') + '" onclick="filterCommunity(\'\')">All Topics</button>';
+        var catColors = {'general':'#6B7B8D','emotional-support':'#B8977E','legal-questions':'#2C4A5E','financial':'#6B8F5E','success-stories':'#C4704E','ask-carol':'#9B6B9E'};
         cats.forEach(function(c) {
-          html += '<button class="community-cat-btn' + (_communityFilter === c.id ? ' active' : '') + '" onclick="filterCommunity(\'' + c.id + '\')">' + c.label + '</button>';
+          html += '<button class="community-filter-btn' + (_communityFilter === c.id ? ' active' : '') + '" onclick="filterCommunity(\'' + c.id + '\')">';
+          html += '<span class="community-filter-dot" style="background:' + (catColors[c.id] || '#6B7B8D') + '"></span>' + c.label + '</button>';
         });
-        html += '  </div>';
-        if (canPost) {
-          html += '<button class="community-new-btn" onclick="showNewPostModal()">New Post</button>';
-        }
-        html += '</div>';
-
-        // Transition filter row
-        html += '<div style="margin-bottom:16px;display:flex;gap:6px;flex-wrap:wrap">';
-        html += '  <button class="community-cat-btn' + (!_communityTransition ? ' active' : '') + '" onclick="filterCommunityTransition(\'\')">All Transitions</button>';
+        html += '  <div class="community-sidebar-label">Transitions</div>';
+        html += '  <button class="community-filter-btn' + (!_communityTransition ? ' active' : '') + '" onclick="filterCommunityTransition(\'\')">All</button>';
         transitions.forEach(function(t) {
-          html += '<button class="community-cat-btn' + (_communityTransition === t.id ? ' active' : '') + '" onclick="filterCommunityTransition(\'' + t.id + '\')" style="font-size:11px">' + t.label + '</button>';
+          html += '<button class="community-filter-btn' + (_communityTransition === t.id ? ' active' : '') + '" onclick="filterCommunityTransition(\'' + t.id + '\')">' + t.label + '</button>';
         });
+        html += '</div>'; // sidebar
+
+        // Main content
+        html += '<div class="community-main">';
+        html += '<div class="community-header">';
+        html += '  <span style="font-size:13px;color:var(--muted)">' + total + ' ' + (total === 1 ? 'post' : 'posts') + '</span>';
+        if (canPost) html += '<button class="community-new-btn" onclick="showNewPostModal()">New Post</button>';
         html += '</div>';
 
-        // Posts list
         if (posts.length === 0) {
           html += '<div class="community-empty">';
-          if (_communityFilter || _communityTransition) {
-            html += '<p>No posts matching these filters yet.</p>';
-          } else {
-            html += '<p>No posts yet. Be the first to start a conversation.</p>';
-          }
+          html += (_communityFilter || _communityTransition) ? '<p>No posts matching these filters yet.</p>' : '<p>No posts yet. Be the first to start a conversation.</p>';
           html += '</div>';
         } else {
-          // Build transition label lookup
           var transMap = {};
           transitions.forEach(function(t) { transMap[t.id] = t.label; });
           posts.forEach(function(p) {
@@ -8699,16 +8721,19 @@ guideLibrary['disability'] = {
             html += '<div class="community-post-card' + (p.is_pinned ? ' pinned' : '') + '" onclick="openCommunityPost(' + p.id + ')">';
             html += '  <div class="community-post-title">' + (p.is_pinned ? '<span class="community-pin-badge">📌 </span>' : '') + escapeHtml(p.title) + '</div>';
             html += '  <div class="community-post-meta">';
-            html += '    <span class="community-name-badge">' + escapeHtml(p.display_name) + '</span>';
+            html += '    <span style="font-weight:500;color:var(--navy)">' + escapeHtml(p.display_name) + '</span>';
             html += '    <span>' + communityTimeAgo(p.created_at) + '</span>';
             if (catLabel) html += '<span class="community-post-cat">' + catLabel + '</span>';
             if (p.transition_category && transMap[p.transition_category]) {
               html += '<span class="community-post-cat" style="background:var(--navy);color:var(--cream)">' + transMap[p.transition_category] + '</span>';
             }
-            html += '    <span class="community-reply-count">💬 ' + p.reply_count + '</span>';
             html += '  </div>';
             var preview = p.body.length > 150 ? p.body.substring(0, 150) + '...' : p.body;
             html += '  <div class="community-post-preview">' + escapeHtml(preview) + '</div>';
+            html += '  <div class="community-post-stats">';
+            html += '    <span>♥ ' + (p.like_count || 0) + '</span>';
+            html += '    <span>💬 ' + p.reply_count + '</span>';
+            html += '  </div>';
             html += '</div>';
           });
         }
@@ -8717,12 +8742,14 @@ guideLibrary['disability'] = {
         var totalPages = Math.ceil(total / (data.per_page || 20));
         if (totalPages > 1) {
           html += '<div style="display:flex;justify-content:center;gap:8px;margin-top:20px">';
-          if (_communityPage > 1) html += '<button class="community-cat-btn" onclick="communityGoPage(' + (_communityPage - 1) + ')">← Previous</button>';
+          if (_communityPage > 1) html += '<button class="community-filter-btn" onclick="communityGoPage(' + (_communityPage - 1) + ')" style="display:inline-flex">← Previous</button>';
           html += '<span style="font-size:13px;color:var(--muted);padding:6px 10px">Page ' + _communityPage + ' of ' + totalPages + '</span>';
-          if (_communityPage < totalPages) html += '<button class="community-cat-btn" onclick="communityGoPage(' + (_communityPage + 1) + ')">Next →</button>';
+          if (_communityPage < totalPages) html += '<button class="community-filter-btn" onclick="communityGoPage(' + (_communityPage + 1) + ')" style="display:inline-flex">Next →</button>';
           html += '</div>';
         }
 
+        html += '</div>'; // community-main
+        html += '</div>'; // community-layout
         el.innerHTML = html;
       })
       .catch(function() {
@@ -8747,70 +8774,94 @@ guideLibrary['disability'] = {
       loadCommunityPosts();
     }
 
+    var _communityReplyTo = null; // {id, name} if replying to a specific reply
+
     function openCommunityPost(postId) {
       var root = document.getElementById('communityRoot');
       if (!root) return;
-      var canPost = (document.getElementById('communityList') || {}).dataset;
-      var canPostVal = canPost && canPost.canPost === '1';
+      var canPostVal = (dashData && dashData.effective_tier && dashData.effective_tier !== 'free');
+      _communityReplyTo = null;
       root.innerHTML = '<p style="color:var(--muted);font-size:13px">Loading...</p>';
       fetch('/api/community/posts/' + postId)
       .then(function(r) { return r.json(); })
       .then(function(data) {
         var post = data.post;
         var replies = data.replies || [];
-        var html = '';
-        html += '<div class="community-detail">';
-        html += '  <button class="community-detail-back" onclick="backToCommunityList()">← Back to Community</button>';
-        html += '  <div class="community-detail-meta">';
-        html += '    <span class="community-name-badge">' + escapeHtml(post.display_name) + '</span>';
-        html += '    <span>' + communityTimeAgo(post.created_at) + '</span>';
-        var cats = [{"id":"general","label":"General"},{"id":"emotional-support","label":"Emotional Support"},{"id":"legal-questions","label":"Legal Questions"},{"id":"financial","label":"Financial"},{"id":"success-stories","label":"Success Stories"},{"id":"ask-carol","label":"Ask Carol"}];
         var transLabels = {"job-loss":"Job Loss & Income Crisis","estate":"Death & Estate","divorce":"Divorce & Separation","disability":"Disability & Benefits","relocation":"Moving & Relocation","retirement":"Retirement Planning"};
+        var cats = [{"id":"general","label":"General"},{"id":"emotional-support","label":"Emotional Support"},{"id":"legal-questions","label":"Legal Questions"},{"id":"financial","label":"Financial"},{"id":"success-stories","label":"Success Stories"},{"id":"ask-carol","label":"Ask Carol"}];
         var catLabel = '';
         cats.forEach(function(c) { if (c.id === post.category) catLabel = c.label; });
+
+        var html = '<div class="community-detail">';
+        html += '<button class="community-detail-back" onclick="backToCommunityList()">← Back to Community</button>';
+
+        // Tags row
+        html += '<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">';
         if (catLabel) html += '<span class="community-post-cat">' + catLabel + '</span>';
         if (post.transition_category && transLabels[post.transition_category]) {
           html += '<span class="community-post-cat" style="background:var(--navy);color:var(--cream)">' + transLabels[post.transition_category] + '</span>';
         }
-        html += '    <div class="community-actions">';
-        if (post.is_author) {
-          html += '<button class="community-action-btn" onclick="deleteCommunityPost(' + post.id + ')">Delete</button>';
-        } else {
-          html += '<button class="community-action-btn" onclick="reportCommunity(' + post.id + ', null)">Report</button>';
-        }
+        html += '</div>';
+
+        // Original post — chat style with avatar on side
+        html += '<div class="community-op">';
+        html += '  <div class="community-op-avatar">' + communityInitial(post.display_name) + '</div>';
+        html += '  <div class="community-op-content">';
+        html += '    <div class="community-op-name">' + escapeHtml(post.display_name) + '</div>';
+        html += '    <div class="community-op-time">' + communityTimeAgo(post.created_at) + '</div>';
+        html += '    <div class="community-op-title">' + escapeHtml(post.title) + '</div>';
+        html += '    <div class="community-op-body">' + escapeHtml(post.body) + '</div>';
+        html += '    <div class="community-op-actions">';
+        html += '      <button class="community-like-btn' + (post.user_liked ? ' liked' : '') + '" onclick="toggleCommunityLike(' + post.id + ',null,this)">♥ ' + (post.like_count || 0) + '</button>';
+        if (canPostVal) html += '<button class="community-reply-btn" onclick="setCommunityReplyTo(null,\'' + escapeHtml(post.display_name).replace(/'/g,'\\\'') + '\')">Reply</button>';
+        if (post.is_author) html += '<button class="community-action-btn" onclick="deleteCommunityPost(' + post.id + ')">Delete</button>';
         html += '    </div>';
         html += '  </div>';
-        html += '  <h2 class="community-detail-title">' + escapeHtml(post.title) + '</h2>';
-        html += '  <div class="community-detail-body">' + escapeHtml(post.body) + '</div>';
+        html += '</div>';
 
-        // Replies section
-        html += '  <div style="border-top:1px solid var(--border);padding-top:20px;margin-top:8px">';
-        html += '    <h3 style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:16px">' + replies.length + ' ' + (replies.length === 1 ? 'Reply' : 'Replies') + '</h3>';
-        replies.forEach(function(r) {
-          html += '<div class="community-reply">';
-          html += '  <div style="display:flex;justify-content:space-between;align-items:center">';
-          html += '    <span class="community-reply-author">' + escapeHtml(r.display_name) + '</span>';
-          html += '    <div class="community-actions">';
-          if (r.is_author) {
-            html += '<button class="community-action-btn" onclick="deleteCommunityReply(' + r.id + ',' + post.id + ')">Delete</button>';
-          } else {
-            html += '<button class="community-action-btn" onclick="reportCommunity(null, ' + r.id + ')">Report</button>';
-          }
-          html += '    </div>';
-          html += '  </div>';
-          html += '  <div class="community-reply-body">' + escapeHtml(r.body) + '</div>';
-          html += '  <div class="community-reply-meta"><span>' + communityTimeAgo(r.created_at) + '</span></div>';
-          html += '</div>';
-        });
+        // Replies — chat bubble style
+        if (replies.length > 0) {
+          html += '<div style="border-top:1px solid var(--border);padding-top:16px;margin-top:8px">';
+          html += '<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:14px">' + replies.length + ' ' + (replies.length === 1 ? 'reply' : 'replies') + '</div>';
 
-        // Reply form (paid users only)
-        if (canPostVal) {
-          html += '<div class="community-reply-form">';
-          html += '  <textarea id="communityReplyText" placeholder="Write a reply..."></textarea>';
-          html += '  <button class="community-new-btn" onclick="submitCommunityReply(' + post.id + ')">Reply</button>';
+          // Build a map for parent reply names
+          var replyMap = {};
+          replies.forEach(function(r) { replyMap[r.id] = r; });
+
+          replies.forEach(function(r) {
+            var indent = r.parent_reply_id ? ' style="margin-left:44px"' : '';
+            html += '<div class="community-msg"' + indent + '>';
+            html += '  <div class="community-msg-avatar" style="background:' + (r.display_name === post.display_name ? 'var(--navy)' : 'var(--gold)') + '">' + communityInitial(r.display_name) + '</div>';
+            html += '  <div>';
+            // Show who they are replying to
+            if (r.parent_reply_id && replyMap[r.parent_reply_id]) {
+              html += '<div class="community-msg-replying">Replying to ' + escapeHtml(replyMap[r.parent_reply_id].display_name) + '</div>';
+            }
+            html += '    <div class="community-msg-bubble">';
+            html += '      <div class="community-msg-name">' + escapeHtml(r.display_name) + '</div>';
+            html += '      <div class="community-msg-body">' + escapeHtml(r.body) + '</div>';
+            html += '    </div>';
+            html += '    <div class="community-msg-footer">';
+            html += '      <span>' + communityTimeAgo(r.created_at) + '</span>';
+            html += '      <button class="community-like-btn' + (r.user_liked ? ' liked' : '') + '" onclick="toggleCommunityLike(null,' + r.id + ',this)">♥ ' + (r.like_count || 0) + '</button>';
+            if (canPostVal) html += '<button class="community-reply-btn" onclick="setCommunityReplyTo(' + r.id + ',\'' + escapeHtml(r.display_name).replace(/'/g,'\\\'') + '\')">Reply</button>';
+            if (r.is_author) html += '<button class="community-action-btn" onclick="deleteCommunityReply(' + r.id + ',' + post.id + ')">Delete</button>';
+            html += '    </div>';
+            html += '  </div>';
+            html += '</div>';
+          });
           html += '</div>';
         }
-        html += '  </div>'; // replies section
+
+        // Reply form
+        if (canPostVal) {
+          html += '<div id="communityReplyContext" style="margin-top:16px"></div>';
+          html += '<div class="community-reply-form">';
+          html += '  <textarea id="communityReplyText" placeholder="Write a reply..." oninput="this.style.height=\'auto\';this.style.height=this.scrollHeight+\'px\'"></textarea>';
+          html += '  <button class="community-new-btn" onclick="submitCommunityReply(' + post.id + ')">Send</button>';
+          html += '</div>';
+        }
+
         html += '</div>'; // community-detail
         root.innerHTML = html;
       })
@@ -8819,15 +8870,50 @@ guideLibrary['disability'] = {
       });
     }
 
+    function setCommunityReplyTo(replyId, name) {
+      _communityReplyTo = replyId ? {id: replyId, name: name} : null;
+      var ctx = document.getElementById('communityReplyContext');
+      if (!ctx) return;
+      if (_communityReplyTo) {
+        ctx.innerHTML = '<div class="community-replying-to">Replying to <strong>' + escapeHtml(name) + '</strong> <button onclick="setCommunityReplyTo(null,null)">✕</button></div>';
+      } else {
+        ctx.innerHTML = '';
+      }
+      var ta = document.getElementById('communityReplyText');
+      if (ta) ta.focus();
+    }
+
+    function toggleCommunityLike(postId, replyId, btn) {
+      fetch('/api/community/like', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: postId, reply_id: replyId })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok && btn) {
+          var count = parseInt(btn.textContent.replace(/[^0-9]/g, '')) || 0;
+          if (data.liked) {
+            btn.classList.add('liked');
+            btn.innerHTML = '♥ ' + (count + 1);
+          } else {
+            btn.classList.remove('liked');
+            btn.innerHTML = '♥ ' + Math.max(0, count - 1);
+          }
+        }
+      });
+    }
+
     function backToCommunityList() {
       var root = document.getElementById('communityRoot');
       if (!root) return;
-      // Rebuild the skeleton
       var canPost = (dashData && dashData.effective_tier && dashData.effective_tier !== 'free');
       var html = '';
-      html += '<div style="margin-bottom:8px">';
-      html += '  <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Community</h2>';
-      html += '  <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Ask questions, share experiences, and connect with others going through life transitions.</p>';
+      html += '<div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px">';
+      html += '  <div>';
+      html += '    <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Community</h2>';
+      html += '    <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Ask questions, share experiences, and connect with others going through life transitions.</p>';
+      html += '  </div>';
       html += '</div>';
       if (!canPost) {
         html += '<div class="community-read-only-banner">';
@@ -8914,10 +9000,11 @@ guideLibrary['disability'] = {
       var body = (document.getElementById('communityReplyText').value || '').trim();
       if (!body) return;
       var name = localStorage.getItem('lumeway_community_name') || '';
+      var parentId = _communityReplyTo ? _communityReplyTo.id : null;
       fetch('/api/community/posts/' + postId + '/replies', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ body: body, display_name: name })
+        body: JSON.stringify({ body: body, display_name: name, parent_reply_id: parentId })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
@@ -8950,19 +9037,10 @@ guideLibrary['disability'] = {
       });
     }
 
-    function reportCommunity(postId, replyId) {
-      var reason = prompt('Why are you reporting this? (brief description)');
-      if (!reason) return;
-      fetch('/api/community/report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ post_id: postId, reply_id: replyId, reason: reason })
-      })
+    function seedCommunity() {
+      fetch('/api/community/seed', { method: 'POST' })
       .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.ok) alert('Thank you. We\'ll review this shortly.');
-        else alert(data.error || 'Could not submit report.');
-      });
+      .then(function(data) { alert(data.message || 'Done'); loadCommunityPosts(); });
     }
 
     function escapeHtml(str) {
