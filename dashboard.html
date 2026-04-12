@@ -415,9 +415,25 @@
     .ws-viewer-body .tox .tox-statusbar { background: var(--cream) !important; border-top: 1px solid var(--border) !important; }
 
     /* Notes */
-    .note-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 10px; }
+    .note-category-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 16px; overflow: hidden; }
+    .note-category-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; user-select: none; transition: background 0.15s; }
+    .note-category-header:hover { background: var(--cream); }
+    .note-category-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--navy); }
+    .note-category-count { font-size: 11px; font-weight: 500; color: var(--muted); background: var(--cream); padding: 2px 8px; border-radius: 10px; }
+    .note-category-chevron { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
+    .note-category-box.open .note-category-chevron { transform: rotate(90deg); }
+    .note-category-body { display: none; border-top: 1px solid var(--border); }
+    .note-category-box.open .note-category-body { display: block; }
+    .note-card { background: transparent; border-bottom: 1px solid var(--border); padding: 14px 18px; transition: background 0.15s; }
+    .note-card:last-child { border-bottom: none; }
+    .note-card:hover { background: rgba(0,0,0,0.015); }
     .note-content { font-size: 14px; font-weight: 300; line-height: 1.6; white-space: pre-wrap; }
-    .note-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+    .note-content.truncated { max-height: 3.4em; overflow: hidden; position: relative; }
+    .note-content.truncated::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1.2em; background: linear-gradient(transparent, var(--warm-white)); }
+    .note-card:hover .note-content.truncated::after { background: linear-gradient(transparent, #fdfcfb); }
+    .note-expand { background: none; border: none; color: var(--accent); font-size: 12px; font-weight: 500; cursor: pointer; padding: 4px 0; font-family: inherit; }
+    .note-expand:hover { text-decoration: underline; }
+    .note-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
     .note-date { font-size: 11px; color: var(--muted); }
     .note-actions { display: flex; gap: 8px; }
     .note-action { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; padding: 2px 6px; }
@@ -561,10 +577,12 @@
     .guide-what { font-size: 14px; font-weight: 300; line-height: 1.7; color: var(--text); margin-bottom: 8px; }
     .guide-why { font-size: 14px; font-weight: 400; line-height: 1.7; color: var(--navy); background: rgba(44,74,94,0.04); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
     .guide-section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin: 16px 0 8px; }
-    .guide-steps { list-style: none; counter-reset: steps; padding: 0; }
-    .guide-steps li { counter-increment: steps; font-size: 14px; font-weight: 300; line-height: 1.7; padding: 8px 0 8px 32px; border-bottom: 1px solid var(--border); position: relative; }
-    .guide-steps li:last-child { border-bottom: none; }
-    .guide-steps li::before { content: counter(steps); position: absolute; left: 0; top: 8px; width: 22px; height: 22px; background: var(--cream); border: 1px solid var(--border); border-radius: 50%; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; color: var(--navy); }
+    .guide-steps { list-style: none; counter-reset: steps; padding: 0; display: flex; flex-direction: column; gap: 0; position: relative; }
+    .guide-steps::before { content: ''; position: absolute; left: 15px; top: 28px; bottom: 28px; width: 2px; background: linear-gradient(to bottom, var(--border), var(--gold), var(--border)); border-radius: 1px; z-index: 0; }
+    .guide-steps li { counter-increment: steps; font-size: 14px; font-weight: 300; line-height: 1.7; padding: 12px 16px 12px 44px; position: relative; background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; z-index: 1; transition: box-shadow 0.2s, border-color 0.2s; }
+    .guide-steps li:last-child { margin-bottom: 0; }
+    .guide-steps li:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-color: var(--gold); }
+    .guide-steps li::before { content: counter(steps); position: absolute; left: 10px; top: 12px; width: 24px; height: 24px; background: var(--navy); border: 2px solid var(--warm-white); border-radius: 50%; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; color: var(--cream); box-shadow: 0 1px 4px rgba(0,0,0,0.1); z-index: 2; }
     .guide-terms { display: grid; gap: 8px; }
     .guide-term { background: var(--cream); border-radius: 8px; padding: 10px 14px; }
     .guide-term strong { font-size: 13px; font-weight: 600; color: var(--navy); }
@@ -583,9 +601,9 @@
     .guide-reveal-content { display: none; margin-top: 8px; }
     .guide-reveal-btn.open + .guide-reveal-content { display: block; }
     .guide-more-info { border-top: 1px solid var(--border); margin-top: 16px; padding-top: 4px; }
-    .guide-save-tooltip { position: absolute; z-index: 50; background: var(--navy); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 500; padding: 6px 12px; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 5px; white-space: nowrap; transition: opacity 0.15s; user-select: none; }
+    .guide-save-tooltip { position: absolute; z-index: 50; background: var(--navy); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 500; padding: 8px 14px; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 5px; white-space: nowrap; transition: opacity 0.15s; user-select: none; }
     .guide-save-tooltip:hover { filter: brightness(1.2); }
-    .guide-save-tooltip::after { content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--navy); }
+    .guide-save-tooltip::after { content: ''; position: absolute; right: -5px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 5px solid var(--navy); }
 
     /* Quick Mode toggle */
     .guide-mode-toggle { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
@@ -3940,80 +3958,95 @@ guideLibrary['disability'] = {
 
     // ── Guide text selection → Save to Notes tooltip ──
     var guideSaveTooltip = null;
+    var _guideTooltipBound = false;
 
     function initGuideSaveTooltip() {
-      // Remove old if exists
+      // Remove old tooltip element
       if (guideSaveTooltip) { guideSaveTooltip.remove(); guideSaveTooltip = null; }
 
       var guideContent = document.getElementById('guideContent');
       if (!guideContent) return;
 
-      guideContent.addEventListener('mouseup', onGuideTextSelect);
-      document.addEventListener('mousedown', hideGuideSaveTooltip);
+      // Only bind listeners once to avoid stacking
+      if (!_guideTooltipBound) {
+        _guideTooltipBound = true;
+        document.addEventListener('mouseup', function(e) {
+          var gc = document.getElementById('guideContent');
+          if (!gc || !gc.contains(e.target)) return;
+          setTimeout(onGuideTextSelect, 50);
+        });
+        document.addEventListener('mousedown', function(e) {
+          if (guideSaveTooltip && !guideSaveTooltip.contains(e.target)) {
+            hideGuideSaveTooltip();
+          }
+        });
+      }
     }
 
-    function onGuideTextSelect(e) {
-      // Small delay so selection is finalized
-      setTimeout(function() {
-        var sel = window.getSelection();
-        if (!sel || sel.isCollapsed || !sel.toString().trim()) { hideGuideSaveTooltip(); return; }
+    function onGuideTextSelect() {
+      var sel = window.getSelection();
+      if (!sel || sel.isCollapsed || !sel.toString().trim()) { hideGuideSaveTooltip(); return; }
 
-        var text = sel.toString().trim();
-        if (text.length < 3) { hideGuideSaveTooltip(); return; }
+      var text = sel.toString().trim();
+      if (text.length < 3) { hideGuideSaveTooltip(); return; }
 
-        // Make sure selection is inside guide content
-        var range = sel.getRangeAt(0);
-        var guideContent = document.getElementById('guideContent');
-        if (!guideContent || !guideContent.contains(range.commonAncestorContainer)) { hideGuideSaveTooltip(); return; }
+      var range = sel.getRangeAt(0);
+      var guideContent = document.getElementById('guideContent');
+      if (!guideContent || !guideContent.contains(range.commonAncestorContainer)) { hideGuideSaveTooltip(); return; }
 
-        // Position tooltip above the selection
-        var rect = range.getBoundingClientRect();
+      // Position tooltip to the LEFT of the selection start
+      var rect = range.getBoundingClientRect();
 
-        if (!guideSaveTooltip) {
-          guideSaveTooltip = document.createElement('div');
-          guideSaveTooltip.className = 'guide-save-tooltip';
-          guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Add to Note';
-          document.body.appendChild(guideSaveTooltip);
-        }
+      if (!guideSaveTooltip) {
+        guideSaveTooltip = document.createElement('div');
+        guideSaveTooltip.className = 'guide-save-tooltip';
+        document.body.appendChild(guideSaveTooltip);
+      }
 
-        guideSaveTooltip.style.display = 'flex';
-        guideSaveTooltip.style.left = (rect.left + rect.width / 2 - 55 + window.scrollX) + 'px';
-        guideSaveTooltip.style.top = (rect.top - 38 + window.scrollY) + 'px';
+      guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Add to note';
+      guideSaveTooltip.style.background = 'var(--navy)';
+      guideSaveTooltip.style.display = 'flex';
+      // Place to the left of the selection
+      var tooltipWidth = 110;
+      guideSaveTooltip.style.left = Math.max(8, rect.left - tooltipWidth - 12 + window.scrollX) + 'px';
+      guideSaveTooltip.style.top = (rect.top + (rect.height / 2) - 16 + window.scrollY) + 'px';
 
-        guideSaveTooltip.onclick = function(ev) {
-          ev.stopPropagation();
-          ev.preventDefault();
-          addToStickyNote(text);
-        };
-      }, 10);
+      guideSaveTooltip.onclick = function(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+        saveGuideHighlightToNote(text);
+      };
     }
 
     function hideGuideSaveTooltip() {
       if (guideSaveTooltip) guideSaveTooltip.style.display = 'none';
     }
 
-    function addToStickyNote(text) {
-      // Open sticky note and append text
-      var el = document.getElementById('wsStickyNote');
-      if (!el || !el.classList.contains('open')) toggleStickyNote();
-      var ta = document.getElementById('wsStickyText');
-      if (ta) {
-        if (ta.value.trim()) ta.value += '\n\n' + text;
-        else ta.value = text;
-      }
-      // Flash the tooltip as confirmation
-      if (guideSaveTooltip) {
-        guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Added';
-        guideSaveTooltip.style.background = 'var(--green)';
-        setTimeout(function() {
-          hideGuideSaveTooltip();
+    function saveGuideHighlightToNote(text) {
+      // Auto-tag with current guide context and save directly
+      var ctx = '';
+      var activeNav = document.querySelector('.guide-nav-item.active .guide-nav-label');
+      if (activeNav) ctx = '[Guide: ' + activeNav.textContent.trim() + '] ';
+      var content = ctx + text;
+
+      fetch('/api/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: content })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          _notesDirty = true;
+          // Flash confirmation on tooltip
           if (guideSaveTooltip) {
-            guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Add to Note';
-            guideSaveTooltip.style.background = 'var(--navy)';
+            guideSaveTooltip.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Saved to notes';
+            guideSaveTooltip.style.background = 'var(--green)';
+            setTimeout(function() { hideGuideSaveTooltip(); }, 1500);
           }
-        }, 1200);
-        window.getSelection().removeAllRanges();
-      }
+          window.getSelection().removeAllRanges();
+        }
+      });
     }
 
     function toggleGuideTask(id) {
@@ -6616,52 +6649,61 @@ guideLibrary['disability'] = {
       html += '</div>';
 
       if (notes.length > 0) {
-        // Group notes by category tag
-        var noteGroups = { _uncategorized: [] };
+        // Group notes by category tag — also detect [Category] tags like [Housing], [Insurance]
+        var noteGroups = {};
         var groupOrder = [];
+        var groupIcons = {};
         notes.forEach(function(n) {
           var tagMatch = n.content.match(/^\[(File|Guide): ([^\]]+)\]/);
+          var catMatch = !tagMatch ? n.content.match(/^\[([A-Za-z]+)\]\s*/) : null;
+          var groupKey, icon;
           if (tagMatch) {
-            var groupKey = tagMatch[1] + ': ' + tagMatch[2];
-            if (!noteGroups[groupKey]) { noteGroups[groupKey] = []; groupOrder.push(groupKey); }
-            noteGroups[groupKey].push(n);
+            groupKey = tagMatch[1] + ': ' + tagMatch[2];
+            icon = tagMatch[1] === 'File' ? '\uD83D\uDCC4' : '\uD83D\uDCD6';
+          } else if (catMatch) {
+            groupKey = catMatch[1];
+            var catIcons = {Financial:'\uD83D\uDCB3',Insurance:'\uD83D\uDEE1\uFE0F',Legal:'\uD83D\uDCDC',Medical:'\u2695\uFE0F',Housing:'\uD83C\uDFE0',Employment:'\uD83D\uDCBC',Personal:'\uD83D\uDC64',Other:'\uD83D\uDCC1'};
+            icon = catIcons[groupKey] || '\uD83D\uDCCC';
           } else {
-            noteGroups._uncategorized.push(n);
+            groupKey = 'Other';
+            icon = '\uD83D\uDCCC';
           }
+          if (!noteGroups[groupKey]) { noteGroups[groupKey] = []; groupOrder.push(groupKey); groupIcons[groupKey] = icon; }
+          noteGroups[groupKey].push(n);
         });
 
-        // Show category filter tabs if we have grouped notes
-        if (groupOrder.length > 0) {
-          html += '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px">';
-          html += '  <button class="ws-status-tab active" onclick="filterNotes(\'all\',this)" data-nfilter="all" style="font-size:11px">All</button>';
-          groupOrder.forEach(function(key) {
-            var icon = key.startsWith('File') ? '\uD83D\uDCC4' : '\uD83D\uDCD6';
-            html += '  <button class="ws-status-tab" onclick="filterNotes(\'' + key.replace(/'/g, "\\'") + '\',this)" data-nfilter="' + key.replace(/"/g, '&quot;') + '" style="font-size:11px">' + icon + ' ' + key + ' <span style="font-size:9px;color:var(--muted)">(' + noteGroups[key].length + ')</span></button>';
+        // Render each category as a collapsible box
+        groupOrder.forEach(function(key) {
+          var groupNotes = noteGroups[key];
+          var icon = groupIcons[key] || '\uD83D\uDCCC';
+          html += '<div class="note-category-box open" data-catkey="' + key.replace(/"/g, '&quot;') + '">';
+          html += '  <div class="note-category-header" onclick="this.parentElement.classList.toggle(\'open\')">';
+          html += '    <div class="note-category-title">' + icon + ' ' + key + ' <span class="note-category-count">' + groupNotes.length + '</span></div>';
+          html += '    <span class="note-category-chevron">&#9654;</span>';
+          html += '  </div>';
+          html += '  <div class="note-category-body">';
+          groupNotes.forEach(function(n) {
+            var tagMatch = n.content.match(/^\[(File|Guide): ([^\]]+)\]/);
+            var catMatch = !tagMatch ? n.content.match(/^\[([A-Za-z]+)\]\s*/) : null;
+            var displayContent = n.content;
+            if (tagMatch) { displayContent = n.content.substring(tagMatch[0].length).trim(); }
+            else if (catMatch) { displayContent = n.content.substring(catMatch[0].length).trim(); }
+            var safeContent = displayContent.replace(/</g, '&lt;').replace(/\n/g, '<br>');
+            var isLong = displayContent.length > 150;
+            html += '<div class="note-card" id="note-' + n.id + '">';
+            html += '  <div class="note-content' + (isLong ? ' truncated' : '') + '" id="note-text-' + n.id + '">' + safeContent + '</div>';
+            if (isLong) {
+              html += '  <button class="note-expand" onclick="toggleNoteExpand(' + n.id + ',this)">Show more</button>';
+            }
+            html += '  <div class="note-meta">';
+            html += '    <div class="note-date">' + formatDate(n.created_at) + (n.updated_at ? ' (edited)' : '') + '</div>';
+            html += '    <div class="note-actions">';
+            html += '      <button class="note-action" onclick="editNote(' + n.id + ')">Edit</button>';
+            html += '      <button class="note-action" onclick="deleteNote(' + n.id + ')">Delete</button>';
+            html += '    </div>';
+            html += '  </div>';
+            html += '</div>';
           });
-          if (noteGroups._uncategorized.length > 0) {
-            html += '  <button class="ws-status-tab" onclick="filterNotes(\'_uncategorized\',this)" data-nfilter="_uncategorized" style="font-size:11px">Other (' + noteGroups._uncategorized.length + ')</button>';
-          }
-          html += '</div>';
-        }
-
-        notes.forEach(function(n) {
-          var tagMatch = n.content.match(/^\[(File|Guide): ([^\]]+)\]/);
-          var groupKey = tagMatch ? (tagMatch[1] + ': ' + tagMatch[2]) : '_uncategorized';
-          var displayContent = n.content;
-          var tagHtml = '';
-          if (tagMatch) {
-            displayContent = n.content.substring(tagMatch[0].length).trim();
-            var icon = tagMatch[1] === 'File' ? '\uD83D\uDCC4' : '\uD83D\uDCD6';
-            tagHtml = '<span style="font-size:10px;background:var(--cream);padding:2px 6px;border-radius:4px;color:var(--navy);font-weight:500;margin-right:6px">' + icon + ' ' + tagMatch[2] + '</span>';
-          }
-          html += '<div class="note-card" id="note-' + n.id + '" data-notegroup="' + groupKey.replace(/"/g, '&quot;') + '">';
-          html += '  <div class="note-content">' + tagHtml + displayContent.replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</div>';
-          html += '  <div class="note-meta">';
-          html += '    <div class="note-date">' + formatDate(n.created_at) + (n.updated_at ? ' (edited)' : '') + '</div>';
-          html += '    <div class="note-actions">';
-          html += '      <button class="note-action" onclick="editNote(' + n.id + ')">Edit</button>';
-          html += '      <button class="note-action" onclick="deleteNote(' + n.id + ')">Delete</button>';
-          html += '    </div>';
           html += '  </div>';
           html += '</div>';
         });
@@ -8062,10 +8104,18 @@ guideLibrary['disability'] = {
 
     function filterNotes(group, btn) {
       document.querySelectorAll('[data-nfilter]').forEach(function(b) { b.classList.toggle('active', b.dataset.nfilter === group); });
-      document.querySelectorAll('.note-card').forEach(function(card) {
-        if (group === 'all') { card.style.display = ''; }
-        else { card.style.display = card.dataset.notegroup === group ? '' : 'none'; }
+      document.querySelectorAll('.note-category-box').forEach(function(box) {
+        if (group === 'all') { box.style.display = ''; }
+        else { box.style.display = box.dataset.catkey === group ? '' : 'none'; }
       });
+    }
+
+    function toggleNoteExpand(noteId, btn) {
+      var el = document.getElementById('note-text-' + noteId);
+      if (!el) return;
+      var isTruncated = el.classList.contains('truncated');
+      el.classList.toggle('truncated');
+      btn.textContent = isTruncated ? 'Show less' : 'Show more';
     }
 
     function deleteNote(noteId) {
