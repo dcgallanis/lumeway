@@ -5405,31 +5405,115 @@ def convert_docx_to_html(file_id):
                 else:
                     html_parts.append('<p>' + content + '</p>')
             elif tag == 'tbl':
-                # Table
+                # Table — preserve column widths from Word
+                # Read grid column widths (w:tblGrid/w:gridCol)
+                col_widths = []
+                tbl_grid = element.find(qn('w:tblGrid'))
+                if tbl_grid is not None:
+                    for grid_col in tbl_grid.findall(qn('w:gridCol')):
+                        w_val = grid_col.get(qn('w:w'), '')
+                        if w_val:
+                            try:
+                                # Convert twips to points (1 inch = 1440 twips = 72pt)
+                                pt = round(int(w_val) / 20)
+                                col_widths.append(pt)
+                            except ValueError:
+                                col_widths.append(0)
+                # Check table width
+                tbl_style = ''
+                tblPr = element.find(qn('w:tblPr'))
+                if tblPr is not None:
+                    tblW = tblPr.find(qn('w:tblW'))
+                    if tblW is not None:
+                        tw = tblW.get(qn('w:w'), '0')
+                        tw_type = tblW.get(qn('w:type'), 'auto')
+                        if tw_type == 'pct':
+                            pct = round(int(tw) / 50)  # 5000 = 100%
+                            tbl_style = ' style="width:{}%"'.format(min(pct, 100))
+                        elif tw_type == 'dxa' and tw != '0':
+                            try:
+                                tbl_pt = round(int(tw) / 20)
+                                tbl_style = ' style="width:{}pt"'.format(tbl_pt)
+                            except ValueError:
+                                pass
+                if not tbl_style:
+                    tbl_style = ' style="width:100%"'
                 rows_html = []
                 for tr in element.findall(qn('w:tr')):
                     cells_html = []
+                    col_idx = 0
                     for tc in tr.findall(qn('w:tc')):
                         cell_text = []
                         for cp in tc.findall(qn('w:p')):
                             parts = []
                             for run in cp.findall(qn('w:r')):
+                                rPr = run.find(qn('w:rPr'))
+                                bold = rPr is not None and rPr.find(qn('w:b')) is not None
+                                italic = rPr is not None and rPr.find(qn('w:i')) is not None
+                                underline = rPr is not None and rPr.find(qn('w:u')) is not None
                                 t = run.find(qn('w:t'))
-                                if t is not None and t.text:
-                                    parts.append(t.text)
+                                txt = t.text if t is not None and t.text else ''
+                                if bold: txt = '<strong>' + txt + '</strong>'
+                                if italic: txt = '<em>' + txt + '</em>'
+                                if underline: txt = '<u>' + txt + '</u>'
+                                parts.append(txt)
                             cell_text.append(''.join(parts))
-                        # Check for shading (colored cells)
+                        # Build cell style: width + shading + colspan
+                        styles = []
                         tcPr = tc.find(qn('w:tcPr'))
-                        shade = ''
+                        colspan = 1
                         if tcPr is not None:
+                            # Cell width
+                            tcW = tcPr.find(qn('w:tcW'))
+                            if tcW is not None:
+                                cw = tcW.get(qn('w:w'), '0')
+                                cw_type = tcW.get(qn('w:type'), 'auto')
+                                if cw_type == 'dxa' and cw != '0':
+                                    try:
+                                        cell_pt = round(int(cw) / 20)
+                                        styles.append('width:{}pt'.format(cell_pt))
+                                    except ValueError:
+                                        pass
+                                elif cw_type == 'pct' and cw != '0':
+                                    try:
+                                        cell_pct = round(int(cw) / 50)
+                                        styles.append('width:{}%'.format(min(cell_pct, 100)))
+                                    except ValueError:
+                                        pass
+                            elif col_idx < len(col_widths) and col_widths[col_idx] > 0:
+                                styles.append('width:{}pt'.format(col_widths[col_idx]))
+                            # Shading
                             shd = tcPr.find(qn('w:shd'))
                             if shd is not None:
                                 fill = shd.get(qn('w:fill'), '')
                                 if fill and fill != 'auto' and fill != 'FFFFFF':
-                                    shade = ' style="background:#' + fill + '"'
-                        cells_html.append('<td' + shade + '>' + '<br>'.join(cell_text) + '</td>')
+                                    styles.append('background:#{}'.format(fill))
+                            # Column span
+                            gridSpan = tcPr.find(qn('w:gridSpan'))
+                            if gridSpan is not None:
+                                try:
+                                    colspan = int(gridSpan.get(qn('w:val'), '1'))
+                                except ValueError:
+                                    colspan = 1
+                            # Vertical merge (detect header of merged cell)
+                            vMerge = tcPr.find(qn('w:vMerge'))
+                            if vMerge is not None:
+                                vm_val = vMerge.get(qn('w:val'), '')
+                                if vm_val != 'restart':
+                                    col_idx += colspan
+                                    continue  # Skip continuation cells
+                        else:
+                            if col_idx < len(col_widths) and col_widths[col_idx] > 0:
+                                styles.append('width:{}pt'.format(col_widths[col_idx]))
+                        attrs = ''
+                        if styles:
+                            attrs += ' style="{}"'.format('; '.join(styles))
+                        if colspan > 1:
+                            attrs += ' colspan="{}"'.format(colspan)
+                        cells_html.append('<td{}>{}</td>'.format(attrs, '<br>'.join(cell_text)))
+                        col_idx += colspan
                     rows_html.append('<tr>' + ''.join(cells_html) + '</tr>')
-                html_parts.append('<table>' + ''.join(rows_html) + '</table>')
+                html_parts.append('<table{}>{}</table>'.format(tbl_style, ''.join(rows_html)))
         return jsonify({"ok": True, "html": '\n'.join(html_parts)})
     except Exception as e:
         return jsonify({"error": str(e), "html": None})
