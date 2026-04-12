@@ -907,18 +907,22 @@ def init_subscribers_db():
                 conn_alt.close()
             except Exception:
                 pass
-    # One-time cleanup: delete old seed data (user_id=0) that had mismatched replies and old "Carol" name
+    # One-time cleanup: delete old seed data (user_id=0) with last-name initials or old "Carol" name
     try:
         conn_seed = get_db()
         param_s = "%s" if USE_POSTGRES else "?"
-        cur_s = db_execute(conn_seed, f"SELECT COUNT(*) FROM community_posts WHERE user_id = 0 AND display_name = {param_s}", ("Carol",))
-        old_carol_count = cur_s.fetchone()[0]
-        if old_carol_count > 0:
-            # Delete old seed replies and posts
+        cur_s = db_execute(conn_seed, "SELECT COUNT(*) FROM community_posts WHERE user_id = 0")
+        old_seed_count = cur_s.fetchone()[0]
+        # Check if any old seeds exist with "Carol" or last-name initials like "Sarah M."
+        has_old = False
+        if old_seed_count > 0:
+            cur_s = db_execute(conn_seed, f"SELECT COUNT(*) FROM community_posts WHERE user_id = 0 AND (display_name = {param_s} OR display_name = {param_s})", ("Carol", "Sarah M."))
+            has_old = cur_s.fetchone()[0] > 0
+        if has_old:
             db_execute(conn_seed, "DELETE FROM community_replies WHERE user_id = 0")
             db_execute(conn_seed, "DELETE FROM community_posts WHERE user_id = 0")
             conn_seed.commit()
-            print("[community] Cleaned up old seed data with Carol name")
+            print("[community] Cleaned up old seed data")
         conn_seed.close()
     except Exception as e:
         print(f"[community] Cleanup error (non-fatal): {e}")
@@ -938,13 +942,13 @@ def init_subscribers_db():
             seeds = [
                 {"name": "Cara", "cat": "general", "trans": None, "title": "Welcome to the Lumeway community",
                  "body": "Hey, so glad you are here.\n\nI built Lumeway because when I was going through my own life transition, I kept wishing someone would just tell me what to do next. Not in a preachy way, just like a friend who had been through it and could walk me through the steps.\n\nThat is what this community is for. Whether you are dealing with a divorce, a job loss, an estate, or something else entirely — you are not alone and there are people here who genuinely get it.\n\nNo question is too small, no vent is too messy. Jump in whenever you are ready.", "pin": 1, "ago": timedelta(days=3)},
-                {"name": "Sarah M.", "cat": "emotional-support", "trans": "divorce", "title": "How do you handle the loneliness?",
+                {"name": "Sarah", "cat": "emotional-support", "trans": "divorce", "title": "How do you handle the loneliness?",
                  "body": "I am about three months into my separation and the evenings are the hardest. The house feels so quiet. I know it gets better but some days it is really hard to believe that.\n\nAnyone else going through this? What has helped you?", "pin": 0, "ago": timedelta(days=2, hours=8)},
-                {"name": "James K.", "cat": "financial", "trans": "job-loss", "title": "Negotiating severance - what I wish I knew",
+                {"name": "James", "cat": "financial", "trans": "job-loss", "title": "Negotiating severance - what I wish I knew",
                  "body": "Just went through a layoff and wanted to share something I learned the hard way. Your initial severance offer is almost always negotiable. I asked for an extra two weeks and they said yes immediately.\n\nThings worth asking about: extended health insurance coverage, outplacement services, a neutral reference letter, and keeping your laptop.\n\nHas anyone else had luck negotiating? Would love to hear what worked for you.", "pin": 0, "ago": timedelta(days=2)},
-                {"name": "Maria L.", "cat": "legal-questions", "trans": "estate", "title": "Probate timeline - how long did yours take?",
+                {"name": "Maria", "cat": "legal-questions", "trans": "estate", "title": "Probate timeline - how long did yours take?",
                  "body": "My mom passed away two months ago and the attorney said probate could take 6 to 12 months. That feels like forever when you are trying to handle everything.\n\nHow long did the process take for others? Any tips for keeping things moving?", "pin": 0, "ago": timedelta(days=1, hours=14)},
-                {"name": "David R.", "cat": "success-stories", "trans": "job-loss", "title": "Landed a new role after 4 months",
+                {"name": "David", "cat": "success-stories", "trans": "job-loss", "title": "Landed a new role after 4 months",
                  "body": "Just wanted to share some hope for anyone in the thick of a job search. I was laid off in December and it was honestly one of the lowest points of my life. But I just accepted an offer that is actually a better fit than my old job.\n\nWhat helped me most was having a system. The checklist on here kept me from spiraling and just taking it one task at a time made a huge difference.\n\nHang in there. It does get better.", "pin": 0, "ago": timedelta(days=1, hours=4)},
                 {"name": "Anonymous", "cat": "ask-cara", "trans": "divorce", "title": "Do I need a lawyer if we agree on everything?",
                  "body": "My spouse and I are splitting amicably. We have already agreed on how to divide everything and we do not have kids. Do we still need to hire lawyers or can we just file the paperwork ourselves?\n\nTrying to keep costs down but also do not want to make a mistake.", "pin": 0, "ago": timedelta(hours=18)},
@@ -962,31 +966,31 @@ def init_subscribers_db():
                 seed_post_ids.append(row[0] if row else None)
             seed_replies = {
                 0: [  # Welcome post
-                    {"name": "Sarah M.", "body": "This is exactly what I needed. Just knowing other people are going through the same thing makes such a difference.", "ago": timedelta(days=2, hours=20)},
-                    {"name": "James K.", "body": "Really glad this exists. Sometimes you just need to talk to people who get it.", "ago": timedelta(days=2, hours=16)},
+                    {"name": "Sarah", "body": "This is exactly what I needed. Just knowing other people are going through the same thing makes such a difference.", "ago": timedelta(days=2, hours=20)},
+                    {"name": "James", "body": "Really glad this exists. Sometimes you just need to talk to people who get it.", "ago": timedelta(days=2, hours=16)},
                     {"name": "Cara", "body": "So happy you are both here. Seriously, do not be shy about posting. Even if it is just to vent. That is what this space is for.", "ago": timedelta(days=2, hours=10)},
                 ],
                 1: [  # Loneliness post
                     {"name": "Cara", "body": "Three months in is still so early, so please be gentle with yourself. The quiet evenings are the worst part for a lot of people.\n\nA few things that have helped others: a small after-dinner routine (even just a walk or a podcast), keeping a text thread going with a friend, or picking up one low-effort hobby that gets you out of your head. You do not have to fill the silence with anything productive. Just something that is yours.", "ago": timedelta(days=2, hours=2)},
-                    {"name": "David R.", "body": "I went through something similar after my divorce. What helped me was finding one thing to look forward to each evening, even something small. A show, a call with a friend, cooking something new. It does get easier.", "ago": timedelta(days=1, hours=20)},
-                    {"name": "Maria L.", "body": "Sending you a hug. The evenings were the hardest for me too. I started journaling before bed and it honestly helped more than I expected.", "ago": timedelta(days=1, hours=16)},
+                    {"name": "David", "body": "I went through something similar after my divorce. What helped me was finding one thing to look forward to each evening, even something small. A show, a call with a friend, cooking something new. It does get easier.", "ago": timedelta(days=1, hours=20)},
+                    {"name": "Maria", "body": "Sending you a hug. The evenings were the hardest for me too. I started journaling before bed and it honestly helped more than I expected.", "ago": timedelta(days=1, hours=16)},
                 ],
                 2: [  # Severance negotiation post
                     {"name": "Cara", "body": "This is such good advice. A lot of people do not realize severance is negotiable because they are in shock when it happens.\n\nOne thing to add: if your company offered a severance agreement, you usually have 21 days to review it (45 days if you are over 40 — that is federal law). So do not feel pressured to sign on the spot. Use that time to negotiate or have an employment attorney look it over.", "ago": timedelta(days=1, hours=18)},
-                    {"name": "Sarah M.", "body": "I wish I had known this. I signed mine the same day because I was so overwhelmed. Great share.", "ago": timedelta(days=1, hours=14)},
+                    {"name": "Sarah", "body": "I wish I had known this. I signed mine the same day because I was so overwhelmed. Great share.", "ago": timedelta(days=1, hours=14)},
                 ],
                 3: [  # Probate timeline post
                     {"name": "Cara", "body": "6 to 12 months is pretty standard, but it really depends on the state and how complex the estate is. A few things that can speed things up:\n\n- Stay on top of deadlines your attorney gives you. A lot of delays happen because paperwork sits.\n- Get multiple copies of the death certificate early (you will need more than you think).\n- If there are no disputes among heirs, things tend to move faster.\n\nAlso worth asking your attorney about small estate shortcuts — some states let you skip formal probate if the estate is under a certain value.", "ago": timedelta(days=1, hours=8)},
-                    {"name": "James K.", "body": "My family went through probate last year. Took about 8 months in our case. The biggest thing that helped was having one person be the point of contact for the attorney so nothing fell through the cracks.", "ago": timedelta(days=1, hours=4)},
+                    {"name": "James", "body": "My family went through probate last year. Took about 8 months in our case. The biggest thing that helped was having one person be the point of contact for the attorney so nothing fell through the cracks.", "ago": timedelta(days=1, hours=4)},
                 ],
                 4: [  # Landed a new role post
                     {"name": "Cara", "body": "Love hearing this. And you are so right about having a system. When everything feels out of control, just having a list of what to do next makes a huge difference. Congrats on the new role.", "ago": timedelta(hours=22)},
-                    {"name": "Sarah M.", "body": "This gives me so much hope. Thank you for sharing.", "ago": timedelta(hours=20)},
-                    {"name": "Maria L.", "body": "Congrats. Four months is tough but you made it through. Inspiring.", "ago": timedelta(hours=16)},
+                    {"name": "Sarah", "body": "This gives me so much hope. Thank you for sharing.", "ago": timedelta(hours=20)},
+                    {"name": "Maria", "body": "Congrats. Four months is tough but you made it through. Inspiring.", "ago": timedelta(hours=16)},
                 ],
                 5: [  # Lawyer question
                     {"name": "Cara", "body": "So this is one of those situations where a little money upfront can save you a lot of headaches later. Even if you agree on everything, there are things you might not think of — like how retirement accounts get divided (that needs a special court order called a QDRO), tax filing status for the year, and whether your state requires specific language in the agreement.\n\nYou probably do not need full representation. A lot of family law attorneys offer a one-time document review for a flat fee. It is worth it just for the peace of mind.\n\nCheck out your state bar association or lawhelp.org for lower-cost options.", "ago": timedelta(hours=12)},
-                    {"name": "David R.", "body": "We did ours without lawyers and regretted it later when we realized we missed some retirement account stuff. Definitely get at least a consultation.", "ago": timedelta(hours=8)},
+                    {"name": "David", "body": "We did ours without lawyers and regretted it later when we realized we missed some retirement account stuff. Definitely get at least a consultation.", "ago": timedelta(hours=8)},
                 ],
             }
             for idx, reply_list in seed_replies.items():
@@ -5049,13 +5053,13 @@ def community_seed():
     seeds = [
         {"name": "Cara", "cat": "general", "trans": None, "title": "Welcome to the Lumeway community",
          "body": "Hey, so glad you are here.\n\nI built Lumeway because when I was going through my own life transition, I kept wishing someone would just tell me what to do next. Not in a preachy way, just like a friend who had been through it and could walk me through the steps.\n\nThat is what this community is for. Whether you are dealing with a divorce, a job loss, an estate, or something else entirely — you are not alone and there are people here who genuinely get it.\n\nNo question is too small, no vent is too messy. Jump in whenever you are ready.", "pin": 1},
-        {"name": "Sarah M.", "cat": "emotional-support", "trans": "divorce", "title": "How do you handle the loneliness?",
+        {"name": "Sarah", "cat": "emotional-support", "trans": "divorce", "title": "How do you handle the loneliness?",
          "body": "I am about three months into my separation and the evenings are the hardest. The house feels so quiet. I know it gets better but some days it is really hard to believe that.\n\nAnyone else going through this? What has helped you?", "pin": 0},
-        {"name": "James K.", "cat": "financial", "trans": "job-loss", "title": "Negotiating severance - what I wish I knew",
+        {"name": "James", "cat": "financial", "trans": "job-loss", "title": "Negotiating severance - what I wish I knew",
          "body": "Just went through a layoff and wanted to share something I learned the hard way. Your initial severance offer is almost always negotiable. I asked for an extra two weeks and they said yes immediately.\n\nThings worth asking about: extended health insurance coverage, outplacement services, a neutral reference letter, and keeping your laptop.\n\nHas anyone else had luck negotiating? Would love to hear what worked for you.", "pin": 0},
-        {"name": "Maria L.", "cat": "legal-questions", "trans": "estate", "title": "Probate timeline - how long did yours take?",
+        {"name": "Maria", "cat": "legal-questions", "trans": "estate", "title": "Probate timeline - how long did yours take?",
          "body": "My mom passed away two months ago and the attorney said probate could take 6 to 12 months. That feels like forever when you are trying to handle everything.\n\nHow long did the process take for others? Any tips for keeping things moving?", "pin": 0},
-        {"name": "David R.", "cat": "success-stories", "trans": "job-loss", "title": "Landed a new role after 4 months",
+        {"name": "David", "cat": "success-stories", "trans": "job-loss", "title": "Landed a new role after 4 months",
          "body": "Just wanted to share some hope for anyone in the thick of a job search. I was laid off in December and it was honestly one of the lowest points of my life. But I just accepted an offer that is actually a better fit than my old job.\n\nWhat helped me most was having a system. The checklist on here kept me from spiraling and just taking it one task at a time made a huge difference.\n\nHang in there. It does get better.", "pin": 0},
         {"name": "Anonymous", "cat": "ask-cara", "trans": "divorce", "title": "Do I need a lawyer if we agree on everything?",
          "body": "My spouse and I are splitting amicably. We have already agreed on how to divide everything and we do not have kids. Do we still need to hire lawyers or can we just file the paperwork ourselves?\n\nTrying to keep costs down but also do not want to make a mistake.", "pin": 0},
@@ -5073,31 +5077,31 @@ def community_seed():
         seed_post_ids.append(row[0] if row else None)
     seed_replies = {
         0: [
-            {"name": "Sarah M.", "body": "This is exactly what I needed. Just knowing other people are going through the same thing makes such a difference."},
-            {"name": "James K.", "body": "Really glad this exists. Sometimes you just need to talk to people who get it."},
+            {"name": "Sarah", "body": "This is exactly what I needed. Just knowing other people are going through the same thing makes such a difference."},
+            {"name": "James", "body": "Really glad this exists. Sometimes you just need to talk to people who get it."},
             {"name": "Cara", "body": "So happy you are both here. Seriously, do not be shy about posting. Even if it is just to vent. That is what this space is for."},
         ],
         1: [
             {"name": "Cara", "body": "Three months in is still so early, so please be gentle with yourself. The quiet evenings are the worst part for a lot of people.\n\nA few things that have helped others: a small after-dinner routine (even just a walk or a podcast), keeping a text thread going with a friend, or picking up one low-effort hobby that gets you out of your head. You do not have to fill the silence with anything productive. Just something that is yours."},
-            {"name": "David R.", "body": "I went through something similar after my divorce. What helped me was finding one thing to look forward to each evening, even something small. A show, a call with a friend, cooking something new. It does get easier."},
-            {"name": "Maria L.", "body": "Sending you a hug. The evenings were the hardest for me too. I started journaling before bed and it honestly helped more than I expected."},
+            {"name": "David", "body": "I went through something similar after my divorce. What helped me was finding one thing to look forward to each evening, even something small. A show, a call with a friend, cooking something new. It does get easier."},
+            {"name": "Maria", "body": "Sending you a hug. The evenings were the hardest for me too. I started journaling before bed and it honestly helped more than I expected."},
         ],
         2: [
             {"name": "Cara", "body": "This is such good advice. A lot of people do not realize severance is negotiable because they are in shock when it happens.\n\nOne thing to add: if your company offered a severance agreement, you usually have 21 days to review it (45 days if you are over 40 — that is federal law). So do not feel pressured to sign on the spot. Use that time to negotiate or have an employment attorney look it over."},
-            {"name": "Sarah M.", "body": "I wish I had known this. I signed mine the same day because I was so overwhelmed. Great share."},
+            {"name": "Sarah", "body": "I wish I had known this. I signed mine the same day because I was so overwhelmed. Great share."},
         ],
         3: [
             {"name": "Cara", "body": "6 to 12 months is pretty standard, but it really depends on the state and how complex the estate is. A few things that can speed things up:\n\n- Stay on top of deadlines your attorney gives you. A lot of delays happen because paperwork sits.\n- Get multiple copies of the death certificate early (you will need more than you think).\n- If there are no disputes among heirs, things tend to move faster.\n\nAlso worth asking your attorney about small estate shortcuts — some states let you skip formal probate if the estate is under a certain value."},
-            {"name": "James K.", "body": "My family went through probate last year. Took about 8 months in our case. The biggest thing that helped was having one person be the point of contact for the attorney so nothing fell through the cracks."},
+            {"name": "James", "body": "My family went through probate last year. Took about 8 months in our case. The biggest thing that helped was having one person be the point of contact for the attorney so nothing fell through the cracks."},
         ],
         4: [
             {"name": "Cara", "body": "Love hearing this. And you are so right about having a system. When everything feels out of control, just having a list of what to do next makes a huge difference. Congrats on the new role."},
-            {"name": "Sarah M.", "body": "This gives me so much hope. Thank you for sharing."},
-            {"name": "Maria L.", "body": "Congrats. Four months is tough but you made it through. Inspiring."},
+            {"name": "Sarah", "body": "This gives me so much hope. Thank you for sharing."},
+            {"name": "Maria", "body": "Congrats. Four months is tough but you made it through. Inspiring."},
         ],
         5: [
             {"name": "Cara", "body": "So this is one of those situations where a little money upfront can save you a lot of headaches later. Even if you agree on everything, there are things you might not think of — like how retirement accounts get divided (that needs a special court order called a QDRO), tax filing status for the year, and whether your state requires specific language in the agreement.\n\nYou probably do not need full representation. A lot of family law attorneys offer a one-time document review for a flat fee. It is worth it just for the peace of mind.\n\nCheck out your state bar association or lawhelp.org for lower-cost options."},
-            {"name": "David R.", "body": "We did ours without lawyers and regretted it later when we realized we missed some retirement account stuff. Definitely get at least a consultation."},
+            {"name": "David", "body": "We did ours without lawyers and regretted it later when we realized we missed some retirement account stuff. Definitely get at least a consultation."},
         ],
     }
     for idx, reply_list in seed_replies.items():
