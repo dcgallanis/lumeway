@@ -219,7 +219,7 @@
       <div class="tier-header featured">
         <div class="tier-label">Full Plan</div>
         <div class="tier-price-tag" id="transitionPrice">$39 <span>one-time</span></div>
-        <div class="tier-desc-short">Complete dashboard for one life change</div>
+        <div class="tier-desc-short">Complete dashboard and templates for one life change</div>
       </div>
       <div class="tier-header">
         <div class="tier-label">Everything</div>
@@ -233,7 +233,7 @@
       <div class="cta-cell"></div>
       <div class="cta-cell"><a href="/chat" class="cta-btn secondary">Start free</a></div>
       <div class="cta-cell"><a href="/templates" class="cta-btn secondary">Choose bundle</a></div>
-      <div class="cta-cell featured"><button class="cta-btn primary" onclick="showTransitionSelector()">Get full plan</button></div>
+      <div class="cta-cell featured"><button class="cta-btn primary" id="fullPlanBtn" onclick="showTransitionSelector()">Get full plan</button></div>
       <div class="cta-cell"><button class="cta-btn primary" onclick="purchaseAll()" id="allBtn">Get everything</button></div>
     </div>
 
@@ -455,6 +455,15 @@
         if (!data) return;
         userCredit = data.credit_cents || 0;
         userAccess = data.category_access || {};
+        // Personalize for starter users who redeemed a template code
+        var starterCats = Object.keys(userAccess).filter(function(k) { return userAccess[k] === 'starter'; });
+        var catLabelsMap = { 'job-loss': 'Job Loss', estate: 'Estate', divorce: 'Divorce', disability: 'Disability', relocation: 'Relocation', retirement: 'Retirement' };
+        if (starterCats.length > 0) {
+          var sCat = starterCats[0];
+          var sLabel = catLabelsMap[sCat] || sCat;
+          var btn = document.getElementById('fullPlanBtn');
+          if (btn) btn.textContent = 'Get full ' + sLabel + ' plan';
+        }
         if (userCredit > 0) {
           var banner = document.getElementById('creditBanner');
           banner.innerHTML = 'You have <strong>$' + (userCredit / 100).toFixed(0) + ' in credit</strong> from previous purchases. Prices below are adjusted.';
