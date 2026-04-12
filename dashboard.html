@@ -294,13 +294,13 @@
     .ws-status-tab { padding: 4px 10px; border: none; border-radius: 4px; font-size: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; cursor: pointer; background: transparent; color: var(--muted); transition: all 0.15s; }
     .ws-status-tab:hover { color: var(--text); }
     .ws-status-tab.active { background: var(--warm-white); color: var(--navy); }
-    .ws-file-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; cursor: pointer; border: 1.5px solid var(--border); position: relative; transition: all 0.15s; }
-    .ws-file-dot:hover { transform: scale(1.3); }
+    .ws-file-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; cursor: pointer; border: 2px solid var(--border); position: relative; transition: all 0.15s; }
+    .ws-file-dot:hover { transform: scale(1.2); box-shadow: 0 0 0 3px rgba(44,74,94,0.08); }
     .ws-file-dot.todo { background: var(--green); border-color: var(--green); }
     .ws-file-dot.in-progress { background: #D4A843; border-color: #D4A843; }
     .ws-file-dot.need-action { background: var(--accent); border-color: var(--accent); }
     .ws-file-dot.done { background: var(--navy); border-color: var(--navy); }
-    .ws-status-menu { position: absolute; top: 100%; right: 0; z-index: 50; background: var(--warm-white); border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 4px 0; min-width: 110px; display: none; }
+    .ws-status-menu { position: absolute; top: 100%; left: 0; z-index: 50; background: var(--warm-white); border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 4px 0; min-width: 120px; display: none; }
     .ws-status-menu.open { display: block; }
     .ws-status-opt { display: flex; align-items: center; gap: 6px; padding: 5px 10px; font-size: 10px; font-weight: 500; cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: inherit; color: var(--text); transition: background 0.1s; }
     .ws-status-opt:hover { background: var(--cream); }
@@ -311,7 +311,7 @@
     .ws-status-dot.c-done { background: var(--navy); }
     .ws-folder-files { padding: 0 8px 4px 34px; display: none; }
     .ws-folder.active + .ws-folder-files, .ws-folder.open + .ws-folder-files { display: block; }
-    .ws-folder-file { padding: 5px 8px; border-radius: 6px; font-size: 11px; color: var(--muted); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: all 0.1s; }
+    .ws-folder-file { padding: 5px 8px; border-radius: 6px; font-size: 11px; color: var(--muted); cursor: pointer; text-overflow: ellipsis; white-space: nowrap; transition: all 0.1s; position: relative; }
     .ws-folder-file:hover { background: var(--cream); color: var(--text); }
     .ws-folder-file:hover .ws-file-dot { transform: scale(1.3); }
     .ws-folder-file.active { color: var(--navy); font-weight: 500; background: var(--cream); }
@@ -372,7 +372,8 @@
     .pdf-page-wrap { position: relative; margin: 0 auto 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.25); background: white; max-width: 100%; }
     .pdf-page-wrap canvas { display: block; }
     .pdf-text-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; line-height: 1; z-index: 3; }
-    .pdf-text-layer span { position: absolute; white-space: pre; color: transparent; pointer-events: all; cursor: text; }
+    .pdf-text-layer span { position: absolute; white-space: pre; color: transparent; pointer-events: auto; cursor: text; z-index: 1; }
+    .pdf-text-layer { pointer-events: auto; }
     .pdf-text-layer span::selection { background: rgba(0,100,200,0.35); }
     .pdf-text-layer span.pdf-highlighted { background: rgba(255, 255, 0, 0.45) !important; }
     .pdf-text-layer.editing-mode { pointer-events: none; opacity: 0; }
@@ -387,8 +388,8 @@
     .pdf-annot-layer.text-mode { pointer-events: auto; cursor: text; }
     .pdf-annot-layer.sig-mode { pointer-events: auto; cursor: none; }
     .pdf-annot { position: absolute; cursor: move; pointer-events: auto !important; z-index: 10; }
-    .pdf-annot-text { border: 1.5px dashed rgba(0,0,0,0.15); padding: 2px 4px 2px 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #2C3E50; background: rgba(255,255,255,0.9); min-width: 60px; min-height: 22px; outline: none; border-radius: 2px; line-height: 1.4; cursor: text; pointer-events: auto !important; }
-    .pdf-annot-text:focus { border-color: var(--gold); background: rgba(255,255,255,0.98); box-shadow: 0 0 0 2px rgba(184,151,126,0.25); }
+    .pdf-annot-text { border: 1.5px dashed rgba(0,0,0,0.15); padding: 2px 4px 2px 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #2C3E50; background: rgba(255,255,255,0.9); min-width: 60px; min-height: 22px; outline: none; border-radius: 2px; line-height: 1.4; cursor: text; pointer-events: auto !important; -webkit-user-modify: read-write; user-select: text; }
+    .pdf-annot-text:focus { border-color: var(--gold); background: rgba(255,255,255,0.98); box-shadow: 0 0 0 2px rgba(184,151,126,0.25); z-index: 20; position: relative; }
     .pdf-annot-text:hover { border-color: var(--gold); background: rgba(255,255,255,0.95); }
     .pdf-annot-drag { position: absolute; left: 0; top: 0; width: 14px; height: 100%; cursor: move; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 8px; opacity: 0; transition: opacity 0.15s; user-select: none; letter-spacing: 1px; }
     .pdf-annot:hover .pdf-annot-drag { opacity: 0.6; }
@@ -537,6 +538,9 @@
     .guide-state-prompt a { color: var(--navy); font-weight: 500; }
     .guide-category { margin-bottom: 24px; }
     .guide-cat-header { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 400; color: var(--navy); margin-bottom: 4px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .guide-category:not(.open) .guide-task { display: none; }
+    .guide-category.open .guide-cat-chevron { transform: rotate(0deg); }
+    .guide-category:not(.open) .guide-cat-chevron { transform: rotate(-90deg); }
     .guide-usage { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 300; color: var(--muted); }
     .guide-cat-risk { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; }
     .guide-cat-risk.low { color: var(--green); }
@@ -3728,7 +3732,7 @@ guideLibrary['disability'] = {
         var stateInfo = stateRulesData[userState][stateKey];
         var stateName = stateRulesData[userState].name || userState;
         html += '<div class="guide-state-callout">';
-        html += '  <div class="guide-state-header"><span class="guide-state-icon">📍</span> ' + stateName + ' rules for this transition</div>';
+        html += '  <div class="guide-state-header"><span class="guide-state-icon">📍</span> ' + stateName + ' specific rules</div>';
         html += '  <ul class="guide-state-bullets">';
         stateInfo.bullets.forEach(function(b) { html += '<li>' + b + '</li>'; });
         html += '  </ul>';
@@ -3742,8 +3746,8 @@ guideLibrary['disability'] = {
       t.categories.forEach(function(cat) {
         var catSlug = key + '-' + cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
         var catUsage = getUsageCount(key + cat.name);
-        html += '<div class="guide-category" id="guide-cat-' + catSlug + '">';
-        html += '  <div class="guide-cat-header">' + cat.name + ' <span class="guide-usage">' + formatUsageCount(catUsage) + ' people used this guide</span></div>';
+        html += '<div class="guide-category open" id="guide-cat-' + catSlug + '">';
+        html += '  <div class="guide-cat-header" onclick="toggleGuideCategory(\'' + catSlug + '\')" style="cursor:pointer;user-select:none">' + cat.name + ' <span class="guide-cat-chevron" style="float:right;transition:transform 0.2s">\u25BE</span></div>';
 
         cat.tasks.forEach(function(task) {
           html += '<div class="guide-task" id="guide-' + task.id + '">';
@@ -3772,7 +3776,7 @@ guideLibrary['disability'] = {
             var taskUsage = getUsageCount(task.id);
             html += '<div class="guide-lock-msg">';
             html += '<div>' + remainSteps + ' more steps, key terms, contacts, and common mistakes — so you don\'t miss a deadline or make a costly error.</div>';
-            html += '<div class="guide-lock-social">' + formatUsageCount(taskUsage) + ' people used this guide</div>';
+            // Social proof removed
             html += '<div class="guide-lock-anchor">Less than the cost of one missed deadline. 30-day money-back guarantee.</div>';
             html += '<a href="/pricing" class="guide-lock-cta">See full plans</a>';
             html += '</div>';
@@ -3839,15 +3843,7 @@ guideLibrary['disability'] = {
               html += '</div>'; // guide-more-info
             }
 
-            // Action bar: save note, bookmark to files
-            html += '<div class="guide-action-bar" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap">';
-            html += '  <button class="guide-action-btn" onclick="event.stopPropagation();guideQuickNote(\'' + task.id + '\',\'' + task.title.replace(/'/g, "\\'") + '\')" style="font-size:11px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;background:var(--cream);cursor:pointer;color:var(--navy);font-family:inherit;display:flex;align-items:center;gap:4px">';
-            html += '    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Save note';
-            html += '  </button>';
-            html += '  <button class="guide-action-btn" onclick="event.stopPropagation();guideAddToChecklist(\'' + task.id + '\',\'' + task.title.replace(/'/g, "\\'") + '\')" style="font-size:11px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;background:var(--cream);cursor:pointer;color:var(--navy);font-family:inherit;display:flex;align-items:center;gap:4px">';
-            html += '    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Add to checklist';
-            html += '  </button>';
-            html += '</div>';
+            // Action bar removed — buttons were non-functional
           }
 
           html += '  </div>'; // task-body
@@ -3996,6 +3992,11 @@ guideLibrary['disability'] = {
         el.classList.toggle('open');
         if (!wasOpen) trackEvent('guide_task_expand', { guide_id: id });
       }
+    }
+
+    function toggleGuideCategory(catSlug) {
+      var el = document.getElementById('guide-cat-' + catSlug);
+      if (el) el.classList.toggle('open');
     }
 
     function maybeShowUpgradePrompt(container) {
@@ -4871,6 +4872,7 @@ guideLibrary['disability'] = {
       if (!name) { alert('Please type your name first.'); return; }
       var font = activeSigFont;
       localStorage.setItem('lumeway_sig_name', name);
+      localStorage.setItem('lumeway_sig_font', font);
       savedSigName = name;
 
       var dd = document.getElementById('wsSigDropdown');
@@ -4878,10 +4880,22 @@ guideLibrary['disability'] = {
       if (dd) dd.classList.remove('open');
       if (btn) btn.classList.remove('active');
 
-      if (wsQuill) {
-        insertQuillSignature(name, font);
-      } else if (pdfDoc) {
-        togglePdfSigMode();
+      // Ensure font is loaded before stamping
+      loadSigFonts();
+      if (document.fonts && document.fonts.load) {
+        document.fonts.load('24px "' + font + '"').then(function() {
+          if (wsQuill) {
+            insertQuillSignature(name, font);
+          } else if (pdfDoc) {
+            togglePdfSigMode();
+          }
+        });
+      } else {
+        if (wsQuill) {
+          insertQuillSignature(name, font);
+        } else if (pdfDoc) {
+          togglePdfSigMode();
+        }
       }
     }
 
@@ -6292,7 +6306,7 @@ guideLibrary['disability'] = {
       html += '  <p class="card-empty" style="margin-bottom:12px">Select what you\'re going through and enter the key date. We\'ll generate a full timeline of deadlines with docs needed and who to contact.</p>';
       html += '  <div class="calc-row">';
       html += '    <select class="init-select" id="calcTransition">';
-      html += '      <option value="">Choose transition...</option>';
+      html += '      <option value="">Choose your situation...</option>';
       html += '      <option value="retirement">Retirement date</option>';
       html += '      <option value="job-loss">Last day of work</option>';
       html += '      <option value="estate">Date of loved one\'s passing</option>';
@@ -6862,6 +6876,17 @@ guideLibrary['disability'] = {
       html += '    <button class="ws-sticky-close" onclick="toggleStickyNote()">&times;</button>';
       html += '  </div>';
       html += '  <div class="ws-sticky-body">';
+      html += '    <select id="wsStickyCategory" style="width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;margin-bottom:6px;background:var(--warm-white);color:var(--navy)">';
+      html += '      <option value="">Category...</option>';
+      html += '      <option value="Financial">Financial</option>';
+      html += '      <option value="Insurance">Insurance</option>';
+      html += '      <option value="Legal">Legal</option>';
+      html += '      <option value="Medical">Medical</option>';
+      html += '      <option value="Housing">Housing</option>';
+      html += '      <option value="Employment">Employment</option>';
+      html += '      <option value="Personal">Personal</option>';
+      html += '      <option value="Other">Other</option>';
+      html += '    </select>';
       html += '    <textarea id="wsStickyText" placeholder="Type a note and hit Enter to save..."></textarea>';
       html += '  </div>';
       html += '  <div class="ws-sticky-footer">';
@@ -8000,7 +8025,10 @@ guideLibrary['disability'] = {
     }
 
     function getStickyNoteContext() {
-      // Determine current context for note categorization
+      // Use category dropdown if selected
+      var catSelect = document.getElementById('wsStickyCategory');
+      if (catSelect && catSelect.value) return '[' + catSelect.value + '] ';
+      // Otherwise auto-detect from context
       if (currentTab === 'documents' && wsActiveFileId) {
         var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
         if (file) return '[File: ' + file.original_name + '] ';
@@ -8030,6 +8058,8 @@ guideLibrary['disability'] = {
       .then(function(data) {
         if (data.ok) {
           ta.value = '';
+          var catSelect = document.getElementById('wsStickyCategory');
+          if (catSelect) catSelect.value = '';
           // Flag notes as dirty so Notes tab refreshes when opened
           _notesDirty = true;
           var status = document.getElementById('wsStickyStatus');
