@@ -371,11 +371,11 @@
     .pdf-viewer { position: relative; padding: 20px; background: #525659; min-height: 400px; overflow-y: auto; max-height: calc(100vh - 200px); }
     .pdf-page-wrap { position: relative; margin: 0 auto 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.25); background: white; max-width: 100%; }
     .pdf-page-wrap canvas { display: block; }
-    .pdf-text-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; line-height: 1; z-index: 3; }
+    .pdf-text-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; line-height: 1; z-index: 2; pointer-events: auto; }
     .pdf-text-layer span { position: absolute; white-space: pre; color: transparent; pointer-events: auto; cursor: text; z-index: 1; }
-    .pdf-text-layer { pointer-events: auto; }
+    .pdf-text-layer.highlight-active { z-index: 5; }
     .pdf-text-layer span::selection { background: rgba(0,100,200,0.35); }
-    .pdf-text-layer span.pdf-highlighted { background: rgba(255, 255, 0, 0.45) !important; }
+    .pdf-text-layer span.pdf-highlighted { /* background set by JS per chosen color */ }
     .pdf-text-layer.editing-mode { pointer-events: none; opacity: 0; }
     .erase-highlight-mode .pdf-highlighted { cursor: pointer !important; outline: 2px dashed var(--accent); outline-offset: 1px; }
     .pdf-highlight-group { display: flex; align-items: center; gap: 4px; padding: 2px 6px; border: 1px solid var(--border); border-radius: 8px; background: var(--warm-white); }
@@ -384,7 +384,7 @@
     .pdf-hl-swatch { width: 18px; height: 18px; border-radius: 4px; border: 2px solid transparent; cursor: pointer; padding: 0; transition: border-color 0.15s; }
     .pdf-hl-swatch:hover { border-color: var(--navy); }
     .pdf-hl-swatch.active { border-color: var(--navy); }
-    .pdf-annot-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+    .pdf-annot-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
     .pdf-annot-layer.text-mode { pointer-events: auto; cursor: text; }
     .pdf-annot-layer.sig-mode { pointer-events: auto; cursor: none; }
     .pdf-annot { position: absolute; cursor: move; pointer-events: auto !important; z-index: 10; }
@@ -3334,10 +3334,10 @@ guideLibrary['disability'] = {
             ],
             contacts: 'SAMHSA Helpline: 1-800-662-4357 (free, 24/7) \u2022 911 for medical emergencies \u2022 Hospital social worker or discharge planner \u2022 Crisis Text Line: text HOME to 741741',
             mistakes: [
-              'Confronting someone while they are intoxicated \u2014 it will not be productive and can be dangerous.',
-              'Pouring out alcohol or flushing drugs \u2014 this can trigger dangerous withdrawal symptoms.',
-              'Trying to handle everything alone without telling anyone.',
-              'Waiting for them to hit rock bottom \u2014 earlier intervention leads to better outcomes.'
+              'Googling "how to fix an addict" instead of calling SAMHSA — the internet is full of predatory treatment marketers. The helpline is free and unbiased.',
+              'Flushing pills or pouring out alcohol without medical guidance — abrupt withdrawal from alcohol, benzodiazepines, or opioids can cause seizures or death.',
+              'Making big decisions (kicking them out, filing for divorce, calling their employer) in the first 24 hours — give yourself time to think clearly before acting.',
+              'Assuming this is a one-time crisis — addiction is chronic. The actions you take now should be sustainable for the long haul, not just tonight.'
             ]
           }
         ]},
@@ -3361,9 +3361,10 @@ guideLibrary['disability'] = {
             ],
             contacts: 'NIDA (National Institute on Drug Abuse): nida.nih.gov \u2022 SAMHSA: samhsa.gov \u2022 Al-Anon: al-anon.org',
             mistakes: [
-              'Thinking addiction is a choice or moral failing \u2014 it is a recognized medical condition.',
-              'Believing they can just stop if they really wanted to.',
-              'Ignoring co-occurring mental health conditions.'
+              'Using shame-based language like "junkie" or "alcoholic" — clinical terms like "substance use disorder" reflect the medical reality and reduce stigma.',
+              'Researching only their substance and ignoring underlying conditions — over 50% of people with addiction also have untreated depression, anxiety, or PTSD.',
+              'Comparing their addiction to someone else\'s — "your uncle quit cold turkey" is not helpful. Each person\'s brain chemistry, substance, and circumstances are different.',
+              'Stopping your own education after one article — understanding addiction is an ongoing process. NIDA, SAMHSA, and Al-Anon all have free ongoing resources.'
             ]
           }
         ]},
@@ -3385,9 +3386,10 @@ guideLibrary['disability'] = {
             ],
             contacts: 'Al-Anon: al-anon.org \u2022 Nar-Anon: nar-anon.org \u2022 SAMHSA Helpline: 1-800-662-4357',
             mistakes: [
-              'Dismissing warning signs as stress or a phase.',
-              'Waiting for absolute proof before taking action.',
-              'Confronting them with a list of evidence \u2014 this usually triggers defensiveness, not change.'
+              'Explaining away clear patterns — "they are just stressed at work" becomes a loop that delays help by months or years.',
+              'Snooping through their phone or belongings to build a case — this damages trust and shifts the conversation to your behavior instead of theirs.',
+              'Telling other family members everything you have observed before talking to the person — this can feel like ambush and makes them less likely to engage.',
+              'Focusing only on the substance and missing behavioral red flags — financial problems, secrecy, and relationship withdrawal are often earlier indicators than physical symptoms.'
             ]
           }
         ]},
@@ -3403,18 +3405,25 @@ guideLibrary['disability'] = {
               'Prepare for denial, anger, or deflection. This is normal. Your goal is to plant a seed, not win an argument.',
               'Have resources ready to offer if they are open: SAMHSA number, a treatment center you have researched, an Al-Anon meeting for yourself.',
               'Know when to stop. If the conversation escalates, it is okay to say "I love you. We can talk about this again when we are both ready."',
-              'Consider the CRAFT method (Community Reinforcement and Family Training) \u2014 an evidence-based approach for families that does not rely on confrontational intervention.'
+              'Learn the CRAFT method (Community Reinforcement and Family Training). CRAFT is the most evidence-based approach for families — studies show 64-74% of families using CRAFT get their loved one into treatment, compared to about 30% with other methods.',
+              'CRAFT step 1: Stop enabling. Identify the ways you are shielding them from consequences (calling in sick for them, paying their bills, cleaning up after them) and gradually stop.',
+              'CRAFT step 2: Reinforce sober behavior. When they are sober, make it rewarding — spend quality time, express affection, do activities they enjoy. When they are using, withdraw those rewards without punishment or lectures.',
+              'CRAFT step 3: Let natural consequences happen. If they miss work because of drinking, let them deal with the fallout. This is not cruelty — it is allowing reality to make the case for change.',
+              'CRAFT step 4: Identify treatment-ready moments. These are windows when they express regret, fear, or openness. Have a treatment option researched and ready to suggest in that moment — "I found a program. Can I tell you about it?"',
+              'CRAFT step 5: Take care of yourself throughout. CRAFT is not about suffering in silence — it is about strategic, compassionate action while maintaining your own health.',
+              'Consider working with a CRAFT-trained therapist who can guide you through the process. Find one at motivationandchange.com or the CRAFT website at robertjmeyersphd.com.'
             ],
             terms: [
-              { term: 'CRAFT', def: 'Community Reinforcement and Family Training. An evidence-based method for families to encourage treatment entry without confrontational intervention.' },
-              { term: 'Intervention', def: 'A structured meeting where loved ones express concern and encourage treatment. Best done with a professional interventionist.' }
+              { term: 'CRAFT', def: 'Community Reinforcement and Family Training. A 6-session evidence-based program teaching families to reduce enabling, reinforce sobriety, let natural consequences occur, and identify treatment-ready moments. Success rate of 64-74% for getting loved ones into treatment.' },
+              { term: 'Natural Consequences', def: 'Allowing someone to experience the real-world results of their substance use — missed work, damaged relationships, financial problems — rather than shielding them.' },
+              { term: 'Intervention', def: 'A structured meeting where loved ones express concern and encourage treatment. Best done with a professional interventionist. CRAFT is an alternative that does not require confrontation.' }
             ],
-            contacts: 'Association of Intervention Professionals: aipro.net \u2022 CRAFT resources: motivationandchange.com \u2022 Al-Anon: al-anon.org',
+            contacts: 'CRAFT resources: motivationandchange.com \u2022 CRAFT creator: robertjmeyersphd.com \u2022 Association of Intervention Professionals: aipro.net \u2022 Al-Anon: al-anon.org',
             mistakes: [
-              'Having the conversation while either of you is intoxicated or emotionally heightened.',
-              'Making threats you are not prepared to follow through on.',
-              'Expecting one conversation to fix everything.',
-              'Trying to do this entirely alone without professional guidance.'
+              'Leading with ultimatums instead of concern — "You need to stop" closes doors, "I am worried about you" opens them.',
+              'Choosing the wrong moment — right after a blowup or while they are using. Wait for a calm, sober window.',
+              'Expecting one conversation to lead to treatment. Seed-planting is the realistic goal. Most people need multiple conversations before they are ready.',
+              'Skipping the preparation step — having treatment options researched and ready makes it possible to act when they show openness.'
             ],
             script: {
               intro: 'When you are ready to talk to them:',
@@ -3449,9 +3458,10 @@ guideLibrary['disability'] = {
             ],
             contacts: 'Al-Anon: al-anon.org \u2022 Nar-Anon: nar-anon.org \u2022 Psychology Today therapist finder: psychologytoday.com/us/therapists \u2022 Crisis Text Line: text HOME to 741741',
             mistakes: [
-              'Believing that focusing on yourself means giving up on them.',
-              'Waiting until you are in crisis to seek help.',
-              'Isolating yourself because of shame or stigma.'
+              'Canceling your own therapy or doctor appointments because "they need you more" — you cannot sustain this. Burnout leads to resentment, health problems, and worse decision-making.',
+              'Monitoring their every move as your primary coping mechanism — this is hypervigilance, not support. It keeps your nervous system in constant fight-or-flight.',
+              'Only talking to people who tell you what you want to hear — Al-Anon and therapy offer honest perspective, not just comfort.',
+              'Setting boundaries and then immediately abandoning them — inconsistent boundaries teach the person that your limits are negotiable.'
             ]
           }
         ]},
@@ -3480,10 +3490,10 @@ guideLibrary['disability'] = {
             ],
             contacts: 'SAMHSA Treatment Locator: findtreatment.gov \u2022 Insurance company (number on back of card) \u2022 CARF directory: carf.org \u2022 Joint Commission: qualitycheck.org',
             mistakes: [
-              'Choosing a program based on marketing instead of accreditation and outcomes.',
-              'Not verifying insurance coverage before admission \u2014 this can lead to surprise bills.',
-              'Assuming all treatment programs are the same.',
-              'Not asking about aftercare planning \u2014 treatment is just the beginning.'
+              'Choosing the first facility that calls you back — many treatment centers use aggressive marketing. Always verify CARF or Joint Commission accreditation before committing.',
+              'Signing financial agreements without reading them — some programs charge $30,000+ and do not accept insurance. Get costs in writing and verify coverage first.',
+              'Sending someone to a program that does not treat their co-occurring conditions — if they have depression, PTSD, or anxiety, the program must address both. Ask specifically about dual diagnosis.',
+              'Skipping the aftercare question during intake — ask "What happens after the 28 days?" If the answer is vague, that is a red flag. Good programs have structured aftercare plans.'
             ]
           }
         ]},
@@ -3506,9 +3516,10 @@ guideLibrary['disability'] = {
             ],
             contacts: '911 for emergencies \u2022 Poison Control: 1-800-222-1222 \u2022 SAMHSA Helpline: 1-800-662-4357 \u2022 Local pharmacy for naloxone',
             mistakes: [
-              'Assuming they are just drunk when they could be in medical distress.',
-              'Not learning about naloxone if opioids are involved.',
-              'Ignoring their mental health symptoms because the addiction seems more urgent.'
+              'Letting someone "sleep it off" when they are unresponsive — alcohol poisoning and opioid overdose can be fatal. If you cannot wake them, call 911.',
+              'Not having naloxone (Narcan) in the house when opioids are involved — it is available without prescription at most pharmacies and can be the difference between life and death.',
+              'Dismissing jaundice (yellow skin or eyes) as "they just look tired" — this is a sign of liver failure and requires immediate medical attention.',
+              'Treating mental health and addiction as separate problems — depression, PTSD, and anxiety drive substance use. Treating only the addiction without addressing the underlying condition leads to relapse.'
             ]
           }
         ]},
@@ -3532,9 +3543,10 @@ guideLibrary['disability'] = {
             ],
             contacts: 'Local family law attorney \u2022 Legal Aid: lawhelp.org \u2022 Your state court system (drug court information) \u2022 SAMHSA Helpline: 1-800-662-4357',
             mistakes: [
-              'Co-signing loans or taking on their debt without understanding the risk.',
-              'Not separating finances until it is too late.',
-              'Assuming you cannot do anything legally until they agree to treatment.'
+              'Bailing them out of jail reflexively — an arrest can be the natural consequence that motivates change. Consult a lawyer before posting bail.',
+              'Keeping joint credit cards active "just in case" — addiction-driven spending can destroy your credit score and drain shared accounts in days.',
+              'Not knowing your state\'s involuntary commitment laws — in many states, families can petition for court-ordered assessment. This option exists even when the person refuses help.',
+              'Hiring a criminal defense attorney without exploring drug court — diversion programs often lead to treatment and have better long-term outcomes than traditional prosecution.'
             ]
           }
         ]},
@@ -3559,10 +3571,10 @@ guideLibrary['disability'] = {
             ],
             contacts: 'Treatment center aftercare coordinator \u2022 Al-Anon: al-anon.org \u2022 SAMHSA Helpline: 1-800-662-4357 \u2022 Psychology Today therapist finder: psychologytoday.com/us/therapists',
             mistakes: [
-              'Expecting everything to go back to normal immediately after treatment.',
-              'Treating relapse as proof that treatment did not work.',
-              'Becoming the sobriety police \u2014 monitoring, testing, interrogating.',
-              'Neglecting your own recovery process.'
+              'Celebrating their 30-day chip and then acting like the problem is solved — early recovery is the most vulnerable period. The real work is the first 6-12 months.',
+              'Checking their phone, smelling their breath, or searching their room — this is hypervigilance, not support. It damages trust and puts you in a parental role that harms the relationship.',
+              'Bringing alcohol into the home or attending events where drinking is central "because they should be able to handle it" — in early recovery, environment matters enormously.',
+              'Dropping your own therapy or Al-Anon because "they are better now" — your recovery from the trauma of living with addiction is separate from their sobriety and takes its own time.'
             ]
           }
         ]},
@@ -3684,8 +3696,27 @@ guideLibrary['disability'] = {
     function switchGuideTransition(key) {
       if (!guideLibrary[key]) return;
       activeGuideTransition = key;
+      // Update active state and expand/collapse subheaders
       document.querySelectorAll('.guide-nav-item').forEach(function(item) {
-        item.classList.toggle('active', item.dataset.key === key);
+        var isActive = item.dataset.key === key;
+        item.classList.toggle('active', isActive);
+        // Remove existing sections list
+        var existingSections = item.querySelector('.guide-nav-sections');
+        if (existingSections) existingSections.remove();
+        // Add sections for newly active item
+        if (isActive && guideLibrary[item.dataset.key]) {
+          var t = guideLibrary[item.dataset.key];
+          var ul = document.createElement('ul');
+          ul.className = 'guide-nav-sections';
+          t.categories.forEach(function(cat) {
+            var catSlug = item.dataset.key + '-' + cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
+            var li = document.createElement('li');
+            li.textContent = cat.name;
+            li.onclick = function(e) { e.stopPropagation(); scrollToGuideCategory(item.dataset.key, catSlug); };
+            ul.appendChild(li);
+          });
+          item.appendChild(ul);
+        }
       });
       renderGuideTransition(key);
     }
@@ -4112,6 +4143,20 @@ guideLibrary['disability'] = {
     function renderUserFiles() {
       var container = document.getElementById('wsFolders');
       if (!container) return;
+      // Show sorting tip for first 5 visits
+      var fileVisits = parseInt(localStorage.getItem('lumeway_files_visits') || '0');
+      if (fileVisits < 5 && userFiles && userFiles.length > 0 && !document.getElementById('wsSortTip')) {
+        localStorage.setItem('lumeway_files_visits', fileVisits + 1);
+        var tip = document.createElement('div');
+        tip.id = 'wsSortTip';
+        tip.style.cssText = 'margin:8px 10px 4px;padding:10px 12px;background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border:1px solid #E8D5C4;border-radius:8px;font-size:11px;color:var(--text);line-height:1.5;position:relative';
+        tip.innerHTML = '<button onclick="this.parentNode.remove()" style="position:absolute;top:4px;right:6px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px">&times;</button>'
+          + '<strong style="font-size:11px;color:var(--navy)">Organizing your files</strong><br>'
+          + 'Use the <span style="color:var(--accent)">colored dots</span> to mark file status (to-do, in progress, done). '
+          + 'Filter by status using the buttons above. Files are grouped by category — click a folder to expand it.';
+        container.parentNode.insertBefore(tip, container);
+        setTimeout(function() { if (tip.parentNode) tip.remove(); }, 15000);
+      }
       var catIcons = {all:'\uD83D\uDCC2', legal:'\uD83D\uDCDC', financial:'\uD83D\uDCB3', insurance:'\uD83D\uDEE1\uFE0F', medical:'\u2695\uFE0F', personal:'\uD83D\uDC64', other:'\uD83D\uDCC1', templates:'\uD83D\uDCE6'};
       var catLabels = {all:'All Files', legal:'Legal', financial:'Financial', insurance:'Insurance', medical:'Medical', personal:'Personal', other:'Other', templates:'Purchased Templates'};
       var catOrder = ['all','legal','financial','insurance','medical','personal','other'];
@@ -4975,6 +5020,25 @@ guideLibrary['disability'] = {
         + '<div class="pdf-viewer" id="pdfViewer"></div>'
         + '<div class="pdf-sig-ghost" id="pdfSigGhost"></div>';
 
+      // Show PDF tools onboarding for first 5 opens
+      var pdfOpenCount = parseInt(localStorage.getItem('lumeway_pdf_opens') || '0');
+      if (pdfOpenCount < 5) {
+        localStorage.setItem('lumeway_pdf_opens', pdfOpenCount + 1);
+        var onb = document.createElement('div');
+        onb.style.cssText = 'position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:20;background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:16px 20px;max-width:340px;box-shadow:0 4px 20px rgba(0,0,0,0.12);font-family:Plus Jakarta Sans,sans-serif;';
+        onb.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px"><span style="font-size:13px;font-weight:600;color:var(--navy)">PDF Tools</span><button onclick="this.closest(\'div\').remove()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px">&times;</button></div>'
+          + '<div style="font-size:12px;color:var(--text);line-height:1.6">'
+          + '<p style="margin:0 0 6px"><strong>Add text</strong> — Click the pen icon, then click anywhere on the page to place text. Hover to drag or delete.</p>'
+          + '<p style="margin:0 0 6px"><strong>Highlight</strong> — Click the highlight icon, pick a color, then select text to highlight it.</p>'
+          + '<p style="margin:0 0 6px"><strong>Signature</strong> — Set your signature in the toolbar, then click to stamp it on the page.</p>'
+          + '<p style="margin:0"><strong>Erase</strong> — Use the eraser icon to click on any highlight to remove it.</p>'
+          + '</div>';
+        var viewerParent = body.querySelector('.pdf-toolbar');
+        if (viewerParent) viewerParent.style.position = 'relative';
+        if (viewerParent) viewerParent.appendChild(onb);
+        setTimeout(function() { if (onb.parentNode) onb.remove(); }, 12000);
+      }
+
       var pdfScale = 1.2;
 
       // Fetch PDF bytes
@@ -5090,6 +5154,10 @@ guideLibrary['disability'] = {
       // When highlight mode is on, listen for mouseup to auto-highlight selection
       var viewer = document.getElementById('pdfViewer');
       if (!viewer) return;
+      // Raise text layer above annotations in highlight mode so text is selectable
+      document.querySelectorAll('.pdf-text-layer').forEach(function(t) {
+        t.classList.toggle('highlight-active', pdfHighlightMode);
+      });
       if (pdfHighlightMode) {
         viewer.addEventListener('mouseup', onPdfHighlightMouseUp);
       } else {
@@ -5246,6 +5314,10 @@ guideLibrary['disability'] = {
       if (pdfEraseMode) { pdfHighlightMode = false; var hb = document.getElementById('pdfHighlightToggle'); if (hb) hb.classList.remove('active'); var viewer = document.getElementById('pdfViewer'); if (viewer) viewer.removeEventListener('mouseup', onPdfHighlightMouseUp); }
       var btn = document.getElementById('pdfEraseHighlightBtn');
       if (btn) btn.classList.toggle('active', pdfEraseMode);
+      // Raise text layer so highlighted spans are clickable for erasing
+      document.querySelectorAll('.pdf-text-layer').forEach(function(t) {
+        t.classList.toggle('highlight-active', pdfEraseMode);
+      });
       var container = document.getElementById('pdfViewer');
       if (!container) return;
       if (pdfEraseMode) {

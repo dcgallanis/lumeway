@@ -5373,14 +5373,38 @@ def convert_docx_to_html(file_id):
         for element in doc.element.body:
             tag = element.tag.split('}')[-1] if '}' in element.tag else element.tag
             if tag == 'p':
-                # Paragraph
+                # Paragraph — preserve formatting, colors, sizes, alignment
                 p = element
                 style_name = ''
+                p_styles = []
                 pPr = p.find(qn('w:pPr'))
                 if pPr is not None:
                     pStyle = pPr.find(qn('w:pStyle'))
                     if pStyle is not None:
                         style_name = pStyle.get(qn('w:val'), '')
+                    # Paragraph alignment
+                    jc = pPr.find(qn('w:jc'))
+                    if jc is not None:
+                        align_val = jc.get(qn('w:val'), '')
+                        align_map = {'center': 'center', 'right': 'right', 'both': 'justify', 'left': 'left'}
+                        if align_val in align_map:
+                            p_styles.append('text-align:{}'.format(align_map[align_val]))
+                    # Paragraph background/shading
+                    pShd = pPr.find(qn('w:shd'))
+                    if pShd is not None:
+                        pfill = pShd.get(qn('w:fill'), '')
+                        if pfill and pfill not in ('auto', 'FFFFFF'):
+                            p_styles.append('background-color:#{}'.format(pfill))
+                            p_styles.append('padding:8px 12px')
+                    # Paragraph indentation
+                    ind = pPr.find(qn('w:ind'))
+                    if ind is not None:
+                        left_ind = ind.get(qn('w:left'), '')
+                        if left_ind:
+                            try:
+                                p_styles.append('margin-left:{}pt'.format(round(int(left_ind) / 20)))
+                            except ValueError:
+                                pass
                 text_parts = []
                 for run in p.findall(qn('w:r')):
                     rPr = run.find(qn('w:rPr'))
@@ -5389,21 +5413,58 @@ def convert_docx_to_html(file_id):
                     underline = rPr is not None and rPr.find(qn('w:u')) is not None
                     t = run.find(qn('w:t'))
                     txt = t.text if t is not None and t.text else ''
+                    # Run-level formatting: color, size, font, highlight
+                    run_styles = []
+                    if rPr is not None:
+                        color_el = rPr.find(qn('w:color'))
+                        if color_el is not None:
+                            cval = color_el.get(qn('w:val'), '')
+                            if cval and cval not in ('auto', '000000'):
+                                run_styles.append('color:#{}'.format(cval))
+                        sz_el = rPr.find(qn('w:sz'))
+                        if sz_el is not None:
+                            szval = sz_el.get(qn('w:val'), '')
+                            if szval:
+                                try:
+                                    # w:sz is in half-points
+                                    run_styles.append('font-size:{}pt'.format(round(int(szval) / 2)))
+                                except ValueError:
+                                    pass
+                        rFonts = rPr.find(qn('w:rFonts'))
+                        if rFonts is not None:
+                            font_name = rFonts.get(qn('w:ascii'), '') or rFonts.get(qn('w:hAnsi'), '')
+                            if font_name and font_name not in ('Calibri', 'Arial', 'Times New Roman'):
+                                run_styles.append("font-family:'{}'".format(font_name))
+                        highlight = rPr.find(qn('w:highlight'))
+                        if highlight is not None:
+                            hl_val = highlight.get(qn('w:val'), '')
+                            hl_colors = {'yellow': '#FFFF00', 'green': '#00FF00', 'cyan': '#00FFFF',
+                                         'magenta': '#FF00FF', 'blue': '#0000FF', 'red': '#FF0000',
+                                         'darkBlue': '#00008B', 'darkCyan': '#008B8B', 'darkGreen': '#006400',
+                                         'darkMagenta': '#8B008B', 'darkRed': '#8B0000', 'darkYellow': '#808000',
+                                         'darkGray': '#A9A9A9', 'lightGray': '#D3D3D3', 'black': '#000000'}
+                            if hl_val in hl_colors:
+                                run_styles.append('background-color:{}'.format(hl_colors[hl_val]))
                     if bold: txt = '<strong>' + txt + '</strong>'
                     if italic: txt = '<em>' + txt + '</em>'
                     if underline: txt = '<u>' + txt + '</u>'
+                    if run_styles:
+                        txt = '<span style="{}">{}</span>'.format('; '.join(run_styles), txt)
                     text_parts.append(txt)
                 content = ''.join(text_parts)
+                p_attr = ''
+                if p_styles:
+                    p_attr = ' style="{}"'.format('; '.join(p_styles))
                 if not content.strip():
                     html_parts.append('<p><br></p>')
                 elif 'Heading1' in style_name or 'Title' in style_name:
-                    html_parts.append('<h1>' + content + '</h1>')
+                    html_parts.append('<h1{}>{}</h1>'.format(p_attr, content))
                 elif 'Heading2' in style_name:
-                    html_parts.append('<h2>' + content + '</h2>')
+                    html_parts.append('<h2{}>{}</h2>'.format(p_attr, content))
                 elif 'Heading3' in style_name:
-                    html_parts.append('<h3>' + content + '</h3>')
+                    html_parts.append('<h3{}>{}</h3>'.format(p_attr, content))
                 else:
-                    html_parts.append('<p>' + content + '</p>')
+                    html_parts.append('<p{}>{}</p>'.format(p_attr, content))
             elif tag == 'tbl':
                 # Table — preserve column widths from Word
                 # Read grid column widths (w:tblGrid/w:gridCol)
