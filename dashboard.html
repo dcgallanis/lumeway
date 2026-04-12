@@ -4384,6 +4384,12 @@ guideLibrary['disability'] = {
           if (data.ok) {
             loadUserFiles();
             if (typeof trackEvent === 'function') trackEvent('file_uploaded', { category: cat });
+            // Show color-coding popup for first 5 uploads
+            var uploadCount = parseInt(localStorage.getItem('lumeway_upload_count') || '0');
+            if (uploadCount < 5) {
+              localStorage.setItem('lumeway_upload_count', uploadCount + 1);
+              showFileColorPopup();
+            }
             var fid = data.file && data.file.id;
             if (fid) setTimeout(function() { openFileViewer(fid); }, 500);
           } else {
@@ -4394,6 +4400,34 @@ guideLibrary['disability'] = {
           if (dzText) dzText.textContent = 'Upload file';
           alert('Upload failed. Please try again.');
         });
+    }
+
+    function showFileColorPopup() {
+      // Don't stack if already showing
+      if (document.getElementById('fileColorPopup')) return;
+      var overlay = document.createElement('div');
+      overlay.id = 'fileColorPopup';
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(44,62,80,0.25);z-index:500;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease';
+      overlay.innerHTML = '<div style="background:var(--warm-white);border-radius:16px;padding:28px 32px;max-width:400px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,0.15);position:relative">'
+        + '<button onclick="this.closest(\'#fileColorPopup\').remove()" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer">&times;</button>'
+        + '<div style="font-family:Libre Baskerville,serif;font-size:18px;color:var(--navy);margin-bottom:12px">Track your file status</div>'
+        + '<p style="font-size:13px;color:var(--text);line-height:1.6;font-weight:300;margin-bottom:16px">Use the colored dots next to each file to mark where things stand.</p>'
+        + '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">'
+        + '<div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text)">'
+        + '<span style="width:12px;height:12px;border-radius:50%;background:#C4704E;flex-shrink:0"></span>'
+        + '<span><strong style="font-weight:500">To-do</strong> — needs attention</span></div>'
+        + '<div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text)">'
+        + '<span style="width:12px;height:12px;border-radius:50%;background:#B8977E;flex-shrink:0"></span>'
+        + '<span><strong style="font-weight:500">In progress</strong> — working on it</span></div>'
+        + '<div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text)">'
+        + '<span style="width:12px;height:12px;border-radius:50%;background:#4A7C59;flex-shrink:0"></span>'
+        + '<span><strong style="font-weight:500">Done</strong> — handled</span></div>'
+        + '</div>'
+        + '<p style="font-size:12px;color:var(--muted);line-height:1.5;font-weight:300">Click the circle next to any file name to set its status. Use the filter buttons to view files by status.</p>'
+        + '<button onclick="this.closest(\'#fileColorPopup\').remove()" style="width:100%;margin-top:8px;padding:10px;background:var(--navy);color:var(--cream);border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer">Got it</button>'
+        + '</div>';
+      document.body.appendChild(overlay);
+      overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
     }
 
     function cancelStaged() {
@@ -5963,13 +5997,12 @@ guideLibrary['disability'] = {
           }, 20 * 60 * 1000); // 20 minutes
         }
         // Show onboarding only for truly new users (no checklist, no sessions, never onboarded)
+        var sessions = dashData.sessions || [];
         if (!localStorage.getItem('lumeway_onboarded') && checklistItems.length === 0 && sessions.length === 0) {
           showOnboarding();
         }
-        // Show contextual tips for recently onboarded users
-        else {
-          setTimeout(showCtxTips, 500);
-        }
+        // Show contextual tips for all users (they stack on each tab panel)
+        setTimeout(showCtxTips, 500);
         // Prompt to chat if no checklist items and not onboarding
         if (localStorage.getItem('lumeway_onboarded') && checklistItems.length === 0 && !document.getElementById('chatPromptBanner')) {
           var banner = document.createElement('div');
@@ -7048,8 +7081,6 @@ guideLibrary['disability'] = {
       html += '  <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Guides</h2>';
       html += '  <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Step-by-step guidance for what you\'re going through. Click any task to expand the full walkthrough.</p>';
       html += '  <div style="display:flex;gap:16px;align-items:center;margin-top:8px;flex-wrap:wrap">';
-      html += '    <a href="#" onclick="switchTab(\'notes\');return false" style="font-size:12px;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg> Quick note</a>';
-      html += '    <span style="font-size:12px;color:var(--muted);font-weight:300">Jot something down while you read — it will be saved in your Notes tab.</span>';
       html += '  </div>';
       html += '</div>';
       html += '<div class="guide-mode-toggle" style="margin-bottom:16px;flex-wrap:wrap;gap:6px 16px">';
@@ -7671,7 +7702,8 @@ guideLibrary['disability'] = {
       checklist: { icon: '✓', text: 'Check off tasks as you go. The Navigator can add more based on your situation.', panel: 'panel-checklist' },
       calendar: { icon: '📅', text: 'Deadlines show here automatically. You can also add your own events.', panel: 'panel-calendar' },
       guides: { icon: '📖', text: 'Step-by-step walkthroughs written in plain language. Click any task to expand.', panel: 'panel-guides' },
-      workspace: { icon: '📁', text: 'Upload and edit documents here. Everything auto-saves and stays private.', panel: 'panel-documents' }
+      workspace: { icon: '📁', text: 'Upload and edit documents here. Use the colored dots next to each file to track its status — to-do, in progress, or done.', panel: 'panel-documents' },
+      notes: { icon: '✏️', text: 'Use the pencil icon on any tab to open a sticky note. Jot things down as you go — highlights from guides, reminders, or anything you want to remember. Save when you are ready.', panel: 'panel-notes' }
     };
     function showCtxTips() {
       if (localStorage.getItem('lumeway_tips_dismissed')) return;

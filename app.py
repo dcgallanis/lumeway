@@ -4689,8 +4689,6 @@ def init_checklist_from_chat():
 Based on what was actually discussed, create a checklist of tasks the user needs to do. Also extract:
 - Documents/info they need to gather (specific items like SS card, insurance policy numbers, etc.)
 - Deadlines mentioned or implied
-- Weekly and monthly goals
-
 Use this exact structure:
 {
   "transition_type": "estate|divorce|job-loss|relocation|disability|retirement",
@@ -4707,10 +4705,6 @@ Use this exact structure:
   "deadlines": [
     {"title": "File for unemployment", "days_from_now": 7, "note": "Don't wait — benefits start from filing date"},
     {"title": "COBRA election deadline", "days_from_now": 60, "note": "60-day window from job loss"}
-  ],
-  "goals": [
-    {"title": "Set up emergency budget", "timeframe": "weekly"},
-    {"title": "Complete benefits applications", "timeframe": "monthly"}
   ]
 }
 
@@ -4761,16 +4755,6 @@ Make tasks SPECIFIC to what was discussed — not generic. If they mentioned kid
             deadline_date = (datetime.now(timezone.utc) + timedelta(days=days)).strftime("%Y-%m-%d")
             db_execute(conn, f"INSERT INTO user_deadlines (user_id, transition_type, title, deadline_date, note, source, created_at) VALUES ({param},{param},{param},{param},{param},{param},{param})",
                 (user["id"], t_type, dl.get("title", ""), deadline_date, dl.get("note", ""), "chat", now))
-
-        # Save goals
-        for goal in plan.get("goals", []):
-            target = None
-            if goal.get("timeframe") == "weekly":
-                target = (datetime.now(timezone.utc) + timedelta(days=7)).strftime("%Y-%m-%d")
-            elif goal.get("timeframe") == "monthly":
-                target = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%d")
-            db_execute(conn, f"INSERT INTO user_goals (user_id, title, timeframe, target_date, created_at) VALUES ({param},{param},{param},{param},{param})",
-                (user["id"], goal.get("title", ""), goal.get("timeframe", "weekly"), target, now))
 
         # Auto-populate user state and transition type from chat
         extracted_state = plan.get("user_state")
