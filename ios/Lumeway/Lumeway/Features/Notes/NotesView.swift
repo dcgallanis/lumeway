@@ -6,8 +6,31 @@ struct NotesView: View {
     @State private var showEditor = false
     @State private var editingNote: NoteItem?
     @State private var editorContent = ""
+    @State private var searchText = ""
+    @State private var selectedFilter: NoteFilter = .all
 
     private let service = NotesService()
+
+    enum NoteFilter: String, CaseIterable {
+        case all = "All"
+        case chatSaved = "Chat Saved"
+        case personal = "Personal"
+    }
+
+    private var filteredNotes: [NoteItem] {
+        var result = notes
+        switch selectedFilter {
+        case .all: break
+        case .chatSaved:
+            result = result.filter { $0.content.hasPrefix("From Navigator chat:") }
+        case .personal:
+            result = result.filter { !$0.content.hasPrefix("From Navigator chat:") }
+        }
+        if !searchText.isEmpty {
+            result = result.filter { $0.content.localizedCaseInsensitiveContains(searchText) }
+        }
+        return result
+    }
 
     var body: some View {
         NavigationStack {
@@ -31,13 +54,62 @@ struct NotesView: View {
                     }
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: 12) {
-                            ForEach(notes) { note in
+                        VStack(spacing: 14) {
+                            // Search bar
+                            HStack(spacing: 10) {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.lumeMuted)
+                                TextField("Search notes...", text: $searchText)
+                                    .font(.lumeBody)
+                                    .foregroundColor(.lumeText)
+                            }
+                            .padding(12)
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                            )
+
+                            // Filter pills
+                            HStack(spacing: 8) {
+                                ForEach(NoteFilter.allCases, id: \.self) { filter in
+                                    Button {
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            selectedFilter = filter
+                                        }
+                                    } label: {
+                                        Text(filter.rawValue)
+                                            .font(.lumeCaption)
+                                            .foregroundColor(selectedFilter == filter ? .white : .lumeNavy)
+                                            .padding(.horizontal, 14)
+                                            .padding(.vertical, 7)
+                                            .background(selectedFilter == filter ? Color.lumeAccent : Color.lumeWarmWhite)
+                                            .cornerRadius(20)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 20)
+                                                    .stroke(selectedFilter == filter ? Color.clear : Color.lumeBorder, lineWidth: 1)
+                                            )
+                                    }
+                                }
+                                Spacer()
+                            }
+
+                            // Notes list
+                            ForEach(filteredNotes) { note in
                                 NoteCard(note: note) {
                                     editingNote = note
                                     editorContent = note.content
                                     showEditor = true
                                 }
+                            }
+
+                            if filteredNotes.isEmpty {
+                                Text("No notes match your filter.")
+                                    .font(.lumeBody)
+                                    .foregroundColor(.lumeMuted)
+                                    .padding(.top, 20)
                             }
                         }
                         .padding(24)

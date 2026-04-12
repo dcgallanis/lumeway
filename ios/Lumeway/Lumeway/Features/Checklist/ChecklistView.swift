@@ -17,6 +17,8 @@ struct ChecklistView: View {
     @State private var isLoading = true
     @State private var toastMessage: String?
     @State private var expandedPhases: Set<String> = []
+    @State private var showConfetti = false
+    @State private var confettiMessage: String?
 
     private let service = ChecklistService()
 
@@ -70,12 +72,17 @@ struct ChecklistView: View {
                                         .font(.lumeDisplayMedium)
                                         .foregroundColor(.white)
 
-                                    let completed = items.filter(\.isCompleted).count
-                                    Text("\(completed) of \(items.count) completed")
+                                    // Show current phase progress only
+                                    let phaseItems = currentPhaseItems
+                                    let phaseCompleted = phaseItems.filter(\.isCompleted).count
+                                    let phaseTotal = phaseItems.count
+                                    let phaseName = phaseItems.first?.phase ?? "This Week"
+
+                                    Text("\(phaseName) — \(phaseCompleted) of \(phaseTotal) done")
                                         .font(.lumeCaption)
                                         .foregroundColor(.white.opacity(0.6))
 
-                                    // Progress bar
+                                    // Progress bar for current phase
                                     GeometryReader { geo in
                                         ZStack(alignment: .leading) {
                                             RoundedRectangle(cornerRadius: 4)
@@ -84,7 +91,7 @@ struct ChecklistView: View {
 
                                             RoundedRectangle(cornerRadius: 4)
                                                 .fill(Color.lumeGreen)
-                                                .frame(width: items.count > 0 ? geo.size.width * CGFloat(completed) / CGFloat(items.count) : 0, height: 6)
+                                                .frame(width: phaseTotal > 0 ? geo.size.width * CGFloat(phaseCompleted) / CGFloat(phaseTotal) : 0, height: 6)
                                         }
                                     }
                                     .frame(height: 6)
@@ -95,13 +102,13 @@ struct ChecklistView: View {
                             }
                             .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
 
-                            // Collapsible phase sections
+                            // Active + upcoming phases (reordered)
                             VStack(spacing: 12) {
-                                ForEach(Array(groupedPhases.enumerated()), id: \.element.phase) { idx, group in
+                                ForEach(Array(reorderedPhases.enumerated()), id: \.element.phase) { idx, group in
                                     let color = phaseColors[idx % phaseColors.count]
 
                                     CollapsiblePhaseSection(
-                                        phase: group.phase,
+                                        phase: group.displayName,
                                         items: group.items,
                                         color: color,
                                         isExpanded: expandedPhases.contains(group.phase),
@@ -122,6 +129,31 @@ struct ChecklistView: View {
                                         }
                                     )
                                 }
+
+                                // Completed phases — collapsed at bottom
+                                if !completedPhaseItems.isEmpty {
+                                    CollapsiblePhaseSection(
+                                        phase: "Completed Tasks",
+                                        items: completedPhaseItems,
+                                        color: .lumeGreen,
+                                        isExpanded: expandedPhases.contains("__completed__"),
+                                        onToggleExpand: {
+                                            withAnimation(.easeInOut(duration: 0.25)) {
+                                                if expandedPhases.contains("__completed__") {
+                                                    expandedPhases.remove("__completed__")
+                                                } else {
+                                                    expandedPhases.insert("__completed__")
+                                                }
+                                            }
+                                        },
+                                        onToggleItem: { item in
+                                            Task { await toggleItem(item) }
+                                        },
+                                        onSkipItem: { item in
+                                            Task { await skipItem(item) }
+                                        }
+                                    )
+                                }
                             }
                             .padding(.horizontal, 20)
                             .padding(.top, 16)
@@ -130,6 +162,38 @@ struct ChecklistView: View {
                         }
                     }
                     .ignoresSafeArea(edges: .top)
+                }
+
+                // Confetti + milestone overlay
+                if showConfetti {
+                    ConfettiOverlay()
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
+                        .zIndex(20)
+                }
+
+                if let milestone = confettiMessage {
+                    VStack {
+                        Spacer()
+                        VStack(spacing: 8) {
+                            Text("🎉")
+                                .font(.system(size: 36))
+                            Text(milestone)
+                                .font(.lumeHeadingSmall)
+                                .foregroundColor(.lumeNavy)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(24)
+                        .background(Color.lumeWarmWhite)
+                        .cornerRadius(20)
+                        .shadow(color: .black.opacity(0.15), radius: 16, y: 6)
+                        Spacer()
+                    }
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(15)
+                    .onTapGesture {
+                        withAnimation { confettiMessage = nil; showConfetti = false }
+                    }
                 }
 
                 // Toast overlay
@@ -159,6 +223,56 @@ struct ChecklistView: View {
             .task { await loadChecklist() }
             .refreshable { await loadChecklist() }
         }
+    }
+
+    /// Items in the current (first incomplete) phase — used for header progress
+    private var currentPhaseItems: [FullChecklistItem] {
+        let incomplete = items.filter { !$0.isCompleted }
+        guard let currentPhase = incomplete.first?.phase else {
+            // All done — show last phase
+            guard let lastPhase = items.last?.phase else { return items }
+            return items.filter { $0.phase == lastPhase }
+        }
+        return items.filter { $0.phase == currentPhase }
+    }
+
+    /// Display name for phases — "Today" for the current active phase
+    private func phaseDisplayName(_ phase: String, isFirst: Bool) -> String {
+        if isFirst { return "Today" }
+        // Clean up backend phase names
+        let lower = phase.lowercased()
+        if lower.contains("first 24") || lower.contains("24 hour") { return "Today" }
+        return phase
+    }
+
+    /// Active and upcoming phases (not fully completed), reordered
+    private var reorderedPhases: [(phase: String, displayName: String, items: [FullChecklistItem])] {
+        let groups = groupedPhases
+        var active: [(phase: String, displayName: String, items: [FullChecklistItem])] = []
+        var isFirstActive = true
+
+        for group in groups {
+            let hasIncomplete = group.items.contains(where: { !$0.isCompleted })
+            if hasIncomplete {
+                let name = phaseDisplayName(group.phase, isFirst: isFirstActive)
+                active.append((phase: group.phase, displayName: name, items: group.items))
+                isFirstActive = false
+            }
+        }
+        return active
+    }
+
+    /// All items from fully completed phases — collapsed at bottom
+    private var completedPhaseItems: [FullChecklistItem] {
+        let groups = groupedPhases
+        var completed: [FullChecklistItem] = []
+        for group in groups {
+            let allDone = group.items.allSatisfy(\.isCompleted)
+            if allDone && !group.items.isEmpty {
+                completed.append(contentsOf: group.items)
+            }
+        }
+        return completed
     }
 
     private var groupedPhases: [(phase: String, items: [FullChecklistItem])] {
@@ -201,14 +315,51 @@ struct ChecklistView: View {
             let response = try await service.toggleItem(id: item.id)
             if let idx = items.firstIndex(where: { $0.id == item.id }) {
                 let wasCompleted = items[idx].isCompleted
+                let itemPhase = items[idx].phase ?? "Other"
+
                 await loadChecklist()
+
                 if !wasCompleted && response.isCompleted == true {
                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                    showToast(completionMessages.randomElement() ?? "Done.")
+
+                    // Check if entire phase is now complete
+                    let phaseItems = items.filter { $0.phase == itemPhase }
+                    let allDone = phaseItems.allSatisfy(\.isCompleted)
+
+                    if allDone && !phaseItems.isEmpty {
+                        // Phase complete — confetti!
+                        triggerConfetti(for: itemPhase)
+                    } else {
+                        showToast(completionMessages.randomElement() ?? "Done.")
+                    }
                 }
             }
         } catch {
             UINotificationFeedbackGenerator().notificationOccurred(.error)
+        }
+    }
+
+    private let milestoneMessages = [
+        "You handled it. That takes real strength.",
+        "Every single one. Well done.",
+        "Section complete. You're making real progress.",
+        "That's a whole section done. Take a moment.",
+        "Incredible. Keep this momentum going.",
+    ]
+
+    private func triggerConfetti(for phase: String) {
+        let msg = milestoneMessages.randomElement() ?? "Section complete."
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+            showConfetti = true
+            confettiMessage = msg
+        }
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        Task {
+            try? await Task.sleep(nanoseconds: 4_000_000_000)
+            withAnimation(.easeOut(duration: 0.5)) {
+                showConfetti = false
+                confettiMessage = nil
+            }
         }
     }
 
@@ -380,4 +531,65 @@ extension View {
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCorner(radius: radius, corners: corners))
     }
+}
+
+// MARK: - Confetti Overlay
+
+struct ConfettiOverlay: View {
+    @State private var particles: [ConfettiParticle] = []
+
+    private let colors: [Color] = [
+        .lumeAccent, .lumeGold, .lumeGreen, Color(hex: "5E8C9A"),
+        Color(hex: "7B6B8D"), .lumeBlush, Color(hex: "D4896C")
+    ]
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                ForEach(particles) { particle in
+                    Circle()
+                        .fill(particle.color)
+                        .frame(width: particle.size, height: particle.size)
+                        .position(particle.position)
+                        .opacity(particle.opacity)
+                }
+            }
+            .onAppear {
+                createParticles(in: geo.size)
+            }
+        }
+    }
+
+    private func createParticles(in size: CGSize) {
+        for i in 0..<60 {
+            let particle = ConfettiParticle(
+                id: i,
+                color: colors.randomElement() ?? .lumeGold,
+                size: CGFloat.random(in: 4...10),
+                position: CGPoint(x: CGFloat.random(in: 0...size.width), y: -20),
+                opacity: 1
+            )
+            particles.append(particle)
+
+            let delay = Double.random(in: 0...0.8)
+            let duration = Double.random(in: 1.5...3.0)
+            let endX = particle.position.x + CGFloat.random(in: -60...60)
+            let endY = size.height + 40
+
+            withAnimation(.easeIn(duration: duration).delay(delay)) {
+                if let idx = particles.firstIndex(where: { $0.id == i }) {
+                    particles[idx].position = CGPoint(x: endX, y: endY)
+                    particles[idx].opacity = 0
+                }
+            }
+        }
+    }
+}
+
+struct ConfettiParticle: Identifiable {
+    let id: Int
+    let color: Color
+    let size: CGFloat
+    var position: CGPoint
+    var opacity: Double
 }

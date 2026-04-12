@@ -5,12 +5,13 @@ struct DashboardView: View {
     @State private var checklistItems: [FullChecklistItem] = []
     @State private var funGreeting: String = ""
     @State private var selectedQuickAction: Int? = nil
+    @State private var showChat = false
 
     private let checklistService = ChecklistService()
 
     private let funGreetings = [
         "Let's make today count.",
-        "One step at a time, champ.",
+        "One step at a time.",
         "You've totally got this.",
         "Small steps, big wins.",
         "Progress looks great on you.",
@@ -19,14 +20,12 @@ struct DashboardView: View {
         "Let's check something off today.",
         "Every step forward matters.",
         "You're doing better than you think.",
-        "Ready to crush it?",
         "Look at you, showing up again.",
     ]
 
     var body: some View {
         NavigationStack {
             ZStack {
-                // Warm gradient background
                 LinearGradient(
                     colors: [Color(hex: "FAF7F2"), Color(hex: "F5F0EA")],
                     startPoint: .top,
@@ -35,20 +34,19 @@ struct DashboardView: View {
                 .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: 20) {
-                        // Fun greeting - BIG bold display font
-                        HStack {
-                            VStack(alignment: .leading, spacing: 6) {
+                    VStack(spacing: 22) {
+                        // Greeting header
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading, spacing: 4) {
                                 if let user = appState.user {
-                                    Text("Hey, \(user.displayName ?? "there") 👋")
+                                    Text("Hey, \(user.displayName ?? "there")")
                                         .font(.lumeDisplayMedium)
                                         .foregroundColor(.lumeNavy)
                                 }
 
                                 Text(funGreeting)
-                                    .font(.lumeBodyLight)
+                                    .font(.custom("LibreBaskerville-Italic", size: 14))
                                     .foregroundColor(.lumeAccent)
-                                    .italic()
                             }
 
                             Spacer()
@@ -68,89 +66,113 @@ struct DashboardView: View {
                         .padding(.horizontal, 24)
                         .padding(.top, 20)
 
-                        // Active Transition Card
-                        if let transition = appState.user?.transitionType {
-                            ActiveTransitionCard(
-                                transition: transition,
-                                completed: checklistItems.filter(\.isCompleted).count,
-                                total: checklistItems.count,
-                                urgentCount: urgentTaskCount
-                            )
-                            .padding(.horizontal, 20)
+                        // Journey progress card
+                        JourneyCard(
+                            completed: checklistItems.filter(\.isCompleted).count,
+                            total: checklistItems.count,
+                            thisWeekTasks: thisWeekTasks
+                        )
+                        .padding(.horizontal, 20)
+
+                        // This week's tasks
+                        if !thisWeekTasks.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("This Week")
+                                    .font(.lumeSectionTitle)
+                                    .foregroundColor(.lumeNavy)
+                                    .padding(.horizontal, 24)
+
+                                ForEach(thisWeekTasks.prefix(4)) { task in
+                                    ThisWeekTaskRow(task: task) {
+                                        toggleTask(task)
+                                    }
+                                    .padding(.horizontal, 20)
+                                }
+                            }
                         }
 
-                        // Quick Actions — colorful pills
+                        // Quick links — 2x3 grid linking to everything
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("QUICK ACTIONS")
-                                .font(.lumeSmall)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.lumeMuted)
-                                .tracking(1)
+                            Text("Your Tools")
+                                .font(.lumeSectionTitle)
+                                .foregroundColor(.lumeNavy)
                                 .padding(.horizontal, 24)
 
                             LazyVGrid(columns: [
                                 GridItem(.flexible(), spacing: 12),
+                                GridItem(.flexible(), spacing: 12),
                                 GridItem(.flexible(), spacing: 12)
                             ], spacing: 12) {
-                                QuickActionPill(
-                                    icon: "checkmark",
-                                    label: "My Checklist",
-                                    bgColor: Color.lumeGreen.opacity(0.1),
-                                    iconColor: .lumeGreen,
-                                    action: { selectedQuickAction = 1 }
-                                )
-                                QuickActionPill(
-                                    icon: "book.fill",
-                                    label: "Guides",
-                                    bgColor: Color.lumeAccent.opacity(0.1),
-                                    iconColor: .lumeAccent,
-                                    action: { selectedQuickAction = 2 }
-                                )
-                                QuickActionPill(
-                                    icon: "folder.fill",
-                                    label: "My Files",
-                                    bgColor: Color.lumeNavy.opacity(0.08),
-                                    iconColor: .lumeNavy,
-                                    action: { selectedQuickAction = 3 }
-                                )
-                                QuickActionPill(
-                                    icon: "sun.max.fill",
-                                    label: "Resources",
-                                    bgColor: Color.lumeGold.opacity(0.12),
-                                    iconColor: .lumeGold,
-                                    action: {}
-                                )
+                                // Tab-based navigation
+                                QuickLinkTile(
+                                    icon: "checklist",
+                                    label: "Checklist",
+                                    color: .lumeGreen
+                                ) { selectedQuickAction = 1 }
+
+                                QuickLinkTile(
+                                    icon: "bubble.left.and.bubble.right",
+                                    label: "Community",
+                                    color: .lumeAccent
+                                ) { selectedQuickAction = 2 }
+
+                                QuickLinkTile(
+                                    icon: "message",
+                                    label: "Chat",
+                                    color: .lumeNavy
+                                ) { selectedQuickAction = 3 }
+
+                                // Direct NavigationLink to actual pages
+                                NavigationLink { CalendarView() } label: {
+                                    QuickLinkContent(icon: "calendar", label: "Calendar", color: .lumeGold)
+                                }
+
+                                NavigationLink { NotesView() } label: {
+                                    QuickLinkContent(icon: "pencil.line", label: "Notes", color: Color(hex: "5E8C9A"))
+                                }
+
+                                NavigationLink { GuidesView() } label: {
+                                    QuickLinkContent(icon: "book", label: "Guides", color: .lumeGold)
+                                }
+
+                                NavigationLink { FilesView() } label: {
+                                    QuickLinkContent(icon: "folder", label: "Files", color: Color(hex: "7B6B8D"))
+                                }
+
+                                NavigationLink { ActivityLogView() } label: {
+                                    QuickLinkContent(icon: "note.text", label: "Activity", color: .lumeGreen)
+                                }
+
+                                NavigationLink { MoreView() } label: {
+                                    QuickLinkContent(icon: "person", label: "Profile", color: Color(hex: "7B6B8D"))
+                                }
                             }
                             .padding(.horizontal, 20)
-                        }
-
-                        // Today's Focus - sage green card
-                        if let nextTask = checklistItems.first(where: { !$0.isCompleted }) {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("TODAY'S FOCUS")
-                                    .font(.lumeSmall)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.lumeMuted)
-                                    .tracking(1)
-                                    .padding(.horizontal, 24)
-
-                                TodayFocusCard(task: nextTask)
-                                    .padding(.horizontal, 20)
-                            }
                         }
 
                         // Upcoming deadlines
                         if let deadlines = appState.dashboardData?.deadlines,
                            !deadlines.isEmpty {
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("DEADLINES")
-                                    .font(.lumeSmall)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.lumeMuted)
-                                    .tracking(1)
+                                Text("Deadlines")
+                                    .font(.lumeSectionTitle)
+                                    .foregroundColor(.lumeNavy)
                                     .padding(.horizontal, 24)
 
                                 DeadlineSection(deadlines: Array(deadlines.prefix(3)))
+                                    .padding(.horizontal, 20)
+                            }
+                        }
+
+                        // Today's Focus
+                        if let nextTask = checklistItems.first(where: { !$0.isCompleted }) {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Next Up")
+                                    .font(.lumeSectionTitle)
+                                    .foregroundColor(.lumeNavy)
+                                    .padding(.horizontal, 24)
+
+                                TodayFocusCard(task: nextTask)
                                     .padding(.horizontal, 20)
                             }
                         }
@@ -178,10 +200,20 @@ struct DashboardView: View {
         }
     }
 
-    private var urgentTaskCount: Int {
+    /// Tasks in current phase that aren't completed
+    private var thisWeekTasks: [FullChecklistItem] {
         let incomplete = checklistItems.filter { !$0.isCompleted }
-        guard let phase = incomplete.first?.phase else { return 0 }
-        return incomplete.filter { $0.phase == phase }.count
+        guard let currentPhase = incomplete.first?.phase else { return [] }
+        return incomplete.filter { $0.phase == currentPhase }
+    }
+
+    private func toggleTask(_ task: FullChecklistItem) {
+        Task {
+            do {
+                _ = try await checklistService.toggleItem(id: task.id)
+                await loadChecklist()
+            } catch {}
+        }
     }
 
     private func loadChecklist() async {
@@ -192,87 +224,97 @@ struct DashboardView: View {
     }
 }
 
-// MARK: - Active Transition Card
+// MARK: - Journey Card (replaces ActiveTransitionCard)
 
-struct ActiveTransitionCard: View {
-    let transition: String
+struct JourneyCard: View {
     let completed: Int
     let total: Int
-    let urgentCount: Int
+    let thisWeekTasks: [FullChecklistItem]
+
+    private var progress: CGFloat {
+        total > 0 ? CGFloat(completed) / CGFloat(total) : 0
+    }
+
+    private var percentage: Int {
+        Int(progress * 100)
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("YOUR JOURNEY")
-                        .font(.lumeSmall)
-                        .foregroundColor(.white.opacity(0.5))
-                        .tracking(1)
+        VStack(alignment: .leading, spacing: 16) {
+            // Hero title
+            Text("Your Journey")
+                .font(.lumeHeadingMedium)
+                .foregroundColor(.white)
 
-                    Text(transition.replacingOccurrences(of: "-", with: " ").capitalized)
-                        .font(.lumeDisplaySmall)
+            // Progress circle + stats
+            HStack(spacing: 20) {
+                // Circular progress
+                ZStack {
+                    Circle()
+                        .stroke(Color.white.opacity(0.12), lineWidth: 5)
+                        .frame(width: 72, height: 72)
+
+                    Circle()
+                        .trim(from: 0, to: progress)
+                        .stroke(
+                            LinearGradient(
+                                colors: [.lumeGold, .lumeAccent],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            style: StrokeStyle(lineWidth: 5, lineCap: .round)
+                        )
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(-90))
+
+                    Text("\(percentage)%")
+                        .font(.lumeBodySemibold)
                         .foregroundColor(.white)
                 }
 
-                Spacer()
-
-                // Sun-like progress circle
-                ZStack {
-                    Circle()
-                        .stroke(Color.white.opacity(0.15), lineWidth: 3)
-                        .frame(width: 52, height: 52)
-
-                    Circle()
-                        .trim(from: 0, to: total > 0 ? CGFloat(completed) / CGFloat(total) : 0)
-                        .stroke(Color.lumeGold, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                        .frame(width: 52, height: 52)
-                        .rotationEffect(.degrees(-90))
-
-                    VStack(spacing: 0) {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 6) {
                         Text("\(completed)")
-                            .font(.lumeBodySemibold)
+                            .font(.lumeHeadingSmall)
                             .foregroundColor(.white)
-                        Text("of \(total)")
-                            .font(.system(size: 9))
+                        Text("of \(total) tasks done")
+                            .font(.lumeCaptionLight)
                             .foregroundColor(.white.opacity(0.6))
                     }
+
+                    if !thisWeekTasks.isEmpty {
+                        Text("\(thisWeekTasks.count) task\(thisWeekTasks.count == 1 ? "" : "s") this week")
+                            .font(.lumeSmall)
+                            .foregroundColor(.lumeGreen)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(Color.lumeGreen.opacity(0.15))
+                            .cornerRadius(8)
+                    }
                 }
+
+                Spacer()
             }
 
-            // Green progress bar
+            // Progress bar
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(Color.white.opacity(0.15))
-                        .frame(height: 5)
+                        .fill(Color.white.opacity(0.12))
+                        .frame(height: 4)
 
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(Color.lumeGreen)
-                        .frame(width: total > 0 ? geo.size.width * CGFloat(completed) / CGFloat(total) : 0, height: 5)
+                        .fill(
+                            LinearGradient(
+                                colors: [.lumeGold, .lumeGreen],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: geo.size.width * progress, height: 4)
                 }
             }
-            .frame(height: 5)
-
-            HStack {
-                if urgentCount > 0 {
-                    Text("\(urgentCount) urgent task\(urgentCount == 1 ? "" : "s")")
-                        .font(.lumeSmall)
-                        .foregroundColor(.lumeGreen)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Color.lumeGreen.opacity(0.15))
-                        .cornerRadius(10)
-                }
-                Spacer()
-                HStack(spacing: 4) {
-                    Text("View all")
-                        .font(.lumeSmall)
-                        .foregroundColor(.white.opacity(0.6))
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 10))
-                        .foregroundColor(.white.opacity(0.4))
-                }
-            }
+            .frame(height: 4)
         }
         .padding(22)
         .background(
@@ -288,32 +330,112 @@ struct ActiveTransitionCard: View {
     }
 }
 
-// MARK: - Quick Action Pill (colorful)
+// MARK: - This Week Task Row
 
-struct QuickActionPill: View {
+struct ThisWeekTaskRow: View {
+    let task: FullChecklistItem
+    let onToggle: () -> Void
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Button(action: onToggle) {
+                ZStack {
+                    Circle()
+                        .stroke(task.isCompleted ? Color.lumeGreen : Color.lumeBorder, lineWidth: 2)
+                        .frame(width: 22, height: 22)
+                    if task.isCompleted {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.lumeGreen)
+                    }
+                }
+            }
+
+            Text(task.title)
+                .font(.lumeBody)
+                .foregroundColor(task.isCompleted ? .lumeMuted : .lumeNavy)
+                .strikethrough(task.isCompleted)
+                .lineLimit(2)
+
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 13)
+        .background(Color.lumeWarmWhite)
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.lumeBorder, lineWidth: 1)
+        )
+    }
+}
+
+// MARK: - Quick Link Tile (compact 3-column)
+
+struct QuickLinkTile: View {
     let icon: String
     let label: String
-    let bgColor: Color
-    let iconColor: Color
+    let color: Color
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 10) {
-                Image(systemName: icon)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(iconColor)
+            VStack(spacing: 8) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(color.opacity(0.1))
+                        .frame(width: 36, height: 36)
+                    Image(systemName: icon)
+                        .font(.system(size: 15))
+                        .foregroundColor(color)
+                }
+
                 Text(label)
-                    .font(.lumeCaption)
-                    .fontWeight(.medium)
+                    .font(.lumeSmall)
                     .foregroundColor(.lumeNavy)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
-            .background(bgColor)
+            .background(Color.lumeWarmWhite)
             .cornerRadius(14)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color.lumeBorder, lineWidth: 1)
+            )
         }
+    }
+}
+
+// MARK: - Quick Link Content (for NavigationLink labels)
+
+struct QuickLinkContent: View {
+    let icon: String
+    let label: String
+    let color: Color
+
+    var body: some View {
+        VStack(spacing: 8) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(color.opacity(0.1))
+                    .frame(width: 36, height: 36)
+                Image(systemName: icon)
+                    .font(.system(size: 15))
+                    .foregroundColor(color)
+            }
+
+            Text(label)
+                .font(.lumeSmall)
+                .foregroundColor(.lumeNavy)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 14)
+        .background(Color.lumeWarmWhite)
+        .cornerRadius(14)
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(Color.lumeBorder, lineWidth: 1)
+        )
     }
 }
 
@@ -328,7 +450,7 @@ struct TodayFocusCard: View {
                 Circle()
                     .fill(Color.lumeAccent.opacity(0.12))
                     .frame(width: 38, height: 38)
-                Image(systemName: "exclamationmark")
+                Image(systemName: "arrow.right")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.lumeAccent)
             }

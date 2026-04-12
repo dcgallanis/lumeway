@@ -1,29 +1,13 @@
 import SwiftUI
 
-// Avatar icons users can pick from
-private let avatarIcons: [(icon: String, color: Color)] = [
-    ("sun.max.fill", Color(hex: "C4704E")),       // terracotta sun
-    ("sun.min.fill", Color(hex: "B8977E")),        // gold sun
-    ("sunrise.fill", Color(hex: "D4896C")),        // warm sunrise
-    ("sparkles", Color(hex: "7B6B8D")),            // purple sparkles
-    ("moon.stars.fill", Color(hex: "2C4A5E")),     // navy moon
-    ("star.fill", Color(hex: "B8977E")),           // gold star
-    ("leaf.fill", Color(hex: "4A7C59")),           // green leaf
-    ("flame.fill", Color(hex: "C4704E")),          // terracotta flame
-    ("bolt.fill", Color(hex: "5E8C9A")),           // teal bolt
-    ("heart.fill", Color(hex: "D4896C")),          // blush heart
-    ("cloud.sun.fill", Color(hex: "2C4A5E")),      // navy cloud
-    ("wand.and.stars", Color(hex: "7B6B8D")),      // purple wand
-]
-
 struct MoreView: View {
     @EnvironmentObject var appState: AppState
     @State private var showLogoutConfirm = false
     @State private var showAvatarPicker = false
-    @AppStorage("selectedAvatarIndex") private var selectedAvatarIndex = 0
+    @AppStorage("selectedProfileEmoji") private var selectedProfileEmoji = "☀️"
 
-    private var selectedAvatar: (icon: String, color: Color) {
-        avatarIcons[selectedAvatarIndex % avatarIcons.count]
+    private var emojiColor: Color {
+        bgColorForIcon(selectedProfileEmoji)
     }
 
     /// Convert tier string to Roman numeral display
@@ -68,14 +52,13 @@ struct MoreView: View {
                                 } label: {
                                     ZStack {
                                         Circle()
-                                            .fill(selectedAvatar.color.opacity(0.2))
+                                            .fill(emojiColor.opacity(0.3))
                                             .frame(width: 76, height: 76)
                                         Circle()
                                             .stroke(Color.white.opacity(0.3), lineWidth: 2)
                                             .frame(width: 76, height: 76)
-                                        Image(systemName: selectedAvatar.icon)
-                                            .font(.system(size: 30))
-                                            .foregroundColor(.white)
+                                        Text(selectedProfileEmoji)
+                                            .font(.system(size: 34))
 
                                         // Edit badge
                                         ZStack {
@@ -128,7 +111,7 @@ struct MoreView: View {
 
                                 VStack(spacing: 0) {
                                     NavigationLink {
-                                        AccountSettingsView(selectedAvatarIndex: $selectedAvatarIndex)
+                                        AccountSettingsView()
                                     } label: {
                                         ProfileSettingRow(
                                             icon: "person.crop.circle",
@@ -265,64 +248,168 @@ struct MoreView: View {
                 Text("You can always sign back in with your email.")
             }
             .sheet(isPresented: $showAvatarPicker) {
-                AvatarPickerSheet(selectedIndex: $selectedAvatarIndex)
+                EmojiAvatarPickerSheet(selectedEmoji: $selectedProfileEmoji)
                     .presentationDetents([.medium])
             }
         }
     }
 }
 
-// MARK: - Avatar Picker
+// MARK: - Emoji Avatar Picker (matches site dashboard icons)
 
-struct AvatarPickerSheet: View {
-    @Binding var selectedIndex: Int
+struct EmojiAvatarPickerSheet: View {
+    @Binding var selectedEmoji: String
+    @AppStorage("selectedIconBgColor") private var selectedBgColorHex: String = ""
     @Environment(\.dismiss) var dismiss
 
-    let columns = [GridItem(.adaptive(minimum: 64), spacing: 16)]
+    let columns = [GridItem(.adaptive(minimum: 60), spacing: 14)]
+
+    private let bgColorOptions: [(String, Color)] = [
+        ("", Color.clear), // "Auto" — use default
+        ("B8977E", Color(hex: "B8977E")),   // gold
+        ("C4704E", Color(hex: "C4704E")),   // terracotta
+        ("4A7C59", Color(hex: "4A7C59")),   // green
+        ("5E8C9A", Color(hex: "5E8C9A")),   // teal
+        ("2C4A5E", Color(hex: "2C4A5E")),   // navy
+        ("7B6B8D", Color(hex: "7B6B8D")),   // purple
+        ("D4896C", Color(hex: "D4896C")),   // blush
+        ("6B7B8D", Color(hex: "6B7B8D")),   // muted
+    ]
+
+    private var effectiveBgColor: Color {
+        if selectedBgColorHex.isEmpty {
+            return bgColorForIcon(selectedEmoji)
+        }
+        return Color(hex: selectedBgColorHex)
+    }
 
     var body: some View {
-        VStack(spacing: 20) {
-            HStack {
-                Text("Choose your icon")
-                    .font(.lumeDisplaySmall)
-                    .foregroundColor(.lumeNavy)
-                Spacer()
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 24))
-                        .foregroundColor(.lumeMuted)
-                }
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 20)
-
-            LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(Array(avatarIcons.enumerated()), id: \.offset) { idx, avatar in
+        ScrollView {
+            VStack(spacing: 20) {
+                HStack {
+                    Text("Choose your icon")
+                        .font(.lumeDisplaySmall)
+                        .foregroundColor(.lumeNavy)
+                    Spacer()
                     Button {
-                        selectedIndex = idx
                         dismiss()
                     } label: {
-                        ZStack {
-                            Circle()
-                                .fill(avatar.color.opacity(selectedIndex == idx ? 0.25 : 0.1))
-                                .frame(width: 60, height: 60)
-                            if selectedIndex == idx {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.lumeMuted)
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 20)
+
+                // Emoji grid
+                LazyVGrid(columns: columns, spacing: 14) {
+                    ForEach(communityEmojiIcons, id: \.self) { emoji in
+                        Button {
+                            selectedEmoji = emoji
+                            UserDefaults.standard.set(emoji, forKey: "community_icon")
+                        } label: {
+                            ZStack {
                                 Circle()
-                                    .stroke(avatar.color, lineWidth: 2.5)
-                                    .frame(width: 60, height: 60)
+                                    .fill(effectiveBgColor.opacity(selectedEmoji == emoji ? 0.35 : 0.15))
+                                    .frame(width: 56, height: 56)
+                                if selectedEmoji == emoji {
+                                    Circle()
+                                        .stroke(effectiveBgColor, lineWidth: 2.5)
+                                        .frame(width: 56, height: 56)
+                                }
+                                Text(emoji)
+                                    .font(.system(size: 26))
                             }
-                            Image(systemName: avatar.icon)
-                                .font(.system(size: 24))
-                                .foregroundColor(avatar.color)
                         }
                     }
                 }
-            }
-            .padding(.horizontal, 24)
+                .padding(.horizontal, 24)
 
-            Spacer()
+                // Background color picker
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("BACKGROUND COLOR")
+                        .font(.lumeSmall)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.lumeMuted)
+                        .tracking(1)
+
+                    HStack(spacing: 12) {
+                        ForEach(bgColorOptions, id: \.0) { hex, color in
+                            Button {
+                                selectedBgColorHex = hex
+                                UserDefaults.standard.set(hex, forKey: "community_icon_bg")
+                            } label: {
+                                ZStack {
+                                    if hex.isEmpty {
+                                        // Auto option
+                                        Circle()
+                                            .fill(bgColorForIcon(selectedEmoji))
+                                            .frame(width: 32, height: 32)
+                                        Text("A")
+                                            .font(.system(size: 11, weight: .bold))
+                                            .foregroundColor(.white)
+                                    } else {
+                                        Circle()
+                                            .fill(color)
+                                            .frame(width: 32, height: 32)
+                                    }
+
+                                    if selectedBgColorHex == hex {
+                                        Circle()
+                                            .stroke(Color.white, lineWidth: 2)
+                                            .frame(width: 32, height: 32)
+                                        Circle()
+                                            .stroke(color.isEmpty ? bgColorForIcon(selectedEmoji) : color, lineWidth: 3)
+                                            .frame(width: 38, height: 38)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
+
+                // Preview
+                HStack(spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(effectiveBgColor)
+                            .frame(width: 44, height: 44)
+                        Text(selectedEmoji)
+                            .font(.system(size: 22))
+                    }
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Your preview")
+                            .font(.lumeCaption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.lumeNavy)
+                        Text("This is how you'll appear in the community")
+                            .font(.lumeSmall)
+                            .foregroundColor(.lumeMuted)
+                    }
+
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+
+                // Done button
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Done")
+                        .font(.lumeBodySemibold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.lumeAccent)
+                        .cornerRadius(28)
+                }
+                .padding(.horizontal, 24)
+
+                Spacer().frame(height: 20)
+            }
         }
     }
 }
@@ -382,9 +469,10 @@ struct ProfileSettingRow: View {
 
 struct AccountSettingsView: View {
     @EnvironmentObject var appState: AppState
-    @Binding var selectedAvatarIndex: Int
+    @AppStorage("selectedProfileEmoji") private var selectedProfileEmoji = "☀️"
     @State private var displayName = ""
     @State private var usState = ""
+    @State private var communityName = ""
     @State private var isSaving = false
     @State private var showSaved = false
     @State private var showAvatarPicker = false
@@ -398,8 +486,8 @@ struct AccountSettingsView: View {
         "VA","WA","WV","WI","WY","DC"
     ]
 
-    private var selectedAvatar: (icon: String, color: Color) {
-        avatarIcons[selectedAvatarIndex % avatarIcons.count]
+    private var emojiColor: Color {
+        bgColorForIcon(selectedProfileEmoji)
     }
 
     /// Convert tier string to Roman numeral display
@@ -440,14 +528,13 @@ struct AccountSettingsView: View {
                             } label: {
                                 ZStack {
                                     Circle()
-                                        .fill(selectedAvatar.color.opacity(0.2))
+                                        .fill(emojiColor.opacity(0.3))
                                         .frame(width: 68, height: 68)
                                     Circle()
                                         .stroke(Color.white.opacity(0.3), lineWidth: 2)
                                         .frame(width: 68, height: 68)
-                                    Image(systemName: selectedAvatar.icon)
-                                        .font(.system(size: 26))
-                                        .foregroundColor(.white)
+                                    Text(selectedProfileEmoji)
+                                        .font(.system(size: 30))
 
                                     ZStack {
                                         Circle()
@@ -489,6 +576,29 @@ struct AccountSettingsView: View {
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(Color.lumeBorder, lineWidth: 1)
                                 )
+                        }
+
+                        // Community name
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Community Name")
+                                .font(.lumeCaption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.lumeNavy)
+
+                            TextField("Anonymous", text: $communityName)
+                                .font(.lumeBody)
+                                .foregroundColor(.lumeText)
+                                .padding(14)
+                                .background(Color.lumeWarmWhite)
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.lumeBorder, lineWidth: 1)
+                                )
+
+                            Text("This is how others see you in the community. Leave blank for Anonymous.")
+                                .font(.lumeSmall)
+                                .foregroundColor(.lumeMuted)
                         }
 
                         // US State
@@ -592,9 +702,10 @@ struct AccountSettingsView: View {
         .onAppear {
             displayName = appState.user?.displayName ?? ""
             usState = appState.user?.usState ?? ""
+            communityName = UserDefaults.standard.string(forKey: "community_display_name") ?? "Anonymous"
         }
         .sheet(isPresented: $showAvatarPicker) {
-            AvatarPickerSheet(selectedIndex: $selectedAvatarIndex)
+            EmojiAvatarPickerSheet(selectedEmoji: $selectedProfileEmoji)
                 .presentationDetents([.medium])
         }
     }
@@ -607,6 +718,9 @@ struct AccountSettingsView: View {
                 displayName: displayName,
                 usState: usState
             )
+            // Save community name locally (syncs with site localStorage approach)
+            let comName = communityName.trimmingCharacters(in: .whitespaces)
+            UserDefaults.standard.set(comName.isEmpty ? "Anonymous" : comName, forKey: "community_display_name")
             withAnimation { showSaved = true }
             Task {
                 try? await Task.sleep(nanoseconds: 2_000_000_000)

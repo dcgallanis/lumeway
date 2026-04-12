@@ -21,14 +21,19 @@ struct NavigatorChatView: View {
                     ScrollViewReader { proxy in
                         ScrollView {
                             LazyVStack(spacing: 16) {
-                                // Welcome message
+                                // Welcome message with suggestion pills
                                 if messages.isEmpty {
-                                    WelcomeBubble()
-                                        .padding(.top, 24)
+                                    WelcomeBubble(onSuggestionTap: { suggestion in
+                                        inputText = suggestion
+                                        sendMessage()
+                                    })
+                                    .padding(.top, 24)
                                 }
 
                                 ForEach(messages) { msg in
-                                    ChatBubble(message: msg)
+                                    ChatBubble(message: msg, onSave: msg.role == .assistant ? {
+                                        saveMessageAsNote(msg.content)
+                                    } : nil)
                                         .id(msg.id)
                                 }
 
@@ -64,6 +69,7 @@ struct NavigatorChatView: View {
                     HStack(spacing: 12) {
                         TextField("Ask anything...", text: $inputText, axis: .vertical)
                             .font(.lumeBody)
+                            .foregroundColor(.lumeText)
                             .lineLimit(1...4)
                             .padding(12)
                             .background(Color.lumeWarmWhite)
@@ -88,6 +94,8 @@ struct NavigatorChatView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Color.lumeCream, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack(spacing: 1) {
@@ -101,13 +109,22 @@ struct NavigatorChatView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        dismiss()
+                        messages = []
+                        inputText = ""
                     } label: {
-                        Image(systemName: "xmark.circle.fill")
+                        Image(systemName: "arrow.counterclockwise.circle.fill")
                             .foregroundColor(.lumeMuted)
                     }
                 }
             }
+        }
+    }
+
+    private let notesService = NotesService()
+
+    private func saveMessageAsNote(_ content: String) {
+        Task {
+            _ = try? await notesService.createNote(content: "From Navigator chat:\n\n\(content)")
         }
     }
 
@@ -175,27 +192,49 @@ struct ChatMessage: Identifiable {
 
 struct ChatBubble: View {
     let message: ChatMessage
+    var onSave: (() -> Void)?
+    @State private var saved = false
 
     var body: some View {
-        HStack {
-            if message.role == .user { Spacer(minLength: 60) }
+        VStack(alignment: message.role == .user ? .trailing : .leading, spacing: 6) {
+            HStack {
+                if message.role == .user { Spacer(minLength: 60) }
 
-            Text(message.content)
-                .font(.lumeBody)
-                .foregroundColor(message.role == .user ? .white : .lumeText)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(
-                    message.role == .user ? Color.lumeNavy : Color.lumeWarmWhite
-                )
-                .cornerRadius(20)
-                .overlay(
-                    message.role == .assistant ?
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color.lumeBorder, lineWidth: 1) : nil
-                )
+                Text(message.content)
+                    .font(.lumeBody)
+                    .foregroundColor(message.role == .user ? .white : .lumeText)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(
+                        message.role == .user ? Color.lumeNavy : Color.lumeWarmWhite
+                    )
+                    .cornerRadius(20)
+                    .overlay(
+                        message.role == .assistant ?
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color.lumeBorder, lineWidth: 1) : nil
+                    )
 
-            if message.role == .assistant { Spacer(minLength: 60) }
+                if message.role == .assistant { Spacer(minLength: 60) }
+            }
+
+            // Save button for assistant messages
+            if message.role == .assistant {
+                Button {
+                    saved = true
+                    onSave?()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: saved ? "bookmark.fill" : "bookmark")
+                            .font(.system(size: 11))
+                        Text(saved ? "Saved" : "Save")
+                            .font(.lumeSmall)
+                    }
+                    .foregroundColor(saved ? .lumeGreen : .lumeMuted)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                }
+            }
         }
         .padding(.horizontal, 8)
     }
@@ -204,15 +243,27 @@ struct ChatBubble: View {
 // MARK: - Welcome Bubble
 
 struct WelcomeBubble: View {
+    var onSuggestionTap: ((String) -> Void)?
+
+    private let suggestions = [
+        "What should I do first?",
+        "Explain my checklist",
+        "What documents do I need?",
+        "Help me understand deadlines",
+    ]
+
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Hi, I'm your Lumeway Navigator.")
-                    .font(.lumeBodyMedium)
-                    .foregroundColor(.lumeText)
-                Text("I can help you understand your checklist, explain next steps, or answer any questions. What would you like to know?")
-                    .font(.lumeBody)
-                    .foregroundColor(.lumeMuted)
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Hi, I'm your Lumeway Navigator.")
+                        .font(.lumeBodyMedium)
+                        .foregroundColor(.lumeText)
+                    Text("I can help you understand your checklist, explain next steps, or answer any questions.")
+                        .font(.lumeBody)
+                        .foregroundColor(.lumeMuted)
+                }
+                Spacer(minLength: 20)
             }
             .padding(16)
             .background(Color.lumeWarmWhite)
@@ -222,9 +273,68 @@ struct WelcomeBubble: View {
                     .stroke(Color.lumeBorder, lineWidth: 1)
             )
 
-            Spacer(minLength: 40)
+            // Suggestion pills
+            FlowLayout(spacing: 8) {
+                ForEach(suggestions, id: \.self) { suggestion in
+                    Button {
+                        onSuggestionTap?(suggestion)
+                    } label: {
+                        Text(suggestion)
+                            .font(.lumeCaption)
+                            .foregroundColor(.lumeNavy)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 9)
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(20)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                            )
+                    }
+                }
+            }
         }
         .padding(.horizontal, 8)
+    }
+}
+
+// MARK: - Flow Layout for pills
+
+struct FlowLayout: Layout {
+    var spacing: CGFloat = 8
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let result = computeLayout(proposal: proposal, subviews: subviews)
+        return result.size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = computeLayout(proposal: proposal, subviews: subviews)
+        for (index, position) in result.positions.enumerated() {
+            subviews[index].place(at: CGPoint(x: bounds.minX + position.x, y: bounds.minY + position.y), proposal: .unspecified)
+        }
+    }
+
+    private func computeLayout(proposal: ProposedViewSize, subviews: Subviews) -> (size: CGSize, positions: [CGPoint]) {
+        let maxWidth = proposal.width ?? .infinity
+        var positions: [CGPoint] = []
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x + size.width > maxWidth && x > 0 {
+                x = 0
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            positions.append(CGPoint(x: x, y: y))
+            rowHeight = max(rowHeight, size.height)
+            x += size.width + spacing
+        }
+
+        return (CGSize(width: maxWidth, height: y + rowHeight), positions)
     }
 }
 

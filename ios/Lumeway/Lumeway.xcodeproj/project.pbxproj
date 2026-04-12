@@ -47,6 +47,12 @@
 		DC570CC7AC6365B804DDF973 /* VerifyCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E73C9B55D6D042F33734E6 /* VerifyCodeView.swift */; };
 		E0620D7CD28175C581A3F379 /* LibreBaskerville-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FAA2C7830ED5929599F10A87 /* LibreBaskerville-Regular.ttf */; };
 		E37D3DE28A33EFF295AFC675 /* NavigatorChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C11B1F90989DDD9E5C7292 /* NavigatorChatView.swift */; };
+		AA1111111111111111111111 /* CommunityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2222222222222222222222 /* CommunityService.swift */; };
+		AA3333333333333333333333 /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4444444444444444444444 /* CalendarService.swift */; };
+		AA5555555555555555555555 /* ActivityLogService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6666666666666666666666 /* ActivityLogService.swift */; };
+		AA7777777777777777777777 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8888888888888888888888 /* CalendarView.swift */; };
+		AA9999999999999999999999 /* ActivityLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAAAA01 /* ActivityLogView.swift */; };
+		AAAAAAAAAAAAAAAAAAAAAA02 /* CommunityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAAAA03 /* CommunityView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -93,6 +99,12 @@
 		F5589F43974FFE8275C5BDDD /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		F868D547997D8DC20C0502ED /* MoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreView.swift; sourceTree = "<group>"; };
 		FAA2C7830ED5929599F10A87 /* LibreBaskerville-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreBaskerville-Regular.ttf"; sourceTree = "<group>"; };
+		AA2222222222222222222222 /* CommunityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityService.swift; sourceTree = "<group>"; };
+		AA4444444444444444444444 /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
+		AA6666666666666666666666 /* ActivityLogService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLogService.swift; sourceTree = "<group>"; };
+		AA8888888888888888888888 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		AAAAAAAAAAAAAAAAAAAAAA01 /* ActivityLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLogView.swift; sourceTree = "<group>"; };
+		AAAAAAAAAAAAAAAAAAAAAA03 /* CommunityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -208,12 +220,39 @@
 			path = Shared;
 			sourceTree = "<group>";
 		};
+		AAAAAAAAAAAAAAAAAAAAAA04 /* ActivityLog */ = {
+			isa = PBXGroup;
+			children = (
+				AAAAAAAAAAAAAAAAAAAAAA01 /* ActivityLogView.swift */,
+			);
+			path = ActivityLog;
+			sourceTree = "<group>";
+		};
+		AAAAAAAAAAAAAAAAAAAAAA05 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				AA8888888888888888888888 /* CalendarView.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		AAAAAAAAAAAAAAAAAAAAAA06 /* Community */ = {
+			isa = PBXGroup;
+			children = (
+				AAAAAAAAAAAAAAAAAAAAAA03 /* CommunityView.swift */,
+			);
+			path = Community;
+			sourceTree = "<group>";
+		};
 		B6CA60CF31E50EC063867439 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				AAAAAAAAAAAAAAAAAAAAAA04 /* ActivityLog */,
 				A7DA8473731A8ED8FF9A1E64 /* Auth */,
+				AAAAAAAAAAAAAAAAAAAAAA05 /* Calendar */,
 				C335DBF3AB280C83B202FA68 /* Chat */,
 				12BCAC53E850B26677D43FDB /* Checklist */,
+				AAAAAAAAAAAAAAAAAAAAAA06 /* Community */,
 				01BA907088B670EA2C89C17C /* Dashboard */,
 				4A4EF2723A1F0E0AF080FA10 /* Files */,
 				C45E3EE05C29D0C6EE750DCE /* Guides */,
@@ -275,9 +314,12 @@
 		ECA2E547DE91A99E07FDFC15 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				AA6666666666666666666666 /* ActivityLogService.swift */,
 				F5589F43974FFE8275C5BDDD /* APIClient.swift */,
 				C003529638D88AB66F919B77 /* AuthService.swift */,
+				AA4444444444444444444444 /* CalendarService.swift */,
 				198AEB9B4D0C855B67CCBEC4 /* ChecklistService.swift */,
+				AA2222222222222222222222 /* CommunityService.swift */,
 				843F3067C9ECC851BF7A3E41 /* DashboardService.swift */,
 				47D84947B35AD9145F0842AE /* GuideService.swift */,
 				3FB48D24FAB52851CA41A689 /* KeychainHelper.swift */,
@@ -398,6 +440,12 @@
 				6E4FDCE064B00B9E0D23C9B4 /* User.swift in Sources */,
 				DC570CC7AC6365B804DDF973 /* VerifyCodeView.swift in Sources */,
 				564E227346152593E9583160 /* WelcomeView.swift in Sources */,
+				AA1111111111111111111111 /* CommunityService.swift in Sources */,
+				AA3333333333333333333333 /* CalendarService.swift in Sources */,
+				AA5555555555555555555555 /* ActivityLogService.swift in Sources */,
+				AA7777777777777777777777 /* CalendarView.swift in Sources */,
+				AA9999999999999999999999 /* ActivityLogView.swift in Sources */,
+				AAAAAAAAAAAAAAAAAAAAAA02 /* CommunityView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

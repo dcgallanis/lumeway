@@ -47,6 +47,10 @@ extension Font {
     static let lumeHeadingSmall = Font.custom("LibreBaskerville-Regular", size: 18, relativeTo: .headline)
     static let lumeHeadingItalic = Font.custom("LibreBaskerville-Italic", size: 24, relativeTo: .title2)
 
+    // Libre Baskerville — section subheadings
+    static let lumeSectionTitle = Font.custom("LibreBaskerville-Regular", size: 15, relativeTo: .subheadline)
+    static let lumeSectionTitleBold = Font.custom("LibreBaskerville-Bold", size: 15, relativeTo: .subheadline)
+
     // Plus Jakarta Sans — clean sans-serif body
     static let lumeBody = Font.custom("PlusJakartaSans-Regular", size: 15, relativeTo: .body)
     static let lumeBodyLight = Font.custom("PlusJakartaSans-Light", size: 15, relativeTo: .body)
@@ -56,6 +60,9 @@ extension Font {
     static let lumeCaptionLight = Font.custom("PlusJakartaSans-Light", size: 13, relativeTo: .caption)
     static let lumeSmall = Font.custom("PlusJakartaSans-Regular", size: 11, relativeTo: .caption2)
     static let lumeLogoText = Font.custom("PlusJakartaSans-SemiBold", size: 16, relativeTo: .headline)
+
+    // DM Serif — accent display for emphasis
+    static let lumeAccentSerif = Font.custom("DMSerifDisplay-Regular", size: 16, relativeTo: .subheadline)
 }
 
 // Debug: print all available custom fonts — call once to verify font names

@@ -21,62 +21,37 @@ struct WelcomeView: View {
                 VStack(spacing: 0) {
                     Spacer()
 
-                    // Sunrise illustration
+                    // Lumeway sun icon — matches brand
                     ZStack {
-                        // Glow behind sun
                         Circle()
                             .fill(
                                 RadialGradient(
-                                    colors: [Color.lumeGold.opacity(0.2), Color.clear],
+                                    colors: [Color.lumeGold.opacity(0.15), Color.clear],
                                     center: .center,
                                     startRadius: 20,
-                                    endRadius: 120
+                                    endRadius: 100
                                 )
                             )
-                            .frame(width: 240, height: 240)
-                            .scaleEffect(animateSun ? 1.1 : 0.9)
+                            .frame(width: 200, height: 200)
+                            .scaleEffect(animateSun ? 1.08 : 0.95)
 
-                        // Sun rays
-                        ForEach(0..<14, id: \.self) { i in
-                            Rectangle()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [Color.lumeGold.opacity(0.35), Color.lumeGold.opacity(0.0)],
-                                        startPoint: .bottom,
-                                        endPoint: .top
-                                    )
-                                )
-                                .frame(width: 2.5, height: 80)
-                                .offset(y: -50)
-                                .rotationEffect(.degrees(Double(i) * 12.86 - 90))
-                                .opacity(animateRays ? 1 : 0)
-                        }
-
-                        // Sun semicircle
-                        Circle()
-                            .fill(
+                        Image(systemName: "sun.max.fill")
+                            .font(.system(size: 72, weight: .light))
+                            .foregroundStyle(
                                 LinearGradient(
-                                    colors: [Color.lumeAccent.opacity(0.5), Color.lumeGold.opacity(0.3)],
-                                    startPoint: .top,
-                                    endPoint: .bottom
+                                    colors: [.lumeAccent, .lumeGold],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
                                 )
                             )
-                            .frame(width: 140, height: 140)
-                            .offset(y: 35)
-                            .mask(
-                                Rectangle()
-                                    .frame(width: 180, height: 80)
-                                    .offset(y: -30)
-                            )
+                            .opacity(animateRays ? 1 : 0.3)
                     }
-                    .frame(height: 110)
-                    .padding(.bottom, 32)
+                    .padding(.bottom, 36)
 
-                    // Brand name
-                    Text("LUMEWAY")
-                        .font(.lumeLogoText)
-                        .tracking(4)
-                        .foregroundColor(.white.opacity(0.5))
+                    // Brand name — hero display
+                    Text("Lumeway")
+                        .font(.lumeDisplayLarge)
+                        .foregroundColor(.white)
                         .padding(.bottom, 20)
 
                     // Tagline
@@ -89,14 +64,6 @@ struct WelcomeView: View {
                             .font(.lumeHeadingItalic)
                             .foregroundColor(.lumeGold)
                     }
-                    .padding(.bottom, 14)
-
-                    Text("Lumeway guides you through life's hardest\nmoments — one clear step at a time.")
-                        .font(.lumeBodyLight)
-                        .foregroundColor(.white.opacity(0.5))
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(4)
-                        .padding(.horizontal, 40)
 
                     Spacer()
 
@@ -145,7 +112,7 @@ struct WelcomeView: View {
                                     .padding(.vertical, 16)
                             } else {
                                 HStack(spacing: 8) {
-                                    Text("Get started free")
+                                    Text("Get started")
                                         .font(.lumeBodySemibold)
                                     Image(systemName: "arrow.right")
                                         .font(.system(size: 14, weight: .semibold))
