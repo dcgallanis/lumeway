@@ -125,13 +125,14 @@
     .community-read-only-banner { background: linear-gradient(135deg, #faf6f1, #f5efe6); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .community-read-only-banner p { font-size: 13px; color: var(--navy); font-weight: 300; }
     .community-gate { max-width: 560px; margin: 40px auto; text-align: center; }
-    .community-gate-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 40px 32px; }
-    .community-gate-card h3 { font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 400; color: var(--navy); margin-bottom: 12px; }
+    .community-gate-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; padding: 44px 36px; box-shadow: 0 8px 32px rgba(44,62,80,0.08); }
+    .community-gate-card h3 { font-family: 'Libre Baskerville', serif; font-size: 24px; font-weight: 400; color: var(--navy); margin-bottom: 6px; }
     .community-gate-card p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
-    .community-rules-list { text-align: left; margin: 20px 0; padding: 0; list-style: none; }
-    .community-rules-list li { font-size: 13px; font-weight: 300; color: var(--text); line-height: 1.6; padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-start; }
-    .community-rules-list li:last-child { border-bottom: none; }
-    .community-rules-num { font-size: 12px; font-weight: 600; color: var(--navy); min-width: 20px; }
+    .community-gate-icon { font-size: 36px; margin-bottom: 16px; display: block; }
+    .community-rules-list { text-align: left; margin: 24px 0; padding: 0; list-style: none; }
+    .community-rules-list li { font-size: 13px; font-weight: 300; color: var(--text); line-height: 1.6; padding: 14px 16px; margin-bottom: 8px; background: var(--cream); border-radius: 12px; display: flex; gap: 14px; align-items: flex-start; transition: background 0.15s; }
+    .community-rules-list li:hover { background: #f3ede5; }
+    .community-rules-num { font-size: 11px; font-weight: 600; color: var(--warm-white); background: var(--navy); min-width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
 
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
@@ -8826,12 +8827,13 @@ guideLibrary['disability'] = {
         var overlay = document.createElement('div');
         overlay.className = 'community-modal-overlay';
         overlay.id = 'communityFreeGate';
-        overlay.innerHTML = '<div class="community-gate-card" style="max-width:480px">' +
+        overlay.innerHTML = '<div class="community-gate-card" style="max-width:480px;text-align:center">' +
+          '<span class="community-gate-icon">👋</span>' +
           '<h3>Welcome to the community</h3>' +
-          '<p>As a free member, you can browse and read all posts and replies. To join the conversation — post, reply, and like — upgrade to a paid plan.</p>' +
-          '<div style="display:flex;gap:10px;justify-content:center;margin-top:20px">' +
-          '  <button class="community-new-btn" onclick="document.getElementById(\'communityFreeGate\').remove()">Browse community</button>' +
-          '  <a href="/pricing" style="padding:8px 20px;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);text-decoration:none;display:inline-flex;align-items:center;font-family:inherit">See plans</a>' +
+          '<p>You can browse and read everything here. To post, reply, and like — upgrade to a paid plan.</p>' +
+          '<div style="display:flex;gap:10px;justify-content:center;margin-top:24px">' +
+          '  <button class="community-new-btn" style="padding:10px 28px;border-radius:10px;font-size:14px" onclick="document.getElementById(\'communityFreeGate\').remove()">Browse community</button>' +
+          '  <a href="/pricing" style="padding:10px 28px;border:1px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);text-decoration:none;display:inline-flex;align-items:center;font-family:inherit">See plans</a>' +
           '</div></div>';
         document.body.appendChild(overlay);
         loadCommunityPosts();
@@ -8843,19 +8845,20 @@ guideLibrary['disability'] = {
         // Show rules popup
         var rulesHtml = '<div class="community-modal-overlay" id="communityRulesModal">';
         rulesHtml += '<div class="community-gate-card" style="max-width:520px;text-align:left">';
-        rulesHtml += '<h3 style="text-align:center">Community Guidelines</h3>';
-        rulesHtml += '<p style="text-align:center">Before you post, please take a moment to read our guidelines.</p>';
+        rulesHtml += '<div style="text-align:center"><span class="community-gate-icon">🤝</span>';
+        rulesHtml += '<h3>A few ground rules</h3>';
+        rulesHtml += '<p>This is a space for people going through real things. Here\'s how we keep it that way.</p></div>';
         rulesHtml += '<ul class="community-rules-list">';
-        rulesHtml += '<li><span class="community-rules-num">1</span><span><strong>Be kind and respectful.</strong> Everyone here is going through something difficult. Lead with empathy.</span></li>';
-        rulesHtml += '<li><span class="community-rules-num">2</span><span><strong>No professional advice.</strong> Share your experience, but don\'t present opinions as legal, medical, or financial advice.</span></li>';
-        rulesHtml += '<li><span class="community-rules-num">3</span><span><strong>Protect your privacy.</strong> Don\'t share personal details like full names, addresses, or case numbers — yours or anyone else\'s.</span></li>';
+        rulesHtml += '<li><span class="community-rules-num">1</span><span><strong>Lead with kindness.</strong> Everyone here is navigating something hard. Empathy first.</span></li>';
+        rulesHtml += '<li><span class="community-rules-num">2</span><span><strong>Share experiences, not advice.</strong> What worked for you is helpful. Diagnosing someone else\'s situation isn\'t.</span></li>';
+        rulesHtml += '<li><span class="community-rules-num">3</span><span><strong>Keep it private.</strong> No full names, addresses, or case numbers — yours or anyone else\'s.</span></li>';
         rulesHtml += '<li><span class="community-rules-num">4</span><span><strong>No spam or self-promotion.</strong> This is a support space, not a marketplace.</span></li>';
-        rulesHtml += '<li><span class="community-rules-num">5</span><span><strong>If you are in crisis, call for help.</strong> National Suicide Prevention Lifeline: <strong>988</strong>. Crisis Text Line: text <strong>HOME</strong> to <strong>741741</strong>.</span></li>';
+        rulesHtml += '<li><span class="community-rules-num">5</span><span><strong>In crisis?</strong> Call <strong>988</strong> (Suicide & Crisis Lifeline) or text <strong>HOME</strong> to <strong>741741</strong>.</span></li>';
         rulesHtml += '</ul>';
-        rulesHtml += '<p style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px">This community is moderated. Posts that violate these guidelines will be removed.</p>';
-        rulesHtml += '<div style="display:flex;gap:10px;justify-content:center;margin-top:20px">';
-        rulesHtml += '  <button class="community-new-btn" onclick="acceptCommunityRules()">I agree</button>';
-        rulesHtml += '  <button class="btn-ghost" onclick="declineCommunityRules()">Decline</button>';
+        rulesHtml += '<p style="font-size:12px;color:var(--muted);text-align:center;margin-top:4px;margin-bottom:0">This community is moderated. Posts that break these rules will be removed.</p>';
+        rulesHtml += '<div style="display:flex;gap:10px;justify-content:center;margin-top:24px">';
+        rulesHtml += '  <button class="community-new-btn" style="padding:10px 28px;border-radius:10px;font-size:14px" onclick="acceptCommunityRules()">I agree</button>';
+        rulesHtml += '  <button class="btn-ghost" style="padding:10px 28px;border-radius:10px;font-size:14px" onclick="declineCommunityRules()">Decline</button>';
         rulesHtml += '</div>';
         rulesHtml += '</div></div>';
         document.body.insertAdjacentHTML('beforeend', rulesHtml);
