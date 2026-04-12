@@ -394,22 +394,22 @@
     .pdf-annot-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
     .pdf-annot-layer.text-mode { pointer-events: auto; cursor: text; }
     .pdf-annot-layer.sig-mode { pointer-events: auto; cursor: none; }
-    .pdf-annot { position: absolute; cursor: move; pointer-events: auto !important; z-index: 10; }
+    .pdf-annot { position: absolute; cursor: move; pointer-events: auto !important; z-index: 10; isolation: isolate; }
     .pdf-annot-text { border: 1.5px dashed rgba(0,0,0,0.15); padding: 2px 4px 2px 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #2C3E50; background: rgba(255,255,255,0.9); min-width: 60px; min-height: 22px; outline: none; border-radius: 2px; line-height: 1.4; cursor: text; pointer-events: auto !important; -webkit-user-modify: read-write; user-select: text; }
-    .pdf-annot-text:focus { border-color: var(--gold); background: rgba(255,255,255,0.98); box-shadow: 0 0 0 2px rgba(184,151,126,0.25); z-index: 20; position: relative; }
-    .pdf-annot-text:hover { border-color: var(--gold); background: rgba(255,255,255,0.95); }
+    .pdf-annot-text:focus { border-color: var(--gold); background: rgba(255,255,255,0.98); box-shadow: 0 0 0 2px rgba(184,151,126,0.25); z-index: 20; }
+    .pdf-annot-text:hover { border-color: var(--gold); background: rgba(255,255,255,0.95); cursor: text; }
     .pdf-annot-drag { position: absolute; left: 0; top: 0; width: 14px; height: 100%; cursor: move; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 8px; opacity: 0; transition: opacity 0.15s; user-select: none; letter-spacing: 1px; }
     .pdf-annot:hover .pdf-annot-drag { opacity: 0.6; }
     .pdf-annot-sig { font-size: 24px; color: #2C4A5E; pointer-events: auto; user-select: none; white-space: nowrap; padding: 2px 6px; border: 1.5px dashed transparent; border-radius: 2px; }
     .pdf-annot-sig:hover { border-color: var(--gold); }
     .pdf-annot-delete { position: absolute; top: -10px; right: -10px; width: 20px; height: 20px; background: var(--accent); color: white; border: none; border-radius: 50%; font-size: 12px; line-height: 20px; text-align: center; cursor: pointer; display: none; z-index: 5; padding: 0; }
     .pdf-annot:hover .pdf-annot-delete { display: block; }
-    .pdf-toolbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--cream); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
-    .pdf-toolbar-btn { padding: 5px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 11px; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; background: var(--warm-white); color: var(--navy); transition: all 0.15s; display: flex; align-items: center; gap: 4px; }
+    .pdf-toolbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 5px; padding: 7px 12px; background: var(--cream); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .pdf-toolbar-btn { padding: 4px 8px; border: 1px solid var(--border); border-radius: 5px; font-size: 11px; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; background: var(--warm-white); color: var(--navy); transition: all 0.15s; display: flex; align-items: center; gap: 3px; }
     .pdf-toolbar-btn:hover { background: var(--navy); color: var(--cream); border-color: var(--navy); }
     .pdf-toolbar-btn.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
-    .pdf-toolbar-sep { width: 1px; height: 20px; background: var(--border); }
-    .pdf-toolbar-info { font-size: 11px; color: var(--muted); font-weight: 300; margin-left: auto; }
+    .pdf-toolbar-sep { width: 1px; height: 16px; background: var(--border); }
+    .pdf-toolbar-info { font-size: 10px; color: var(--muted); font-weight: 300; }
     .pdf-sig-ghost { position: fixed; pointer-events: none; z-index: 1000; font-size: 24px; color: rgba(44,74,94,0.6); white-space: nowrap; display: none; }
     /* Spreadsheet viewer (jspreadsheet) */
     #sheetTableWrap { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; overflow: auto; height: calc(100vh - 220px); }
@@ -4243,9 +4243,12 @@ guideLibrary['disability'] = {
         tip.id = 'wsSortTip';
         tip.style.cssText = 'margin:8px 10px 4px;padding:10px 12px;background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border:1px solid #E8D5C4;border-radius:8px;font-size:11px;color:var(--text);line-height:1.5;position:relative';
         tip.innerHTML = '<button onclick="this.parentNode.remove()" style="position:absolute;top:4px;right:6px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px">&times;</button>'
-          + '<strong style="font-size:11px;color:var(--navy)">Organizing your files</strong><br>'
-          + 'Use the <span style="color:var(--accent)">colored dots</span> to mark file status (to-do, in progress, done). '
-          + 'Filter by status using the buttons above. Files are grouped by category — click a folder to expand it.';
+          + '<strong style="font-size:11px;color:var(--navy)">Track your file status</strong><br>'
+          + 'Click the <span style="display:inline-block;width:8px;height:8px;border-radius:50%;border:1.5px solid var(--muted);vertical-align:middle;margin:0 2px"></span> circle next to any file to color-code its status: '
+          + '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#C4704E;vertical-align:middle;margin:0 1px"></span> to-do, '
+          + '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#B8977E;vertical-align:middle;margin:0 1px"></span> in progress, '
+          + '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4A7C59;vertical-align:middle;margin:0 1px"></span> done. '
+          + 'Use the filter buttons above to quickly find files by status.';
         container.parentNode.insertBefore(tip, container);
         setTimeout(function() { if (tip.parentNode) tip.remove(); }, 15000);
       }
@@ -4678,9 +4681,7 @@ guideLibrary['disability'] = {
       header.style.display = 'flex';
       title.textContent = file.original_name;
       dlBtn.href = '/api/files/' + fileId + '/download';
-      // Remove old export button if any
-      var oldExport = document.getElementById('wsExportBtn');
-      if (oldExport) oldExport.remove();
+      dlBtn.onclick = null; // Reset any previous export override
       // Hide sig dropdown + button by default
       var sigWrap = document.getElementById('wsSigBtnWrap');
       if (sigWrap) sigWrap.style.display = 'none';
@@ -4694,13 +4695,10 @@ guideLibrary['disability'] = {
       var isDocEditable = ['doc','docx'].indexOf(ext) >= 0;
 
       if (isDocEditable) {
-        // Add export button to header
-        var exportBtn = document.createElement('button');
-        exportBtn.id = 'wsExportBtn';
-        exportBtn.className = 'ws-viewer-btn';
-        exportBtn.textContent = 'Download edited';
-        exportBtn.onclick = function() { exportAsDocx(file.original_name); };
-        header.insertBefore(exportBtn, dlBtn);
+        // Override download button to export edited version instead of original
+        dlBtn.removeAttribute('href');
+        dlBtn.style.cursor = 'pointer';
+        dlBtn.onclick = function(e) { e.preventDefault(); exportAsDocx(file.original_name); };
         // Show signature button in header
         if (sigWrap) { sigWrap.style.display = 'block'; initSigFonts(); }
         body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Loading editor\u2026</div>';
@@ -4931,21 +4929,22 @@ guideLibrary['disability'] = {
     // ── Signature Tool ──
     var sigFontsLoaded = false;
     var SIG_FONTS = [
+      { name: 'Dr Sugiyama', label: 'Elegant' },
+      { name: 'Alex Brush', label: 'Formal' },
       { name: 'Dancing Script', label: 'Script' },
-      { name: 'Great Vibes', label: 'Formal' },
-      { name: 'Caveat', label: 'Casual' },
       { name: 'Architects Daughter', label: 'Handwritten' },
-      { name: 'Libre Baskerville', label: 'Serif' }
+      { name: 'Homemade Apple', label: 'Casual' },
+      { name: 'Rock Salt', label: 'Rough' }
     ];
     // Remember signature preferences
-    var activeSigFont = localStorage.getItem('lumeway_sig_font') || 'Dancing Script';
+    var activeSigFont = localStorage.getItem('lumeway_sig_font') || 'Dr Sugiyama';
     var savedSigName = localStorage.getItem('lumeway_sig_name') || '';
 
     function loadSigFonts() {
       if (sigFontsLoaded) return;
       sigFontsLoaded = true;
       var link = document.createElement('link');
-      link.href = 'https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@400;700&family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap';
+      link.href = 'https://fonts.googleapis.com/css2?family=Dr+Sugiyama&family=Alex+Brush&family=Dancing+Script:wght@400;700&family=Architects+Daughter&family=Homemade+Apple&family=Rock+Salt&display=swap';
       link.rel = 'stylesheet';
       document.head.appendChild(link);
     }
@@ -4999,8 +4998,25 @@ guideLibrary['disability'] = {
     function insertQuillSignature(name, font) {
       if (!wsQuill) return;
       loadSigFonts();
+      // Inject Google Font into TinyMCE iframe so the font renders
+      if (tinymce.activeEditor) {
+        var edDoc = tinymce.activeEditor.getDoc();
+        if (edDoc && !edDoc.getElementById('sig-font-link')) {
+          var fl = edDoc.createElement('link');
+          fl.id = 'sig-font-link';
+          fl.rel = 'stylesheet';
+          fl.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(font).replace(/%20/g, '+') + '&display=swap';
+          edDoc.head.appendChild(fl);
+        }
+        // Update existing link if font changed
+        var existing = edDoc.getElementById('sig-font-link');
+        if (existing) {
+          existing.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(font).replace(/%20/g, '+') + '&display=swap';
+        }
+      }
       var sigHtml = '<p><br></p><p style="font-family:\'' + font + '\', cursive; font-size: 24px; color: #2C4A5E;">' + name + '</p>';
-      insertEditorContent(sigHtml);
+      // Small delay to let font load in iframe
+      setTimeout(function() { insertEditorContent(sigHtml); }, 200);
     }
 
     function stampSignature() {
@@ -5088,9 +5104,9 @@ guideLibrary['disability'] = {
         + '</select>'
         + '<button class="pdf-toolbar-btn" id="pdfBoldBtn" onclick="pdfAnnotBold=!pdfAnnotBold;this.classList.toggle(\'active\',pdfAnnotBold)" title="Bold" style="font-weight:700;padding:3px 8px">B</button>'
         + '<div class="pdf-toolbar-sep"></div>'
-        + '<button class="pdf-toolbar-btn" id="pdfZoomOutBtn" onclick="pdfZoom(-0.15)">−</button>'
-        + '<span class="pdf-toolbar-info" id="pdfZoomLevel">120%</span>'
-        + '<button class="pdf-toolbar-btn" id="pdfZoomInBtn" onclick="pdfZoom(0.15)">+</button>'
+        + '<button class="pdf-toolbar-btn" id="pdfZoomOutBtn" onclick="pdfZoom(-0.15)" style="padding:3px 6px">−</button>'
+        + '<span style="font-size:10px;color:var(--muted);min-width:28px;text-align:center" id="pdfZoomLevel">120%</span>'
+        + '<button class="pdf-toolbar-btn" id="pdfZoomInBtn" onclick="pdfZoom(0.15)" style="padding:3px 6px">+</button>'
         + '<div class="pdf-toolbar-sep"></div>'
         + '<div class="pdf-highlight-group">'
         + '<label>Highlight</label>'
@@ -5112,24 +5128,7 @@ guideLibrary['disability'] = {
         + '<div class="pdf-viewer" id="pdfViewer"></div>'
         + '<div class="pdf-sig-ghost" id="pdfSigGhost"></div>';
 
-      // Show PDF tools onboarding for first 5 opens
-      var pdfOpenCount = parseInt(localStorage.getItem('lumeway_pdf_opens') || '0');
-      if (pdfOpenCount < 5) {
-        localStorage.setItem('lumeway_pdf_opens', pdfOpenCount + 1);
-        var onb = document.createElement('div');
-        onb.style.cssText = 'position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:20;background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:16px 20px;max-width:340px;box-shadow:0 4px 20px rgba(0,0,0,0.12);font-family:Plus Jakarta Sans,sans-serif;';
-        onb.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px"><span style="font-size:13px;font-weight:600;color:var(--navy)">PDF Tools</span><button onclick="this.closest(\'div\').remove()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px">&times;</button></div>'
-          + '<div style="font-size:12px;color:var(--text);line-height:1.6">'
-          + '<p style="margin:0 0 6px"><strong>Add text</strong> — Click the pen icon, then click anywhere on the page to place text. Hover to drag or delete.</p>'
-          + '<p style="margin:0 0 6px"><strong>Highlight</strong> — Click the highlight icon, pick a color, then select text to highlight it.</p>'
-          + '<p style="margin:0 0 6px"><strong>Signature</strong> — Set your signature in the toolbar, then click to stamp it on the page.</p>'
-          + '<p style="margin:0"><strong>Erase</strong> — Use the eraser icon to click on any highlight to remove it.</p>'
-          + '</div>';
-        var viewerParent = body.querySelector('.pdf-toolbar');
-        if (viewerParent) viewerParent.style.position = 'relative';
-        if (viewerParent) viewerParent.appendChild(onb);
-        setTimeout(function() { if (onb.parentNode) onb.remove(); }, 12000);
-      }
+      // PDF tools popup removed — onboarding is for file categorization dots instead
 
       var pdfScale = 1.2;
 
@@ -5199,13 +5198,31 @@ guideLibrary['disability'] = {
             }).then(function(textContent) {
               // Manually position text spans for selection
               textContent.items.forEach(function(item) {
+                if (!item.str) return;
                 var tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
                 var span = document.createElement('span');
                 span.textContent = item.str;
+                var fontSize = item.height * viewport.scale * 0.82;
                 span.style.left = tx[4] + 'px';
                 span.style.top = (tx[5] - item.height * viewport.scale * 0.8) + 'px';
-                span.style.fontSize = (item.height * viewport.scale * 0.82) + 'px';
+                span.style.fontSize = fontSize + 'px';
                 span.style.fontFamily = item.fontName || 'sans-serif';
+                // Calculate width from transform to cover full text extent
+                // tx[0] contains the horizontal scale factor
+                if (item.width) {
+                  var scaledWidth = item.width * viewport.scale;
+                  span.style.width = scaledWidth + 'px';
+                  // Apply scaleX if text needs horizontal stretching
+                  var naturalWidth = item.str.length * fontSize * 0.5; // rough char width
+                  if (naturalWidth > 0 && Math.abs(scaledWidth - naturalWidth) > 5) {
+                    span.style.transform = 'scaleX(' + (scaledWidth / Math.max(naturalWidth, 1)).toFixed(3) + ')';
+                    span.style.transformOrigin = 'left top';
+                  }
+                } else if (tx[0]) {
+                  // Fallback: use transform matrix horizontal scale
+                  var textWidth = Math.abs(tx[0]) * item.str.length * 0.6;
+                  span.style.width = textWidth + 'px';
+                }
                 textLayerDiv.appendChild(span);
               });
               // Restore saved annotations for this page
@@ -6747,7 +6764,8 @@ guideLibrary['disability'] = {
           else if (lk === 'housing') catColor = 'housing';
           else if (lk === 'employment') catColor = 'employment';
           else if (lk === 'personal') catColor = 'personal';
-          html += '<div class="note-category-box open" data-catkey="' + key.replace(/"/g, '&quot;') + '" data-catcolor="' + catColor + '">';
+          var isFirstGroup = (key === groupOrder[0]);
+          html += '<div class="note-category-box' + (isFirstGroup ? ' open' : '') + '" data-catkey="' + key.replace(/"/g, '&quot;') + '" data-catcolor="' + catColor + '">';
           html += '  <div class="note-category-header" onclick="this.parentElement.classList.toggle(\'open\')">';
           html += '    <div class="note-category-title">' + icon + ' ' + key + ' <span class="note-category-count">' + groupNotes.length + '</span></div>';
           html += '    <span class="note-category-chevron">&#9654;</span>';
