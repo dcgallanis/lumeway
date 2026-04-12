@@ -158,6 +158,15 @@
           if (typeof gtag === 'function') {
             gtag('event', res.data.is_new ? 'sign_up' : 'login', { method: 'magic_link' });
           }
+          // Clear per-user localStorage for new accounts so onboarding shows fresh
+          if (res.data.is_new) {
+            localStorage.removeItem('lumeway_onboarded');
+            localStorage.removeItem('lumeway_tips_dismissed');
+            localStorage.removeItem('lumeway_sig_name');
+            localStorage.removeItem('lumeway_sig_font');
+            localStorage.removeItem('lumeway_files_visits');
+            localStorage.removeItem('lumeway_upload_count');
+          }
           window.location.href = '/dashboard';
         } else {
           var msg = document.getElementById('codeMsg');

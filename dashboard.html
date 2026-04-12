@@ -50,6 +50,14 @@
     .dash-tab:hover { color: var(--text); }
     .dash-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
     .dash-tab .tab-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--accent); color: white; font-size: 10px; font-weight: 600; min-width: 18px; height: 18px; border-radius: 9px; margin-left: 6px; padding: 0 5px; }
+    .dash-tab .tab-lock { font-size: 10px; margin-left: 4px; opacity: 0.5; }
+    .dash-tab.locked { color: var(--muted); opacity: 0.7; }
+    .dash-tab.locked:hover { opacity: 0.85; }
+    .tab-locked-preview { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 48px 32px; text-align: center; max-width: 480px; margin: 40px auto; }
+    .tab-locked-preview h3 { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 400; color: var(--navy); margin-bottom: 10px; }
+    .tab-locked-preview p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+    .tab-locked-preview .locked-cta { display: inline-block; padding: 10px 24px; background: var(--accent); color: var(--cream); border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; }
+    .tab-locked-preview .locked-cta:hover { filter: brightness(1.08); }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
@@ -4844,7 +4852,7 @@ guideLibrary['disability'] = {
         tinymce.init({
           selector: '#wsDocEditor',
           height: 'calc(100vh - 200px)',
-          menubar: 'file edit view insert format table',
+          menubar: 'edit view insert format table',
           plugins: 'lists link table code wordcount searchreplace autolink',
           toolbar: 'undo redo | fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link | removeformat code',
           font_family_formats: 'Sans Serif=Plus Jakarta Sans,sans-serif; Arial=Arial,sans-serif; Times New Roman=Times New Roman,serif; Georgia=Georgia,serif; Verdana=Verdana,sans-serif; Courier New=Courier New,monospace; Trebuchet MS=Trebuchet MS,sans-serif; Calibri=Calibri,sans-serif',
@@ -4856,6 +4864,18 @@ guideLibrary['disability'] = {
           resize: false,
           statusbar: true,
           elementpath: false,
+          color_map_background: [
+            '#FFFF00', 'Yellow',
+            '#00FF00', 'Green',
+            '#00FFFF', 'Cyan',
+            '#FF00FF', 'Pink',
+            '#FF0000', 'Red',
+            '#0000FF', 'Blue',
+            '#FFA500', 'Orange',
+            '#FFFFFF', 'White',
+            '#000000', 'Black'
+          ],
+          color_default_background: '#FFFF00',
           setup: function(editor) {
             editor.on('init', function() {
               editor.setContent(html);
@@ -5048,7 +5068,21 @@ guideLibrary['disability'] = {
           existing.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(font).replace(/%20/g, '+') + '&display=swap';
         }
       }
-      var sigHtml = '<p><br></p><p style="font-family:\'' + font + '\', cursive; font-size: 24px; color: #2C4A5E;">' + name + '</p>';
+      // Check if cursor is inside a table cell — use inline span instead of block <p>
+      var inTable = false;
+      if (tinymce.activeEditor) {
+        var node = tinymce.activeEditor.selection.getNode();
+        while (node && node.nodeName !== 'BODY') {
+          if (node.nodeName === 'TD' || node.nodeName === 'TH') { inTable = true; break; }
+          node = node.parentNode;
+        }
+      }
+      var sigHtml;
+      if (inTable) {
+        sigHtml = '<span style="font-family:\'' + font + '\', cursive; font-size: 24px; color: #2C4A5E;">' + name + '</span>';
+      } else {
+        sigHtml = '<p><br></p><p style="font-family:\'' + font + '\', cursive; font-size: 24px; color: #2C4A5E;">' + name + '</p>';
+      }
       // Small delay to let font load in iframe
       setTimeout(function() { insertEditorContent(sigHtml); }, 200);
     }
@@ -6071,26 +6105,28 @@ guideLibrary['disability'] = {
       html += '  <p class="dash-sub">' + u.email + '</p>';
       html += '</div>';
 
-      // Tabs — tier-based visibility
+      // Tabs — always show all tabs, lock icon on gated ones
       var tier = (dashData && dashData.effective_tier) || 'free';
       var hasFullAccess = (tier === 'one_transition' || tier === 'all_transitions' || tier === 'unlimited' || tier === 'pass');
       var catAccess = dashData.category_access || {};
       var hasSomeFullCat = Object.keys(catAccess).some(function(k) { return catAccess[k] === 'full'; });
+      var hasStarterCat = Object.keys(catAccess).some(function(k) { return catAccess[k] === 'starter'; });
+      var unlocked = hasFullAccess || hasSomeFullCat;
+      // Starter/Etsy users: unlock files tab (templates only) but not other gated tabs
+      var filesUnlocked = unlocked || hasStarterCat;
+      var lockIcon = '<span class="tab-lock">🔒</span>';
 
       html += '<div class="dash-tabs" role="tablist" aria-label="Dashboard sections">';
       html += '  <button class="dash-tab active" data-tab="overview" role="tab" aria-selected="true" onclick="switchTab(\'overview\')">Overview</button>';
       html += '  <button class="dash-tab" data-tab="checklist" onclick="switchTab(\'checklist\')">Checklist';
       if (prog.total > 0) html += ' <span class="tab-badge">' + prog.completed + '/' + prog.total + '</span>';
       html += '</button>';
-      if (hasFullAccess || hasSomeFullCat) {
-        html += '  <button class="dash-tab" data-tab="calendar" onclick="switchTab(\'calendar\')">Calendar</button>';
-        html += '  <button class="dash-tab" data-tab="documents" onclick="switchTab(\'documents\')">Files & Templates</button>';
-        html += '  <button class="dash-tab" data-tab="guides" onclick="switchTab(\'guides\')">Guides</button>';
-        html += '  <button class="dash-tab" data-tab="notes" onclick="switchTab(\'notes\')">Notes</button>';
-        html += '  <button class="dash-tab" data-tab="activity" onclick="switchTab(\'activity\')">Activity Log';
-        html += '</button>';
-        html += '  <button class="dash-tab" data-tab="history" onclick="switchTab(\'history\')">History</button>';
-      }
+      html += '  <button class="dash-tab' + (!unlocked ? ' locked' : '') + '" data-tab="calendar" onclick="switchTab(\'calendar\')">Calendar' + (!unlocked ? lockIcon : '') + '</button>';
+      html += '  <button class="dash-tab' + (!filesUnlocked ? ' locked' : '') + '" data-tab="documents" onclick="switchTab(\'documents\')">Files & Templates' + (!filesUnlocked ? lockIcon : '') + '</button>';
+      html += '  <button class="dash-tab' + (!unlocked ? ' locked' : '') + '" data-tab="guides" onclick="switchTab(\'guides\')">Guides' + (!unlocked ? lockIcon : '') + '</button>';
+      html += '  <button class="dash-tab' + (!unlocked ? ' locked' : '') + '" data-tab="notes" onclick="switchTab(\'notes\')">Notes' + (!unlocked ? lockIcon : '') + '</button>';
+      html += '  <button class="dash-tab' + (!unlocked ? ' locked' : '') + '" data-tab="activity" onclick="switchTab(\'activity\')">Activity Log' + (!unlocked ? lockIcon : '') + '</button>';
+      html += '  <button class="dash-tab' + (!unlocked ? ' locked' : '') + '" data-tab="history" onclick="switchTab(\'history\')">History' + (!unlocked ? lockIcon : '') + '</button>';
       html += '  <button class="dash-tab" data-tab="account" onclick="switchTab(\'account\')" style="margin-left:auto">⚙ Account Settings</button>';
       html += '</div>';
 
@@ -6513,8 +6549,12 @@ guideLibrary['disability'] = {
       // ── CALENDAR TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-calendar">';
+      if (!unlocked) {
+        html += '<div class="tab-locked-preview"><h3>Calendar</h3><p>Track deadlines, auto-calculate timelines, and get reminders for important dates — all personalized to your situation.</p><a href="/pricing" class="locked-cta">Unlock with a plan</a></div>';
+      }
 
       // Auto-calculate at top
+      html += '<div id="calendarContent"' + (!unlocked ? ' style="display:none"' : '') + '>';
       html += '<div class="calc-section">';
       html += '  <div class="calc-title">Auto-calculate deadlines</div>';
       html += '  <p class="card-empty" style="margin-bottom:12px">Select what you\'re going through and enter the key date. We\'ll generate a full timeline of deadlines with docs needed and who to contact.</p>';
@@ -6608,18 +6648,24 @@ guideLibrary['disability'] = {
       html += '</div>'; // cal-sidebar
       html += '</div>'; // cal-layout
 
+      html += '</div>'; // calendarContent wrapper
       html += '</div>'; // panel-calendar
 
       // ═══════════════════════════════
       // ── DOCUMENTS TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-documents">';
-      html += '<div class="ws-main">';
+      if (!filesUnlocked) {
+        html += '<div class="tab-locked-preview"><h3>Files & Templates</h3><p>Upload, organize, and edit your important documents. Add signatures to PDFs, track file status, and keep everything in one secure place.</p><a href="/pricing" class="locked-cta">Unlock with a plan</a></div>';
+      }
+      html += '<div class="ws-main"' + (!filesUnlocked ? ' style="display:none"' : '') + '>';
 
       // ── SIDEBAR: upload, folders, files ──
       html += '<div class="ws-sidebar">';
       html += '<div class="ws-sidebar-top">';
-      html += '  <div class="ws-drop" id="dropZone" onclick="document.getElementById(\'fileUploadInput\').click()">';
+      // Hide upload area for starter/Etsy users (templates only, no new uploads)
+      var canUpload = unlocked;
+      html += '  <div class="ws-drop" id="dropZone"' + (canUpload ? ' onclick="document.getElementById(\'fileUploadInput\').click()"' : ' style="display:none"') + '>';
       html += '    <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.xls,.jpg,.jpeg,.png,.gif,.webp" style="display:none">';
       html += '    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
       html += '    <span id="dropZoneText">Upload file</span>';
@@ -6751,6 +6797,10 @@ guideLibrary['disability'] = {
       // ── NOTES TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-notes">';
+      if (!unlocked) {
+        html += '<div class="tab-locked-preview"><h3>Notes</h3><p>Save notes as you read guides, jot down phone numbers and reminders, and keep everything organized by category.</p><a href="/pricing" class="locked-cta">Unlock with a plan</a></div>';
+      }
+      html += '<div id="notesContent"' + (!unlocked ? ' style="display:none"' : '') + '>';
       html += '<div class="dash-card" style="margin-bottom:20px">';
       html += '  <div class="card-label">Add a Note</div>';
       html += '  <textarea class="note-textarea" id="newNoteText" placeholder="Write down questions, reminders, phone numbers, or anything you want to remember..."></textarea>';
@@ -6830,14 +6880,19 @@ guideLibrary['disability'] = {
           html += '</div>';
         });
       }
+      html += '</div>'; // notesContent wrapper
       html += '</div>'; // panel-notes
 
       // ═══════════════════════════════
       // ── ACTIVITY LOG TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-activity">';
+      if (!unlocked) {
+        html += '<div class="tab-locked-preview"><h3>Activity Log</h3><p>Track phone calls, emails, appointments, and everything you have done. Keep a record so nothing falls through the cracks.</p><a href="/pricing" class="locked-cta">Unlock with a plan</a></div>';
+      }
 
       // Add activity form
+      html += '<div id="activityContent"' + (!unlocked ? ' style="display:none"' : '') + '>';
       html += '<div class="dash-card" style="margin-bottom:20px">';
       html += '  <div class="card-label">Log an Activity</div>';
       html += '  <div class="activity-form">';
@@ -6905,13 +6960,17 @@ guideLibrary['disability'] = {
         html += '</div>';
       }
 
+      html += '</div>'; // activityContent wrapper
       html += '</div>'; // panel-activity
 
       // ═══════════════════════════════
       // ── HISTORY TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-history">';
-      if (sessions.length > 0) {
+      if (!unlocked) {
+        html += '<div class="tab-locked-preview"><h3>Chat History</h3><p>Review all your past conversations with the Navigator. Pick up where you left off or revisit advice.</p><a href="/pricing" class="locked-cta">Unlock with a plan</a></div>';
+      }
+      if (sessions.length > 0 && unlocked) {
         html += '<div class="dash-card">';
         html += '  <div class="session-list">';
         sessions.forEach(function(s) {
@@ -7077,6 +7136,10 @@ guideLibrary['disability'] = {
       // ── GUIDES TAB ──
       // ═══════════════════════════════
       html += '<div class="tab-panel" id="panel-guides">';
+      if (!unlocked) {
+        html += '<div class="tab-locked-preview"><h3>Guides</h3><p>Step-by-step walkthroughs for your specific situation — written in plain language with checklists, key terms, and real next steps.</p><a href="/pricing" class="locked-cta">Unlock with a plan</a></div>';
+      }
+      html += '<div id="guidesContent"' + (!unlocked ? ' style="display:none"' : '') + '>';
       html += '<div style="margin-bottom:20px">';
       html += '  <h2 style="font-family:Libre Baskerville,serif;font-size:24px;font-weight:400;margin-bottom:6px">Guides</h2>';
       html += '  <p style="font-size:14px;font-weight:300;color:var(--muted);line-height:1.6">Step-by-step guidance for what you\'re going through. Click any task to expand the full walkthrough.</p>';
@@ -7099,6 +7162,7 @@ guideLibrary['disability'] = {
       html += '    <div id="guideContent"></div>';
       html += '  </div>';
       html += '</div>'; // guide-layout
+      html += '</div>'; // guidesContent wrapper
       html += '</div>'; // panel-guides
 
       // Settings panel removed — merged into Account Settings tab above
