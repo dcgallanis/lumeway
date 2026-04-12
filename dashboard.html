@@ -4301,9 +4301,10 @@ guideLibrary['disability'] = {
         if (!groups[cat]) groups[cat] = [];
         groups[cat].push(f);
       });
-      // Add purchased templates as a folder
+      // Add templates folder if user has template files or purchased bundles
       var templatePurchases = (dashData.purchases || []).filter(function(p) { return p.download_token && p.product_id !== 'unlimited' && !p.product_id.startsWith('pass-'); });
-      if (templatePurchases.length > 0) catOrder.push('templates');
+      var hasTemplateFiles = groups['templates'] && groups['templates'].length > 0;
+      if (hasTemplateFiles || templatePurchases.length > 0) catOrder.push('templates');
 
       var html = '';
       catOrder.forEach(function(cat) {
@@ -4318,7 +4319,24 @@ guideLibrary['disability'] = {
         // File list inside folder
         if (isActive) {
           html += '<div class="ws-folder-files" style="display:block">';
-          if (cat === 'templates') {
+          if (cat === 'templates' && hasTemplateFiles) {
+            // Show real template files (editable in workspace)
+            (groups['templates'] || []).forEach(function(f) {
+              var fActive = wsActiveFileId === f.id ? ' active' : '';
+              var fStatus = getFileStatus(f.id);
+              html += '<div class="ws-folder-file' + fActive + '" style="display:flex;align-items:center;gap:5px;position:relative" onclick="event.stopPropagation();openFileViewer(' + f.id + ')" title="' + f.original_name + '">';
+              html += '<div class="ws-file-dot ' + fStatus + '" onclick="toggleStatusMenu(' + f.id + ',event)" title="' + (fStatus ? getStatusLabel(fStatus) : 'Set status') + '"></div>';
+              html += '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + getFileIcon(f.original_name) + ' ' + f.original_name + '</span>';
+              html += '<div class="ws-status-menu" id="statusMenu-' + f.id + '">';
+              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'todo\');event.stopPropagation()"><span class="ws-status-dot c-todo"></span> To Do</button>';
+              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'in-progress\');event.stopPropagation()"><span class="ws-status-dot c-in-progress"></span> In Progress</button>';
+              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'done\');event.stopPropagation()"><span class="ws-status-dot c-done"></span> Done</button>';
+              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'\');event.stopPropagation()" style="color:var(--muted)">Clear</button>';
+              html += '</div>';
+              html += '</div>';
+            });
+          } else if (cat === 'templates') {
+            // Fallback: show bundle download links for older purchases
             templatePurchases.forEach(function(p) {
               html += '<div class="ws-folder-file" onclick="event.stopPropagation()" style="display:flex;align-items:center;gap:6px">';
               html += '  <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + p.product_name + '</span>';

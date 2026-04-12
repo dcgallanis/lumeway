@@ -2163,6 +2163,92 @@ BUNDLE_FILES = {
     "retirement": "retirement.zip",
 }
 
+
+def preload_bundle_templates(user_id, category):
+    """Extract individual template files from a bundle zip and add them to the user's workspace.
+    Called after purchase fulfillment or Etsy code redemption."""
+    import zipfile as _zipfile
+
+    # For master bundle, preload all individual bundles
+    if category == "master":
+        for cat in BUNDLE_FILES:
+            if cat != "master":
+                preload_bundle_templates(user_id, cat)
+        return
+
+    zip_filename = BUNDLE_FILES.get(category)
+    if not zip_filename:
+        print(f"[preload] No bundle zip for category: {category}")
+        return
+
+    zip_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "bundles", zip_filename)
+    if not os.path.exists(zip_path):
+        print(f"[preload] Bundle zip not found: {zip_path}")
+        return
+
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.utcnow().isoformat()
+
+    # Check what templates this user already has (avoid duplicates)
+    cur = db_execute(conn, f"SELECT original_name FROM user_files WHERE user_id = {param} AND category = 'templates'", (user_id,))
+    existing_names = set(row[0] for row in cur.fetchall())
+
+    try:
+        with _zipfile.ZipFile(zip_path, "r") as zf:
+            for entry in sorted(zf.namelist()):
+                # Skip directories, hidden files, macOS metadata, and .unpack_ folders
+                if entry.endswith("/"):
+                    continue
+                basename = os.path.basename(entry)
+                if not basename or basename.startswith("."):
+                    continue
+                if "/__MACOSX/" in entry or "/.unpack_" in entry or "__MACOSX/" in entry or ".unpack_" in entry.split("/")[-2] if "/" in entry else False:
+                    continue
+                # Only include .docx and .pdf files at the top level of the bundle folder
+                parts = entry.split("/")
+                if len(parts) != 2:
+                    continue  # Skip nested files (inside .unpack_ dirs etc.)
+                ext = os.path.splitext(basename)[1].lower()
+                if ext not in (".docx", ".pdf"):
+                    continue
+
+                # Clean up the display name: remove numbering prefix like "1. "
+                display_name = basename
+
+                # Skip if already preloaded
+                if display_name in existing_names:
+                    continue
+
+                # Read file data from zip
+                file_data = zf.read(entry)
+                file_size = len(file_data)
+
+                # Determine content type
+                content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document" if ext == ".docx" else "application/pdf"
+
+                # Encrypt and store
+                stored_name = f"{uuid.uuid4().hex}{ext}"
+                encrypted_data = file_cipher.encrypt(file_data)
+                storage_save(user_id, stored_name, encrypted_data)
+
+                # Insert into user_files with 'templates' category
+                db_execute(conn, f"""INSERT INTO user_files (user_id, original_name, stored_name, category, file_size, content_type, uploaded_at)
+                    VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param})""",
+                    (user_id, display_name, stored_name, "templates", file_size, content_type, now))
+                existing_names.add(display_name)
+
+            conn.commit()
+            count = len(existing_names)
+            print(f"[preload] Loaded templates for user {user_id}, category {category}")
+    except Exception as e:
+        print(f"[preload] Error extracting bundle for user {user_id}, category {category}: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        conn.close()
+
+
 @app.route("/api/create-checkout", methods=["POST"])
 def create_checkout():
     data = request.get_json()
@@ -2430,11 +2516,16 @@ def redeem_code():
             except Exception as e:
                 print(f"Error granting etsy bundle {cat}: {e}")
     conn.close()
+    # Preload individual template files into user's workspace
+    try:
+        preload_bundle_templates(user["id"], category)
+    except Exception as e:
+        print(f"[preload] Error during Etsy preload for user {user['id']}: {e}")
     return jsonify({
         "ok": True,
         "category": category,
         "credit_cents": credit_amount,
-        "message": f"Code redeemed. Your {CATEGORY_LABELS.get(category, 'templates')} worksheets are ready in My Templates."
+        "message": f"Code redeemed. Your {CATEGORY_LABELS.get(category, 'templates')} worksheets are ready in Files & Templates."
     })
 
 @app.route("/api/account/upgrade-options")
@@ -2593,8 +2684,18 @@ def fulfill_purchase(session_data):
             update_user_tier_from_access(uid)
             # Also add $16 credit for the bundle purchase
             db_execute(conn2, f"UPDATE users SET credit_cents = credit_cents + 1600 WHERE id = {param2}", (uid,))
-        conn2.commit()
-        conn2.close()
+            # Preload individual template files into user's workspace
+            conn2.commit()
+            conn2.close()
+            try:
+                bundle_cat = "master" if product_id == "bundle-master" else category
+                if bundle_cat:
+                    preload_bundle_templates(uid, bundle_cat)
+            except Exception as pe:
+                print(f"[preload] Error during purchase preload for user {uid}: {pe}")
+        else:
+            conn2.commit()
+            conn2.close()
     except Exception as e:
         print(f"Error granting starter access: {e}")
     # Send email in background thread so it doesn't block the response
@@ -2693,7 +2794,27 @@ def handle_tier_upgrade(session_data, metadata):
         except Exception as e:
             print(f"DB error granting bundle {bundle_id}: {e}")
 
+    # Get user ID for preloading
+    uid = None
+    try:
+        conn_uid = get_db()
+        cur_uid = db_execute(conn_uid, f"SELECT id FROM users WHERE email = {param}", (email,))
+        row_uid = cur_uid.fetchone()
+        if row_uid:
+            uid = row_uid[0]
+        conn_uid.close()
+    except Exception:
+        pass
+
     conn.close()
+
+    # Preload template files into user's workspace
+    if uid and bundles_to_grant:
+        try:
+            for bundle_cat in bundles_to_grant:
+                preload_bundle_templates(uid, bundle_cat)
+        except Exception as pe:
+            print(f"[preload] Error during tier upgrade preload for user {uid}: {pe}")
 
     # Send confirmation email
     threading.Thread(target=send_tier_email, args=(email, tier, product_name), daemon=True).start()
