@@ -6582,8 +6582,24 @@ guideLibrary['disability'] = {
             if (hasUncompleted) { currentPhaseIdx = pi; break; }
           }
 
+          // Separate active/future phases from fully completed phases
+          var activePhases = [];
+          var completedPhases = [];
           phaseOrder.forEach(function(phase, idx) {
             var phaseItems = phases[phase].slice();
+            var phaseDone = phaseItems.filter(function(i) { return i.is_completed; }).length;
+            var allDone = phaseDone === phaseItems.length;
+            if (allDone) {
+              completedPhases.push({ phase: phase, items: phaseItems, idx: idx });
+            } else {
+              activePhases.push({ phase: phase, items: phaseItems, idx: idx });
+            }
+          });
+
+          // Render active phases first
+          activePhases.forEach(function(p, activeIdx) {
+            var phase = p.phase;
+            var phaseItems = p.items;
             // Within early phases, prioritize "gather info" tasks before "take action" tasks
             if (phase.indexOf('24') !== -1 || phase.indexOf('72') !== -1 || phase.indexOf('First Week') !== -1 || phase.indexOf('Week 1') !== -1) {
               phaseItems.sort(function(a, b) {
@@ -6595,28 +6611,24 @@ guideLibrary['disability'] = {
             }
             var phaseDone = phaseItems.filter(function(i) { return i.is_completed; }).length;
             var phaseTotal = phaseItems.length;
-            var allDone = phaseDone === phaseTotal;
-            var isCurrent = (idx === currentPhaseIdx);
-            var isFuture = (currentPhaseIdx >= 0 && idx > currentPhaseIdx);
+            var isCurrent = (activeIdx === 0); // First active phase is current
+            var isFuture = (activeIdx > 0);
 
-            // Progressive disclosure: collapse completed and future phases, expand current
+            // Rename current active phase to "Today"
+            var displayName = isCurrent ? 'Today' : phase;
+
             var phaseClasses = 'phase-group';
-            if (allDone) phaseClasses += ' phase-done collapsed';
-            else if (isFuture) phaseClasses += ' collapsed';
+            if (isFuture) phaseClasses += ' collapsed';
 
             html += '<div class="' + phaseClasses + '" data-phase="' + cat + '-' + phase + '">';
 
             // Clickable phase header with chevron
             html += '<div class="phase-title"><div class="phase-toggle" onclick="togglePhaseCollapse(\'' + cat + '-' + phase + '\')">';
             html += '<span class="phase-chevron">&#9654;</span>';
-            if (allDone) html += '<span class="phase-done-check">&#10003;</span>';
-            html += phase + ' <span class="phase-progress">' + phaseDone + ' of ' + phaseTotal + '</span>';
+            html += displayName + ' <span class="phase-progress">' + phaseDone + ' of ' + phaseTotal + '</span>';
             html += '</div></div>';
 
-            // Collapsed summary line
-            if (allDone) {
-              html += '<div class="phase-summary-collapsed">All ' + phaseTotal + ' tasks complete</div>';
-            } else if (isFuture) {
+            if (isFuture) {
               html += '<div class="phase-summary-collapsed">' + phaseTotal + ' tasks — click to preview</div>';
             }
 
@@ -6637,6 +6649,30 @@ guideLibrary['disability'] = {
             });
             html += '</div>';
           });
+
+          // Render completed phases at bottom in a collapsed "Completed Tasks" section
+          if (completedPhases.length > 0) {
+            var totalCompleted = 0;
+            completedPhases.forEach(function(p) { totalCompleted += p.items.length; });
+
+            html += '<div class="phase-group phase-done collapsed" data-phase="' + cat + '-completed-all">';
+            html += '<div class="phase-title"><div class="phase-toggle" onclick="togglePhaseCollapse(\'' + cat + '-completed-all\')">';
+            html += '<span class="phase-chevron">&#9654;</span>';
+            html += '<span class="phase-done-check">&#10003;</span>';
+            html += 'Completed Tasks <span class="phase-progress">' + totalCompleted + ' tasks</span>';
+            html += '</div></div>';
+            html += '<div class="phase-summary-collapsed">All ' + totalCompleted + ' tasks complete</div>';
+
+            completedPhases.forEach(function(p) {
+              p.items.forEach(function(item) {
+                html += '<div class="check-item done" onclick="toggleItem(' + item.id + ', this)">';
+                html += '  <div class="check-box"></div>';
+                html += '  <div class="check-text">' + item.item_text + '</div>';
+                html += '</div>';
+              });
+            });
+            html += '</div>';
+          }
           html += '</div>';
         });
 
@@ -8774,7 +8810,7 @@ guideLibrary['disability'] = {
     var _communityDisplayName = '';
 
     function communityInitial(name) { return name ? name.charAt(0).toUpperCase() : '?'; }
-    function communityAvatar(icon, name) { return icon || communityInitial(name); }
+    function communityAvatar(icon, name) { return icon || '☀️'; }
 
     function loadCommunityPosts() {
       var el = document.getElementById('communityList');
@@ -8831,7 +8867,7 @@ guideLibrary['disability'] = {
             html += '<div class="community-post-card' + (p.is_pinned ? ' pinned' : '') + '" onclick="openCommunityPost(' + p.id + ')">';
             html += '  <div class="community-post-title">' + (p.is_pinned ? '<span class="community-pin-badge">📌 </span>' : '') + escapeHtml(p.title) + '</div>';
             html += '  <div class="community-post-meta">';
-            html += '    <span style="font-weight:500;color:var(--navy)">' + (p.icon || '') + ' ' + escapeHtml(p.display_name) + '</span>';
+            html += '    <span style="font-weight:500;color:var(--navy)">' + communityAvatar(p.icon, p.display_name) + ' ' + escapeHtml(p.display_name) + '</span>';
             html += '    <span>' + communityTimeAgo(p.created_at) + '</span>';
             if (catLabel) html += '<span class="community-post-cat">' + catLabel + '</span>';
             if (p.transition_category && transMap[p.transition_category]) {

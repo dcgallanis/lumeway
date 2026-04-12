@@ -360,7 +360,7 @@ struct EmojiAvatarPickerSheet: View {
                                             .stroke(Color.white, lineWidth: 2)
                                             .frame(width: 32, height: 32)
                                         Circle()
-                                            .stroke(color.isEmpty ? bgColorForIcon(selectedEmoji) : color, lineWidth: 3)
+                                            .stroke(hex.isEmpty ? bgColorForIcon(selectedEmoji) : color, lineWidth: 3)
                                             .frame(width: 38, height: 38)
                                     }
                                 }

@@ -4435,8 +4435,29 @@ def auth_verify_code():
 
     return jsonify(response_data)
 
+DEMO_EMAIL = "demo@lumeway.co"
+
 @app.route("/api/auth/logout", methods=["POST"])
 def auth_logout():
+    # If demo account, reset all data so it's fresh next login
+    user = get_current_user()
+    if user and user.get("email") == DEMO_EMAIL:
+        conn = get_db()
+        param = "%s" if USE_POSTGRES else "?"
+        uid = user["id"]
+        # Delete replies on demo user's posts first (foreign key)
+        db_execute(conn, f"DELETE FROM community_replies WHERE post_id IN (SELECT id FROM community_posts WHERE user_id = {param})", (uid,))
+        # Then delete demo user's own replies on other posts
+        db_execute(conn, f"DELETE FROM community_replies WHERE user_id = {param}", (uid,))
+        for table in ["community_posts", "checklist_items", "user_deadlines", "user_documents_needed", "user_goals", "user_notes", "chat_sessions"]:
+            db_execute(conn, f"DELETE FROM {table} WHERE user_id = {param}", (uid,))
+        # Also clear uploaded files
+        try:
+            db_execute(conn, f"DELETE FROM user_files WHERE user_id = {param}", (uid,))
+        except Exception:
+            pass
+        conn.commit()
+        conn.close()
     flask_session.clear()
     return jsonify({"ok": True})
 
@@ -4543,8 +4564,6 @@ def auth_me():
 
 # ── Demo / test dashboard ──
 
-DEMO_EMAIL = "demo@lumeway.co"
-
 @app.route("/demo")
 def demo_dashboard():
     """One-click demo login — creates or reuses a demo account with full access and sample data."""
@@ -4612,8 +4631,15 @@ def demo_reset():
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
     uid = user["id"]
-    for table in ["checklist_items", "user_deadlines", "user_documents_needed", "user_goals", "user_notes", "chat_sessions"]:
+    # Community cleanup (foreign key order matters)
+    db_execute(conn, f"DELETE FROM community_replies WHERE post_id IN (SELECT id FROM community_posts WHERE user_id = {param})", (uid,))
+    db_execute(conn, f"DELETE FROM community_replies WHERE user_id = {param}", (uid,))
+    for table in ["community_posts", "checklist_items", "user_deadlines", "user_documents_needed", "user_goals", "user_notes", "chat_sessions"]:
         db_execute(conn, f"DELETE FROM {table} WHERE user_id = {param}", (uid,))
+    try:
+        db_execute(conn, f"DELETE FROM user_files WHERE user_id = {param}", (uid,))
+    except Exception:
+        pass
     conn.commit()
     conn.close()
     return redirect("/demo")
