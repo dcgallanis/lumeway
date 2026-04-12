@@ -51,6 +51,19 @@ struct DashboardView: View {
 
                             Spacer()
 
+                            // Refresh button
+                            Button {
+                                Task {
+                                    await appState.loadDashboard()
+                                    await loadChecklist()
+                                }
+                            } label: {
+                                Image(systemName: "arrow.triangle.2.circlepath")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.lumeMuted)
+                                    .padding(8)
+                            }
+
                             // Avatar
                             if let user = appState.user {
                                 ZStack {
@@ -164,7 +177,7 @@ struct DashboardView: View {
                             }
                         }
 
-                        // Today's Focus
+                        // Today's Focus — taps to switch to Checklist tab
                         if let nextTask = checklistItems.first(where: { !$0.isCompleted }) {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Next Up")
@@ -172,8 +185,13 @@ struct DashboardView: View {
                                     .foregroundColor(.lumeNavy)
                                     .padding(.horizontal, 24)
 
-                                TodayFocusCard(task: nextTask)
-                                    .padding(.horizontal, 20)
+                                Button {
+                                    NotificationCenter.default.post(name: .navigateToChecklist, object: nil)
+                                } label: {
+                                    TodayFocusCard(task: nextTask)
+                                }
+                                .buttonStyle(.plain)
+                                .padding(.horizontal, 20)
                             }
                         }
 

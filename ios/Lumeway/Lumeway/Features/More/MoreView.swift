@@ -143,6 +143,43 @@ struct MoreView: View {
                                 )
                             }
 
+                            // Subscription & Upgrades section
+                            VStack(spacing: 0) {
+                                SettingSectionHeader(title: "SUBSCRIPTION")
+
+                                VStack(spacing: 0) {
+                                    NavigationLink {
+                                        PricingView()
+                                    } label: {
+                                        ProfileSettingRow(
+                                            icon: "crown.fill",
+                                            label: "View Plans & Pricing",
+                                            iconColor: Color(hex: "B8977E"),
+                                            bgColor: Color(hex: "F0EAE0")
+                                        )
+                                    }
+
+                                    Divider().padding(.leading, 62)
+
+                                    NavigationLink {
+                                        PromoCodeView()
+                                    } label: {
+                                        ProfileSettingRow(
+                                            icon: "ticket.fill",
+                                            label: "Redeem a Code",
+                                            iconColor: Color(hex: "4A7C59"),
+                                            bgColor: Color(hex: "E8F0E4")
+                                        )
+                                    }
+                                }
+                                .background(Color.lumeWarmWhite)
+                                .cornerRadius(16)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.lumeBorder, lineWidth: 1)
+                                )
+                            }
+
                             // Support section
                             VStack(spacing: 0) {
                                 SettingSectionHeader(title: "SUPPORT")
@@ -681,13 +718,17 @@ struct AccountSettingsView: View {
 
                                 Spacer()
 
-                                Text("Manage")
-                                    .font(.lumeSmall)
-                                    .foregroundColor(.lumeAccent)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 5)
-                                    .background(Color.lumeAccent.opacity(0.08))
-                                    .cornerRadius(8)
+                                NavigationLink {
+                                    PricingView()
+                                } label: {
+                                    Text("Manage")
+                                        .font(.lumeSmall)
+                                        .foregroundColor(.lumeAccent)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 5)
+                                        .background(Color.lumeAccent.opacity(0.08))
+                                        .cornerRadius(8)
+                                }
                             }
                             .padding(14)
                             .background(Color.lumeWarmWhite)
@@ -957,5 +998,366 @@ struct NotificationsSettingsView: View {
                 }
             }
         } catch {}
+    }
+}
+
+// MARK: - Promo Code Entry
+
+struct PromoCodeView: View {
+    @EnvironmentObject var appState: AppState
+    @State private var code = ""
+    @State private var isRedeeming = false
+    @State private var resultMessage: String?
+    @State private var isSuccess = false
+
+    private let api = APIClient.shared
+
+    var body: some View {
+        ZStack {
+            Color(hex: "F0EDE8").ignoresSafeArea()
+
+            ScrollView {
+                VStack(spacing: 0) {
+                    // Color-blocked header
+                    ZStack {
+                        Color.lumeNavy
+
+                        VStack(spacing: 10) {
+                            Image(systemName: "ticket.fill")
+                                .font(.system(size: 28))
+                                .foregroundColor(.lumeGold)
+                            Text("Redeem a Code")
+                                .font(.lumeDisplaySmall)
+                                .foregroundColor(.white)
+                            Text("Enter a promo or purchase code")
+                                .font(.lumeCaption)
+                                .foregroundColor(.white.opacity(0.6))
+                        }
+                        .padding(.top, 60)
+                        .padding(.bottom, 28)
+                    }
+                    .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
+
+                    VStack(spacing: 20) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Your Code")
+                                .font(.lumeCaption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.lumeNavy)
+
+                            TextField("Enter code", text: $code)
+                                .font(.lumeBody)
+                                .foregroundColor(.lumeText)
+                                .textInputAutocapitalization(.characters)
+                                .autocorrectionDisabled()
+                                .padding(14)
+                                .background(Color.lumeWarmWhite)
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.lumeBorder, lineWidth: 1)
+                                )
+                        }
+
+                        Button {
+                            Task { await redeemCode() }
+                        } label: {
+                            if isRedeeming {
+                                ProgressView()
+                                    .tint(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                            } else {
+                                Text("Redeem Code")
+                                    .font(.lumeBodySemibold)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                            }
+                        }
+                        .foregroundColor(.white)
+                        .background(
+                            RoundedRectangle(cornerRadius: 28)
+                                .fill(code.trimmingCharacters(in: .whitespaces).isEmpty ? Color.lumeBorder : Color.lumeAccent)
+                        )
+                        .disabled(code.trimmingCharacters(in: .whitespaces).isEmpty || isRedeeming)
+
+                        if let message = resultMessage {
+                            HStack(spacing: 10) {
+                                Image(systemName: isSuccess ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                                    .font(.system(size: 16))
+                                    .foregroundColor(isSuccess ? .lumeGreen : .lumeAccent)
+
+                                Text(message)
+                                    .font(.lumeBody)
+                                    .foregroundColor(isSuccess ? .lumeGreen : .lumeAccent)
+                                    .multilineTextAlignment(.leading)
+                            }
+                            .padding(16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background((isSuccess ? Color.lumeGreen : Color.lumeAccent).opacity(0.08))
+                            .cornerRadius(12)
+                        }
+
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Where to find your code")
+                                .font(.lumeCaption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.lumeNavy)
+
+                            Text("Promo codes are shared through Lumeway campaigns. Purchase codes are included in your Etsy order confirmation email.")
+                                .font(.lumeSmall)
+                                .foregroundColor(.lumeMuted)
+                                .lineSpacing(3)
+                        }
+                        .padding(16)
+                        .background(Color.lumeWarmWhite)
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.lumeBorder, lineWidth: 1)
+                        )
+                    }
+                    .padding(24)
+                }
+            }
+            .ignoresSafeArea(edges: .top)
+        }
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func redeemCode() async {
+        isRedeeming = true
+        resultMessage = nil
+        defer { isRedeeming = false }
+
+        do {
+            struct RedeemResponse: Codable {
+                let ok: Bool?
+                let message: String?
+                let error: String?
+            }
+            let response: RedeemResponse = try await api.post("/api/redeem-code", body: ["code": code.trimmingCharacters(in: .whitespaces)])
+            if response.ok == true {
+                isSuccess = true
+                resultMessage = response.message ?? "Code redeemed successfully."
+                code = ""
+                // Refresh dashboard to reflect new access
+                await appState.loadDashboard()
+            } else {
+                isSuccess = false
+                resultMessage = response.error ?? "Invalid code. Please check and try again."
+            }
+        } catch {
+            isSuccess = false
+            resultMessage = "Unable to redeem code right now. Please try again."
+        }
+    }
+}
+
+// MARK: - Pricing View
+
+struct PricingView: View {
+    @EnvironmentObject var appState: AppState
+
+    private var currentTier: String {
+        appState.effectiveTier
+    }
+
+    private let plans: [(name: String, tier: String, price: String, period: String, features: [String], highlight: Bool)] = [
+        (
+            name: "Free",
+            tier: "free",
+            price: "Free",
+            period: "",
+            features: [
+                "Personalized checklist",
+                "Community access",
+                "Navigator chat (basic)",
+                "Calendar & deadlines",
+                "Notes & activity log"
+            ],
+            highlight: false
+        ),
+        (
+            name: "Starter Bundle",
+            tier: "starter",
+            price: "$16",
+            period: "one-time",
+            features: [
+                "Everything in Free",
+                "Template document pack",
+                "90 printable worksheets",
+                "Fillable forms"
+            ],
+            highlight: false
+        ),
+        (
+            name: "Chapter Pass",
+            tier: "pass",
+            price: "$39",
+            period: "per transition",
+            features: [
+                "Everything in Free",
+                "Full guide library",
+                "Step-by-step breakdowns",
+                "Scripts & key terms",
+                "Professional resources"
+            ],
+            highlight: true
+        ),
+        (
+            name: "Unlimited",
+            tier: "unlimited",
+            price: "$9.99",
+            period: "/month",
+            features: [
+                "Everything in Pass",
+                "All transitions unlocked",
+                "Priority navigator chat",
+                "Future content updates"
+            ],
+            highlight: false
+        )
+    ]
+
+    var body: some View {
+        ZStack {
+            Color(hex: "F0EDE8").ignoresSafeArea()
+
+            ScrollView {
+                VStack(spacing: 0) {
+                    // Color-blocked header
+                    ZStack {
+                        Color.lumeNavy
+
+                        VStack(spacing: 10) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 28))
+                                .foregroundColor(.lumeGold)
+                            Text("Choose Your Plan")
+                                .font(.lumeDisplayMedium)
+                                .foregroundColor(.white)
+                            Text("Unlock the tools you need")
+                                .font(.lumeCaption)
+                                .foregroundColor(.white.opacity(0.6))
+                        }
+                        .padding(.top, 60)
+                        .padding(.bottom, 28)
+                    }
+                    .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
+
+                    VStack(spacing: 16) {
+                        ForEach(plans, id: \.tier) { plan in
+                            PricingPlanCard(
+                                name: plan.name,
+                                price: plan.price,
+                                period: plan.period,
+                                features: plan.features,
+                                isHighlighted: plan.highlight,
+                                isCurrent: currentTier == plan.tier,
+                                onUpgrade: {
+                                    // Open web pricing page for checkout
+                                    if let url = URL(string: "https://lumeway.co/pricing") {
+                                        UIApplication.shared.open(url)
+                                    }
+                                }
+                            )
+                        }
+
+                        Text("All purchases are handled securely through our website.")
+                            .font(.lumeSmall)
+                            .foregroundColor(.lumeMuted)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 8)
+                    }
+                    .padding(20)
+                    .padding(.bottom, 80)
+                }
+            }
+            .ignoresSafeArea(edges: .top)
+        }
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct PricingPlanCard: View {
+    let name: String
+    let price: String
+    let period: String
+    let features: [String]
+    let isHighlighted: Bool
+    let isCurrent: Bool
+    let onUpgrade: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            // Header
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 8) {
+                        Text(name)
+                            .font(.lumeHeadingSmall)
+                            .foregroundColor(.lumeNavy)
+
+                        if isCurrent {
+                            Text("CURRENT")
+                                .font(.system(size: 9, weight: .bold))
+                                .foregroundColor(.lumeGreen)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Color.lumeGreen.opacity(0.12))
+                                .cornerRadius(6)
+                        }
+                    }
+
+                    HStack(alignment: .firstTextBaseline, spacing: 2) {
+                        Text(price)
+                            .font(.lumeDisplaySmall)
+                            .foregroundColor(.lumeNavy)
+                        if !period.isEmpty {
+                            Text(period)
+                                .font(.lumeSmall)
+                                .foregroundColor(.lumeMuted)
+                        }
+                    }
+                }
+                Spacer()
+            }
+
+            // Features
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(features, id: \.self) { feature in
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.lumeGreen)
+                        Text(feature)
+                            .font(.lumeCaption)
+                            .foregroundColor(.lumeText)
+                    }
+                }
+            }
+
+            // CTA
+            if !isCurrent && price != "Free" {
+                Button(action: onUpgrade) {
+                    Text("Upgrade")
+                        .font(.lumeBodyMedium)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(isHighlighted ? Color.lumeAccent : Color.lumeNavy)
+                        .cornerRadius(24)
+                }
+            }
+        }
+        .padding(18)
+        .background(Color.lumeWarmWhite)
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(isHighlighted ? Color.lumeGold : Color.lumeBorder, lineWidth: isHighlighted ? 2 : 1)
+        )
     }
 }

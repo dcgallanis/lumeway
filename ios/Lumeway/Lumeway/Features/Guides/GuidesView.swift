@@ -32,6 +32,7 @@ private let categoryBullets: [String] = [
 struct GuidesView: View {
     @EnvironmentObject var appState: AppState
     @State private var guideData: GuideDetailResponse?
+    @State private var allGuides: [String: GuideDetailResponse] = [:]
     @State private var isLoading = true
     @State private var searchText = ""
     @State private var expandedTransitions: Set<String> = []
@@ -68,8 +69,8 @@ struct GuidesView: View {
                                         .font(.lumeDisplayMedium)
                                         .foregroundColor(.white)
 
-                                    if let bundle = appState.user?.transitionType {
-                                        Text(bundle.replacingOccurrences(of: "-", with: " ").capitalized)
+                                    if !allTransitionKeys.isEmpty {
+                                        Text("\(allTransitionKeys.count) transition\(allTransitionKeys.count == 1 ? "" : "s")")
                                             .font(.lumeCaption)
                                             .foregroundColor(.white.opacity(0.6))
                                     }
@@ -100,25 +101,29 @@ struct GuidesView: View {
                             .padding(.top, 16)
                             .padding(.bottom, 8)
 
-                            // Transition sections — collapsible
-                            if let transition = appState.user?.transitionType {
-                                TransitionGuideSection(
-                                    transitionName: transition.replacingOccurrences(of: "-", with: " ").capitalized,
-                                    categories: filteredCategories,
-                                    hasFullAccess: guide.hasFullAccess,
-                                    isExpanded: expandedTransitions.contains(transition),
-                                    onToggle: {
-                                        withAnimation(.easeInOut(duration: 0.25)) {
-                                            if expandedTransitions.contains(transition) {
-                                                expandedTransitions.remove(transition)
-                                            } else {
-                                                expandedTransitions.insert(transition)
+                            // Transition sections — show all purchased transitions
+                            ForEach(allTransitionKeys, id: \.self) { transition in
+                                let guideResp = allGuides[transition] ?? guide
+                                let cats = filteredCategories(for: guideResp)
+                                if !cats.isEmpty {
+                                    TransitionGuideSection(
+                                        transitionName: transition.replacingOccurrences(of: "-", with: " ").capitalized,
+                                        categories: cats,
+                                        hasFullAccess: guideResp.hasFullAccess,
+                                        isExpanded: expandedTransitions.contains(transition),
+                                        onToggle: {
+                                            withAnimation(.easeInOut(duration: 0.25)) {
+                                                if expandedTransitions.contains(transition) {
+                                                    expandedTransitions.remove(transition)
+                                                } else {
+                                                    expandedTransitions.insert(transition)
+                                                }
                                             }
                                         }
-                                    }
-                                )
-                                .padding(.horizontal, 20)
-                                .padding(.top, 8)
+                                    )
+                                    .padding(.horizontal, 20)
+                                    .padding(.top, 8)
+                                }
                             }
 
                             Spacer().frame(height: 100)
@@ -143,8 +148,8 @@ struct GuidesView: View {
             .navigationBarHidden(true)
             .task {
                 await loadGuides()
-                // Auto-expand current transition
-                if let t = appState.user?.transitionType {
+                // Auto-expand all transitions
+                for t in allTransitionKeys {
                     expandedTransitions.insert(t)
                 }
             }
@@ -152,8 +157,21 @@ struct GuidesView: View {
         }
     }
 
-    private var filteredCategories: [GuideCategory] {
-        guard let cats = guideData?.guide.categories else { return [] }
+    /// All transition keys the user has access to (primary + purchased)
+    private var allTransitionKeys: [String] {
+        var keys: [String] = []
+        if let primary = appState.user?.transitionType {
+            keys.append(primary)
+        }
+        // Add any additional active transitions from purchases
+        for t in appState.activeTransitions where !keys.contains(t) {
+            keys.append(t)
+        }
+        return keys
+    }
+
+    private func filteredCategories(for guideResp: GuideDetailResponse) -> [GuideCategory] {
+        let cats = guideResp.guide.categories
         if searchText.isEmpty { return cats }
         return cats.filter { cat in
             cat.name.localizedCaseInsensitiveContains(searchText) ||
@@ -162,12 +180,32 @@ struct GuidesView: View {
     }
 
     private func loadGuides() async {
-        guard let transition = appState.user?.transitionType else {
+        let transitions = allTransitionKeys
+        guard !transitions.isEmpty else {
             isLoading = false
             return
         }
         do {
-            guideData = try await service.getGuide(transition: transition)
+            // Load primary transition
+            let primary = transitions[0]
+            guideData = try await service.getGuide(transition: primary)
+            allGuides[primary] = guideData
+
+            // Load additional purchased transitions in parallel
+            await withTaskGroup(of: (String, GuideDetailResponse?).self) { group in
+                for t in transitions.dropFirst() {
+                    group.addTask {
+                        let resp = try? await self.service.getGuide(transition: t)
+                        return (t, resp)
+                    }
+                }
+                for await (key, resp) in group {
+                    if let resp = resp {
+                        allGuides[key] = resp
+                    }
+                }
+            }
+
             isLoading = false
         } catch {
             isLoading = false

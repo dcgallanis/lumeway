@@ -379,6 +379,10 @@ struct MainTabView: View {
 struct HubView: View {
     @EnvironmentObject var appState: AppState
 
+    private var isFree: Bool {
+        appState.effectiveTier == "free"
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -445,8 +449,9 @@ struct HubView: View {
                                     HubTile(
                                         icon: "book.fill",
                                         title: "Guides",
-                                        subtitle: "Step-by-step help",
-                                        color: .lumeGold
+                                        subtitle: isFree ? "Upgrade to unlock" : "Step-by-step help",
+                                        color: .lumeGold,
+                                        isLocked: isFree
                                     )
                                 }
                             }
@@ -458,8 +463,9 @@ struct HubView: View {
                                     HubTile(
                                         icon: "folder.fill",
                                         title: "Files",
-                                        subtitle: "Your documents",
-                                        color: .lumeNavy
+                                        subtitle: isFree ? "Upgrade to unlock" : "Your documents",
+                                        color: .lumeNavy,
+                                        isLocked: isFree
                                     )
                                 }
 
@@ -493,33 +499,46 @@ struct HubTile: View {
     let title: String
     let subtitle: String
     let color: Color
+    var isLocked: Bool = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(color.opacity(0.12))
-                    .frame(width: 42, height: 42)
-                Image(systemName: icon)
-                    .font(.system(size: 18))
-                    .foregroundColor(color)
+        ZStack(alignment: .topTrailing) {
+            VStack(alignment: .leading, spacing: 10) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(color.opacity(0.12))
+                        .frame(width: 42, height: 42)
+                    Image(systemName: icon)
+                        .font(.system(size: 18))
+                        .foregroundColor(color)
+                }
+
+                Text(title)
+                    .font(.lumeSectionTitle)
+                    .foregroundColor(.lumeNavy)
+
+                Text(subtitle)
+                    .font(.lumeCaptionLight)
+                    .foregroundColor(.lumeMuted)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(18)
+            .background(Color.lumeWarmWhite)
+            .cornerRadius(16)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.lumeBorder, lineWidth: 1)
+            )
 
-            Text(title)
-                .font(.lumeSectionTitle)
-                .foregroundColor(.lumeNavy)
-
-            Text(subtitle)
-                .font(.lumeCaptionLight)
-                .foregroundColor(.lumeMuted)
+            if isLocked {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 10))
+                    .foregroundColor(.lumeGold)
+                    .padding(6)
+                    .background(Color.lumeGold.opacity(0.12))
+                    .cornerRadius(8)
+                    .padding(10)
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(18)
-        .background(Color.lumeWarmWhite)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.lumeBorder, lineWidth: 1)
-        )
     }
 }
