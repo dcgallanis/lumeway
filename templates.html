@@ -61,6 +61,47 @@
     .mobile-menu a:hover { color: var(--accent); }
     .mobile-menu .mobile-cta { margin-top: 24px; display: block; text-align: center; padding: 14px 24px; background: var(--accent); color: #fff; border-radius: 10px; font-size: 15px; font-weight: 500; text-decoration: none; border: none; }
 
+    /* Tier carousel */
+    .carousel-section { padding: 140px 5% 56px; width: 100%; display: flex; flex-direction: column; align-items: center; }
+    .carousel-container { position: relative; width: 100%; max-width: 900px; overflow: hidden; }
+    .carousel-track { display: flex; transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+    .carousel-slide { min-width: 100%; padding: 0 12px; box-sizing: border-box; }
+    .carousel-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; padding: 44px 40px; box-shadow: 0 2px 32px rgba(27,58,92,0.07); text-align: center; }
+    .carousel-card.carousel-card--highlight { border: 2px solid var(--navy); }
+    .carousel-pill { display: inline-block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 14px; border-radius: 100px; margin-bottom: 18px; }
+    .carousel-pill--free { background: #e8f5e9; color: #2d6a4f; }
+    .carousel-pill--starter { background: var(--cream); border: 1px solid var(--border); color: var(--muted); }
+    .carousel-pill--full { background: var(--navy); color: var(--cream); }
+    .carousel-card h2 { font-family: 'Libre Baskerville', serif; font-size: clamp(24px, 4vw, 34px); font-weight: 400; line-height: 1.2; margin-bottom: 16px; color: var(--navy); }
+    .carousel-card .carousel-price { font-family: 'Libre Baskerville', serif; font-size: 40px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
+    .carousel-card .carousel-price span { font-size: 15px; font-weight: 300; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; }
+    .carousel-card p { font-size: 15px; color: var(--muted); font-weight: 300; line-height: 1.7; max-width: 600px; margin: 0 auto 24px; }
+    .carousel-features { list-style: none; text-align: left; max-width: 480px; margin: 0 auto 28px; }
+    .carousel-features li { font-size: 14px; color: var(--text); line-height: 1.6; padding: 5px 0 5px 22px; position: relative; }
+    .carousel-features li::before { content: '\2713'; position: absolute; left: 0; color: var(--gold); font-weight: 600; }
+    .carousel-mini-icons { display: flex; justify-content: center; gap: 16px; margin-bottom: 28px; }
+    .carousel-mini-icon { background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 14px 20px; font-size: 13px; color: var(--text); font-weight: 400; display: flex; align-items: center; gap: 8px; }
+    .carousel-mini-icon svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .carousel-cta { display: inline-block; padding: 13px 28px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; }
+    .carousel-cta--primary { background: var(--accent); color: var(--cream); border: none; }
+    .carousel-cta--primary:hover { background: var(--accent-light); transform: translateY(-1px); }
+    .carousel-cta--outline { background: transparent; color: var(--navy); border: 1px solid var(--navy); }
+    .carousel-cta--outline:hover { background: var(--navy); color: var(--cream); }
+    .carousel-cta--ghost { background: transparent; color: var(--accent); border: none; font-weight: 500; }
+    .carousel-cta--ghost:hover { color: var(--accent-light); }
+    .carousel-nav { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 28px; }
+    .carousel-arrow { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: var(--warm-white); color: var(--navy); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 18px; }
+    .carousel-arrow:hover { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    .carousel-dots { display: flex; gap: 8px; }
+    .carousel-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); border: none; cursor: pointer; transition: background 0.2s, transform 0.2s; padding: 0; }
+    .carousel-dot.active { background: var(--accent); transform: scale(1.2); }
+    @media (max-width: 768px) {
+      .carousel-card { padding: 32px 20px; }
+      .carousel-mini-icons { flex-direction: column; align-items: center; gap: 10px; }
+      .carousel-mini-icon { width: 100%; justify-content: center; }
+      .carousel-features { max-width: 100%; }
+    }
+
     .hero { padding: 120px 5% 56px; width: 100%; text-align: center; }
     .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
     .hero-title { font-family: 'Libre Baskerville', serif; font-size: clamp(36px, 6vw, 64px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 20px; }
@@ -215,42 +256,95 @@
     <a href="/chat" target="_blank" class="mobile-cta">Try it free</a>
   </div>
 
-  <div class="hero">
-    <div class="hero-eyebrow reveal">Shop Worksheets</div>
-    <h1 class="hero-title reveal">Get organized for<br><em>what comes next</em></h1>
-    <p class="hero-subtitle reveal">Step-by-step worksheets, checklists, and planning tools for life's hardest transitions. Instant download. Works in Word and Google Docs.</p>
-  </div>
-
   <div id="purchase-msg" class="purchase-success" style="display:none;max-width:900px;margin:0 auto 0;"></div>
 
-  <!-- Two products explainer -->
-  <div class="products-grid reveal" style="max-width:900px;margin:0 auto 48px;padding:0 5%;display:grid;grid-template-columns:1fr 1fr;gap:20px">
-    <div style="background:var(--warm-white);border:1px solid var(--border);border-radius:16px;padding:28px 24px">
-      <div style="font-size:28px;margin-bottom:10px">📄</div>
-      <h3 style="font-family:'Libre Baskerville',serif;font-size:18px;font-weight:400;color:var(--navy);margin-bottom:8px">Worksheet Bundles</h3>
-      <div style="font-size:28px;font-weight:600;color:var(--text);margin-bottom:4px">$16 <span style="font-size:14px;font-weight:300;color:var(--muted)">per bundle</span></div>
-      <p style="font-size:13px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">14-16 editable worksheets and checklists you download and keep. Comes with basic dashboard access to store your templates.</p>
-      <ul style="list-style:none;font-size:13px;color:var(--text);font-weight:300;margin-bottom:16px">
-        <li style="padding:4px 0">✓ Editable .docx files</li>
-        <li style="padding:4px 0">✓ Instant download</li>
-        <li style="padding:4px 0">✓ Basic dashboard access</li>
-        <li style="padding:4px 0">✓ $16 counts toward full plan</li>
-      </ul>
-      <a href="#job-loss" style="font-size:13px;color:var(--navy);text-decoration:none;font-weight:500">Browse bundles below ↓</a>
-    </div>
-    <div style="background:var(--warm-white);border:2px solid var(--navy);border-radius:16px;padding:28px 24px;position:relative">
-      <div style="position:absolute;top:-11px;left:24px;background:var(--navy);color:var(--cream);font-size:11px;font-weight:500;padding:3px 12px;border-radius:100px">Full Experience</div>
-      <div style="font-size:28px;margin-bottom:10px">🏠</div>
-      <h3 style="font-family:'Libre Baskerville',serif;font-size:18px;font-weight:400;color:var(--navy);margin-bottom:8px">Dashboard Plan</h3>
-      <div style="font-size:28px;font-weight:600;color:var(--text);margin-bottom:4px">$39 <span style="font-size:14px;font-weight:300;color:var(--muted)">per life change</span></div>
-      <p style="font-size:13px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">The worksheets plus the full dashboard — step-by-step guides, calendar with deadlines, document tracking, and everything you need to stay on top of it.</p>
-      <ul style="list-style:none;font-size:13px;color:var(--text);font-weight:300;margin-bottom:16px">
-        <li style="padding:4px 0">✓ Everything in the bundle</li>
-        <li style="padding:4px 0">✓ Full guides and checklists</li>
-        <li style="padding:4px 0">✓ Calendar with real deadlines</li>
-        <li style="padding:4px 0">✓ Document storage and tracking</li>
-      </ul>
-      <a href="/pricing" style="display:inline-block;padding:10px 24px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:13px;text-decoration:none;font-weight:500">See all plans</a>
+  <div class="carousel-section">
+    <div class="carousel-container" id="tierCarousel">
+      <div class="carousel-track" id="carouselTrack">
+
+        <!-- Slide 1: What is Lumeway -->
+        <div class="carousel-slide">
+          <div class="carousel-card">
+            <h2>One place to manage everything when life changes</h2>
+            <p>Lumeway gives you step-by-step guidance, editable worksheets, deadline tracking, and a real community — for job loss, divorce, estate planning, and more.</p>
+            <div class="carousel-mini-icons">
+              <div class="carousel-mini-icon">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Navigator chat
+              </div>
+              <div class="carousel-mini-icon">
+                <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Checklist
+              </div>
+              <div class="carousel-mini-icon">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Calendar
+              </div>
+            </div>
+            <button class="carousel-cta carousel-cta--ghost" onclick="goToSlide(1)">See what's included &#8594;</button>
+          </div>
+        </div>
+
+        <!-- Slide 2: Free Tier -->
+        <div class="carousel-slide">
+          <div class="carousel-card">
+            <span class="carousel-pill carousel-pill--free">Always Free</span>
+            <h2>Start with the Navigator</h2>
+            <div class="carousel-price">$0</div>
+            <ul class="carousel-features">
+              <li>Chat with the AI Navigator to figure out your next steps</li>
+              <li>Get a personalized checklist overview</li>
+              <li>Access crisis resources anytime</li>
+            </ul>
+            <a href="/chat" class="carousel-cta carousel-cta--primary">Try it free &#8594;</a>
+          </div>
+        </div>
+
+        <!-- Slide 3: Starter / Worksheet Bundle -->
+        <div class="carousel-slide">
+          <div class="carousel-card">
+            <span class="carousel-pill carousel-pill--starter">Starter</span>
+            <h2>Editable worksheets you keep forever</h2>
+            <div class="carousel-price">$16 <span>per bundle</span></div>
+            <ul class="carousel-features">
+              <li>14-16 editable worksheets and checklists (.docx)</li>
+              <li>Instant download</li>
+              <li>Basic dashboard access</li>
+              <li>Every dollar counts as credit toward the full plan</li>
+            </ul>
+            <a href="#job-loss" class="carousel-cta carousel-cta--outline">Browse bundles &#8595;</a>
+          </div>
+        </div>
+
+        <!-- Slide 4: Full Dashboard Plan -->
+        <div class="carousel-slide">
+          <div class="carousel-card carousel-card--highlight">
+            <span class="carousel-pill carousel-pill--full">Full Plan — Most Popular</span>
+            <h2>The complete dashboard for your transition</h2>
+            <div class="carousel-price">$39 <span>per life change</span></div>
+            <ul class="carousel-features">
+              <li>Everything in the bundle, plus:</li>
+              <li>Full step-by-step guides</li>
+              <li>Calendar with real legal and financial deadlines</li>
+              <li>Document storage and tracking</li>
+              <li>Community access</li>
+              <li>AI Navigator with full context</li>
+            </ul>
+            <a href="/pricing" class="carousel-cta carousel-cta--primary">See all plans &#8594;</a>
+          </div>
+        </div>
+
+      </div>
+      <div class="carousel-nav">
+        <button class="carousel-arrow" id="carouselPrev" aria-label="Previous slide">&#8249;</button>
+        <div class="carousel-dots" id="carouselDots">
+          <button class="carousel-dot active" aria-label="Go to slide 1"></button>
+          <button class="carousel-dot" aria-label="Go to slide 2"></button>
+          <button class="carousel-dot" aria-label="Go to slide 3"></button>
+          <button class="carousel-dot" aria-label="Go to slide 4"></button>
+        </div>
+        <button class="carousel-arrow" id="carouselNext" aria-label="Next slide">&#8250;</button>
+      </div>
     </div>
   </div>
 
@@ -526,6 +620,60 @@
         msg.style.color = '#c0392b';
       });
     });
+
+    // Tier carousel
+    (function() {
+      var track = document.getElementById('carouselTrack');
+      var dots = document.querySelectorAll('#carouselDots .carousel-dot');
+      var prevBtn = document.getElementById('carouselPrev');
+      var nextBtn = document.getElementById('carouselNext');
+      var total = dots.length;
+      var current = 0;
+      var autoTimer;
+      var touchStartX = 0;
+      var touchEndX = 0;
+      var container = document.getElementById('tierCarousel');
+
+      function goTo(idx) {
+        if (idx < 0) idx = total - 1;
+        if (idx >= total) idx = 0;
+        current = idx;
+        track.style.transform = 'translateX(-' + (current * 100) + '%)';
+        dots.forEach(function(d, i) {
+          d.classList.toggle('active', i === current);
+        });
+      }
+
+      window.goToSlide = function(idx) { goTo(idx); resetAuto(); };
+
+      prevBtn.addEventListener('click', function() { goTo(current - 1); resetAuto(); });
+      nextBtn.addEventListener('click', function() { goTo(current + 1); resetAuto(); });
+      dots.forEach(function(dot, i) {
+        dot.addEventListener('click', function() { goTo(i); resetAuto(); });
+      });
+
+      function startAuto() { autoTimer = setInterval(function() { goTo(current + 1); }, 6000); }
+      function stopAuto() { clearInterval(autoTimer); }
+      function resetAuto() { stopAuto(); startAuto(); }
+
+      container.addEventListener('mouseenter', stopAuto);
+      container.addEventListener('mouseleave', startAuto);
+
+      container.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+        stopAuto();
+      }, { passive: true });
+      container.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        var diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 50) {
+          diff > 0 ? goTo(current + 1) : goTo(current - 1);
+        }
+        startAuto();
+      }, { passive: true });
+
+      startAuto();
+    })();
   </script>
 <script>
 (function(){var r=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){r.forEach(function(e){e.classList.add('visible')});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('visible');o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();
