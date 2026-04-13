@@ -32,6 +32,8 @@
 		8AEFC450CE9DA904A3DDC1AD /* OfflineRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D888685D1E3C7E669FC3243 /* OfflineRepository.swift */; };
 		8BD3D280C707FA5D893713CD /* ChecklistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D525089BAE615A4F7E771322 /* ChecklistView.swift */; };
 		BB1111111111111111111111 /* TaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2222222222222222222222 /* TaskDetailView.swift */; };
+		CC9999999999999999999999 /* GoalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCAAAAAAAAAAAAAAAAAAAAAA /* GoalsView.swift */; };
+		CCBBBBBBBBBBBBBBBBBBBBBB /* GoalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCCCCCCCCCCCCCCCCCCCCCC /* GoalService.swift */; };
 		8CEC5068596632E184728C59 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29521A7495CB693714080634 /* StoreKitManager.swift */; };
 		8D07EEEC50533FAAE5ADBC5E /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C003529638D88AB66F919B77 /* AuthService.swift */; };
 		9013F41EBECF2E943E08CE73 /* UpgradeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8B4D6CB6ED7069373ED10D /* UpgradeView.swift */; };
@@ -98,6 +100,8 @@
 		C003529638D88AB66F919B77 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		D525089BAE615A4F7E771322 /* ChecklistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistView.swift; sourceTree = "<group>"; };
 		BB2222222222222222222222 /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
+		CCAAAAAAAAAAAAAAAAAAAAAA /* GoalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsView.swift; sourceTree = "<group>"; };
+		CCCCCCCCCCCCCCCCCCCCCCCC /* GoalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalService.swift; sourceTree = "<group>"; };
 		DD2075D3D124A47855D1250D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F482A5905C311042BB4BF85E /* Montserrat-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-SemiBold.ttf"; sourceTree = "<group>"; };
 		CC2222222222222222222222 /* CormorantGaramond-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CormorantGaramond-Regular.ttf"; sourceTree = "<group>"; };
@@ -261,6 +265,7 @@
 				AAAAAAAAAAAAAAAAAAAAAA05 /* Calendar */,
 				C335DBF3AB280C83B202FA68 /* Chat */,
 				12BCAC53E850B26677D43FDB /* Checklist */,
+				CCDDDDDDDDDDDDDDDDDDDDDD /* Goals */,
 				AAAAAAAAAAAAAAAAAAAAAA06 /* Community */,
 				01BA907088B670EA2C89C17C /* Dashboard */,
 				4A4EF2723A1F0E0AF080FA10 /* Files */,
@@ -332,6 +337,7 @@
 				198AEB9B4D0C855B67CCBEC4 /* ChecklistService.swift */,
 				AA2222222222222222222222 /* CommunityService.swift */,
 				843F3067C9ECC851BF7A3E41 /* DashboardService.swift */,
+				CCCCCCCCCCCCCCCCCCCCCCCC /* GoalService.swift */,
 				47D84947B35AD9145F0842AE /* GuideService.swift */,
 				3FB48D24FAB52851CA41A689 /* KeychainHelper.swift */,
 				789C964C932F755E498227C7 /* NotesService.swift */,
@@ -340,6 +346,14 @@
 				29521A7495CB693714080634 /* StoreKitManager.swift */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		CCDDDDDDDDDDDDDDDDDDDDDD /* Goals */ = {
+			isa = PBXGroup;
+			children = (
+				CCAAAAAAAAAAAAAAAAAAAAAA /* GoalsView.swift */,
+			);
+			path = Goals;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -436,6 +450,8 @@
 				16203A75B605FD04F8F7F40D /* DashboardService.swift in Sources */,
 				958C00BD3BDBEC346B9573FC /* DashboardView.swift in Sources */,
 				65CB948E9C9E7AE7268D12BE /* FilesView.swift in Sources */,
+				CCBBBBBBBBBBBBBBBBBBBBBB /* GoalService.swift in Sources */,
+				CC9999999999999999999999 /* GoalsView.swift in Sources */,
 				518161E170108AE27B6667D7 /* GuideService.swift in Sources */,
 				85BAC4BBA70CF7D7B0F074B1 /* GuidesView.swift in Sources */,
 				A189FF777ECEF23842A2D656 /* KeychainHelper.swift in Sources */,

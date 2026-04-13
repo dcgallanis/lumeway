@@ -83,13 +83,17 @@ struct Deadline: Codable, Identifiable {
 
 struct Goal: Codable, Identifiable {
     let id: Int
-    let text: String
-    let goalType: String?
-    let completed: Bool?
+    let title: String?
+    let timeframe: String?
+    let targetDate: String?
+    let isCompleted: Bool?
+    let createdAt: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, text, completed
-        case goalType = "goal_type"
+        case id, title, timeframe
+        case targetDate = "target_date"
+        case isCompleted = "is_completed"
+        case createdAt = "created_at"
     }
 }
 

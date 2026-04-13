@@ -5,6 +5,7 @@ struct DashboardView: View {
     @State private var checklistItems: [FullChecklistItem] = []
     @State private var funGreeting: String = ""
     @State private var showChat = false
+    @State private var isRefreshing = false
 
     private let checklistService = ChecklistService()
 
@@ -53,25 +54,38 @@ struct DashboardView: View {
                             // Refresh button
                             Button {
                                 Task {
+                                    isRefreshing = true
                                     await appState.loadDashboard()
                                     await loadChecklist()
+                                    funGreeting = funGreetings.randomElement() ?? ""
+                                    isRefreshing = false
                                 }
                             } label: {
-                                Image(systemName: "arrow.triangle.2.circlepath")
-                                    .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.lumeMuted)
-                                    .padding(8)
+                                if isRefreshing {
+                                    ProgressView()
+                                        .tint(.lumeMuted)
+                                        .padding(8)
+                                } else {
+                                    Image(systemName: "arrow.triangle.2.circlepath")
+                                        .font(.system(size: 16, weight: .medium))
+                                        .foregroundColor(.lumeMuted)
+                                        .padding(8)
+                                }
                             }
 
-                            // Avatar
+                            // Avatar — links to profile
                             if let user = appState.user {
-                                ZStack {
-                                    Circle()
-                                        .fill(Color.lumeGreen.opacity(0.15))
-                                        .frame(width: 42, height: 42)
-                                    Text(String((user.displayName ?? user.email).prefix(1)).uppercased())
-                                        .font(.lumeBodySemibold)
-                                        .foregroundColor(.lumeGreen)
+                                NavigationLink {
+                                    MoreView(isEmbedded: true)
+                                } label: {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.lumeGreen.opacity(0.15))
+                                            .frame(width: 42, height: 42)
+                                        Text(String((user.displayName ?? user.email).prefix(1)).uppercased())
+                                            .font(.lumeBodySemibold)
+                                            .foregroundColor(.lumeGreen)
+                                    }
                                 }
                             }
                         }
@@ -103,6 +117,55 @@ struct DashboardView: View {
                             }
                         }
 
+                        // Personal goals
+                        if let goals = appState.dashboardData?.goals, !goals.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    Text("Your Goals")
+                                        .font(.lumeSectionTitle)
+                                        .foregroundColor(.lumeNavy)
+                                    Spacer()
+                                    NavigationLink {
+                                        GoalsView(isEmbedded: true)
+                                    } label: {
+                                        Text("See all")
+                                            .font(.lumeSmall)
+                                            .foregroundColor(.lumeAccent)
+                                    }
+                                }
+                                .padding(.horizontal, 24)
+
+                                ForEach(goals.prefix(3)) { goal in
+                                    HStack(spacing: 12) {
+                                        Image(systemName: goal.isCompleted == true ? "checkmark.circle.fill" : "circle")
+                                            .font(.system(size: 18))
+                                            .foregroundColor(goal.isCompleted == true ? .lumeGreen : .lumeGold)
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(goal.title ?? "")
+                                                .font(.lumeBody)
+                                                .foregroundColor(goal.isCompleted == true ? .lumeMuted : .lumeNavy)
+                                                .strikethrough(goal.isCompleted == true)
+                                            if let tf = goal.timeframe, !tf.isEmpty {
+                                                Text(tf.capitalized)
+                                                    .font(.lumeSmall)
+                                                    .foregroundColor(.lumeMuted)
+                                            }
+                                        }
+                                        Spacer()
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 12)
+                                    .background(Color.lumeWarmWhite)
+                                    .cornerRadius(12)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(Color.lumeBorder, lineWidth: 1)
+                                    )
+                                    .padding(.horizontal, 20)
+                                }
+                            }
+                        }
+
                         // Quick links — 2x3 grid linking to everything
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Your Tools")
@@ -127,8 +190,12 @@ struct DashboardView: View {
                                     QuickLinkContent(icon: "message", label: "Chat", color: .lumeNavy)
                                 }
 
+                                NavigationLink { GoalsView(isEmbedded: true) } label: {
+                                    QuickLinkContent(icon: "target", label: "Goals", color: .lumeGold)
+                                }
+
                                 NavigationLink { CalendarView(isEmbedded: true) } label: {
-                                    QuickLinkContent(icon: "calendar", label: "Calendar", color: .lumeGold)
+                                    QuickLinkContent(icon: "calendar", label: "Calendar", color: .lumeAccent)
                                 }
 
                                 NavigationLink { NotesView(isEmbedded: true) } label: {

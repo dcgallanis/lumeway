@@ -273,6 +273,7 @@ enum NavPage: String, CaseIterable, Identifiable {
     case checklist = "checklist"
     case community = "community"
     case chat = "chat"
+    case goals = "goals"
     case calendar = "calendar"
     case activityLog = "activity_log"
     case notes = "notes"
@@ -287,6 +288,7 @@ enum NavPage: String, CaseIterable, Identifiable {
         case .checklist: return "Checklist"
         case .community: return "Community"
         case .chat: return "Chat"
+        case .goals: return "Goals"
         case .calendar: return "Calendar"
         case .activityLog: return "Activity"
         case .notes: return "Notes"
@@ -301,6 +303,7 @@ enum NavPage: String, CaseIterable, Identifiable {
         case .checklist: return "checklist"
         case .community: return "bubble.left.and.bubble.right"
         case .chat: return "message"
+        case .goals: return "target"
         case .calendar: return "calendar"
         case .activityLog: return "note.text"
         case .notes: return "pencil.line"
@@ -315,6 +318,7 @@ enum NavPage: String, CaseIterable, Identifiable {
         case .checklist: return "checklist.checked"
         case .community: return "bubble.left.and.bubble.right.fill"
         case .chat: return "message.fill"
+        case .goals: return "target"
         case .calendar: return "calendar"
         case .activityLog: return "note.text"
         case .notes: return "pencil.line"
@@ -329,6 +333,7 @@ enum NavPage: String, CaseIterable, Identifiable {
         case .checklist: return .lumeGreen
         case .community: return .lumeAccent
         case .chat: return .lumeNavy
+        case .goals: return .lumeGold
         case .calendar: return .lumeAccent
         case .activityLog: return .lumeGreen
         case .notes: return Color(hex: "5E8C9A")
@@ -342,7 +347,8 @@ enum NavPage: String, CaseIterable, Identifiable {
         switch self {
         case .checklist: return "Your tasks"
         case .community: return "Connect & share"
-        case .chat: return "AI assistant"
+        case .chat: return "Your Navigator"
+        case .goals: return "Track your goals"
         case .calendar: return "Deadlines & dates"
         case .activityLog: return "Track your actions"
         case .notes: return "Your thoughts"
@@ -358,6 +364,7 @@ enum NavPage: String, CaseIterable, Identifiable {
         case .checklist: ChecklistView()
         case .community: CommunityView()
         case .chat: NavigatorChatView()
+        case .goals: GoalsView()
         case .calendar: CalendarView()
         case .activityLog: ActivityLogView()
         case .notes: NotesView()
@@ -374,6 +381,7 @@ enum NavPage: String, CaseIterable, Identifiable {
         case .checklist: ChecklistView(isEmbedded: true)
         case .community: CommunityView(isEmbedded: true)
         case .chat: NavigatorChatView(isEmbedded: true)
+        case .goals: GoalsView(isEmbedded: true)
         case .calendar: CalendarView(isEmbedded: true)
         case .activityLog: ActivityLogView(isEmbedded: true)
         case .notes: NotesView(isEmbedded: true)
@@ -499,6 +507,7 @@ struct HubView: View {
     @EnvironmentObject var appState: AppState
     @AppStorage("tabBarPages") private var tabBarPagesRaw: String = "checklist,community,chat"
     @State private var showPersonalize = false
+    @State private var showUpgrade = false
 
     private var isFree: Bool {
         appState.effectiveTier == "free"
@@ -555,56 +564,13 @@ struct HubView: View {
                                 HStack(spacing: 14) {
                                     let firstIdx = rowIdx * 2
                                     if firstIdx < pages.count {
-                                        let page = pages[firstIdx]
-                                        if isPageLocked(page) {
-                                            HubTile(
-                                                icon: page.icon,
-                                                title: page.label,
-                                                subtitle: lockedSubtitle(for: page),
-                                                color: page.color,
-                                                isLocked: true
-                                            )
-                                        } else {
-                                            NavigationLink {
-                                                page.embeddedDestination
-                                            } label: {
-                                                HubTile(
-                                                    icon: page.icon,
-                                                    title: page.label,
-                                                    subtitle: page.subtitle,
-                                                    color: page.color,
-                                                    isLocked: false
-                                                )
-                                            }
-                                        }
+                                        hubTileFor(pages[firstIdx])
                                     }
 
                                     let secondIdx = firstIdx + 1
                                     if secondIdx < pages.count {
-                                        let page = pages[secondIdx]
-                                        if isPageLocked(page) {
-                                            HubTile(
-                                                icon: page.icon,
-                                                title: page.label,
-                                                subtitle: lockedSubtitle(for: page),
-                                                color: page.color,
-                                                isLocked: true
-                                            )
-                                        } else {
-                                            NavigationLink {
-                                                page.embeddedDestination
-                                            } label: {
-                                                HubTile(
-                                                    icon: page.icon,
-                                                    title: page.label,
-                                                    subtitle: page.subtitle,
-                                                    color: page.color,
-                                                    isLocked: false
-                                                )
-                                            }
-                                        }
+                                        hubTileFor(pages[secondIdx])
                                     } else {
-                                        // Empty spacer for odd count
                                         Color.clear.frame(maxWidth: .infinity)
                                     }
                                 }
@@ -621,16 +587,45 @@ struct HubView: View {
                 PersonalizeTabsSheet(tabBarPagesRaw: $tabBarPagesRaw)
                     .presentationDetents([.medium, .large])
             }
+            .sheet(isPresented: $showUpgrade) {
+                UpgradeView()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func hubTileFor(_ page: NavPage) -> some View {
+        if isPageLocked(page) {
+            Button {
+                showUpgrade = true
+            } label: {
+                HubTile(
+                    icon: page.icon,
+                    title: page.label,
+                    subtitle: "Upgrade to unlock",
+                    color: page.color,
+                    isLocked: true
+                )
+            }
+            .buttonStyle(.plain)
+        } else {
+            NavigationLink {
+                page.embeddedDestination
+            } label: {
+                HubTile(
+                    icon: page.icon,
+                    title: page.label,
+                    subtitle: page.subtitle,
+                    color: page.color,
+                    isLocked: false
+                )
+            }
+            .buttonStyle(.plain)
         }
     }
 
     private func isPageLocked(_ page: NavPage) -> Bool {
         isFree && (page == .guides || page == .files)
-    }
-
-    private func lockedSubtitle(for page: NavPage) -> String {
-        if isPageLocked(page) { return "Upgrade to unlock" }
-        return page.subtitle
     }
 }
 

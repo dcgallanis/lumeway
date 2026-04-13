@@ -22,6 +22,7 @@ struct ChecklistView: View {
     @State private var expandedPhases: Set<String> = []
     @State private var showConfetti = false
     @State private var confettiMessage: String?
+    @State private var selectedTransition: String? = nil
 
     private let service = ChecklistService()
 
@@ -74,6 +75,35 @@ struct ChecklistView: View {
                                     Text("Your Checklist")
                                         .font(.lumeDisplayMedium)
                                         .foregroundColor(.white)
+
+                                    // Transition picker (only if multiple transitions)
+                                    if transitionTypes.count > 1 {
+                                        ScrollView(.horizontal, showsIndicators: false) {
+                                            HStack(spacing: 8) {
+                                                ForEach(transitionTypes, id: \.self) { t in
+                                                    Button {
+                                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                                            selectedTransition = t
+                                                            expandedPhases.removeAll()
+                                                            // Auto-expand first incomplete phase
+                                                            if let first = groupedPhases.first(where: { g in g.items.contains(where: { !$0.isCompleted }) }) {
+                                                                expandedPhases.insert(first.phase)
+                                                            }
+                                                        }
+                                                    } label: {
+                                                        Text(friendlyTransitionName(t))
+                                                            .font(.lumeCaption)
+                                                            .foregroundColor(selectedTransition == t ? .lumeNavy : .white.opacity(0.7))
+                                                            .padding(.horizontal, 14)
+                                                            .padding(.vertical, 7)
+                                                            .background(selectedTransition == t ? Color.white : Color.white.opacity(0.12))
+                                                            .cornerRadius(16)
+                                                    }
+                                                }
+                                            }
+                                            .padding(.horizontal, 20)
+                                        }
+                                    }
 
                                     // Show current phase progress only
                                     let phaseItems = currentPhaseItems
@@ -236,15 +266,44 @@ struct ChecklistView: View {
         }
     }
 
+    /// All unique transition types in the data
+    private var transitionTypes: [String] {
+        var seen: [String] = []
+        for item in items {
+            let t = item.transitionType ?? "general"
+            if !seen.contains(t) { seen.append(t) }
+        }
+        return seen
+    }
+
+    /// Items filtered to the selected transition (or all if only one)
+    private var filteredItems: [FullChecklistItem] {
+        guard let selected = selectedTransition, transitionTypes.count > 1 else { return items }
+        return items.filter { ($0.transitionType ?? "general") == selected }
+    }
+
+    /// Friendly name for transition type
+    private func friendlyTransitionName(_ t: String) -> String {
+        switch t.lowercased() {
+        case "estate": return "Loss of Loved One"
+        case "divorce": return "Divorce"
+        case "job-loss": return "Job Loss"
+        case "relocation": return "Relocation"
+        case "disability": return "Disability"
+        case "retirement": return "Retirement"
+        default: return t.capitalized
+        }
+    }
+
     /// Items in the current (first incomplete) phase — used for header progress
     private var currentPhaseItems: [FullChecklistItem] {
-        let incomplete = items.filter { !$0.isCompleted }
+        let filtered = filteredItems
+        let incomplete = filtered.filter { !$0.isCompleted }
         guard let currentPhase = incomplete.first?.phase else {
-            // All done — show last phase
-            guard let lastPhase = items.last?.phase else { return items }
-            return items.filter { $0.phase == lastPhase }
+            guard let lastPhase = filtered.last?.phase else { return filtered }
+            return filtered.filter { $0.phase == lastPhase }
         }
-        return items.filter { $0.phase == currentPhase }
+        return filtered.filter { $0.phase == currentPhase }
     }
 
     /// Display name for phases — "Today" for the current active phase
@@ -252,8 +311,8 @@ struct ChecklistView: View {
         if isFirst { return "Today" }
         let lower = phase.lowercased()
         if lower.contains("first 24") || lower.contains("24 hour") { return "Today" }
-        if lower.contains("first week") { return "This Week" }
-        if lower.contains("first month") { return "This Month" }
+        if lower.contains("first week") || lower.contains("this week") { return "This Week" }
+        if lower.contains("first month") || lower.contains("this month") { return "This Month" }
         return phase
     }
 
@@ -288,9 +347,10 @@ struct ChecklistView: View {
     }
 
     private var groupedPhases: [(phase: String, items: [FullChecklistItem])] {
+        let source = filteredItems
         var dict: [String: [FullChecklistItem]] = [:]
         var order: [String] = []
-        for item in items {
+        for item in source {
             let phase = item.phase ?? "Other"
             if dict[phase] == nil { order.append(phase) }
             dict[phase, default: []].append(item)
@@ -308,6 +368,10 @@ struct ChecklistView: View {
             withAnimation {
                 items = response.items
                 isLoading = false
+            }
+            // Auto-select first transition if not set
+            if selectedTransition == nil, transitionTypes.count > 1 {
+                selectedTransition = transitionTypes.first
             }
             // Auto-expand first incomplete phase
             if expandedPhases.isEmpty {

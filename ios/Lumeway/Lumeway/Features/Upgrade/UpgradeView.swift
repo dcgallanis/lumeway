@@ -72,6 +72,37 @@ struct UpgradeView: View {
                                     Task { await purchase(allProduct) }
                                 }
                             }
+
+                            // Fallback: web upgrade when no StoreKit products loaded
+                            if store.products.isEmpty && !store.isLoading {
+                                VStack(spacing: 14) {
+                                    Text("Upgrade on the web")
+                                        .font(.lumeBodyMedium)
+                                        .foregroundColor(.lumeNavy)
+
+                                    Text("In-app purchases are being set up.\nUpgrade on lumeway.co to unlock full access.")
+                                        .font(.lumeCaption)
+                                        .foregroundColor(.lumeMuted)
+                                        .multilineTextAlignment(.center)
+
+                                    Link(destination: URL(string: "https://lumeway.co/pricing")!) {
+                                        Text("Go to lumeway.co/pricing")
+                                            .font(.lumeBodySemibold)
+                                            .foregroundColor(.white)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, 14)
+                                            .background(Color.lumeAccent)
+                                            .cornerRadius(12)
+                                    }
+                                }
+                                .padding(20)
+                                .background(Color.lumeWarmWhite)
+                                .cornerRadius(16)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.lumeAccent.opacity(0.2), lineWidth: 1)
+                                )
+                            }
                         }
                         .padding(.horizontal, 24)
 
@@ -82,14 +113,12 @@ struct UpgradeView: View {
                                 .padding(.horizontal, 24)
                         }
 
-                        // Restore purchases (only for users who already purchased)
-                        if appState.effectiveTier.lowercased() != "free" {
-                            Button("Restore purchases") {
-                                Task { await store.restorePurchases() }
-                            }
-                            .font(.lumeCaption)
-                            .foregroundColor(.lumeMuted)
+                        // Restore purchases
+                        Button("Restore purchases") {
+                            Task { await store.restorePurchases() }
                         }
+                        .font(.lumeCaption)
+                        .foregroundColor(.lumeMuted)
 
                         Spacer().frame(height: 32)
                     }
