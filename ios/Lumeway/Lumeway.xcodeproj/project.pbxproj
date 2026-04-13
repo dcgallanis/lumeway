@@ -44,7 +44,6 @@
 		A66601348388ABE54AC53E53 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89ADB7EB5E20CE69192D4321 /* ContentView.swift */; };
 		A69DA10964F525A2DBD2D921 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5589F43974FFE8275C5BDDD /* APIClient.swift */; };
 		ABF3D9DB03E5B2567495C6C8 /* PushNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 421F9A6B8A263327F4DE9C6F /* PushNotificationManager.swift */; };
-		B13F65708B1C1887B5DA44C7 /* CormorantGaramond-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E530167D86D4C89A7B9D052F /* CormorantGaramond-Regular.ttf */; };
 		C006BB68ABA43EF49A300E1B /* NotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666D15B4CB31D44B92882F00 /* NotesView.swift */; };
 		D4973B1A1C1B6838986A261C /* CachedModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C3C81049ADEB3A574DA258E /* CachedModels.swift */; };
 		DBA3361A4E9253D89474C91D /* CormorantGaramond-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4798BE46612EB87FC312A94F /* CormorantGaramond-Italic.ttf */; };
@@ -98,7 +97,6 @@
 		C003529638D88AB66F919B77 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		D525089BAE615A4F7E771322 /* ChecklistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistView.swift; sourceTree = "<group>"; };
 		DD2075D3D124A47855D1250D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		E530167D86D4C89A7B9D052F /* CormorantGaramond-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CormorantGaramond-Regular.ttf"; sourceTree = "<group>"; };
 		F482A5905C311042BB4BF85E /* Montserrat-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-SemiBold.ttf"; sourceTree = "<group>"; };
 		CC2222222222222222222222 /* CormorantGaramond-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CormorantGaramond-Regular.ttf"; sourceTree = "<group>"; };
 		CC4444444444444444444444 /* CormorantGaramond-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CormorantGaramond-Italic.ttf"; sourceTree = "<group>"; };
