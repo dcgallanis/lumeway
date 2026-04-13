@@ -724,14 +724,20 @@ def init_subscribers_db():
                 conn2.close()
             except Exception:
                 pass
-    try:
-        db_execute(conn, "ALTER TABLE users ADD COLUMN community_icon TEXT DEFAULT '☀️'")
-    except Exception:
-        pass
-    try:
-        db_execute(conn, "ALTER TABLE users ADD COLUMN community_icon_bg TEXT DEFAULT ''")
-    except Exception:
-        pass
+    for icon_sql in [
+        "ALTER TABLE users ADD COLUMN community_icon TEXT DEFAULT '☀️'",
+        "ALTER TABLE users ADD COLUMN community_icon_bg TEXT DEFAULT ''",
+    ]:
+        try:
+            conn3 = get_db()
+            db_execute(conn3, icon_sql)
+            conn3.commit()
+            conn3.close()
+        except Exception:
+            try:
+                conn3.close()
+            except Exception:
+                pass
     # Etsy redemptions table (idempotent)
     try:
         conn_etsy = get_db()
@@ -1376,11 +1382,20 @@ def get_current_user():
         return None
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state, created_at, last_login_at, tier, tier_transition, tier_expires_at, stripe_customer_id, subscription_cancel_at, credit_cents, active_transitions, community_icon, community_icon_bg FROM users WHERE id = {param}", (user_id,))
-    row = cur.fetchone()
+    try:
+        cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state, created_at, last_login_at, tier, tier_transition, tier_expires_at, stripe_customer_id, subscription_cancel_at, credit_cents, active_transitions, community_icon, community_icon_bg FROM users WHERE id = {param}", (user_id,))
+        row = cur.fetchone()
+        cols = ["id", "email", "display_name", "transition_type", "us_state", "created_at", "last_login_at", "tier", "tier_transition", "tier_expires_at", "stripe_customer_id", "subscription_cancel_at", "credit_cents", "active_transitions", "community_icon", "community_icon_bg"]
+    except Exception:
+        # Fallback if community_icon columns don't exist yet
+        if USE_POSTGRES:
+            conn.close()
+            conn = get_db()
+        cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state, created_at, last_login_at, tier, tier_transition, tier_expires_at, stripe_customer_id, subscription_cancel_at, credit_cents, active_transitions FROM users WHERE id = {param}", (user_id,))
+        row = cur.fetchone()
+        cols = ["id", "email", "display_name", "transition_type", "us_state", "created_at", "last_login_at", "tier", "tier_transition", "tier_expires_at", "stripe_customer_id", "subscription_cancel_at", "credit_cents", "active_transitions"]
     conn.close()
     if row:
-        cols = ["id", "email", "display_name", "transition_type", "us_state", "created_at", "last_login_at", "tier", "tier_transition", "tier_expires_at", "stripe_customer_id", "subscription_cancel_at", "credit_cents", "active_transitions", "community_icon", "community_icon_bg"]
         user = dict(zip(cols, row))
         if not user.get("tier"):
             user["tier"] = "free"
