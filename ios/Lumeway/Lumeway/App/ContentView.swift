@@ -481,6 +481,7 @@ struct HubView: View {
     @EnvironmentObject var appState: AppState
     @AppStorage("tabBarPages") private var tabBarPagesRaw: String = "checklist,community,chat"
     @State private var showPersonalize = false
+    @State private var selectedPage: NavPage?
 
     private var isFree: Bool {
         appState.effectiveTier == "free"
@@ -538,8 +539,10 @@ struct HubView: View {
                                     let firstIdx = rowIdx * 2
                                     if firstIdx < pages.count {
                                         let page = pages[firstIdx]
-                                        NavigationLink {
-                                            page.destination
+                                        Button {
+                                            if !isPageLocked(page) {
+                                                selectedPage = page
+                                            }
                                         } label: {
                                             HubTile(
                                                 icon: page.icon,
@@ -554,8 +557,10 @@ struct HubView: View {
                                     let secondIdx = firstIdx + 1
                                     if secondIdx < pages.count {
                                         let page = pages[secondIdx]
-                                        NavigationLink {
-                                            page.destination
+                                        Button {
+                                            if !isPageLocked(page) {
+                                                selectedPage = page
+                                            }
                                         } label: {
                                             HubTile(
                                                 icon: page.icon,
@@ -583,6 +588,10 @@ struct HubView: View {
                 PersonalizeTabsSheet(tabBarPagesRaw: $tabBarPagesRaw)
                     .presentationDetents([.medium, .large])
             }
+            .fullScreenCover(item: $selectedPage) { page in
+                HubPageWrapper(page: page)
+                    .environmentObject(appState)
+            }
         }
     }
 
@@ -593,6 +602,40 @@ struct HubView: View {
     private func lockedSubtitle(for page: NavPage) -> String {
         if isPageLocked(page) { return "Upgrade to unlock" }
         return page.subtitle
+    }
+}
+
+/// Wraps a Hub page in a full-screen cover with a back button.
+/// This avoids nested NavigationStack issues since each page has its own.
+struct HubPageWrapper: View {
+    let page: NavPage
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            page.destination
+
+            // Floating back button
+            Button {
+                dismiss()
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 14, weight: .semibold))
+                    Text("Hub")
+                        .font(.lumeBodyMedium)
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(.ultraThinMaterial.opacity(0.9))
+                .background(Color.lumeNavy.opacity(0.7))
+                .cornerRadius(20)
+            }
+            .padding(.leading, 16)
+            .padding(.top, 54)
+            .zIndex(100)
+        }
     }
 }
 

@@ -16,6 +16,7 @@ struct FilesView: View {
     @State private var uploadToast: String?
     @State private var previewFile: UploadedFile?
     @State private var previewURL: URL?
+    @State private var previewError = false
 
     private let api = APIClient.shared
 
@@ -183,7 +184,7 @@ struct FilesView: View {
                 }
             }
             .sheet(item: $previewFile) { file in
-                FilePreviewSheet(file: file, previewURL: previewURL)
+                FilePreviewSheet(file: file, previewURL: previewURL, previewError: previewError)
             }
             .task { await loadUploads() }
         }
@@ -258,13 +259,21 @@ struct FilesView: View {
     }
 
     private func openPreview(_ file: UploadedFile) async {
+        previewError = false
+        previewURL = nil
         // Download the file to a temp location for preview
         do {
             var request = URLRequest(url: URL(string: "https://lumeway.co/api/files/\(file.id)/preview")!)
             if let token = KeychainHelper.getToken() {
                 request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
-            let (data, _) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await URLSession.shared.data(for: request)
+            // Check for error responses
+            if let http = response as? HTTPURLResponse, http.statusCode >= 400 {
+                previewError = true
+                previewFile = file
+                return
+            }
             let ext = file.fileExtension
             let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("preview_\(file.id).\(ext)")
             try data.write(to: tempURL)
@@ -272,6 +281,8 @@ struct FilesView: View {
             previewFile = file
         } catch {
             print("Preview error: \(error)")
+            previewError = true
+            previewFile = file
         }
     }
 
@@ -635,7 +646,10 @@ struct FileCard: View {
 struct FilePreviewSheet: View {
     let file: UploadedFile
     let previewURL: URL?
+    var previewError: Bool = false
     @Environment(\.dismiss) var dismiss
+    @State private var loadedImage: UIImage?
+    @State private var isLoadingPreview = true
 
     var body: some View {
         NavigationStack {
@@ -644,20 +658,19 @@ struct FilePreviewSheet: View {
 
                 if let url = previewURL {
                     if file.contentType?.contains("image") == true {
-                        // Image preview — zoomable
-                        ScrollView([.horizontal, .vertical]) {
-                            if let data = try? Data(contentsOf: url),
-                               let image = UIImage(data: data) {
+                        // Image preview
+                        if let image = loadedImage {
+                            ScrollView {
                                 Image(uiImage: image)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(maxWidth: .infinity)
                                     .padding(16)
                             }
+                        } else if isLoadingPreview {
+                            ProgressView("Loading preview...")
+                                .tint(.lumeAccent)
                         }
-                    } else if file.contentType?.contains("pdf") == true {
-                        // PDF preview
-                        PDFPreviewView(url: url)
                     } else if file.contentType?.contains("text") == true {
                         // Text file preview
                         if let text = try? String(contentsOf: url, encoding: .utf8) {
@@ -666,24 +679,27 @@ struct FilePreviewSheet: View {
                                     .font(.lumeBody)
                                     .foregroundColor(.lumeText)
                                     .padding(20)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
                         }
                     } else {
-                        // Generic — show file info
-                        VStack(spacing: 16) {
-                            Image(systemName: file.iconName)
-                                .font(.system(size: 48, weight: .light))
-                                .foregroundColor(.lumeNavy)
-                            Text(file.displayName)
-                                .font(.lumeBodyMedium)
-                                .foregroundColor(.lumeText)
-                            Text("Preview not available for this file type.")
-                                .font(.lumeBody)
-                                .foregroundColor(.lumeMuted)
-                        }
+                        // PDF, DOC, XLSX, and everything else — use WKWebView
+                        FileWebView(url: url)
+                    }
+                } else if previewError {
+                    VStack(spacing: 16) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.system(size: 40, weight: .light))
+                            .foregroundColor(.lumeGold)
+                        Text("Couldn't load preview")
+                            .font(.lumeBodyMedium)
+                            .foregroundColor(.lumeText)
+                        Text("Try again or view this file on the web.")
+                            .font(.lumeBody)
+                            .foregroundColor(.lumeMuted)
                     }
                 } else {
-                    ProgressView()
+                    ProgressView("Loading preview...")
                         .tint(.lumeAccent)
                 }
             }
@@ -699,31 +715,33 @@ struct FilePreviewSheet: View {
                     }
                 }
             }
+            .task {
+                if file.contentType?.contains("image") == true, let url = previewURL {
+                    if let data = try? Data(contentsOf: url) {
+                        loadedImage = UIImage(data: data)
+                    }
+                }
+                isLoadingPreview = false
+            }
         }
     }
 }
 
-// MARK: - PDF Preview using UIKit
+// MARK: - WKWebView for file preview (PDF, DOC, etc.)
 
-struct PDFPreviewView: UIViewRepresentable {
+struct FileWebView: UIViewRepresentable {
     let url: URL
 
-    func makeUIView(context: Context) -> UIView {
-        let webView = WKWebViewWrapper.createWebView()
-        webView.load(URLRequest(url: url))
-        return webView
-    }
-
-    func updateUIView(_ uiView: UIView, context: Context) {}
-}
-
-enum WKWebViewWrapper {
-    static func createWebView() -> WKWebView {
+    func makeUIView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.backgroundColor = UIColor(Color.lumeCream)
+        webView.isOpaque = false
+        webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
         return webView
     }
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {}
 }
 
 // MARK: - Upload Response Models

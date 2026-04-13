@@ -67,10 +67,20 @@ struct CommunityView: View {
         return posts.filter { ($0.category ?? "general") == selectedCategory }
     }
 
+    private var isPaid: Bool {
+        let tier = appState.effectiveTier.lowercased()
+        return tier != "free"
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.lumeCream.ignoresSafeArea()
+
+                if !isPaid {
+                    // Free users cannot access Community
+                    CommunityLockedView()
+                } else {
 
                 ScrollView {
                     VStack(spacing: 14) {
@@ -123,10 +133,12 @@ struct CommunityView: View {
                     .padding(.top, 8)
                 }
 
-                if isLoading {
+                if isLoading && isPaid {
                     ProgressView()
                         .tint(.lumeAccent)
                 }
+
+                } // end else (paid)
             }
             .navigationTitle("Community")
             .navigationBarTitleDisplayMode(.inline)
@@ -144,10 +156,10 @@ struct CommunityView: View {
                 }
             }
             .refreshable {
-                await loadPosts()
+                if isPaid { await loadPosts() }
             }
             .task {
-                await loadPosts()
+                if isPaid { await loadPosts() }
             }
             .sheet(isPresented: $showNewPost) {
                 NewPostSheet(onPost: { title, body, category in
@@ -795,4 +807,85 @@ func timeAgo(_ dateStr: String?) -> String {
     if days == 1 { return "yesterday" }
     if days < 30 { return "\(days)d ago" }
     return "\(days / 30)mo ago"
+}
+
+// MARK: - Community Locked View (Free Users)
+
+struct CommunityLockedView: View {
+    @State private var showUpgrade = false
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            ZStack {
+                Circle()
+                    .fill(Color.lumeAccent.opacity(0.08))
+                    .frame(width: 100, height: 100)
+                Image(systemName: "bubble.left.and.bubble.right.fill")
+                    .font(.system(size: 38, weight: .light))
+                    .foregroundColor(.lumeAccent)
+            }
+
+            VStack(spacing: 10) {
+                Text("Community")
+                    .font(.lumeDisplayMedium)
+                    .foregroundColor(.lumeNavy)
+
+                Text("Connect with others going through\nsimilar transitions. Share experiences,\nask questions, and find support.")
+                    .font(.lumeBody)
+                    .foregroundColor(.lumeMuted)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(3)
+            }
+
+            VStack(spacing: 8) {
+                HStack(spacing: 10) {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.lumeGreen)
+                    Text("Real conversations with real people")
+                        .font(.lumeBody)
+                        .foregroundColor(.lumeText)
+                }
+
+                HStack(spacing: 10) {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.lumeGreen)
+                    Text("Tips and advice from those who've been there")
+                        .font(.lumeBody)
+                        .foregroundColor(.lumeText)
+                }
+
+                HStack(spacing: 10) {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.lumeGreen)
+                    Text("A safe, supportive space")
+                        .font(.lumeBody)
+                        .foregroundColor(.lumeText)
+                }
+            }
+
+            Button {
+                showUpgrade = true
+            } label: {
+                Text("Unlock Community Access")
+                    .font(.lumeBodySemibold)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color.lumeAccent)
+                    .cornerRadius(28)
+            }
+            .padding(.horizontal, 40)
+
+            Spacer()
+        }
+        .padding(.horizontal, 24)
+        .sheet(isPresented: $showUpgrade) {
+            UpgradeView()
+        }
+    }
 }
