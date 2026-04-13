@@ -158,10 +158,7 @@ struct GuidesView: View {
             .navigationBarHidden(true)
             .task {
                 await loadGuides()
-                // Auto-expand all transitions
-                for t in allTransitionKeys {
-                    expandedTransitions.insert(t)
-                }
+                // Start with all transitions collapsed
             }
             .refreshable { await loadGuides() }
         }

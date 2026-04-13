@@ -557,23 +557,12 @@ struct HubView: View {
                         .padding(.top, 20)
 
                         // Tools grid — only pages not in tab bar
-                        let pages = hubPages
-                        VStack(spacing: 14) {
-                            // Pair up pages into rows of 2
-                            ForEach(0..<((pages.count + 1) / 2), id: \.self) { rowIdx in
-                                HStack(spacing: 14) {
-                                    let firstIdx = rowIdx * 2
-                                    if firstIdx < pages.count {
-                                        hubTileFor(pages[firstIdx])
-                                    }
-
-                                    let secondIdx = firstIdx + 1
-                                    if secondIdx < pages.count {
-                                        hubTileFor(pages[secondIdx])
-                                    } else {
-                                        Color.clear.frame(maxWidth: .infinity)
-                                    }
-                                }
+                        LazyVGrid(columns: [
+                            GridItem(.flexible(), spacing: 14),
+                            GridItem(.flexible(), spacing: 14)
+                        ], spacing: 14) {
+                            ForEach(hubPages) { page in
+                                hubTileFor(page)
                             }
                         }
                         .padding(.horizontal, 20)

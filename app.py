@@ -2797,24 +2797,24 @@ def redeem_code():
         param = "%s" if USE_POSTGRES else "?"
         # Check if already redeemed
         cur = db_execute(conn, f"SELECT id FROM etsy_redemptions WHERE user_id = {param} AND code = {param}", (user["id"], code))
-        if cur.fetchone():
-            conn.close()
-            return jsonify({"error": "You have already redeemed this code."}), 400
+        already_redeemed = cur.fetchone() is not None
         now = datetime.now(timezone.utc).isoformat()
-        # Record redemption
-        db_execute(conn, f"INSERT INTO etsy_redemptions (user_id, code, category, credit_cents, redeemed_at) VALUES ({param}, {param}, {param}, {param}, {param})",
-                   (user["id"], code, "promo-all", 0, now))
-        # Grant full access to all categories
+        if not already_redeemed:
+            # Record redemption
+            db_execute(conn, f"INSERT INTO etsy_redemptions (user_id, code, category, credit_cents, redeemed_at) VALUES ({param}, {param}, {param}, {param}, {param})",
+                       (user["id"], code, "promo-all", 0, now))
+        # Always re-grant full access (ensures tier is correct even if redeemed before)
         for cat in VALID_CATEGORIES:
             add_user_category(user["id"], cat, "full", conn)
         update_user_tier_from_access(user["id"], conn)
         conn.commit()
         conn.close()
+        msg = "You already have full access — you're all set!" if already_redeemed else "Code redeemed. You now have full access to everything — all guides, checklists, and tools for every life change."
         return jsonify({
             "ok": True,
             "category": "all",
             "credit_cents": 0,
-            "message": "Code redeemed. You now have full access to everything — all guides, checklists, and tools for every life change."
+            "message": msg
         })
 
     if code not in ETSY_CODES:
