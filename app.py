@@ -4125,7 +4125,7 @@ def parse_html_post(filepath):
     # Extract category from blog-category div or category-tag span
     cat_match = re.search(r'class="[^"]*blog-category[^"]*"[^>]*>(.*?)</div>', raw, re.DOTALL)
     if not cat_match:
-        cat_match = re.search(r'class="[^"]*category-tag[^"]*"[^>]*>(.*?)</span>', raw, re.DOTALL)
+        cat_match = re.search(r'class="[^"]*category-tag[^"]*"[^>]*>(.*?)</(?:span|div)>', raw, re.DOTALL)
     if cat_match:
         meta["category"] = re.sub(r"<[^>]+>", "", cat_match.group(1)).strip().title()
     # Extract blog-content div (the actual post body)

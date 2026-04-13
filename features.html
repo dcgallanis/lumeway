@@ -328,38 +328,37 @@
         <span class="sun-icon nav-sun"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
         <span class="nav-logo-text">Lumeway</span>
       </a>
-      <div class="nav-dropdown">
-        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">&#9662;</span></button>
-        <div class="nav-drop-menu">
-          <a href="/estate">Death &amp; Estate</a>
-          <a href="/divorce">Divorce &amp; Separation</a>
-          <a href="/job-loss">Job Loss &amp; Income Crisis</a>
-          <a href="/relocation">Moving &amp; Relocation</a>
-          <a href="/disability">Disability &amp; Benefits</a>
-          <a href="/retirement">Retirement</a>
+      <div class="nav-links">
+        <div class="nav-dropdown">
+          <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">&#9662;</span></button>
+          <div class="nav-drop-menu">
+            <a href="/estate">Death &amp; Estate</a>
+            <a href="/divorce">Divorce &amp; Separation</a>
+            <a href="/job-loss">Job Loss &amp; Income Crisis</a>
+            <a href="/relocation">Moving &amp; Relocation</a>
+            <a href="/disability">Disability &amp; Benefits</a>
+            <a href="/retirement">Retirement</a>
+          </div>
         </div>
-      </div>
-      <a href="/features" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--muted);text-decoration:none;padding:6px 4px;transition:color 0.15s;" onmouseover="this.style.color='var(--navy)'" onmouseout="this.style.color='var(--muted)'">Features</a>
-
-      <div class="nav-dropdown">
-        <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">&#9662;</span></button>
-        <div class="nav-drop-menu">
-          <a href="/templates">Shop</a>
-          <a href="/faq">FAQ</a>
-          <a href="/blog">Blog</a>
-          <div class="menu-div"></div>
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/terms">Terms</a>
+        <a href="/features" class="nav-link">Features</a>
+        <div class="nav-dropdown">
+          <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">&#9662;</span></button>
+          <div class="nav-drop-menu">
+            <a href="/features">Features</a>
+            <a href="/templates">Shop</a>
+            <a href="/faq">FAQ</a>
+            <a href="/blog">Blog</a>
+            <div class="menu-div"></div>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+          </div>
         </div>
       </div>
     </div>
     <div class="nav-right">
-      <a href="/login" class="btn-ghost" id="navAccount">Sign in</a>
+      <a href="/login" class="nav-link" id="navAccount">Sign in</a>
       <a href="/templates" class="btn-ghost">Shop</a>
       <a href="/chat" target="_blank" class="btn-primary">Try it free</a>
-      <a href="/cart" class="btn-ghost" title="Cart" style="font-size:18px;">&#128722;</a>
     </div>
     <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -381,7 +380,11 @@
     <a href="/relocation">Moving &amp; Relocation</a>
     <a href="/disability">Disability &amp; Benefits</a>
     <a href="/retirement">Retirement</a>
-    <a href="/templates">Explore</a>
+    <a href="/features">Features</a>
+    <a href="/templates">Template Shop</a>
+    <a href="/blog">Blog</a>
+    <a href="/faq">FAQ</a>
+    <a href="/about">About</a>
     <a href="/login">Log in</a>
     <a href="/chat" target="_blank" class="mobile-cta">Try it free</a>
   </div>
@@ -695,9 +698,9 @@
                 <span style="font-size:13px;font-weight:500;color:var(--navy)">Sarah</span>
                 <span style="font-size:11px;color:var(--muted)">2 days ago</span>
               </div>
-              <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px">How do you handle the loneliness?</div>
-              <div style="font-size:12px;color:var(--muted)">I am about three months into my separation and the evenings are the hardest...</div>
-              <div style="display:flex;gap:12px;margin-top:8px"><span style="font-size:11px;color:var(--muted)">&hearts; 4</span><span style="font-size:11px;color:var(--muted)">3 replies</span></div>
+              <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px">Tips for organizing estate paperwork?</div>
+              <div style="font-size:12px;color:var(--muted)">Finally tackling my parents' estate docs. Has anyone found a good system for sorting deeds, accounts, and beneficiary forms?</div>
+              <div style="display:flex;gap:12px;margin-top:8px"><span style="font-size:11px;color:var(--muted)">&hearts; 6</span><span style="font-size:11px;color:var(--muted)">5 replies</span></div>
             </div>
             <div style="padding:14px 16px;background:var(--cream);border-radius:10px;border:1px solid var(--border)">
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
