@@ -1,21 +1,28 @@
 import SwiftUI
 
+@MainActor
+final class ChatViewModel: ObservableObject {
+    @Published var messages: [ChatMessage] = []
+    @Published var inputText = ""
+    @Published var isStreaming = false
+    @Published var sessionId: String? = nil
+    @Published var conversationHistory: [[String: String]] = []
+
+    let api = APIClient.shared
+    let notesService = NotesService()
+}
+
 struct NavigatorChatView: View {
+    var isEmbedded: Bool = false
+
     @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) var dismiss
 
-    @State private var messages: [ChatMessage] = []
-    @State private var inputText = ""
-    @State private var isStreaming = false
-    @State private var scrollToBottom = false
-    @State private var sessionId: String? = nil
-    @State private var conversationHistory: [[String: String]] = []
+    @EnvironmentObject var vm: ChatViewModel
     @State private var showHistory = false
 
-    private let api = APIClient.shared
-
     var body: some View {
-        NavigationStack {
+        OptionalNavigationStack(isEmbedded: isEmbedded) {
             ZStack {
                 Color.lumeCream.ignoresSafeArea()
 
@@ -25,25 +32,25 @@ struct NavigatorChatView: View {
                         ScrollView {
                             LazyVStack(spacing: 16) {
                                 // Welcome message with suggestion pills
-                                if messages.isEmpty {
+                                if vm.messages.isEmpty {
                                     WelcomeBubble(onSuggestionTap: { suggestion in
-                                        inputText = suggestion
+                                        vm.inputText = suggestion
                                         sendMessage()
                                     })
                                     .padding(.top, 24)
                                 }
 
-                                ForEach(messages) { msg in
+                                ForEach(vm.messages) { msg in
                                     ChatBubble(message: msg, onSave: msg.role == .assistant ? {
                                         saveMessageAsNote(msg.content)
                                     } : nil, onQuickReply: msg.role == .assistant ? { reply in
-                                        inputText = reply
+                                        vm.inputText = reply
                                         sendMessage()
                                     } : nil)
                                         .id(msg.id)
                                 }
 
-                                if isStreaming {
+                                if vm.isStreaming {
                                     HStack {
                                         TypingIndicator()
                                         Spacer()
@@ -55,12 +62,12 @@ struct NavigatorChatView: View {
                             .padding(.horizontal, 16)
                             .padding(.bottom, 16)
                         }
-                        .onChange(of: messages.count) { _, _ in
+                        .onChange(of: vm.messages.count) { _, _ in
                             withAnimation {
-                                proxy.scrollTo(messages.last?.id, anchor: .bottom)
+                                proxy.scrollTo(vm.messages.last?.id, anchor: .bottom)
                             }
                         }
-                        .onChange(of: isStreaming) { _, streaming in
+                        .onChange(of: vm.isStreaming) { _, streaming in
                             if streaming {
                                 withAnimation {
                                     proxy.scrollTo("typing", anchor: .bottom)
@@ -73,7 +80,7 @@ struct NavigatorChatView: View {
 
                     // Input bar
                     HStack(spacing: 12) {
-                        TextField("Tell me what\u{2019}s going on\u{2026}", text: $inputText, axis: .vertical)
+                        TextField("Tell me what\u{2019}s going on\u{2026}", text: $vm.inputText, axis: .vertical)
                             .font(.lumeBody)
                             .foregroundColor(.lumeText)
                             .lineLimit(1...4)
@@ -90,9 +97,9 @@ struct NavigatorChatView: View {
                         } label: {
                             Image(systemName: "arrow.up.circle.fill")
                                 .font(.system(size: 32))
-                                .foregroundColor(inputText.trimmingCharacters(in: .whitespaces).isEmpty ? .lumeBorder : .lumeNavy)
+                                .foregroundColor(vm.inputText.trimmingCharacters(in: .whitespaces).isEmpty ? .lumeBorder : .lumeNavy)
                         }
-                        .disabled(inputText.trimmingCharacters(in: .whitespaces).isEmpty || isStreaming)
+                        .disabled(vm.inputText.trimmingCharacters(in: .whitespaces).isEmpty || vm.isStreaming)
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
@@ -130,17 +137,17 @@ struct NavigatorChatView: View {
                             Label("Chat History", systemImage: "clock.arrow.circlepath")
                         }
                         Button {
-                            if let lastAssistant = messages.last(where: { $0.role == .assistant }) {
+                            if let lastAssistant = vm.messages.last(where: { $0.role == .assistant }) {
                                 saveMessageAsNote(lastAssistant.content)
                             }
                         } label: {
                             Label("Save to Dashboard", systemImage: "bookmark")
                         }
                         Button {
-                            messages = []
-                            inputText = ""
-                            sessionId = nil
-                            conversationHistory = []
+                            vm.messages = []
+                            vm.inputText = ""
+                            vm.sessionId = nil
+                            vm.conversationHistory = []
                         } label: {
                             Label("New Conversation", systemImage: "arrow.counterclockwise")
                         }
@@ -160,21 +167,19 @@ struct NavigatorChatView: View {
         }
     }
 
-    private let notesService = NotesService()
-
     private func saveMessageAsNote(_ content: String) {
         Task {
-            _ = try? await notesService.createNote(content: "From Navigator chat:\n\n\(content)")
+            _ = try? await vm.notesService.createNote(content: "From Navigator chat:\n\n\(content)")
         }
     }
 
     private func sendMessage() {
-        let text = inputText.trimmingCharacters(in: .whitespaces)
+        let text = vm.inputText.trimmingCharacters(in: .whitespaces)
         guard !text.isEmpty else { return }
 
         let userMsg = ChatMessage(id: UUID().uuidString, role: .user, content: text)
-        messages.append(userMsg)
-        inputText = ""
+        vm.messages.append(userMsg)
+        vm.inputText = ""
 
         Task {
             await streamResponse(for: text)
@@ -182,46 +187,43 @@ struct NavigatorChatView: View {
     }
 
     private func streamResponse(for question: String) async {
-        isStreaming = true
-        defer { isStreaming = false }
+        vm.isStreaming = true
+        defer { vm.isStreaming = false }
 
         let assistantId = UUID().uuidString
         var accumulated = ""
 
         do {
-            // Build request matching the site chat API format
             var body: [String: Any] = [
                 "message": question,
-                "history": conversationHistory.map { $0 as [String: Any] }
+                "history": vm.conversationHistory.map { $0 as [String: Any] }
             ]
-            if let sid = sessionId {
+            if let sid = vm.sessionId {
                 body["session_id"] = sid
             }
 
-            let stream = api.stream("/chat", body: body)
+            let stream = vm.api.stream("/chat", body: body)
 
             for try await chunk in stream {
-                // Check for [DONE] with session info
                 if chunk.hasPrefix("[DONE]") {
                     let jsonStr = String(chunk.dropFirst(6))
                     if let data = jsonStr.data(using: .utf8),
                        let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
                         if let sid = json["session_id"] as? String {
-                            sessionId = sid
+                            vm.sessionId = sid
                         }
                         if let history = json["history"] as? [[String: String]] {
-                            conversationHistory = history
+                            vm.conversationHistory = history
                         }
                     }
                     continue
                 }
 
                 accumulated += chunk
-                // Update or create the assistant message
-                if let idx = messages.firstIndex(where: { $0.id == assistantId }) {
-                    messages[idx] = ChatMessage(id: assistantId, role: .assistant, content: accumulated)
+                if let idx = vm.messages.firstIndex(where: { $0.id == assistantId }) {
+                    vm.messages[idx] = ChatMessage(id: assistantId, role: .assistant, content: accumulated)
                 } else {
-                    messages.append(ChatMessage(id: assistantId, role: .assistant, content: accumulated))
+                    vm.messages.append(ChatMessage(id: assistantId, role: .assistant, content: accumulated))
                 }
             }
         } catch {
@@ -230,27 +232,26 @@ struct NavigatorChatView: View {
                 role: .assistant,
                 content: "I'm having trouble connecting right now. Please try again in a moment."
             )
-            if let idx = messages.firstIndex(where: { $0.id == assistantId }) {
-                messages[idx] = errorMsg
+            if let idx = vm.messages.firstIndex(where: { $0.id == assistantId }) {
+                vm.messages[idx] = errorMsg
             } else {
-                messages.append(errorMsg)
+                vm.messages.append(errorMsg)
             }
         }
     }
 
     private func loadSession(_ sid: String) async {
         do {
-            let response: ChatHistoryResponse = try await api.get("/api/dashboard/history/\(sid)")
-            messages = response.messages.enumerated().map { index, msg in
+            let response: ChatHistoryResponse = try await vm.api.get("/api/dashboard/history/\(sid)")
+            vm.messages = response.messages.enumerated().map { index, msg in
                 ChatMessage(
                     id: "\(sid)-\(index)",
                     role: msg.role == "user" ? .user : .assistant,
                     content: msg.content
                 )
             }
-            sessionId = sid
-            // Rebuild conversation history for continued chatting
-            conversationHistory = response.messages.map { ["role": $0.role, "content": $0.content] }
+            vm.sessionId = sid
+            vm.conversationHistory = response.messages.map { ["role": $0.role, "content": $0.content] }
         } catch {
             print("Failed to load session: \(error)")
         }
@@ -294,12 +295,19 @@ struct ChatBubble: View {
         return (cleaned, replies)
     }
 
+    private func renderMarkdown(_ text: String) -> Text {
+        if let attributed = try? AttributedString(markdown: text, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)) {
+            return Text(attributed)
+        }
+        return Text(text)
+    }
+
     var body: some View {
         VStack(alignment: message.role == .user ? .trailing : .leading, spacing: 6) {
             HStack {
                 if message.role == .user { Spacer(minLength: 60) }
 
-                Text(parsed.text)
+                renderMarkdown(parsed.text)
                     .font(.lumeBody)
                     .foregroundColor(message.role == .user ? .white : .lumeText)
                     .padding(.horizontal, 16)

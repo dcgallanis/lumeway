@@ -69,14 +69,15 @@ struct Deadline: Codable, Identifiable {
     let title: String?
     let dueDate: String?
     let completed: Bool?
-    let category: String?
-    let notes: String?
-    let daysRemaining: Int?
+    let transitionType: String?
+    let note: String?
+    let source: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, title, completed, category, notes
-        case dueDate = "due_date"
-        case daysRemaining = "days_remaining"
+        case id, title, note, source
+        case dueDate = "deadline_date"
+        case completed = "is_completed"
+        case transitionType = "transition_type"
     }
 }
 

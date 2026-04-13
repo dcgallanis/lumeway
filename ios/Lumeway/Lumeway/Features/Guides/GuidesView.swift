@@ -30,6 +30,9 @@ private let categoryBullets: [String] = [
 ]
 
 struct GuidesView: View {
+    var isEmbedded: Bool = false
+    @Environment(\.dismiss) var dismiss
+
     @EnvironmentObject var appState: AppState
     @State private var guideData: GuideDetailResponse?
     @State private var allGuides: [String: GuideDetailResponse] = [:]
@@ -40,7 +43,7 @@ struct GuidesView: View {
     private let service = GuideService()
 
     var body: some View {
-        NavigationStack {
+        OptionalNavigationStack(isEmbedded: isEmbedded) {
             ZStack {
                 // Soft sage-cream gradient
                 LinearGradient(
@@ -77,6 +80,13 @@ struct GuidesView: View {
                                 }
                                 .padding(.top, 60)
                                 .padding(.bottom, 28)
+                            }
+                            .overlay(alignment: .topLeading) {
+                                if isEmbedded {
+                                    EmbeddedBackButton()
+                                        .padding(.leading, 16)
+                                        .padding(.top, 54)
+                                }
                             }
                             .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
 

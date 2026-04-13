@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct NotesView: View {
+    var isEmbedded: Bool = false
+
     @State private var notes: [NoteItem] = []
     @State private var isLoading = true
     @State private var showEditor = false
@@ -11,7 +13,7 @@ struct NotesView: View {
     private let service = NotesService()
 
     var body: some View {
-        NavigationStack {
+        OptionalNavigationStack(isEmbedded: isEmbedded) {
             ZStack {
                 Color.lumeCream.ignoresSafeArea()
 

@@ -10,6 +10,31 @@ final class GuideService {
     func getGuide(transition: String) async throws -> GuideDetailResponse {
         try await api.get("/api/guides/\(transition)")
     }
+
+    /// Fetch guide content for a specific checklist item
+    func getItemGuide(itemId: Int) async throws -> ItemGuideResponse {
+        try await api.get("/api/checklist/\(itemId)/guide")
+    }
+}
+
+struct ItemGuideResponse: Codable {
+    let found: Bool
+    let itemText: String?
+    let transitionType: String?
+    let urgency: String?
+    let howTo: String?
+    let steps: [String]?
+    let relatedWorksheet: String?
+
+    enum CodingKeys: String, CodingKey {
+        case found
+        case itemText = "item_text"
+        case transitionType = "transition_type"
+        case urgency
+        case howTo = "how_to"
+        case steps
+        case relatedWorksheet = "related_worksheet"
+    }
 }
 
 // MARK: - Response Models

@@ -55,6 +55,8 @@ final class AppState: ObservableObject {
                     UserDefaults.standard.set(bg, forKey: "community_icon_bg")
                     UserDefaults.standard.set(bg, forKey: "selectedIconBgColor")
                 }
+                // Pre-load dashboard data so effectiveTier is ready before views render
+                await loadDashboard()
             } else {
                 self.isAuthenticated = false
                 KeychainHelper.deleteToken()

@@ -366,6 +366,22 @@ enum NavPage: String, CaseIterable, Identifiable {
         case .profile: MoreView()
         }
     }
+
+    /// Destination without its own NavigationStack — for use inside Hub/Dashboard NavigationLinks
+    @ViewBuilder
+    var embeddedDestination: some View {
+        switch self {
+        case .checklist: ChecklistView(isEmbedded: true)
+        case .community: CommunityView(isEmbedded: true)
+        case .chat: NavigatorChatView(isEmbedded: true)
+        case .calendar: CalendarView(isEmbedded: true)
+        case .activityLog: ActivityLogView(isEmbedded: true)
+        case .notes: NotesView(isEmbedded: true)
+        case .guides: GuidesView(isEmbedded: true)
+        case .files: FilesView(isEmbedded: true)
+        case .profile: MoreView(isEmbedded: true)
+        }
+    }
 }
 
 /// Default tab bar pages (besides Home=0 and Hub=4)
@@ -373,6 +389,7 @@ let defaultTabPages: [NavPage] = [.checklist, .community, .chat]
 
 struct MainTabView: View {
     @EnvironmentObject var appState: AppState
+    @StateObject private var chatViewModel = ChatViewModel()
     @State private var selectedTab = 0
     @State private var hubNavigationId = UUID()
     @AppStorage("tabBarPages") private var tabBarPagesRaw: String = "checklist,community,chat"
@@ -443,6 +460,7 @@ struct MainTabView: View {
                     .tag(4)
             }
             .tint(.lumeAccent)
+            .environmentObject(chatViewModel)
             .onChange(of: selectedTab) { oldTab, newTab in
                 // Reset Hub to root when navigating to it from another tab
                 if newTab == 4 && oldTab != 4 {
@@ -548,7 +566,7 @@ struct HubView: View {
                                             )
                                         } else {
                                             NavigationLink {
-                                                page.destination
+                                                page.embeddedDestination
                                             } label: {
                                                 HubTile(
                                                     icon: page.icon,
@@ -574,7 +592,7 @@ struct HubView: View {
                                             )
                                         } else {
                                             NavigationLink {
-                                                page.destination
+                                                page.embeddedDestination
                                             } label: {
                                                 HubTile(
                                                     icon: page.icon,
@@ -679,7 +697,7 @@ struct PersonalizeTabsSheet: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Header
+                // Header with Save button
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Personalize Navigation")
@@ -691,12 +709,18 @@ struct PersonalizeTabsSheet: View {
                     }
                     Spacer()
                     Button {
+                        tabBarPagesRaw = selectedPages.map(\.rawValue).joined(separator: ",")
                         dismiss()
                     } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(.lumeMuted)
+                        Text("Save")
+                            .font(.lumeBodySemibold)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                            .background(selectedPages.count == maxTabs ? Color.lumeAccent : Color.lumeMuted)
+                            .cornerRadius(20)
                     }
+                    .disabled(selectedPages.count != maxTabs)
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
@@ -820,27 +844,11 @@ struct PersonalizeTabsSheet: View {
                 }
                 .padding(.horizontal, 24)
 
-                // Save button
-                Button {
-                    tabBarPagesRaw = selectedPages.map(\.rawValue).joined(separator: ",")
-                    dismiss()
-                } label: {
-                    Text("Save")
-                        .font(.lumeBodySemibold)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(Color.lumeAccent)
-                        .cornerRadius(28)
-                }
-                .padding(.horizontal, 24)
-                .disabled(selectedPages.count != maxTabs)
-                .opacity(selectedPages.count == maxTabs ? 1 : 0.5)
-
                 if selectedPages.count != maxTabs {
                     Text("Select exactly 3 pages for your tab bar")
                         .font(.lumeSmall)
                         .foregroundColor(.lumeAccent)
+                        .padding(.horizontal, 24)
                 }
 
                 Spacer().frame(height: 20)

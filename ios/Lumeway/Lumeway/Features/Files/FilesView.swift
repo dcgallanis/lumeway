@@ -5,6 +5,9 @@ import QuickLook
 import WebKit
 
 struct FilesView: View {
+    var isEmbedded: Bool = false
+    @Environment(\.dismiss) var dismiss
+
     @EnvironmentObject var appState: AppState
     @State private var selectedTab: FileTab = .upload
     @State private var uploads: [UploadedFile] = []
@@ -26,7 +29,7 @@ struct FilesView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        OptionalNavigationStack(isEmbedded: isEmbedded) {
             ZStack {
                 LinearGradient(
                     colors: [Color(hex: "EFF2F5"), Color(hex: "FAF7F2")],
@@ -62,6 +65,13 @@ struct FilesView: View {
                             }
                             .padding(.top, 60)
                             .padding(.bottom, 28)
+                        }
+                        .overlay(alignment: .topLeading) {
+                            if isEmbedded {
+                                EmbeddedBackButton()
+                                    .padding(.leading, 16)
+                                    .padding(.top, 54)
+                            }
                         }
                         .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
 

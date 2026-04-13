@@ -31,6 +31,7 @@
 		85BAC4BBA70CF7D7B0F074B1 /* GuidesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A865AE9C37FB618AED6A795 /* GuidesView.swift */; };
 		8AEFC450CE9DA904A3DDC1AD /* OfflineRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D888685D1E3C7E669FC3243 /* OfflineRepository.swift */; };
 		8BD3D280C707FA5D893713CD /* ChecklistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D525089BAE615A4F7E771322 /* ChecklistView.swift */; };
+		BB1111111111111111111111 /* TaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2222222222222222222222 /* TaskDetailView.swift */; };
 		8CEC5068596632E184728C59 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29521A7495CB693714080634 /* StoreKitManager.swift */; };
 		8D07EEEC50533FAAE5ADBC5E /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C003529638D88AB66F919B77 /* AuthService.swift */; };
 		9013F41EBECF2E943E08CE73 /* UpgradeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8B4D6CB6ED7069373ED10D /* UpgradeView.swift */; };
@@ -96,6 +97,7 @@
 		BA82B65D7BC8A70E15FD4515 /* LumewayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LumewayApp.swift; sourceTree = "<group>"; };
 		C003529638D88AB66F919B77 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		D525089BAE615A4F7E771322 /* ChecklistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistView.swift; sourceTree = "<group>"; };
+		BB2222222222222222222222 /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
 		DD2075D3D124A47855D1250D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F482A5905C311042BB4BF85E /* Montserrat-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-SemiBold.ttf"; sourceTree = "<group>"; };
 		CC2222222222222222222222 /* CormorantGaramond-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CormorantGaramond-Regular.ttf"; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				D525089BAE615A4F7E771322 /* ChecklistView.swift */,
+				BB2222222222222222222222 /* TaskDetailView.swift */,
 			);
 			path = Checklist;
 			sourceTree = "<group>";
@@ -427,6 +430,7 @@
 				D4973B1A1C1B6838986A261C /* CachedModels.swift in Sources */,
 				18B178056572E658ADC9F642 /* ChecklistService.swift in Sources */,
 				8BD3D280C707FA5D893713CD /* ChecklistView.swift in Sources */,
+				BB1111111111111111111111 /* TaskDetailView.swift in Sources */,
 				A66601348388ABE54AC53E53 /* ContentView.swift in Sources */,
 				9604A7C02F57A515FD2D5CF1 /* DashboardData.swift in Sources */,
 				16203A75B605FD04F8F7F40D /* DashboardService.swift in Sources */,

@@ -43,6 +43,8 @@ func isCaraPost(_ displayName: String?) -> Bool {
 }
 
 struct CommunityView: View {
+    var isEmbedded: Bool = false
+
     @EnvironmentObject var appState: AppState
     @State private var posts: [CommunityPost] = []
     @State private var isLoading = true
@@ -73,7 +75,7 @@ struct CommunityView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        OptionalNavigationStack(isEmbedded: isEmbedded) {
             ZStack {
                 Color.lumeCream.ignoresSafeArea()
 

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ActivityLogView: View {
+    var isEmbedded: Bool = false
+
     @State private var entries: [ActivityEntry] = []
     @State private var isLoading = true
     @State private var showAddSheet = false
@@ -18,7 +20,7 @@ struct ActivityLogView: View {
     ]
 
     var body: some View {
-        NavigationStack {
+        OptionalNavigationStack(isEmbedded: isEmbedded) {
             ZStack {
                 Color.lumeCream.ignoresSafeArea()
 
@@ -92,6 +94,9 @@ struct ActivityLogView: View {
             }
             .navigationTitle("Activity Log")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Color.lumeCream, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {

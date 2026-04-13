@@ -8,17 +8,17 @@ final class CalendarService {
     }
 
     func addDeadline(title: String, dueDate: String, category: String? = nil, notes: String? = nil) async throws -> SimpleOkResponse {
-        var body: [String: Any] = ["title": title, "due_date": dueDate]
-        if let cat = category { body["category"] = cat }
-        if let n = notes { body["notes"] = n }
+        var body: [String: Any] = ["title": title, "deadline_date": dueDate]
+        if let cat = category { body["transition_type"] = cat }
+        if let n = notes { body["note"] = n }
         return try await api.post("/api/deadlines", body: body)
     }
 
     func updateDeadline(id: Int, title: String? = nil, dueDate: String? = nil, notes: String? = nil) async throws -> SimpleOkResponse {
         var body: [String: Any] = [:]
         if let t = title { body["title"] = t }
-        if let d = dueDate { body["due_date"] = d }
-        if let n = notes { body["notes"] = n }
+        if let d = dueDate { body["deadline_date"] = d }
+        if let n = notes { body["note"] = n }
         return try await api.put("/api/deadlines/\(id)", body: body)
     }
 
@@ -40,34 +40,16 @@ struct DeadlineItem: Codable, Identifiable {
     let title: String?
     let dueDate: String?
     let completed: Bool?
-    let category: String?
-    let notes: String?
-    let daysRemaining: Int?
+    let transitionType: String?
+    let note: String?
+    let source: String?
+    let createdAt: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, title, completed, category, notes
-        case dueDate = "due_date"
-        case daysRemaining = "days_remaining"
-    }
-
-    init(id: Int, title: String?, dueDate: String?, completed: Bool?, category: String? = nil, notes: String? = nil, daysRemaining: Int?) {
-        self.id = id
-        self.title = title
-        self.dueDate = dueDate
-        self.completed = completed
-        self.category = category
-        self.notes = notes
-        self.daysRemaining = daysRemaining
-    }
-
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        id = try c.decode(Int.self, forKey: .id)
-        title = try c.decodeIfPresent(String.self, forKey: .title)
-        dueDate = try c.decodeIfPresent(String.self, forKey: .dueDate)
-        completed = try c.decodeIfPresent(Bool.self, forKey: .completed)
-        category = try c.decodeIfPresent(String.self, forKey: .category)
-        notes = try c.decodeIfPresent(String.self, forKey: .notes)
-        daysRemaining = try c.decodeIfPresent(Int.self, forKey: .daysRemaining)
+        case id, title, note, source
+        case dueDate = "deadline_date"
+        case completed = "is_completed"
+        case transitionType = "transition_type"
+        case createdAt = "created_at"
     }
 }

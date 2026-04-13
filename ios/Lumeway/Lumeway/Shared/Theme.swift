@@ -127,3 +127,42 @@ extension View {
         modifier(LumeCardStyle())
     }
 }
+
+// MARK: - Conditional NavigationStack
+
+/// Wraps content in a NavigationStack only when NOT embedded in a parent NavigationStack.
+/// Use `isEmbedded: true` when the view is pushed via NavigationLink from Hub or Dashboard.
+struct OptionalNavigationStack<Content: View>: View {
+    let isEmbedded: Bool
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        if isEmbedded {
+            content()
+        } else {
+            NavigationStack {
+                content()
+            }
+        }
+    }
+}
+
+// MARK: - Embedded Back Button (for views with custom color-block headers)
+
+/// A circular back button for views that hide the system navigation bar.
+/// Place this in the top-left of the custom header ZStack.
+struct EmbeddedBackButton: View {
+    @Environment(\.dismiss) var dismiss
+    var tint: Color = .white
+
+    var body: some View {
+        Button { dismiss() } label: {
+            Image(systemName: "chevron.left")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(tint)
+                .padding(9)
+                .background(Color.black.opacity(0.18))
+                .clipShape(Circle())
+        }
+    }
+}

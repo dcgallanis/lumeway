@@ -2,6 +2,9 @@ import SwiftUI
 import UserNotifications
 
 struct MoreView: View {
+    var isEmbedded: Bool = false
+    @Environment(\.dismiss) var dismiss
+
     @EnvironmentObject var appState: AppState
     @State private var showLogoutConfirm = false
     @State private var showAvatarPicker = false
@@ -11,22 +14,20 @@ struct MoreView: View {
         bgColorForIcon(selectedProfileEmoji)
     }
 
-    /// Convert tier string to Roman numeral display
+    /// Human-readable tier name based on effective access level
     private var tierDisplay: String {
-        guard let tier = appState.user?.tier, !tier.isEmpty else {
-            return "Tier I"
-        }
-        switch tier.lowercased() {
-        case "free": return "Tier I"
-        case "starter": return "Tier II"
-        case "pass": return "Tier III"
-        case "unlimited": return "Tier IV"
-        default: return "Tier I"
+        let tier = appState.effectiveTier.lowercased()
+        switch tier {
+        case "all_transitions": return "Full Access"
+        case "one_transition": return "Chapter Pass"
+        case "starter": return "Starter"
+        case "free": return "Free"
+        default: return "Free"
         }
     }
 
     var body: some View {
-        NavigationStack {
+        OptionalNavigationStack(isEmbedded: isEmbedded) {
             ZStack {
                 // Subtle gradient background instead of flat cream
                 LinearGradient(
@@ -101,6 +102,13 @@ struct MoreView: View {
                             }
                             .padding(.top, 60)
                             .padding(.bottom, 32)
+                        }
+                        .overlay(alignment: .topLeading) {
+                            if isEmbedded {
+                                EmbeddedBackButton()
+                                    .padding(.leading, 16)
+                                    .padding(.top, 54)
+                            }
                         }
                         .cornerRadius(24, corners: [.bottomLeft, .bottomRight])
 
@@ -563,25 +571,26 @@ struct AccountSettingsView: View {
         bgColorForIcon(selectedProfileEmoji)
     }
 
-    /// Convert tier string to Roman numeral display
+    /// Human-readable tier name
     private var tierDisplay: String {
-        guard let tier = appState.user?.tier, !tier.isEmpty else {
-            return "Tier I"
-        }
-        switch tier.lowercased() {
-        case "free": return "Tier I"
-        case "starter": return "Tier II"
-        case "pass": return "Tier III"
-        case "unlimited": return "Tier IV"
-        default: return "Tier I"
+        let tier = appState.effectiveTier.lowercased()
+        switch tier {
+        case "all_transitions": return "Full Access"
+        case "one_transition": return "Chapter Pass"
+        case "starter": return "Starter"
+        case "free": return "Free"
+        default: return "Free"
         }
     }
 
     private var tierLabel: String {
-        guard let tier = appState.user?.tier, !tier.isEmpty else {
-            return "Free"
+        let tier = appState.effectiveTier.lowercased()
+        switch tier {
+        case "all_transitions": return "Full Access"
+        case "one_transition": return "Chapter Pass"
+        case "starter": return "Starter"
+        default: return "Free"
         }
-        return tier.capitalized
     }
 
     var body: some View {
@@ -1179,7 +1188,6 @@ struct PricingView: View {
             period: "",
             features: [
                 "Personalized checklist",
-                "Community access",
                 "Navigator chat (basic)",
                 "Calendar & deadlines",
                 "Notes & activity log"
@@ -1187,7 +1195,7 @@ struct PricingView: View {
             highlight: false
         ),
         (
-            name: "Starter Bundle",
+            name: "Starter",
             tier: "starter",
             price: "$16",
             period: "one-time",
@@ -1200,8 +1208,8 @@ struct PricingView: View {
             highlight: false
         ),
         (
-            name: "Chapter Pass",
-            tier: "pass",
+            name: "Full Plan",
+            tier: "one_transition",
             price: "$39",
             period: "per transition",
             features: [
@@ -1209,17 +1217,18 @@ struct PricingView: View {
                 "Full guide library",
                 "Step-by-step breakdowns",
                 "Scripts & key terms",
+                "Community access",
                 "Professional resources"
             ],
             highlight: true
         ),
         (
-            name: "Unlimited",
-            tier: "unlimited",
-            price: "$9.99",
-            period: "/month",
+            name: "Full Access",
+            tier: "all_transitions",
+            price: "$125",
+            period: "one-time",
             features: [
-                "Everything in Pass",
+                "Everything in Full Plan",
                 "All transitions unlocked",
                 "Priority navigator chat",
                 "Future content updates"

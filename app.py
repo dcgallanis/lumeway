@@ -5450,6 +5450,31 @@ def skip_checklist_item(item_id):
     conn.close()
     return jsonify({"ok": True})
 
+@app.route("/api/checklist/<int:item_id>/guide")
+def checklist_item_guide(item_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT item_text, transition_type, phase FROM checklist_items WHERE id = {param} AND user_id = {param}", (item_id, user["id"]))
+    row = cur.fetchone()
+    conn.close()
+    if not row:
+        return jsonify({"error": "Item not found"}), 404
+    item_text, transition_type, phase = row[0], row[1], row[2]
+    try:
+        from guide_data import ITEM_GUIDES
+        guide = ITEM_GUIDES.get(item_text)
+        if guide:
+            return jsonify({"found": True, "item_text": item_text, "transition_type": transition_type, **guide})
+    except ImportError:
+        pass
+    # Fallback: generate basic guide from phase
+    phase_urgency = {"First 24 Hours": "Within 24 hours", "First Week": "Within 7 days", "First Month": "Within 30 days"}
+    urgency = phase_urgency.get(phase, "Ongoing")
+    return jsonify({"found": False, "item_text": item_text, "transition_type": transition_type, "urgency": urgency})
+
 @app.route("/api/checklist/init", methods=["POST"])
 def init_checklist():
     user = get_current_user()

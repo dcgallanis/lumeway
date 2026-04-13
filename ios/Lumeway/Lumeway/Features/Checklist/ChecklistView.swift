@@ -12,6 +12,9 @@ private let phaseColors: [Color] = [
 ]
 
 struct ChecklistView: View {
+    var isEmbedded: Bool = false
+    @Environment(\.dismiss) var dismiss
+
     @EnvironmentObject var appState: AppState
     @State private var items: [FullChecklistItem] = []
     @State private var isLoading = true
@@ -34,7 +37,7 @@ struct ChecklistView: View {
     ]
 
     var body: some View {
-        NavigationStack {
+        OptionalNavigationStack(isEmbedded: isEmbedded) {
             ZStack {
                 // Subtle warm gradient
                 LinearGradient(
@@ -100,6 +103,13 @@ struct ChecklistView: View {
                                 }
                                 .padding(.top, 60)
                                 .padding(.bottom, 28)
+                            }
+                            .overlay(alignment: .topLeading) {
+                                if isEmbedded {
+                                    EmbeddedBackButton()
+                                        .padding(.leading, 16)
+                                        .padding(.top, 54)
+                                }
                             }
                             .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
 
@@ -492,13 +502,26 @@ struct ChecklistItemRow: View {
                 }
             }
 
-            Text(item.title)
-                .font(.lumeBody)
-                .foregroundColor(item.isCompleted ? .lumeMuted : .lumeText)
-                .strikethrough(item.isCompleted)
-                .opacity(item.isCompleted ? 0.5 : 1)
+            NavigationLink {
+                TaskDetailView(item: item, color: color)
+            } label: {
+                HStack(spacing: 6) {
+                    Text(item.title)
+                        .font(.lumeBody)
+                        .foregroundColor(item.isCompleted ? .lumeMuted : .lumeText)
+                        .strikethrough(item.isCompleted)
+                        .opacity(item.isCompleted ? 0.5 : 1)
+                        .multilineTextAlignment(.leading)
 
-            Spacer()
+                    Spacer()
+
+                    if !item.isCompleted {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(color.opacity(0.3))
+                    }
+                }
+            }
 
             if !item.isCompleted {
                 Button(action: onSkip) {

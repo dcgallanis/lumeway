@@ -115,39 +115,39 @@ struct DashboardView: View {
                                 GridItem(.flexible(), spacing: 12),
                                 GridItem(.flexible(), spacing: 12)
                             ], spacing: 12) {
-                                NavigationLink { ChecklistView() } label: {
+                                NavigationLink { ChecklistView(isEmbedded: true) } label: {
                                     QuickLinkContent(icon: "checklist", label: "Checklist", color: .lumeGreen)
                                 }
 
-                                NavigationLink { CommunityView() } label: {
+                                NavigationLink { CommunityView(isEmbedded: true) } label: {
                                     QuickLinkContent(icon: "bubble.left.and.bubble.right", label: "Community", color: .lumeAccent)
                                 }
 
-                                NavigationLink { NavigatorChatView() } label: {
+                                NavigationLink { NavigatorChatView(isEmbedded: true) } label: {
                                     QuickLinkContent(icon: "message", label: "Chat", color: .lumeNavy)
                                 }
 
-                                NavigationLink { CalendarView() } label: {
+                                NavigationLink { CalendarView(isEmbedded: true) } label: {
                                     QuickLinkContent(icon: "calendar", label: "Calendar", color: .lumeGold)
                                 }
 
-                                NavigationLink { NotesView() } label: {
+                                NavigationLink { NotesView(isEmbedded: true) } label: {
                                     QuickLinkContent(icon: "pencil.line", label: "Notes", color: Color(hex: "5E8C9A"))
                                 }
 
-                                NavigationLink { GuidesView() } label: {
+                                NavigationLink { GuidesView(isEmbedded: true) } label: {
                                     QuickLinkContent(icon: "book", label: "Guides", color: .lumeGold)
                                 }
 
-                                NavigationLink { FilesView() } label: {
+                                NavigationLink { FilesView(isEmbedded: true) } label: {
                                     QuickLinkContent(icon: "folder", label: "Files", color: Color(hex: "7B6B8D"))
                                 }
 
-                                NavigationLink { ActivityLogView() } label: {
+                                NavigationLink { ActivityLogView(isEmbedded: true) } label: {
                                     QuickLinkContent(icon: "note.text", label: "Activity", color: .lumeGreen)
                                 }
 
-                                NavigationLink { MoreView() } label: {
+                                NavigationLink { MoreView(isEmbedded: true) } label: {
                                     QuickLinkContent(icon: "person", label: "Profile", color: Color(hex: "7B6B8D"))
                                 }
                             }
@@ -168,7 +168,7 @@ struct DashboardView: View {
                             }
                         }
 
-                        // Today's Focus — taps to switch to Checklist tab
+                        // Next Up — taps to open full checklist
                         if let nextTask = checklistItems.first(where: { !$0.isCompleted }) {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Next Up")
@@ -176,8 +176,8 @@ struct DashboardView: View {
                                     .foregroundColor(.lumeNavy)
                                     .padding(.horizontal, 24)
 
-                                Button {
-                                    NotificationCenter.default.post(name: .navigateToChecklist, object: nil)
+                                NavigationLink {
+                                    TaskDetailView(item: nextTask, color: .lumeAccent)
                                 } label: {
                                     TodayFocusCard(task: nextTask)
                                 }
@@ -218,20 +218,18 @@ struct DashboardView: View {
     private func toggleTask(_ task: FullChecklistItem) {
         Task {
             do {
+                // Snapshot which task IDs are currently visible BEFORE toggling
+                if snapshotTasks.isEmpty {
+                    snapshotTasks = thisWeekTasks
+                }
+                let visibleIds = Set(snapshotTasks.map(\.id))
+
                 _ = try await checklistService.toggleItem(id: task.id)
-                // Reload data but keep snapshot so tasks stay visible
                 let response = try await checklistService.getChecklist()
                 checklistItems = response.items
-                // Update snapshot: find same phase, show all items (completed stay visible)
-                if snapshotTasks.isEmpty {
-                    // First toggle — snapshot the current phase tasks
-                    let phase = task.phase
-                    snapshotTasks = checklistItems.filter { $0.phase == phase }
-                } else {
-                    // Update existing snapshot with new completion states
-                    let phase = snapshotTasks.first?.phase
-                    snapshotTasks = checklistItems.filter { $0.phase == phase }
-                }
+
+                // Update snapshot: only include tasks that were already showing
+                snapshotTasks = checklistItems.filter { visibleIds.contains($0.id) }
             } catch {}
         }
     }
@@ -371,13 +369,26 @@ struct ThisWeekTaskRow: View {
                 }
             }
 
-            Text(task.title)
-                .font(.lumeBody)
-                .foregroundColor(task.isCompleted ? .lumeMuted : .lumeNavy)
-                .strikethrough(task.isCompleted)
-                .lineLimit(2)
+            NavigationLink {
+                TaskDetailView(item: task, color: .lumeNavy)
+            } label: {
+                HStack {
+                    Text(task.title)
+                        .font(.lumeBody)
+                        .foregroundColor(task.isCompleted ? .lumeMuted : .lumeNavy)
+                        .strikethrough(task.isCompleted)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
 
-            Spacer()
+                    Spacer()
+
+                    if !task.isCompleted {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(.lumeBorder)
+                    }
+                }
+            }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 13)
@@ -425,6 +436,15 @@ struct QuickLinkContent: View {
 
 // MARK: - Today's Focus Card
 
+/// Map raw phase names to friendly labels
+private func friendlyPhaseName(_ phase: String) -> String {
+    let lower = phase.lowercased()
+    if lower.contains("first 24") || lower.contains("24 hour") { return "Today" }
+    if lower.contains("first week") { return "This Week" }
+    if lower.contains("first month") { return "This Month" }
+    return phase
+}
+
 struct TodayFocusCard: View {
     let task: FullChecklistItem
 
@@ -445,7 +465,7 @@ struct TodayFocusCard: View {
                     .foregroundColor(.lumeNavy)
 
                 if let phase = task.phase {
-                    Text(phase)
+                    Text(friendlyPhaseName(phase))
                         .font(.lumeSmall)
                         .foregroundColor(.lumeMuted)
                 }
@@ -484,7 +504,7 @@ struct DeadlineSection: View {
                         Text(deadline.title ?? "")
                             .font(.lumeCaption)
                             .foregroundColor(.lumeNavy)
-                        if let days = deadline.daysRemaining {
+                        if let days = daysRemaining(for: deadline) {
                             Text(deadlineText(days))
                                 .font(.lumeSmall)
                                 .foregroundColor(days <= 3 ? .lumeAccent : .lumeMuted)
@@ -510,8 +530,16 @@ struct DeadlineSection: View {
         return "You have \(days) days left"
     }
 
+    private func daysRemaining(for deadline: Deadline) -> Int? {
+        guard let dateStr = deadline.dueDate else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        guard let date = formatter.date(from: String(dateStr.prefix(10))) else { return nil }
+        return Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: Date()), to: Calendar.current.startOfDay(for: date)).day
+    }
+
     private func urgencyColor(_ deadline: Deadline) -> Color {
-        guard let days = deadline.daysRemaining else { return .lumeMuted }
+        guard let days = daysRemaining(for: deadline) else { return .lumeMuted }
         if days <= 3 { return .lumeAccent }
         if days <= 14 { return .lumeGold }
         return .lumeGreen

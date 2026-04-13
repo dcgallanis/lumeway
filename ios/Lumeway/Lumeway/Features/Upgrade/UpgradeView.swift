@@ -82,12 +82,14 @@ struct UpgradeView: View {
                                 .padding(.horizontal, 24)
                         }
 
-                        // Restore purchases
-                        Button("Restore purchases") {
-                            Task { await store.restorePurchases() }
+                        // Restore purchases (only for users who already purchased)
+                        if appState.effectiveTier.lowercased() != "free" {
+                            Button("Restore purchases") {
+                                Task { await store.restorePurchases() }
+                            }
+                            .font(.lumeCaption)
+                            .foregroundColor(.lumeMuted)
                         }
-                        .font(.lumeCaption)
-                        .foregroundColor(.lumeMuted)
 
                         Spacer().frame(height: 32)
                     }

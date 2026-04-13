@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct CalendarView: View {
+    var isEmbedded: Bool = false
+
     @EnvironmentObject var appState: AppState
     @State private var deadlines: [DeadlineItem] = []
     @State private var isLoading = true
@@ -12,7 +14,7 @@ struct CalendarView: View {
     private let calendar = Calendar.current
 
     var body: some View {
-        NavigationStack {
+        OptionalNavigationStack(isEmbedded: isEmbedded) {
             ZStack {
                 Color.lumeCream.ignoresSafeArea()
 
@@ -60,8 +62,8 @@ struct CalendarView: View {
                                                 Text(deadline.title ?? "Deadline")
                                                     .font(.lumeBodyMedium)
                                                     .foregroundColor(.lumeNavy)
-                                                if let notes = deadline.notes, !notes.isEmpty {
-                                                    Text(notes)
+                                                if let note = deadline.note, !note.isEmpty {
+                                                    Text(note)
                                                         .font(.lumeSmall)
                                                         .foregroundColor(.lumeMuted)
                                                         .lineLimit(2)
@@ -139,7 +141,7 @@ struct CalendarView: View {
                                                     Text(formatDateShort(dueDate))
                                                         .font(.lumeSmall)
                                                         .foregroundColor(.lumeMuted)
-                                                    if let days = deadline.daysRemaining {
+                                                    if let days = daysRemaining(for: deadline) {
                                                         Text("·")
                                                             .foregroundColor(.lumeBorder)
                                                         Text(daysText(days))
@@ -235,7 +237,7 @@ struct CalendarView: View {
     // Only show active (not completed) deadlines in the key list
     private var majorDeadlines: [DeadlineItem] {
         deadlines.filter { !($0.completed ?? false) }
-            .sorted { ($0.daysRemaining ?? 999) < ($1.daysRemaining ?? 999) }
+            .sorted { (daysRemaining(for: $0) ?? 999) < (daysRemaining(for: $1) ?? 999) }
     }
 
     private func deadlinesForDate(_ date: Date) -> [DeadlineItem] {
@@ -245,8 +247,16 @@ struct CalendarView: View {
         return deadlines.filter { $0.dueDate.map { String($0.prefix(10)) } == dateStr }
     }
 
+    private func daysRemaining(for deadline: DeadlineItem) -> Int? {
+        guard let dateStr = deadline.dueDate else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        guard let date = formatter.date(from: String(dateStr.prefix(10))) else { return nil }
+        return calendar.dateComponents([.day], from: calendar.startOfDay(for: Date()), to: calendar.startOfDay(for: date)).day
+    }
+
     private func urgencyColor(_ deadline: DeadlineItem) -> Color {
-        guard let days = deadline.daysRemaining, !(deadline.completed ?? false) else { return .lumeMuted }
+        guard let days = daysRemaining(for: deadline), !(deadline.completed ?? false) else { return .lumeMuted }
         if days < 0 { return .lumeAccent }
         if days <= 3 { return .lumeAccent }
         if days <= 14 { return .lumeGold }
@@ -287,7 +297,7 @@ struct CalendarView: View {
         if deadlines.isEmpty, let dashDeadlines = appState.dashboardData?.deadlines, !dashDeadlines.isEmpty {
             deadlines = dashDeadlines.map { d in
                 DeadlineItem(id: d.id, title: d.title, dueDate: d.dueDate, completed: d.completed,
-                             category: d.category, notes: d.notes, daysRemaining: d.daysRemaining)
+                             transitionType: d.transitionType, note: d.note, source: d.source, createdAt: nil)
             }
         }
     }
