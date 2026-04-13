@@ -512,6 +512,7 @@ struct FileCard: View {
     let onDelete: () -> Void
     @State private var thumbnail: UIImage?
     @State private var isLoadingThumb = false
+    @State private var showDeleteConfirm = false
 
     var isImage: Bool {
         file.contentType?.contains("image") == true
@@ -581,22 +582,11 @@ struct FileCard: View {
 
                     Spacer()
 
-                    // Action buttons
-                    HStack(spacing: 4) {
-                        Image(systemName: "eye")
-                            .font(.system(size: 13))
-                            .foregroundColor(.lumeNavy)
-                            .padding(8)
-
-                        Button {
-                            onDelete()
-                        } label: {
-                            Image(systemName: "trash")
-                                .font(.system(size: 13))
-                                .foregroundColor(.lumeMuted)
-                                .padding(8)
-                        }
-                    }
+                    // View indicator
+                    Image(systemName: "eye")
+                        .font(.system(size: 13))
+                        .foregroundColor(.lumeNavy)
+                        .padding(8)
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 12)
@@ -610,6 +600,19 @@ struct FileCard: View {
             )
         }
         .buttonStyle(.plain)
+        .contextMenu {
+            Button(role: .destructive) {
+                showDeleteConfirm = true
+            } label: {
+                Label("Delete File", systemImage: "trash")
+            }
+        }
+        .alert("Delete File?", isPresented: $showDeleteConfirm) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) { onDelete() }
+        } message: {
+            Text("This can't be undone.")
+        }
         .task {
             if isImage { await loadThumbnail() }
         }

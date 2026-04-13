@@ -29,7 +29,7 @@ final class APIClient {
     private init() {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 30
-        config.timeoutIntervalForResource = 60
+        config.timeoutIntervalForResource = 300
         self.session = URLSession(configuration: config)
         self.decoder = JSONDecoder()
     }
@@ -88,6 +88,9 @@ final class APIClient {
                     var request = try buildRequest(path: path, method: "POST")
                     request.httpBody = try JSONSerialization.data(withJSONObject: body)
                     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
+                    request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
+                    request.timeoutInterval = 120
 
                     let (bytes, response) = try await session.bytes(for: request)
                     guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {

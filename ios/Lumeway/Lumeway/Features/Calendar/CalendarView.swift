@@ -106,42 +106,65 @@ struct CalendarView: View {
                             }
                         }
 
-                        // Key deadlines — simplified, just title + date
-                        if !majorDeadlines.isEmpty {
+                        // Upcoming deadlines — show max 3
+                        let upcoming = Array(majorDeadlines.prefix(3))
+                        if !upcoming.isEmpty {
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("Key Deadlines")
+                                Text("Upcoming")
                                     .font(.lumeSectionTitle)
                                     .foregroundColor(.lumeNavy)
                                     .padding(.horizontal, 24)
 
-                                ForEach(majorDeadlines) { deadline in
+                                ForEach(upcoming) { deadline in
                                     HStack(spacing: 14) {
                                         RoundedRectangle(cornerRadius: 2)
                                             .fill(urgencyColor(deadline))
-                                            .frame(width: 4, height: 32)
+                                            .frame(width: 4, height: 44)
 
-                                        VStack(alignment: .leading, spacing: 2) {
+                                        VStack(alignment: .leading, spacing: 4) {
                                             Text(deadline.title ?? "Deadline")
                                                 .font(.lumeBodyMedium)
-                                                .foregroundColor(deadline.completed ?? false ? .lumeMuted : .lumeNavy)
-                                                .strikethrough(deadline.completed ?? false)
+                                                .foregroundColor(.lumeNavy)
 
                                             if let dueDate = deadline.dueDate {
                                                 HStack(spacing: 6) {
+                                                    Image(systemName: "calendar")
+                                                        .font(.system(size: 11))
+                                                        .foregroundColor(.lumeMuted)
                                                     Text(formatDateShort(dueDate))
                                                         .font(.lumeSmall)
                                                         .foregroundColor(.lumeMuted)
-                                                    if let days = deadline.daysRemaining, !(deadline.completed ?? false) {
+                                                    if let days = deadline.daysRemaining {
+                                                        Text("·")
+                                                            .foregroundColor(.lumeBorder)
                                                         Text(daysText(days))
                                                             .font(.lumeSmall)
-                                                            .foregroundColor(days <= 3 ? .lumeAccent : .lumeMuted)
+                                                            .fontWeight(.medium)
+                                                            .foregroundColor(days <= 3 ? .lumeAccent : days <= 7 ? .lumeGold : .lumeGreen)
                                                     }
                                                 }
                                             }
                                         }
 
                                         Spacer()
+
+                                        Button {
+                                            toggleDeadline(deadline)
+                                        } label: {
+                                            ZStack {
+                                                Circle()
+                                                    .stroke(urgencyColor(deadline), lineWidth: 1.5)
+                                                    .frame(width: 24, height: 24)
+                                            }
+                                        }
                                     }
+                                    .padding(14)
+                                    .background(Color.lumeWarmWhite)
+                                    .cornerRadius(12)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(Color.lumeBorder, lineWidth: 1)
+                                    )
                                     .padding(.horizontal, 20)
                                 }
                             }
@@ -155,7 +178,7 @@ struct CalendarView: View {
                                 Text("No upcoming deadlines")
                                     .font(.lumeBody)
                                     .foregroundColor(.lumeMuted)
-                                Text("Add important dates to keep track of filing deadlines, court dates, and more.")
+                                Text("Add important dates to stay\non track with your transition.")
                                     .font(.lumeCaption)
                                     .foregroundColor(.lumeMuted)
                                     .multilineTextAlignment(.center)

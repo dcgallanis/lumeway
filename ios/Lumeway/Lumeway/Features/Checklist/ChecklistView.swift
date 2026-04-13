@@ -76,7 +76,8 @@ struct ChecklistView: View {
                                     let phaseItems = currentPhaseItems
                                     let phaseCompleted = phaseItems.filter(\.isCompleted).count
                                     let phaseTotal = phaseItems.count
-                                    let phaseName = phaseItems.first?.phase ?? "This Week"
+                                    let rawPhase = phaseItems.first?.phase ?? "This Week"
+                                    let phaseName = rawPhase.lowercased().contains("first week") ? "This Week" : rawPhase.lowercased().contains("first month") ? "This Month" : rawPhase.lowercased().contains("first 24") ? "Today" : rawPhase
 
                                     Text("\(phaseName) — \(phaseCompleted) of \(phaseTotal) done")
                                         .font(.lumeCaption)
@@ -239,9 +240,10 @@ struct ChecklistView: View {
     /// Display name for phases — "Today" for the current active phase
     private func phaseDisplayName(_ phase: String, isFirst: Bool) -> String {
         if isFirst { return "Today" }
-        // Clean up backend phase names
         let lower = phase.lowercased()
         if lower.contains("first 24") || lower.contains("24 hour") { return "Today" }
+        if lower.contains("first week") { return "This Week" }
+        if lower.contains("first month") { return "This Month" }
         return phase
     }
 
