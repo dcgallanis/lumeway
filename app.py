@@ -5463,16 +5463,48 @@ def checklist_item_guide(item_id):
     if not row:
         return jsonify({"error": "Item not found"}), 404
     item_text, transition_type, phase = row[0], row[1], row[2]
+    phase_urgency = {"First 24 Hours": "Within 24 hours", "First Week": "Within 7 days", "First Month": "Within 30 days", "This Week": "Within 7 days", "This Month": "Within 30 days"}
+    urgency = phase_urgency.get(phase, "Ongoing")
     try:
         from guide_data import ITEM_GUIDES
+        # Exact match first
         guide = ITEM_GUIDES.get(item_text)
         if guide:
             return jsonify({"found": True, "item_text": item_text, "transition_type": transition_type, **guide})
+        # Fuzzy match: check if any key is substantially contained in this item or vice versa
+        item_lower = item_text.lower().strip()
+        for key, val in ITEM_GUIDES.items():
+            key_lower = key.lower().strip()
+            if item_lower in key_lower or key_lower in item_lower:
+                return jsonify({"found": True, "item_text": item_text, "transition_type": transition_type, **val})
     except ImportError:
         pass
-    # Fallback: generate basic guide from phase
-    phase_urgency = {"First 24 Hours": "Within 24 hours", "First Week": "Within 7 days", "First Month": "Within 30 days"}
-    urgency = phase_urgency.get(phase, "Ongoing")
+    # Generate guide on-the-fly for personalized/chat-created items
+    try:
+        resp = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=800,
+            system="You help people through life transitions. Return ONLY valid JSON with these keys: urgency (string like 'Within 7 days'), how_to (2-3 practical sentences), steps (array of 3-5 short action steps). Be warm, specific, and actionable. No markdown, just JSON.",
+            messages=[{"role": "user", "content": f"Generate a practical guide for someone going through a {transition_type or 'life'} transition who needs to: \"{item_text}\". Phase: {phase}."}]
+        )
+        import json as _json
+        text = resp.content[0].text.strip()
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+        generated = _json.loads(text)
+        return jsonify({
+            "found": True,
+            "item_text": item_text,
+            "transition_type": transition_type,
+            "urgency": generated.get("urgency", urgency),
+            "how_to": generated.get("how_to", ""),
+            "steps": generated.get("steps", []),
+            "related_worksheet": generated.get("related_worksheet")
+        })
+    except Exception:
+        pass
     return jsonify({"found": False, "item_text": item_text, "transition_type": transition_type, "urgency": urgency})
 
 @app.route("/api/checklist/init", methods=["POST"])
