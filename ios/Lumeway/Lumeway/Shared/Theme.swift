@@ -33,26 +33,25 @@ extension Color {
 }
 
 // MARK: - Typography
-// Cormorant Garamond — elegant display/heading serif
-// Libre Baskerville — warm serif for section titles & subheadings
-// Montserrat — clean modern sans-serif for body & UI
+// Cormorant Garamond — ALL headers, titles, display text
+// Montserrat — ALL body, UI, captions, labels
 
 extension Font {
-    // Cormorant Garamond — hero display headings
+    // Cormorant Garamond — large display headings
     static let lumeDisplayLarge = Font.custom("CormorantGaramond-Bold", size: 36, relativeTo: .largeTitle)
     static let lumeDisplayMedium = Font.custom("CormorantGaramond-SemiBold", size: 28, relativeTo: .title2)
     static let lumeDisplaySmall = Font.custom("CormorantGaramond-SemiBold", size: 22, relativeTo: .headline)
     static let lumeDisplayItalic = Font.custom("CormorantGaramond-Italic", size: 28, relativeTo: .title2)
 
-    // Libre Baskerville — section headings & subheadings
-    static let lumeHeadingLarge = Font.custom("LibreBaskerville-Regular", size: 30, relativeTo: .largeTitle)
-    static let lumeHeadingMedium = Font.custom("LibreBaskerville-Regular", size: 22, relativeTo: .title2)
-    static let lumeHeadingSmall = Font.custom("LibreBaskerville-Regular", size: 17, relativeTo: .headline)
-    static let lumeHeadingItalic = Font.custom("LibreBaskerville-Italic", size: 22, relativeTo: .title2)
+    // Cormorant Garamond — section headings & subheadings
+    static let lumeHeadingLarge = Font.custom("CormorantGaramond-SemiBold", size: 30, relativeTo: .largeTitle)
+    static let lumeHeadingMedium = Font.custom("CormorantGaramond-Regular", size: 22, relativeTo: .title2)
+    static let lumeHeadingSmall = Font.custom("CormorantGaramond-Regular", size: 17, relativeTo: .headline)
+    static let lumeHeadingItalic = Font.custom("CormorantGaramond-Italic", size: 22, relativeTo: .title2)
 
-    // Libre Baskerville — section subheadings
-    static let lumeSectionTitle = Font.custom("LibreBaskerville-Regular", size: 15, relativeTo: .subheadline)
-    static let lumeSectionTitleBold = Font.custom("LibreBaskerville-Bold", size: 15, relativeTo: .subheadline)
+    // Cormorant Garamond — section labels
+    static let lumeSectionTitle = Font.custom("CormorantGaramond-SemiBold", size: 16, relativeTo: .subheadline)
+    static let lumeSectionTitleBold = Font.custom("CormorantGaramond-Bold", size: 16, relativeTo: .subheadline)
 
     // Montserrat — body text
     static let lumeBody = Font.custom("Montserrat-Regular", size: 15, relativeTo: .body)

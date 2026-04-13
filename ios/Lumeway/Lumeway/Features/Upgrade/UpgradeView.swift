@@ -154,7 +154,8 @@ struct PricingCard: View {
         VStack(spacing: 12) {
             if isPopular {
                 Text("Best value")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.lumeSmall)
+                    .fontWeight(.semibold)
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 4)
@@ -167,7 +168,7 @@ struct PricingCard: View {
                 .foregroundColor(.lumeText)
 
             Text(price)
-                .font(.system(size: 28, weight: .bold))
+                .font(.lumeDisplayMedium)
                 .foregroundColor(.lumeNavy)
 
             Text(desc)
