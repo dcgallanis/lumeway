@@ -461,6 +461,14 @@ struct EmojiAvatarPickerSheet: View {
 
                 // Done button
                 Button {
+                    // Sync icon to server
+                    Task {
+                        try? await DashboardService().updateSettings(
+                            displayName: nil, usState: nil,
+                            communityIcon: selectedEmoji,
+                            communityIconBg: selectedBgColorHex
+                        )
+                    }
                     dismiss()
                 } label: {
                     Text("Done")

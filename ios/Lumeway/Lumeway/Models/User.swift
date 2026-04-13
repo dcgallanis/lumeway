@@ -10,6 +10,8 @@ struct User: Codable, Identifiable {
     let tier: String?
     let creditCents: Int?
     let activeTransitions: [String]?
+    let communityIcon: String?
+    let communityIconBg: String?
 
     enum CodingKeys: String, CodingKey {
         case id, email
@@ -20,6 +22,8 @@ struct User: Codable, Identifiable {
         case tier
         case creditCents = "credit_cents"
         case activeTransitions = "active_transitions"
+        case communityIcon = "community_icon"
+        case communityIconBg = "community_icon_bg"
     }
 }
 

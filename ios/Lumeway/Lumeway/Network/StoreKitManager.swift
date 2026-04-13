@@ -141,6 +141,8 @@ final class StoreKitManager: ObservableObject {
                 "transaction_id": String(transaction.id),
                 "original_id": String(transaction.originalID),
             ])
+            // Notify app to refresh tier and dashboard data
+            NotificationCenter.default.post(name: .purchaseCompleted, object: nil)
         } catch {
             print("Failed to verify purchase with server: \(error)")
         }

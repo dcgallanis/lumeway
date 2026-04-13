@@ -724,6 +724,14 @@ def init_subscribers_db():
                 conn2.close()
             except Exception:
                 pass
+    try:
+        db_execute(conn, "ALTER TABLE users ADD COLUMN community_icon TEXT DEFAULT '☀️'")
+    except Exception:
+        pass
+    try:
+        db_execute(conn, "ALTER TABLE users ADD COLUMN community_icon_bg TEXT DEFAULT ''")
+    except Exception:
+        pass
     # Etsy redemptions table (idempotent)
     try:
         conn_etsy = get_db()
@@ -1368,11 +1376,11 @@ def get_current_user():
         return None
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state, created_at, last_login_at, tier, tier_transition, tier_expires_at, stripe_customer_id, subscription_cancel_at, credit_cents, active_transitions FROM users WHERE id = {param}", (user_id,))
+    cur = db_execute(conn, f"SELECT id, email, display_name, transition_type, us_state, created_at, last_login_at, tier, tier_transition, tier_expires_at, stripe_customer_id, subscription_cancel_at, credit_cents, active_transitions, community_icon, community_icon_bg FROM users WHERE id = {param}", (user_id,))
     row = cur.fetchone()
     conn.close()
     if row:
-        cols = ["id", "email", "display_name", "transition_type", "us_state", "created_at", "last_login_at", "tier", "tier_transition", "tier_expires_at", "stripe_customer_id", "subscription_cancel_at", "credit_cents", "active_transitions"]
+        cols = ["id", "email", "display_name", "transition_type", "us_state", "created_at", "last_login_at", "tier", "tier_transition", "tier_expires_at", "stripe_customer_id", "subscription_cancel_at", "credit_cents", "active_transitions", "community_icon", "community_icon_bg"]
         user = dict(zip(cols, row))
         if not user.get("tier"):
             user["tier"] = "free"
@@ -4584,7 +4592,10 @@ def auth_me():
     user = get_current_user()
     if not user:
         return jsonify({"logged_in": False})
-    return jsonify({"logged_in": True, "user": user})
+    # Normalize active_transitions to flat list of strings for mobile app
+    safe_user = dict(user)
+    safe_user["active_transitions"] = [item["cat"] if isinstance(item, dict) else item for item in (user.get("active_transitions") or [])]
+    return jsonify({"logged_in": True, "user": safe_user})
 
 # ── Demo / test dashboard ──
 
@@ -4681,17 +4692,19 @@ def update_account_settings():
     display_name = data.get("display_name", "").strip()[:100]
     us_state = data.get("us_state", "").strip()[:5]
     transition_type = data.get("transition_type", "").strip().lower()[:30]
+    community_icon = data.get("community_icon", "").strip()[:10]
+    community_icon_bg = data.get("community_icon_bg", "").strip()[:10]
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
     if transition_type and transition_type in VALID_CATEGORIES:
-        db_execute(conn, f"UPDATE users SET display_name = {param}, us_state = {param}, transition_type = {param} WHERE id = {param}",
-                   (display_name or None, us_state or None, transition_type, user["id"]))
+        db_execute(conn, f"UPDATE users SET display_name = {param}, us_state = {param}, transition_type = {param}, community_icon = {param}, community_icon_bg = {param} WHERE id = {param}",
+                   (display_name or None, us_state or None, transition_type, community_icon or None, community_icon_bg or None, user["id"]))
     else:
-        db_execute(conn, f"UPDATE users SET display_name = {param}, us_state = {param} WHERE id = {param}",
-                   (display_name or None, us_state or None, user["id"]))
+        db_execute(conn, f"UPDATE users SET display_name = {param}, us_state = {param}, community_icon = {param}, community_icon_bg = {param} WHERE id = {param}",
+                   (display_name or None, us_state or None, community_icon or None, community_icon_bg or None, user["id"]))
     conn.commit()
     conn.close()
-    audit_log(user["id"], "settings_update", "user", str(user["id"]), f"name={display_name}, state={us_state}, transition={transition_type}")
+    audit_log(user["id"], "settings_update", "user", str(user["id"]), f"name={display_name}, state={us_state}, transition={transition_type}, icon={community_icon}")
     return jsonify({"ok": True})
 
 @app.route("/dashboard")
@@ -4777,7 +4790,7 @@ def dashboard_data():
         "effective_tier": get_effective_tier(user),
         "category_access": get_user_categories(user),
         "credit_cents": user.get("credit_cents", 0),
-        "active_transitions": user.get("active_transitions", []),
+        "active_transitions": [item["cat"] if isinstance(item, dict) else item for item in (user.get("active_transitions") or [])],
         "is_admin": user.get("email") in ["hello@lumeway.co", "lumeway.co@gmail.com"],
     })
 
@@ -4799,6 +4812,29 @@ def dashboard_history_detail(session_id):
     messages = [{"role": r[0], "content": r[1], "created_at": r[2]} for r in cur.fetchall()]
     conn.close()
     return jsonify({"messages": messages})
+
+@app.route("/api/chat/sessions")
+def chat_sessions_list():
+    """Return user's chat sessions for the mobile app chat history screen."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not logged in"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"""SELECT id, started_at, ended_at, transition_category
+        FROM chat_sessions WHERE user_id = {param} ORDER BY started_at DESC LIMIT 50""", (user["id"],))
+    sessions = []
+    for row in cur.fetchall():
+        sid = row[0]
+        msg_cur = db_execute(conn, f"SELECT content FROM chat_messages WHERE session_id = {param} AND role = 'user' ORDER BY created_at LIMIT 1", (sid,))
+        msg_row = msg_cur.fetchone()
+        preview = msg_row[0][:100] + "..." if msg_row and len(msg_row[0]) > 100 else (msg_row[0] if msg_row else "")
+        sessions.append({
+            "id": row[0], "started_at": row[1], "ended_at": row[2],
+            "transition_category": row[3], "preview": preview
+        })
+    conn.close()
+    return jsonify({"sessions": sessions})
 
 # ── Community Forum API ──
 

@@ -10,6 +10,7 @@ struct NavigatorChatView: View {
     @State private var scrollToBottom = false
     @State private var sessionId: String? = nil
     @State private var conversationHistory: [[String: String]] = []
+    @State private var showHistory = false
 
     private let api = APIClient.shared
 
@@ -109,6 +110,14 @@ struct NavigatorChatView: View {
                             .foregroundColor(.lumeMuted)
                     }
                 }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showHistory = true
+                    } label: {
+                        Image(systemName: "clock.arrow.circlepath")
+                            .foregroundColor(.lumeMuted)
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         messages = []
@@ -120,6 +129,13 @@ struct NavigatorChatView: View {
                             .foregroundColor(.lumeMuted)
                     }
                 }
+            }
+            .sheet(isPresented: $showHistory) {
+                ChatHistorySheet(onSelectSession: { session in
+                    showHistory = false
+                    Task { await loadSession(session.id) }
+                })
+                .environmentObject(appState)
             }
         }
     }
@@ -199,6 +215,24 @@ struct NavigatorChatView: View {
             } else {
                 messages.append(errorMsg)
             }
+        }
+    }
+
+    private func loadSession(_ sid: String) async {
+        do {
+            let response: ChatHistoryResponse = try await api.get("/api/dashboard/history/\(sid)")
+            messages = response.messages.enumerated().map { index, msg in
+                ChatMessage(
+                    id: "\(sid)-\(index)",
+                    role: msg.role == "user" ? .user : .assistant,
+                    content: msg.content
+                )
+            }
+            sessionId = sid
+            // Rebuild conversation history for continued chatting
+            conversationHistory = response.messages.map { ["role": $0.role, "content": $0.content] }
+        } catch {
+            print("Failed to load session: \(error)")
         }
     }
 }
@@ -391,5 +425,124 @@ struct TypingIndicator: View {
         .onReceive(timer) { _ in
             dotIndex = (dotIndex + 1) % 3
         }
+    }
+}
+
+// MARK: - Chat History
+
+struct ChatHistoryMessage: Codable {
+    let role: String
+    let content: String
+    let createdAt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case role, content
+        case createdAt = "created_at"
+    }
+}
+
+struct ChatHistoryResponse: Codable {
+    let messages: [ChatHistoryMessage]
+}
+
+struct ChatHistorySheet: View {
+    @EnvironmentObject var appState: AppState
+    @Environment(\.dismiss) var dismiss
+    var onSelectSession: (ChatSessionSummary) -> Void
+
+    var sessions: [ChatSessionSummary] {
+        appState.dashboardData?.sessions ?? []
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Color.lumeCream.ignoresSafeArea()
+
+                if sessions.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "bubble.left.and.bubble.right")
+                            .font(.system(size: 36))
+                            .foregroundColor(.lumeBorder)
+                        Text("No previous conversations")
+                            .font(.lumeBody)
+                            .foregroundColor(.lumeMuted)
+                    }
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            ForEach(sessions) { session in
+                                Button {
+                                    onSelectSession(session)
+                                } label: {
+                                    HStack(spacing: 14) {
+                                        Image(systemName: "bubble.left.fill")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(.lumeNavy.opacity(0.6))
+
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(session.preview ?? "Chat session")
+                                                .font(.lumeBody)
+                                                .foregroundColor(.lumeText)
+                                                .lineLimit(2)
+                                                .multilineTextAlignment(.leading)
+
+                                            if let date = session.startedAt {
+                                                Text(formatSessionDate(date))
+                                                    .font(.lumeSmall)
+                                                    .foregroundColor(.lumeMuted)
+                                            }
+                                        }
+
+                                        Spacer()
+
+                                        Image(systemName: "chevron.right")
+                                            .font(.system(size: 12))
+                                            .foregroundColor(.lumeBorder)
+                                    }
+                                    .padding(.horizontal, 20)
+                                    .padding(.vertical, 14)
+                                }
+
+                                Divider()
+                                    .padding(.leading, 48)
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Chat History")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.lumeMuted)
+                    }
+                }
+            }
+        }
+    }
+
+    private func formatSessionDate(_ dateStr: String) -> String {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = formatter.date(from: dateStr) {
+            let display = DateFormatter()
+            display.dateStyle = .medium
+            display.timeStyle = .short
+            return display.string(from: date)
+        }
+        // Try without fractional seconds
+        formatter.formatOptions = [.withInternetDateTime]
+        if let date = formatter.date(from: dateStr) {
+            let display = DateFormatter()
+            display.dateStyle = .medium
+            display.timeStyle = .short
+            return display.string(from: date)
+        }
+        return dateStr
     }
 }

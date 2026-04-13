@@ -80,4 +80,5 @@ extension Notification.Name {
     static let navigateToChecklist = Notification.Name("navigateToChecklist")
     static let navigateToDashboard = Notification.Name("navigateToDashboard")
     static let switchToTab = Notification.Name("switchToTab")
+    static let purchaseCompleted = Notification.Name("purchaseCompleted")
 }

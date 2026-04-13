@@ -20,6 +20,11 @@ final class AppState: ObservableObject {
 
     init() {
         Task { await checkAuth() }
+        NotificationCenter.default.addObserver(forName: .purchaseCompleted, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in
+                await self?.loadDashboard()
+            }
+        }
     }
 
     func configureModelContext(_ context: ModelContext) {
@@ -41,6 +46,15 @@ final class AppState: ObservableObject {
                 self.user = me.user
                 self.isAuthenticated = true
                 self.needsOnboarding = me.user?.transitionType == nil
+                // Sync community icon from server to local storage
+                if let icon = me.user?.communityIcon, !icon.isEmpty {
+                    UserDefaults.standard.set(icon, forKey: "selectedProfileEmoji")
+                    UserDefaults.standard.set(icon, forKey: "community_icon")
+                }
+                if let bg = me.user?.communityIconBg, !bg.isEmpty {
+                    UserDefaults.standard.set(bg, forKey: "community_icon_bg")
+                    UserDefaults.standard.set(bg, forKey: "selectedIconBgColor")
+                }
             } else {
                 self.isAuthenticated = false
                 KeychainHelper.deleteToken()
@@ -58,6 +72,15 @@ final class AppState: ObservableObject {
         self.isAuthenticated = true
         self.needsOnboarding = user.transitionType == nil
         self.justLoggedIn = true
+        // Sync community icon from server to local storage
+        if let icon = user.communityIcon, !icon.isEmpty {
+            UserDefaults.standard.set(icon, forKey: "selectedProfileEmoji")
+            UserDefaults.standard.set(icon, forKey: "community_icon")
+        }
+        if let bg = user.communityIconBg, !bg.isEmpty {
+            UserDefaults.standard.set(bg, forKey: "community_icon_bg")
+            UserDefaults.standard.set(bg, forKey: "selectedIconBgColor")
+        }
     }
 
     func logout() {

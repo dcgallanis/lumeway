@@ -1,29 +1,32 @@
 import SwiftUI
 import PhotosUI
 import UIKit
+import QuickLook
+import WebKit
 
 struct FilesView: View {
     @EnvironmentObject var appState: AppState
-    @State private var selectedTab: FileTab = .documents
+    @State private var selectedTab: FileTab = .upload
     @State private var uploads: [UploadedFile] = []
     @State private var isLoadingUploads = true
-    @State private var showUploadSheet = false
+    @State private var showFileImporter = false
     @State private var showCamera = false
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var isUploading = false
     @State private var uploadToast: String?
+    @State private var previewFile: UploadedFile?
+    @State private var previewURL: URL?
 
     private let api = APIClient.shared
 
     enum FileTab: String, CaseIterable {
-        case documents = "Documents"
-        case uploads = "Uploads"
+        case upload = "Upload"
+        case myFiles = "My Files"
     }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                // Cool blue-cream gradient
                 LinearGradient(
                     colors: [Color(hex: "EFF2F5"), Color(hex: "FAF7F2")],
                     startPoint: .top,
@@ -46,9 +49,15 @@ struct FilesView: View {
                                     .font(.lumeDisplayMedium)
                                     .foregroundColor(.white)
 
-                                Text("Keep everything in one place.")
-                                    .font(.lumeCaption)
-                                    .foregroundColor(.white.opacity(0.6))
+                                if !uploads.isEmpty {
+                                    Text("\(uploads.count) file\(uploads.count == 1 ? "" : "s")")
+                                        .font(.lumeCaption)
+                                        .foregroundColor(.white.opacity(0.6))
+                                } else {
+                                    Text("Keep everything in one place.")
+                                        .font(.lumeCaption)
+                                        .foregroundColor(.white.opacity(0.6))
+                                }
                             }
                             .padding(.top, 60)
                             .padding(.bottom, 28)
@@ -65,7 +74,7 @@ struct FilesView: View {
                                 } label: {
                                     VStack(spacing: 6) {
                                         HStack(spacing: 6) {
-                                            Image(systemName: tab == .documents ? "doc.text" : "arrow.up.doc")
+                                            Image(systemName: tab == .upload ? "arrow.up.doc" : "folder")
                                                 .font(.system(size: 13))
                                             Text(tab.rawValue)
                                                 .font(.lumeBodyMedium)
@@ -85,18 +94,18 @@ struct FilesView: View {
 
                         // Content
                         switch selectedTab {
-                        case .documents:
-                            DocumentsNeededList()
-                        case .uploads:
-                            UploadedFilesContent(
+                        case .upload:
+                            UploadSection(
+                                selectedPhoto: $selectedPhoto,
+                                onCamera: { showCamera = true },
+                                onBrowse: { showFileImporter = true }
+                            )
+                        case .myFiles:
+                            MyFilesSection(
                                 files: uploads,
                                 isLoading: isLoadingUploads,
-                                onDelete: { file in
-                                    Task { await deleteUpload(file) }
-                                },
-                                selectedPhoto: $selectedPhoto,
-                                onAddCamera: { showCamera = true },
-                                onAddFile: { showUploadSheet = true }
+                                onDelete: { file in Task { await deleteUpload(file) } },
+                                onPreview: { file in Task { await openPreview(file) } }
                             )
                         }
 
@@ -160,7 +169,7 @@ struct FilesView: View {
                 }
             }
             .fileImporter(
-                isPresented: $showUploadSheet,
+                isPresented: $showFileImporter,
                 allowedContentTypes: [.pdf, .image, .plainText],
                 allowsMultipleSelection: false
             ) { result in
@@ -172,6 +181,9 @@ struct FilesView: View {
                 case .failure(let error):
                     print("File picker error: \(error)")
                 }
+            }
+            .sheet(item: $previewFile) { file in
+                FilePreviewSheet(file: file, previewURL: previewURL)
             }
             .task { await loadUploads() }
         }
@@ -203,7 +215,7 @@ struct FilesView: View {
     private func uploadData(_ data: Data, filename: String, mimeType: String) async {
         isUploading = true
         do {
-            let result = try await api.upload(
+            _ = try await api.upload(
                 path: "/api/files/upload",
                 fileData: data,
                 filename: filename,
@@ -213,7 +225,8 @@ struct FilesView: View {
             generator.notificationOccurred(.success)
             showUploadToast("File uploaded successfully.")
             await loadUploads()
-            _ = result
+            // Switch to My Files tab after upload
+            withAnimation { selectedTab = .myFiles }
         } catch {
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.error)
@@ -244,6 +257,24 @@ struct FilesView: View {
         }
     }
 
+    private func openPreview(_ file: UploadedFile) async {
+        // Download the file to a temp location for preview
+        do {
+            var request = URLRequest(url: URL(string: "https://lumeway.co/api/files/\(file.id)/preview")!)
+            if let token = KeychainHelper.getToken() {
+                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            }
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let ext = file.fileExtension
+            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("preview_\(file.id).\(ext)")
+            try data.write(to: tempURL)
+            previewURL = tempURL
+            previewFile = file
+        } catch {
+            print("Preview error: \(error)")
+        }
+    }
+
     private func showUploadToast(_ message: String) {
         withAnimation(.easeInOut(duration: 0.3)) {
             uploadToast = message
@@ -268,213 +299,144 @@ struct FilesView: View {
     }
 }
 
-// MARK: - Upload Response Models
+// MARK: - Upload Section
 
-struct UploadedFile: Codable, Identifiable {
-    let id: Int
-    let filename: String
-    let originalName: String?
-    let mimeType: String?
-    let size: Int?
-    let createdAt: String?
-
-    enum CodingKeys: String, CodingKey {
-        case id, filename, mimeType, size
-        case originalName = "original_name"
-        case createdAt = "created_at"
-    }
-
-    var displayName: String {
-        originalName ?? filename
-    }
-
-    var formattedSize: String {
-        guard let size = size else { return "" }
-        if size < 1024 { return "\(size) B" }
-        if size < 1024 * 1024 { return "\(size / 1024) KB" }
-        return String(format: "%.1f MB", Double(size) / (1024 * 1024))
-    }
-
-    var iconName: String {
-        guard let mime = mimeType else { return "doc" }
-        if mime.contains("pdf") { return "doc.richtext" }
-        if mime.contains("image") { return "photo" }
-        if mime.contains("text") { return "doc.plaintext" }
-        return "doc"
-    }
-}
-
-struct UploadListResponse: Codable {
-    let files: [UploadedFile]
-}
-
-struct EmptyResponse: Codable {}
-
-// MARK: - Documents Needed
-
-struct DocumentsNeededList: View {
-    @EnvironmentObject var appState: AppState
+struct UploadSection: View {
+    @Binding var selectedPhoto: PhotosPickerItem?
+    let onCamera: () -> Void
+    let onBrowse: () -> Void
 
     var body: some View {
-        if let docs = appState.dashboardData?.documentsNeeded, !docs.isEmpty {
-            let obtained = docs.filter { $0.obtained == true }.count
+        VStack(spacing: 20) {
+            Spacer().frame(height: 24)
 
-            VStack(spacing: 12) {
-                // Progress summary
-                HStack(spacing: 12) {
-                    ZStack {
-                        Circle()
-                            .fill(Color(hex: "E8F0E4"))
-                            .frame(width: 40, height: 40)
-                        Image(systemName: "doc.text.fill")
-                            .font(.system(size: 16))
-                            .foregroundColor(Color(hex: "4A7C59"))
-                    }
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Documents you'll need")
-                            .font(.lumeBodyMedium)
-                            .foregroundColor(.lumeNavy)
-                        Text("\(obtained) of \(docs.count) gathered")
-                            .font(.lumeSmall)
-                            .foregroundColor(.lumeMuted)
-                    }
-                    Spacer()
+            // Upload area
+            VStack(spacing: 24) {
+                ZStack {
+                    Circle()
+                        .fill(Color(hex: "E4E8EE"))
+                        .frame(width: 72, height: 72)
+                    Image(systemName: "arrow.up.doc.fill")
+                        .font(.system(size: 28, weight: .light))
+                        .foregroundColor(.lumeNavy)
                 }
-                .padding(16)
-                .background(Color.lumeWarmWhite)
-                .cornerRadius(14)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(Color.lumeBorder, lineWidth: 1)
-                )
 
-                ForEach(docs, id: \.id) { doc in
-                    HStack(spacing: 14) {
-                        ZStack {
-                            Circle()
-                                .fill(doc.obtained == true ? Color(hex: "E8F0E4") : Color(hex: "F0EAE0"))
-                                .frame(width: 36, height: 36)
-                            Image(systemName: doc.obtained == true ? "checkmark.circle.fill" : "doc")
-                                .font(.system(size: 15))
-                                .foregroundColor(doc.obtained == true ? Color(hex: "4A7C59") : Color(hex: "C4704E"))
-                        }
+                VStack(spacing: 6) {
+                    Text("Upload a file")
+                        .font(.lumeDisplaySmall)
+                        .foregroundColor(.lumeNavy)
 
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(doc.name ?? "")
+                    Text("Photos of documents, IDs, forms,\nreceipts — anything you need to keep.")
+                        .font(.lumeBody)
+                        .foregroundColor(.lumeMuted)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(3)
+                }
+
+                // Upload buttons
+                VStack(spacing: 10) {
+                    // Camera button — prominent
+                    Button(action: onCamera) {
+                        HStack(spacing: 10) {
+                            Image(systemName: "camera.fill")
+                                .font(.system(size: 16))
+                            Text("Take a Photo")
                                 .font(.lumeBodyMedium)
-                                .foregroundColor(doc.obtained == true ? .lumeMuted : .lumeNavy)
-                                .strikethrough(doc.obtained == true)
-                            if let note = doc.note, !note.isEmpty {
-                                Text(note)
-                                    .font(.lumeSmall)
-                                    .foregroundColor(.lumeMuted)
-                            }
                         }
-                        Spacer()
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Color.lumeAccent)
+                        .cornerRadius(14)
+                    }
 
-                        if doc.obtained == true {
-                            Text("Done")
-                                .font(.lumeSmall)
-                                .foregroundColor(Color(hex: "4A7C59"))
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(Color(hex: "E8F0E4"))
-                                .cornerRadius(8)
+                    HStack(spacing: 10) {
+                        // Photo library
+                        PhotosPicker(
+                            selection: $selectedPhoto,
+                            matching: .any(of: [.images, .screenshots])
+                        ) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "photo.fill")
+                                    .font(.system(size: 14))
+                                Text("Photo Library")
+                                    .font(.lumeBodyMedium)
+                            }
+                            .foregroundColor(.lumeNavy)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                            )
+                        }
+
+                        // File browser
+                        Button(action: onBrowse) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "folder.fill")
+                                    .font(.system(size: 14))
+                                Text("Browse Files")
+                                    .font(.lumeBodyMedium)
+                            }
+                            .foregroundColor(.lumeNavy)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                            )
                         }
                     }
-                    .padding(16)
-                    .background(Color.lumeWarmWhite)
-                    .cornerRadius(14)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14)
-                            .stroke(Color.lumeBorder, lineWidth: 1)
-                    )
+                }
+            }
+            .padding(24)
+            .background(Color.lumeWarmWhite)
+            .cornerRadius(20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.lumeBorder, lineWidth: 1)
+            )
+            .padding(.horizontal, 20)
+
+            // Supported formats info
+            VStack(spacing: 10) {
+                HStack(spacing: 8) {
+                    Image(systemName: "lock.shield.fill")
+                        .font(.system(size: 13))
+                        .foregroundColor(.lumeGreen)
+                    Text("Files are encrypted and stored securely")
+                        .font(.lumeSmall)
+                        .foregroundColor(.lumeMuted)
+                }
+
+                HStack(spacing: 8) {
+                    Image(systemName: "doc.badge.ellipsis")
+                        .font(.system(size: 13))
+                        .foregroundColor(.lumeMuted)
+                    Text("PDF, JPG, PNG, TXT, DOC, XLSX — up to 10 MB")
+                        .font(.lumeSmall)
+                        .foregroundColor(.lumeMuted)
                 }
             }
             .padding(.horizontal, 20)
-            .padding(.top, 16)
-        } else {
-            // Empty state — warm, website-matching placeholder
-            VStack(spacing: 20) {
-                Spacer().frame(height: 40)
 
-                ZStack {
-                    Circle()
-                        .fill(Color(hex: "F0EAE0"))
-                        .frame(width: 80, height: 80)
-                    Image(systemName: "doc.text.fill")
-                        .font(.system(size: 32, weight: .light))
-                        .foregroundColor(Color(hex: "C4704E"))
-                }
-
-                Text("No documents yet")
-                    .font(.lumeDisplaySmall)
-                    .foregroundColor(.lumeNavy)
-
-                Text("Once you get started, we'll list\nevery document you need — all\nin one place, nothing to guess.")
-                    .font(.lumeBody)
-                    .foregroundColor(.lumeMuted)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(3)
-
-                HStack(spacing: 16) {
-                    VStack(spacing: 6) {
-                        Image(systemName: "list.clipboard")
-                            .font(.system(size: 18))
-                            .foregroundColor(Color(hex: "4A7C59"))
-                        Text("Track")
-                            .font(.lumeSmall)
-                            .foregroundColor(.lumeMuted)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(Color(hex: "E8F0E4"))
-                    .cornerRadius(12)
-
-                    VStack(spacing: 6) {
-                        Image(systemName: "checkmark.shield")
-                            .font(.system(size: 18))
-                            .foregroundColor(Color(hex: "2C4A5E"))
-                        Text("Organize")
-                            .font(.lumeSmall)
-                            .foregroundColor(.lumeMuted)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(Color(hex: "E4E8EE"))
-                    .cornerRadius(12)
-
-                    VStack(spacing: 6) {
-                        Image(systemName: "heart.fill")
-                            .font(.system(size: 18))
-                            .foregroundColor(Color(hex: "C4704E"))
-                        Text("Breathe")
-                            .font(.lumeSmall)
-                            .foregroundColor(.lumeMuted)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(Color(hex: "F0EAE0"))
-                    .cornerRadius(12)
-                }
-                .padding(.horizontal, 20)
-
-                Spacer()
-            }
+            Spacer()
         }
     }
 }
 
-// MARK: - Uploaded Files Content
+// MARK: - My Files Section
 
-struct UploadedFilesContent: View {
+struct MyFilesSection: View {
     let files: [UploadedFile]
     let isLoading: Bool
     let onDelete: (UploadedFile) -> Void
-    @Binding var selectedPhoto: PhotosPickerItem?
-    let onAddCamera: () -> Void
-    let onAddFile: () -> Void
+    let onPreview: (UploadedFile) -> Void
 
     var body: some View {
         if isLoading {
@@ -484,95 +446,33 @@ struct UploadedFilesContent: View {
                 Spacer()
             }
         } else if files.isEmpty {
-            // Empty state — warm, inviting
-            VStack(spacing: 20) {
-                Spacer().frame(height: 40)
+            VStack(spacing: 16) {
+                Spacer().frame(height: 60)
 
                 ZStack {
                     Circle()
                         .fill(Color(hex: "E4E8EE"))
-                        .frame(width: 80, height: 80)
-                    Image(systemName: "arrow.up.doc.fill")
-                        .font(.system(size: 32, weight: .light))
-                        .foregroundColor(Color(hex: "2C4A5E"))
+                        .frame(width: 64, height: 64)
+                    Image(systemName: "folder")
+                        .font(.system(size: 26, weight: .light))
+                        .foregroundColor(.lumeNavy)
                 }
 
-                Text("Your secure file vault")
+                Text("No files yet")
                     .font(.lumeDisplaySmall)
                     .foregroundColor(.lumeNavy)
 
-                Text("Upload photos of documents, IDs,\nforms, or anything you need to\nkeep track of along the way.")
+                Text("Upload your first file using\nthe Upload tab.")
                     .font(.lumeBody)
                     .foregroundColor(.lumeMuted)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(3)
-
-                // Upload action buttons
-                VStack(spacing: 10) {
-                    Button(action: onAddFile) {
-                        HStack(spacing: 10) {
-                            Image(systemName: "folder.fill")
-                                .font(.system(size: 15))
-                            Text("Browse Files")
-                                .font(.lumeBodyMedium)
-                        }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(Color.lumeNavy)
-                        .cornerRadius(12)
-                    }
-
-                    HStack(spacing: 10) {
-                        Button(action: onAddCamera) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "camera.fill")
-                                    .font(.system(size: 14))
-                                Text("Camera")
-                                    .font(.lumeBodyMedium)
-                            }
-                            .foregroundColor(.lumeNavy)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(Color.lumeWarmWhite)
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.lumeBorder, lineWidth: 1)
-                            )
-                        }
-
-                        PhotosPicker(
-                            selection: $selectedPhoto,
-                            matching: .any(of: [.images, .screenshots])
-                        ) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "photo.fill")
-                                    .font(.system(size: 14))
-                                Text("Photos")
-                                    .font(.lumeBodyMedium)
-                            }
-                            .foregroundColor(.lumeNavy)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(Color.lumeWarmWhite)
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.lumeBorder, lineWidth: 1)
-                            )
-                        }
-                    }
-                }
-                .padding(.horizontal, 20)
 
                 Spacer()
             }
         } else {
             VStack(spacing: 12) {
-                // File count header
                 HStack {
-                    Text("\(files.count) file\(files.count == 1 ? "" : "s") uploaded")
+                    Text("\(files.count) file\(files.count == 1 ? "" : "s")")
                         .font(.lumeSmall)
                         .foregroundColor(.lumeMuted)
                     Spacer()
@@ -581,58 +481,143 @@ struct UploadedFilesContent: View {
                 .padding(.top, 12)
 
                 ForEach(files) { file in
-                    HStack(spacing: 14) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color(hex: "E4E8EE"))
-                                .frame(width: 40, height: 40)
-                            Image(systemName: file.iconName)
-                                .font(.system(size: 16))
-                                .foregroundColor(.lumeNavy)
-                        }
-
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(file.displayName)
-                                .font(.lumeBodyMedium)
-                                .foregroundColor(.lumeText)
-                                .lineLimit(1)
-
-                            HStack(spacing: 8) {
-                                if !file.formattedSize.isEmpty {
-                                    Text(file.formattedSize)
-                                        .font(.lumeSmall)
-                                        .foregroundColor(.lumeMuted)
-                                }
-                                if let date = file.createdAt {
-                                    Text(formatDate(date))
-                                        .font(.lumeSmall)
-                                        .foregroundColor(.lumeMuted)
-                                }
-                            }
-                        }
-
-                        Spacer()
-
-                        Button {
-                            onDelete(file)
-                        } label: {
-                            Image(systemName: "trash")
-                                .font(.system(size: 14))
-                                .foregroundColor(.lumeMuted)
-                                .padding(8)
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .background(Color.lumeWarmWhite)
-                    .cornerRadius(14)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14)
-                            .stroke(Color.lumeBorder, lineWidth: 1)
+                    FileCard(
+                        file: file,
+                        onTap: { onPreview(file) },
+                        onDelete: { onDelete(file) }
                     )
                 }
                 .padding(.horizontal, 20)
             }
+        }
+    }
+}
+
+// MARK: - File Card with Preview
+
+struct FileCard: View {
+    let file: UploadedFile
+    let onTap: () -> Void
+    let onDelete: () -> Void
+    @State private var thumbnail: UIImage?
+    @State private var isLoadingThumb = false
+
+    var isImage: Bool {
+        file.contentType?.contains("image") == true
+    }
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(spacing: 0) {
+                // Thumbnail area
+                ZStack {
+                    if isImage, let thumb = thumbnail {
+                        Image(uiImage: thumb)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 160)
+                            .clipped()
+                    } else if isImage && isLoadingThumb {
+                        Rectangle()
+                            .fill(Color(hex: "E4E8EE"))
+                            .frame(height: 160)
+                            .overlay(ProgressView().tint(.lumeMuted))
+                    } else {
+                        // Non-image file type icon
+                        Rectangle()
+                            .fill(file.bgColor)
+                            .frame(height: 100)
+                            .overlay(
+                                VStack(spacing: 8) {
+                                    Image(systemName: file.iconName)
+                                        .font(.system(size: 32, weight: .light))
+                                        .foregroundColor(file.accentColor)
+                                    Text(file.fileExtension.uppercased())
+                                        .font(.lumeSmall)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(file.accentColor)
+                                }
+                            )
+                    }
+                }
+                .cornerRadius(14, corners: [.topLeft, .topRight])
+
+                // File info
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(file.displayName)
+                            .font(.lumeBodyMedium)
+                            .foregroundColor(.lumeText)
+                            .lineLimit(1)
+
+                        HStack(spacing: 6) {
+                            if !file.formattedSize.isEmpty {
+                                Text(file.formattedSize)
+                                    .font(.lumeSmall)
+                                    .foregroundColor(.lumeMuted)
+                            }
+                            if let date = file.uploadedAt {
+                                Text("·")
+                                    .font(.lumeSmall)
+                                    .foregroundColor(.lumeBorder)
+                                Text(formatDate(date))
+                                    .font(.lumeSmall)
+                                    .foregroundColor(.lumeMuted)
+                            }
+                        }
+                    }
+
+                    Spacer()
+
+                    // Action buttons
+                    HStack(spacing: 4) {
+                        Image(systemName: "eye")
+                            .font(.system(size: 13))
+                            .foregroundColor(.lumeNavy)
+                            .padding(8)
+
+                        Button {
+                            onDelete()
+                        } label: {
+                            Image(systemName: "trash")
+                                .font(.system(size: 13))
+                                .foregroundColor(.lumeMuted)
+                                .padding(8)
+                        }
+                    }
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .background(Color.lumeWarmWhite)
+            }
+            .background(Color.lumeWarmWhite)
+            .cornerRadius(14)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color.lumeBorder, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .task {
+            if isImage { await loadThumbnail() }
+        }
+    }
+
+    private func loadThumbnail() async {
+        isLoadingThumb = true
+        defer { isLoadingThumb = false }
+        do {
+            var request = URLRequest(url: URL(string: "https://lumeway.co/api/files/\(file.id)/preview")!)
+            if let token = KeychainHelper.getToken() {
+                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            }
+            let (data, _) = try await URLSession.shared.data(for: request)
+            if let image = UIImage(data: data) {
+                thumbnail = image
+            }
+        } catch {
+            print("Thumbnail load error: \(error)")
         }
     }
 
@@ -644,6 +629,173 @@ struct UploadedFilesContent: View {
         return display.string(from: date)
     }
 }
+
+// MARK: - File Preview Sheet
+
+struct FilePreviewSheet: View {
+    let file: UploadedFile
+    let previewURL: URL?
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Color.lumeCream.ignoresSafeArea()
+
+                if let url = previewURL {
+                    if file.contentType?.contains("image") == true {
+                        // Image preview — zoomable
+                        ScrollView([.horizontal, .vertical]) {
+                            if let data = try? Data(contentsOf: url),
+                               let image = UIImage(data: data) {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(16)
+                            }
+                        }
+                    } else if file.contentType?.contains("pdf") == true {
+                        // PDF preview
+                        PDFPreviewView(url: url)
+                    } else if file.contentType?.contains("text") == true {
+                        // Text file preview
+                        if let text = try? String(contentsOf: url, encoding: .utf8) {
+                            ScrollView {
+                                Text(text)
+                                    .font(.lumeBody)
+                                    .foregroundColor(.lumeText)
+                                    .padding(20)
+                            }
+                        }
+                    } else {
+                        // Generic — show file info
+                        VStack(spacing: 16) {
+                            Image(systemName: file.iconName)
+                                .font(.system(size: 48, weight: .light))
+                                .foregroundColor(.lumeNavy)
+                            Text(file.displayName)
+                                .font(.lumeBodyMedium)
+                                .foregroundColor(.lumeText)
+                            Text("Preview not available for this file type.")
+                                .font(.lumeBody)
+                                .foregroundColor(.lumeMuted)
+                        }
+                    }
+                } else {
+                    ProgressView()
+                        .tint(.lumeAccent)
+                }
+            }
+            .navigationTitle(file.displayName)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.lumeMuted)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - PDF Preview using UIKit
+
+struct PDFPreviewView: UIViewRepresentable {
+    let url: URL
+
+    func makeUIView(context: Context) -> UIView {
+        let webView = WKWebViewWrapper.createWebView()
+        webView.load(URLRequest(url: url))
+        return webView
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
+}
+
+enum WKWebViewWrapper {
+    static func createWebView() -> WKWebView {
+        let config = WKWebViewConfiguration()
+        let webView = WKWebView(frame: .zero, configuration: config)
+        webView.backgroundColor = UIColor(Color.lumeCream)
+        return webView
+    }
+}
+
+// MARK: - Upload Response Models
+
+struct UploadedFile: Codable, Identifiable {
+    let id: Int
+    let originalName: String?
+    let category: String?
+    let fileSize: Int?
+    let contentType: String?
+    let uploadedAt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case originalName = "original_name"
+        case category
+        case fileSize = "file_size"
+        case contentType = "content_type"
+        case uploadedAt = "uploaded_at"
+    }
+
+    var displayName: String {
+        originalName ?? "Untitled"
+    }
+
+    var formattedSize: String {
+        guard let fileSize = fileSize else { return "" }
+        if fileSize < 1024 { return "\(fileSize) B" }
+        if fileSize < 1024 * 1024 { return "\(fileSize / 1024) KB" }
+        return String(format: "%.1f MB", Double(fileSize) / (1024 * 1024))
+    }
+
+    var fileExtension: String {
+        guard let name = originalName else { return "file" }
+        let ext = (name as NSString).pathExtension.lowercased()
+        return ext.isEmpty ? "file" : ext
+    }
+
+    var iconName: String {
+        guard let mime = contentType else { return "doc" }
+        if mime.contains("pdf") { return "doc.richtext" }
+        if mime.contains("image") { return "photo" }
+        if mime.contains("text") { return "doc.plaintext" }
+        if mime.contains("spreadsheet") || mime.contains("excel") || mime.contains("xlsx") { return "tablecells" }
+        if mime.contains("word") || mime.contains("doc") { return "doc.text" }
+        return "doc"
+    }
+
+    var bgColor: Color {
+        guard let mime = contentType else { return Color(hex: "E4E8EE") }
+        if mime.contains("pdf") { return Color(hex: "F0E4E4") }
+        if mime.contains("text") { return Color(hex: "E4E8EE") }
+        if mime.contains("spreadsheet") || mime.contains("excel") { return Color(hex: "E8F0E4") }
+        if mime.contains("word") || mime.contains("doc") { return Color(hex: "E4E8F0") }
+        return Color(hex: "E4E8EE")
+    }
+
+    var accentColor: Color {
+        guard let mime = contentType else { return .lumeNavy }
+        if mime.contains("pdf") { return Color(hex: "C4704E") }
+        if mime.contains("text") { return .lumeNavy }
+        if mime.contains("spreadsheet") || mime.contains("excel") { return Color(hex: "4A7C59") }
+        if mime.contains("word") || mime.contains("doc") { return Color(hex: "2C4A5E") }
+        return .lumeNavy
+    }
+}
+
+struct UploadListResponse: Codable {
+    let files: [UploadedFile]
+}
+
+struct EmptyResponse: Codable {}
 
 // MARK: - Camera Picker
 
@@ -685,3 +837,5 @@ struct CameraPickerView: UIViewControllerRepresentable {
         }
     }
 }
+
+// RoundedCorner helper defined in ChecklistView.swift

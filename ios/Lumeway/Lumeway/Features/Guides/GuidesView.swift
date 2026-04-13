@@ -157,18 +157,26 @@ struct GuidesView: View {
         }
     }
 
-    /// All transition keys the user has access to (primary + purchased)
+    /// All transition keys the user has access to
+    /// Combines: primary transition, active_transitions from dashboard, and /api/guides list
     private var allTransitionKeys: [String] {
         var keys: [String] = []
         if let primary = appState.user?.transitionType {
             keys.append(primary)
         }
-        // Add any additional active transitions from purchases
+        // Add transitions from dashboard active_transitions
         for t in appState.activeTransitions where !keys.contains(t) {
+            keys.append(t)
+        }
+        // Add transitions discovered from /api/guides (covers dict-format active_transitions)
+        for t in accessibleTransitions where !keys.contains(t) {
             keys.append(t)
         }
         return keys
     }
+
+    /// Transitions where user has_access from the /api/guides endpoint
+    @State private var accessibleTransitions: [String] = []
 
     private func filteredCategories(for guideResp: GuideDetailResponse) -> [GuideCategory] {
         let cats = guideResp.guide.categories
@@ -180,6 +188,16 @@ struct GuidesView: View {
     }
 
     private func loadGuides() async {
+        do {
+            // First, fetch the full guides list to discover all accessible transitions
+            let guideList = try await service.listGuides()
+            accessibleTransitions = guideList.transitions
+                .filter { $0.hasAccess }
+                .map { $0.key }
+        } catch {
+            // If list fails, fall back to what we already know
+        }
+
         let transitions = allTransitionKeys
         guard !transitions.isEmpty else {
             isLoading = false

@@ -29,9 +29,10 @@ struct ChatSessionSummary: Codable, Identifiable {
     let startedAt: String?
     let transitionCategory: String?
     let messageCount: Int?
+    let preview: String?
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case id, preview
         case startedAt = "started_at"
         case transitionCategory = "transition_category"
         case messageCount = "message_count"
