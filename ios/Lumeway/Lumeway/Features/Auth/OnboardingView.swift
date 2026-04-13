@@ -120,7 +120,7 @@ struct TransitionCard: View {
         Button(action: onTap) {
             VStack(spacing: 8) {
                 Text(emoji)
-                    .font(.system(size: 28))
+                    .font(.lumeDisplayMedium)
 
                 Text(label)
                     .font(.lumeCaption)
