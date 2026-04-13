@@ -19,54 +19,185 @@ struct CalendarView: View {
                 Color.lumeCream.ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: 20) {
-                        // Month header
-                        MonthHeader(date: $selectedMonth)
+                    VStack(spacing: 0) {
+                        // Navy color-blocked header
+                        ZStack {
+                            Color.lumeNavy
+
+                            VStack(spacing: 10) {
+                                Image(systemName: "calendar")
+                                    .font(.system(size: 28))
+                                    .foregroundColor(.lumeGold)
+
+                                Text("Calendar")
+                                    .font(.lumeDisplayMedium)
+                                    .foregroundColor(.white)
+
+                                let deadlineCount = deadlines.filter { !($0.completed ?? false) }.count
+                                if deadlineCount > 0 {
+                                    Text("\(deadlineCount) upcoming deadline\(deadlineCount == 1 ? "" : "s")")
+                                        .font(.lumeCaption)
+                                        .foregroundColor(.white.opacity(0.6))
+                                } else {
+                                    Text("Stay on top of your dates.")
+                                        .font(.lumeCaption)
+                                        .foregroundColor(.white.opacity(0.6))
+                                }
+                            }
+                            .padding(.top, 60)
+                            .padding(.bottom, 28)
+                        }
+                        .overlay(alignment: .topLeading) {
+                            if isEmbedded {
+                                EmbeddedBackButton()
+                                    .padding(.leading, 16)
+                                    .padding(.top, 54)
+                            }
+                        }
+                        .overlay(alignment: .topTrailing) {
+                            Button {
+                                showAddSheet = true
+                            } label: {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.system(size: 22))
+                                    .foregroundColor(.white.opacity(0.8))
+                            }
+                            .padding(.trailing, 16)
+                            .padding(.top, 58)
+                        }
+                        .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
+
+                        VStack(spacing: 20) {
+                            // Month header
+                            MonthHeader(date: $selectedMonth)
+                                .padding(.horizontal, 20)
+                                .padding(.top, 16)
+
+                            // Calendar grid with clickable days
+                            InteractiveCalendarGrid(
+                                selectedMonth: selectedMonth,
+                                deadlines: deadlines,
+                                selectedDate: $selectedDate
+                            )
                             .padding(.horizontal, 20)
-                            .padding(.top, 12)
 
-                        // Calendar grid with clickable days
-                        InteractiveCalendarGrid(
-                            selectedMonth: selectedMonth,
-                            deadlines: deadlines,
-                            selectedDate: $selectedDate
-                        )
-                        .padding(.horizontal, 20)
+                            // Selected day event popup
+                            if let date = selectedDate {
+                                let eventsForDay = deadlinesForDate(date)
+                                VStack(alignment: .leading, spacing: 10) {
+                                    HStack {
+                                        Text(formatFullDate(date))
+                                            .font(.lumeHeadingSmall)
+                                            .foregroundColor(.lumeNavy)
+                                        Spacer()
+                                        Button {
+                                            withAnimation { selectedDate = nil }
+                                        } label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .font(.system(size: 18))
+                                                .foregroundColor(.lumeMuted)
+                                        }
+                                    }
 
-                        // Selected day event popup
-                        if let date = selectedDate {
-                            let eventsForDay = deadlinesForDate(date)
-                            VStack(alignment: .leading, spacing: 10) {
-                                HStack {
-                                    Text(formatFullDate(date))
-                                        .font(.lumeHeadingSmall)
-                                        .foregroundColor(.lumeNavy)
-                                    Spacer()
-                                    Button {
-                                        withAnimation { selectedDate = nil }
-                                    } label: {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .font(.system(size: 18))
+                                    if !eventsForDay.isEmpty {
+                                        ForEach(eventsForDay) { deadline in
+                                            HStack(spacing: 12) {
+                                                RoundedRectangle(cornerRadius: 2)
+                                                    .fill(urgencyColor(deadline))
+                                                    .frame(width: 4, height: 36)
+
+                                                VStack(alignment: .leading, spacing: 3) {
+                                                    Text(deadline.title ?? "Deadline")
+                                                        .font(.lumeBodyMedium)
+                                                        .foregroundColor(.lumeNavy)
+                                                    if let note = deadline.note, !note.isEmpty {
+                                                        Text(note)
+                                                            .font(.lumeSmall)
+                                                            .foregroundColor(.lumeMuted)
+                                                            .lineLimit(2)
+                                                    }
+                                                }
+
+                                                Spacer()
+
+                                                Button {
+                                                    toggleDeadline(deadline)
+                                                } label: {
+                                                    ZStack {
+                                                        Circle()
+                                                            .stroke(deadline.completed ?? false ? Color.lumeGreen : urgencyColor(deadline), lineWidth: 2)
+                                                            .frame(width: 24, height: 24)
+                                                        if deadline.completed ?? false {
+                                                            Image(systemName: "checkmark")
+                                                                .font(.system(size: 11, weight: .bold))
+                                                                .foregroundColor(.lumeGreen)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            .padding(14)
+                                            .background(Color.lumeWarmWhite)
+                                            .cornerRadius(12)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                                            )
+                                        }
+                                    } else {
+                                        Text("No events on this day")
+                                            .font(.lumeBody)
                                             .foregroundColor(.lumeMuted)
+                                            .padding(.top, 4)
                                     }
                                 }
+                                .padding(16)
+                                .background(Color.lumeAccent.opacity(0.04))
+                                .cornerRadius(16)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.lumeAccent.opacity(0.12), lineWidth: 1)
+                                )
+                                .padding(.horizontal, 20)
+                                .transition(.opacity.combined(with: .move(edge: .top)))
+                            }
 
-                                if !eventsForDay.isEmpty {
-                                    ForEach(eventsForDay) { deadline in
-                                        HStack(spacing: 12) {
+                            // Upcoming deadlines — show max 3
+                            let upcoming = Array(majorDeadlines.prefix(3))
+                            if !upcoming.isEmpty {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text("Upcoming")
+                                        .font(.lumeSectionTitle)
+                                        .foregroundColor(.lumeNavy)
+                                        .padding(.horizontal, 24)
+
+                                    ForEach(upcoming) { deadline in
+                                        HStack(spacing: 14) {
                                             RoundedRectangle(cornerRadius: 2)
                                                 .fill(urgencyColor(deadline))
-                                                .frame(width: 4, height: 36)
+                                                .frame(width: 4, height: 44)
 
-                                            VStack(alignment: .leading, spacing: 3) {
+                                            VStack(alignment: .leading, spacing: 4) {
                                                 Text(deadline.title ?? "Deadline")
                                                     .font(.lumeBodyMedium)
                                                     .foregroundColor(.lumeNavy)
-                                                if let note = deadline.note, !note.isEmpty {
-                                                    Text(note)
-                                                        .font(.lumeSmall)
-                                                        .foregroundColor(.lumeMuted)
-                                                        .lineLimit(2)
+
+                                                if let dueDate = deadline.dueDate {
+                                                    HStack(spacing: 6) {
+                                                        Image(systemName: "calendar")
+                                                            .font(.system(size: 11))
+                                                            .foregroundColor(.lumeMuted)
+                                                        Text(formatDateShort(dueDate))
+                                                            .font(.lumeSmall)
+                                                            .foregroundColor(.lumeMuted)
+                                                        if let days = daysRemaining(for: deadline) {
+                                                            Text("·")
+                                                                .foregroundColor(.lumeBorder)
+                                                            Text(daysText(days))
+                                                                .font(.lumeSmall)
+                                                                .fontWeight(.medium)
+                                                                .foregroundColor(days <= 3 ? .lumeAccent : days <= 7 ? .lumeGold : .lumeGreen)
+                                                        }
+                                                    }
                                                 }
                                             }
 
@@ -77,13 +208,8 @@ struct CalendarView: View {
                                             } label: {
                                                 ZStack {
                                                     Circle()
-                                                        .stroke(deadline.completed ?? false ? Color.lumeGreen : urgencyColor(deadline), lineWidth: 2)
+                                                        .stroke(urgencyColor(deadline), lineWidth: 1.5)
                                                         .frame(width: 24, height: 24)
-                                                    if deadline.completed ?? false {
-                                                        Image(systemName: "checkmark")
-                                                            .font(.system(size: 11, weight: .bold))
-                                                            .foregroundColor(.lumeGreen)
-                                                    }
                                                 }
                                             }
                                         }
@@ -94,131 +220,41 @@ struct CalendarView: View {
                                             RoundedRectangle(cornerRadius: 12)
                                                 .stroke(Color.lumeBorder, lineWidth: 1)
                                         )
+                                        .padding(.horizontal, 20)
                                     }
-                                } else {
-                                    Text("No events on this day")
+                                }
+                            }
+
+                            if majorDeadlines.isEmpty && !isLoading {
+                                VStack(spacing: 12) {
+                                    Image(systemName: "calendar.badge.plus")
+                                        .font(.system(size: 36))
+                                        .foregroundColor(.lumeBorder)
+                                    Text("No upcoming deadlines")
                                         .font(.lumeBody)
                                         .foregroundColor(.lumeMuted)
-                                        .padding(.top, 4)
+                                    Text("Add important dates to stay\non track with your transition.")
+                                        .font(.lumeCaption)
+                                        .foregroundColor(.lumeMuted)
+                                        .multilineTextAlignment(.center)
+                                        .padding(.horizontal, 40)
                                 }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 32)
                             }
-                            .padding(16)
-                            .background(Color.lumeAccent.opacity(0.04))
-                            .cornerRadius(16)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color.lumeAccent.opacity(0.12), lineWidth: 1)
-                            )
-                            .padding(.horizontal, 20)
-                            .transition(.opacity.combined(with: .move(edge: .top)))
+
+                            Spacer().frame(height: 100)
                         }
-
-                        // Upcoming deadlines — show max 3
-                        let upcoming = Array(majorDeadlines.prefix(3))
-                        if !upcoming.isEmpty {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Upcoming")
-                                    .font(.lumeSectionTitle)
-                                    .foregroundColor(.lumeNavy)
-                                    .padding(.horizontal, 24)
-
-                                ForEach(upcoming) { deadline in
-                                    HStack(spacing: 14) {
-                                        RoundedRectangle(cornerRadius: 2)
-                                            .fill(urgencyColor(deadline))
-                                            .frame(width: 4, height: 44)
-
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(deadline.title ?? "Deadline")
-                                                .font(.lumeBodyMedium)
-                                                .foregroundColor(.lumeNavy)
-
-                                            if let dueDate = deadline.dueDate {
-                                                HStack(spacing: 6) {
-                                                    Image(systemName: "calendar")
-                                                        .font(.system(size: 11))
-                                                        .foregroundColor(.lumeMuted)
-                                                    Text(formatDateShort(dueDate))
-                                                        .font(.lumeSmall)
-                                                        .foregroundColor(.lumeMuted)
-                                                    if let days = daysRemaining(for: deadline) {
-                                                        Text("·")
-                                                            .foregroundColor(.lumeBorder)
-                                                        Text(daysText(days))
-                                                            .font(.lumeSmall)
-                                                            .fontWeight(.medium)
-                                                            .foregroundColor(days <= 3 ? .lumeAccent : days <= 7 ? .lumeGold : .lumeGreen)
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        Spacer()
-
-                                        Button {
-                                            toggleDeadline(deadline)
-                                        } label: {
-                                            ZStack {
-                                                Circle()
-                                                    .stroke(urgencyColor(deadline), lineWidth: 1.5)
-                                                    .frame(width: 24, height: 24)
-                                            }
-                                        }
-                                    }
-                                    .padding(14)
-                                    .background(Color.lumeWarmWhite)
-                                    .cornerRadius(12)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(Color.lumeBorder, lineWidth: 1)
-                                    )
-                                    .padding(.horizontal, 20)
-                                }
-                            }
-                        }
-
-                        if majorDeadlines.isEmpty && !isLoading {
-                            VStack(spacing: 12) {
-                                Image(systemName: "calendar.badge.plus")
-                                    .font(.system(size: 36))
-                                    .foregroundColor(.lumeBorder)
-                                Text("No upcoming deadlines")
-                                    .font(.lumeBody)
-                                    .foregroundColor(.lumeMuted)
-                                Text("Add important dates to stay\non track with your transition.")
-                                    .font(.lumeCaption)
-                                    .foregroundColor(.lumeMuted)
-                                    .multilineTextAlignment(.center)
-                                    .padding(.horizontal, 40)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 32)
-                        }
-
-                        Spacer().frame(height: 100)
                     }
                 }
+                .ignoresSafeArea(edges: .top)
 
                 if isLoading {
                     ProgressView()
                         .tint(.lumeAccent)
                 }
             }
-            .navigationTitle("Calendar")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(Color.lumeCream, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showAddSheet = true
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 22))
-                            .foregroundColor(.lumeAccent)
-                    }
-                }
-            }
+            .navigationBarHidden(true)
             .refreshable {
                 await loadDeadlines()
             }
@@ -558,6 +594,9 @@ struct AddDeadlineSheet: View {
             }
             .navigationTitle("New Deadline")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Color.lumeCream, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }

@@ -42,7 +42,7 @@ struct UpgradeView: View {
                             FeatureRow(icon: "book.closed", text: "Key terms explained in plain language")
                             FeatureRow(icon: "exclamationmark.triangle", text: "Common mistakes to avoid")
                             FeatureRow(icon: "person.2", text: "Professional resource contacts")
-                            FeatureRow(icon: "bubble.left", text: "Unlimited AI Navigator chat")
+                            FeatureRow(icon: "bubble.left", text: "Unlimited Navigator chat")
                         }
                         .padding(.horizontal, 32)
 

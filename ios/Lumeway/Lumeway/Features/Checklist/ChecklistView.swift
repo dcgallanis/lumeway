@@ -76,47 +76,22 @@ struct ChecklistView: View {
                                         .font(.lumeDisplayMedium)
                                         .foregroundColor(.white)
 
-                                    // Transition picker (only if multiple transitions)
+                                    // Transition labels (when multiple)
                                     if transitionTypes.count > 1 {
-                                        ScrollView(.horizontal, showsIndicators: false) {
-                                            HStack(spacing: 8) {
-                                                ForEach(transitionTypes, id: \.self) { t in
-                                                    Button {
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            selectedTransition = t
-                                                            expandedPhases.removeAll()
-                                                            // Auto-expand first incomplete phase
-                                                            if let first = groupedPhases.first(where: { g in g.items.contains(where: { !$0.isCompleted }) }) {
-                                                                expandedPhases.insert(first.phase)
-                                                            }
-                                                        }
-                                                    } label: {
-                                                        Text(friendlyTransitionName(t))
-                                                            .font(.lumeCaption)
-                                                            .foregroundColor(selectedTransition == t ? .lumeNavy : .white.opacity(0.7))
-                                                            .padding(.horizontal, 14)
-                                                            .padding(.vertical, 7)
-                                                            .background(selectedTransition == t ? Color.white : Color.white.opacity(0.12))
-                                                            .cornerRadius(16)
-                                                    }
-                                                }
-                                            }
-                                            .padding(.horizontal, 20)
-                                        }
+                                        Text(transitionTypes.map { friendlyTransitionName($0) }.joined(separator: " · "))
+                                            .font(.lumeSmall)
+                                            .foregroundColor(.white.opacity(0.5))
                                     }
 
-                                    // Show current phase progress only
-                                    let phaseItems = currentPhaseItems
-                                    let phaseCompleted = phaseItems.filter(\.isCompleted).count
-                                    let phaseTotal = phaseItems.count
-                                    let rawPhase = phaseItems.first?.phase ?? "This Week"
-                                    let phaseName = rawPhase.lowercased().contains("first week") ? "This Week" : rawPhase.lowercased().contains("first month") ? "This Month" : rawPhase.lowercased().contains("first 24") ? "Today" : rawPhase
+                                    // Overall progress
+                                    let allCompleted = items.filter(\.isCompleted).count
+                                    let allTotal = items.count
 
-                                    Text("\(phaseName) — \(phaseCompleted) of \(phaseTotal) done")
+                                    Text("\(allCompleted) of \(allTotal) tasks done")
                                         .font(.lumeCaption)
                                         .foregroundColor(.white.opacity(0.6))
 
-                                    // Progress bar for current phase
+                                    // Progress bar — overall
                                     GeometryReader { geo in
                                         ZStack(alignment: .leading) {
                                             RoundedRectangle(cornerRadius: 4)
@@ -125,7 +100,7 @@ struct ChecklistView: View {
 
                                             RoundedRectangle(cornerRadius: 4)
                                                 .fill(Color.lumeGreen)
-                                                .frame(width: phaseTotal > 0 ? geo.size.width * CGFloat(phaseCompleted) / CGFloat(phaseTotal) : 0, height: 6)
+                                                .frame(width: allTotal > 0 ? geo.size.width * CGFloat(allCompleted) / CGFloat(allTotal) : 0, height: 6)
                                         }
                                     }
                                     .frame(height: 6)
@@ -276,10 +251,9 @@ struct ChecklistView: View {
         return seen
     }
 
-    /// Items filtered to the selected transition (or all if only one)
+    /// All items combined across all transitions
     private var filteredItems: [FullChecklistItem] {
-        guard let selected = selectedTransition, transitionTypes.count > 1 else { return items }
-        return items.filter { ($0.transitionType ?? "general") == selected }
+        return items
     }
 
     /// Friendly name for transition type
@@ -351,14 +325,17 @@ struct ChecklistView: View {
         var dict: [String: [FullChecklistItem]] = [:]
         var order: [String] = []
         for item in source {
+            let transition = item.transitionType ?? "general"
             let phase = item.phase ?? "Other"
-            if dict[phase] == nil { order.append(phase) }
-            dict[phase, default: []].append(item)
+            // Create unique key per transition+phase so phases don't merge across transitions
+            let key = transitionTypes.count > 1 ? "\(friendlyTransitionName(transition)): \(phase)" : phase
+            if dict[key] == nil { order.append(key) }
+            dict[key, default: []].append(item)
         }
-        return order.map { phase in
-            let phaseItems = dict[phase]!
+        return order.map { key in
+            let phaseItems = dict[key]!
             let sorted = phaseItems.filter { !$0.isCompleted } + phaseItems.filter(\.isCompleted)
-            return (phase: phase, items: sorted)
+            return (phase: key, items: sorted)
         }
     }
 
@@ -368,10 +345,6 @@ struct ChecklistView: View {
             withAnimation {
                 items = response.items
                 isLoading = false
-            }
-            // Auto-select first transition if not set
-            if selectedTransition == nil, transitionTypes.count > 1 {
-                selectedTransition = transitionTypes.first
             }
             // Auto-expand first incomplete phase
             if expandedPhases.isEmpty {

@@ -42,7 +42,7 @@ struct NavigatorChatView: View {
 
                                 ForEach(vm.messages) { msg in
                                     ChatBubble(message: msg, onSave: msg.role == .assistant ? {
-                                        saveMessageAsNote(msg.content)
+                                        saveChatToChecklist()
                                     } : nil, onQuickReply: msg.role == .assistant ? { reply in
                                         vm.inputText = reply
                                         sendMessage()
@@ -124,7 +124,7 @@ struct NavigatorChatView: View {
                         Text("Navigator")
                             .font(.lumeBodyMedium)
                             .foregroundColor(.lumeText)
-                        Text("AI Assistant")
+                        Text("Your Navigator")
                             .font(.lumeSmall)
                             .foregroundColor(.lumeMuted)
                     }
@@ -137,11 +137,9 @@ struct NavigatorChatView: View {
                             Label("Chat History", systemImage: "clock.arrow.circlepath")
                         }
                         Button {
-                            if let lastAssistant = vm.messages.last(where: { $0.role == .assistant }) {
-                                saveMessageAsNote(lastAssistant.content)
-                            }
+                            saveChatToChecklist()
                         } label: {
-                            Label("Save to Dashboard", systemImage: "bookmark")
+                            Label("Save to Checklist", systemImage: "checklist")
                         }
                         Button {
                             vm.messages = []
@@ -167,9 +165,27 @@ struct NavigatorChatView: View {
         }
     }
 
-    private func saveMessageAsNote(_ content: String) {
+    private func saveChatToChecklist() {
         Task {
-            _ = try? await vm.notesService.createNote(content: "From Navigator chat:\n\n\(content)")
+            // Build conversation history for the init-from-chat endpoint
+            let history = vm.messages.map { msg -> [String: String] in
+                ["role": msg.role == .user ? "user" : "assistant", "content": msg.content]
+            }
+            guard !history.isEmpty else { return }
+
+            // Determine transition type from app state
+            let transitionType = appState.user?.transitionType ?? appState.activeTransitions.first ?? "general"
+
+            do {
+                let body: [String: Any] = [
+                    "history": history,
+                    "transition_type": transitionType
+                ]
+                let _: SimpleOkResponse = try await vm.api.post("/api/checklist/init-from-chat", body: body)
+            } catch {
+                // Fallback: save as note if checklist extraction fails
+                _ = try? await vm.notesService.createNote(content: "From Navigator chat:\n\n\(vm.messages.last(where: { $0.role == .assistant })?.content ?? "")")
+            }
         }
     }
 

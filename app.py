@@ -2471,7 +2471,7 @@ PRODUCTS = {
             ("After Treatment: Recovery & Relapse", "What to expect, warning signs, and how to support long-term recovery."),
             ("Resource Directory", "Hotlines, support groups, treatment locators, and tools for supporters."),
         ],
-        "features": ["10 in-depth guides written for supporters and families", "Phase-based checklist system with 50 tasks", "Glossary of 19 addiction and recovery terms", "Resource directory with hotlines and organizations", "AI Navigator trained for addiction-related queries"],
+        "features": ["10 in-depth guides written for supporters and families", "Phase-based checklist system with 50 tasks", "Glossary of 19 addiction and recovery terms", "Resource directory with hotlines and organizations", "Navigator trained for addiction-related queries"],
         "transition_page": "/addiction"},
 }
 
@@ -3984,6 +3984,7 @@ footer{padding:40px 48px 28px;border-top:1px solid var(--border);display:flex;fl
 <a href="/" class="nav-logo"><span class="sun-icon" style="color:var(--accent)"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span><span class="nav-logo-text">Lumeway</span></a>
 <div class="nav-dropdown"><button class="nav-drop-btn" aria-expanded="false">Get help with <span class="chev">▾</span></button>
 <div class="nav-drop-menu"><a href="/estate">Death &amp; Estate</a><a href="/divorce">Divorce &amp; Separation</a><a href="/job-loss">Job Loss &amp; Income Crisis</a><a href="/relocation">Moving &amp; Relocation</a><a href="/disability">Disability &amp; Benefits</a><a href="/retirement">Retirement</a></div></div>
+<a href="/features" class="nav-link" style="font-size:14px;color:var(--muted);text-decoration:none;padding:6px 4px">Features</a>
 <div class="nav-dropdown"><button class="nav-drop-btn" aria-expanded="false">Explore <span class="chev">▾</span></button>
 <div class="nav-drop-menu"><a href="/templates">Templates</a><a href="/faq">FAQ</a><a href="/blog">Blog</a><div class="menu-div"></div><a href="/about">About</a><a href="/contact">Contact</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div></div>
 </div>
@@ -4297,6 +4298,7 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
         <span class="sun-icon" style="color:var(--accent)"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
         <span class="nav-logo-text">Lumeway</span>
       </a>
+      <a href="/features" style="font-size:14px;color:var(--muted);text-decoration:none;padding:6px 4px">Features</a>
     </div>
     <div class="nav-right">
       <a href="/chat" target="_blank" class="btn-ghost">Try it free</a>

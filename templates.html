@@ -62,11 +62,11 @@
     .mobile-menu .mobile-cta { margin-top: 24px; display: block; text-align: center; padding: 14px 24px; background: var(--accent); color: #fff; border-radius: 10px; font-size: 15px; font-weight: 500; text-decoration: none; border: none; }
 
     /* Tier carousel */
-    .carousel-section { padding: 32px 5% 56px; width: 100%; display: flex; flex-direction: column; align-items: center; }
+    .carousel-section { padding: 24px 5% 40px; width: 100%; display: flex; flex-direction: column; align-items: center; }
     .carousel-container { position: relative; width: 100%; max-width: 900px; overflow: hidden; }
-    .carousel-track { display: flex; transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
-    .carousel-slide { min-width: 100%; padding: 0 12px; box-sizing: border-box; }
-    .carousel-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; padding: 44px 40px; box-shadow: 0 2px 32px rgba(27,58,92,0.07); text-align: center; }
+    .carousel-track { display: flex; align-items: stretch; transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+    .carousel-slide { min-width: 100%; padding: 0 12px; box-sizing: border-box; display: flex; flex-direction: column; }
+    .carousel-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; box-shadow: 0 2px 32px rgba(27,58,92,0.07); text-align: center; display: flex; flex-direction: column; flex: 1; }
     .carousel-card.carousel-card--highlight { border: 2px solid var(--navy); }
     .carousel-pill { display: inline-block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 14px; border-radius: 100px; margin-bottom: 18px; }
     .carousel-pill--free { background: #e8f5e9; color: #2d6a4f; }
@@ -76,7 +76,7 @@
     .carousel-card .carousel-price { font-family: 'Libre Baskerville', serif; font-size: 40px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
     .carousel-card .carousel-price span { font-size: 15px; font-weight: 300; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; }
     .carousel-card p { font-size: 15px; color: var(--muted); font-weight: 300; line-height: 1.7; max-width: 600px; margin: 0 auto 24px; }
-    .carousel-features { list-style: none; text-align: left; max-width: 480px; margin: 0 auto 28px; }
+    .carousel-features { list-style: none; text-align: left; max-width: 480px; margin: 0 auto 28px; flex: 1; }
     .carousel-features li { font-size: 14px; color: var(--text); line-height: 1.6; padding: 5px 0 5px 22px; position: relative; }
     .carousel-features li::before { content: '\2713'; position: absolute; left: 0; color: var(--gold); font-weight: 600; }
     .carousel-mini-icons { display: flex; justify-content: center; gap: 16px; margin-bottom: 28px; }
@@ -211,7 +211,6 @@
         <div class="nav-dropdown">
           <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">&#9662;</span></button>
           <div class="nav-drop-menu">
-            <a href="/features">Features</a>
             <a href="/templates">Shop</a>
             <a href="/faq">FAQ</a>
             <a href="/blog">Blog</a>
@@ -297,7 +296,7 @@
             <h2>Start with the Navigator</h2>
             <div class="carousel-price">$0</div>
             <ul class="carousel-features">
-              <li>Chat with the AI Navigator to figure out your next steps</li>
+              <li>Chat with the Navigator to figure out your next steps</li>
               <li>Get a personalized checklist overview</li>
               <li>Access crisis resources anytime</li>
             </ul>
@@ -333,7 +332,7 @@
               <li>Calendar with real legal and financial deadlines</li>
               <li>Document storage and tracking</li>
               <li>Community access</li>
-              <li>AI Navigator with full context</li>
+              <li>Navigator with full context</li>
             </ul>
             <a href="/pricing" class="carousel-cta carousel-cta--primary">See all plans &#8594;</a>
           </div>
@@ -343,7 +342,7 @@
         <div class="carousel-slide">
           <div class="carousel-card carousel-card--highlight">
             <span class="carousel-pill carousel-pill--full">Full Access</span>
-            <h2>Every transition, every feature, forever</h2>
+            <h2>Every transition, every feature</h2>
             <div class="carousel-price">$125 <span>one-time</span></div>
             <p style="margin-bottom:20px">One purchase unlocks the complete Lumeway experience across all six life changes — no subscriptions, no recurring fees.</p>
             <ul class="carousel-features">
@@ -351,9 +350,10 @@
               <li>Every worksheet bundle included</li>
               <li>Full guides, calendar, and document storage</li>
               <li>Community access</li>
-              <li>AI Navigator with full context</li>
+              <li>Navigator with full context</li>
               <li>Every future update included</li>
             </ul>
+            <p style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.5;margin:12px auto 20px;max-width:480px;text-align:center">Includes all six current transitions. Future content additions (such as new transition types) are not guaranteed at this price and may be offered separately.</p>
             <a href="/pricing" class="carousel-cta carousel-cta--primary">Get full access &#8594;</a>
           </div>
         </div>

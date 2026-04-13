@@ -161,6 +161,8 @@ struct CommunityView: View {
                 if isPaid { await loadPosts() }
             }
             .task {
+                // Refresh tier data in case it changed (e.g. promo code redeemed on web)
+                await appState.loadDashboard()
                 if isPaid { await loadPosts() }
             }
             .sheet(isPresented: $showNewPost) {

@@ -46,7 +46,7 @@ final class AppState: ObservableObject {
                 self.user = me.user
                 self.isAuthenticated = true
                 self.needsOnboarding = me.user?.transitionType == nil
-                // Sync community icon from server to local storage
+                // Sync community icon and display name from server to local storage
                 if let icon = me.user?.communityIcon, !icon.isEmpty {
                     UserDefaults.standard.set(icon, forKey: "selectedProfileEmoji")
                     UserDefaults.standard.set(icon, forKey: "community_icon")
@@ -54,6 +54,9 @@ final class AppState: ObservableObject {
                 if let bg = me.user?.communityIconBg, !bg.isEmpty {
                     UserDefaults.standard.set(bg, forKey: "community_icon_bg")
                     UserDefaults.standard.set(bg, forKey: "selectedIconBgColor")
+                }
+                if let name = me.user?.displayName, !name.isEmpty {
+                    UserDefaults.standard.set(name, forKey: "community_display_name")
                 }
                 // Pre-load dashboard data so effectiveTier is ready before views render
                 await loadDashboard()
@@ -74,7 +77,7 @@ final class AppState: ObservableObject {
         self.isAuthenticated = true
         self.needsOnboarding = user.transitionType == nil
         self.justLoggedIn = true
-        // Sync community icon from server to local storage
+        // Sync community icon and display name from server to local storage
         if let icon = user.communityIcon, !icon.isEmpty {
             UserDefaults.standard.set(icon, forKey: "selectedProfileEmoji")
             UserDefaults.standard.set(icon, forKey: "community_icon")
@@ -82,6 +85,9 @@ final class AppState: ObservableObject {
         if let bg = user.communityIconBg, !bg.isEmpty {
             UserDefaults.standard.set(bg, forKey: "community_icon_bg")
             UserDefaults.standard.set(bg, forKey: "selectedIconBgColor")
+        }
+        if let name = user.displayName, !name.isEmpty {
+            UserDefaults.standard.set(name, forKey: "community_display_name")
         }
     }
 
@@ -103,6 +109,20 @@ final class AppState: ObservableObject {
             self.effectiveTier = data.effectiveTier ?? "free"
             self.categoryAccess = data.categoryAccess ?? [:]
             self.activeTransitions = data.activeTransitions ?? []
+            // Sync community settings from server on every refresh
+            if let user = data.user {
+                if let icon = user.communityIcon, !icon.isEmpty {
+                    UserDefaults.standard.set(icon, forKey: "selectedProfileEmoji")
+                    UserDefaults.standard.set(icon, forKey: "community_icon")
+                }
+                if let bg = user.communityIconBg, !bg.isEmpty {
+                    UserDefaults.standard.set(bg, forKey: "community_icon_bg")
+                    UserDefaults.standard.set(bg, forKey: "selectedIconBgColor")
+                }
+                if let name = user.displayName, !name.isEmpty {
+                    UserDefaults.standard.set(name, forKey: "community_display_name")
+                }
+            }
         } catch {
             print("Dashboard load error: \(error)")
         }

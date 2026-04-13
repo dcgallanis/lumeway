@@ -43,15 +43,15 @@ extension Font {
     static let lumeDisplaySmall = Font.custom("CormorantGaramond-SemiBold", size: 22, relativeTo: .headline)
     static let lumeDisplayItalic = Font.custom("CormorantGaramond-Italic", size: 28, relativeTo: .title2)
 
-    // Cormorant Garamond — section headings & subheadings
+    // Montserrat — section headings & subheadings
     static let lumeHeadingLarge = Font.custom("CormorantGaramond-SemiBold", size: 30, relativeTo: .largeTitle)
-    static let lumeHeadingMedium = Font.custom("CormorantGaramond-Regular", size: 22, relativeTo: .title2)
-    static let lumeHeadingSmall = Font.custom("CormorantGaramond-Regular", size: 17, relativeTo: .headline)
-    static let lumeHeadingItalic = Font.custom("CormorantGaramond-Italic", size: 22, relativeTo: .title2)
+    static let lumeHeadingMedium = Font.custom("Montserrat-SemiBold", size: 20, relativeTo: .title2)
+    static let lumeHeadingSmall = Font.custom("Montserrat-Medium", size: 17, relativeTo: .headline)
+    static let lumeHeadingItalic = Font.custom("Montserrat-Medium", size: 20, relativeTo: .title2)
 
-    // Cormorant Garamond — section labels
-    static let lumeSectionTitle = Font.custom("CormorantGaramond-SemiBold", size: 16, relativeTo: .subheadline)
-    static let lumeSectionTitleBold = Font.custom("CormorantGaramond-Bold", size: 16, relativeTo: .subheadline)
+    // Montserrat — section labels
+    static let lumeSectionTitle = Font.custom("Montserrat-SemiBold", size: 14, relativeTo: .subheadline)
+    static let lumeSectionTitleBold = Font.custom("Montserrat-Bold", size: 14, relativeTo: .subheadline)
 
     // Montserrat — body text
     static let lumeBody = Font.custom("Montserrat-Regular", size: 15, relativeTo: .body)

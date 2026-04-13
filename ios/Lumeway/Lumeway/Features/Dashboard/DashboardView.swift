@@ -92,30 +92,14 @@ struct DashboardView: View {
                         .padding(.horizontal, 24)
                         .padding(.top, 20)
 
-                        // Journey progress card
-                        JourneyCard(
-                            completed: checklistItems.filter(\.isCompleted).count,
-                            total: checklistItems.count,
-                            thisWeekTasks: thisWeekTasks
+                        // Week at a glance
+                        WeekAtGlanceCard(
+                            tasks: thisWeekTasks,
+                            allCompleted: checklistItems.filter(\.isCompleted).count,
+                            allTotal: checklistItems.count,
+                            onToggle: { task in toggleTask(task) }
                         )
                         .padding(.horizontal, 20)
-
-                        // This week's tasks
-                        if !thisWeekTasks.isEmpty {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("This Week")
-                                    .font(.lumeSectionTitle)
-                                    .foregroundColor(.lumeNavy)
-                                    .padding(.horizontal, 24)
-
-                                ForEach(thisWeekTasks.prefix(4)) { task in
-                                    ThisWeekTaskRow(task: task) {
-                                        toggleTask(task)
-                                    }
-                                    .padding(.horizontal, 20)
-                                }
-                            }
-                        }
 
                         // Personal goals
                         if let goals = appState.dashboardData?.goals, !goals.isEmpty {
@@ -309,86 +293,69 @@ struct DashboardView: View {
     }
 }
 
-// MARK: - Journey Card (replaces ActiveTransitionCard)
+// MARK: - Week at a Glance Card
 
-struct JourneyCard: View {
-    let completed: Int
-    let total: Int
-    let thisWeekTasks: [FullChecklistItem]
+struct WeekAtGlanceCard: View {
+    let tasks: [FullChecklistItem]
+    let allCompleted: Int
+    let allTotal: Int
+    let onToggle: (FullChecklistItem) -> Void
 
-    private var progress: CGFloat {
-        total > 0 ? CGFloat(completed) / CGFloat(total) : 0
+    private var weekCompleted: Int {
+        tasks.filter(\.isCompleted).count
     }
 
-    private var percentage: Int {
-        Int(progress * 100)
+    private var weekProgress: CGFloat {
+        tasks.isEmpty ? 0 : CGFloat(weekCompleted) / CGFloat(tasks.count)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Hero title
-            Text("Your Journey")
-                .font(.lumeHeadingMedium)
-                .foregroundColor(.white)
-
-            // Progress circle + stats
-            HStack(spacing: 20) {
-                // Circular progress
-                ZStack {
-                    Circle()
-                        .stroke(Color.white.opacity(0.12), lineWidth: 5)
-                        .frame(width: 72, height: 72)
-
-                    Circle()
-                        .trim(from: 0, to: progress)
-                        .stroke(
-                            LinearGradient(
-                                colors: [.lumeGold, .lumeAccent],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            style: StrokeStyle(lineWidth: 5, lineCap: .round)
-                        )
-                        .frame(width: 72, height: 72)
-                        .rotationEffect(.degrees(-90))
-
-                    Text("\(percentage)%")
-                        .font(.lumeBodySemibold)
+            // Header
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Your Week")
+                        .font(.lumeHeadingMedium)
                         .foregroundColor(.white)
-                }
 
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 6) {
-                        Text("\(completed)")
-                            .font(.lumeHeadingSmall)
-                            .foregroundColor(.white)
-                        Text("of \(total) tasks done")
-                            .font(.lumeCaptionLight)
+                    if tasks.isEmpty {
+                        Text("You're all caught up")
+                            .font(.lumeCaption)
+                            .foregroundColor(.white.opacity(0.5))
+                    } else {
+                        Text("\(weekCompleted) of \(tasks.count) done this week")
+                            .font(.lumeCaption)
                             .foregroundColor(.white.opacity(0.6))
                     }
-
-                    if !thisWeekTasks.isEmpty {
-                        Text("\(thisWeekTasks.count) task\(thisWeekTasks.count == 1 ? "" : "s") this week")
-                            .font(.lumeSmall)
-                            .foregroundColor(.lumeGreen)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(Color.lumeGreen.opacity(0.15))
-                            .cornerRadius(8)
-                    }
                 }
-
                 Spacer()
+
+                // Small overall badge
+                if allTotal > 0 {
+                    VStack(spacing: 2) {
+                        Text("\(allCompleted)/\(allTotal)")
+                            .font(.lumeSmall)
+                            .fontWeight(.medium)
+                            .foregroundColor(.white)
+                        Text("overall")
+                            .font(.system(size: 9))
+                            .foregroundColor(.white.opacity(0.4))
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.white.opacity(0.1))
+                    .cornerRadius(10)
+                }
             }
 
-            // Progress bar
+            // Weekly progress bar
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 3)
+                    RoundedRectangle(cornerRadius: 4)
                         .fill(Color.white.opacity(0.12))
-                        .frame(height: 4)
+                        .frame(height: 6)
 
-                    RoundedRectangle(cornerRadius: 3)
+                    RoundedRectangle(cornerRadius: 4)
                         .fill(
                             LinearGradient(
                                 colors: [.lumeGold, .lumeGreen],
@@ -396,10 +363,42 @@ struct JourneyCard: View {
                                 endPoint: .trailing
                             )
                         )
-                        .frame(width: geo.size.width * progress, height: 4)
+                        .frame(width: geo.size.width * weekProgress, height: 6)
                 }
             }
-            .frame(height: 4)
+            .frame(height: 6)
+
+            // Task list (max 4)
+            if !tasks.isEmpty {
+                VStack(spacing: 8) {
+                    ForEach(tasks.prefix(4)) { task in
+                        HStack(spacing: 12) {
+                            Button {
+                                onToggle(task)
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .stroke(task.isCompleted ? Color.lumeGreen : Color.white.opacity(0.3), lineWidth: 1.5)
+                                        .frame(width: 22, height: 22)
+                                    if task.isCompleted {
+                                        Image(systemName: "checkmark")
+                                            .font(.system(size: 10, weight: .bold))
+                                            .foregroundColor(.lumeGreen)
+                                    }
+                                }
+                            }
+
+                            Text(task.title)
+                                .font(.lumeCaption)
+                                .foregroundColor(task.isCompleted ? .white.opacity(0.4) : .white.opacity(0.85))
+                                .strikethrough(task.isCompleted, color: .white.opacity(0.3))
+                                .lineLimit(1)
+
+                            Spacer()
+                        }
+                    }
+                }
+            }
         }
         .padding(22)
         .background(

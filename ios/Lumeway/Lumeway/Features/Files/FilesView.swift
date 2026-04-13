@@ -459,6 +459,49 @@ struct MyFilesSection: View {
     let onDelete: (UploadedFile) -> Void
     let onPreview: (UploadedFile) -> Void
 
+    @State private var expandedCategories: Set<String> = []
+    @State private var didInitExpand = false
+
+    // Group files by category
+    private var groupedFiles: [(category: String, files: [UploadedFile])] {
+        var dict: [String: [UploadedFile]] = [:]
+        for file in files {
+            let cat = file.category?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+                ? file.category! : categoryFromType(file)
+            dict[cat, default: []].append(file)
+        }
+        // Sort categories alphabetically, but put "Other" last
+        return dict.sorted { a, b in
+            if a.key == "Other" { return false }
+            if b.key == "Other" { return true }
+            return a.key < b.key
+        }.map { ($0.key, $0.value) }
+    }
+
+    private func categoryFromType(_ file: UploadedFile) -> String {
+        guard let mime = file.contentType else { return "Other" }
+        if mime.contains("image") { return "Photos" }
+        if mime.contains("pdf") { return "Documents" }
+        if mime.contains("text") { return "Text Files" }
+        if mime.contains("spreadsheet") || mime.contains("excel") { return "Spreadsheets" }
+        if mime.contains("word") || mime.contains("doc") { return "Documents" }
+        return "Other"
+    }
+
+    private func iconForCategory(_ cat: String) -> String {
+        switch cat.lowercased() {
+        case "photos": return "photo.fill"
+        case "documents": return "doc.richtext"
+        case "text files": return "doc.plaintext"
+        case "spreadsheets": return "tablecells"
+        case "legal": return "building.columns.fill"
+        case "financial", "finance": return "dollarsign.circle.fill"
+        case "medical", "health": return "heart.text.square.fill"
+        case "identification", "id": return "person.text.rectangle.fill"
+        default: return "folder.fill"
+        }
+    }
+
     var body: some View {
         if isLoading {
             VStack(spacing: 16) {
@@ -491,7 +534,7 @@ struct MyFilesSection: View {
                 Spacer()
             }
         } else {
-            VStack(spacing: 12) {
+            VStack(spacing: 16) {
                 HStack {
                     Text("\(files.count) file\(files.count == 1 ? "" : "s")")
                         .font(.lumeSmall)
@@ -501,14 +544,63 @@ struct MyFilesSection: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
 
-                ForEach(files) { file in
-                    FileCard(
-                        file: file,
-                        onTap: { onPreview(file) },
-                        onDelete: { onDelete(file) }
-                    )
+                // Categorized collapsible sections
+                ForEach(groupedFiles, id: \.category) { group in
+                    VStack(spacing: 0) {
+                        // Category header
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                if expandedCategories.contains(group.category) {
+                                    expandedCategories.remove(group.category)
+                                } else {
+                                    expandedCategories.insert(group.category)
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 10) {
+                                Image(systemName: iconForCategory(group.category))
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.lumeNavy)
+                                Text(group.category)
+                                    .font(.lumeSectionTitle)
+                                    .foregroundColor(.lumeNavy)
+                                Text("\(group.files.count)")
+                                    .font(.lumeSmall)
+                                    .foregroundColor(.lumeMuted)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.lumeBorder.opacity(0.5))
+                                    .cornerRadius(8)
+                                Spacer()
+                                Image(systemName: expandedCategories.contains(group.category) ? "chevron.up" : "chevron.down")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.lumeMuted)
+                            }
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                        }
+                        .buttonStyle(.plain)
+
+                        if expandedCategories.contains(group.category) {
+                            ForEach(group.files) { file in
+                                FileCard(
+                                    file: file,
+                                    onTap: { onPreview(file) },
+                                    onDelete: { onDelete(file) }
+                                )
+                                .padding(.horizontal, 20)
+                            }
+                        }
+                    }
                 }
-                .padding(.horizontal, 20)
+            }
+            .onAppear {
+                if !didInitExpand {
+                    didInitExpand = true
+                    for group in groupedFiles {
+                        expandedCategories.insert(group.category)
+                    }
+                }
             }
         }
     }

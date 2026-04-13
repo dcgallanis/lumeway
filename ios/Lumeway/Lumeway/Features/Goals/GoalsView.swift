@@ -586,6 +586,9 @@ private struct AddGoalSheet: View {
             }
             .navigationTitle("Add Goal")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Color(hex: "F5F2ED"), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
