@@ -36,6 +36,9 @@ struct NavigatorChatView: View {
                                 ForEach(messages) { msg in
                                     ChatBubble(message: msg, onSave: msg.role == .assistant ? {
                                         saveMessageAsNote(msg.content)
+                                    } : nil, onQuickReply: msg.role == .assistant ? { reply in
+                                        inputText = reply
+                                        sendMessage()
                                     } : nil)
                                         .id(msg.id)
                                 }
@@ -70,7 +73,7 @@ struct NavigatorChatView: View {
 
                     // Input bar
                     HStack(spacing: 12) {
-                        TextField("Ask anything...", text: $inputText, axis: .vertical)
+                        TextField("Tell me what\u{2019}s going on\u{2026}", text: $inputText, axis: .vertical)
                             .font(.lumeBody)
                             .foregroundColor(.lumeText)
                             .lineLimit(1...4)
@@ -94,6 +97,15 @@ struct NavigatorChatView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     .background(Color.lumeCream)
+
+                    // Footer disclaimer
+                    Text("Lumeway is a guidance tool, not a licensed professional. Always consult a qualified advisor.")
+                        .font(.system(size: 11))
+                        .foregroundColor(.lumeMuted)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 8)
+                        .background(Color.lumeCream)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -110,22 +122,30 @@ struct NavigatorChatView: View {
                             .foregroundColor(.lumeMuted)
                     }
                 }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        showHistory = true
-                    } label: {
-                        Image(systemName: "clock.arrow.circlepath")
-                            .foregroundColor(.lumeMuted)
-                    }
-                }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        messages = []
-                        inputText = ""
-                        sessionId = nil
-                        conversationHistory = []
+                    Menu {
+                        Button {
+                            showHistory = true
+                        } label: {
+                            Label("Chat History", systemImage: "clock.arrow.circlepath")
+                        }
+                        Button {
+                            if let lastAssistant = messages.last(where: { $0.role == .assistant }) {
+                                saveMessageAsNote(lastAssistant.content)
+                            }
+                        } label: {
+                            Label("Save to Dashboard", systemImage: "bookmark")
+                        }
+                        Button {
+                            messages = []
+                            inputText = ""
+                            sessionId = nil
+                            conversationHistory = []
+                        } label: {
+                            Label("New Conversation", systemImage: "arrow.counterclockwise")
+                        }
                     } label: {
-                        Image(systemName: "arrow.counterclockwise.circle.fill")
+                        Image(systemName: "ellipsis.circle")
                             .foregroundColor(.lumeMuted)
                     }
                 }
@@ -254,14 +274,32 @@ struct ChatMessage: Identifiable {
 struct ChatBubble: View {
     let message: ChatMessage
     var onSave: (() -> Void)?
+    var onQuickReply: ((String) -> Void)?
     @State private var saved = false
+
+    /// Parse quick replies from `[QUICK_REPLIES: A | B | C]` and return (cleaned text, options).
+    private var parsed: (text: String, quickReplies: [String]) {
+        let content = message.content
+        let pattern = #"\[QUICK_REPLIES:\s*(.+?)\]"#
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: content, range: NSRange(content.startIndex..., in: content)),
+              let repliesRange = Range(match.range(at: 1), in: content) else {
+            return (content, [])
+        }
+        let replies = content[repliesRange]
+            .split(separator: "|")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+        let cleaned = content.replacingOccurrences(of: pattern, with: "", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return (cleaned, replies)
+    }
 
     var body: some View {
         VStack(alignment: message.role == .user ? .trailing : .leading, spacing: 6) {
             HStack {
                 if message.role == .user { Spacer(minLength: 60) }
 
-                Text(message.content)
+                Text(parsed.text)
                     .font(.lumeBody)
                     .foregroundColor(message.role == .user ? .white : .lumeText)
                     .padding(.horizontal, 16)
@@ -277,6 +315,30 @@ struct ChatBubble: View {
                     )
 
                 if message.role == .assistant { Spacer(minLength: 60) }
+            }
+
+            // Quick reply pills for assistant messages
+            if message.role == .assistant && !parsed.quickReplies.isEmpty {
+                FlowLayout(spacing: 8) {
+                    ForEach(parsed.quickReplies, id: \.self) { reply in
+                        Button {
+                            onQuickReply?(reply)
+                        } label: {
+                            Text(reply)
+                                .font(.lumeCaption)
+                                .foregroundColor(.lumeNavy)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 9)
+                                .background(Color.lumeWarmWhite)
+                                .cornerRadius(20)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(Color.lumeBorder, lineWidth: 1)
+                                )
+                        }
+                    }
+                }
+                .padding(.top, 4)
             }
 
             // Save button for assistant messages
@@ -306,25 +368,35 @@ struct ChatBubble: View {
 struct WelcomeBubble: View {
     var onSuggestionTap: ((String) -> Void)?
 
-    private let suggestions = [
-        "What should I do first?",
-        "Explain my checklist",
-        "What documents do I need?",
-        "Help me understand deadlines",
+    private let starters = [
+        "I recently lost a loved one and don\u{2019}t know where to start.",
+        "I just got laid off. What do I need to do right away?",
+        "I\u{2019}m going through a divorce and feel completely overwhelmed.",
+        "I\u{2019}m moving to a new state and need help with everything.",
+        "I\u{2019}m applying for disability benefits and don\u{2019}t know where to begin.",
+        "I\u{2019}m getting ready to retire and want to make sure I don\u{2019}t miss anything.",
+        "Something else is going on\u{2026}",
     ]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Hi, I'm your Lumeway Navigator.")
-                        .font(.lumeBodyMedium)
-                        .foregroundColor(.lumeText)
-                    Text("I can help you understand your checklist, explain next steps, or answer any questions.")
-                        .font(.lumeBody)
-                        .foregroundColor(.lumeMuted)
-                }
-                Spacer(minLength: 20)
+        VStack(alignment: .leading, spacing: 16) {
+            // Heading & subtext
+            VStack(alignment: .leading, spacing: 12) {
+                Text("You don\u{2019}t have to figure this out alone.")
+                    .font(.lumeBodyMedium)
+                    .foregroundColor(.lumeText)
+
+                Text("Lumeway helps you understand the process and timeline for life\u{2019}s hardest transitions \u{2014} with planning tools to keep you organized and a Transition Navigator to walk you through what comes next.")
+                    .font(.lumeBody)
+                    .foregroundColor(.lumeMuted)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                // Disclaimer
+                Text("Lumeway is a guidance tool \u{2014} not a lawyer, financial advisor, or licensed professional. The information provided is for general educational purposes only and should not be considered legal, financial, or medical advice. Always consult a qualified professional for decisions specific to your situation.")
+                    .font(.system(size: 11))
+                    .foregroundColor(.lumeMuted)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 4)
             }
             .padding(16)
             .background(Color.lumeWarmWhite)
@@ -334,21 +406,28 @@ struct WelcomeBubble: View {
                     .stroke(Color.lumeBorder, lineWidth: 1)
             )
 
-            // Suggestion pills
-            FlowLayout(spacing: 8) {
-                ForEach(suggestions, id: \.self) { suggestion in
+            // Starter buttons
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Where are you right now?")
+                    .font(.lumeBodyMedium)
+                    .foregroundColor(.lumeText)
+                    .padding(.bottom, 2)
+
+                ForEach(starters, id: \.self) { starter in
                     Button {
-                        onSuggestionTap?(suggestion)
+                        onSuggestionTap?(starter)
                     } label: {
-                        Text(suggestion)
-                            .font(.lumeCaption)
+                        Text(starter)
+                            .font(.lumeBody)
                             .foregroundColor(.lumeNavy)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 9)
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
                             .background(Color.lumeWarmWhite)
-                            .cornerRadius(20)
+                            .cornerRadius(16)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 20)
+                                RoundedRectangle(cornerRadius: 16)
                                     .stroke(Color.lumeBorder, lineWidth: 1)
                             )
                     }

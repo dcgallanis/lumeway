@@ -210,7 +210,7 @@ struct DashboardView: View {
         if !snapshotTasks.isEmpty { return snapshotTasks }
         let incomplete = checklistItems.filter { !$0.isCompleted }
         guard let currentPhase = incomplete.first?.phase else { return [] }
-        return checklistItems.filter { $0.phase == currentPhase }
+        return incomplete.filter { $0.phase == currentPhase }
     }
 
     @State private var snapshotTasks: [FullChecklistItem] = []

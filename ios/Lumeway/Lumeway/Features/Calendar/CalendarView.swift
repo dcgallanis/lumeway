@@ -34,22 +34,22 @@ struct CalendarView: View {
                         // Selected day event popup
                         if let date = selectedDate {
                             let eventsForDay = deadlinesForDate(date)
-                            if !eventsForDay.isEmpty {
-                                VStack(alignment: .leading, spacing: 10) {
-                                    HStack {
-                                        Text(formatFullDate(date))
-                                            .font(.lumeHeadingSmall)
-                                            .foregroundColor(.lumeNavy)
-                                        Spacer()
-                                        Button {
-                                            withAnimation { selectedDate = nil }
-                                        } label: {
-                                            Image(systemName: "xmark.circle.fill")
-                                                .font(.system(size: 18))
-                                                .foregroundColor(.lumeMuted)
-                                        }
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack {
+                                    Text(formatFullDate(date))
+                                        .font(.lumeHeadingSmall)
+                                        .foregroundColor(.lumeNavy)
+                                    Spacer()
+                                    Button {
+                                        withAnimation { selectedDate = nil }
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .font(.system(size: 18))
+                                            .foregroundColor(.lumeMuted)
                                     }
+                                }
 
+                                if !eventsForDay.isEmpty {
                                     ForEach(eventsForDay) { deadline in
                                         HStack(spacing: 12) {
                                             RoundedRectangle(cornerRadius: 2)
@@ -93,17 +93,22 @@ struct CalendarView: View {
                                                 .stroke(Color.lumeBorder, lineWidth: 1)
                                         )
                                     }
+                                } else {
+                                    Text("No events on this day")
+                                        .font(.lumeBody)
+                                        .foregroundColor(.lumeMuted)
+                                        .padding(.top, 4)
                                 }
-                                .padding(16)
-                                .background(Color.lumeAccent.opacity(0.04))
-                                .cornerRadius(16)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color.lumeAccent.opacity(0.12), lineWidth: 1)
-                                )
-                                .padding(.horizontal, 20)
-                                .transition(.opacity.combined(with: .move(edge: .top)))
                             }
+                            .padding(16)
+                            .background(Color.lumeAccent.opacity(0.04))
+                            .cornerRadius(16)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.lumeAccent.opacity(0.12), lineWidth: 1)
+                            )
+                            .padding(.horizontal, 20)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
                         }
 
                         // Upcoming deadlines — show max 3
@@ -417,7 +422,7 @@ struct InteractiveCalendarGrid: View {
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 if isSelected {
                                     selectedDate = nil
-                                } else if hasDeadline {
+                                } else {
                                     selectedDate = date
                                 }
                             }
@@ -440,8 +445,9 @@ struct InteractiveCalendarGrid: View {
                                 if hasDeadline && !isSelected {
                                     Circle()
                                         .fill(Color.lumeAccent)
-                                        .frame(width: 6, height: 6)
+                                        .frame(width: 8, height: 8)
                                         .offset(y: 15)
+                                        .transition(.scale.combined(with: .opacity))
                                 }
                             }
                             .frame(height: 38)
