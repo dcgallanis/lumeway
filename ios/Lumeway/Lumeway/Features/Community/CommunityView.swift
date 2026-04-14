@@ -146,6 +146,8 @@ struct CommunityView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Color.lumeCream, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
+            .tint(.lumeNavy)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -403,6 +405,7 @@ struct PostDetailSheet: View {
     @State private var replyText = ""
     @State private var isLoading = true
     @State private var isSending = false
+    @State private var replyingTo: CommunityReply? = nil
 
     private let service = CommunityService()
 
@@ -473,6 +476,9 @@ struct PostDetailSheet: View {
                                         } : nil,
                                         onLike: {
                                             likeReply(reply)
+                                        },
+                                        onReply: {
+                                            replyingTo = reply
                                         }
                                     )
                                 }
@@ -481,10 +487,37 @@ struct PostDetailSheet: View {
                         .padding(20)
                     }
 
+                    // Reply-to context banner
+                    if let target = replyingTo {
+                        HStack(spacing: 8) {
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(Color.lumeAccent)
+                                .frame(width: 3, height: 20)
+                            Text("Replying to \(target.displayName ?? "Anonymous")")
+                                .font(.lumeSmall)
+                                .foregroundColor(.lumeMuted)
+                            Spacer()
+                            Button {
+                                replyingTo = nil
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .foregroundColor(.lumeMuted)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.lumeWarmWhite)
+                    }
+
                     // Reply input
                     Divider()
                     HStack(spacing: 12) {
-                        TextField("Write a reply...", text: $replyText, axis: .vertical)
+                        TextField(
+                            replyingTo != nil ? "Reply to \(replyingTo?.displayName ?? "")..." : "Write a reply...",
+                            text: $replyText,
+                            axis: .vertical
+                        )
                             .font(.lumeBody)
                             .foregroundColor(.lumeText)
                             .lineLimit(1...4)
@@ -521,6 +554,9 @@ struct PostDetailSheet: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Color.lumeCream, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -536,6 +572,7 @@ struct PostDetailSheet: View {
                 await loadPost()
             }
         }
+        .environment(\.colorScheme, .light)
     }
 
     private func loadPost() async {
@@ -550,8 +587,16 @@ struct PostDetailSheet: View {
     }
 
     private func sendReply() {
-        let text = replyText.trimmingCharacters(in: .whitespaces)
+        var text = replyText.trimmingCharacters(in: .whitespaces)
         guard !text.isEmpty else { return }
+
+        // If replying to another reply, prefix with @mention
+        if let target = replyingTo {
+            let mention = "@\(target.displayName ?? "Anonymous") "
+            if !text.hasPrefix(mention) {
+                text = mention + text
+            }
+        }
 
         let name = UserDefaults.standard.string(forKey: "community_display_name") ?? "Anonymous"
         let icon = UserDefaults.standard.string(forKey: "community_icon") ?? "☀️"
@@ -561,6 +606,7 @@ struct PostDetailSheet: View {
             do {
                 _ = try await service.createReply(postId: postId, body: text, displayName: name, icon: icon)
                 replyText = ""
+                replyingTo = nil
                 await loadPost()
             } catch {}
             isSending = false
@@ -592,6 +638,7 @@ struct CommunityReplyRow: View {
     let reply: CommunityReply
     var onDelete: (() -> Void)?
     var onLike: (() -> Void)?
+    var onReply: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -631,6 +678,18 @@ struct CommunityReplyRow: View {
                                     Image(systemName: "heart")
                                         .font(.system(size: 11))
                                     Text("\(reply.likeCount ?? 0)")
+                                        .font(.lumeSmall)
+                                }
+                                .foregroundColor(.lumeMuted)
+                            }
+                        }
+
+                        if let onReply = onReply {
+                            Button(action: onReply) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "arrowshape.turn.up.left")
+                                        .font(.system(size: 11))
+                                    Text("Reply")
                                         .font(.lumeSmall)
                                 }
                                 .foregroundColor(.lumeMuted)

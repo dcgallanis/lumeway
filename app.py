@@ -4795,8 +4795,11 @@ def dashboard_data():
                 d["days_remaining"] = None
 
     conn.close()
+    # Sanitize user dict for JSON response — normalize active_transitions to string list
+    user_response = dict(user)
+    user_response["active_transitions"] = [item["cat"] if isinstance(item, dict) else item for item in (user.get("active_transitions") or [])]
     return jsonify({
-        "user": user,
+        "user": user_response,
         "sessions": sessions,
         "checklist": {"total": total_items, "completed": completed_items, "items": checklist_items},
         "purchases": purchases,

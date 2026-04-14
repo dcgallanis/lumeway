@@ -49,19 +49,20 @@ struct WelcomeView: View {
                     .padding(.bottom, 36)
 
                     // Brand name — hero display
-                    Text("Lumeway")
-                        .font(.lumeDisplayLarge)
+                    Text("LUMEWAY")
+                        .font(.custom("CormorantGaramond-Bold", size: 48))
+                        .tracking(5)
                         .foregroundColor(.white)
                         .padding(.bottom, 20)
 
                     // Tagline
                     VStack(spacing: 6) {
                         Text("When life changes,")
-                            .font(.lumeHeadingMedium)
+                            .font(.custom("Montserrat-SemiBold", size: 18))
                             .foregroundColor(.white)
 
                         Text("find your way through.")
-                            .font(.lumeHeadingItalic)
+                            .font(.custom("Montserrat-Medium", size: 18).italic())
                             .foregroundColor(.lumeGold)
                     }
 

@@ -118,6 +118,8 @@ struct NavigatorChatView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Color.lumeCream, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
+            .tint(.lumeNavy)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack(spacing: 1) {

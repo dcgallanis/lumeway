@@ -13,40 +13,102 @@ struct NotesView: View {
 
     private let service = NotesService()
 
-    // Group notes by time period
-    private var groupedNotes: [(label: String, notes: [NoteItem])] {
-        let cal = Calendar.current
-        let now = Date()
-        let formatter = ISO8601DateFormatter()
+    // Category icons matching the site dashboard
+    private let categoryIcons: [String: String] = [
+        "Financial": "💳",
+        "Insurance": "🛡️",
+        "Legal": "📜",
+        "Medical": "⚕️",
+        "Housing": "🏠",
+        "Employment": "💼",
+        "Personal": "👤",
+        "Other": "📌"
+    ]
 
-        var today: [NoteItem] = []
-        var thisWeek: [NoteItem] = []
-        var thisMonth: [NoteItem] = []
-        var earlier: [NoteItem] = []
+    // SF Symbol fallbacks for category headers
+    private func sfIconForCategory(_ cat: String) -> String {
+        let lower = cat.lowercased()
+        if lower.hasPrefix("guide") { return "book" }
+        if lower.hasPrefix("file") { return "doc" }
+        switch lower {
+        case "financial": return "creditcard"
+        case "insurance": return "shield"
+        case "legal": return "building.columns"
+        case "medical": return "heart.text.square"
+        case "housing": return "house"
+        case "employment": return "briefcase"
+        case "personal": return "person"
+        default: return "pin"
+        }
+    }
+
+    private func colorForCategory(_ cat: String) -> Color {
+        let lower = cat.lowercased()
+        if lower.hasPrefix("guide") { return Color(hex: "2C4A5E") }
+        if lower.hasPrefix("file") { return Color(hex: "8BA888") }
+        switch lower {
+        case "financial": return Color(hex: "B8977E")
+        case "insurance": return Color(hex: "6B8F5E")
+        case "legal": return Color(hex: "7B6BA8")
+        case "medical": return Color(hex: "C4704E")
+        case "housing": return Color(hex: "D4896C")
+        case "employment": return Color(hex: "4A7C9B")
+        case "personal": return Color(hex: "E8CFC0")
+        default: return Color(hex: "6B7B8D")
+        }
+    }
+
+    /// Parse the category tag from note content, matching the site's logic
+    private func categoryForNote(_ note: NoteItem) -> String {
+        let content = note.content
+        // Match [File: X] or [Guide: X]
+        if let range = content.range(of: #"^\[(File|Guide): ([^\]]+)\]"#, options: .regularExpression) {
+            let tag = String(content[range]).dropFirst().dropLast() // Remove [ and ]
+            return String(tag)
+        }
+        // Match [Category] like [Housing], [Financial], etc.
+        if let range = content.range(of: #"^\[([A-Za-z]+)\]\s*"#, options: .regularExpression) {
+            let tag = String(content[range]).trimmingCharacters(in: .whitespaces)
+            // Extract just the word inside brackets
+            if let inner = tag.range(of: #"\[([A-Za-z]+)\]"#, options: .regularExpression) {
+                let word = String(tag[inner]).dropFirst().dropLast()
+                return String(word)
+            }
+        }
+        return "Other"
+    }
+
+    // Group notes by content-based category tags, sorted by newest note in each section
+    private var groupedNotes: [(label: String, notes: [NoteItem])] {
+        var groups: [String: [NoteItem]] = [:]
 
         for note in filteredNotes {
-            guard let dateStr = note.createdAt ?? note.updatedAt,
-                  let date = formatter.date(from: dateStr) else {
-                earlier.append(note)
-                continue
-            }
-            if cal.isDateInToday(date) {
-                today.append(note)
-            } else if cal.isDate(date, equalTo: now, toGranularity: .weekOfYear) {
-                thisWeek.append(note)
-            } else if cal.isDate(date, equalTo: now, toGranularity: .month) {
-                thisMonth.append(note)
-            } else {
-                earlier.append(note)
+            let cat = categoryForNote(note)
+            groups[cat, default: []].append(note)
+        }
+
+        // Sort notes within each group by newest first (by updatedAt or createdAt)
+        for key in groups.keys {
+            groups[key]?.sort { a, b in
+                let dateA = a.updatedAt ?? a.createdAt ?? ""
+                let dateB = b.updatedAt ?? b.createdAt ?? ""
+                return dateA > dateB
             }
         }
 
-        var result: [(String, [NoteItem])] = []
-        if !today.isEmpty { result.append(("Today", today)) }
-        if !thisWeek.isEmpty { result.append(("This Week", thisWeek)) }
-        if !thisMonth.isEmpty { result.append(("This Month", thisMonth)) }
-        if !earlier.isEmpty { result.append(("Earlier", earlier)) }
-        return result
+        // Sort sections by newest note in each, "Other" always last
+        let sorted = groups.keys.sorted { a, b in
+            if a == "Other" { return false }
+            if b == "Other" { return true }
+            let newestA = groups[a]?.first?.updatedAt ?? groups[a]?.first?.createdAt ?? ""
+            let newestB = groups[b]?.first?.updatedAt ?? groups[b]?.first?.createdAt ?? ""
+            return newestA > newestB
+        }
+
+        return sorted.compactMap { key in
+            guard let notes = groups[key] else { return nil }
+            return (key, notes)
+        }
     }
 
     var body: some View {
@@ -145,13 +207,20 @@ struct NotesView: View {
                                                 }
                                             }
                                         } label: {
-                                            HStack {
+                                            HStack(spacing: 10) {
+                                                Image(systemName: sfIconForCategory(group.label))
+                                                    .font(.system(size: 13))
+                                                    .foregroundColor(colorForCategory(group.label))
                                                 Text(group.label)
                                                     .font(.lumeSectionTitle)
                                                     .foregroundColor(.lumeNavy)
                                                 Text("\(group.notes.count)")
                                                     .font(.lumeSmall)
                                                     .foregroundColor(.lumeMuted)
+                                                    .padding(.horizontal, 6)
+                                                    .padding(.vertical, 2)
+                                                    .background(Color.lumeBorder.opacity(0.5))
+                                                    .cornerRadius(8)
                                                 Spacer()
                                                 Image(systemName: expandedSections.contains(group.label) ? "chevron.up" : "chevron.down")
                                                     .font(.system(size: 12, weight: .medium))
@@ -326,17 +395,31 @@ struct NoteEditorView: View {
     let onDelete: (() -> Void)?
     @Environment(\.dismiss) var dismiss
 
+    private let placeholderText = "Phone numbers to remember, questions for your lawyer, reminders about deadlines, things you want to look up later..."
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.lumeCream.ignoresSafeArea()
 
                 VStack {
-                    TextEditor(text: $content)
-                        .font(.lumeBody)
-                        .foregroundColor(.lumeText)
-                        .scrollContentBackground(.hidden)
-                        .padding(16)
+                    ZStack(alignment: .topLeading) {
+                        // Placeholder when empty
+                        if content.isEmpty {
+                            Text(placeholderText)
+                                .font(.lumeBody)
+                                .foregroundColor(.lumeMuted.opacity(0.5))
+                                .padding(.horizontal, 21)
+                                .padding(.vertical, 24)
+                                .allowsHitTesting(false)
+                        }
+
+                        TextEditor(text: $content)
+                            .font(.lumeBody)
+                            .foregroundColor(.lumeText)
+                            .scrollContentBackground(.hidden)
+                            .padding(16)
+                    }
 
                     if let onDelete = onDelete {
                         Button(role: .destructive) {
@@ -352,6 +435,10 @@ struct NoteEditorView: View {
             }
             .navigationTitle(isEditing ? "Edit Note" : "New Note")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Color.lumeCream, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
+            .tint(.lumeNavy)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }
@@ -365,5 +452,6 @@ struct NoteEditorView: View {
                 }
             }
         }
+        .environment(\.colorScheme, .light)
     }
 }

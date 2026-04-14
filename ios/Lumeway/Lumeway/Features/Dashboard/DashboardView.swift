@@ -3,25 +3,19 @@ import SwiftUI
 struct DashboardView: View {
     @EnvironmentObject var appState: AppState
     @State private var checklistItems: [FullChecklistItem] = []
-    @State private var funGreeting: String = ""
     @State private var showChat = false
     @State private var isRefreshing = false
+    @State private var showEditQuickLinks = false
+    @State private var directGoals: [GoalItem] = []
+    @AppStorage("quickLinkPages") private var quickLinkPagesRaw: String = "checklist,calendar,guides"
 
     private let checklistService = ChecklistService()
+    private let goalService = GoalService()
 
-    private let funGreetings = [
-        "Let's make today count.",
-        "One step at a time.",
-        "You've totally got this.",
-        "Small steps, big wins.",
-        "Progress looks great on you.",
-        "You showed up. That's huge.",
-        "Your future self says thanks.",
-        "Let's check something off today.",
-        "Every step forward matters.",
-        "You're doing better than you think.",
-        "Look at you, showing up again.",
-    ]
+    private var quickLinkPages: [NavPage] {
+        let keys = quickLinkPagesRaw.split(separator: ",").map(String.init)
+        return keys.compactMap { NavPage(rawValue: $0) }
+    }
 
     var body: some View {
         NavigationStack {
@@ -35,174 +29,205 @@ struct DashboardView: View {
 
                 ScrollView {
                     VStack(spacing: 22) {
-                        // Greeting header
-                        HStack(alignment: .top) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                if let user = appState.user {
-                                    Text("Hey, \(user.displayName ?? "there")")
-                                        .font(.lumeDisplayMedium)
-                                        .foregroundColor(.lumeNavy)
-                                }
-
-                                Text(funGreeting)
-                                    .font(.custom("CormorantGaramond-Italic", size: 16))
-                                    .foregroundColor(.lumeAccent)
-                            }
-
-                            Spacer()
-
-                            // Refresh button
-                            Button {
+                        // ── Motivational navy card (includes refresh + profile) ──
+                        MotivationCard(
+                            userName: appState.user?.displayName ?? "there",
+                            userInitial: String((appState.user?.displayName ?? appState.user?.email ?? "U").prefix(1)).uppercased(),
+                            completedThisWeek: thisWeekTasks.filter(\.isCompleted).count,
+                            totalThisWeek: thisWeekTasks.count,
+                            allCompleted: checklistItems.filter(\.isCompleted).count,
+                            allTotal: checklistItems.count,
+                            isRefreshing: isRefreshing,
+                            onRefresh: {
                                 Task {
                                     isRefreshing = true
                                     await appState.loadDashboard()
                                     await loadChecklist()
-                                    funGreeting = funGreetings.randomElement() ?? ""
+                                    await loadGoals()
                                     isRefreshing = false
                                 }
-                            } label: {
-                                if isRefreshing {
-                                    ProgressView()
-                                        .tint(.lumeMuted)
-                                        .padding(8)
-                                } else {
-                                    Image(systemName: "arrow.triangle.2.circlepath")
-                                        .font(.system(size: 16, weight: .medium))
-                                        .foregroundColor(.lumeMuted)
-                                        .padding(8)
-                                }
-                            }
-
-                            // Avatar — links to profile
-                            if let user = appState.user {
-                                NavigationLink {
-                                    MoreView(isEmbedded: true)
-                                } label: {
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color.lumeGreen.opacity(0.15))
-                                            .frame(width: 42, height: 42)
-                                        Text(String((user.displayName ?? user.email).prefix(1)).uppercased())
-                                            .font(.lumeBodySemibold)
-                                            .foregroundColor(.lumeGreen)
-                                    }
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 20)
-
-                        // Week at a glance
-                        WeekAtGlanceCard(
-                            tasks: thisWeekTasks,
-                            allCompleted: checklistItems.filter(\.isCompleted).count,
-                            allTotal: checklistItems.count,
-                            onToggle: { task in toggleTask(task) }
+                            },
+                            profileDestination: { MoreView(isEmbedded: true) }
                         )
                         .padding(.horizontal, 20)
+                        .padding(.top, 12)
 
-                        // Personal goals
-                        if let goals = appState.dashboardData?.goals, !goals.isEmpty {
-                            VStack(alignment: .leading, spacing: 12) {
-                                HStack {
-                                    Text("Your Goals")
-                                        .font(.lumeSectionTitle)
-                                        .foregroundColor(.lumeNavy)
-                                    Spacer()
-                                    NavigationLink {
-                                        GoalsView(isEmbedded: true)
-                                    } label: {
-                                        Text("See all")
-                                            .font(.lumeSmall)
-                                            .foregroundColor(.lumeAccent)
-                                    }
+                        // ── Checklist section ──
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text("Checklist")
+                                    .font(.lumeSectionTitle)
+                                    .foregroundColor(.lumeNavy)
+                                Spacer()
+                                NavigationLink {
+                                    ChecklistView(isEmbedded: true)
+                                } label: {
+                                    Text("View all")
+                                        .font(.lumeSmall)
+                                        .foregroundColor(.lumeAccent)
                                 }
-                                .padding(.horizontal, 24)
+                            }
+                            .padding(.horizontal, 24)
 
-                                ForEach(goals.prefix(3)) { goal in
-                                    HStack(spacing: 12) {
-                                        Image(systemName: goal.isCompleted == true ? "checkmark.circle.fill" : "circle")
-                                            .font(.system(size: 18))
-                                            .foregroundColor(goal.isCompleted == true ? .lumeGreen : .lumeGold)
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text(goal.title ?? "")
-                                                .font(.lumeBody)
-                                                .foregroundColor(goal.isCompleted == true ? .lumeMuted : .lumeNavy)
-                                                .strikethrough(goal.isCompleted == true)
-                                            if let tf = goal.timeframe, !tf.isEmpty {
-                                                Text(tf.capitalized)
-                                                    .font(.lumeSmall)
-                                                    .foregroundColor(.lumeMuted)
-                                            }
-                                        }
-                                        Spacer()
-                                    }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 12)
-                                    .background(Color.lumeWarmWhite)
-                                    .cornerRadius(12)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(Color.lumeBorder, lineWidth: 1)
-                                    )
-                                    .padding(.horizontal, 20)
+                            if thisWeekTasks.isEmpty {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "checkmark.seal.fill")
+                                        .font(.system(size: 20))
+                                        .foregroundColor(.lumeGreen)
+                                    Text("You're all caught up. Nice work.")
+                                        .font(.lumeBody)
+                                        .foregroundColor(.lumeMuted)
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 14)
+                                .background(Color.lumeGreen.opacity(0.06))
+                                .cornerRadius(12)
+                                .padding(.horizontal, 20)
+                            } else {
+                                ForEach(thisWeekTasks.prefix(4)) { task in
+                                    ThisWeekTaskRow(task: task, onToggle: { toggleTask(task) })
+                                        .padding(.horizontal, 20)
                                 }
                             }
                         }
 
-                        // Quick links — 2x3 grid linking to everything
+                        // ── Quick Links — labeled grid, customizable ──
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("Your Tools")
-                                .font(.lumeSectionTitle)
-                                .foregroundColor(.lumeNavy)
-                                .padding(.horizontal, 24)
+                            HStack {
+                                Text("Quick Links")
+                                    .font(.lumeSectionTitle)
+                                    .foregroundColor(.lumeNavy)
+                                Spacer()
+                                Button {
+                                    showEditQuickLinks = true
+                                } label: {
+                                    Image(systemName: "pencil")
+                                        .font(.system(size: 12, weight: .medium))
+                                        .foregroundColor(.lumeAccent)
+                                        .padding(6)
+                                        .background(Color.lumeAccent.opacity(0.08))
+                                        .cornerRadius(8)
+                                }
+                            }
+                            .padding(.horizontal, 24)
 
                             LazyVGrid(columns: [
                                 GridItem(.flexible(), spacing: 12),
                                 GridItem(.flexible(), spacing: 12),
                                 GridItem(.flexible(), spacing: 12)
                             ], spacing: 12) {
-                                NavigationLink { ChecklistView(isEmbedded: true) } label: {
-                                    QuickLinkContent(icon: "checklist", label: "Checklist", color: .lumeGreen)
-                                }
-
-                                NavigationLink { CommunityView(isEmbedded: true) } label: {
-                                    QuickLinkContent(icon: "bubble.left.and.bubble.right", label: "Community", color: .lumeAccent)
-                                }
-
-                                NavigationLink { NavigatorChatView(isEmbedded: true) } label: {
-                                    QuickLinkContent(icon: "message", label: "Chat", color: .lumeNavy)
-                                }
-
-                                NavigationLink { GoalsView(isEmbedded: true) } label: {
-                                    QuickLinkContent(icon: "target", label: "Goals", color: .lumeGold)
-                                }
-
-                                NavigationLink { CalendarView(isEmbedded: true) } label: {
-                                    QuickLinkContent(icon: "calendar", label: "Calendar", color: .lumeAccent)
-                                }
-
-                                NavigationLink { NotesView(isEmbedded: true) } label: {
-                                    QuickLinkContent(icon: "pencil.line", label: "Notes", color: Color(hex: "5E8C9A"))
-                                }
-
-                                NavigationLink { GuidesView(isEmbedded: true) } label: {
-                                    QuickLinkContent(icon: "book", label: "Guides", color: .lumeGold)
-                                }
-
-                                NavigationLink { FilesView(isEmbedded: true) } label: {
-                                    QuickLinkContent(icon: "folder", label: "Files", color: Color(hex: "7B6B8D"))
-                                }
-
-                                NavigationLink { ActivityLogView(isEmbedded: true) } label: {
-                                    QuickLinkContent(icon: "note.text", label: "Activity", color: .lumeGreen)
-                                }
-
-                                NavigationLink { MoreView(isEmbedded: true) } label: {
-                                    QuickLinkContent(icon: "person", label: "Profile", color: Color(hex: "7B6B8D"))
+                                ForEach(quickLinkPages) { page in
+                                    NavigationLink {
+                                        page.embeddedDestination
+                                    } label: {
+                                        QuickLinkContent(icon: page.icon, label: page.label, color: page.color)
+                                    }
                                 }
                             }
                             .padding(.horizontal, 20)
+                        }
+
+                        // ── Your Goals ──
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text("Your Goals")
+                                    .font(.lumeSectionTitle)
+                                    .foregroundColor(.lumeNavy)
+                                Spacer()
+                                NavigationLink {
+                                    GoalsView(isEmbedded: true)
+                                } label: {
+                                    Text("Manage")
+                                        .font(.lumeSmall)
+                                        .foregroundColor(.lumeAccent)
+                                }
+                            }
+                            .padding(.horizontal, 24)
+
+                            if hasGoals {
+                                // Show actual goals from either source
+                                if !directGoals.isEmpty {
+                                    ForEach(directGoals) { goal in
+                                        HStack(spacing: 12) {
+                                            Image(systemName: goal.isCompleted ? "checkmark.circle.fill" : "circle")
+                                                .font(.system(size: 18))
+                                                .foregroundColor(goal.isCompleted ? .lumeGreen : .lumeGold)
+                                            VStack(alignment: .leading, spacing: 2) {
+                                                Text(goal.title)
+                                                    .font(.lumeBody)
+                                                    .foregroundColor(goal.isCompleted ? .lumeMuted : .lumeNavy)
+                                                    .strikethrough(goal.isCompleted)
+                                                if !goal.timeframe.isEmpty {
+                                                    Text(goal.timeframe.capitalized)
+                                                        .font(.lumeSmall)
+                                                        .foregroundColor(.lumeMuted)
+                                                }
+                                            }
+                                            Spacer()
+                                        }
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 12)
+                                        .background(Color.lumeWarmWhite)
+                                        .cornerRadius(12)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color.lumeBorder, lineWidth: 1)
+                                        )
+                                        .padding(.horizontal, 20)
+                                    }
+                                } else if let goals = appState.dashboardData?.goals {
+                                    ForEach(goals) { goal in
+                                        HStack(spacing: 12) {
+                                            Image(systemName: goal.isCompleted == true ? "checkmark.circle.fill" : "circle")
+                                                .font(.system(size: 18))
+                                                .foregroundColor(goal.isCompleted == true ? .lumeGreen : .lumeGold)
+                                            VStack(alignment: .leading, spacing: 2) {
+                                                Text(goal.title ?? "")
+                                                    .font(.lumeBody)
+                                                    .foregroundColor(goal.isCompleted == true ? .lumeMuted : .lumeNavy)
+                                                    .strikethrough(goal.isCompleted == true)
+                                                if let tf = goal.timeframe, !tf.isEmpty {
+                                                    Text(tf.capitalized)
+                                                        .font(.lumeSmall)
+                                                        .foregroundColor(.lumeMuted)
+                                                }
+                                            }
+                                            Spacer()
+                                        }
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 12)
+                                        .background(Color.lumeWarmWhite)
+                                        .cornerRadius(12)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color.lumeBorder, lineWidth: 1)
+                                        )
+                                        .padding(.horizontal, 20)
+                                    }
+                                }
+                            } else {
+                                NavigationLink {
+                                    GoalsView(isEmbedded: true)
+                                } label: {
+                                    HStack(spacing: 10) {
+                                        Image(systemName: "plus.circle.fill")
+                                            .font(.system(size: 18))
+                                        Text("Set your own goal")
+                                            .font(.lumeBodyMedium)
+                                    }
+                                    .foregroundColor(.lumeAccent)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 16)
+                                    .background(Color.lumeAccent.opacity(0.06))
+                                    .cornerRadius(14)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(Color.lumeAccent.opacity(0.15), lineWidth: 1)
+                                    )
+                                    .padding(.horizontal, 20)
+                                }
+                            }
                         }
 
                         // Upcoming deadlines
@@ -219,40 +244,33 @@ struct DashboardView: View {
                             }
                         }
 
-                        // Next Up — taps to open full checklist
-                        if let nextTask = checklistItems.first(where: { !$0.isCompleted }) {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Next Up")
-                                    .font(.lumeSectionTitle)
-                                    .foregroundColor(.lumeNavy)
-                                    .padding(.horizontal, 24)
-
-                                NavigationLink {
-                                    TaskDetailView(item: nextTask, color: .lumeAccent)
-                                } label: {
-                                    TodayFocusCard(task: nextTask)
-                                }
-                                .buttonStyle(.plain)
-                                .padding(.horizontal, 20)
-                            }
-                        }
-
                         Spacer().frame(height: 100)
                     }
                 }
             }
             .navigationBarHidden(true)
+            .sheet(isPresented: $showEditQuickLinks) {
+                EditQuickLinksSheet(quickLinkPagesRaw: $quickLinkPagesRaw)
+                    .presentationDetents([.medium, .large])
+            }
             .refreshable {
                 await appState.loadDashboard()
                 await loadChecklist()
-                funGreeting = funGreetings.randomElement() ?? ""
+                await loadGoals()
             }
             .task {
                 snapshotTasks = [] // Reset snapshot on appear
                 await loadChecklist()
-                funGreeting = funGreetings.randomElement() ?? ""
+                await loadGoals()
             }
         }
+    }
+
+    /// Whether the user has any goals from either data source
+    private var hasGoals: Bool {
+        if !directGoals.isEmpty { return true }
+        if let goals = appState.dashboardData?.goals, !goals.isEmpty { return true }
+        return false
     }
 
     /// Tasks in current phase — includes recently checked items so they don't vanish
@@ -289,6 +307,13 @@ struct DashboardView: View {
         do {
             let response = try await checklistService.getChecklist()
             checklistItems = response.items
+        } catch {}
+    }
+
+    private func loadGoals() async {
+        do {
+            let response = try await goalService.getGoals()
+            directGoals = response.goals
         } catch {}
     }
 }
@@ -414,6 +439,184 @@ struct WeekAtGlanceCard: View {
     }
 }
 
+// MARK: - Motivation Card (navy, personalized encouragement + circular progress)
+
+struct MotivationCard<Destination: View>: View {
+    let userName: String
+    let userInitial: String
+    let completedThisWeek: Int
+    let totalThisWeek: Int
+    let allCompleted: Int
+    let allTotal: Int
+    let isRefreshing: Bool
+    let onRefresh: () -> Void
+    @ViewBuilder let profileDestination: () -> Destination
+
+    // Rotating motivational sayings
+    private static var sayings: [String] {
+        [
+            "You're doing better than you think.",
+            "One step at a time. You've got this.",
+            "Progress, not perfection.",
+            "Every small win matters.",
+            "Be kind to yourself today.",
+            "You're building something new.",
+            "Breathe. You're moving forward.",
+            "Trust the process.",
+            "Today is a fresh start.",
+            "You don't have to figure it all out today.",
+            "Courage looks different every day.",
+            "You've already survived 100% of your hardest days.",
+        ]
+    }
+
+    private var motivationalSaying: String {
+        // Rotate based on day of year so it changes daily
+        let day = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
+        return Self.sayings[day % Self.sayings.count]
+    }
+
+    private var weekProgress: CGFloat {
+        guard totalThisWeek > 0 else { return 0 }
+        return CGFloat(completedThisWeek) / CGFloat(totalThisWeek)
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Top row: greeting + refresh + profile
+            HStack(alignment: .top) {
+                Text("Hey, \(userName)")
+                    .font(.custom("CormorantGaramond-Bold", size: 34))
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                // Refresh button
+                Button(action: onRefresh) {
+                    if isRefreshing {
+                        ProgressView()
+                            .tint(.white.opacity(0.6))
+                            .frame(width: 32, height: 32)
+                    } else {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white.opacity(0.5))
+                            .frame(width: 32, height: 32)
+                    }
+                }
+
+                // Profile avatar
+                NavigationLink {
+                    profileDestination()
+                } label: {
+                    ZStack {
+                        Circle()
+                            .fill(Color.white.opacity(0.15))
+                            .frame(width: 36, height: 36)
+                        Text(userInitial)
+                            .font(.custom("Montserrat-SemiBold", size: 14))
+                            .foregroundColor(.white)
+                    }
+                }
+            }
+
+            Spacer().frame(height: 18)
+
+            // Middle: circular progress + motivational saying
+            HStack(spacing: 20) {
+                // Circular progress ring
+                ZStack {
+                    Circle()
+                        .stroke(Color.white.opacity(0.12), lineWidth: 5)
+                        .frame(width: 72, height: 72)
+
+                    Circle()
+                        .trim(from: 0, to: weekProgress)
+                        .stroke(
+                            LinearGradient(
+                                colors: [.lumeGold, .lumeGreen],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            style: StrokeStyle(lineWidth: 5, lineCap: .round)
+                        )
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(-90))
+
+                    VStack(spacing: 1) {
+                        Text("\(completedThisWeek)/\(totalThisWeek)")
+                            .font(.custom("Montserrat-SemiBold", size: 15))
+                            .foregroundColor(.white)
+                        Text("this week")
+                            .font(.custom("Montserrat-Regular", size: 9))
+                            .foregroundColor(.white.opacity(0.45))
+                    }
+                }
+
+                // Motivational saying in terracotta
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(motivationalSaying)
+                        .font(.custom("Montserrat-Medium", size: 15))
+                        .foregroundColor(.lumeAccent)
+                        .lineSpacing(4)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if allTotal > 0 {
+                        Text("\(allCompleted) of \(allTotal) overall")
+                            .font(.custom("Montserrat-Regular", size: 12))
+                            .foregroundColor(.white.opacity(0.4))
+                    }
+                }
+
+                Spacer()
+            }
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 22)
+                .fill(
+                    LinearGradient(
+                        colors: [Color.lumeNavy, Color(hex: "1E3A4C")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        )
+    }
+}
+
+// MARK: - Goal Suggestion Row
+
+struct GoalSuggestionRow: View {
+    let icon: String
+    let text: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 14))
+                .foregroundColor(color)
+                .frame(width: 28, height: 28)
+                .background(color.opacity(0.1))
+                .cornerRadius(8)
+            Text(text)
+                .font(.lumeBody)
+                .foregroundColor(.lumeMuted)
+            Spacer()
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 11)
+        .background(Color.lumeWarmWhite)
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.lumeBorder, lineWidth: 1)
+        )
+    }
+}
+
 // MARK: - This Week Task Row
 
 struct ThisWeekTaskRow: View {
@@ -473,30 +676,203 @@ struct QuickLinkContent: View {
     let icon: String
     let label: String
     let color: Color
+    var isLocked: Bool = false
 
     var body: some View {
-        VStack(spacing: 8) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(color.opacity(0.1))
-                    .frame(width: 36, height: 36)
-                Image(systemName: icon)
-                    .font(.system(size: 15))
-                    .foregroundColor(color)
-            }
+        ZStack(alignment: .topTrailing) {
+            VStack(spacing: 8) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(color.opacity(0.1))
+                        .frame(width: 36, height: 36)
+                    Image(systemName: icon)
+                        .font(.system(size: 15))
+                        .foregroundColor(color)
+                }
 
-            Text(label)
-                .font(.lumeSmall)
-                .foregroundColor(.lumeNavy)
+                Text(label)
+                    .font(.lumeSmall)
+                    .foregroundColor(.lumeNavy)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(Color.lumeWarmWhite)
+            .cornerRadius(14)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color.lumeBorder, lineWidth: 1)
+            )
+
+            if isLocked {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 8))
+                    .foregroundColor(.lumeGold)
+                    .padding(4)
+                    .background(Color.lumeGold.opacity(0.12))
+                    .cornerRadius(6)
+                    .padding(6)
+            }
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 14)
-        .background(Color.lumeWarmWhite)
-        .cornerRadius(14)
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(Color.lumeBorder, lineWidth: 1)
-        )
+    }
+}
+
+// MARK: - Quick Link Icon (icon-only for dashboard)
+
+struct QuickLinkIcon: View {
+    let icon: String
+    let color: Color
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(color.opacity(0.1))
+                .frame(width: 56, height: 56)
+            Image(systemName: icon)
+                .font(.system(size: 22))
+                .foregroundColor(color)
+        }
+    }
+}
+
+// MARK: - Edit Quick Links Sheet
+
+struct EditQuickLinksSheet: View {
+    @Binding var quickLinkPagesRaw: String
+    @Environment(\.dismiss) var dismiss
+    @State private var selectedPages: [NavPage] = []
+
+    var body: some View {
+        ZStack {
+            Color.lumeCream.ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                // Sticky header with save
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Quick Links")
+                            .font(.lumeDisplaySmall)
+                            .foregroundColor(.lumeNavy)
+                        Text("Choose which tools appear on your dashboard.")
+                            .font(.lumeSmall)
+                            .foregroundColor(.lumeMuted)
+                    }
+                    Spacer()
+                    Button {
+                        quickLinkPagesRaw = selectedPages.map(\.rawValue).joined(separator: ",")
+                        dismiss()
+                    } label: {
+                        Text("Save")
+                            .font(.lumeBodySemibold)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                            .background(selectedPages.isEmpty ? Color.lumeMuted : Color.lumeAccent)
+                            .cornerRadius(20)
+                    }
+                    .disabled(selectedPages.isEmpty)
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 20)
+                .padding(.bottom, 12)
+
+                ScrollView {
+                    VStack(spacing: 20) {
+                // Current quick links preview
+                if !selectedPages.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("SELECTED · \(selectedPages.count)")
+                            .font(.lumeSmall)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.lumeMuted)
+                            .tracking(1)
+
+                        // Wrap in a scrollable row so it doesn't overflow
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 12) {
+                                ForEach(selectedPages) { page in
+                                    VStack(spacing: 6) {
+                                        QuickLinkIcon(icon: page.icon, color: page.color)
+                                        Text(page.label)
+                                            .font(.system(size: 10))
+                                            .foregroundColor(.lumeMuted)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 24)
+                }
+
+                // All pages
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("ALL TOOLS")
+                        .font(.lumeSmall)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.lumeMuted)
+                        .tracking(1)
+
+                    ForEach(NavPage.allCases) { page in
+                        let isSelected = selectedPages.contains(page)
+                        Button {
+                            togglePage(page)
+                        } label: {
+                            HStack(spacing: 14) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(page.color.opacity(0.12))
+                                        .frame(width: 36, height: 36)
+                                    Image(systemName: page.icon)
+                                        .font(.system(size: 15))
+                                        .foregroundColor(page.color)
+                                }
+
+                                Text(page.label)
+                                    .font(.lumeBodyMedium)
+                                    .foregroundColor(.lumeNavy)
+
+                                Spacer()
+
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(isSelected ? Color.lumeAccent : Color.lumeBorder.opacity(0.3))
+                                        .frame(width: 28, height: 28)
+                                    if isSelected {
+                                        Image(systemName: "checkmark")
+                                            .font(.system(size: 12, weight: .bold))
+                                            .foregroundColor(.white)
+                                    }
+                                }
+                            }
+                            .padding(12)
+                            .background(isSelected ? Color.lumeAccent.opacity(0.04) : Color.lumeWarmWhite)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(isSelected ? Color.lumeAccent.opacity(0.2) : Color.lumeBorder, lineWidth: 1)
+                            )
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
+
+                Spacer().frame(height: 20)
+                    } // VStack inside ScrollView
+                } // ScrollView
+            } // VStack
+        } // ZStack
+        .environment(\.colorScheme, .light)
+        .onAppear {
+            let keys = quickLinkPagesRaw.split(separator: ",").map(String.init)
+            selectedPages = keys.compactMap { NavPage(rawValue: $0) }
+        }
+    }
+
+    private func togglePage(_ page: NavPage) {
+        if let idx = selectedPages.firstIndex(of: page) {
+            selectedPages.remove(at: idx)
+        } else {
+            selectedPages.append(page)
+        }
     }
 }
 

@@ -265,7 +265,8 @@ struct CalendarView: View {
                 AddDeadlineSheet(onSave: { title, date, notes in
                     Task { await addDeadline(title: title, date: date, notes: notes) }
                 })
-                .presentationDetents([.medium])
+                .presentationDetents([.medium, .large])
+                .environment(\.colorScheme, .light)
             }
         }
     }
@@ -534,7 +535,7 @@ struct AddDeadlineSheet: View {
                 ScrollView {
                     VStack(spacing: 18) {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("What's the deadline?")
+                            Text("What's the event?")
                                 .font(.lumeCaption)
                                 .fontWeight(.medium)
                                 .foregroundColor(.lumeNavy)
@@ -583,7 +584,7 @@ struct AddDeadlineSheet: View {
                             onSave(title, formatter.string(from: dueDate), notes.isEmpty ? nil : notes)
                             dismiss()
                         } label: {
-                            Text("Add Deadline")
+                            Text("Add Event")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(LumePrimaryButtonStyle())
@@ -592,11 +593,12 @@ struct AddDeadlineSheet: View {
                     .padding(24)
                 }
             }
-            .navigationTitle("New Deadline")
+            .navigationTitle("New Event")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Color.lumeCream, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.light, for: .navigationBar)
+            .tint(.lumeNavy)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }

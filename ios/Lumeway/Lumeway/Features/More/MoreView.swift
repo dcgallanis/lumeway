@@ -18,8 +18,8 @@ struct MoreView: View {
     private var tierDisplay: String {
         let tier = appState.effectiveTier.lowercased()
         switch tier {
-        case "all_transitions": return "Full Access"
-        case "one_transition": return "Chapter Pass"
+        case "all_transitions": return "Everything"
+        case "one_transition": return "Bundled Plan"
         case "starter": return "Starter"
         case "free": return "Free"
         default: return "Free"
@@ -575,8 +575,8 @@ struct AccountSettingsView: View {
     private var tierDisplay: String {
         let tier = appState.effectiveTier.lowercased()
         switch tier {
-        case "all_transitions": return "Full Access"
-        case "one_transition": return "Chapter Pass"
+        case "all_transitions": return "Everything"
+        case "one_transition": return "Bundled Plan"
         case "starter": return "Starter"
         case "free": return "Free"
         default: return "Free"
@@ -586,8 +586,8 @@ struct AccountSettingsView: View {
     private var tierLabel: String {
         let tier = appState.effectiveTier.lowercased()
         switch tier {
-        case "all_transitions": return "Full Access"
-        case "one_transition": return "Chapter Pass"
+        case "all_transitions": return "Everything"
+        case "one_transition": return "Bundled Plan"
         case "starter": return "Starter"
         default: return "Free"
         }
@@ -1208,7 +1208,7 @@ struct PricingView: View {
             highlight: false
         ),
         (
-            name: "Full Plan",
+            name: "Bundled Plan",
             tier: "one_transition",
             price: "$39",
             period: "per transition",
@@ -1223,12 +1223,12 @@ struct PricingView: View {
             highlight: true
         ),
         (
-            name: "Full Access",
+            name: "Everything",
             tier: "all_transitions",
             price: "$125",
             period: "one-time",
             features: [
-                "Everything in Full Plan",
+                "Everything in Bundled Plan",
                 "All transitions unlocked",
                 "Priority navigator chat",
                 "Future content updates"

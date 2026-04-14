@@ -61,28 +61,31 @@
     .mobile-menu a:hover { color: var(--accent); }
     .mobile-menu .mobile-cta { margin-top: 24px; display: block; text-align: center; padding: 14px 24px; background: var(--accent); color: #fff; border-radius: 10px; font-size: 15px; font-weight: 500; text-decoration: none; border: none; }
 
-    /* Tier carousel */
+    /* Tier carousel — 60% width, one slide at a time, horizontal card layout */
     .carousel-section { padding: 16px 5% 28px; width: 100%; display: flex; flex-direction: column; align-items: center; }
-    .carousel-container { position: relative; width: 100%; max-width: 580px; overflow: hidden; }
+    .carousel-container { position: relative; width: 60%; max-width: 720px; overflow: hidden; }
     .carousel-track { display: flex; align-items: stretch; transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
     .carousel-slide { min-width: 100%; padding: 0 8px; box-sizing: border-box; display: flex; flex-direction: column; }
-    .carousel-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 22px 22px; box-shadow: 0 2px 20px rgba(27,58,92,0.05); text-align: center; display: flex; flex-direction: column; flex: 1; }
+    /* Card uses horizontal two-column layout: left = title/price/cta, right = features */
+    .carousel-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; box-shadow: 0 2px 20px rgba(27,58,92,0.05); display: flex; flex-direction: row; align-items: flex-start; gap: 28px; flex: 1; }
     .carousel-card.carousel-card--highlight { border: 2px solid var(--navy); }
-    .carousel-pill { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; margin-bottom: 12px; }
+    .carousel-card-left { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+    .carousel-card-right { flex: 1; min-width: 0; }
+    .carousel-pill { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; margin-bottom: 10px; }
     .carousel-pill--free { background: #e8f5e9; color: #2d6a4f; }
     .carousel-pill--starter { background: var(--cream); border: 1px solid var(--border); color: var(--muted); }
     .carousel-pill--full { background: var(--navy); color: var(--cream); }
-    .carousel-card h2 { font-family: 'Libre Baskerville', serif; font-size: clamp(18px, 2.5vw, 22px); font-weight: 400; line-height: 1.25; margin-bottom: 10px; color: var(--navy); }
-    .carousel-card .carousel-price { font-family: 'Libre Baskerville', serif; font-size: 28px; font-weight: 500; color: var(--navy); margin-bottom: 6px; }
-    .carousel-card .carousel-price span { font-size: 13px; font-weight: 300; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; }
-    .carousel-card p { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.6; max-width: 440px; margin: 0 auto 16px; }
-    .carousel-features { list-style: none; text-align: left; max-width: 400px; margin: 0 auto 18px; flex: 1; }
-    .carousel-features li { font-size: 12.5px; color: var(--text); line-height: 1.5; padding: 3px 0 3px 18px; position: relative; }
+    .carousel-card h2 { font-family: 'Libre Baskerville', serif; font-size: clamp(16px, 2vw, 20px); font-weight: 400; line-height: 1.25; margin-bottom: 8px; color: var(--navy); text-align: left; }
+    .carousel-card .carousel-price { font-family: 'Libre Baskerville', serif; font-size: 26px; font-weight: 500; color: var(--navy); margin-bottom: 6px; }
+    .carousel-card .carousel-price span { font-size: 12px; font-weight: 300; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; }
+    .carousel-card p { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; margin: 0 0 12px; text-align: left; }
+    .carousel-features { list-style: none; text-align: left; margin: 0 0 14px; padding: 0; flex: 1; }
+    .carousel-features li { font-size: 12px; color: var(--text); line-height: 1.5; padding: 2px 0 2px 18px; position: relative; }
     .carousel-features li::before { content: '\2713'; position: absolute; left: 0; color: var(--gold); font-weight: 600; }
-    .carousel-mini-icons { display: flex; justify-content: center; gap: 10px; margin-bottom: 18px; }
-    .carousel-mini-icon { background: var(--cream); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--text); font-weight: 400; display: flex; align-items: center; gap: 6px; }
-    .carousel-mini-icon svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-    .carousel-cta { display: inline-block; padding: 10px 22px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; }
+    .carousel-mini-icons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .carousel-mini-icon { background: var(--cream); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 11px; color: var(--text); font-weight: 400; display: flex; align-items: center; gap: 5px; }
+    .carousel-mini-icon svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .carousel-cta { display: inline-block; padding: 10px 22px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; margin-top: 4px; }
     .carousel-cta--primary { background: var(--accent); color: var(--cream); border: none; }
     .carousel-cta--primary:hover { background: var(--accent-light); transform: translateY(-1px); }
     .carousel-cta--outline { background: transparent; color: var(--navy); border: 1px solid var(--navy); }
@@ -96,9 +99,12 @@
     .carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); border: none; cursor: pointer; transition: background 0.2s, transform 0.2s; padding: 0; }
     .carousel-dot.active { background: var(--accent); transform: scale(1.2); }
     @media (max-width: 768px) {
-      .carousel-card { padding: 20px 16px; }
-      .carousel-mini-icons { flex-direction: column; align-items: center; gap: 8px; }
-      .carousel-mini-icon { width: 100%; justify-content: center; }
+      .carousel-container { width: 90%; }
+      .carousel-card { flex-direction: column; padding: 20px 16px; text-align: center; gap: 14px; }
+      .carousel-card-left { align-items: center; text-align: center; }
+      .carousel-card h2 { text-align: center; }
+      .carousel-card p { text-align: center; }
+      .carousel-mini-icons { justify-content: center; }
       .carousel-features { max-width: 100%; }
     }
 
@@ -270,21 +276,26 @@
         <!-- Slide 1: What Lumeway offers -->
         <div class="carousel-slide">
           <div class="carousel-card">
-            <h2>What Lumeway offers</h2>
-            <p>Lumeway offers step-by-step guidance, editable worksheets, deadline tracking, and a real community — for job loss, divorce, estate planning, and more.</p>
-            <div class="carousel-mini-icons">
-              <a href="#job-loss" class="carousel-mini-icon" style="text-decoration:none;color:var(--text)">
-                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Templates
-              </a>
-              <a href="/chat" class="carousel-mini-icon" style="text-decoration:none;color:var(--text)">
-                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Navigator
-              </a>
-              <a href="/features" class="carousel-mini-icon" style="text-decoration:none;color:var(--text)">
-                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-                Dashboard Features
-              </a>
+            <div class="carousel-card-left">
+              <h2>What Lumeway offers</h2>
+              <p>Step-by-step guidance, editable worksheets, deadline tracking, and a real community — for job loss, divorce, estate planning, and more.</p>
+              <a href="/features" class="carousel-cta carousel-cta--primary">See features &#8594;</a>
+            </div>
+            <div class="carousel-card-right">
+              <div class="carousel-mini-icons">
+                <a href="#job-loss" class="carousel-mini-icon" style="text-decoration:none;color:var(--text)">
+                  <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  Templates
+                </a>
+                <a href="/chat" class="carousel-mini-icon" style="text-decoration:none;color:var(--text)">
+                  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  Navigator
+                </a>
+                <a href="/features" class="carousel-mini-icon" style="text-decoration:none;color:var(--text)">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                  Dashboard
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -292,69 +303,85 @@
         <!-- Slide 2: Free Tier -->
         <div class="carousel-slide">
           <div class="carousel-card">
-            <span class="carousel-pill carousel-pill--free">Always Free</span>
-            <h2>Start with the Navigator</h2>
-            <div class="carousel-price">$0</div>
-            <ul class="carousel-features">
-              <li>Chat with the Navigator to figure out your next steps</li>
-              <li>Get a personalized checklist overview</li>
-              <li>Access crisis resources anytime</li>
-            </ul>
-            <a href="/chat" class="carousel-cta carousel-cta--primary">Try it free &#8594;</a>
+            <div class="carousel-card-left">
+              <span class="carousel-pill carousel-pill--free">Always Free</span>
+              <h2>Start with the Navigator</h2>
+              <div class="carousel-price">$0</div>
+              <a href="/chat" class="carousel-cta carousel-cta--primary">Try it free &#8594;</a>
+            </div>
+            <div class="carousel-card-right">
+              <ul class="carousel-features">
+                <li>Chat with the Navigator to figure out your next steps</li>
+                <li>Get a personalized checklist overview</li>
+                <li>Access crisis resources anytime</li>
+              </ul>
+            </div>
           </div>
         </div>
 
         <!-- Slide 3: Starter / Worksheet Bundle -->
         <div class="carousel-slide">
           <div class="carousel-card">
-            <span class="carousel-pill carousel-pill--starter">Starter</span>
-            <h2>Editable worksheets you keep forever</h2>
-            <div class="carousel-price">$16 <span>per bundle</span></div>
-            <ul class="carousel-features">
-              <li>14-16 editable worksheets and checklists (.docx)</li>
-              <li>Instant download</li>
-              <li>Basic dashboard access</li>
-              <li>Every dollar counts as credit toward the full plan</li>
-            </ul>
-            <a href="#job-loss" class="carousel-cta carousel-cta--outline">Browse bundles &#8595;</a>
+            <div class="carousel-card-left">
+              <span class="carousel-pill carousel-pill--starter">Starter</span>
+              <h2>Editable worksheets you keep forever</h2>
+              <div class="carousel-price">$16 <span>per bundle</span></div>
+              <a href="#job-loss" class="carousel-cta carousel-cta--outline">Browse bundles &#8595;</a>
+            </div>
+            <div class="carousel-card-right">
+              <ul class="carousel-features">
+                <li>14-16 editable worksheets and checklists (.docx)</li>
+                <li>Instant download</li>
+                <li>Basic dashboard access</li>
+                <li>Every dollar counts as credit toward the full plan</li>
+              </ul>
+            </div>
           </div>
         </div>
 
         <!-- Slide 4: Full Dashboard Plan -->
         <div class="carousel-slide">
           <div class="carousel-card carousel-card--highlight">
-            <span class="carousel-pill carousel-pill--full">Full Plan — Most Popular</span>
-            <h2>The complete dashboard for your transition</h2>
-            <div class="carousel-price">$39 <span>per life change</span></div>
-            <ul class="carousel-features">
-              <li>Everything in the bundle, plus:</li>
-              <li>Full step-by-step guides</li>
-              <li>Calendar with real legal and financial deadlines</li>
-              <li>Document storage and tracking</li>
-              <li>Community access</li>
-              <li>Navigator with full context</li>
-            </ul>
-            <a href="/pricing" class="carousel-cta carousel-cta--primary">See all plans &#8594;</a>
+            <div class="carousel-card-left">
+              <span class="carousel-pill carousel-pill--full">Full Plan — Most Popular</span>
+              <h2>The complete dashboard</h2>
+              <div class="carousel-price">$39 <span>per life change</span></div>
+              <a href="/pricing" class="carousel-cta carousel-cta--primary">See all plans &#8594;</a>
+            </div>
+            <div class="carousel-card-right">
+              <ul class="carousel-features">
+                <li>Everything in the bundle, plus:</li>
+                <li>Full step-by-step guides</li>
+                <li>Calendar with deadlines</li>
+                <li>Document storage and tracking</li>
+                <li>Community access</li>
+                <li>Navigator with full context</li>
+              </ul>
+            </div>
           </div>
         </div>
 
         <!-- Slide 5: Everything / Full Access -->
         <div class="carousel-slide">
           <div class="carousel-card carousel-card--highlight">
-            <span class="carousel-pill carousel-pill--full">Full Access</span>
-            <h2>Every transition, every feature</h2>
-            <div class="carousel-price">$125 <span>one-time</span></div>
-            <p style="margin-bottom:20px">One purchase unlocks the complete Lumeway experience across all six life changes — no subscriptions, no recurring fees.</p>
-            <ul class="carousel-features">
-              <li>All 6 transition dashboards (job loss, divorce, estate, relocation, disability, retirement)</li>
-              <li>Every worksheet bundle included</li>
-              <li>Full guides, calendar, and document storage</li>
-              <li>Community access</li>
-              <li>Navigator with full context</li>
-              <li>Every future update included</li>
-            </ul>
-            <p style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.5;margin:12px auto 20px;max-width:480px;text-align:center">Includes all six current transitions. Future content additions (such as new transition types) are not guaranteed at this price and may be offered separately.</p>
-            <a href="/pricing" class="carousel-cta carousel-cta--primary">Get full access &#8594;</a>
+            <div class="carousel-card-left">
+              <span class="carousel-pill carousel-pill--full">Full Access</span>
+              <h2>Every transition, every feature</h2>
+              <div class="carousel-price">$125 <span>one-time</span></div>
+              <p>One purchase unlocks all six life changes — no subscriptions.</p>
+              <a href="/pricing" class="carousel-cta carousel-cta--primary">Get full access &#8594;</a>
+            </div>
+            <div class="carousel-card-right">
+              <ul class="carousel-features">
+                <li>All 6 transition dashboards</li>
+                <li>Every worksheet bundle included</li>
+                <li>Full guides, calendar, document storage</li>
+                <li>Community access</li>
+                <li>Navigator with full context</li>
+                <li>Every future update included</li>
+              </ul>
+              <p style="font-size:11px;color:var(--muted);font-weight:300;line-height:1.4;margin:8px 0 0;text-align:left">Future transition types may be offered separately.</p>
+            </div>
           </div>
         </div>
 
@@ -646,7 +673,7 @@
       });
     });
 
-    // Tier carousel
+    // Tier carousel — one slide at a time, auto-scroll
     (function() {
       var track = document.getElementById('carouselTrack');
       var dots = document.querySelectorAll('#carouselDots .carousel-dot');
@@ -664,9 +691,7 @@
         if (idx >= total) idx = 0;
         current = idx;
         track.style.transform = 'translateX(-' + (current * 100) + '%)';
-        dots.forEach(function(d, i) {
-          d.classList.toggle('active', i === current);
-        });
+        dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
       }
 
       var pauseTimer;

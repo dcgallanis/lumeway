@@ -90,7 +90,7 @@ struct GoalsView: View {
                 AddGoalSheet(onSave: { title, timeframe, targetDate in
                     Task { await createGoal(title: title, timeframe: timeframe, targetDate: targetDate) }
                 })
-                .presentationDetents([.medium])
+                .presentationDetents([.large])
             }
         }
     }
@@ -471,6 +471,13 @@ private struct AddGoalSheet: View {
 
     private let timeframes = ["This Week", "This Month", "This Quarter", "Ongoing"]
 
+    private let goalSuggestions: [(icon: String, text: String, color: Color)] = [
+        ("list.bullet.clipboard", "Complete my first checklist phase", .lumeGreen),
+        ("doc.text", "Gather all my important documents", .lumeNavy),
+        ("gift", "Treat myself when I finish 10 tasks", .lumeAccent),
+        ("phone", "Make the calls I've been putting off", .lumeGold),
+    ]
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -483,6 +490,47 @@ private struct AddGoalSheet: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
+                        // Goal suggestions (tappable to pre-fill)
+                        if title.isEmpty {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Ideas to get you started")
+                                    .font(.lumeCaption)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.lumeMuted)
+
+                                ForEach(goalSuggestions, id: \.text) { suggestion in
+                                    Button {
+                                        title = suggestion.text
+                                    } label: {
+                                        HStack(spacing: 12) {
+                                            Image(systemName: suggestion.icon)
+                                                .font(.system(size: 14))
+                                                .foregroundColor(suggestion.color)
+                                                .frame(width: 28, height: 28)
+                                                .background(suggestion.color.opacity(0.1))
+                                                .cornerRadius(8)
+                                            Text(suggestion.text)
+                                                .font(.lumeBody)
+                                                .foregroundColor(.lumeNavy)
+                                                .multilineTextAlignment(.leading)
+                                            Spacer()
+                                            Image(systemName: "plus")
+                                                .font(.system(size: 12, weight: .medium))
+                                                .foregroundColor(.lumeMuted)
+                                        }
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 11)
+                                        .background(Color.lumeWarmWhite)
+                                        .cornerRadius(12)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color.lumeBorder, lineWidth: 1)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
                         // Title field
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Goal")

@@ -64,69 +64,21 @@ struct WelcomeBannerView: View {
     @EnvironmentObject var appState: AppState
     @State private var showSun = false
     @State private var showText = false
-    @State private var showStats = false
-    @State private var checklistItems: [FullChecklistItem] = []
     @State private var dismissing = false
+    @State private var thinkingIndex = 0
 
-    private let checklistService = ChecklistService()
-
-    private let greetings = [
-        "Welcome back",
-        "Hey, you're here",
-        "Look who's back",
-        "Good to see you",
+    private let thinkingWords = [
+        "Gathering your stuff...",
+        "Sorting your checklist...",
+        "Checking your deadlines...",
+        "Brewing some motivation...",
+        "Counting your wins...",
+        "Rounding up your notes...",
+        "Polishing your progress...",
+        "Finding where you left off...",
+        "Warming up the dashboard...",
+        "Putting your ducks in a row...",
     ]
-
-    private var greeting: String {
-        greetings.randomElement() ?? greetings[0]
-    }
-
-    private var completedCount: Int {
-        checklistItems.filter(\.isCompleted).count
-    }
-
-    // Calculate streak: consecutive days with at least one completion
-    private var streakDays: Int {
-        let calendar = Calendar.current
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-
-        let completionDates: Set<String> = Set(checklistItems.compactMap { item in
-            guard item.isCompleted, let dateStr = item.completedAt else { return nil }
-            if let date = formatter.date(from: String(dateStr.prefix(19))) {
-                let df = DateFormatter()
-                df.dateFormat = "yyyy-MM-dd"
-                return df.string(from: date)
-            }
-            return nil
-        })
-
-        guard !completionDates.isEmpty else { return 0 }
-
-        var streak = 0
-        var checkDate = Date()
-        let df = DateFormatter()
-        df.dateFormat = "yyyy-MM-dd"
-
-        for _ in 0..<365 {
-            if completionDates.contains(df.string(from: checkDate)) {
-                streak += 1
-                checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
-            } else if streak == 0 {
-                // Today might not have activity yet, check yesterday
-                checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
-                if completionDates.contains(df.string(from: checkDate)) {
-                    streak += 1
-                    checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
-                } else {
-                    break
-                }
-            } else {
-                break
-            }
-        }
-        return streak
-    }
 
     var body: some View {
         ZStack {
@@ -137,7 +89,7 @@ struct WelcomeBannerView: View {
 
                 // Sun icon
                 Image(systemName: "sun.max.fill")
-                    .font(.system(size: 56, weight: .light))
+                    .font(.system(size: 68, weight: .light))
                     .foregroundStyle(
                         LinearGradient(
                             colors: [.lumeAccent, .lumeGold],
@@ -149,120 +101,64 @@ struct WelcomeBannerView: View {
                     .opacity(showSun ? 1 : 0)
                     .rotationEffect(.degrees(showSun ? 0 : -90))
 
-                Spacer().frame(height: 20)
+                Spacer().frame(height: 28)
 
-                // Greeting
-                Text(greeting)
-                    .font(.lumeHeadingLarge)
+                // "Hey, there" or "Hey, name"
+                Text("Hey, \(appState.user?.displayName ?? "there").")
+                    .font(.custom("CormorantGaramond-Bold", size: 36))
                     .foregroundColor(.white)
                     .opacity(showText ? 1 : 0)
-                    .offset(y: showText ? 0 : 20)
+                    .offset(y: showText ? 0 : 16)
 
-                Text("Let's continue your journey")
-                    .font(.lumeBodyLight)
+                Spacer().frame(height: 8)
+
+                // "Loading your dashboard"
+                Text("Loading your dashboard")
+                    .font(.custom("Montserrat-Regular", size: 14))
                     .foregroundColor(.white.opacity(0.5))
                     .opacity(showText ? 1 : 0)
-                    .padding(.top, 6)
 
-                Spacer().frame(height: 36)
+                Spacer().frame(height: 24)
 
-                // Stats cards
-                VStack(spacing: 12) {
-                    WelcomeStatRow(
-                        icon: "checkmark.circle.fill",
-                        iconColor: .lumeGreen,
-                        text: "\(completedCount) task\(completedCount == 1 ? "" : "s") completed"
-                    )
-
-                    if streakDays > 0 {
-                        WelcomeStatRow(
-                            icon: "flame.fill",
-                            iconColor: .lumeGold,
-                            text: "\(streakDays) day streak"
-                        )
-                    }
-
-                    if let noteCount = appState.dashboardData?.notes?.count, noteCount > 0 {
-                        WelcomeStatRow(
-                            icon: "doc.text.fill",
-                            iconColor: Color(hex: "5E8C9A"),
-                            text: "\(noteCount) note\(noteCount == 1 ? "" : "s") saved"
-                        )
-                    }
-                }
-                .padding(.horizontal, 32)
-                .opacity(showStats ? 1 : 0)
-                .offset(y: showStats ? 0 : 16)
+                // Rotating fun thinking words
+                Text(thinkingWords[thinkingIndex])
+                    .font(.custom("Montserrat-Medium", size: 22).italic())
+                    .foregroundColor(.lumeAccent)
+                    .opacity(showText ? 1 : 0)
+                    .animation(.easeInOut(duration: 0.3), value: thinkingIndex)
+                    .id("thinking-\(thinkingIndex)")
+                    .transition(.opacity)
 
                 Spacer()
-
-                // Continue button
-                Button {
-                    withAnimation(.easeIn(duration: 0.3)) {
-                        dismissing = true
-                    }
-                    Task {
-                        try? await Task.sleep(nanoseconds: 300_000_000)
-                        appState.justLoggedIn = false
-                    }
-                } label: {
-                    Text("Continue")
-                        .font(.lumeBodySemibold)
-                        .foregroundColor(.lumeNavy)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Color.lumeBlush)
-                        .cornerRadius(28)
-                }
-                .padding(.horizontal, 32)
-                .padding(.bottom, 48)
-                .opacity(showStats ? 1 : 0)
             }
             .opacity(dismissing ? 0 : 1)
         }
         .task {
-            // Load stats
-            do {
-                let response = try await checklistService.getChecklist()
-                checklistItems = response.items
-            } catch {}
-
             // Animate in
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                 showSun = true
             }
-            withAnimation(.easeOut(duration: 0.5).delay(0.3)) {
+            withAnimation(.easeOut(duration: 0.5).delay(0.2)) {
                 showText = true
             }
-            withAnimation(.easeOut(duration: 0.5).delay(0.7)) {
-                showStats = true
+
+            // Rotate thinking words with progressive timing — each stays a bit longer
+            let delays: [UInt64] = [800_000_000, 1_000_000_000, 1_200_000_000, 1_400_000_000, 1_200_000_000]
+            for i in 0..<delays.count {
+                try? await Task.sleep(nanoseconds: delays[i])
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    thinkingIndex = (i + 1) % thinkingWords.count
+                }
             }
+
+            // Auto-dismiss
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            withAnimation(.easeIn(duration: 0.35)) {
+                dismissing = true
+            }
+            try? await Task.sleep(nanoseconds: 350_000_000)
+            appState.justLoggedIn = false
         }
-    }
-}
-
-struct WelcomeStatRow: View {
-    let icon: String
-    let iconColor: Color
-    let text: String
-
-    var body: some View {
-        HStack(spacing: 14) {
-            Image(systemName: icon)
-                .font(.system(size: 18))
-                .foregroundColor(iconColor)
-                .frame(width: 24)
-
-            Text(text)
-                .font(.lumeBodyMedium)
-                .foregroundColor(.white.opacity(0.85))
-
-            Spacer()
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
-        .background(Color.white.opacity(0.08))
-        .cornerRadius(14)
     }
 }
 
@@ -399,7 +295,6 @@ struct MainTabView: View {
     @EnvironmentObject var appState: AppState
     @StateObject private var chatViewModel = ChatViewModel()
     @State private var selectedTab = 0
-    @State private var hubNavigationId = UUID()
     @AppStorage("tabBarPages") private var tabBarPagesRaw: String = "checklist,community,chat"
 
     var tabPages: [NavPage] {
@@ -460,7 +355,6 @@ struct MainTabView: View {
                 }
 
                 HubView()
-                    .id(hubNavigationId)
                     .tabItem {
                         Image(systemName: selectedTab == 4 ? "square.grid.2x2.fill" : "square.grid.2x2")
                         Text("Hub")
@@ -469,12 +363,6 @@ struct MainTabView: View {
             }
             .tint(.lumeAccent)
             .environmentObject(chatViewModel)
-            .onChange(of: selectedTab) { oldTab, newTab in
-                // Reset Hub to root when navigating to it from another tab
-                if newTab == 4 && oldTab != 4 {
-                    hubNavigationId = UUID()
-                }
-            }
         }
         .task {
             await appState.loadDashboard()
@@ -507,20 +395,10 @@ struct HubView: View {
     @EnvironmentObject var appState: AppState
     @AppStorage("tabBarPages") private var tabBarPagesRaw: String = "checklist,community,chat"
     @State private var showPersonalize = false
-    @State private var showUpgrade = false
-
-    private var isFree: Bool {
-        appState.effectiveTier == "free"
-    }
-
-    /// Pages NOT currently in the tab bar — these show in the Hub grid
-    private var hubPages: [NavPage] {
-        let tabKeys = Set(tabBarPagesRaw.split(separator: ",").map(String.init))
-        return NavPage.allCases.filter { !tabKeys.contains($0.rawValue) }
-    }
+    @State var path = NavigationPath()
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ZStack {
                 LinearGradient(
                     colors: [Color(hex: "FAF7F2"), Color(hex: "F5F0EA")],
@@ -556,13 +434,20 @@ struct HubView: View {
                         .padding(.horizontal, 24)
                         .padding(.top, 20)
 
-                        // Tools grid — only pages not in tab bar
-                        LazyVGrid(columns: [
-                            GridItem(.flexible(), spacing: 14),
-                            GridItem(.flexible(), spacing: 14)
-                        ], spacing: 14) {
-                            ForEach(hubPages) { page in
-                                hubTileFor(page)
+                        // All tools grid — 3-column, same style as dashboard
+                        let columns = [
+                            GridItem(.flexible(), spacing: 12),
+                            GridItem(.flexible(), spacing: 12),
+                            GridItem(.flexible(), spacing: 12)
+                        ]
+                        LazyVGrid(columns: columns, spacing: 12) {
+                            ForEach(NavPage.allCases) { page in
+                                Button {
+                                    path.append(page)
+                                } label: {
+                                    QuickLinkContent(icon: page.icon, label: page.label, color: page.color)
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
                         .padding(.horizontal, 20)
@@ -572,98 +457,12 @@ struct HubView: View {
                 }
             }
             .navigationBarHidden(true)
+            .navigationDestination(for: NavPage.self) { page in
+                page.embeddedDestination
+            }
             .sheet(isPresented: $showPersonalize) {
                 PersonalizeTabsSheet(tabBarPagesRaw: $tabBarPagesRaw)
                     .presentationDetents([.medium, .large])
-            }
-            .sheet(isPresented: $showUpgrade) {
-                UpgradeView()
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func hubTileFor(_ page: NavPage) -> some View {
-        if isPageLocked(page) {
-            Button {
-                showUpgrade = true
-            } label: {
-                HubTile(
-                    icon: page.icon,
-                    title: page.label,
-                    subtitle: "Upgrade to unlock",
-                    color: page.color,
-                    isLocked: true
-                )
-            }
-            .buttonStyle(.plain)
-        } else {
-            NavigationLink {
-                page.embeddedDestination
-            } label: {
-                HubTile(
-                    icon: page.icon,
-                    title: page.label,
-                    subtitle: page.subtitle,
-                    color: page.color,
-                    isLocked: false
-                )
-            }
-            .buttonStyle(.plain)
-        }
-    }
-
-    private func isPageLocked(_ page: NavPage) -> Bool {
-        isFree && (page == .guides || page == .files)
-    }
-}
-
-// MARK: - Hub Tile
-
-struct HubTile: View {
-    let icon: String
-    let title: String
-    let subtitle: String
-    let color: Color
-    var isLocked: Bool = false
-
-    var body: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(alignment: .leading, spacing: 10) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(color.opacity(0.12))
-                        .frame(width: 42, height: 42)
-                    Image(systemName: icon)
-                        .font(.system(size: 18))
-                        .foregroundColor(color)
-                }
-
-                Text(title)
-                    .font(.lumeSectionTitle)
-                    .foregroundColor(.lumeNavy)
-
-                Text(subtitle)
-                    .font(.lumeCaptionLight)
-                    .foregroundColor(.lumeMuted)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(18)
-            .background(Color.lumeWarmWhite)
-            .cornerRadius(16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.lumeBorder, lineWidth: 1)
-            )
-
-            if isLocked {
-                Image(systemName: "lock.fill")
-                    .font(.system(size: 10))
-                    .foregroundColor(.lumeGold)
-                    .padding(6)
-                    .background(Color.lumeGold.opacity(0.12))
-                    .cornerRadius(8)
-                    .padding(10)
             }
         }
     }
@@ -679,6 +478,9 @@ struct PersonalizeTabsSheet: View {
     private let maxTabs = 3
 
     var body: some View {
+        ZStack {
+            Color.lumeCream.ignoresSafeArea()
+
         ScrollView {
             VStack(spacing: 20) {
                 // Header with Save button
@@ -838,6 +640,8 @@ struct PersonalizeTabsSheet: View {
                 Spacer().frame(height: 20)
             }
         }
+        } // ZStack
+        .environment(\.colorScheme, .light)
         .onAppear {
             let keys = tabBarPagesRaw.split(separator: ",").map(String.init)
             selectedPages = keys.compactMap { NavPage(rawValue: $0) }

@@ -294,7 +294,7 @@
         <div class="tier-desc-short">Template bundle with 14-16 editable worksheets</div>
       </div>
       <div class="tier-header featured">
-        <div class="tier-label">Full Plan</div>
+        <div class="tier-label">Bundled Plan</div>
         <div class="tier-price-tag" id="transitionPrice">$39 <span>one-time</span></div>
         <div class="tier-desc-short">Complete dashboard and templates for one life change</div>
       </div>
@@ -325,7 +325,7 @@
       <div class="addon-card">
         <h3>Add Another Life Change</h3>
         <div class="addon-price">+$20 <span>per life change</span></div>
-        <div class="addon-desc">Already have a Full Plan? Add another transition to your dashboard for $20.</div>
+        <div class="addon-desc">Already have a Bundled Plan? Add another transition to your dashboard for $20.</div>
         <button class="addon-btn cta-btn secondary" onclick="showAddTransitionSelector()" id="addTransitionBtn">Add a life change</button>
       </div>
     </div>
@@ -444,10 +444,10 @@
 
     <div class="faq-item">
       <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-        What's the difference between Starter and the Full Plan?
+        What's the difference between Starter and the Bundled Plan?
         <span class="faq-chev">&#9662;</span>
       </div>
-      <div class="faq-a">Starter gives you a template bundle — worksheets you can download and fill out. The Full Plan adds the complete dashboard: step-by-step guides with key terms and contacts, deadline calendar, state-specific guidance, document storage, and more. Your $16 counts toward the upgrade, so you'd only pay $23 more.</div>
+      <div class="faq-a">Starter gives you a template bundle — worksheets you can download and fill out. The Bundled Plan adds the complete dashboard: step-by-step guides with key terms and contacts, deadline calendar, state-specific guidance, document storage, and more. Your $16 counts toward the upgrade, so you'd only pay $23 more.</div>
     </div>
 
     <div class="faq-item">
@@ -463,7 +463,7 @@
         Do my purchases count as credit toward upgrades?
         <span class="faq-chev">&#9662;</span>
       </div>
-      <div class="faq-a">Yes. Every dollar you spend on Lumeway counts toward higher tiers. If you buy a $16 Starter bundle and later want the Full Plan ($39), you only pay the $23 difference. If you've bought one Full Plan ($39) and want Everything ($125), you'd pay $86. Your credit balance shows in your dashboard.</div>
+      <div class="faq-a">Yes. Every dollar you spend on Lumeway counts toward higher tiers. If you buy a $16 Starter bundle and later want the Bundled Plan ($39), you only pay the $23 difference. If you've bought one Bundled Plan ($39) and want Everything ($125), you'd pay $86. Your credit balance shows in your dashboard.</div>
     </div>
 
     <div class="faq-item">
@@ -471,7 +471,7 @@
         I bought a bundle on Etsy. Does that count?
         <span class="faq-chev">&#9662;</span>
       </div>
-      <div class="faq-a">Yes. Your Etsy bundle came with a redemption code. Enter it in your dashboard to connect your purchase and get $16 in credit toward the Full Plan.</div>
+      <div class="faq-a">Yes. Your Etsy bundle came with a redemption code. Enter it in your dashboard to connect your purchase and get $16 in credit toward the Bundled Plan.</div>
     </div>
 
     <div class="faq-item">
@@ -629,7 +629,7 @@
     function purchaseTransition(category, purchaseType) {
       var label = catLabels[category] || category;
       var price = purchaseType === 'add_transition' ? 20 : 39;
-      var name = purchaseType === 'add_transition' ? label + ' (Add Transition)' : label + ' Full Plan';
+      var name = purchaseType === 'add_transition' ? label + ' (Add Transition)' : label + ' Bundled Plan';
       if (typeof gtag === 'function') gtag('event', 'begin_checkout', { category: category, purchase_type: purchaseType, value: price });
       fetch('/api/cart/add', {
         method: 'POST',

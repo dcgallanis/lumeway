@@ -460,7 +460,6 @@ struct MyFilesSection: View {
     let onPreview: (UploadedFile) -> Void
 
     @State private var expandedCategories: Set<String> = []
-    @State private var didInitExpand = false
 
     // Group files by category
     private var groupedFiles: [(category: String, files: [UploadedFile])] {
@@ -594,14 +593,7 @@ struct MyFilesSection: View {
                     }
                 }
             }
-            .onAppear {
-                if !didInitExpand {
-                    didInitExpand = true
-                    for group in groupedFiles {
-                        expandedCategories.insert(group.category)
-                    }
-                }
-            }
+            // Start collapsed — user taps to expand categories
         }
     }
 }

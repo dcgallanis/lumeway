@@ -10,13 +10,14 @@ struct ActivityLogView: View {
 
     private let service = ActivityLogService()
 
+    // Match site dashboard activity types exactly
     private let actionTypes: [(id: String, label: String, icon: String, color: Color)] = [
-        ("call", "Phone Call", "phone.fill", .lumeGreen),
-        ("email", "Email", "envelope.fill", Color(hex: "5E8C9A")),
-        ("meeting", "Meeting", "person.2.fill", .lumeNavy),
-        ("filing", "Filing", "doc.text.fill", .lumeAccent),
-        ("research", "Research", "magnifyingglass", .lumeGold),
-        ("other", "Other", "ellipsis.circle.fill", .lumeMuted),
+        ("phone_call", "Phone Call", "phone.fill", .lumeGreen),
+        ("email_sent", "Email Sent", "envelope.fill", Color(hex: "5E8C9A")),
+        ("appointment", "Appointment", "calendar.badge.clock", .lumeNavy),
+        ("form_submitted", "Form Submitted", "doc.text.fill", .lumeAccent),
+        ("document_filed", "Document Filed", "folder.fill", .lumeGold),
+        ("other", "Other", "ellipsis.circle.fill", Color(hex: "6B7B8D")),
     ]
 
     var body: some View {
@@ -97,6 +98,7 @@ struct ActivityLogView: View {
             .toolbarBackground(Color.lumeCream, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.light, for: .navigationBar)
+            .tint(.lumeNavy)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -146,7 +148,7 @@ struct ActivityLogView: View {
     private func typeFor(_ actionType: String?) -> (label: String, icon: String, color: Color) {
         guard let type = actionType,
               let found = actionTypes.first(where: { $0.id == type }) else {
-            return ("Other", "ellipsis.circle.fill", .lumeMuted)
+            return ("Other", "ellipsis.circle.fill", Color(hex: "6B7B8D"))
         }
         return (found.label, found.icon, found.color)
     }
@@ -220,7 +222,7 @@ struct ActivityEntryRow: View {
     let onDelete: () -> Void
 
     var body: some View {
-        HStack(spacing: 14) {
+        HStack(alignment: .top, spacing: 14) {
             // Type icon
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
@@ -231,32 +233,58 @@ struct ActivityEntryRow: View {
                     .foregroundColor(typeInfo.color)
             }
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text(entry.description ?? "")
-                    .font(.lumeBodyMedium)
-                    .foregroundColor(.lumeNavy)
-                    .lineLimit(2)
+            VStack(alignment: .leading, spacing: 4) {
+                // Description — full text, not truncated
+                if let desc = entry.description, !desc.isEmpty {
+                    Text(desc)
+                        .font(.lumeBody)
+                        .foregroundColor(.lumeNavy)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
 
-                HStack(spacing: 6) {
+                // Metadata row
+                HStack(spacing: 8) {
                     Text(typeInfo.label)
                         .font(.lumeSmall)
                         .foregroundColor(typeInfo.color)
 
                     if let contact = entry.contactName, !contact.isEmpty {
-                        Text("with \(contact)")
-                            .font(.lumeSmall)
-                            .foregroundColor(.lumeMuted)
+                        HStack(spacing: 3) {
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 8))
+                            Text(contact)
+                        }
+                        .font(.lumeSmall)
+                        .foregroundColor(.lumeMuted)
                     }
 
                     if let org = entry.organization, !org.isEmpty {
-                        Text("at \(org)")
-                            .font(.lumeSmall)
-                            .foregroundColor(.lumeMuted)
+                        HStack(spacing: 3) {
+                            Image(systemName: "building.2.fill")
+                                .font(.system(size: 8))
+                            Text(org)
+                        }
+                        .font(.lumeSmall)
+                        .foregroundColor(.lumeMuted)
                     }
+                }
+
+                // Date
+                if let dateStr = entry.date {
+                    Text(formatEntryDate(dateStr))
+                        .font(.lumeSmall)
+                        .foregroundColor(.lumeMuted)
                 }
             }
 
             Spacer()
+
+            // Delete button
+            Button(action: onDelete) {
+                Image(systemName: "trash")
+                    .font(.system(size: 12))
+                    .foregroundColor(.lumeMuted.opacity(0.5))
+            }
         }
         .padding(14)
         .background(Color.lumeWarmWhite)
@@ -265,6 +293,15 @@ struct ActivityEntryRow: View {
             RoundedRectangle(cornerRadius: 14)
                 .stroke(Color.lumeBorder, lineWidth: 1)
         )
+    }
+
+    private func formatEntryDate(_ dateStr: String) -> String {
+        let input = DateFormatter()
+        input.dateFormat = "yyyy-MM-dd"
+        guard let date = input.date(from: String(dateStr.prefix(10))) else { return dateStr }
+        let output = DateFormatter()
+        output.dateFormat = "MMM d, yyyy"
+        return output.string(from: date)
     }
 }
 
@@ -275,7 +312,7 @@ struct AddActivitySheet: View {
     let onSave: (String, String, String, String?, String?) -> Void
     @Environment(\.dismiss) var dismiss
 
-    @State private var selectedType = "call"
+    @State private var selectedType = "phone_call"
     @State private var description = ""
     @State private var date = Date()
     @State private var contactName = ""
@@ -327,16 +364,29 @@ struct AddActivitySheet: View {
                                 .font(.lumeCaption)
                                 .fontWeight(.medium)
                                 .foregroundColor(.lumeNavy)
-                            TextField("e.g., Called attorney about filing", text: $description)
-                                .font(.lumeBody)
-                                .foregroundColor(.lumeText)
-                                .padding(14)
-                                .background(Color.lumeWarmWhite)
-                                .cornerRadius(12)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.lumeBorder, lineWidth: 1)
-                                )
+
+                            ZStack(alignment: .topLeading) {
+                                if description.isEmpty {
+                                    Text("What happened...")
+                                        .font(.lumeBody)
+                                        .foregroundColor(.lumeMuted.opacity(0.5))
+                                        .padding(.horizontal, 18)
+                                        .padding(.vertical, 18)
+                                        .allowsHitTesting(false)
+                                }
+                                TextEditor(text: $description)
+                                    .font(.lumeBody)
+                                    .foregroundColor(.lumeText)
+                                    .scrollContentBackground(.hidden)
+                                    .frame(minHeight: 80)
+                                    .padding(12)
+                            }
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                            )
                         }
 
                         // Date
@@ -345,7 +395,7 @@ struct AddActivitySheet: View {
                                 .font(.lumeCaption)
                                 .fontWeight(.medium)
                                 .foregroundColor(.lumeNavy)
-                            DatePicker("", selection: $date, displayedComponents: .date)
+                            DatePicker("", selection: $date, in: ...Date(), displayedComponents: .date)
                                 .labelsHidden()
                                 .tint(.lumeAccent)
                         }
@@ -356,7 +406,7 @@ struct AddActivitySheet: View {
                                 .font(.lumeCaption)
                                 .fontWeight(.medium)
                                 .foregroundColor(.lumeNavy)
-                            TextField("Who did you speak with?", text: $contactName)
+                            TextField("Who you dealt with", text: $contactName)
                                 .font(.lumeBody)
                                 .foregroundColor(.lumeText)
                                 .padding(14)
@@ -374,7 +424,7 @@ struct AddActivitySheet: View {
                                 .font(.lumeCaption)
                                 .fontWeight(.medium)
                                 .foregroundColor(.lumeNavy)
-                            TextField("e.g., Smith & Associates", text: $organization)
+                            TextField("Company/agency", text: $organization)
                                 .font(.lumeBody)
                                 .foregroundColor(.lumeText)
                                 .padding(14)
@@ -409,6 +459,10 @@ struct AddActivitySheet: View {
             }
             .navigationTitle("Log Activity")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Color.lumeCream, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
+            .tint(.lumeNavy)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }
@@ -416,5 +470,6 @@ struct AddActivitySheet: View {
                 }
             }
         }
+        .environment(\.colorScheme, .light)
     }
 }

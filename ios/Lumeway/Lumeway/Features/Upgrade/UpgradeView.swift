@@ -52,7 +52,7 @@ struct UpgradeView: View {
                             if let transition = appState.user?.transitionType,
                                let product = store.product(for: transition) {
                                 PricingCard(
-                                    title: "One Transition",
+                                    title: "Bundled Plan",
                                     price: product.displayPrice,
                                     desc: "Full access to your current transition",
                                     isPopular: false
@@ -64,7 +64,7 @@ struct UpgradeView: View {
                             // All access
                             if let allProduct = store.bundleAllProduct {
                                 PricingCard(
-                                    title: "All Transitions",
+                                    title: "Everything",
                                     price: allProduct.displayPrice,
                                     desc: "Full access to all 7 transition guides",
                                     isPopular: true

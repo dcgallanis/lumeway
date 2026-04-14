@@ -76,16 +76,10 @@ struct ChecklistView: View {
                                         .font(.lumeDisplayMedium)
                                         .foregroundColor(.white)
 
-                                    // Transition labels (when multiple)
-                                    if transitionTypes.count > 1 {
-                                        Text(transitionTypes.map { friendlyTransitionName($0) }.joined(separator: " · "))
-                                            .font(.lumeSmall)
-                                            .foregroundColor(.white.opacity(0.5))
-                                    }
-
                                     // Overall progress
-                                    let allCompleted = items.filter(\.isCompleted).count
-                                    let allTotal = items.count
+                                    let visibleItems = filteredItems
+                                    let allCompleted = visibleItems.filter(\.isCompleted).count
+                                    let allTotal = visibleItems.count
 
                                     Text("\(allCompleted) of \(allTotal) tasks done")
                                         .font(.lumeCaption)
@@ -105,6 +99,22 @@ struct ChecklistView: View {
                                     }
                                     .frame(height: 6)
                                     .padding(.horizontal, 20)
+
+                                    // Transition selector pills (when multiple checklists) — wrapping layout
+                                    if transitionTypes.count > 1 {
+                                        WrappingHStack(spacing: 8) {
+                                            TransitionPill(label: "All", isSelected: selectedTransition == nil) {
+                                                withAnimation(.easeInOut(duration: 0.2)) { selectedTransition = nil }
+                                            }
+                                            ForEach(transitionTypes, id: \.self) { t in
+                                                TransitionPill(label: friendlyTransitionName(t), isSelected: selectedTransition == t) {
+                                                    withAnimation(.easeInOut(duration: 0.2)) { selectedTransition = t }
+                                                }
+                                            }
+                                        }
+                                        .padding(.horizontal, 20)
+                                        .padding(.top, 4)
+                                    }
                                 }
                                 .padding(.top, 60)
                                 .padding(.bottom, 28)
@@ -251,9 +261,10 @@ struct ChecklistView: View {
         return seen
     }
 
-    /// All items combined across all transitions
+    /// Items filtered by selected transition (or all if nil)
     private var filteredItems: [FullChecklistItem] {
-        return items
+        guard let selected = selectedTransition else { return items }
+        return items.filter { ($0.transitionType ?? "general") == selected }
     }
 
     /// Friendly name for transition type
@@ -324,11 +335,19 @@ struct ChecklistView: View {
         let source = filteredItems
         var dict: [String: [FullChecklistItem]] = [:]
         var order: [String] = []
+
+        let showingAll = selectedTransition == nil && transitionTypes.count > 1
+
         for item in source {
             let transition = item.transitionType ?? "general"
             let phase = item.phase ?? "Other"
-            // Create unique key per transition+phase so phases don't merge across transitions
-            let key = transitionTypes.count > 1 ? "\(friendlyTransitionName(transition)): \(phase)" : phase
+            // When viewing a single transition or "All" with multiple, use transition prefix
+            let key: String
+            if showingAll {
+                key = "\(friendlyTransitionName(transition)): \(phase)"
+            } else {
+                key = phase
+            }
             if dict[key] == nil { order.append(key) }
             dict[key, default: []].append(item)
         }
@@ -654,4 +673,65 @@ struct ConfettiParticle: Identifiable {
     let size: CGFloat
     var position: CGPoint
     var opacity: Double
+}
+
+// MARK: - Transition Pill
+
+struct TransitionPill: View {
+    let label: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(label)
+                .font(.lumeCaption)
+                .foregroundColor(isSelected ? .lumeNavy : .white.opacity(0.7))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 7)
+                .background(isSelected ? Color.white : Color.white.opacity(0.12))
+                .cornerRadius(18)
+        }
+    }
+}
+
+// MARK: - Wrapping HStack (flow layout for pills)
+
+struct WrappingHStack: Layout {
+    var spacing: CGFloat = 8
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let result = layout(subviews: subviews, maxWidth: proposal.width ?? .infinity)
+        return result.size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = layout(subviews: subviews, maxWidth: bounds.width)
+        for (index, position) in result.positions.enumerated() {
+            subviews[index].place(at: CGPoint(x: bounds.minX + position.x, y: bounds.minY + position.y), proposal: .unspecified)
+        }
+    }
+
+    private func layout(subviews: Subviews, maxWidth: CGFloat) -> (size: CGSize, positions: [CGPoint]) {
+        var positions: [CGPoint] = []
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var maxX: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x + size.width > maxWidth && x > 0 {
+                x = 0
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            positions.append(CGPoint(x: x, y: y))
+            rowHeight = max(rowHeight, size.height)
+            x += size.width + spacing
+            maxX = max(maxX, x - spacing)
+        }
+
+        return (CGSize(width: maxX, height: y + rowHeight), positions)
+    }
 }
