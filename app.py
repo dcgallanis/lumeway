@@ -7670,6 +7670,30 @@ def admin_grant_tier():
             print(f"Error creating purchase record: {e}")
     return jsonify({"ok": True, "message": f"User {email} set to tier={tier}{record_msg}"})
 
+@app.route("/api/admin/create-gift-code", methods=["POST"])
+def admin_create_gift_code():
+    """Admin tool: create a gift code for testing."""
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    gift_type = data.get("gift_type", "all_transitions")
+    code = data.get("code", "").strip().upper() or generate_gift_code()
+    label = "All Access — All Transitions" if gift_type == "all_transitions" else "Bundled Plan — One Transition"
+    amount = 12500 if gift_type == "all_transitions" else 3900
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+    try:
+        db_execute(conn, f"""INSERT INTO gift_codes (code, purchaser_email, purchaser_name, recipient_name, gift_type, gift_label, amount_cents, stripe_session_id, created_at)
+            VALUES ({param},{param},{param},{param},{param},{param},{param},{param},{param})""",
+            (code, "admin@lumeway.co", "Admin", "", gift_type, label, amount, "admin-test", now))
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        return jsonify({"error": str(e)}), 500
+    conn.close()
+    return jsonify({"ok": True, "code": code, "gift_type": gift_type, "label": label})
+
 @app.route("/api/admin/delete-purchase", methods=["POST"])
 def admin_delete_purchase():
     """Admin tool: delete a purchase record by stripe_session_id."""
