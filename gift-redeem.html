@@ -178,6 +178,10 @@ function submitStep1() {
       storedCode = code;
       document.getElementById('verifyEmailDisplay').textContent = email;
       goToStep(2);
+      if (res.data.demo && res.data.demo_code) {
+        document.getElementById('authCode').value = res.data.demo_code;
+        showMsg('step2Msg', 'success', 'Demo account — code pre-filled. Just hit Verify.');
+      }
       document.getElementById('authCode').focus();
     } else {
       showMsg('step1Msg', 'error', res.data.error || 'Something went wrong.');

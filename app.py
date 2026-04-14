@@ -3002,9 +3002,18 @@ def gift_redeem_start():
         conn.close()
         return jsonify({"error": "Too many attempts. Please try again later."}), 429
 
-    auth_code = str(random.randint(100000, 999999))
     now = datetime.now(timezone.utc).isoformat()
     expires = (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
+
+    # Demo account: use fixed code, skip email
+    if email == "demo@lumeway.co":
+        auth_code = "000000"
+        db_execute(conn, f"INSERT INTO auth_codes (email, code, created_at, expires_at) VALUES ({param}, {param}, {param}, {param})", (email, auth_code, now, expires))
+        conn.commit()
+        conn.close()
+        return jsonify({"ok": True, "message": "Demo account — use code 000000.", "demo": True, "demo_code": "000000"})
+
+    auth_code = str(random.randint(100000, 999999))
     db_execute(conn, f"INSERT INTO auth_codes (email, code, created_at, expires_at) VALUES ({param}, {param}, {param}, {param})", (email, auth_code, now, expires))
     conn.commit()
     conn.close()
