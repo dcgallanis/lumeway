@@ -344,10 +344,7 @@
         </div>
         <div id="giftForm" style="display:none;margin-top:14px;text-align:left">
           <div style="margin-bottom:8px">
-            <input type="text" id="giftRecipient" placeholder="Recipient's name" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none">
-          </div>
-          <div style="margin-bottom:8px">
-            <input type="text" id="giftFrom" placeholder="Your name" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none">
+            <input type="text" id="giftFrom" placeholder="Your name (for the certificate)" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none">
           </div>
           <div style="margin-bottom:10px">
             <input type="email" id="giftEmail" placeholder="Your email" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none">
@@ -738,12 +735,10 @@
       document.getElementById('giftForm').style.display = 'block';
     }
     function purchaseGift() {
-      var recipient = document.getElementById('giftRecipient').value.trim();
       var from = document.getElementById('giftFrom').value.trim();
       var email = document.getElementById('giftEmail').value.trim();
       var errEl = document.getElementById('giftError');
       errEl.style.display = 'none';
-      if (!recipient) { errEl.textContent = 'Please enter the recipient\'s name.'; errEl.style.display = 'block'; return; }
       if (!email) { errEl.textContent = 'Please enter your email.'; errEl.style.display = 'block'; return; }
       if (!selectedGiftProduct) { errEl.textContent = 'Please select a gift option.'; errEl.style.display = 'block'; return; }
       var btn = document.getElementById('giftCheckoutBtn');
@@ -755,8 +750,7 @@
         body: JSON.stringify({
           product_id: selectedGiftProduct,
           purchaser_name: from,
-          purchaser_email: email,
-          recipient_name: recipient
+          purchaser_email: email
         })
       })
       .then(function(r) { return r.json(); })

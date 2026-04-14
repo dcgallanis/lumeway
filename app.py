@@ -2851,8 +2851,7 @@ def create_gift_checkout():
         return jsonify({"error": "Invalid gift product"}), 400
     if not purchaser_email:
         return jsonify({"error": "Your email is required"}), 400
-    if not recipient_name:
-        return jsonify({"error": "Recipient name is required"}), 400
+    # recipient_name is optional — buyer can leave blank
 
     gift = GIFT_PRODUCTS[product_id]
     label = gift["label"]
@@ -3016,7 +3015,7 @@ def send_gift_email(to_email, purchaser_name, recipient_name, code, gift_label, 
     body = email_wrap(f"""
     <h2 style="font-family:'Libre Baskerville',Georgia,serif;font-size:22px;font-weight:400;color:#2C4A5E;margin:0 0 16px;line-height:1.3;">Your gift is ready</h2>
     <p style="font-size:14px;line-height:1.7;margin:0 0 16px;color:#4A5568;">
-        You purchased a <strong>{gift_label}</strong> gift for <strong>{recipient_name}</strong>. Their redemption code is:
+        You purchased a <strong>{gift_label}</strong> gift. The redemption code is:
     </p>
     <div style="background:#F5F0E8;border:2px dashed #B8977E;border-radius:12px;padding:20px;text-align:center;margin:0 0 20px;">
         <span style="font-family:'Plus Jakarta Sans',monospace;font-size:24px;font-weight:700;color:#2C4A5E;letter-spacing:3px;">{code}</span>
@@ -3040,7 +3039,7 @@ def send_gift_email(to_email, purchaser_name, recipient_name, code, gift_label, 
         resp = http_requests.post("https://api.resend.com/emails", json={
             "from": "Lumeway <hello@lumeway.co>",
             "to": [to_email],
-            "subject": f"Your Lumeway gift for {recipient_name} is ready",
+            "subject": "Your Lumeway gift certificate is ready",
             "html": body,
             "attachments": [{
                 "filename": "lumeway-gift-certificate.html",
@@ -3062,6 +3061,7 @@ def build_gift_certificate(purchaser_name, recipient_name, code, gift_label, amo
     """Build a printable HTML gift certificate."""
     amount_str = f"${amount_cents / 100:.0f}" if amount_cents else ""
     from_line = f"From {purchaser_name}" if purchaser_name else ""
+    for_line = f'<p class="cert-for">For <strong>{recipient_name}</strong></p>' if recipient_name else ""
     return f"""<!DOCTYPE html>
 <html>
 <head>
@@ -3104,7 +3104,7 @@ def build_gift_certificate(purchaser_name, recipient_name, code, gift_label, amo
   <div class="cert-body">
     <div class="cert-gift-label">Gift Certificate</div>
     <h1 class="cert-title">A little help<br>goes a long way</h1>
-    <p class="cert-for">For <strong>{recipient_name}</strong></p>
+    {for_line}
     <p class="cert-from">{from_line}</p>
     <div class="cert-plan">{gift_label}</div>
     <p class="cert-value">{amount_str} value</p>
