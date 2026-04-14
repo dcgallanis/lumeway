@@ -4585,24 +4585,24 @@ guideLibrary['disability'] = {
       var currentStatus = getFileStatus(fileId);
       var h = '';
       // Move to Category section
-      h += '<button class="ws-ctx-parent" onclick="this.nextElementSibling.classList.toggle(\'open\')">';
+      h += '<button class="ws-ctx-parent" onclick="event.stopPropagation();toggleCtxSub(this)">';
       h += '📂 Move to Category <span class="ws-ctx-arrow">▸</span></button>';
-      h += '<div class="ws-ctx-sub">';
+      h += '<div class="ws-ctx-sub" id="ctxSubCat">';
       cats.forEach(function(c) {
         var isActive = currentCat === c.id ? ' active' : '';
-        h += '<button class="ws-file-context-opt' + isActive + '" onclick="recategorizeFile(' + fileId + ',\'' + c.id + '\')">';
+        h += '<button class="ws-file-context-opt' + isActive + '" onclick="event.stopPropagation();recategorizeFile(' + fileId + ',\'' + c.id + '\')">';
         h += '<span class="ws-ctx-icon">' + c.icon + '</span> ' + c.label;
         if (currentCat === c.id) h += ' <span style="margin-left:auto;font-size:11px;color:var(--green)">✓</span>';
         h += '</button>';
       });
       h += '</div>';
       // Change Status section
-      h += '<button class="ws-ctx-parent" onclick="this.nextElementSibling.classList.toggle(\'open\')" style="border-top:1px solid var(--border)">';
+      h += '<button class="ws-ctx-parent" onclick="event.stopPropagation();toggleCtxSub(this)" style="border-top:1px solid var(--border)">';
       h += '🔵 Change Status <span class="ws-ctx-arrow">▸</span></button>';
-      h += '<div class="ws-ctx-sub">';
+      h += '<div class="ws-ctx-sub" id="ctxSubStatus">';
       statuses.forEach(function(s) {
         var isActive = currentStatus === s.id ? ' active' : '';
-        h += '<button class="ws-file-context-opt' + isActive + '" onclick="setFileStatus(' + fileId + ',\'' + s.id + '\');closeFileContextMenu()">';
+        h += '<button class="ws-file-context-opt' + isActive + '" onclick="event.stopPropagation();setFileStatus(' + fileId + ',\'' + s.id + '\');closeFileContextMenu()">';
         if (s.dot) h += '<span class="ws-status-dot ' + s.dot + '" style="display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span> ';
         else h += '<span style="width:8px;display:inline-block"></span> ';
         h += s.label;
@@ -4617,10 +4617,23 @@ guideLibrary['disability'] = {
       menu.style.left = Math.min(x, window.innerWidth - 200) + 'px';
       menu.style.top = Math.min(y, window.innerHeight - 280) + 'px';
       menu.classList.add('open');
-      // Close on next click anywhere
+      // Close on click outside menu
       setTimeout(function() {
-        document.addEventListener('click', closeFileContextMenu, { once: true });
+        document.addEventListener('click', function handler(e) {
+          var m = document.getElementById('wsFileContextMenu');
+          if (m && m.contains(e.target)) return;
+          closeFileContextMenu();
+          document.removeEventListener('click', handler);
+        });
       }, 10);
+    }
+    function toggleCtxSub(btn) {
+      var sub = btn.nextElementSibling;
+      var wasOpen = sub.classList.contains('open');
+      // Close all subs first
+      var menu = document.getElementById('wsFileContextMenu');
+      if (menu) menu.querySelectorAll('.ws-ctx-sub').forEach(function(s) { s.classList.remove('open'); });
+      if (!wasOpen) sub.classList.add('open');
     }
     function closeFileContextMenu() {
       var menu = document.getElementById('wsFileContextMenu');
@@ -7071,8 +7084,8 @@ guideLibrary['disability'] = {
       html += '  <div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:6px">How to use</div>';
       html += '  <ul style="list-style:none;padding:0;margin:0;font-size:11px;color:var(--muted);line-height:1.6;font-weight:300">';
       html += '    <li style="padding:2px 0">📤 <strong>Upload</strong> — drag files or click the drop zone above</li>';
-      html += '    <li style="padding:2px 0">🔵 <strong>Status dots</strong> — click the dot next to any file to track progress</li>';
-      html += '    <li style="padding:2px 0">📂 <strong>Organize</strong> — right-click a file to move categories or change status</li>';
+      html += '    <li style="padding:2px 0">📂 <strong>Move to Category</strong> — right-click a file, select Move to Category</li>';
+      html += '    <li style="padding:2px 0">🔵 <strong>Change Status</strong> — right-click a file, select Change Status</li>';
       html += '    <li style="padding:2px 0">👁 <strong>View</strong> — click a file name to preview it on the right</li>';
       html += '  </ul>';
       html += '</div>';
