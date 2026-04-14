@@ -3545,8 +3545,10 @@ def redeem_code():
         return jsonify({"error": "Please log in first."}), 401
     code = (request.get_json() or {}).get("code", "").strip().upper()
 
-    # Demo reset code — wipes the account back to a fresh new user
+    # Demo reset code — wipes the account back to a fresh new user (demo account only)
     if code == "DEMOTEST":
+        if user.get("email") != "demo@lumeway.co":
+            return jsonify({"error": "This code is only for the demo account."}), 400
         uid = user["id"]
         conn = get_db()
         param = "%s" if USE_POSTGRES else "?"
