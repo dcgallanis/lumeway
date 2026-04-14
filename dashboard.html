@@ -4447,8 +4447,8 @@ guideLibrary['disability'] = {
       var container = document.getElementById('wsFolders');
       if (!container) return;
 
-      var catIcons = {legal:'\uD83D\uDCDC', financial:'\uD83D\uDCB3', insurance:'\uD83D\uDEE1\uFE0F', medical:'\u2695\uFE0F', personal:'\uD83D\uDC64', other:'\uD83D\uDCC1', templates:'\uD83D\uDCE6'};
-      var catLabels = {legal:'Legal', financial:'Financial', insurance:'Insurance', medical:'Medical', personal:'Personal', other:'Other', templates:'Purchased Templates'};
+      var catIcons = {legal:'\uD83D\uDCDC', financial:'\uD83D\uDCB3', insurance:'\uD83D\uDEE1\uFE0F', medical:'\u2695\uFE0F', personal:'\uD83D\uDC64', other:'\uD83D\uDCC1', templates:'\uD83D\uDCE6', 'job-loss':'\uD83D\uDCBC', estate:'\uD83D\uDD4A\uFE0F', divorce:'\u2696\uFE0F', disability:'\u267F', relocation:'\uD83C\uDFE0', retirement:'\uD83C\uDF05'};
+      var catLabels = {legal:'Legal', financial:'Financial', insurance:'Insurance', medical:'Medical', personal:'Personal', other:'Other', templates:'Purchased Templates', 'job-loss':'Job Loss Templates', estate:'Estate Templates', divorce:'Divorce Templates', disability:'Disability Templates', relocation:'Relocation Templates', retirement:'Retirement Templates'};
       var catOrder = ['legal','financial','insurance','medical','personal','other'];
       var groups = {};
       var totalCount = 0;
@@ -4473,6 +4473,11 @@ guideLibrary['disability'] = {
       var templatePurchases = (dashData.purchases || []).filter(function(p) { return p.download_token && p.product_id !== 'unlimited' && !p.product_id.startsWith('pass-'); });
       var hasTemplateFiles = groups['templates'] && groups['templates'].length > 0;
       if (hasTemplateFiles || templatePurchases.length > 0) catOrder.push('templates');
+
+      // Dynamically add transition categories that have files
+      ['job-loss','estate','divorce','disability','relocation','retirement'].forEach(function(tc) {
+          if (groups[tc] && groups[tc].length > 0 && catOrder.indexOf(tc) === -1) catOrder.push(tc);
+      });
 
       var html = '';
 
@@ -4579,7 +4584,7 @@ guideLibrary['disability'] = {
       if (Object.keys(wsOpenCats).length > 0) {
         wsOpenCats = {};
       } else {
-        var catOrder = ['legal','financial','insurance','medical','personal','other','templates'];
+        var catOrder = ['legal','financial','insurance','medical','personal','other','templates','job-loss','estate','divorce','disability','relocation','retirement'];
         catOrder.forEach(function(c) { wsOpenCats[c] = true; });
       }
       renderUserFiles();
@@ -4606,7 +4611,13 @@ guideLibrary['disability'] = {
         { id: 'insurance', icon: '🛡️', label: 'Insurance' },
         { id: 'medical', icon: '🏥', label: 'Medical' },
         { id: 'personal', icon: '👤', label: 'Personal' },
-        { id: 'other', icon: '📁', label: 'Other' }
+        { id: 'other', icon: '📁', label: 'Other' },
+        { id: 'job-loss', icon: '💼', label: 'Job Loss Templates' },
+        { id: 'estate', icon: '🕊️', label: 'Estate Templates' },
+        { id: 'divorce', icon: '⚖️', label: 'Divorce Templates' },
+        { id: 'disability', icon: '♿', label: 'Disability Templates' },
+        { id: 'relocation', icon: '🏠', label: 'Relocation Templates' },
+        { id: 'retirement', icon: '🌅', label: 'Retirement Templates' }
       ];
       var statuses = [
         { id: 'todo', dot: 'c-todo', label: 'To Do' },

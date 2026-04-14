@@ -2590,7 +2590,7 @@ def preload_bundle_templates(user_id, category):
     now = datetime.utcnow().isoformat()
 
     # Check what templates this user already has (avoid duplicates)
-    cur = db_execute(conn, f"SELECT original_name FROM user_files WHERE user_id = {param} AND category = 'templates'", (user_id,))
+    cur = db_execute(conn, f"SELECT original_name FROM user_files WHERE user_id = {param} AND category = {param}", (user_id, category))
     existing_names = set(row[0] for row in cur.fetchall())
 
     try:
@@ -2631,10 +2631,10 @@ def preload_bundle_templates(user_id, category):
                 encrypted_data = file_cipher.encrypt(file_data)
                 storage_save(user_id, stored_name, encrypted_data)
 
-                # Insert into user_files with 'templates' category
+                # Insert into user_files with transition-specific category
                 db_execute(conn, f"""INSERT INTO user_files (user_id, original_name, stored_name, category, file_size, content_type, uploaded_at)
                     VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param})""",
-                    (user_id, display_name, stored_name, "templates", file_size, content_type, now))
+                    (user_id, display_name, stored_name, category, file_size, content_type, now))
                 existing_names.add(display_name)
 
             conn.commit()
@@ -3090,6 +3090,13 @@ def gift_redeem_verify():
         db_execute(conn, f"UPDATE users SET tier = 'all_transitions' WHERE id = {param}", (user_id,))
         db_execute(conn, f"UPDATE users SET credit_cents = 12500 WHERE id = {param}", (user_id,))
         conn.commit()
+        # Auto-load templates for each transition
+        for cat in VALID_CATEGORIES:
+            if cat in BUNDLE_FILES:
+                try:
+                    preload_bundle_templates(user_id, cat)
+                except Exception as e:
+                    print(f"[gift] Error preloading {cat} templates: {e}")
         msg = "Gift redeemed! You now have All Access — every transition, every feature."
     elif gift_type == "one_transition":
         db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (user_id,))
@@ -3620,6 +3627,13 @@ def redeem_code():
                 db_execute(conn_g, f"UPDATE users SET tier = 'all_transitions' WHERE id = {param_g}", (uid,))
                 db_execute(conn_g, f"UPDATE users SET credit_cents = 12500 WHERE id = {param_g}", (uid,))
                 conn_g.commit()
+                # Auto-load templates for each transition
+                for cat in VALID_CATEGORIES:
+                    if cat in BUNDLE_FILES:
+                        try:
+                            preload_bundle_templates(uid, cat)
+                        except Exception as e:
+                            print(f"[gift] Error preloading {cat} templates: {e}")
                 msg = "Gift redeemed! You now have All Access — every transition, every feature."
             elif gift_type == "one_transition":
                 db_execute(conn_g, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param_g}", (uid,))
@@ -8433,10 +8447,12 @@ def chat():
                 if us_state:
                     context_parts.append(f"- State: {us_state}. Use this for state-specific legal deadlines, filing requirements, and resources. Do NOT ask what state they're in — you already know.")
 
-                if active_labels:
+                if tier == "all_transitions":
+                    context_parts.append("- All Access: They have access to all transition types (job loss, estate/loss of a loved one, divorce, disability, relocation, retirement). Ask which transition they're navigating if it's not clear from context. Then offer help with specific areas relevant to that transition — insurance, finances, legal paperwork, housing, benefits, etc.")
+                elif active_labels:
                     context_parts.append(f"- Active transitions: {', '.join(active_labels)}")
                     if tier not in ("free",):
-                        context_parts.append("- They have a paid bundle. You can reference specific checklist items, guides, and templates available for their transition(s). Offer to help with specific areas like insurance, finances, legal paperwork, housing, etc. that are relevant to their situation.")
+                        context_parts.append(f"- They have a paid bundle for {', '.join(active_labels)}. Offer to help with specific areas relevant to their transition — insurance, finances, legal paperwork, housing, benefits, etc.")
 
                 if tier == "free":
                     context_parts.append("- Free tier. Be helpful but don't oversell — they may upgrade on their own.")
