@@ -3844,7 +3844,12 @@ guideLibrary['disability'] = {
             localStorage.removeItem('lumeway_community_declined');
             localStorage.removeItem('lumeway_community_free_seen');
             sessionStorage.clear();
-            setTimeout(function() { window.location.reload(); }, 1000);
+            // Log out and redirect to login
+            setTimeout(function() {
+              fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
+                .then(function() { window.location.href = '/login'; })
+                .catch(function() { window.location.href = '/login'; });
+            }, 1000);
           } else {
             setTimeout(function() { loadDashboard(); }, 1500);
           }

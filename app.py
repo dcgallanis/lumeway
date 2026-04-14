@@ -5722,6 +5722,16 @@ def dashboard_data():
         conn_obs.close()
     except Exception:
         pass
+    # Fallback: check if user has redeemed a gift code
+    if not onboarding_source:
+        try:
+            conn_gc = get_db()
+            cur_gc = db_execute(conn_gc, f"SELECT id FROM gift_codes WHERE redeemed_by = {param} LIMIT 1", (user["id"],))
+            if cur_gc.fetchone():
+                onboarding_source = "gift"
+            conn_gc.close()
+        except Exception:
+            pass
 
     conn.close()
     # Sanitize user dict for JSON response — normalize active_transitions to string list
@@ -8490,27 +8500,34 @@ def chat():
                 if us_state:
                     context_parts.append(f"- State: {us_state}. Use this for state-specific legal deadlines, filing requirements, and resources. Do NOT ask what state they're in — you already know.")
 
+                # Also check transition_type as fallback
+                if not active_labels and transition_type and transition_type in transition_labels:
+                    active_cats = [transition_type]
+                    active_labels = [transition_labels[transition_type]]
+
                 if tier == "all_transitions":
                     context_parts.append("- All Access: They have access to all transition types (job loss, estate/loss of a loved one, divorce, disability, relocation, retirement). Ask which transition they're navigating if it's not clear from context. Then offer help with specific areas relevant to that transition — insurance, finances, legal paperwork, housing, benefits, etc.")
                 elif active_labels:
                     context_parts.append(f"- Active transitions: {', '.join(active_labels)}")
-                    if tier not in ("free",):
-                        context_parts.append(f"- They have a paid bundle for {', '.join(active_labels)}. Offer to help with specific areas relevant to their transition — insurance, finances, legal paperwork, housing, benefits, etc.")
+                    context_parts.append(f"- They have a paid bundle for {', '.join(active_labels)}. Offer to help with specific areas relevant to their transition — insurance, finances, legal paperwork, housing, benefits, etc.")
 
-                if tier == "free":
+                if tier == "free" and not active_labels:
                     context_parts.append("- Free tier. Be helpful but don't oversell — they may upgrade on their own.")
                 elif tier == "all_transitions":
                     context_parts.append("- All Access tier — they have access to everything.")
-                elif tier in ("pass", "one_transition"):
-                    context_parts.append(f"- Bundled Plan tier for: {', '.join(active_labels) if active_labels else 'one transition'}.")
+                elif active_labels and tier not in ("free", "all_transitions"):
+                    context_parts.append(f"- Bundled Plan tier for: {', '.join(active_labels)}.")
 
                 if onboarding_source == "gift":
-                    context_parts.append("- This user received Lumeway as a gift. They may be brand new. Be extra warm and welcoming. If this seems like their first message, acknowledge the gift, ask what life transition they're navigating, and help them get set up. Keep it conversational and low-pressure — they may be going through a hard time.")
+                    context_parts.append("- This user received Lumeway as a gift. They may be brand new. Be extra warm and welcoming. If this seems like their first message, acknowledge the gift and help them get started with their bundle. Keep it conversational and low-pressure — they may be going through a hard time.")
 
                 if len(context_parts) > 1:
                     chat_system_prompt += "\n".join(context_parts)
-            except Exception:
-                pass
+                    print(f"[chat-context] user={user.get('email')}, tier={tier}, transitions={active_cats}, state={us_state}, source={onboarding_source}")
+            except Exception as e:
+                print(f"[chat-context] Error building context: {e}")
+                import traceback
+                traceback.print_exc()
 
         def generate():
             full_reply = ""
