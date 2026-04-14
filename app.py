@@ -741,11 +741,15 @@ def init_subscribers_db():
     # Onboarding source column (for gift recipients)
     try:
         conn_obs = get_db()
-        db_execute(conn_obs, "ALTER TABLE users ADD COLUMN onboarding_source TEXT DEFAULT NULL")
+        if USE_POSTGRES:
+            db_execute(conn_obs, "ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_source TEXT DEFAULT NULL")
+        else:
+            db_execute(conn_obs, "ALTER TABLE users ADD COLUMN onboarding_source TEXT DEFAULT NULL")
         conn_obs.commit()
         conn_obs.close()
     except Exception:
         try:
+            conn_obs.rollback()
             conn_obs.close()
         except Exception:
             pass
