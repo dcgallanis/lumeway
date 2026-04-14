@@ -282,6 +282,9 @@ struct MoreView: View {
                                 )
                             }
 
+                            // Having troubles? Contact support
+                            SupportContactCard()
+
                             // Sign out
                             Button {
                                 showLogoutConfirm = true
@@ -1152,12 +1155,19 @@ struct PromoCodeView: View {
                 let ok: Bool?
                 let message: String?
                 let error: String?
+                let reload: Bool?
             }
             let response: RedeemResponse = try await api.post("/api/redeem-code", body: ["code": code.trimmingCharacters(in: .whitespaces)])
             if response.ok == true {
                 isSuccess = true
                 resultMessage = response.message ?? "Code redeemed successfully."
                 code = ""
+                if response.reload == true {
+                    // DEMOTEST: account was reset, log user out so they start fresh
+                    try? await Task.sleep(nanoseconds: 1_500_000_000)
+                    await MainActor.run { appState.logout() }
+                    return
+                }
                 // Refresh dashboard to reflect new access
                 await appState.loadDashboard()
             } else {
@@ -1167,6 +1177,123 @@ struct PromoCodeView: View {
         } catch {
             isSuccess = false
             resultMessage = "Unable to redeem code right now. Please try again."
+        }
+    }
+}
+
+// MARK: - Support Contact Card
+
+struct SupportContactCard: View {
+    @EnvironmentObject var appState: AppState
+    @State private var message = ""
+    @State private var isSending = false
+    @State private var showSent = false
+    private let api = APIClient.shared
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "questionmark.circle.fill")
+                    .font(.system(size: 16))
+                    .foregroundColor(Color(hex: "B8977E"))
+                Text("Having troubles?")
+                    .font(.lumeBodySemibold)
+                    .foregroundColor(.lumeNavy)
+            }
+
+            Text("Something not working right? Let us know and we'll help you out.")
+                .font(.lumeSmall)
+                .foregroundColor(.lumeMuted)
+                .lineSpacing(2)
+
+            TextEditor(text: $message)
+                .font(.lumeBody)
+                .foregroundColor(.lumeText)
+                .frame(minHeight: 80, maxHeight: 140)
+                .padding(10)
+                .background(Color(hex: "FAF7F2"))
+                .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.lumeBorder, lineWidth: 1)
+                )
+                .overlay(alignment: .topLeading) {
+                    if message.isEmpty {
+                        Text("Tell us what's going on...")
+                            .font(.lumeBody)
+                            .foregroundColor(.lumeMuted.opacity(0.6))
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 18)
+                            .allowsHitTesting(false)
+                    }
+                }
+
+            HStack(spacing: 12) {
+                Button {
+                    Task { await sendMessage() }
+                } label: {
+                    if isSending {
+                        ProgressView()
+                            .tint(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                    } else {
+                        Text("Send to Support")
+                            .font(.lumeBodyMedium)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                    }
+                }
+                .foregroundColor(.white)
+                .background(
+                    RoundedRectangle(cornerRadius: 24)
+                        .fill(message.trimmingCharacters(in: .whitespaces).isEmpty ? Color.lumeBorder : Color.lumeAccent)
+                )
+                .disabled(message.trimmingCharacters(in: .whitespaces).isEmpty || isSending)
+
+                if showSent {
+                    HStack(spacing: 4) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 13))
+                        Text("Sent — we'll get back to you")
+                            .font(.lumeSmall)
+                    }
+                    .foregroundColor(Color(hex: "6B8F5E"))
+                    .transition(.opacity)
+                }
+            }
+        }
+        .padding(20)
+        .background(Color.lumeWarmWhite)
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.lumeBorder, lineWidth: 1)
+        )
+    }
+
+    private func sendMessage() async {
+        isSending = true
+        defer { isSending = false }
+        let userName = appState.dashboardData?.user?.displayName ?? appState.dashboardData?.user?.email ?? "App user"
+        let userEmail = appState.dashboardData?.user?.email ?? ""
+        do {
+            struct ContactResponse: Codable { let ok: Bool? }
+            let _: ContactResponse = try await api.post("/api/contact", body: [
+                "name": userName,
+                "email": userEmail,
+                "subject": "app-support",
+                "message": message.trimmingCharacters(in: .whitespaces)
+            ])
+            await MainActor.run {
+                message = ""
+                withAnimation { showSent = true }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                    withAnimation { showSent = false }
+                }
+            }
+        } catch {
+            // Silently fail — message is stored in DB anyway
         }
     }
 }

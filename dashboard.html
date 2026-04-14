@@ -4400,6 +4400,28 @@ guideLibrary['disability'] = {
       });
     }
 
+    function sendSupportMessage() {
+      var msg = document.getElementById('supportMessage');
+      if (!msg || !msg.value.trim()) return;
+      var u = dashData.user || {};
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          name: u.display_name || u.email || 'Dashboard user',
+          email: u.email || '',
+          subject: 'dashboard-support',
+          message: msg.value.trim()
+        })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.ok) {
+          msg.value = '';
+          var sent = document.getElementById('supportSent');
+          if (sent) { sent.style.opacity = '1'; setTimeout(function(){ sent.style.opacity = '0'; }, 4000); }
+        }
+      });
+    }
+
     function pickCommunityIcon(icon) {
       localStorage.setItem('lumeway_community_icon', icon);
       var preview = document.getElementById('comIconPreview');
@@ -7752,6 +7774,18 @@ guideLibrary['disability'] = {
 
       html += '</div>'; // right column
       html += '</div>'; // 2-col grid
+
+      // Having troubles? Contact support
+      html += '<div class="dash-card" style="margin-top:20px">';
+      html += '  <div class="card-label">Having troubles?</div>';
+      html += '  <p style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:14px">Something not working right? Let us know and we\'ll help you out.</p>';
+      html += '  <textarea id="supportMessage" rows="4" placeholder="Tell us what\'s going on — the more detail, the faster we can help." style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;background:var(--warm-white);color:var(--text);resize:vertical;line-height:1.6"></textarea>';
+      html += '  <div style="display:flex;align-items:center;gap:12px;margin-top:12px">';
+      html += '    <button onclick="sendSupportMessage()" class="btn-primary" style="padding:10px 24px">Send to Support</button>';
+      html += '    <span id="supportSent" style="font-size:13px;color:var(--green);opacity:0;transition:opacity 0.3s">✓ Sent — we\'ll get back to you soon</span>';
+      html += '  </div>';
+      html += '</div>';
+
       html += '</div>'; // panel-account
 
       // ═══════════════════════════════

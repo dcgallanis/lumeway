@@ -3866,10 +3866,12 @@ def stripe_webhook():
         else:
             raw_meta = session_data.metadata
             if raw_meta and not isinstance(raw_meta, dict):
+                metadata = {}
                 try:
-                    metadata = dict(raw_meta)
+                    for k in raw_meta:
+                        metadata[k] = raw_meta[k]
                 except Exception:
-                    metadata = {k: getattr(raw_meta, k, None) for k in ["purchase_type", "product_id", "transition", "user_id"] if getattr(raw_meta, k, None) is not None}
+                    metadata = {k: getattr(raw_meta, k, None) for k in ["purchase_type", "product_id", "product_ids", "purchase_types", "transition", "user_id", "email", "credit_used", "category", "base_price", "credit_applied", "gift_type", "gift_label", "gift_category", "gift_message", "sender_name"] if getattr(raw_meta, k, None) is not None}
             else:
                 metadata = raw_meta or {}
         purchase_type = metadata.get("purchase_type", "") if isinstance(metadata, dict) else getattr(metadata, "purchase_type", "")
@@ -4519,16 +4521,15 @@ footer{padding:28px 48px;border-top:1px solid var(--border);text-align:center}
 <h1>Thank you for your purchase!</h1>
 <div class="product-name">{{ product_name }}</div>
 <div class="steps">
-<div class="step"><div class="step-num">1</div><div class="step-text"><strong>Check your email</strong><br><span>We're sending a download link to the email you used at checkout. It should arrive within a few minutes.</span></div></div>
-<div class="step"><div class="step-num">2</div><div class="step-text"><strong>Click the download link</strong><br><span>The email contains a unique link that takes you to your personal download page. This link does not expire.</span></div></div>
-<div class="step"><div class="step-num">3</div><div class="step-text"><strong>Download your templates</strong><br><span>Your templates come as a .zip file containing editable .docx files. Open them in Microsoft Word or Google Docs.</span></div></div>
+<div class="step"><div class="step-num">1</div><div class="step-text"><strong>Check your email</strong><br><span>A confirmation with your templates is on its way to the email you used at checkout. It may take a minute or two.</span></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-text"><strong>Log in to your dashboard</strong><br><span>Your templates are also available in your dashboard at <strong>lumeway.co/login</strong> — just log in with the same email.</span></div></div>
 </div>
 <div class="contact-box">
 Didn't receive an email? Check your spam folder first.<br>
-Still need help? Email us at <a href="mailto:hello@lumeway.co">hello@lumeway.co</a>
+Still need help? Email us at <a href="mailto:support@lumeway.co">support@lumeway.co</a>
 </div>
-<a href="/templates" class="btn">Browse More Templates</a>
-<a href="/" class="btn-ghost">Back to Lumeway</a>
+<a href="/login" class="btn">Log In to Dashboard</a>
+<a href="/templates" class="btn-ghost">Browse More Templates</a>
 </div>
 <footer>
 <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo">
@@ -4616,7 +4617,7 @@ p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:24px}
 <h1>{{ product_name }}</h1>
 <p>Your templates are ready to download.</p>
 <a href="/download/{{ token }}/file" class="btn">Download Templates</a>
-<p class="note">This link is unique to your purchase and does not expire.<br>Questions? Email <a href="mailto:hello@lumeway.co" style="color:var(--navy)">hello@lumeway.co</a></p>
+<p class="note">This link is unique to your purchase and does not expire.<br>Questions? Email <a href="mailto:support@lumeway.co" style="color:var(--navy)">support@lumeway.co</a></p>
 </div></body></html>"""
 
 @app.route("/cart")
@@ -5013,6 +5014,19 @@ def contact_form():
         conn.close()
     except Exception:
         pass
+    # Send email notification to support
+    if RESEND_API_KEY:
+        try:
+            subject_line = f"[Lumeway] Support request from {name}" if subject == "dashboard-support" else f"[Lumeway] Contact form: {subject}"
+            requests.post("https://api.resend.com/emails", headers={"Authorization": f"Bearer {RESEND_API_KEY}"}, json={
+                "from": "Lumeway <hello@lumeway.co>",
+                "to": ["support@lumeway.co"],
+                "reply_to": email,
+                "subject": subject_line,
+                "html": f"<p><strong>From:</strong> {name} ({email})</p><p><strong>Subject:</strong> {subject}</p><hr><p>{message}</p>"
+            })
+        except Exception:
+            pass
     return jsonify({"ok": True})
 
 @app.route("/robots.txt")
