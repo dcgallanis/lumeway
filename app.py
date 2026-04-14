@@ -3545,6 +3545,44 @@ def redeem_code():
         return jsonify({"error": "Please log in first."}), 401
     code = (request.get_json() or {}).get("code", "").strip().upper()
 
+    # Demo reset code — wipes the account back to a fresh new user
+    if code == "DEMOTEST":
+        uid = user["id"]
+        conn = get_db()
+        param = "%s" if USE_POSTGRES else "?"
+        # Clear all user data
+        try:
+            db_execute(conn, f"DELETE FROM community_replies WHERE post_id IN (SELECT id FROM community_posts WHERE user_id = {param})", (uid,))
+        except Exception:
+            pass
+        try:
+            db_execute(conn, f"DELETE FROM community_replies WHERE user_id = {param}", (uid,))
+        except Exception:
+            pass
+        for table in ["community_posts", "checklist_items", "user_deadlines", "user_documents_needed", "user_goals", "user_notes", "chat_sessions", "user_files"]:
+            try:
+                db_execute(conn, f"DELETE FROM {table} WHERE user_id = {param}", (uid,))
+            except Exception:
+                pass
+        # Reset user profile to fresh state
+        try:
+            db_execute(conn, f"UPDATE users SET tier = 'free', display_name = NULL, transition_type = NULL, us_state = NULL, active_transitions = NULL, credit_cents = 0, onboarding_source = NULL WHERE id = {param}", (uid,))
+        except Exception:
+            pass
+        # Clear user_access (purchased bundles)
+        try:
+            db_execute(conn, f"DELETE FROM user_access WHERE user_id = {param}", (uid,))
+        except Exception:
+            pass
+        # Clear purchases tied to this email
+        try:
+            db_execute(conn, f"DELETE FROM purchases WHERE email = {param}", (user["email"],))
+        except Exception:
+            pass
+        conn.commit()
+        conn.close()
+        return jsonify({"ok": True, "message": "Account reset to new user. Refreshing...", "reload": True})
+
     # Check gift codes first (LUME-XXXX-XXXX format)
     if code.startswith("LUME-"):
         conn_g = get_db()

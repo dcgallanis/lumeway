@@ -3831,7 +3831,23 @@ guideLibrary['disability'] = {
         if (data.ok) {
           result.innerHTML = '<span style="color:var(--green)">' + data.message + '</span>';
           document.getElementById('redeemCodeInput').value = '';
-          setTimeout(function() { loadDashboard(); }, 1500);
+          if (data.reload) {
+            // Full reset — clear localStorage and reload fresh
+            localStorage.removeItem('lumeway_onboarded');
+            localStorage.removeItem('lumeway_tips_dismissed');
+            localStorage.removeItem('lumeway_sig_name');
+            localStorage.removeItem('lumeway_sig_font');
+            localStorage.removeItem('lumeway_files_visits');
+            localStorage.removeItem('lumeway_upload_count');
+            localStorage.removeItem('lumeway_community_name');
+            localStorage.removeItem('lumeway_community_accepted');
+            localStorage.removeItem('lumeway_community_declined');
+            localStorage.removeItem('lumeway_community_free_seen');
+            sessionStorage.clear();
+            setTimeout(function() { window.location.reload(); }, 1000);
+          } else {
+            setTimeout(function() { loadDashboard(); }, 1500);
+          }
         } else {
           result.innerHTML = '<span style="color:var(--accent)">' + (data.error || 'Something went wrong.') + '</span>';
         }
