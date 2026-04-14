@@ -67,7 +67,7 @@
     .carousel-track { display: flex; align-items: stretch; transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
     .carousel-slide { min-width: 100%; padding: 0 8px; box-sizing: border-box; display: flex; flex-direction: column; }
     /* Card uses horizontal two-column layout: left = title/price/cta, right = features */
-    .carousel-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; box-shadow: 0 2px 20px rgba(27,58,92,0.05); display: flex; flex-direction: row; align-items: flex-start; gap: 28px; flex: 1; }
+    .carousel-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; box-shadow: 0 2px 20px rgba(27,58,92,0.05); display: flex; flex-direction: row; align-items: center; gap: 28px; flex: 1; }
     .carousel-card.carousel-card--highlight { border: 2px solid var(--navy); }
     .carousel-card-left { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
     .carousel-card-right { flex: 1; min-width: 0; }
@@ -82,7 +82,7 @@
     .carousel-features { list-style: none; text-align: left; margin: 0 0 14px; padding: 0; flex: 1; }
     .carousel-features li { font-size: 12px; color: var(--text); line-height: 1.5; padding: 2px 0 2px 18px; position: relative; }
     .carousel-features li::before { content: '\2713'; position: absolute; left: 0; color: var(--gold); font-weight: 600; }
-    .carousel-mini-icons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .carousel-mini-icons { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
     .carousel-mini-icon { background: var(--cream); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 11px; color: var(--text); font-weight: 400; display: flex; align-items: center; gap: 5px; }
     .carousel-mini-icon svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
     .carousel-cta { display: inline-block; padding: 10px 22px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; margin-top: 4px; }
@@ -104,7 +104,7 @@
       .carousel-card-left { align-items: center; text-align: center; }
       .carousel-card h2 { text-align: center; }
       .carousel-card p { text-align: center; }
-      .carousel-mini-icons { justify-content: center; }
+      .carousel-mini-icons { justify-content: center; flex-direction: column; }
       .carousel-features { max-width: 100%; }
     }
 
@@ -378,9 +378,8 @@
                 <li>Full guides, calendar, document storage</li>
                 <li>Community access</li>
                 <li>Navigator with full context</li>
-                <li>Every future update included</li>
               </ul>
-              <p style="font-size:11px;color:var(--muted);font-weight:300;line-height:1.4;margin:8px 0 0;text-align:left">Future transition types may be offered separately.</p>
+              <p style="font-size:11px;color:var(--muted);font-weight:300;line-height:1.4;margin:8px 0 0;text-align:left">Future transition types are sold separately and not included in this purchase.</p>
             </div>
           </div>
         </div>

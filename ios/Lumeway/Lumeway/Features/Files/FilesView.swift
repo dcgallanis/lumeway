@@ -116,7 +116,8 @@ struct FilesView: View {
                                 files: uploads,
                                 isLoading: isLoadingUploads,
                                 onDelete: { file in Task { await deleteUpload(file) } },
-                                onPreview: { file in Task { await openPreview(file) } }
+                                onPreview: { file in Task { await openPreview(file) } },
+                                onChangeCategory: { file, newCat in Task { await changeCategory(file, to: newCat) } }
                             )
                         }
 
@@ -265,6 +266,19 @@ struct FilesView: View {
             await loadUploads()
         } catch {
             print("Delete error: \(error)")
+        }
+    }
+
+    private func changeCategory(_ file: UploadedFile, to category: String) async {
+        do {
+            let body = ["category": category]
+            try await api.post("/api/files/\(file.id)/category", body: body)
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.impactOccurred()
+            showUploadToast("Moved to \(category)")
+            await loadUploads()
+        } catch {
+            print("Category change error: \(error)")
         }
     }
 
@@ -458,8 +472,15 @@ struct MyFilesSection: View {
     let isLoading: Bool
     let onDelete: (UploadedFile) -> Void
     let onPreview: (UploadedFile) -> Void
+    var onChangeCategory: ((UploadedFile, String) -> Void)? = nil
 
     @State private var expandedCategories: Set<String> = []
+
+    static let allCategories = [
+        "Documents", "Photos", "Legal", "Financial",
+        "Medical", "Identification", "Text Files",
+        "Spreadsheets", "Other"
+    ]
 
     // Group files by category
     private var groupedFiles: [(category: String, files: [UploadedFile])] {
@@ -488,6 +509,10 @@ struct MyFilesSection: View {
     }
 
     private func iconForCategory(_ cat: String) -> String {
+        Self.iconForCategoryStatic(cat)
+    }
+
+    static func iconForCategoryStatic(_ cat: String) -> String {
         switch cat.lowercased() {
         case "photos": return "photo.fill"
         case "documents": return "doc.richtext"
@@ -499,6 +524,11 @@ struct MyFilesSection: View {
         case "identification", "id": return "person.text.rectangle.fill"
         default: return "folder.fill"
         }
+    }
+
+    private func currentCategory(for file: UploadedFile) -> String {
+        file.category?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+            ? file.category! : categoryFromType(file)
     }
 
     var body: some View {
@@ -533,12 +563,21 @@ struct MyFilesSection: View {
                 Spacer()
             }
         } else {
-            VStack(spacing: 16) {
-                HStack {
-                    Text("\(files.count) file\(files.count == 1 ? "" : "s")")
-                        .font(.lumeSmall)
-                        .foregroundColor(.lumeMuted)
-                    Spacer()
+            VStack(spacing: 12) {
+                // File count + hint
+                VStack(spacing: 4) {
+                    HStack {
+                        Text("\(files.count) file\(files.count == 1 ? "" : "s")")
+                            .font(.lumeSmall)
+                            .foregroundColor(.lumeMuted)
+                        Spacer()
+                    }
+                    HStack {
+                        Text("Long press a file to change its category")
+                            .font(.system(size: 11))
+                            .foregroundColor(.lumeMuted.opacity(0.7))
+                        Spacer()
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
@@ -581,120 +620,117 @@ struct MyFilesSection: View {
                         .buttonStyle(.plain)
 
                         if expandedCategories.contains(group.category) {
-                            ForEach(group.files) { file in
-                                FileCard(
-                                    file: file,
-                                    onTap: { onPreview(file) },
-                                    onDelete: { onDelete(file) }
-                                )
-                                .padding(.horizontal, 20)
+                            VStack(spacing: 2) {
+                                ForEach(group.files) { file in
+                                    FileRow(
+                                        file: file,
+                                        onTap: { onPreview(file) },
+                                        onDelete: { onDelete(file) },
+                                        onChangeCategory: { newCat in
+                                            onChangeCategory?(file, newCat)
+                                        },
+                                        currentCategory: currentCategory(for: file)
+                                    )
+                                    .padding(.horizontal, 20)
+                                }
                             }
+                            .padding(.bottom, 6)
                         }
                     }
                 }
             }
-            // Start collapsed — user taps to expand categories
         }
     }
 }
 
-// MARK: - File Card with Preview
+// MARK: - Compact File Row
 
-struct FileCard: View {
+struct FileRow: View {
     let file: UploadedFile
     let onTap: () -> Void
     let onDelete: () -> Void
-    @State private var thumbnail: UIImage?
-    @State private var isLoadingThumb = false
+    let onChangeCategory: (String) -> Void
+    let currentCategory: String
     @State private var showDeleteConfirm = false
-
-    var isImage: Bool {
-        file.contentType?.contains("image") == true
-    }
 
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: 0) {
-                // Thumbnail area
+            HStack(spacing: 12) {
+                // File type icon — small colored square
                 ZStack {
-                    if isImage, let thumb = thumbnail {
-                        Image(uiImage: thumb)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 160)
-                            .clipped()
-                    } else if isImage && isLoadingThumb {
-                        Rectangle()
-                            .fill(Color(hex: "E4E8EE"))
-                            .frame(height: 160)
-                            .overlay(ProgressView().tint(.lumeMuted))
-                    } else {
-                        // Non-image file type icon
-                        Rectangle()
-                            .fill(file.bgColor)
-                            .frame(height: 100)
-                            .overlay(
-                                VStack(spacing: 8) {
-                                    Image(systemName: file.iconName)
-                                        .font(.system(size: 32, weight: .light))
-                                        .foregroundColor(file.accentColor)
-                                    Text(file.fileExtension.uppercased())
-                                        .font(.lumeSmall)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(file.accentColor)
-                                }
-                            )
-                    }
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(file.bgColor)
+                        .frame(width: 40, height: 40)
+                    Image(systemName: file.iconName)
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(file.accentColor)
                 }
-                .cornerRadius(14, corners: [.topLeft, .topRight])
 
-                // File info
-                HStack(spacing: 12) {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(file.displayName)
-                            .font(.lumeBodyMedium)
-                            .foregroundColor(.lumeText)
-                            .lineLimit(1)
+                // File name + metadata
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(file.displayName)
+                        .font(.lumeBodyMedium)
+                        .foregroundColor(.lumeText)
+                        .lineLimit(1)
 
-                        HStack(spacing: 6) {
-                            if !file.formattedSize.isEmpty {
-                                Text(file.formattedSize)
-                                    .font(.lumeSmall)
-                                    .foregroundColor(.lumeMuted)
-                            }
-                            if let date = file.uploadedAt {
-                                Text("·")
-                                    .font(.lumeSmall)
-                                    .foregroundColor(.lumeBorder)
-                                Text(formatDate(date))
-                                    .font(.lumeSmall)
-                                    .foregroundColor(.lumeMuted)
-                            }
+                    HStack(spacing: 6) {
+                        Text(file.fileExtension.uppercased())
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundColor(file.accentColor.opacity(0.8))
+
+                        if !file.formattedSize.isEmpty {
+                            Text("·")
+                                .font(.system(size: 10))
+                                .foregroundColor(.lumeBorder)
+                            Text(file.formattedSize)
+                                .font(.system(size: 11))
+                                .foregroundColor(.lumeMuted)
+                        }
+                        if let date = file.uploadedAt {
+                            Text("·")
+                                .font(.system(size: 10))
+                                .foregroundColor(.lumeBorder)
+                            Text(formatDate(date))
+                                .font(.system(size: 11))
+                                .foregroundColor(.lumeMuted)
                         }
                     }
-
-                    Spacer()
-
-                    // View indicator
-                    Image(systemName: "eye")
-                        .font(.system(size: 13))
-                        .foregroundColor(.lumeNavy)
-                        .padding(8)
                 }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 12)
-                .background(Color.lumeWarmWhite)
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.lumeMuted.opacity(0.5))
             }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
             .background(Color.lumeWarmWhite)
-            .cornerRadius(14)
+            .cornerRadius(10)
             .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(Color.lumeBorder, lineWidth: 1)
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.lumeBorder.opacity(0.5), lineWidth: 0.5)
             )
         }
         .buttonStyle(.plain)
         .contextMenu {
+            // Move to category submenu
+            Menu {
+                ForEach(MyFilesSection.allCategories, id: \.self) { cat in
+                    if cat != currentCategory {
+                        Button {
+                            onChangeCategory(cat)
+                        } label: {
+                            Label(cat, systemImage: MyFilesSection.iconForCategoryStatic(cat))
+                        }
+                    }
+                }
+            } label: {
+                Label("Move to Category", systemImage: "folder.badge.gear")
+            }
+
+            Divider()
+
             Button(role: .destructive) {
                 showDeleteConfirm = true
             } label: {
@@ -706,26 +742,6 @@ struct FileCard: View {
             Button("Delete", role: .destructive) { onDelete() }
         } message: {
             Text("This can't be undone.")
-        }
-        .task {
-            if isImage { await loadThumbnail() }
-        }
-    }
-
-    private func loadThumbnail() async {
-        isLoadingThumb = true
-        defer { isLoadingThumb = false }
-        do {
-            var request = URLRequest(url: URL(string: "https://lumeway.co/api/files/\(file.id)/preview")!)
-            if let token = KeychainHelper.getToken() {
-                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            }
-            let (data, _) = try await URLSession.shared.data(for: request)
-            if let image = UIImage(data: data) {
-                thumbnail = image
-            }
-        } catch {
-            print("Thumbnail load error: \(error)")
         }
     }
 

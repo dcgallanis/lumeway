@@ -1230,8 +1230,7 @@ struct PricingView: View {
             features: [
                 "Everything in Bundled Plan",
                 "All transitions unlocked",
-                "Priority navigator chat",
-                "Future content updates"
+                "Priority navigator chat"
             ],
             highlight: false
         )
