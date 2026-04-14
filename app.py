@@ -5412,6 +5412,11 @@ def auth_verify_code():
         # Clear all user data
         db_execute(conn, f"DELETE FROM community_replies WHERE post_id IN (SELECT id FROM community_posts WHERE user_id = {param})", (user_id,))
         db_execute(conn, f"DELETE FROM community_replies WHERE user_id = {param}", (user_id,))
+        # Delete chat_messages before chat_sessions (no cascade)
+        try:
+            db_execute(conn, f"DELETE FROM chat_messages WHERE session_id IN (SELECT id FROM chat_sessions WHERE user_id = {param})", (user_id,))
+        except Exception:
+            pass
         for table in ["community_posts", "checklist_items", "user_deadlines", "user_documents_needed", "user_goals", "user_notes", "chat_sessions"]:
             db_execute(conn, f"DELETE FROM {table} WHERE user_id = {param}", (user_id,))
         try:
@@ -5426,8 +5431,21 @@ def auth_verify_code():
             db_execute(conn, f"DELETE FROM activity_log WHERE user_id = {param}", (user_id,))
         except Exception:
             pass
+        # Clear purchased access and gift codes
+        try:
+            db_execute(conn, f"DELETE FROM user_access WHERE user_id = {param}", (user_id,))
+        except Exception:
+            pass
+        try:
+            db_execute(conn, f"DELETE FROM purchases WHERE email = {param}", (email,))
+        except Exception:
+            pass
+        try:
+            db_execute(conn, f"UPDATE gift_codes SET redeemed_by = NULL, redeemed_at = NULL WHERE redeemed_by = {param}", (user_id,))
+        except Exception:
+            pass
         # Reset user back to free tier with no transition selected
-        db_execute(conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL, active_transitions = '[]', transition_type = NULL, display_name = NULL, us_state = NULL WHERE id = {param}", (user_id,))
+        db_execute(conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL, active_transitions = '[]', transition_type = NULL, display_name = NULL, us_state = NULL, credit_cents = 0 WHERE id = {param}", (user_id,))
         is_new = True  # Force onboarding flow
 
     # Claim anonymous chat session if provided
@@ -5475,6 +5493,11 @@ def auth_logout():
         db_execute(conn, f"DELETE FROM community_replies WHERE post_id IN (SELECT id FROM community_posts WHERE user_id = {param})", (uid,))
         # Then delete demo user's own replies on other posts
         db_execute(conn, f"DELETE FROM community_replies WHERE user_id = {param}", (uid,))
+        # Delete chat_messages before chat_sessions (no cascade)
+        try:
+            db_execute(conn, f"DELETE FROM chat_messages WHERE session_id IN (SELECT id FROM chat_sessions WHERE user_id = {param})", (uid,))
+        except Exception:
+            pass
         for table in ["community_posts", "checklist_items", "user_deadlines", "user_documents_needed", "user_goals", "user_notes", "chat_sessions"]:
             db_execute(conn, f"DELETE FROM {table} WHERE user_id = {param}", (uid,))
         # Also clear uploaded files

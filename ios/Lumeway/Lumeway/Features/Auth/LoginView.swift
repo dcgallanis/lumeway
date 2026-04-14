@@ -8,6 +8,7 @@ struct LoginView: View {
     @State private var isSending = false
     @State private var showVerify = false
     @State private var errorMessage: String?
+    @State private var demoCode: String?
 
     private let authService = AuthService()
 
@@ -125,7 +126,7 @@ struct LoginView: View {
                 }
             }
             .navigationDestination(isPresented: $showVerify) {
-                VerifyCodeView(email: email)
+                VerifyCodeView(email: email, prefillCode: demoCode)
             }
         }
     }
@@ -138,6 +139,7 @@ struct LoginView: View {
         do {
             let response = try await authService.sendCode(email: email.lowercased().trimmingCharacters(in: .whitespaces))
             if response.ok == true {
+                demoCode = response.demoCode
                 showVerify = true
             } else {
                 errorMessage = response.error ?? "Something went wrong. Try again."

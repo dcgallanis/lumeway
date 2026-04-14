@@ -5,6 +5,7 @@ struct VerifyCodeView: View {
     @Environment(\.dismiss) var dismiss
 
     let email: String
+    var prefillCode: String? = nil
 
     @State private var digits: [String] = Array(repeating: "", count: 6)
     @FocusState private var focusedField: Int?
@@ -97,7 +98,15 @@ struct VerifyCodeView: View {
             }
         }
         .onAppear {
-            focusedField = 0
+            if let code = prefillCode, code.count == 6 {
+                // Auto-fill demo code
+                for (i, ch) in code.enumerated() {
+                    digits[i] = String(ch)
+                }
+                Task { await verifyCode() }
+            } else {
+                focusedField = 0
+            }
         }
         .onReceive(timer) { _ in
             if resendCountdown > 0 {

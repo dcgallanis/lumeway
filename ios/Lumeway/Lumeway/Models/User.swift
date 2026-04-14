@@ -77,6 +77,13 @@ struct AuthMeResponse: Codable {
 struct SendCodeResponse: Codable {
     let ok: Bool?
     let error: String?
+    let demo: Bool?
+    let demoCode: String?
+
+    enum CodingKeys: String, CodingKey {
+        case ok, error, demo
+        case demoCode = "demo_code"
+    }
 }
 
 struct VerifyCodeResponse: Codable {
