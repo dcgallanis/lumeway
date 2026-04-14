@@ -4103,10 +4103,23 @@ def send_tier_email(to_email, tier, product_name, category=None):
         body = "You have full access to everything — all guides, scripts, and tools for every life change."
     else:
         body = f"Your {product_name} is now active. Your dashboard is ready with the full guide, checklists, scripts, and tools."
+    # Determine if we can attach zip or need a download link
+    will_attach = category and category in BUNDLE_FILES
+    if will_attach:
+        templates_line = f'<p style="{_e_p}">Your templates and worksheets are attached to this email as a zip file. They\'ve also been added to the <strong>Files</strong> tab in your dashboard, where you can view, edit, and fill them out right in your browser.</p>'
+    elif tier in ("all_transitions", "unlimited"):
+        # Master bundle is too large for email attachment — provide download link
+        dl_token = _get_master_download_token(to_email)
+        if dl_token:
+            templates_line = f'<p style="{_e_p}">Your full template library is ready. <a href="https://lumeway.co/download/{dl_token}" style="color:#2C4A5E;font-weight:500">Download the master bundle here</a> — or find individual templates in the <strong>Files</strong> tab of your dashboard.</p>'
+        else:
+            templates_line = f'<p style="{_e_p}">Your templates and worksheets have been added to the <strong>Files</strong> tab in your dashboard, where you can view, edit, and fill them out right in your browser. You can also download them from the <strong>My Templates</strong> tab.</p>'
+    else:
+        templates_line = f'<p style="{_e_p}">Your templates and worksheets have been added to the <strong>Files</strong> tab in your dashboard, where you can view, edit, and fill them out right in your browser.</p>'
     html = email_wrap(f"""
 <p style="{_e_hi}">Hi there,</p>
 <p style="{_e_p}">{body}</p>
-<p style="{_e_p}">Your templates and worksheets are attached to this email as a zip file. They've also been added to the <strong>Files</strong> tab in your dashboard, where you can view, edit, and fill them out right in your browser.</p>
+{templates_line}
 {_e_btn('https://lumeway.co/dashboard', 'Go to Your Dashboard')}
 <p style="{_e_muted}">Log in anytime at <strong>lumeway.co/login</strong> with this email address.</p>
 <p style="{_e_muted}">Questions? Email us at <a href="mailto:support@lumeway.co" style="color:#2C4A5E">support@lumeway.co</a></p>""")
@@ -4152,6 +4165,21 @@ def send_tier_email(to_email, tier, product_name, category=None):
             print(f"Resend response: {resp.text}")
     except Exception as e:
         print(f"Failed to send tier email to {to_email}: {e}")
+
+def _get_master_download_token(email):
+    """Look up the master bundle or all-transitions download token for a user."""
+    try:
+        conn = get_db()
+        param = "%s" if USE_POSTGRES else "?"
+        # Look for master bundle or all-transitions purchase
+        cur = db_execute(conn, f"SELECT download_token FROM purchases WHERE email = {param} AND product_id IN ('master', 'all-transitions') ORDER BY purchased_at DESC LIMIT 1", (email,))
+        row = cur.fetchone()
+        conn.close()
+        if row:
+            return row[0]
+    except Exception:
+        pass
+    return None
 
 def handle_transition_webhook(session_data, metadata):
     """Handle one_transition or add_transition purchase from webhook."""
