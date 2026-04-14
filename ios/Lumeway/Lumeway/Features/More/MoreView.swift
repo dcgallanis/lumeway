@@ -1229,8 +1229,9 @@ struct PricingView: View {
             period: "one-time",
             features: [
                 "Everything in Bundled Plan",
-                "All transitions unlocked",
-                "Priority navigator chat"
+                "All 6 transition dashboards",
+                "Every worksheet bundle included",
+                "1 GB document storage"
             ],
             highlight: false
         )

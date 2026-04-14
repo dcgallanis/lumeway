@@ -34,6 +34,8 @@ struct DashboardView: View {
                             userName: appState.user?.displayName ?? "there",
                             userInitial: String((appState.user?.displayName ?? appState.user?.email ?? "U").prefix(1)).uppercased(),
                             isRefreshing: isRefreshing,
+                            weekCompleted: thisWeekTasks.filter(\.isCompleted).count,
+                            weekTotal: thisWeekTasks.count,
                             onRefresh: {
                                 Task {
                                     isRefreshing = true
@@ -441,27 +443,33 @@ struct MotivationCard<Destination: View>: View {
     let userName: String
     let userInitial: String
     let isRefreshing: Bool
+    let weekCompleted: Int
+    let weekTotal: Int
     let onRefresh: () -> Void
     @ViewBuilder let profileDestination: () -> Destination
 
-    // Fun, interesting rotating sayings
+    private var weekProgress: CGFloat {
+        weekTotal == 0 ? 0 : CGFloat(weekCompleted) / CGFloat(weekTotal)
+    }
+
+    // Fun, lighthearted rotating sayings
     private static var sayings: [String] {
         [
-            "You're doing better than you think.",
             "Plot twist: you're the main character.",
             "Today's vibe: handling it.",
-            "Chaos is temporary. You are permanent.",
-            "Small steps still cover ground.",
-            "You didn't come this far to only come this far.",
-            "Permission to take it one thing at a time.",
-            "Future you is already proud.",
             "Not all heroes wear capes. Some use checklists.",
-            "Deep breath. You've got this.",
-            "Your only competition is yesterday's you.",
             "Messy progress beats perfect paralysis.",
-            "The hard part? You're already doing it.",
-            "Be the calm in your own storm.",
             "You're literally rebuilding your life. That's badass.",
+            "Look at you, being all productive.",
+            "One thing at a time. You pick which one.",
+            "Checked your to-do list today? Same.",
+            "Adulting level: intermediate.",
+            "You showed up. That's step one.",
+            "Your checklist doesn't stand a chance.",
+            "Doing hard things before breakfast? Iconic.",
+            "Getting your life together, one checkbox at a time.",
+            "Somewhere, a spreadsheet is proud of you.",
+            "Main character energy. Activated.",
         ]
     }
 
@@ -507,15 +515,46 @@ struct MotivationCard<Destination: View>: View {
                 }
             }
 
-            Spacer().frame(height: 20)
+            Spacer().frame(height: 16)
 
-            // Fun motivational saying — large, terracotta
-            Text(motivationalSaying)
-                .font(.custom("Montserrat-Medium", size: 20))
-                .foregroundColor(.lumeAccent)
-                .lineSpacing(5)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            HStack(alignment: .center, spacing: 16) {
+                // Fun motivational saying — large, terracotta
+                Text(motivationalSaying)
+                    .font(.custom("Montserrat-Medium", size: 18))
+                    .foregroundColor(.lumeAccent)
+                    .lineSpacing(4)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                // Weekly progress circle
+                if weekTotal > 0 {
+                    ZStack {
+                        Circle()
+                            .stroke(Color.white.opacity(0.12), lineWidth: 4)
+                            .frame(width: 52, height: 52)
+                        Circle()
+                            .trim(from: 0, to: weekProgress)
+                            .stroke(
+                                LinearGradient(
+                                    colors: [.lumeGold, .lumeGreen],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                            )
+                            .frame(width: 52, height: 52)
+                            .rotationEffect(.degrees(-90))
+                        VStack(spacing: 0) {
+                            Text("\(weekCompleted)/\(weekTotal)")
+                                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                .foregroundColor(.white)
+                            Text("week")
+                                .font(.system(size: 8))
+                                .foregroundColor(.white.opacity(0.5))
+                        }
+                    }
+                }
+            }
         }
         .padding(24)
         .frame(maxWidth: .infinity, alignment: .leading)

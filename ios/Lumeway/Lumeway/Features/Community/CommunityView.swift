@@ -46,11 +46,14 @@ struct CommunityView: View {
     var isEmbedded: Bool = false
 
     @EnvironmentObject var appState: AppState
+    struct PostDetailItem: Identifiable {
+        let id: Int
+    }
+
     @State private var posts: [CommunityPost] = []
     @State private var isLoading = true
     @State private var showNewPost = false
-    @State private var selectedPostId: Int? = nil
-    @State private var showPostDetail = false
+    @State private var selectedPostDetail: PostDetailItem? = nil
     @State private var selectedCategory: String = "all"
 
     private let service = CommunityService()
@@ -124,8 +127,7 @@ struct CommunityView: View {
                             CommunityPostCard(post: post, onLike: {
                                 likePost(post)
                             }, onTap: {
-                                selectedPostId = post.id
-                                showPostDetail = true
+                                selectedPostDetail = PostDetailItem(id: post.id)
                             })
                             .padding(.horizontal, 20)
                         }
@@ -174,13 +176,11 @@ struct CommunityView: View {
                 .presentationDetents([.large])
                 .presentationBackground(Color.lumeCream)
             }
-            .sheet(isPresented: $showPostDetail) {
-                if let postId = selectedPostId {
-                    PostDetailSheet(postId: postId, onDismiss: {
-                        Task { await loadPosts() }
-                    })
-                    .presentationBackground(Color.lumeCream)
-                }
+            .sheet(item: $selectedPostDetail) { detail in
+                PostDetailSheet(postId: detail.id, onDismiss: {
+                    Task { await loadPosts() }
+                })
+                .presentationBackground(Color.lumeCream)
             }
         }
     }
