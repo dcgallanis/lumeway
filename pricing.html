@@ -212,6 +212,7 @@
           <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">&#9662;</span></button>
           <div class="nav-drop-menu">
             <a href="/templates">Shop</a>
+          <a href="/pricing">Plans</a>
             <a href="/faq">FAQ</a>
             <a href="/blog">Blog</a>
             <div class="menu-div"></div>
@@ -328,6 +329,33 @@
         <div class="addon-desc">Already have a Bundled Plan? Add another transition to your dashboard for $20.</div>
         <button class="addon-btn cta-btn secondary" onclick="showAddTransitionSelector()" id="addTransitionBtn">Add a life change</button>
       </div>
+      <div class="addon-card">
+        <h3>🎁 Gift a Plan</h3>
+        <div class="addon-desc" style="margin-top:6px">Know someone going through it? Gift them a Lumeway plan.</div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button class="gift-opt" onclick="selectGift(this,'gift-transition')" style="flex:1;background:var(--cream);border:2px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-family:inherit;transition:all 0.2s;text-align:center;min-width:100px">
+            <div style="font-size:11px;font-weight:600;color:var(--navy)">Bundled Plan</div>
+            <div style="font-size:16px;font-weight:500;color:var(--navy);margin-top:2px">$39</div>
+          </button>
+          <button class="gift-opt" onclick="selectGift(this,'gift-all')" style="flex:1;background:var(--cream);border:2px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-family:inherit;transition:all 0.2s;text-align:center;min-width:100px">
+            <div style="font-size:11px;font-weight:600;color:var(--navy)">All Access</div>
+            <div style="font-size:16px;font-weight:500;color:var(--navy);margin-top:2px">$125</div>
+          </button>
+        </div>
+        <div id="giftForm" style="display:none;margin-top:14px;text-align:left">
+          <div style="margin-bottom:8px">
+            <input type="text" id="giftRecipient" placeholder="Recipient's name" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none">
+          </div>
+          <div style="margin-bottom:8px">
+            <input type="text" id="giftFrom" placeholder="Your name" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none">
+          </div>
+          <div style="margin-bottom:10px">
+            <input type="email" id="giftEmail" placeholder="Your email" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none">
+          </div>
+          <button id="giftCheckoutBtn" onclick="purchaseGift()" style="width:100%;padding:12px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s">Purchase Gift</button>
+          <p id="giftError" style="display:none;margin-top:8px;font-size:11px;color:var(--accent);text-align:center"></p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -435,47 +463,6 @@
       <p>If your purchase does not help, we do not want your money. Email us within 14 days and we will refund you in full — no forms, no hoops, no questions you should not have to answer during a hard time.</p>
       <p>This applies to every paid plan and every add-on. One-time purchases, yours to keep — or your money back.</p>
       <a href="mailto:hello@lumeway.co" class="guarantee-contact">hello@lumeway.co</a>
-    </div>
-  </div>
-
-  <!-- Gift a plan -->
-  <div class="gift-section" style="max-width:680px;margin:0 auto 40px;padding:0 5%">
-    <div style="background:var(--warm-white);border:1px solid var(--border);border-radius:16px;padding:36px 32px;text-align:center">
-      <div style="font-size:32px;margin-bottom:12px">🎁</div>
-      <h2 style="font-family:'Libre Baskerville',serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:8px">Give the gift of getting through it</h2>
-      <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.7;max-width:480px;margin:0 auto 24px">Know someone going through a hard transition? Gift them a Lumeway plan. We'll email you a printable gift certificate with a redemption code they can use anytime.</p>
-
-      <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:20px">
-        <button class="gift-opt" data-product="gift-starter" style="background:var(--cream);border:2px solid var(--border);border-radius:10px;padding:14px 22px;cursor:pointer;font-family:inherit;transition:all 0.2s;text-align:center;min-width:140px" onclick="selectGift(this,'gift-starter')">
-          <div style="font-size:12px;font-weight:600;color:var(--navy)">Starter Bundle</div>
-          <div style="font-size:18px;font-weight:500;color:var(--navy);margin-top:4px">$16</div>
-        </button>
-        <button class="gift-opt" data-product="gift-transition" style="background:var(--cream);border:2px solid var(--border);border-radius:10px;padding:14px 22px;cursor:pointer;font-family:inherit;transition:all 0.2s;text-align:center;min-width:140px" onclick="selectGift(this,'gift-transition')">
-          <div style="font-size:12px;font-weight:600;color:var(--navy)">Bundled Plan</div>
-          <div style="font-size:18px;font-weight:500;color:var(--navy);margin-top:4px">$39</div>
-        </button>
-        <button class="gift-opt" data-product="gift-all" style="background:var(--cream);border:2px solid var(--border);border-radius:10px;padding:14px 22px;cursor:pointer;font-family:inherit;transition:all 0.2s;text-align:center;min-width:140px" onclick="selectGift(this,'gift-all')">
-          <div style="font-size:12px;font-weight:600;color:var(--navy)">All Access</div>
-          <div style="font-size:18px;font-weight:500;color:var(--navy);margin-top:4px">$125</div>
-        </button>
-      </div>
-
-      <div id="giftForm" style="display:none;max-width:360px;margin:0 auto;text-align:left">
-        <div style="margin-bottom:10px">
-          <label style="font-size:11px;font-weight:600;color:var(--navy);display:block;margin-bottom:4px">Recipient's name</label>
-          <input type="text" id="giftRecipient" placeholder="Who is this for?" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;outline:none">
-        </div>
-        <div style="margin-bottom:10px">
-          <label style="font-size:11px;font-weight:600;color:var(--navy);display:block;margin-bottom:4px">Your name</label>
-          <input type="text" id="giftFrom" placeholder="Your name (for the certificate)" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;outline:none">
-        </div>
-        <div style="margin-bottom:16px">
-          <label style="font-size:11px;font-weight:600;color:var(--navy);display:block;margin-bottom:4px">Your email</label>
-          <input type="email" id="giftEmail" placeholder="We'll send the certificate here" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;outline:none">
-        </div>
-        <button id="giftCheckoutBtn" onclick="purchaseGift()" style="width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s">Purchase Gift</button>
-        <p id="giftError" style="display:none;margin-top:10px;font-size:12px;color:var(--accent);text-align:center"></p>
-      </div>
     </div>
   </div>
 

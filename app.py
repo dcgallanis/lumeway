@@ -2825,7 +2825,6 @@ def create_individual_template_checkout():
 # ── Gift Certificate System ──
 
 GIFT_PRODUCTS = {
-    "gift-starter": {"name": "Starter Bundle Gift", "price": 1600, "gift_type": "starter", "label": "Starter Bundle"},
     "gift-transition": {"name": "Bundled Plan Gift", "price": 3900, "gift_type": "one_transition", "label": "Bundled Plan (one transition)"},
     "gift-all": {"name": "All Access Gift", "price": 12500, "gift_type": "all_transitions", "label": "All Access — All Transitions"},
 }
