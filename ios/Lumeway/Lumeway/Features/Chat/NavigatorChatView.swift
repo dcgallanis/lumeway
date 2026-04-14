@@ -87,10 +87,18 @@ struct NavigatorChatView: View {
                             LazyVStack(spacing: 16) {
                                 // Welcome message with suggestion pills
                                 if vm.messages.isEmpty {
-                                    WelcomeBubble(onSuggestionTap: { suggestion in
-                                        vm.inputText = suggestion
-                                        sendMessage()
-                                    }, activeTransitions: appState.activeTransitions)
+                                    WelcomeBubble(
+                                        onSuggestionTap: { suggestion in
+                                            vm.inputText = suggestion
+                                            sendMessage()
+                                        },
+                                        activeTransitions: appState.activeTransitions,
+                                        effectiveTier: appState.effectiveTier,
+                                        userState: appState.user?.usState,
+                                        userName: appState.user?.displayName,
+                                        hasHistory: (appState.dashboardData?.sessions?.count ?? 0) > 0,
+                                        lastPreview: appState.dashboardData?.sessions?.first?.preview
+                                    )
                                     .padding(.top, 24)
                                 }
 
@@ -443,68 +451,114 @@ struct ChatBubble: View {
 struct WelcomeBubble: View {
     var onSuggestionTap: ((String) -> Void)?
     var activeTransitions: [String] = []
+    var effectiveTier: String = "free"
+    var userState: String? = nil
+    var userName: String? = nil
+    var hasHistory: Bool = false
+    var lastPreview: String? = nil
+
+    private let transitionLabels: [String: String] = [
+        "job-loss": "Job Loss & Income Crisis",
+        "estate": "Estate & Survivor",
+        "divorce": "Divorce & Separation",
+        "disability": "Disability & Benefits",
+        "relocation": "Relocation",
+        "retirement": "Retirement"
+    ]
+
+    private var heading: String {
+        if hasHistory {
+            return "Welcome back\(userName.map { ", \($0)" } ?? "")"
+        } else if effectiveTier == "one_transition" || effectiveTier == "pass" {
+            return "Let\u{2019}s get you set up"
+        } else {
+            return "Your Transition Navigator"
+        }
+    }
+
+    private var subtitle: String {
+        if hasHistory {
+            if let preview = lastPreview, !preview.isEmpty {
+                let trimmed = preview.count > 80 ? String(preview.prefix(80)) + "\u{2026}" : preview
+                return "Last time we talked about: \(trimmed)"
+            }
+            return "Ready to pick up where you left off, or start something new."
+        } else if effectiveTier == "one_transition" || effectiveTier == "pass" {
+            let bundleName = activeTransitions.first.flatMap { transitionLabels[$0] } ?? "your transition"
+            if let state = userState, !state.isEmpty {
+                return "You have the \(bundleName) guide and you\u{2019}re in \(state). I can walk you through what to do first and build your personalized checklist."
+            } else {
+                return "You have the \(bundleName) guide. Tell me what state you\u{2019}re in and I\u{2019}ll personalize your action plan with state-specific steps and deadlines."
+            }
+        } else if effectiveTier == "all_transitions" || effectiveTier == "unlimited" {
+            return "You have access to all transition guides. Tell me what you\u{2019}re going through and I\u{2019}ll help you figure out next steps."
+        } else {
+            return "Lumeway helps you through life\u{2019}s hardest transitions. Tell me what\u{2019}s going on and I\u{2019}ll walk you through what to do next."
+        }
+    }
 
     private var starters: [String] {
-        // If user has active transitions, show context-aware starters
-        if !activeTransitions.isEmpty {
-            var contextStarters: [String] = [
+        if hasHistory {
+            return [
+                "Pick up where we left off",
                 "What should I focus on next?",
-                "Help me understand my checklist",
-                "I have a question about a deadline",
+                "I have a new question",
+                "I\u{2019}m feeling overwhelmed",
             ]
-            // Add transition-specific starters
-            for transition in activeTransitions.prefix(2) {
-                switch transition {
-                case "job-loss":
-                    contextStarters.insert("What\u{2019}s the most urgent thing for my job loss situation?", at: 0)
-                case "estate":
-                    contextStarters.insert("Walk me through what I need to handle for the estate", at: 0)
-                case "divorce":
-                    contextStarters.insert("What should I be documenting for my divorce?", at: 0)
-                case "disability":
-                    contextStarters.insert("Help me with my disability benefits application", at: 0)
-                case "relocation":
-                    contextStarters.insert("What do I need to update for my move?", at: 0)
-                case "retirement":
-                    contextStarters.insert("What retirement deadlines should I know about?", at: 0)
-                default: break
-                }
+        } else if effectiveTier == "one_transition" || effectiveTier == "pass" {
+            if let state = userState, !state.isEmpty {
+                return [
+                    "What should I do first?",
+                    "Build my personalized checklist",
+                    "What are my most urgent deadlines?",
+                    "I\u{2019}m feeling overwhelmed",
+                ]
+            } else {
+                return [
+                    "I\u{2019}m in [my state] \u{2014} what do I do first?",
+                    "Build my personalized checklist",
+                    "What are my most urgent deadlines?",
+                    "I\u{2019}m feeling overwhelmed",
+                ]
             }
-            contextStarters.append("I\u{2019}m feeling overwhelmed")
-            return contextStarters
+        } else if effectiveTier == "all_transitions" || effectiveTier == "unlimited" {
+            return [
+                "I recently lost a loved one and don\u{2019}t know where to start",
+                "I just got laid off \u{2014} what do I do right away?",
+                "I\u{2019}m going through a divorce and feel overwhelmed",
+                "Help me with something else",
+            ]
+        } else {
+            return [
+                "I recently lost a loved one and don\u{2019}t know where to start",
+                "I just got laid off \u{2014} what do I do right away?",
+                "I\u{2019}m going through a divorce and feel overwhelmed",
+                "I\u{2019}m dealing with something else",
+            ]
         }
-
-        // Default starters for new/free users
-        return [
-            "I recently lost a loved one and don\u{2019}t know where to start.",
-            "I just got laid off. What do I need to do right away?",
-            "I\u{2019}m going through a divorce and feel completely overwhelmed.",
-            "I\u{2019}m moving to a new state and need help with everything.",
-            "I\u{2019}m applying for disability benefits and don\u{2019}t know where to begin.",
-            "I\u{2019}m getting ready to retire and want to make sure I don\u{2019}t miss anything.",
-            "Something else is going on\u{2026}",
-        ]
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Heading & subtext
             VStack(alignment: .leading, spacing: 12) {
-                Text("You don\u{2019}t have to figure this out alone.")
+                Text(heading)
                     .font(.lumeBodyMedium)
                     .foregroundColor(.lumeText)
 
-                Text("Lumeway helps you understand the process and timeline for life\u{2019}s hardest transitions \u{2014} with planning tools to keep you organized and a Transition Navigator to walk you through what comes next.")
+                Text(subtitle)
                     .font(.lumeBody)
                     .foregroundColor(.lumeMuted)
                     .fixedSize(horizontal: false, vertical: true)
 
-                // Disclaimer
-                Text("Lumeway is a guidance tool \u{2014} not a lawyer, financial advisor, or licensed professional. The information provided is for general educational purposes only and should not be considered legal, financial, or medical advice. Always consult a qualified professional for decisions specific to your situation.")
-                    .font(.system(size: 11))
-                    .foregroundColor(.lumeMuted)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 4)
+                // Disclaimer (only show for new users without history)
+                if !hasHistory {
+                    Text("Lumeway is a guidance tool \u{2014} not a lawyer, financial advisor, or licensed professional. Always consult a qualified professional for decisions specific to your situation.")
+                        .font(.system(size: 11))
+                        .foregroundColor(.lumeMuted)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 4)
+                }
             }
             .padding(16)
             .background(Color.lumeWarmWhite)
@@ -516,7 +570,7 @@ struct WelcomeBubble: View {
 
             // Starter buttons
             VStack(alignment: .leading, spacing: 10) {
-                Text("Where are you right now?")
+                Text(hasHistory ? "What would you like to do?" : "Where are you right now?")
                     .font(.lumeBodyMedium)
                     .foregroundColor(.lumeText)
                     .padding(.bottom, 2)

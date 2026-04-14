@@ -7801,16 +7801,71 @@ guideLibrary['disability'] = {
       html += '  </div>';
       html += '  <div class="nav-chat-sessions-list" id="ncSessionsList" style="display:none"></div>';
       html += '  <div class="nav-chat-messages" id="ncMessages">';
+      // Build context-aware welcome based on tier, transitions, state, and chat history
+      var ncSessions = dashData.sessions || [];
+      var ncTransitions = dashData.active_transitions || [];
+      var ncState = dashData.user && dashData.user.us_state;
+      var ncName = dashData.user && dashData.user.display_name;
+      var ncTier = tier;
+      var ncHasHistory = ncSessions.length > 0;
+      var ncTransitionLabels = { 'job-loss': 'Job Loss & Income Crisis', 'estate': 'Estate & Survivor', 'divorce': 'Divorce & Separation', 'disability': 'Disability & Benefits', 'relocation': 'Relocation', 'retirement': 'Retirement' };
+
       html += '    <div class="nav-chat-welcome" id="ncWelcome">';
       html += '      <img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" style="width:48px;height:48px;object-fit:contain;margin-bottom:4px">';
-      html += '      <h3>Your Transition Navigator</h3>';
-      html += '      <p>I can help you understand what to do next, walk you through your checklist, and answer questions about your situation. What would you like to start with?</p>';
-      html += '      <div class="nav-chat-starters">';
-      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">What should I focus on next?</button>';
-      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">Help me understand my checklist</button>';
-      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I have a question about a deadline</button>';
-      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m feeling overwhelmed</button>';
-      html += '      </div>';
+
+      if (ncHasHistory) {
+        // ── Returning user with chat history ──
+        var lastPreview = ncSessions[0].preview || '';
+        html += '      <h3>Welcome back' + (ncName ? ', ' + ncName : '') + '</h3>';
+        if (lastPreview) {
+          html += '      <p>Last time we talked about: <em>' + lastPreview.replace(/</g, '&lt;').substring(0, 80) + (lastPreview.length > 80 ? '\u2026' : '') + '</em></p>';
+        }
+        html += '      <div class="nav-chat-starters">';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">Pick up where we left off</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">What should I focus on next?</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I have a new question</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m feeling overwhelmed</button>';
+        html += '      </div>';
+      } else if (ncTier === 'one_transition' || ncTier === 'pass') {
+        // ── Bundled user, first time chatting ──
+        var bundleName = ncTransitions.length > 0 ? (ncTransitionLabels[ncTransitions[0]] || ncTransitions[0]) : 'your transition';
+        html += '      <h3>Let\'s get you set up</h3>';
+        if (ncState) {
+          html += '      <p>You have the <strong>' + bundleName + '</strong> guide and you\'re in <strong>' + ncState + '</strong>. I can walk you through what to do first and build your personalized checklist.</p>';
+        } else {
+          html += '      <p>You have the <strong>' + bundleName + '</strong> guide. Tell me what state you\'re in and I\'ll personalize your action plan with state-specific steps and deadlines.</p>';
+        }
+        html += '      <div class="nav-chat-starters">';
+        if (!ncState) {
+          html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m in ' + (ncState || '[tell me your state]') + ' \u2014 what do I do first?</button>';
+        } else {
+          html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">What should I do first?</button>';
+        }
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">Build my personalized checklist</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">What are my most urgent deadlines?</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m feeling overwhelmed</button>';
+        html += '      </div>';
+      } else if (ncTier === 'all_transitions' || ncTier === 'unlimited') {
+        // ── All-access user, first time chatting ──
+        html += '      <h3>Your Transition Navigator</h3>';
+        html += '      <p>You have access to all transition guides. Tell me what you\'re going through and I\'ll help you figure out next steps.</p>';
+        html += '      <div class="nav-chat-starters">';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I recently lost a loved one and don\'t know where to start</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I just got laid off \u2014 what do I do right away?</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m going through a divorce and feel overwhelmed</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">Help me with something else</button>';
+        html += '      </div>';
+      } else {
+        // ── Free user, first time chatting ──
+        html += '      <h3>Your Transition Navigator</h3>';
+        html += '      <p>Lumeway helps you through life\'s hardest transitions. Tell me what\'s going on and I\'ll walk you through what to do next.</p>';
+        html += '      <div class="nav-chat-starters">';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I recently lost a loved one and don\'t know where to start</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I just got laid off \u2014 what do I do right away?</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m going through a divorce and feel overwhelmed</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m dealing with something else</button>';
+        html += '      </div>';
+      }
       html += '    </div>';
       html += '  </div>';
       html += '  <div class="nav-chat-input-area">';
