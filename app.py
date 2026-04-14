@@ -8387,22 +8387,69 @@ def chat():
 
         boundary_cat = detect_boundary_category(user_message)
 
-        # Build system prompt — add gift context if applicable
+        # Build system prompt — add user context if logged in
         chat_system_prompt = SYSTEM_PROMPT
         user = get_current_user()
         if user:
             try:
-                conn_ctx = get_db()
-                param_ctx = "%s" if USE_POSTGRES else "?"
-                cur_ctx = db_execute(conn_ctx, f"SELECT onboarding_source, tier, active_transitions FROM users WHERE id = {param_ctx}", (user["id"],))
-                ctx_row = cur_ctx.fetchone()
-                conn_ctx.close()
-                if ctx_row and ctx_row[0] == "gift":
-                    tier = ctx_row[1] or "unknown"
-                    transitions = ctx_row[2] or ""
-                    chat_system_prompt += f"""
+                transition_labels = {
+                    "job-loss": "job loss", "estate": "loss of a loved one", "divorce": "divorce or separation",
+                    "disability": "disability", "relocation": "relocation", "retirement": "retirement", "addiction": "addiction recovery"
+                }
+                tier = user.get("tier", "free")
+                us_state = user.get("us_state", "")
+                transition_type = user.get("transition_type", "")
+                display_name = user.get("display_name", "")
+                active_transitions = user.get("active_transitions") or []
+                if isinstance(active_transitions, str):
+                    try:
+                        import json as _json
+                        active_transitions = _json.loads(active_transitions)
+                    except Exception:
+                        active_transitions = []
+                # Normalize: items might be dicts like {"cat": "job-loss"} or strings
+                active_cats = [t["cat"] if isinstance(t, dict) else t for t in active_transitions]
+                active_labels = [transition_labels.get(c, c) for c in active_cats]
 
-IMPORTANT CONTEXT: This user received Lumeway as a gift. They are brand new and may not know what Lumeway does yet. Their tier is "{tier}". Be extra warm and welcoming. In your first response, briefly acknowledge they received a gift, ask what life transition they're going through so you can help set up their dashboard, and ask what state they're in (this matters for state-specific legal deadlines and resources). Keep it conversational and low-pressure — they may be going through a hard time."""
+                # Check onboarding source
+                onboarding_source = None
+                try:
+                    conn_ctx = get_db()
+                    param_ctx = "%s" if USE_POSTGRES else "?"
+                    cur_ctx = db_execute(conn_ctx, f"SELECT onboarding_source FROM users WHERE id = {param_ctx}", (user["id"],))
+                    ctx_row = cur_ctx.fetchone()
+                    if ctx_row:
+                        onboarding_source = ctx_row[0]
+                    conn_ctx.close()
+                except Exception:
+                    pass
+
+                # Build context block
+                context_parts = ["\n\nUSER CONTEXT (do not repeat this verbatim, just use it to personalize your responses):"]
+
+                if display_name:
+                    context_parts.append(f"- Name: {display_name}")
+
+                if us_state:
+                    context_parts.append(f"- State: {us_state}. Use this for state-specific legal deadlines, filing requirements, and resources. Do NOT ask what state they're in — you already know.")
+
+                if active_labels:
+                    context_parts.append(f"- Active transitions: {', '.join(active_labels)}")
+                    if tier not in ("free",):
+                        context_parts.append("- They have a paid bundle. You can reference specific checklist items, guides, and templates available for their transition(s). Offer to help with specific areas like insurance, finances, legal paperwork, housing, etc. that are relevant to their situation.")
+
+                if tier == "free":
+                    context_parts.append("- Free tier. Be helpful but don't oversell — they may upgrade on their own.")
+                elif tier == "all_transitions":
+                    context_parts.append("- All Access tier — they have access to everything.")
+                elif tier in ("pass", "one_transition"):
+                    context_parts.append(f"- Bundled Plan tier for: {', '.join(active_labels) if active_labels else 'one transition'}.")
+
+                if onboarding_source == "gift":
+                    context_parts.append("- This user received Lumeway as a gift. They may be brand new. Be extra warm and welcoming. If this seems like their first message, acknowledge the gift, ask what life transition they're navigating, and help them get set up. Keep it conversational and low-pressure — they may be going through a hard time.")
+
+                if len(context_parts) > 1:
+                    chat_system_prompt += "\n".join(context_parts)
             except Exception:
                 pass
 
