@@ -797,8 +797,15 @@ def init_subscribers_db():
                 stripe_session_id TEXT,
                 redeemed_by INTEGER,
                 redeemed_at TEXT,
+                transition_category TEXT DEFAULT '',
                 created_at TEXT NOT NULL
             )""")
+            # Migration: add transition_category if missing
+            try:
+                db_execute(conn_gift, "ALTER TABLE gift_codes ADD COLUMN IF NOT EXISTS transition_category TEXT DEFAULT ''")
+                conn_gift.commit()
+            except Exception:
+                pass
         else:
             db_execute(conn_gift, """CREATE TABLE IF NOT EXISTS gift_codes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -812,6 +819,7 @@ def init_subscribers_db():
                 stripe_session_id TEXT,
                 redeemed_by INTEGER,
                 redeemed_at TEXT,
+                transition_category TEXT DEFAULT '',
                 created_at TEXT NOT NULL
             )""")
         conn_gift.commit()
@@ -3069,12 +3077,12 @@ def gift_redeem_verify():
         user_id = cur.fetchone()[0]
 
     # Validate and redeem gift code
-    cur = db_execute(conn, f"SELECT id, gift_type, gift_label, redeemed_by FROM gift_codes WHERE code = {param}", (gift_code,))
+    cur = db_execute(conn, f"SELECT id, gift_type, gift_label, redeemed_by, transition_category FROM gift_codes WHERE code = {param}", (gift_code,))
     gift_row = cur.fetchone()
     if not gift_row:
         conn.close()
         return jsonify({"error": "Gift code not found."}), 400
-    gift_id, gift_type, gift_label, redeemed_by = gift_row
+    gift_id, gift_type, gift_label, redeemed_by, gift_transition = gift_row
     if redeemed_by is not None:
         conn.close()
         return jsonify({"error": "This gift code has already been redeemed."}), 400
@@ -3099,9 +3107,25 @@ def gift_redeem_verify():
                     print(f"[gift] Error preloading {cat} templates: {e}")
         msg = "Gift redeemed! You now have All Access — every transition, every feature."
     elif gift_type == "one_transition":
-        db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (user_id,))
-        conn.commit()
-        msg = "Gift redeemed! You have $39 in credit toward any transition plan."
+        # Grant access to the specific transition the buyer chose
+        gift_cat = gift_transition if gift_transition in VALID_CATEGORIES else None
+        if gift_cat:
+            add_user_category(user_id, gift_cat, "full", conn)
+            db_execute(conn, f"UPDATE users SET transition_type = {param} WHERE id = {param}", (gift_cat, user_id))
+            conn.commit()
+            # Auto-load templates for this transition
+            if gift_cat in BUNDLE_FILES:
+                try:
+                    preload_bundle_templates(user_id, gift_cat)
+                except Exception as e:
+                    print(f"[gift] Error preloading {gift_cat} templates: {e}")
+            cat_label = CATEGORY_LABELS.get(gift_cat, gift_cat)
+            msg = f"Gift redeemed! You have the {cat_label} bundle. If you'd like to switch to a different transition, email cara@lumeway.co."
+        else:
+            # Fallback: give credit if no category specified
+            db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (user_id,))
+            conn.commit()
+            msg = "Gift redeemed! You have $39 in credit toward any transition plan."
     else:
         msg = "Gift redeemed!"
 
@@ -3158,9 +3182,9 @@ def handle_gift_webhook(session_data, metadata):
     # Store gift code
     try:
         db_execute(conn,
-            f"""INSERT INTO gift_codes (code, purchaser_email, purchaser_name, recipient_name, gift_type, gift_label, amount_cents, stripe_session_id, created_at)
-            VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param}, {param}, {param})""",
-            (code, purchaser_email, purchaser_name, recipient_name, gift_type, gift_label, gift_price, session_id, now))
+            f"""INSERT INTO gift_codes (code, purchaser_email, purchaser_name, recipient_name, gift_type, gift_label, amount_cents, stripe_session_id, transition_category, created_at)
+            VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param}, {param}, {param}, {param})""",
+            (code, purchaser_email, purchaser_name, recipient_name, gift_type, gift_label, gift_price, session_id, transition_category, now))
         conn.commit()
     except Exception as e:
         print(f"Error storing gift code: {e}")
@@ -3609,10 +3633,10 @@ def redeem_code():
     if code.startswith("LUME-"):
         conn_g = get_db()
         param_g = "%s" if USE_POSTGRES else "?"
-        cur_g = db_execute(conn_g, f"SELECT id, gift_type, gift_label, redeemed_by FROM gift_codes WHERE code = {param_g}", (code,))
+        cur_g = db_execute(conn_g, f"SELECT id, gift_type, gift_label, redeemed_by, transition_category FROM gift_codes WHERE code = {param_g}", (code,))
         gift_row = cur_g.fetchone()
         if gift_row:
-            gift_id, gift_type, gift_label, redeemed_by = gift_row
+            gift_id, gift_type, gift_label, redeemed_by, gift_transition = gift_row
             if redeemed_by is not None:
                 conn_g.close()
                 return jsonify({"error": "This gift code has already been redeemed."}), 400
@@ -3636,9 +3660,22 @@ def redeem_code():
                             print(f"[gift] Error preloading {cat} templates: {e}")
                 msg = "Gift redeemed! You now have All Access — every transition, every feature."
             elif gift_type == "one_transition":
-                db_execute(conn_g, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param_g}", (uid,))
-                conn_g.commit()
-                msg = f"Gift redeemed! You have $39 in credit toward any transition plan."
+                gift_cat = gift_transition if gift_transition in VALID_CATEGORIES else None
+                if gift_cat:
+                    add_user_category(uid, gift_cat, "full", conn_g)
+                    db_execute(conn_g, f"UPDATE users SET transition_type = {param_g} WHERE id = {param_g}", (gift_cat, uid))
+                    conn_g.commit()
+                    if gift_cat in BUNDLE_FILES:
+                        try:
+                            preload_bundle_templates(uid, gift_cat)
+                        except Exception as e:
+                            print(f"[gift] Error preloading {gift_cat} templates: {e}")
+                    cat_label = CATEGORY_LABELS.get(gift_cat, gift_cat)
+                    msg = f"Gift redeemed! You have the {cat_label} bundle. If you'd like to switch, email cara@lumeway.co."
+                else:
+                    db_execute(conn_g, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param_g}", (uid,))
+                    conn_g.commit()
+                    msg = f"Gift redeemed! You have $39 in credit toward any transition plan."
             elif gift_type == "starter":
                 db_execute(conn_g, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 1600 WHERE id = {param_g}", (uid,))
                 conn_g.commit()
@@ -8184,22 +8221,28 @@ def admin_create_gift_code():
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
     gift_type = data.get("gift_type", "all_transitions")
+    transition_category = data.get("transition_category", "")
     code = data.get("code", "").strip().upper() or generate_gift_code()
-    label = "All Access — All Transitions" if gift_type == "all_transitions" else "Bundled Plan — One Transition"
+    if gift_type == "all_transitions":
+        label = "All Access — All Transitions"
+    elif transition_category and transition_category in CATEGORY_LABELS:
+        label = f"Bundled Plan — {CATEGORY_LABELS[transition_category]}"
+    else:
+        label = "Bundled Plan — One Transition"
     amount = 12500 if gift_type == "all_transitions" else 3900
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
     now = datetime.now(timezone.utc).isoformat()
     try:
-        db_execute(conn, f"""INSERT INTO gift_codes (code, purchaser_email, purchaser_name, recipient_name, gift_type, gift_label, amount_cents, stripe_session_id, created_at)
-            VALUES ({param},{param},{param},{param},{param},{param},{param},{param},{param})""",
-            (code, "admin@lumeway.co", "Admin", "", gift_type, label, amount, "admin-test", now))
+        db_execute(conn, f"""INSERT INTO gift_codes (code, purchaser_email, purchaser_name, recipient_name, gift_type, gift_label, amount_cents, stripe_session_id, transition_category, created_at)
+            VALUES ({param},{param},{param},{param},{param},{param},{param},{param},{param},{param})""",
+            (code, "admin@lumeway.co", "Admin", "", gift_type, label, amount, "admin-test", transition_category, now))
         conn.commit()
     except Exception as e:
         conn.close()
         return jsonify({"error": str(e)}), 500
     conn.close()
-    return jsonify({"ok": True, "code": code, "gift_type": gift_type, "label": label})
+    return jsonify({"ok": True, "code": code, "gift_type": gift_type, "transition_category": transition_category, "label": label})
 
 @app.route("/api/admin/delete-purchase", methods=["POST"])
 def admin_delete_purchase():
