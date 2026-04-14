@@ -5502,8 +5502,13 @@ def auth_verify_code():
         # Reset user tier only — data cleanup happens on DEMOTEST code or logout
         try:
             db_execute(conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL, active_transitions = '[]', transition_type = NULL, display_name = NULL, us_state = NULL, credit_cents = 0 WHERE id = {param}", (user_id,))
+            conn.commit()
         except Exception as e:
             print(f"DEMO reset error: {e}")
+            try:
+                conn.rollback()
+            except Exception:
+                pass
         is_new = True  # Force onboarding flow
 
     # Claim anonymous chat session if provided
