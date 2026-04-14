@@ -5498,43 +5498,41 @@ def auth_verify_code():
 
     # Demo account: full reset on every login so it feels like a fresh free user
     if email == DEMO_EMAIL and not is_new:
-        # Clear all user data
-        db_execute(conn, f"DELETE FROM community_replies WHERE post_id IN (SELECT id FROM community_posts WHERE user_id = {param})", (user_id,))
-        db_execute(conn, f"DELETE FROM community_replies WHERE user_id = {param}", (user_id,))
-        # Delete chat_messages before chat_sessions (no cascade)
-        try:
-            db_execute(conn, f"DELETE FROM chat_messages WHERE session_id IN (SELECT id FROM chat_sessions WHERE user_id = {param})", (user_id,))
-        except Exception:
-            pass
-        for table in ["community_posts", "checklist_items", "user_deadlines", "user_documents_needed", "user_goals", "user_notes", "chat_sessions"]:
-            db_execute(conn, f"DELETE FROM {table} WHERE user_id = {param}", (user_id,))
-        try:
-            db_execute(conn, f"DELETE FROM user_files WHERE user_id = {param}", (user_id,))
-        except Exception:
-            pass
-        try:
-            db_execute(conn, f"DELETE FROM etsy_redemptions WHERE user_id = {param}", (user_id,))
-        except Exception:
-            pass
-        try:
-            db_execute(conn, f"DELETE FROM activity_log WHERE user_id = {param}", (user_id,))
-        except Exception:
-            pass
-        # Clear purchased access and gift codes
-        try:
-            db_execute(conn, f"DELETE FROM user_access WHERE user_id = {param}", (user_id,))
-        except Exception:
-            pass
+        # Clear all user data — wrap everything in try/except so one failure doesn't block login
+        cleanup_tables = [
+            f"DELETE FROM community_replies WHERE post_id IN (SELECT id FROM community_posts WHERE user_id = {param})",
+            f"DELETE FROM community_replies WHERE user_id = {param}",
+            f"DELETE FROM chat_messages WHERE session_id IN (SELECT id FROM chat_sessions WHERE user_id = {param})",
+            f"DELETE FROM community_posts WHERE user_id = {param}",
+            f"DELETE FROM checklist_items WHERE user_id = {param}",
+            f"DELETE FROM user_deadlines WHERE user_id = {param}",
+            f"DELETE FROM user_documents_needed WHERE user_id = {param}",
+            f"DELETE FROM user_goals WHERE user_id = {param}",
+            f"DELETE FROM user_notes WHERE user_id = {param}",
+            f"DELETE FROM chat_sessions WHERE user_id = {param}",
+            f"DELETE FROM user_files WHERE user_id = {param}",
+            f"DELETE FROM etsy_redemptions WHERE user_id = {param}",
+            f"DELETE FROM activity_log WHERE user_id = {param}",
+            f"DELETE FROM user_access WHERE user_id = {param}",
+        ]
+        for sql in cleanup_tables:
+            try:
+                db_execute(conn, sql, (user_id,))
+            except Exception as e:
+                print(f"DEMO reset cleanup error: {e}")
         try:
             db_execute(conn, f"DELETE FROM purchases WHERE email = {param}", (email,))
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"DEMO reset purchases error: {e}")
         try:
             db_execute(conn, f"UPDATE gift_codes SET redeemed_by = NULL, redeemed_at = NULL WHERE redeemed_by = {param}", (user_id,))
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"DEMO reset gift_codes error: {e}")
         # Reset user back to free tier with no transition selected
-        db_execute(conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL, active_transitions = '[]', transition_type = NULL, display_name = NULL, us_state = NULL, credit_cents = 0 WHERE id = {param}", (user_id,))
+        try:
+            db_execute(conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL, active_transitions = '[]', transition_type = NULL, display_name = NULL, us_state = NULL, credit_cents = 0 WHERE id = {param}", (user_id,))
+        except Exception as e:
+            print(f"DEMO reset user error: {e}")
         is_new = True  # Force onboarding flow
 
     # Claim anonymous chat session if provided
