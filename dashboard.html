@@ -8,6 +8,11 @@
   <title>My Dashboard — Lumeway</title>
   <meta name="description" content="Track your progress, view past conversations, and manage your checklist."/>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232C4A5E'/><text x='16' y='23' text-anchor='middle' fill='%23FAF7F2' font-family='serif' font-size='20' font-weight='bold'>L</text></svg>"/>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#2C4A5E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -203,6 +208,19 @@
     @media (max-width: 480px) { .onboard-choices { grid-template-columns: 1fr; } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .check-skip:hover { color: var(--accent); background: rgba(196,112,78,0.06); }
+
+    /* Gift onboarding modal */
+    .gift-onboard-overlay { position: fixed; inset: 0; background: rgba(44,62,80,0.5); z-index: 510; display: flex; align-items: center; justify-content: center; padding: 24px; animation: fadeIn 0.3s ease; }
+    .gift-onboard-card { background: var(--warm-white); border-radius: 20px; max-width: 520px; width: 100%; padding: 40px 36px 32px; position: relative; box-shadow: 0 12px 48px rgba(44,62,80,0.15); text-align: center; }
+    .gift-onboard-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px; }
+    .gift-onboard-title { font-family: 'Libre Baskerville', serif; font-size: 24px; font-weight: 400; margin-bottom: 8px; color: var(--navy); }
+    .gift-onboard-intro { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
+    .gift-onboard-list { text-align: left; list-style: none; padding: 0; margin: 0 0 24px 0; display: flex; flex-direction: column; gap: 12px; }
+    .gift-onboard-list li { font-size: 13px; font-weight: 400; color: var(--text); line-height: 1.6; display: flex; align-items: flex-start; gap: 10px; }
+    .gift-onboard-list li span.gift-ob-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .gift-onboard-closing { font-size: 13px; font-weight: 300; font-style: italic; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+    .gift-onboard-btn { display: inline-block; padding: 14px 36px; background: var(--accent); color: var(--cream); border: none; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .gift-onboard-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
     /* Contextual tooltips for first-time users */
     .ctx-tip { position: relative; display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #f8f4ef, #f2ece3); border: 1px solid var(--gold); border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 300; color: var(--text); line-height: 1.4; margin-bottom: 12px; animation: tipFadeIn 0.4s ease; }
@@ -6369,9 +6387,13 @@ guideLibrary['disability'] = {
               + '</div>';
           }, 20 * 60 * 1000); // 20 minutes
         }
+        // Show gift onboarding for gift recipients (once per session)
+        if (dashData.onboarding_source === 'gift' && !sessionStorage.getItem('lumeway_gift_onboarded')) {
+          showGiftOnboarding();
+        }
         // Show onboarding only for truly new users (no checklist, no sessions, never onboarded)
         var sessions = dashData.sessions || [];
-        if (!localStorage.getItem('lumeway_onboarded') && checklistItems.length === 0 && sessions.length === 0) {
+        if (!localStorage.getItem('lumeway_onboarded') && checklistItems.length === 0 && sessions.length === 0 && dashData.onboarding_source !== 'gift') {
           showOnboarding();
         }
         // Show contextual tips for all users (they stack on each tab panel)
@@ -9622,6 +9644,34 @@ guideLibrary['disability'] = {
     </div>
   </div>
 
+  <!-- Gift onboarding modal -->
+  <div class="gift-onboard-overlay" id="giftOnboardModal" style="display:none">
+    <div class="gift-onboard-card">
+      <button class="gift-onboard-close" onclick="closeGiftOnboarding()">&times;</button>
+      <div class="gift-onboard-title">Welcome to Lumeway</div>
+      <p class="gift-onboard-intro">Someone got you this because they care about you. Here's how to get started.</p>
+      <ul class="gift-onboard-list">
+        <li><span class="gift-ob-icon">&#x1F4CB;</span><span>Your personalized checklist is on the main dashboard — check items off as you go</span></li>
+        <li><span class="gift-ob-icon">&#x1F4D6;</span><span>Step-by-step guides are in the Guide tab</span></li>
+        <li><span class="gift-ob-icon">&#x1F4C1;</span><span>Templates and worksheets are in the Files tab</span></li>
+        <li><span class="gift-ob-icon">&#x1F4AC;</span><span>Talk to the Navigator anytime — it can help you figure out next steps</span></li>
+        <li><span class="gift-ob-icon">&#x1F4F1;</span><span>iPhone user? Download the Lumeway app for access on the go</span></li>
+      </ul>
+      <p class="gift-onboard-closing">Take your time. Start wherever feels right.</p>
+      <button class="gift-onboard-btn" onclick="closeGiftOnboarding()">Get Started</button>
+    </div>
+  </div>
+
+  <script>
+    function showGiftOnboarding() {
+      document.getElementById('giftOnboardModal').style.display = 'flex';
+    }
+    function closeGiftOnboarding() {
+      document.getElementById('giftOnboardModal').style.display = 'none';
+      sessionStorage.setItem('lumeway_gift_onboarded', '1');
+    }
+  </script>
+
   <script>
     function showOnboarding() {
       document.getElementById('onboardModal').style.display = 'flex';
@@ -9756,6 +9806,12 @@ guideLibrary['disability'] = {
         btn.textContent = 'Copied!';
         setTimeout(function() { btn.textContent = 'Copy to clipboard'; }, 2000);
       });
+    }
+  </script>
+  <script>
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(function() {});
     }
   </script>
 </body>

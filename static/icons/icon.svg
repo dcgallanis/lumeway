@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#2C4A5E"/>
+  <circle cx="256" cy="256" r="64" fill="#FAF7F2"/>
+  <line x1="256" y1="172" x2="256" y2="120" stroke="#FAF7F2" stroke-width="8" stroke-linecap="round"/>
+  <line x1="256" y1="340" x2="256" y2="392" stroke="#FAF7F2" stroke-width="8" stroke-linecap="round"/>
+  <line x1="172" y1="256" x2="120" y2="256" stroke="#FAF7F2" stroke-width="8" stroke-linecap="round"/>
+  <line x1="340" y1="256" x2="392" y2="256" stroke="#FAF7F2" stroke-width="8" stroke-linecap="round"/>
+  <line x1="196.7" y1="196.7" x2="156.5" y2="156.5" stroke="#FAF7F2" stroke-width="6" stroke-linecap="round"/>
+  <line x1="315.3" y1="315.3" x2="355.5" y2="355.5" stroke="#FAF7F2" stroke-width="6" stroke-linecap="round"/>
+  <line x1="196.7" y1="315.3" x2="156.5" y2="355.5" stroke="#FAF7F2" stroke-width="6" stroke-linecap="round"/>
+  <line x1="315.3" y1="196.7" x2="355.5" y2="156.5" stroke="#FAF7F2" stroke-width="6" stroke-linecap="round"/>
+  <line x1="227" y1="178" x2="214" y2="130" stroke="#FAF7F2" stroke-width="5" stroke-linecap="round"/>
+  <line x1="285" y1="178" x2="298" y2="130" stroke="#FAF7F2" stroke-width="5" stroke-linecap="round"/>
+  <line x1="227" y1="334" x2="214" y2="382" stroke="#FAF7F2" stroke-width="5" stroke-linecap="round"/>
+  <line x1="285" y1="334" x2="298" y2="382" stroke="#FAF7F2" stroke-width="5" stroke-linecap="round"/>
+  <text x="256" y="470" text-anchor="middle" font-family="sans-serif" font-weight="600" font-size="36" fill="#B8977E" letter-spacing="6">LUMEWAY</text>
+</svg>

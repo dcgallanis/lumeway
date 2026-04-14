@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumeway Gift Certificate</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  @page {
+    size: 8.5in 11in;
+    margin: 0;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #f7f4ef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .certificate {
+    width: 8.5in;
+    height: 11in;
+    background: #f7f4ef;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Subtle linen texture */
+  .certificate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-conic-gradient(rgba(160,136,120,0.018) 0% 25%, transparent 0% 50%) 0 0 / 4px 4px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Soft radial glow */
+  .certificate::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 38%, rgba(255,255,255,0.35) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 5.8in;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 0.4in;
+  }
+
+  /* Decorative border frame */
+  .frame {
+    position: absolute;
+    z-index: 1;
+    top: 0.55in;
+    left: 0.55in;
+    right: 0.55in;
+    bottom: 0.55in;
+    border: 1px solid rgba(141,119,104,0.18);
+    border-radius: 3px;
+    pointer-events: none;
+  }
+  .frame::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    bottom: 6px;
+    border: 1px solid rgba(141,119,104,0.10);
+    border-radius: 2px;
+  }
+
+  /* Botanical corner accents — SVG inline */
+  .botanical {
+    position: absolute;
+    z-index: 2;
+    opacity: 0.07;
+    pointer-events: none;
+  }
+  .botanical-tl {
+    top: 0.65in;
+    left: 0.65in;
+    width: 90px;
+    height: 90px;
+  }
+  .botanical-tr {
+    top: 0.65in;
+    right: 0.65in;
+    width: 90px;
+    height: 90px;
+    transform: scaleX(-1);
+  }
+  .botanical-bl {
+    bottom: 0.65in;
+    left: 0.65in;
+    width: 90px;
+    height: 90px;
+    transform: scaleY(-1);
+  }
+  .botanical-br {
+    bottom: 0.65in;
+    right: 0.65in;
+    width: 90px;
+    height: 90px;
+    transform: scale(-1, -1);
+  }
+
+  /* Sun mark logo */
+  .sun-mark {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 20px;
+  }
+  .sun-mark svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Brand name */
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: #1b3a5c;
+    margin-bottom: 36px;
+  }
+
+  /* Thin divider */
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: #c4b5a6;
+    margin: 0 auto;
+  }
+
+  .divider-top {
+    margin-bottom: 40px;
+  }
+
+  /* Gift headline */
+  .gift-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    font-weight: 300;
+    color: #1b3a5c;
+    line-height: 1.25;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .gift-subline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 300;
+    font-style: italic;
+    color: #8d7768;
+    line-height: 1.35;
+    margin-bottom: 36px;
+  }
+
+  /* Blurb about Lumeway */
+  .blurb {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11.5px;
+    font-weight: 300;
+    color: #6b5b50;
+    line-height: 1.8;
+    max-width: 4.6in;
+    margin-bottom: 34px;
+  }
+
+  /* Code box */
+  .code-section {
+    margin-bottom: 38px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .code-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #8d7768;
+    margin-bottom: 12px;
+  }
+
+  .code-box {
+    background: rgba(255,255,255,0.7);
+    border: 1.5px dashed rgba(141,119,104,0.30);
+    border-radius: 6px;
+    padding: 18px 40px;
+    display: inline-block;
+  }
+
+  .code-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: 6px;
+    color: #1b3a5c;
+  }
+
+  /* Redemption instructions */
+  .redeem-section {
+    margin-bottom: 32px;
+    max-width: 4in;
+    text-align: center;
+  }
+
+  .redeem-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #8d7768;
+    margin-bottom: 18px;
+  }
+
+  .redeem-steps {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+    max-width: 3.4in;
+    margin: 0 auto;
+  }
+
+  .redeem-steps li {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #5c4d43;
+    line-height: 1.55;
+    display: flex;
+    align-items: first baseline;
+    gap: 8px;
+  }
+
+  .step-num {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #1b3a5c;
+    flex-shrink: 0;
+    width: 18px;
+    text-align: right;
+  }
+
+  .step-text a {
+    color: #1b3a5c;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(27,58,92,0.25);
+  }
+
+  .redeem-note {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 300;
+    font-style: italic;
+    color: #8d7768;
+    margin-top: 14px;
+    line-height: 1.6;
+  }
+
+  /* Personal note from Cara */
+  .personal-note {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10.5px;
+    font-weight: 300;
+    color: #6b5b50;
+    line-height: 1.75;
+    max-width: 4.2in;
+    margin-bottom: 34px;
+    text-align: center;
+  }
+
+  .personal-note a {
+    color: #1b3a5c;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(27,58,92,0.25);
+  }
+
+  /* Divider before footer */
+  .divider-bottom {
+    margin-bottom: 32px;
+  }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .footer-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    color: #8d7768;
+    letter-spacing: 0.5px;
+  }
+
+  .footer-url {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: #b8a192;
+    text-transform: lowercase;
+  }
+
+  /* Print styles */
+  @media print {
+    body {
+      background: #f7f4ef;
+      padding: 0;
+      margin: 0;
+    }
+    .certificate {
+      page-break-after: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="certificate">
+    <!-- Decorative frame -->
+    <div class="frame"></div>
+
+    <!-- Botanical corner accents -->
+    <svg class="botanical botanical-tl" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 80 Q 25 55, 45 45 Q 30 40, 15 50" stroke="#6b5b50" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      <path d="M10 80 Q 20 60, 38 52 Q 22 48, 12 58" stroke="#6b5b50" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 50 30, 48 15" stroke="#6b5b50" stroke-width="1" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 55 35, 60 20" stroke="#6b5b50" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+      <circle cx="45" cy="44" r="2" fill="#6b5b50" opacity="0.4"/>
+      <circle cx="47" cy="16" r="1.5" fill="#6b5b50" opacity="0.3"/>
+    </svg>
+    <svg class="botanical botanical-tr" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 80 Q 25 55, 45 45 Q 30 40, 15 50" stroke="#6b5b50" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      <path d="M10 80 Q 20 60, 38 52 Q 22 48, 12 58" stroke="#6b5b50" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 50 30, 48 15" stroke="#6b5b50" stroke-width="1" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 55 35, 60 20" stroke="#6b5b50" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+      <circle cx="45" cy="44" r="2" fill="#6b5b50" opacity="0.4"/>
+      <circle cx="47" cy="16" r="1.5" fill="#6b5b50" opacity="0.3"/>
+    </svg>
+    <svg class="botanical botanical-bl" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 80 Q 25 55, 45 45 Q 30 40, 15 50" stroke="#6b5b50" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      <path d="M10 80 Q 20 60, 38 52 Q 22 48, 12 58" stroke="#6b5b50" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 50 30, 48 15" stroke="#6b5b50" stroke-width="1" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 55 35, 60 20" stroke="#6b5b50" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+      <circle cx="45" cy="44" r="2" fill="#6b5b50" opacity="0.4"/>
+      <circle cx="47" cy="16" r="1.5" fill="#6b5b50" opacity="0.3"/>
+    </svg>
+    <svg class="botanical botanical-br" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 80 Q 25 55, 45 45 Q 30 40, 15 50" stroke="#6b5b50" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      <path d="M10 80 Q 20 60, 38 52 Q 22 48, 12 58" stroke="#6b5b50" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 50 30, 48 15" stroke="#6b5b50" stroke-width="1" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 55 35, 60 20" stroke="#6b5b50" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+      <circle cx="45" cy="44" r="2" fill="#6b5b50" opacity="0.4"/>
+      <circle cx="47" cy="16" r="1.5" fill="#6b5b50" opacity="0.3"/>
+    </svg>
+
+    <!-- Main content -->
+    <div class="content">
+      <!-- Sun mark logo -->
+      <div class="sun-mark">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="16" fill="#5c4d43"/>
+          <!-- Rays -->
+          <line x1="50" y1="28" x2="50" y2="10" stroke="#5c4d43" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="50" y1="72" x2="50" y2="90" stroke="#5c4d43" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="28" y1="50" x2="10" y2="50" stroke="#5c4d43" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="72" y1="50" x2="90" y2="50" stroke="#5c4d43" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Diagonal rays -->
+          <line x1="34.4" y1="34.4" x2="21.7" y2="21.7" stroke="#5c4d43" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="65.6" y1="65.6" x2="78.3" y2="78.3" stroke="#5c4d43" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="34.4" y1="65.6" x2="21.7" y2="78.3" stroke="#5c4d43" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="65.6" y1="34.4" x2="78.3" y2="21.7" stroke="#5c4d43" stroke-width="1.2" stroke-linecap="round"/>
+          <!-- Short accent rays -->
+          <line x1="41" y1="30" x2="36" y2="18" stroke="#5c4d43" stroke-width="0.8" stroke-linecap="round"/>
+          <line x1="59" y1="30" x2="64" y2="18" stroke="#5c4d43" stroke-width="0.8" stroke-linecap="round"/>
+          <line x1="41" y1="70" x2="36" y2="82" stroke="#5c4d43" stroke-width="0.8" stroke-linecap="round"/>
+          <line x1="59" y1="70" x2="64" y2="82" stroke="#5c4d43" stroke-width="0.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="brand-name">Lumeway</div>
+
+      <div class="divider divider-top"></div>
+
+      <div class="gift-headline">Someone is thinking of you.</div>
+      <div class="gift-subline">You've been gifted a Lumeway bundle<br>to help you through this change.</div>
+
+      <p class="blurb">
+        Lumeway helps people navigate life's hardest moments — job loss, divorce, loss of a loved one, disability, relocation, and retirement. With step-by-step worksheets, planning tools, and practical resources, we help you understand what comes next and find your way through.
+      </p>
+
+      <!-- Redemption code -->
+      <div class="code-section">
+        <div class="code-label">Your Redemption Code</div>
+        <div class="code-box">
+          <span class="code-value">{{REDEMPTION_CODE}}</span>
+        </div>
+      </div>
+
+      <!-- Redemption instructions -->
+      <div class="redeem-section">
+        <div class="redeem-title">How to Redeem</div>
+        <ol class="redeem-steps">
+          <li>
+            <span class="step-num">1.</span>
+            <span class="step-text">Visit <a href="https://lumeway.co/gift/redeem">lumeway.co/gift/redeem</a></span>
+          </li>
+          <li>
+            <span class="step-num">2.</span>
+            <span class="step-text">Enter your code and email address</span>
+          </li>
+          <li>
+            <span class="step-num">3.</span>
+            <span class="step-text">Check your email for a login link</span>
+          </li>
+          <li>
+            <span class="step-num">4.</span>
+            <span class="step-text">Log in — your bundle and guide will be ready in your dashboard</span>
+          </li>
+        </ol>
+        <p class="redeem-note">Your code never expires. Take your time.</p>
+      </div>
+
+      <p class="personal-note">
+        Not sure where to start, or having trouble redeeming your code?<br>
+        Our founder Cara is happy to help — reach out at <a href="mailto:cara@lumeway.co">cara@lumeway.co</a>.
+      </p>
+
+      <div class="divider divider-bottom"></div>
+
+      <div class="footer">
+        <div class="footer-tagline">When life changes, find your way through.</div>
+        <div class="footer-url">lumeway.co</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

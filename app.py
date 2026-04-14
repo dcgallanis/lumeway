@@ -738,6 +738,17 @@ def init_subscribers_db():
                 conn3.close()
             except Exception:
                 pass
+    # Onboarding source column (for gift recipients)
+    try:
+        conn_obs = get_db()
+        db_execute(conn_obs, "ALTER TABLE users ADD COLUMN onboarding_source TEXT DEFAULT NULL")
+        conn_obs.commit()
+        conn_obs.close()
+    except Exception:
+        try:
+            conn_obs.close()
+        except Exception:
+            pass
     # Etsy redemptions table (idempotent)
     try:
         conn_etsy = get_db()
@@ -2958,6 +2969,142 @@ def gift_redeem():
     return jsonify({"ok": True, "message": msg, "gift_type": gift_type})
 
 
+@app.route("/api/gift/redeem-start", methods=["POST"])
+def gift_redeem_start():
+    """Step 1: Validate gift code + send auth code to email."""
+    data = request.get_json() or {}
+    email = (data.get("email") or "").strip().lower()
+    code = (data.get("code") or "").strip().upper()
+
+    if not email or not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        return jsonify({"error": "Please enter a valid email address."}), 400
+    if not code:
+        return jsonify({"error": "Please enter your gift code."}), 400
+
+    # Validate gift code exists and isn't redeemed
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id, redeemed_by FROM gift_codes WHERE code = {param}", (code,))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "That code doesn't look right. Double-check and try again."}), 400
+    if row[1] is not None:
+        conn.close()
+        return jsonify({"error": "This gift code has already been redeemed."}), 400
+
+    # Send auth code (reuse existing logic from auth_send_code)
+    # Rate limit
+    one_hour_ago = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
+    cur = db_execute(conn, f"SELECT COUNT(*) FROM auth_codes WHERE email = {param} AND created_at > {param}", (email, one_hour_ago))
+    count = cur.fetchone()[0]
+    if count >= 5:
+        conn.close()
+        return jsonify({"error": "Too many attempts. Please try again later."}), 429
+
+    auth_code = str(random.randint(100000, 999999))
+    now = datetime.now(timezone.utc).isoformat()
+    expires = (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
+    db_execute(conn, f"INSERT INTO auth_codes (email, code, created_at, expires_at) VALUES ({param}, {param}, {param}, {param})", (email, auth_code, now, expires))
+    conn.commit()
+    conn.close()
+
+    if not send_auth_code(email, auth_code):
+        return jsonify({"error": "Failed to send verification code. Please try again."}), 500
+
+    return jsonify({"ok": True, "message": "Verification code sent! Check your email."})
+
+
+@app.route("/api/gift/redeem-verify", methods=["POST"])
+def gift_redeem_verify():
+    """Step 2: Verify auth code, log in, redeem gift."""
+    data = request.get_json() or {}
+    email = (data.get("email") or "").strip().lower()
+    gift_code = (data.get("code") or "").strip().upper()
+    auth_code = (data.get("auth_code") or "").strip()
+
+    if not email or not gift_code or not auth_code:
+        return jsonify({"error": "All fields are required."}), 400
+
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Verify auth code
+    false_val = "FALSE" if USE_POSTGRES else "0"
+    cur = db_execute(conn, f"SELECT id FROM auth_codes WHERE email = {param} AND code = {param} AND used = {false_val} AND expires_at > {param} ORDER BY created_at DESC LIMIT 1", (email, auth_code, now))
+    auth_row = cur.fetchone()
+    if not auth_row:
+        conn.close()
+        return jsonify({"error": "Invalid or expired code. Please try again."}), 401
+
+    # Mark auth code as used
+    true_val = "TRUE" if USE_POSTGRES else "1"
+    db_execute(conn, f"UPDATE auth_codes SET used = {true_val} WHERE id = {param}", (auth_row[0],))
+
+    # Find or create user
+    cur = db_execute(conn, f"SELECT id, email FROM users WHERE email = {param}", (email,))
+    user_row = cur.fetchone()
+    is_new = False
+    if user_row:
+        user_id = user_row[0]
+        db_execute(conn, f"UPDATE users SET last_login_at = {param} WHERE id = {param}", (now, user_id))
+    else:
+        is_new = True
+        db_execute(conn, f"INSERT INTO users (email, created_at, last_login_at) VALUES ({param}, {param}, {param})", (email, now, now))
+        cur = db_execute(conn, f"SELECT id FROM users WHERE email = {param}", (email,))
+        user_id = cur.fetchone()[0]
+
+    # Validate and redeem gift code
+    cur = db_execute(conn, f"SELECT id, gift_type, gift_label, redeemed_by FROM gift_codes WHERE code = {param}", (gift_code,))
+    gift_row = cur.fetchone()
+    if not gift_row:
+        conn.close()
+        return jsonify({"error": "Gift code not found."}), 400
+    gift_id, gift_type, gift_label, redeemed_by = gift_row
+    if redeemed_by is not None:
+        conn.close()
+        return jsonify({"error": "This gift code has already been redeemed."}), 400
+
+    # Mark gift as redeemed
+    db_execute(conn, f"UPDATE gift_codes SET redeemed_by = {param}, redeemed_at = {param} WHERE id = {param}", (user_id, now, gift_id))
+    conn.commit()
+
+    # Grant access based on gift type
+    if gift_type == "all_transitions":
+        for cat in VALID_CATEGORIES:
+            add_user_category(user_id, cat, "full", conn)
+        db_execute(conn, f"UPDATE users SET tier = 'all_transitions' WHERE id = {param}", (user_id,))
+        db_execute(conn, f"UPDATE users SET credit_cents = 12500 WHERE id = {param}", (user_id,))
+        conn.commit()
+        msg = "Gift redeemed! You now have All Access — every transition, every feature."
+    elif gift_type == "one_transition":
+        db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (user_id,))
+        conn.commit()
+        msg = "Gift redeemed! You have $39 in credit toward any transition plan."
+    else:
+        msg = "Gift redeemed!"
+
+    # Mark user as gift redeemer for onboarding
+    try:
+        db_execute(conn, f"UPDATE users SET onboarding_source = 'gift' WHERE id = {param}", (user_id,))
+        conn.commit()
+    except Exception:
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+
+    update_user_tier_from_access(user_id, conn)
+
+    # Set session (log them in)
+    flask_session["user_id"] = user_id
+    flask_session.permanent = True
+
+    conn.close()
+    return jsonify({"ok": True, "message": msg, "gift_type": gift_type, "is_new": is_new})
+
+
 def handle_gift_webhook(session_data, metadata):
     """Handle gift certificate purchase — generate code, store, email certificate."""
     email = _get_session_email(session_data)
@@ -3058,73 +3205,336 @@ def send_gift_email(to_email, purchaser_name, recipient_name, code, gift_label, 
 
 
 def build_gift_certificate(purchaser_name, recipient_name, code, gift_label, amount_cents):
-    """Build a printable HTML gift certificate."""
-    amount_str = f"${amount_cents / 100:.0f}" if amount_cents else ""
-    from_line = f"From {purchaser_name}" if purchaser_name else ""
-    for_line = f'<p class="cert-for">For <strong>{recipient_name}</strong></p>' if recipient_name else ""
-    return f"""<!DOCTYPE html>
-<html>
+    """Build a printable HTML gift certificate using Carol's designed template."""
+    template = """<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lumeway Gift Certificate</title>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  @media print {{ @page {{ margin: 0.75in; }} body {{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }} }}
-  * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-  body {{ background: #FAF7F2; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px 20px; }}
-  .cert {{ max-width: 600px; width: 100%; background: #FDFCFA; border: 1px solid #E8E0D6; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 40px rgba(44,74,94,0.08); }}
-  .cert-header {{ background: linear-gradient(135deg, #2C4A5E, #1B3A4E); padding: 36px 40px; text-align: center; }}
-  .cert-brand {{ font-size: 12px; font-weight: 600; color: rgba(250,247,242,0.45); letter-spacing: 3px; text-transform: uppercase; }}
-  .cert-gold {{ height: 3px; background: linear-gradient(90deg, #B8977E, #D4B49A, #B8977E); }}
-  .cert-body {{ padding: 44px 40px 36px; text-align: center; }}
-  .cert-gift-label {{ font-size: 11px; font-weight: 600; color: #B8977E; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }}
-  .cert-title {{ font-family: 'Libre Baskerville', Georgia, serif; font-size: 28px; font-weight: 400; color: #2C4A5E; line-height: 1.3; margin-bottom: 8px; }}
-  .cert-for {{ font-size: 15px; color: #6B7B8D; margin-bottom: 6px; }}
-  .cert-for strong {{ color: #2C4A5E; font-weight: 600; }}
-  .cert-from {{ font-size: 13px; color: #999; margin-bottom: 28px; }}
-  .cert-plan {{ display: inline-block; background: #2C4A5E; color: #FAF7F2; padding: 8px 24px; border-radius: 100px; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px; }}
-  .cert-value {{ font-size: 12px; color: #999; margin-bottom: 32px; }}
-  .cert-code-wrap {{ background: #F5F0E8; border: 2px dashed #B8977E; border-radius: 14px; padding: 24px; margin-bottom: 28px; }}
-  .cert-code-label {{ font-size: 10px; font-weight: 600; color: #B8977E; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }}
-  .cert-code {{ font-family: 'Plus Jakarta Sans', monospace; font-size: 32px; font-weight: 700; color: #2C4A5E; letter-spacing: 4px; }}
-  .cert-instructions {{ font-size: 13px; color: #6B7B8D; line-height: 1.8; }}
-  .cert-instructions a {{ color: #C4704E; font-weight: 500; text-decoration: none; }}
-  .cert-footer {{ background: #F5F0E8; padding: 20px 40px; text-align: center; border-top: 1px solid #E8E0D6; }}
-  .cert-footer p {{ font-size: 11px; color: #999; }}
-  .cert-footer a {{ color: #2C4A5E; text-decoration: none; font-weight: 500; }}
+  @page {
+    size: 8.5in 11in;
+    margin: 0;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #f7f4ef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .certificate {
+    width: 8.5in;
+    height: 11in;
+    background: #f7f4ef;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Subtle linen texture */
+  .certificate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-conic-gradient(rgba(160,136,120,0.018) 0% 25%, transparent 0% 50%) 0 0 / 4px 4px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Soft radial glow */
+  .certificate::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 38%, rgba(255,255,255,0.35) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 5.8in;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 0.4in;
+  }
+
+  /* Decorative border frame */
+  .frame {
+    position: absolute;
+    z-index: 1;
+    top: 0.55in;
+    left: 0.55in;
+    right: 0.55in;
+    bottom: 0.55in;
+    border: 1px solid rgba(141,119,104,0.18);
+    border-radius: 3px;
+    pointer-events: none;
+  }
+  .frame::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    bottom: 6px;
+    border: 1px solid rgba(141,119,104,0.10);
+    border-radius: 2px;
+  }
+
+  /* Botanical corner accents */
+  .botanical {
+    position: absolute;
+    z-index: 2;
+    opacity: 0.07;
+    pointer-events: none;
+  }
+  .botanical-tl { top: 0.65in; left: 0.65in; width: 90px; height: 90px; }
+  .botanical-tr { top: 0.65in; right: 0.65in; width: 90px; height: 90px; transform: scaleX(-1); }
+  .botanical-bl { bottom: 0.65in; left: 0.65in; width: 90px; height: 90px; transform: scaleY(-1); }
+  .botanical-br { bottom: 0.65in; right: 0.65in; width: 90px; height: 90px; transform: scale(-1, -1); }
+
+  /* Sun mark logo */
+  .sun-mark { width: 52px; height: 52px; margin-bottom: 20px; }
+  .sun-mark svg { width: 100%; height: 100%; }
+
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px; font-weight: 400; letter-spacing: 8px;
+    text-transform: uppercase; color: #1b3a5c; margin-bottom: 36px;
+  }
+
+  .divider { width: 60px; height: 1px; background: #c4b5a6; margin: 0 auto; }
+  .divider-top { margin-bottom: 40px; }
+
+  .gift-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px; font-weight: 300; color: #1b3a5c;
+    line-height: 1.25; margin-bottom: 10px; letter-spacing: 0.5px;
+  }
+
+  .gift-subline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 300; font-style: italic;
+    color: #8d7768; line-height: 1.35; margin-bottom: 36px;
+  }
+
+  .blurb {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11.5px; font-weight: 300; color: #6b5b50;
+    line-height: 1.8; max-width: 4.6in; margin-bottom: 34px;
+  }
+
+  .code-section { margin-bottom: 38px; display: flex; flex-direction: column; align-items: center; }
+  .code-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px; font-weight: 500; letter-spacing: 3px;
+    text-transform: uppercase; color: #8d7768; margin-bottom: 12px;
+  }
+  .code-box {
+    background: rgba(255,255,255,0.7);
+    border: 1.5px dashed rgba(141,119,104,0.30);
+    border-radius: 6px; padding: 18px 40px; display: inline-block;
+  }
+  .code-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 500; letter-spacing: 6px; color: #1b3a5c;
+  }
+
+  .redeem-section { margin-bottom: 32px; max-width: 4in; text-align: center; }
+  .redeem-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px; font-weight: 500; letter-spacing: 3px;
+    text-transform: uppercase; color: #8d7768; margin-bottom: 18px;
+  }
+  .redeem-steps {
+    list-style: none; padding: 0; display: flex; flex-direction: column;
+    gap: 8px; text-align: left; max-width: 3.4in; margin: 0 auto;
+  }
+  .redeem-steps li {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px; font-weight: 300; color: #5c4d43;
+    line-height: 1.55; display: flex; align-items: first baseline; gap: 8px;
+  }
+  .step-num {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px; font-weight: 500; color: #1b3a5c;
+    flex-shrink: 0; width: 18px; text-align: right;
+  }
+  .step-text a {
+    color: #1b3a5c; font-weight: 500; text-decoration: none;
+    border-bottom: 1px solid rgba(27,58,92,0.25);
+  }
+  .redeem-note {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px; font-weight: 300; font-style: italic;
+    color: #8d7768; margin-top: 14px; line-height: 1.6;
+  }
+
+  .personal-note {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10.5px; font-weight: 300; color: #6b5b50;
+    line-height: 1.75; max-width: 4.2in; margin-bottom: 34px; text-align: center;
+  }
+  .personal-note a {
+    color: #1b3a5c; font-weight: 500; text-decoration: none;
+    border-bottom: 1px solid rgba(27,58,92,0.25);
+  }
+
+  .divider-bottom { margin-bottom: 32px; }
+
+  .footer { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .footer-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px; font-weight: 300; font-style: italic;
+    color: #8d7768; letter-spacing: 0.5px;
+  }
+  .footer-url {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px; font-weight: 400; letter-spacing: 2px;
+    color: #b8a192; text-transform: lowercase;
+  }
+
+  @media print {
+    body { background: #f7f4ef; padding: 0; margin: 0; }
+    .certificate { page-break-after: avoid; }
+  }
 </style>
 </head>
 <body>
-<div class="cert">
-  <div class="cert-header">
-    <div class="cert-brand">&#9788;&ensp;LUMEWAY</div>
-  </div>
-  <div class="cert-gold"></div>
-  <div class="cert-body">
-    <div class="cert-gift-label">Gift Certificate</div>
-    <h1 class="cert-title">A little help<br>goes a long way</h1>
-    {for_line}
-    <p class="cert-from">{from_line}</p>
-    <div class="cert-plan">{gift_label}</div>
-    <p class="cert-value">{amount_str} value</p>
-    <div class="cert-code-wrap">
-      <div class="cert-code-label">Redemption Code</div>
-      <div class="cert-code">{code}</div>
+  <div class="certificate">
+    <div class="frame"></div>
+
+    <svg class="botanical botanical-tl" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 80 Q 25 55, 45 45 Q 30 40, 15 50" stroke="#6b5b50" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      <path d="M10 80 Q 20 60, 38 52 Q 22 48, 12 58" stroke="#6b5b50" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 50 30, 48 15" stroke="#6b5b50" stroke-width="1" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 55 35, 60 20" stroke="#6b5b50" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+      <circle cx="45" cy="44" r="2" fill="#6b5b50" opacity="0.4"/>
+      <circle cx="47" cy="16" r="1.5" fill="#6b5b50" opacity="0.3"/>
+    </svg>
+    <svg class="botanical botanical-tr" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 80 Q 25 55, 45 45 Q 30 40, 15 50" stroke="#6b5b50" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      <path d="M10 80 Q 20 60, 38 52 Q 22 48, 12 58" stroke="#6b5b50" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 50 30, 48 15" stroke="#6b5b50" stroke-width="1" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 55 35, 60 20" stroke="#6b5b50" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+      <circle cx="45" cy="44" r="2" fill="#6b5b50" opacity="0.4"/>
+      <circle cx="47" cy="16" r="1.5" fill="#6b5b50" opacity="0.3"/>
+    </svg>
+    <svg class="botanical botanical-bl" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 80 Q 25 55, 45 45 Q 30 40, 15 50" stroke="#6b5b50" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      <path d="M10 80 Q 20 60, 38 52 Q 22 48, 12 58" stroke="#6b5b50" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 50 30, 48 15" stroke="#6b5b50" stroke-width="1" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 55 35, 60 20" stroke="#6b5b50" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+      <circle cx="45" cy="44" r="2" fill="#6b5b50" opacity="0.4"/>
+      <circle cx="47" cy="16" r="1.5" fill="#6b5b50" opacity="0.3"/>
+    </svg>
+    <svg class="botanical botanical-br" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 80 Q 25 55, 45 45 Q 30 40, 15 50" stroke="#6b5b50" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      <path d="M10 80 Q 20 60, 38 52 Q 22 48, 12 58" stroke="#6b5b50" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 50 30, 48 15" stroke="#6b5b50" stroke-width="1" stroke-linecap="round" fill="none"/>
+      <path d="M45 45 Q 55 35, 60 20" stroke="#6b5b50" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+      <circle cx="45" cy="44" r="2" fill="#6b5b50" opacity="0.4"/>
+      <circle cx="47" cy="16" r="1.5" fill="#6b5b50" opacity="0.3"/>
+    </svg>
+
+    <div class="content">
+      <div class="sun-mark">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="16" fill="#5c4d43"/>
+          <line x1="50" y1="28" x2="50" y2="10" stroke="#5c4d43" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="50" y1="72" x2="50" y2="90" stroke="#5c4d43" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="28" y1="50" x2="10" y2="50" stroke="#5c4d43" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="72" y1="50" x2="90" y2="50" stroke="#5c4d43" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="34.4" y1="34.4" x2="21.7" y2="21.7" stroke="#5c4d43" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="65.6" y1="65.6" x2="78.3" y2="78.3" stroke="#5c4d43" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="34.4" y1="65.6" x2="21.7" y2="78.3" stroke="#5c4d43" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="65.6" y1="34.4" x2="78.3" y2="21.7" stroke="#5c4d43" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="41" y1="30" x2="36" y2="18" stroke="#5c4d43" stroke-width="0.8" stroke-linecap="round"/>
+          <line x1="59" y1="30" x2="64" y2="18" stroke="#5c4d43" stroke-width="0.8" stroke-linecap="round"/>
+          <line x1="41" y1="70" x2="36" y2="82" stroke="#5c4d43" stroke-width="0.8" stroke-linecap="round"/>
+          <line x1="59" y1="70" x2="64" y2="82" stroke="#5c4d43" stroke-width="0.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="brand-name">Lumeway</div>
+      <div class="divider divider-top"></div>
+
+      <div class="gift-headline">Someone is thinking of you.</div>
+      <div class="gift-subline">You've been gifted a Lumeway bundle<br>to help you through this change.</div>
+
+      <p class="blurb">
+        Lumeway helps people navigate life's hardest moments — job loss, divorce, loss of a loved one, disability, relocation, and retirement. With step-by-step worksheets, planning tools, and practical resources, we help you understand what comes next and find your way through.
+      </p>
+
+      <div class="code-section">
+        <div class="code-label">Your Redemption Code</div>
+        <div class="code-box">
+          <span class="code-value">{{REDEMPTION_CODE}}</span>
+        </div>
+      </div>
+
+      <div class="redeem-section">
+        <div class="redeem-title">How to Redeem</div>
+        <ol class="redeem-steps">
+          <li>
+            <span class="step-num">1.</span>
+            <span class="step-text">Visit <a href="https://lumeway.co/gift/redeem">lumeway.co/gift/redeem</a></span>
+          </li>
+          <li>
+            <span class="step-num">2.</span>
+            <span class="step-text">Enter your code and email address</span>
+          </li>
+          <li>
+            <span class="step-num">3.</span>
+            <span class="step-text">Check your email for a login link</span>
+          </li>
+          <li>
+            <span class="step-num">4.</span>
+            <span class="step-text">Log in — your bundle and guide will be ready in your dashboard</span>
+          </li>
+        </ol>
+        <p class="redeem-note">Your code never expires. Take your time.</p>
+      </div>
+
+      <p class="personal-note">
+        Not sure where to start, or having trouble redeeming your code?<br>
+        Our founder Cara is happy to help — reach out at <a href="mailto:cara@lumeway.co">cara@lumeway.co</a>.
+      </p>
+
+      <div class="divider divider-bottom"></div>
+
+      <div class="footer">
+        <div class="footer-tagline">When life changes, find your way through.</div>
+        <div class="footer-url">lumeway.co</div>
+      </div>
     </div>
-    <div class="cert-instructions">
-      <strong>To redeem:</strong><br>
-      1. Go to <a href="https://lumeway.co/gift/redeem">lumeway.co/gift/redeem</a><br>
-      2. Create a free account or log in<br>
-      3. Enter the code above
-    </div>
   </div>
-  <div class="cert-footer">
-    <p><a href="https://lumeway.co">lumeway.co</a> &middot; Step-by-step guidance through life's hardest transitions</p>
-  </div>
-</div>
 </body>
 </html>"""
+    return template.replace("{{REDEMPTION_CODE}}", code)
 
 
 @app.route("/api/redeem-code", methods=["POST"])
@@ -5110,6 +5520,14 @@ def update_account_settings():
     audit_log(user["id"], "settings_update", "user", str(user["id"]), f"name={display_name}, state={us_state}, transition={transition_type}, icon={community_icon}")
     return jsonify({"ok": True})
 
+@app.route("/manifest.json")
+def serve_manifest():
+    return send_from_directory(".", "manifest.json", mimetype="application/manifest+json")
+
+@app.route("/sw.js")
+def serve_sw():
+    return send_from_directory(".", "sw.js", mimetype="application/javascript")
+
 @app.route("/dashboard")
 def dashboard_page():
     if not get_current_user():
@@ -5180,6 +5598,18 @@ def dashboard_data():
             except (ValueError, TypeError):
                 d["days_remaining"] = None
 
+    # Fetch onboarding_source
+    onboarding_source = None
+    try:
+        conn_obs = get_db()
+        cur_obs = db_execute(conn_obs, f"SELECT onboarding_source FROM users WHERE id = {param}", (user["id"],))
+        obs_row = cur_obs.fetchone()
+        if obs_row:
+            onboarding_source = obs_row[0]
+        conn_obs.close()
+    except Exception:
+        pass
+
     conn.close()
     # Sanitize user dict for JSON response — normalize active_transitions to string list
     user_response = dict(user)
@@ -5198,6 +5628,7 @@ def dashboard_data():
         "credit_cents": user.get("credit_cents", 0),
         "active_transitions": [item["cat"] if isinstance(item, dict) else item for item in (user.get("active_transitions") or [])],
         "is_admin": user.get("email") in ["hello@lumeway.co", "lumeway.co@gmail.com"],
+        "onboarding_source": onboarding_source,
     })
 
     # Subscription management removed — all purchases are one-time
