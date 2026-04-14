@@ -909,6 +909,73 @@
       .cal-day-num { font-size: 12px; }
       .cal-day.today .cal-day-num { width: 22px; height: 22px; }
     }
+
+    /* ── Navigator Chat Tab ── */
+    #panel-navigator { max-width: 800px; margin-left: auto; margin-right: auto; }
+    .nav-chat-wrap { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; height: calc(100vh - 240px); min-height: 400px; }
+    .nav-chat-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--cream); }
+    .nav-chat-header-left { display: flex; align-items: center; gap: 10px; }
+    .nav-chat-header-left img { width: 28px; height: 28px; }
+    .nav-chat-header-left h3 { font-family: 'Libre Baskerville', serif; font-size: 16px; font-weight: 400; color: var(--navy); }
+    .nav-chat-header-left p { font-size: 11px; color: var(--muted); font-weight: 300; }
+    .nav-chat-sessions-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px; background: none; font-family: inherit; font-size: 12px; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+    .nav-chat-sessions-btn:hover { background: var(--cream); color: var(--navy); border-color: var(--gold); }
+    .nav-chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; scroll-behavior: smooth; }
+    .nav-chat-messages::-webkit-scrollbar { width: 3px; }
+    .nav-chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .nav-chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .nav-chat-welcome { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px 20px; gap: 12px; }
+    .nav-chat-welcome h3 { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 400; color: var(--navy); }
+    .nav-chat-welcome p { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.6; max-width: 400px; }
+    .nav-chat-starters { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-width: 440px; width: 100%; margin-top: 8px; }
+    .nav-chat-starter { background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: inherit; font-size: 12px; color: var(--muted); cursor: pointer; text-align: left; transition: all 0.15s; line-height: 1.4; }
+    .nav-chat-starter:hover { background: var(--warm-white); border-color: var(--gold); color: var(--navy); transform: translateY(-1px); }
+    .nc-msg { display: flex; gap: 10px; animation: nc-msg-in 0.28s cubic-bezier(0.22,1,0.36,1) both; }
+    @keyframes nc-msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .nc-msg.user { flex-direction: row-reverse; }
+    .nc-av { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; margin-top: 2px; }
+    .nc-av.bot { background: var(--cream); color: var(--accent); border-radius: 8px; }
+    .nc-av.user-av { background: var(--cream); border: 1px solid var(--border); color: var(--muted); font-size: 9px; }
+    .nc-bubble { max-width: 82%; padding: 11px 14px; border-radius: 14px; font-size: 13px; line-height: 1.7; font-weight: 400; }
+    .nc-msg.bot .nc-bubble { background: #f8f6f2; border: 1px solid var(--border); border-top-left-radius: 4px; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .nc-msg.user .nc-bubble { background: var(--navy); color: var(--cream); border-top-right-radius: 4px; }
+    .nc-bubble p { margin-bottom: 8px; } .nc-bubble p:last-child { margin-bottom: 0; }
+    .nc-bubble strong { font-weight: 500; } .nc-bubble em { font-style: italic; }
+    .nc-bubble h1, .nc-bubble h2, .nc-bubble h3 { font-family: 'Libre Baskerville', serif; font-weight: 600; line-height: 1.3; margin: 12px 0 6px; }
+    .nc-bubble h1 { font-size: 18px; } .nc-bubble h2 { font-size: 16px; } .nc-bubble h3 { font-size: 14px; color: var(--gold); }
+    .nc-bubble ul, .nc-bubble ol { padding-left: 16px; margin: 8px 0; }
+    .nc-bubble li { margin-bottom: 4px; line-height: 1.6; } .nc-bubble li::marker { color: var(--gold); }
+    .nc-bubble hr { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+    .nc-bubble .checklist { list-style: none; padding-left: 0; margin: 8px 0; }
+    .nc-bubble .checklist li { display: flex; align-items: flex-start; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+    .nc-bubble .checklist li:last-child { border-bottom: none; }
+    .nc-bubble .checklist li input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; accent-color: var(--accent); }
+    .nc-typing { display: flex; gap: 10px; align-items: flex-end; animation: nc-msg-in 0.28s both; }
+    .nc-typing-dots { background: #f8f6f2; border: 1px solid var(--border); border-radius: 14px; border-top-left-radius: 4px; padding: 12px 15px; display: flex; gap: 5px; align-items: center; }
+    .nc-dot { width: 5px; height: 5px; background: var(--border); border-radius: 50%; animation: nc-bounce 1.3s ease-in-out infinite; }
+    .nc-dot:nth-child(2) { animation-delay: 0.18s; } .nc-dot:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes nc-bounce { 0%, 60%, 100% { transform: translateY(0); background: var(--border); } 30% { transform: translateY(-5px); background: var(--gold); } }
+    .nav-chat-input-area { padding: 12px 16px 10px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-end; background: var(--cream); }
+    .nav-chat-input-area textarea { flex: 1; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; font-family: inherit; font-size: 13px; color: var(--text); resize: none; min-height: 42px; max-height: 120px; line-height: 1.55; outline: none; transition: border-color 0.15s; }
+    .nav-chat-input-area textarea:focus { border-color: var(--gold); }
+    .nav-chat-input-area textarea::placeholder { color: var(--muted); }
+    .nc-send-btn { width: 42px; height: 42px; background: var(--accent); border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; color: white; }
+    .nc-send-btn:hover:not(:disabled) { background: var(--accent-light); transform: scale(1.05); }
+    .nc-send-btn:disabled { opacity: 0.35; cursor: default; }
+    .nc-send-btn svg { width: 16px; height: 16px; }
+    .nav-chat-footer { padding: 0 16px 10px; text-align: center; }
+    .nav-chat-footer span { font-size: 10px; color: var(--muted); }
+    .nc-quick-replies { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; padding-left: 36px; animation: nc-msg-in 0.3s ease both; }
+    .nc-quick-reply { background: var(--warm-white); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; font-family: inherit; font-size: 12px; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+    .nc-quick-reply:hover { border-color: var(--gold); color: var(--navy); transform: translateY(-1px); }
+    .nav-chat-sessions-list { max-height: 300px; overflow-y: auto; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--cream); }
+    .nc-session-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; cursor: pointer; background: var(--warm-white); transition: all 0.12s; }
+    .nc-session-item:hover { border-color: var(--gold); }
+    .nc-session-item.active { border-color: var(--accent); background: #faf6f1; }
+    .nc-session-preview { font-size: 12px; color: var(--text); font-weight: 400; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nc-session-date { font-size: 10px; color: var(--muted); flex-shrink: 0; margin-left: 12px; }
+    .nc-new-chat-btn { width: 100%; padding: 8px; border: 1px dashed var(--border); border-radius: 8px; background: none; font-family: inherit; font-size: 12px; color: var(--accent); cursor: pointer; transition: all 0.12s; margin-top: 4px; }
+    .nc-new-chat-btn:hover { border-color: var(--accent); background: #fdf9f5; }
   </style>
 </head>
 <body>
@@ -920,7 +987,7 @@
     </a>
     <div class="nav-right">
       <button class="btn-ghost" onclick="openFeedback()" style="font-size:13px;padding:6px 14px;display:inline-flex;align-items:center;gap:5px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Feedback</button>
-      <a href="/chat" target="_blank" class="btn-primary">Open Navigator</a>
+      <button class="btn-primary" onclick="switchTab('navigator')" style="border:none;font-family:inherit">Navigator</button>
       <button class="btn-ghost" onclick="logout()">Log out</button>
     </div>
   </nav>
@@ -1035,6 +1102,11 @@
       // Load community posts when switching to community tab
       if (tab === 'community') {
         showCommunityGate();
+      }
+      // Initialize navigator chat on first visit
+      if (tab === 'navigator' && !window._ncInitialized) {
+        window._ncInitialized = true;
+        ncLoadMostRecent();
       }
     }
 
@@ -6513,6 +6585,7 @@ guideLibrary['disability'] = {
 
       html += '<div class="dash-tabs" role="tablist" aria-label="Dashboard sections">';
       html += '  <button class="dash-tab active" data-tab="overview" role="tab" aria-selected="true" onclick="switchTab(\'overview\')">Overview</button>';
+      html += '  <button class="dash-tab" data-tab="navigator" onclick="switchTab(\'navigator\')">Navigator</button>';
       html += '  <button class="dash-tab" data-tab="checklist" onclick="switchTab(\'checklist\')">Checklist';
       if (prog.total > 0) html += ' <span class="tab-badge">' + prog.completed + '/' + prog.total + '</span>';
       html += '</button>';
@@ -7714,6 +7787,42 @@ guideLibrary['disability'] = {
       html += '</div>'; // guide-layout
       html += '</div>'; // guidesContent wrapper
       html += '</div>'; // panel-guides
+
+      // ═══════════════════════════════
+      // ── NAVIGATOR CHAT TAB ──
+      // ═══════════════════════════════
+      html += '<div class="tab-panel" id="panel-navigator">';
+      html += '<div class="nav-chat-wrap">';
+      html += '  <div class="nav-chat-header">';
+      html += '    <div class="nav-chat-header-left">';
+      html += '      <img src="/static/logos/sun-mark-cream-transparent.png" alt="L" style="width:28px;height:28px;object-fit:contain">';
+      html += '      <div><h3>Navigator</h3><p>Your transition guide</p></div>';
+      html += '    </div>';
+      html += '    <button class="nav-chat-sessions-btn" onclick="ncToggleSessions()">Past chats</button>';
+      html += '  </div>';
+      html += '  <div class="nav-chat-sessions-list" id="ncSessionsList" style="display:none"></div>';
+      html += '  <div class="nav-chat-messages" id="ncMessages">';
+      html += '    <div class="nav-chat-welcome" id="ncWelcome">';
+      html += '      <img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" style="width:48px;height:48px;object-fit:contain;margin-bottom:4px">';
+      html += '      <h3>Pick up where you left off</h3>';
+      html += '      <p>Your Navigator knows your situation, your state, and what you\'re working on. Ask anything about your transition.</p>';
+      html += '      <div class="nav-chat-starters">';
+      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">What should I focus on next?</button>';
+      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">Help me understand my checklist</button>';
+      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I have a question about a deadline</button>';
+      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m feeling overwhelmed</button>';
+      html += '      </div>';
+      html += '    </div>';
+      html += '  </div>';
+      html += '  <div class="nav-chat-input-area">';
+      html += '    <textarea id="ncInput" placeholder="Ask your Navigator anything\u2026" rows="1" onkeydown="ncHandleKey(event)" oninput="ncAutoResize(this)"></textarea>';
+      html += '    <button class="nc-send-btn" id="ncSendBtn" onclick="ncSend()" title="Send">';
+      html += '      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>';
+      html += '    </button>';
+      html += '  </div>';
+      html += '  <div class="nav-chat-footer"><span>Lumeway is a guidance tool, not a licensed professional. Always consult a qualified advisor.</span></div>';
+      html += '</div>'; // nav-chat-wrap
+      html += '</div>'; // panel-navigator
 
       // Settings panel removed — merged into Account Settings tab above
 
@@ -9689,7 +9798,7 @@ guideLibrary['disability'] = {
         <li><span class="gift-ob-icon">&#x1F4F1;</span><span>iPhone user? Download the Lumeway app for access on the go</span></li>
       </ul>
       <p class="gift-onboard-closing">Take your time. Start wherever feels right.</p>
-      <a href="/chat?gift=1" class="gift-onboard-btn" style="text-decoration:none;display:inline-block;text-align:center" onclick="closeGiftOnboarding()">Start a Chat</a>
+      <button class="gift-onboard-btn" style="display:inline-block;text-align:center;border:none;font-family:inherit;cursor:pointer" onclick="closeGiftOnboarding();switchTab('navigator');setTimeout(function(){ncSend('Hi, I just received Lumeway as a gift. Can you help me get set up?')},500)">Start a Chat</button>
       <button class="back-link" style="display:block;margin:12px auto 0;background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;text-decoration:underline;font-family:inherit" onclick="closeGiftOnboarding()">I'll explore on my own</button>
     </div>
   </div>
@@ -9838,6 +9947,307 @@ guideLibrary['disability'] = {
         btn.textContent = 'Copied!';
         setTimeout(function() { btn.textContent = 'Copy to clipboard'; }, 2000);
       });
+    }
+  </script>
+  <script>
+    // ═══════════════════════════════════════
+    // ── NAVIGATOR CHAT (Dashboard Tab) ──
+    // ═══════════════════════════════════════
+    var ncHistory = [];
+    var ncSessionId = null;
+    var ncIsLoading = false;
+    var ncSessionsVisible = false;
+
+    // ── Markdown renderer (simplified from index.html) ──
+    function ncRenderMarkdown(text) {
+      text = text.replace(/\[DOCS:\s*.+?\]\s*/g, '');
+      text = text.replace(/\[TEMPLATE_IDEA:\s*.+?\]\s*/g, '');
+      text = text.replace(/\[QUICK_REPLIES:\s*.+?\]\s*$/g, '');
+      var html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      // Strip trailing incomplete bold/italic
+      var boldCount = (html.match(/\*\*/g) || []).length;
+      if (boldCount % 2 !== 0) html = html.replace(/\*\*([^*]*)$/, '$1');
+      var lines = html.split('\n');
+      var output = [];
+      var inUL = false, inOL = false, inCL = false;
+      function closeList() {
+        if (inUL) { output.push('</ul>'); inUL = false; }
+        if (inOL) { output.push('</ol>'); inOL = false; }
+        if (inCL) { output.push('</ul>'); inCL = false; }
+      }
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        line = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+        if (/^### (.+)$/.test(line)) { closeList(); output.push(line.replace(/^### (.+)$/, '<h3>$1</h3>')); continue; }
+        if (/^## (.+)$/.test(line)) { closeList(); output.push(line.replace(/^## (.+)$/, '<h2>$1</h2>')); continue; }
+        if (/^# (.+)$/.test(line)) { closeList(); output.push(line.replace(/^# (.+)$/, '<h1>$1</h1>')); continue; }
+        if (/^---+$/.test(line.trim())) { closeList(); output.push('<hr>'); continue; }
+        if (/^([-*] )?\[(x| )\] (.+)$/i.test(line)) {
+          var checked = /\[x\]/i.test(line);
+          var txt = line.replace(/^([-*] )?\[(x| )\] /i, '');
+          if (inOL) { output.push('</ol>'); inOL = false; } if (inUL) { output.push('</ul>'); inUL = false; }
+          if (!inCL) { output.push('<ul class="checklist">'); inCL = true; }
+          output.push('<li><input type="checkbox"' + (checked ? ' checked' : '') + '><span' + (checked ? ' style="text-decoration:line-through;opacity:0.5"' : '') + '>' + txt + '</span></li>');
+          continue;
+        }
+        if (/^[\*\-\u2022] (.+)$/.test(line) && !/^([-*] )?\[(x| )\]/i.test(line)) {
+          if (inOL) { output.push('</ol>'); inOL = false; } if (inCL) { output.push('</ul>'); inCL = false; }
+          if (!inUL) { output.push('<ul>'); inUL = true; }
+          output.push(line.replace(/^[\*\-\u2022] (.+)$/, '<li>$1</li>')); continue;
+        }
+        if (/^\d+\. (.+)$/.test(line)) {
+          if (inUL) { output.push('</ul>'); inUL = false; } if (inCL) { output.push('</ul>'); inCL = false; }
+          if (!inOL) { output.push('<ol>'); inOL = true; }
+          output.push(line.replace(/^\d+\. (.+)$/, '<li>$1</li>')); continue;
+        }
+        closeList();
+        if (line.trim() === '') continue;
+        output.push('<p>' + line + '</p>');
+      }
+      closeList();
+      return output.join('');
+    }
+
+    // ── Parse quick replies from response ──
+    function ncParseQuickReplies(text) {
+      var match = text.match(/\[QUICK_REPLIES:\s*(.+?)\]\s*$/);
+      if (!match) return { text: text, options: null };
+      var options = match[1].split('|').map(function(o) { return o.trim(); }).filter(Boolean);
+      var cleaned = text.replace(/\[QUICK_REPLIES:\s*.+?\]\s*$/, '').trimEnd();
+      return { text: cleaned, options: options.length ? options : null };
+    }
+
+    // ── Add message to chat DOM ──
+    function ncAddMessage(role, text) {
+      var welcome = document.getElementById('ncWelcome');
+      if (welcome) welcome.style.display = 'none';
+      var msgs = document.getElementById('ncMessages');
+      var div = document.createElement('div');
+      div.className = 'nc-msg ' + role;
+      var avatarHTML = role === 'bot'
+        ? '<div class="nc-av bot"><img src="/static/logos/sun-mark-cream-transparent.png" alt="L" style="width:16px;height:16px;object-fit:contain"></div>'
+        : '<div class="nc-av user-av">You</div>';
+      var bubbleContent = role === 'bot'
+        ? ncRenderMarkdown(text)
+        : '<p>' + text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>') + '</p>';
+      div.innerHTML = avatarHTML + '<div class="nc-bubble">' + bubbleContent + '</div>';
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+      return div;
+    }
+
+    function ncUpdateBubble(div, text) {
+      var bubble = div.querySelector('.nc-bubble');
+      if (bubble) bubble.innerHTML = ncRenderMarkdown(text);
+      var msgs = document.getElementById('ncMessages');
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function ncShowTyping() {
+      var msgs = document.getElementById('ncMessages');
+      var div = document.createElement('div');
+      div.id = 'ncTyping';
+      div.className = 'nc-typing';
+      div.innerHTML = '<div class="nc-av bot"><img src="/static/logos/sun-mark-cream-transparent.png" alt="L" style="width:16px;height:16px;object-fit:contain"></div>' +
+        '<div class="nc-typing-dots"><div class="nc-dot"></div><div class="nc-dot"></div><div class="nc-dot"></div></div>';
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function ncRemoveTyping() {
+      var t = document.getElementById('ncTyping');
+      if (t) t.remove();
+    }
+
+    function ncRenderQuickReplies(options, afterEl) {
+      var old = document.querySelector('.nc-quick-replies');
+      if (old) old.remove();
+      var container = document.createElement('div');
+      container.className = 'nc-quick-replies';
+      options.forEach(function(opt) {
+        var btn = document.createElement('button');
+        btn.className = 'nc-quick-reply';
+        btn.textContent = opt;
+        btn.onclick = function() { container.remove(); ncSend(opt); };
+        container.appendChild(btn);
+      });
+      afterEl.after(container);
+      var msgs = document.getElementById('ncMessages');
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    // ── Send message ──
+    function ncSend(presetText) {
+      var input = document.getElementById('ncInput');
+      var message = presetText || (input ? input.value.trim() : '');
+      if (!message || ncIsLoading) return;
+      if (input) { input.value = ''; input.style.height = 'auto'; }
+      ncIsLoading = true;
+
+      // Remove lingering quick replies
+      var oldReplies = document.querySelector('.nc-quick-replies');
+      if (oldReplies) oldReplies.remove();
+      var sendBtn = document.getElementById('ncSendBtn');
+      if (sendBtn) sendBtn.disabled = true;
+
+      ncAddMessage('user', message);
+      ncHistory.push({ role: 'user', content: message });
+      ncShowTyping();
+
+      fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message, history: ncHistory, session_id: ncSessionId })
+      }).then(function(res) {
+        ncRemoveTyping();
+        var msgs = document.getElementById('ncMessages');
+        var msgDiv = document.createElement('div');
+        msgDiv.className = 'nc-msg bot';
+        msgDiv.innerHTML = '<div class="nc-av bot"><img src="/static/logos/sun-mark-cream-transparent.png" alt="L" style="width:16px;height:16px;object-fit:contain"></div><div class="nc-bubble"></div>';
+        msgs.appendChild(msgDiv);
+
+        var reader = res.body.getReader();
+        var decoder = new TextDecoder();
+        var fullText = '';
+        var lineBuffer = '';
+
+        function processStream() {
+          reader.read().then(function(result) {
+            if (result.done) {
+              finishStream();
+              return;
+            }
+            lineBuffer += decoder.decode(result.value, { stream: true });
+            var lines = lineBuffer.split('\n');
+            lineBuffer = lines.pop();
+            for (var i = 0; i < lines.length; i++) {
+              var line = lines[i];
+              if (line.indexOf('data: ') === 0) {
+                var payload = line.slice(6);
+                if (payload.indexOf('[DONE]') === 0) {
+                  try {
+                    var doneData = JSON.parse(payload.slice(6));
+                    ncHistory = doneData.history || doneData;
+                    if (doneData.session_id) ncSessionId = doneData.session_id;
+                  } catch(e) {}
+                } else {
+                  fullText += payload === '' ? '\n' : payload.replace(/\\n/g, '\n');
+                  ncUpdateBubble(msgDiv, fullText);
+                }
+              }
+            }
+            processStream();
+          });
+        }
+
+        function finishStream() {
+          // Clean up special tags and show quick replies
+          var cleanedText = fullText.replace(/\[DOCS:\s*.+?\]\s*/g, '').replace(/\[TEMPLATE_IDEA:\s*.+?\]\s*/g, '');
+          var parsed = ncParseQuickReplies(cleanedText);
+          ncUpdateBubble(msgDiv, parsed.text);
+          if (parsed.options) {
+            ncRenderQuickReplies(parsed.options, msgDiv);
+          }
+          ncIsLoading = false;
+          if (sendBtn) sendBtn.disabled = false;
+          if (input) input.focus();
+        }
+
+        processStream();
+      }).catch(function() {
+        ncRemoveTyping();
+        ncAddMessage('bot', 'Could not connect. Please try again.');
+        ncIsLoading = false;
+        if (sendBtn) sendBtn.disabled = false;
+      });
+    }
+
+    function ncHandleKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        ncSend();
+      }
+    }
+
+    function ncAutoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    }
+
+    // ── Load most recent chat session ──
+    function ncLoadMostRecent() {
+      fetch('/api/chat/sessions').then(function(r) { return r.json(); }).then(function(data) {
+        if (data.sessions && data.sessions.length > 0) {
+          var latest = data.sessions[0];
+          ncResumeSession(latest.id);
+        }
+      }).catch(function() {});
+    }
+
+    // ── Resume a specific session ──
+    function ncResumeSession(sid) {
+      fetch('/api/dashboard/history/' + sid).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.messages && data.messages.length > 0) {
+          ncSessionId = sid;
+          ncHistory = [];
+          // Clear existing messages
+          var msgs = document.getElementById('ncMessages');
+          var welcome = document.getElementById('ncWelcome');
+          if (welcome) welcome.style.display = 'none';
+          // Remove previous messages (keep welcome hidden)
+          var existing = msgs.querySelectorAll('.nc-msg, .nc-quick-replies');
+          existing.forEach(function(el) { el.remove(); });
+          // Add messages
+          data.messages.forEach(function(m) {
+            var role = m.role === 'user' ? 'user' : 'bot';
+            ncAddMessage(role, m.content);
+            ncHistory.push({ role: m.role, content: m.content });
+          });
+        }
+      }).catch(function() {});
+    }
+
+    // ── Toggle past sessions panel ──
+    function ncToggleSessions() {
+      ncSessionsVisible = !ncSessionsVisible;
+      var panel = document.getElementById('ncSessionsList');
+      if (!panel) return;
+      if (ncSessionsVisible) {
+        panel.style.display = 'block';
+        panel.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted);font-size:12px">Loading chats\u2026</div>';
+        fetch('/api/chat/sessions').then(function(r) { return r.json(); }).then(function(data) {
+          var html = '';
+          if (data.sessions && data.sessions.length > 0) {
+            data.sessions.forEach(function(s) {
+              var date = s.started_at ? new Date(s.started_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+              var preview = s.preview || 'New conversation';
+              var activeClass = s.id === ncSessionId ? ' active' : '';
+              html += '<div class="nc-session-item' + activeClass + '" onclick="ncResumeSession(\'' + s.id + '\');ncToggleSessions()">';
+              html += '  <span class="nc-session-preview">' + preview.replace(/</g, '&lt;') + '</span>';
+              html += '  <span class="nc-session-date">' + date + '</span>';
+              html += '</div>';
+            });
+          }
+          html += '<button class="nc-new-chat-btn" onclick="ncStartNewChat()">+ New conversation</button>';
+          panel.innerHTML = html;
+        }).catch(function() {
+          panel.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted);font-size:12px">Could not load chats</div>';
+        });
+      } else {
+        panel.style.display = 'none';
+      }
+    }
+
+    // ── Start fresh conversation ──
+    function ncStartNewChat() {
+      ncHistory = [];
+      ncSessionId = null;
+      var msgs = document.getElementById('ncMessages');
+      var existing = msgs.querySelectorAll('.nc-msg, .nc-quick-replies');
+      existing.forEach(function(el) { el.remove(); });
+      var welcome = document.getElementById('ncWelcome');
+      if (welcome) welcome.style.display = '';
+      ncToggleSessions(); // close panel
     }
   </script>
   <script>
