@@ -4375,7 +4375,19 @@ def purchase_success():
             session_data = stripe.checkout.Session.retrieve(session_id)
             print(f"Session retrieved: payment_status={session_data.payment_status}, metadata={session_data.metadata}")
             if session_data.payment_status == "paid":
-                metadata = session_data.metadata if isinstance(session_data.metadata, dict) else dict(session_data.metadata or {})
+                # Stripe metadata is a StripeObject — convert carefully
+                raw_meta = session_data.metadata
+                if raw_meta and not isinstance(raw_meta, dict):
+                    try:
+                        metadata = dict(raw_meta)
+                    except Exception:
+                        metadata = {}
+                        for k in ["purchase_type", "product_id", "category", "transition", "user_id", "email", "product_ids", "purchase_types", "credit_used"]:
+                            v = getattr(raw_meta, k, None)
+                            if v is not None:
+                                metadata[k] = v
+                else:
+                    metadata = raw_meta or {}
                 product_id = metadata.get("product_id", "")
                 purchase_type = metadata.get("purchase_type", "")
 
@@ -8308,7 +8320,18 @@ def admin_retry_purchase():
         session_data = stripe.checkout.Session.retrieve(session_id)
         if session_data.payment_status != "paid":
             return jsonify({"error": "Session not paid"}), 400
-        metadata = session_data.metadata if isinstance(session_data.metadata, dict) else dict(session_data.metadata or {})
+        raw_meta = session_data.metadata
+        if raw_meta and not isinstance(raw_meta, dict):
+            try:
+                metadata = dict(raw_meta)
+            except Exception:
+                metadata = {}
+                for k in ["purchase_type", "product_id", "category", "transition", "user_id", "email", "product_ids", "purchase_types", "credit_used"]:
+                    v = getattr(raw_meta, k, None)
+                    if v is not None:
+                        metadata[k] = v
+        else:
+            metadata = raw_meta or {}
         purchase_type = metadata.get("purchase_type", "")
         if purchase_type in ("pass", "unlimited"):
             handle_tier_upgrade(session_data, metadata)
