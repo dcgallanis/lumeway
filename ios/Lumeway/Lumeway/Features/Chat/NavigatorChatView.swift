@@ -5,11 +5,65 @@ final class ChatViewModel: ObservableObject {
     @Published var messages: [ChatMessage] = []
     @Published var inputText = ""
     @Published var isStreaming = false
-    @Published var sessionId: String? = nil
+    @Published var sessionId: String? = nil {
+        didSet {
+            // Persist session ID so chat memory survives app restarts
+            if let sid = sessionId {
+                UserDefaults.standard.set(sid, forKey: "nc_last_session_id")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "nc_last_session_id")
+            }
+        }
+    }
     @Published var conversationHistory: [[String: String]] = []
+    @Published var hasLoadedInitialSession = false
 
     let api = APIClient.shared
     let notesService = NotesService()
+
+    /// Restore the most recent conversation on first load
+    func loadMostRecentSession() async {
+        guard !hasLoadedInitialSession else { return }
+        hasLoadedInitialSession = true
+
+        // First try the persisted session ID
+        if let lastSid = UserDefaults.standard.string(forKey: "nc_last_session_id") {
+            do {
+                let response: ChatHistoryResponse = try await api.get("/api/dashboard/history/\(lastSid)")
+                if !response.messages.isEmpty {
+                    restoreSession(sid: lastSid, messages: response.messages)
+                    return
+                }
+            } catch {
+                // Session may have been deleted or expired — fall through
+            }
+        }
+
+        // Fallback: fetch session list and load the most recent one
+        do {
+            let sessionsResponse: ChatSessionsResponse = try await api.get("/api/chat/sessions")
+            if let latest = sessionsResponse.sessions.first {
+                let response: ChatHistoryResponse = try await api.get("/api/dashboard/history/\(latest.id)")
+                if !response.messages.isEmpty {
+                    restoreSession(sid: latest.id, messages: response.messages)
+                }
+            }
+        } catch {
+            print("Could not load recent chat session: \(error)")
+        }
+    }
+
+    func restoreSession(sid: String, messages: [ChatHistoryMessage]) {
+        self.sessionId = sid
+        self.messages = messages.enumerated().map { index, msg in
+            ChatMessage(
+                id: "\(sid)-\(index)",
+                role: msg.role == "user" ? .user : .assistant,
+                content: msg.content
+            )
+        }
+        self.conversationHistory = messages.map { ["role": $0.role, "content": $0.content] }
+    }
 }
 
 struct NavigatorChatView: View {
@@ -36,7 +90,7 @@ struct NavigatorChatView: View {
                                     WelcomeBubble(onSuggestionTap: { suggestion in
                                         vm.inputText = suggestion
                                         sendMessage()
-                                    })
+                                    }, activeTransitions: appState.activeTransitions)
                                     .padding(.top, 24)
                                 }
 
@@ -164,6 +218,9 @@ struct NavigatorChatView: View {
                 })
                 .environmentObject(appState)
             }
+            .onAppear {
+                Task { await vm.loadMostRecentSession() }
+            }
         }
     }
 
@@ -261,15 +318,7 @@ struct NavigatorChatView: View {
     private func loadSession(_ sid: String) async {
         do {
             let response: ChatHistoryResponse = try await vm.api.get("/api/dashboard/history/\(sid)")
-            vm.messages = response.messages.enumerated().map { index, msg in
-                ChatMessage(
-                    id: "\(sid)-\(index)",
-                    role: msg.role == "user" ? .user : .assistant,
-                    content: msg.content
-                )
-            }
-            vm.sessionId = sid
-            vm.conversationHistory = response.messages.map { ["role": $0.role, "content": $0.content] }
+            vm.restoreSession(sid: sid, messages: response.messages)
         } catch {
             print("Failed to load session: \(error)")
         }
@@ -393,16 +442,49 @@ struct ChatBubble: View {
 
 struct WelcomeBubble: View {
     var onSuggestionTap: ((String) -> Void)?
+    var activeTransitions: [String] = []
 
-    private let starters = [
-        "I recently lost a loved one and don\u{2019}t know where to start.",
-        "I just got laid off. What do I need to do right away?",
-        "I\u{2019}m going through a divorce and feel completely overwhelmed.",
-        "I\u{2019}m moving to a new state and need help with everything.",
-        "I\u{2019}m applying for disability benefits and don\u{2019}t know where to begin.",
-        "I\u{2019}m getting ready to retire and want to make sure I don\u{2019}t miss anything.",
-        "Something else is going on\u{2026}",
-    ]
+    private var starters: [String] {
+        // If user has active transitions, show context-aware starters
+        if !activeTransitions.isEmpty {
+            var contextStarters: [String] = [
+                "What should I focus on next?",
+                "Help me understand my checklist",
+                "I have a question about a deadline",
+            ]
+            // Add transition-specific starters
+            for transition in activeTransitions.prefix(2) {
+                switch transition {
+                case "job-loss":
+                    contextStarters.insert("What\u{2019}s the most urgent thing for my job loss situation?", at: 0)
+                case "estate":
+                    contextStarters.insert("Walk me through what I need to handle for the estate", at: 0)
+                case "divorce":
+                    contextStarters.insert("What should I be documenting for my divorce?", at: 0)
+                case "disability":
+                    contextStarters.insert("Help me with my disability benefits application", at: 0)
+                case "relocation":
+                    contextStarters.insert("What do I need to update for my move?", at: 0)
+                case "retirement":
+                    contextStarters.insert("What retirement deadlines should I know about?", at: 0)
+                default: break
+                }
+            }
+            contextStarters.append("I\u{2019}m feeling overwhelmed")
+            return contextStarters
+        }
+
+        // Default starters for new/free users
+        return [
+            "I recently lost a loved one and don\u{2019}t know where to start.",
+            "I just got laid off. What do I need to do right away?",
+            "I\u{2019}m going through a divorce and feel completely overwhelmed.",
+            "I\u{2019}m moving to a new state and need help with everything.",
+            "I\u{2019}m applying for disability benefits and don\u{2019}t know where to begin.",
+            "I\u{2019}m getting ready to retire and want to make sure I don\u{2019}t miss anything.",
+            "Something else is going on\u{2026}",
+        ]
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -548,6 +630,21 @@ struct ChatHistoryMessage: Codable {
 
 struct ChatHistoryResponse: Codable {
     let messages: [ChatHistoryMessage]
+}
+
+struct ChatSessionsResponse: Codable {
+    let sessions: [ChatSessionItem]
+
+    struct ChatSessionItem: Codable {
+        let id: String
+        let startedAt: String?
+        let preview: String?
+
+        enum CodingKeys: String, CodingKey {
+            case id, preview
+            case startedAt = "started_at"
+        }
+    }
 }
 
 struct ChatHistorySheet: View {
