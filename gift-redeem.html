@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redeem a Gift — Lumeway</title>
+<link rel="icon" href="/static/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --navy: #2C4A5E; --cream: #FAF7F2; --warm-white: #FDFCFA; --accent: #C4704E; --accent-light: #D4896C; --gold: #B8977E; --green: #4A7C59; --muted: #6B7B8D; --text: #2C3E50; --border: #E8E0D6; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--cream); font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; -webkit-font-smoothing: antialiased; }
+
+  .top-bar { width: 100%; background: linear-gradient(135deg, var(--navy), #1B3A4E); padding: 20px 5%; display: flex; align-items: center; justify-content: center; }
+  .top-bar a { font-size: 12px; font-weight: 600; color: rgba(250,247,242,0.45); letter-spacing: 3px; text-transform: uppercase; text-decoration: none; }
+  .gold-line { width: 100%; height: 3px; background: linear-gradient(90deg, var(--gold), #D4B49A, var(--gold)); }
+
+  .redeem-card { max-width: 480px; width: 100%; margin: 60px 20px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 24px rgba(44,74,94,0.06); }
+  .redeem-header { padding: 36px 36px 0; text-align: center; }
+  .redeem-icon { font-size: 40px; margin-bottom: 12px; }
+  .redeem-title { font-family: 'Libre Baskerville', Georgia, serif; font-size: 24px; font-weight: 400; color: var(--navy); margin-bottom: 8px; }
+  .redeem-subtitle { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.6; }
+
+  .redeem-form { padding: 28px 36px 36px; }
+  .redeem-input { width: 100%; padding: 16px 18px; font-family: 'Plus Jakarta Sans', monospace; font-size: 18px; font-weight: 600; letter-spacing: 2px; text-align: center; color: var(--navy); background: var(--cream); border: 2px solid var(--border); border-radius: 12px; outline: none; transition: border-color 0.2s; text-transform: uppercase; }
+  .redeem-input:focus { border-color: var(--gold); }
+  .redeem-input::placeholder { color: #ccc; font-weight: 400; letter-spacing: 1px; font-size: 14px; text-transform: none; }
+  .redeem-btn { width: 100%; margin-top: 16px; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .redeem-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
+  .redeem-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .redeem-msg { margin-top: 16px; padding: 14px 18px; border-radius: 10px; font-size: 13px; line-height: 1.6; display: none; }
+  .redeem-msg.success { display: block; background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
+  .redeem-msg.error { display: block; background: #fef3f0; color: var(--accent); border: 1px solid #f5d5c8; }
+  .redeem-login { margin-top: 16px; font-size: 13px; color: var(--muted); text-align: center; }
+  .redeem-login a { color: var(--accent); font-weight: 500; text-decoration: none; }
+
+  .redeem-footer { padding: 20px 36px; background: #F5F0E8; border-top: 1px solid var(--border); text-align: center; }
+  .redeem-footer p { font-size: 11px; color: #999; }
+  .redeem-footer a { color: var(--navy); text-decoration: none; font-weight: 500; }
+</style>
+</head>
+<body>
+  <div class="top-bar"><a href="/">&#9788;&ensp;LUMEWAY</a></div>
+  <div class="gold-line"></div>
+
+  <div class="redeem-card">
+    <div class="redeem-header">
+      <div class="redeem-icon">🎁</div>
+      <h1 class="redeem-title">Redeem a gift</h1>
+      <p class="redeem-subtitle">Enter the code from your gift certificate below.</p>
+    </div>
+    <div class="redeem-form">
+      <input type="text" id="giftCode" class="redeem-input" placeholder="LUME-XXXX-XXXX" maxlength="14" autocomplete="off">
+      <button class="redeem-btn" id="redeemBtn" onclick="redeemGift()">Redeem Code</button>
+      <div class="redeem-msg" id="redeemMsg"></div>
+      <div class="redeem-login" id="loginHint" style="display:none">
+        <a href="/login?redirect=/gift/redeem">Log in</a> or <a href="/login?redirect=/gift/redeem">create an account</a> first, then come back to redeem.
+      </div>
+    </div>
+    <div class="redeem-footer">
+      <p><a href="/">lumeway.co</a> &middot; Step-by-step guidance through life's hardest transitions</p>
+    </div>
+  </div>
+
+<script>
+function redeemGift() {
+  var code = document.getElementById('giftCode').value.trim().toUpperCase();
+  var msg = document.getElementById('redeemMsg');
+  var btn = document.getElementById('redeemBtn');
+  var loginHint = document.getElementById('loginHint');
+  if (!code) { showMsg('error', 'Please enter a gift code.'); return; }
+  btn.disabled = true;
+  btn.textContent = 'Redeeming...';
+  msg.style.display = 'none';
+  loginHint.style.display = 'none';
+
+  fetch('/api/redeem-code', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ code: code })
+  })
+  .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+  .then(function(res) {
+    btn.disabled = false;
+    btn.textContent = 'Redeem Code';
+    if (res.ok && res.data.ok) {
+      showMsg('success', res.data.message || 'Gift redeemed! Head to your dashboard.');
+      btn.textContent = 'Go to Dashboard';
+      btn.onclick = function() { window.location.href = '/dashboard'; };
+    } else {
+      var errMsg = res.data.error || 'Something went wrong.';
+      showMsg('error', errMsg);
+      if (errMsg.toLowerCase().includes('log in')) {
+        loginHint.style.display = 'block';
+      }
+    }
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'Redeem Code';
+    showMsg('error', 'Something went wrong. Please try again.');
+  });
+}
+
+function showMsg(type, text) {
+  var msg = document.getElementById('redeemMsg');
+  msg.className = 'redeem-msg ' + type;
+  msg.textContent = text;
+  msg.style.display = 'block';
+}
+
+// Auto-format input as LUME-XXXX-XXXX
+document.getElementById('giftCode').addEventListener('input', function(e) {
+  var v = e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  if (v.length > 12) v = v.substring(0, 12);
+  var parts = [];
+  if (v.length > 0) parts.push(v.substring(0, 4));
+  if (v.length > 4) parts.push(v.substring(4, 8));
+  if (v.length > 8) parts.push(v.substring(8, 12));
+  e.target.value = parts.join('-');
+});
+
+// Allow Enter key
+document.getElementById('giftCode').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') redeemGift();
+});
+</script>
+</body>
+</html>

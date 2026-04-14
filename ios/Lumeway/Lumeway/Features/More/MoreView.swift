@@ -1287,6 +1287,28 @@ struct PricingView: View {
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 20)
                             .padding(.top, 8)
+
+                        // Gift blurb
+                        VStack(spacing: 8) {
+                            Text("🎁")
+                                .font(.system(size: 24))
+                            Text("Know someone going through it?")
+                                .font(.lumeBodyMedium)
+                                .foregroundColor(.lumeNavy)
+                            Text("Gift a Lumeway plan at lumeway.co/pricing")
+                                .font(.lumeSmall)
+                                .foregroundColor(.lumeMuted)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(20)
+                        .background(Color.lumeWarmWhite)
+                        .cornerRadius(14)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(Color.lumeBorder, lineWidth: 1)
+                        )
+                        .padding(.horizontal, 20)
+                        .padding(.top, 12)
                     }
                     .padding(20)
                     .padding(.bottom, 80)

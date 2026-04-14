@@ -766,6 +766,46 @@ def init_subscribers_db():
             conn_etsy.close()
         except Exception:
             pass
+    # Gift codes table (idempotent)
+    try:
+        conn_gift = get_db()
+        if USE_POSTGRES:
+            db_execute(conn_gift, """CREATE TABLE IF NOT EXISTS gift_codes (
+                id SERIAL PRIMARY KEY,
+                code TEXT NOT NULL UNIQUE,
+                purchaser_email TEXT NOT NULL,
+                purchaser_name TEXT,
+                recipient_name TEXT,
+                gift_type TEXT NOT NULL,
+                gift_label TEXT NOT NULL,
+                amount_cents INTEGER NOT NULL,
+                stripe_session_id TEXT,
+                redeemed_by INTEGER,
+                redeemed_at TEXT,
+                created_at TEXT NOT NULL
+            )""")
+        else:
+            db_execute(conn_gift, """CREATE TABLE IF NOT EXISTS gift_codes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                code TEXT NOT NULL UNIQUE,
+                purchaser_email TEXT NOT NULL,
+                purchaser_name TEXT,
+                recipient_name TEXT,
+                gift_type TEXT NOT NULL,
+                gift_label TEXT NOT NULL,
+                amount_cents INTEGER NOT NULL,
+                stripe_session_id TEXT,
+                redeemed_by INTEGER,
+                redeemed_at TEXT,
+                created_at TEXT NOT NULL
+            )""")
+        conn_gift.commit()
+        conn_gift.close()
+    except Exception:
+        try:
+            conn_gift.close()
+        except Exception:
+            pass
     # Expenses table (idempotent)
     try:
         conn3 = get_db()
@@ -2782,6 +2822,312 @@ def create_individual_template_checkout():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ── Gift Certificate System ──
+
+GIFT_PRODUCTS = {
+    "gift-starter": {"name": "Starter Bundle Gift", "price": 1600, "gift_type": "starter", "label": "Starter Bundle"},
+    "gift-transition": {"name": "Bundled Plan Gift", "price": 3900, "gift_type": "one_transition", "label": "Bundled Plan (one transition)"},
+    "gift-all": {"name": "All Access Gift", "price": 12500, "gift_type": "all_transitions", "label": "All Access — All Transitions"},
+}
+
+def generate_gift_code():
+    """Generate a human-readable gift code like LUME-XXXX-XXXX."""
+    import random, string
+    chars = string.ascii_uppercase + string.digits
+    part1 = ''.join(random.choices(chars, k=4))
+    part2 = ''.join(random.choices(chars, k=4))
+    return f"LUME-{part1}-{part2}"
+
+@app.route("/api/create-gift-checkout", methods=["POST"])
+def create_gift_checkout():
+    """Create Stripe checkout for a gift certificate."""
+    data = request.get_json() or {}
+    product_id = data.get("product_id", "")
+    purchaser_name = data.get("purchaser_name", "").strip()
+    purchaser_email = data.get("purchaser_email", "").strip()
+    recipient_name = data.get("recipient_name", "").strip()
+    transition_category = data.get("transition_category", "")
+
+    if product_id not in GIFT_PRODUCTS:
+        return jsonify({"error": "Invalid gift product"}), 400
+    if not purchaser_email:
+        return jsonify({"error": "Your email is required"}), 400
+    if not recipient_name:
+        return jsonify({"error": "Recipient name is required"}), 400
+
+    gift = GIFT_PRODUCTS[product_id]
+    label = gift["label"]
+    # For single transition gifts, include the category in the label
+    if gift["gift_type"] == "one_transition" and transition_category in CATEGORY_LABELS:
+        label = f"Bundled Plan — {CATEGORY_LABELS[transition_category]}"
+
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            customer_email=purchaser_email,
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {"name": f"Gift: {label}"},
+                    "unit_amount": gift["price"],
+                },
+                "quantity": 1,
+            }],
+            mode="payment",
+            success_url=request.host_url + "gift/success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=request.host_url + "pricing",
+            metadata={
+                "purchase_type": "gift",
+                "gift_product_id": product_id,
+                "gift_type": gift["gift_type"],
+                "gift_label": label,
+                "purchaser_name": purchaser_name,
+                "purchaser_email": purchaser_email,
+                "recipient_name": recipient_name,
+                "transition_category": transition_category,
+            },
+        )
+        return jsonify({"url": session.url})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/gift/success")
+def gift_success():
+    return render_template_string(open("gift-success.html").read())
+
+@app.route("/gift/redeem")
+def gift_redeem_page():
+    return render_template_string(open("gift-redeem.html").read())
+
+@app.route("/api/gift/redeem", methods=["POST"])
+def gift_redeem():
+    """Redeem a gift code — grants the purchased tier to the logged-in user."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Please log in or create an account first, then redeem your code."}), 401
+    code = (request.get_json() or {}).get("code", "").strip().upper()
+    if not code:
+        return jsonify({"error": "Please enter a gift code."}), 400
+
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id, gift_type, gift_label, redeemed_by, redeemed_at FROM gift_codes WHERE code = {param}", (code,))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "That code doesn't look right. Double-check and try again."}), 400
+
+    gift_id, gift_type, gift_label, redeemed_by, redeemed_at = row
+    if redeemed_by is not None:
+        conn.close()
+        return jsonify({"error": "This gift code has already been redeemed."}), 400
+
+    now = datetime.now(timezone.utc).isoformat()
+    uid = user["id"]
+
+    # Mark as redeemed
+    db_execute(conn, f"UPDATE gift_codes SET redeemed_by = {param}, redeemed_at = {param} WHERE id = {param}",
+               (uid, now, gift_id))
+    conn.commit()
+
+    # Grant access based on gift type
+    if gift_type == "all_transitions":
+        for cat in VALID_CATEGORIES:
+            add_user_category(uid, cat, "full", conn)
+        db_execute(conn, f"UPDATE users SET tier = 'all_transitions' WHERE id = {param}", (uid,))
+        db_execute(conn, f"UPDATE users SET credit_cents = 12500 WHERE id = {param}", (uid,))
+        conn.commit()
+        msg = "Gift redeemed! You now have All Access — every transition, every feature."
+    elif gift_type == "one_transition":
+        # Get the transition category from the gift record
+        cur2 = db_execute(conn, f"SELECT gift_label FROM gift_codes WHERE id = {param}", (gift_id,))
+        # Try to extract category from label, or grant a choosable one
+        # For now, grant full access to one category — they pick on dashboard
+        msg = f"Gift redeemed! You have access to the {gift_label}. Head to your dashboard to get started."
+        # Grant credit equivalent
+        db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (uid,))
+        conn.commit()
+    elif gift_type == "starter":
+        db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 1600 WHERE id = {param}", (uid,))
+        conn.commit()
+        msg = f"Gift redeemed! You have $16 in credit toward any bundle."
+    else:
+        msg = "Gift redeemed!"
+
+    update_user_tier_from_access(uid, conn)
+    conn.close()
+
+    return jsonify({"ok": True, "message": msg, "gift_type": gift_type})
+
+
+def handle_gift_webhook(session_data, metadata):
+    """Handle gift certificate purchase — generate code, store, email certificate."""
+    email = _get_session_email(session_data)
+    session_id = _get_session_field(session_data, "id")
+    gift_product_id = metadata.get("gift_product_id", "")
+    gift_type = metadata.get("gift_type", "")
+    gift_label = metadata.get("gift_label", "")
+    purchaser_name = metadata.get("purchaser_name", "")
+    purchaser_email = metadata.get("purchaser_email", email)
+    recipient_name = metadata.get("recipient_name", "")
+    transition_category = metadata.get("transition_category", "")
+
+    if not purchaser_email:
+        print(f"Cannot handle gift: no email")
+        return
+
+    # Generate unique code
+    code = generate_gift_code()
+    # Ensure uniqueness
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    for _ in range(10):
+        cur = db_execute(conn, f"SELECT id FROM gift_codes WHERE code = {param}", (code,))
+        if not cur.fetchone():
+            break
+        code = generate_gift_code()
+
+    now = datetime.now(timezone.utc).isoformat()
+    gift_price = GIFT_PRODUCTS.get(gift_product_id, {}).get("price", 0)
+
+    # Store gift code
+    try:
+        db_execute(conn,
+            f"""INSERT INTO gift_codes (code, purchaser_email, purchaser_name, recipient_name, gift_type, gift_label, amount_cents, stripe_session_id, created_at)
+            VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param}, {param}, {param})""",
+            (code, purchaser_email, purchaser_name, recipient_name, gift_type, gift_label, gift_price, session_id, now))
+        conn.commit()
+    except Exception as e:
+        print(f"Error storing gift code: {e}")
+    conn.close()
+
+    # Send email with gift certificate attached
+    threading.Thread(target=send_gift_email, args=(purchaser_email, purchaser_name, recipient_name, code, gift_label, gift_price), daemon=True).start()
+    print(f"Gift purchased: {purchaser_email} → {recipient_name}, code={code}, type={gift_label}")
+
+
+def send_gift_email(to_email, purchaser_name, recipient_name, code, gift_label, amount_cents):
+    """Send the gift purchase confirmation with HTML certificate attached."""
+    import base64
+
+    # Build the HTML certificate
+    certificate_html = build_gift_certificate(purchaser_name, recipient_name, code, gift_label, amount_cents)
+
+    # Email body
+    body = email_wrap(f"""
+    <h2 style="font-family:'Libre Baskerville',Georgia,serif;font-size:22px;font-weight:400;color:#2C4A5E;margin:0 0 16px;line-height:1.3;">Your gift is ready</h2>
+    <p style="font-size:14px;line-height:1.7;margin:0 0 16px;color:#4A5568;">
+        You purchased a <strong>{gift_label}</strong> gift for <strong>{recipient_name}</strong>. Their redemption code is:
+    </p>
+    <div style="background:#F5F0E8;border:2px dashed #B8977E;border-radius:12px;padding:20px;text-align:center;margin:0 0 20px;">
+        <span style="font-family:'Plus Jakarta Sans',monospace;font-size:24px;font-weight:700;color:#2C4A5E;letter-spacing:3px;">{code}</span>
+    </div>
+    <p style="font-size:14px;line-height:1.7;margin:0 0 12px;color:#4A5568;">
+        <strong>How they redeem it:</strong>
+    </p>
+    <ol style="font-size:13px;line-height:1.8;color:#4A5568;padding-left:20px;margin:0 0 20px;">
+        <li>Go to <a href="https://lumeway.co/gift/redeem" style="color:#C4704E;font-weight:500;">lumeway.co/gift/redeem</a></li>
+        <li>Create a free account (or log in)</li>
+        <li>Enter the code above</li>
+    </ol>
+    <p style="font-size:13px;line-height:1.7;margin:0 0 8px;color:#6B7B8D;">
+        We also attached a printable gift certificate to this email — feel free to print it out or forward this email.
+    </p>
+    """)
+
+    # Send with attachment via Resend
+    cert_b64 = base64.b64encode(certificate_html.encode("utf-8")).decode("utf-8")
+    try:
+        resp = http_requests.post("https://api.resend.com/emails", json={
+            "from": "Lumeway <hello@lumeway.co>",
+            "to": [to_email],
+            "subject": f"Your Lumeway gift for {recipient_name} is ready",
+            "html": body,
+            "attachments": [{
+                "filename": "lumeway-gift-certificate.html",
+                "content": cert_b64,
+            }],
+        }, headers={
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        }, timeout=15)
+        if resp.status_code == 200:
+            print(f"Gift email sent to {to_email}")
+        else:
+            print(f"Gift email error ({resp.status_code}): {resp.text}")
+    except Exception as e:
+        print(f"Failed to send gift email: {e}")
+
+
+def build_gift_certificate(purchaser_name, recipient_name, code, gift_label, amount_cents):
+    """Build a printable HTML gift certificate."""
+    amount_str = f"${amount_cents / 100:.0f}" if amount_cents else ""
+    from_line = f"From {purchaser_name}" if purchaser_name else ""
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumeway Gift Certificate</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  @media print {{ @page {{ margin: 0.75in; }} body {{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }} }}
+  * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+  body {{ background: #FAF7F2; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px 20px; }}
+  .cert {{ max-width: 600px; width: 100%; background: #FDFCFA; border: 1px solid #E8E0D6; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 40px rgba(44,74,94,0.08); }}
+  .cert-header {{ background: linear-gradient(135deg, #2C4A5E, #1B3A4E); padding: 36px 40px; text-align: center; }}
+  .cert-brand {{ font-size: 12px; font-weight: 600; color: rgba(250,247,242,0.45); letter-spacing: 3px; text-transform: uppercase; }}
+  .cert-gold {{ height: 3px; background: linear-gradient(90deg, #B8977E, #D4B49A, #B8977E); }}
+  .cert-body {{ padding: 44px 40px 36px; text-align: center; }}
+  .cert-gift-label {{ font-size: 11px; font-weight: 600; color: #B8977E; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }}
+  .cert-title {{ font-family: 'Libre Baskerville', Georgia, serif; font-size: 28px; font-weight: 400; color: #2C4A5E; line-height: 1.3; margin-bottom: 8px; }}
+  .cert-for {{ font-size: 15px; color: #6B7B8D; margin-bottom: 6px; }}
+  .cert-for strong {{ color: #2C4A5E; font-weight: 600; }}
+  .cert-from {{ font-size: 13px; color: #999; margin-bottom: 28px; }}
+  .cert-plan {{ display: inline-block; background: #2C4A5E; color: #FAF7F2; padding: 8px 24px; border-radius: 100px; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px; }}
+  .cert-value {{ font-size: 12px; color: #999; margin-bottom: 32px; }}
+  .cert-code-wrap {{ background: #F5F0E8; border: 2px dashed #B8977E; border-radius: 14px; padding: 24px; margin-bottom: 28px; }}
+  .cert-code-label {{ font-size: 10px; font-weight: 600; color: #B8977E; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }}
+  .cert-code {{ font-family: 'Plus Jakarta Sans', monospace; font-size: 32px; font-weight: 700; color: #2C4A5E; letter-spacing: 4px; }}
+  .cert-instructions {{ font-size: 13px; color: #6B7B8D; line-height: 1.8; }}
+  .cert-instructions a {{ color: #C4704E; font-weight: 500; text-decoration: none; }}
+  .cert-footer {{ background: #F5F0E8; padding: 20px 40px; text-align: center; border-top: 1px solid #E8E0D6; }}
+  .cert-footer p {{ font-size: 11px; color: #999; }}
+  .cert-footer a {{ color: #2C4A5E; text-decoration: none; font-weight: 500; }}
+</style>
+</head>
+<body>
+<div class="cert">
+  <div class="cert-header">
+    <div class="cert-brand">&#9788;&ensp;LUMEWAY</div>
+  </div>
+  <div class="cert-gold"></div>
+  <div class="cert-body">
+    <div class="cert-gift-label">Gift Certificate</div>
+    <h1 class="cert-title">A little help<br>goes a long way</h1>
+    <p class="cert-for">For <strong>{recipient_name}</strong></p>
+    <p class="cert-from">{from_line}</p>
+    <div class="cert-plan">{gift_label}</div>
+    <p class="cert-value">{amount_str} value</p>
+    <div class="cert-code-wrap">
+      <div class="cert-code-label">Redemption Code</div>
+      <div class="cert-code">{code}</div>
+    </div>
+    <div class="cert-instructions">
+      <strong>To redeem:</strong><br>
+      1. Go to <a href="https://lumeway.co/gift/redeem">lumeway.co/gift/redeem</a><br>
+      2. Create a free account or log in<br>
+      3. Enter the code above
+    </div>
+  </div>
+  <div class="cert-footer">
+    <p><a href="https://lumeway.co">lumeway.co</a> &middot; Step-by-step guidance through life's hardest transitions</p>
+  </div>
+</div>
+</body>
+</html>"""
+
+
 @app.route("/api/redeem-code", methods=["POST"])
 def redeem_code():
     """Redeem a promo code or Etsy purchase code."""
@@ -2789,6 +3135,45 @@ def redeem_code():
     if not user:
         return jsonify({"error": "Please log in first."}), 401
     code = (request.get_json() or {}).get("code", "").strip().upper()
+
+    # Check gift codes first (LUME-XXXX-XXXX format)
+    if code.startswith("LUME-"):
+        conn_g = get_db()
+        param_g = "%s" if USE_POSTGRES else "?"
+        cur_g = db_execute(conn_g, f"SELECT id, gift_type, gift_label, redeemed_by FROM gift_codes WHERE code = {param_g}", (code,))
+        gift_row = cur_g.fetchone()
+        if gift_row:
+            gift_id, gift_type, gift_label, redeemed_by = gift_row
+            if redeemed_by is not None:
+                conn_g.close()
+                return jsonify({"error": "This gift code has already been redeemed."}), 400
+            now = datetime.now(timezone.utc).isoformat()
+            uid = user["id"]
+            db_execute(conn_g, f"UPDATE gift_codes SET redeemed_by = {param_g}, redeemed_at = {param_g} WHERE id = {param_g}",
+                       (uid, now, gift_id))
+            conn_g.commit()
+            if gift_type == "all_transitions":
+                for cat in VALID_CATEGORIES:
+                    add_user_category(uid, cat, "full", conn_g)
+                db_execute(conn_g, f"UPDATE users SET tier = 'all_transitions' WHERE id = {param_g}", (uid,))
+                db_execute(conn_g, f"UPDATE users SET credit_cents = 12500 WHERE id = {param_g}", (uid,))
+                conn_g.commit()
+                msg = "Gift redeemed! You now have All Access — every transition, every feature."
+            elif gift_type == "one_transition":
+                db_execute(conn_g, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param_g}", (uid,))
+                conn_g.commit()
+                msg = f"Gift redeemed! You have $39 in credit toward any transition plan."
+            elif gift_type == "starter":
+                db_execute(conn_g, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 1600 WHERE id = {param_g}", (uid,))
+                conn_g.commit()
+                msg = "Gift redeemed! You have $16 in credit toward any bundle."
+            else:
+                msg = "Gift redeemed!"
+            update_user_tier_from_access(uid, conn_g)
+            conn_g.close()
+            return jsonify({"ok": True, "category": "gift", "credit_cents": 0, "message": msg})
+        conn_g.close()
+        # Fall through to check other code types
 
     # Check promo codes first (full access grants)
     if code in PROMO_CODES:
@@ -2952,7 +3337,9 @@ def stripe_webhook():
                 metadata = raw_meta or {}
         purchase_type = metadata.get("purchase_type", "") if isinstance(metadata, dict) else getattr(metadata, "purchase_type", "")
         print(f"Webhook metadata: {metadata}, purchase_type: {purchase_type}")
-        if purchase_type == "cart":
+        if purchase_type == "gift":
+            handle_gift_webhook(session_data, metadata)
+        elif purchase_type == "cart":
             handle_cart_webhook(session_data, metadata)
         elif purchase_type in ("one_transition", "add_transition"):
             handle_transition_webhook(session_data, metadata)
