@@ -53,6 +53,32 @@ final class ChatViewModel: ObservableObject {
         }
     }
 
+    /// Auto-greet bundled users who haven't chatted yet
+    func autoGreetIfNeeded(tier: String, transitions: [String], userState: String?) {
+        guard messages.isEmpty else { return }
+        guard tier == "one_transition" || tier == "pass" else { return }
+        guard !transitions.isEmpty else { return }
+
+        let labels: [String: String] = [
+            "job-loss": "Job Loss & Income Crisis",
+            "estate": "Estate & Survivor",
+            "divorce": "Divorce & Separation",
+            "disability": "Disability & Benefits",
+            "relocation": "Relocation",
+            "retirement": "Retirement"
+        ]
+        let bundleName = labels[transitions[0]] ?? transitions[0]
+
+        let greeting: String
+        if let state = userState, !state.isEmpty {
+            greeting = "I see you have the **\(bundleName)** guide, and you\u{2019}re in **\(state)**. I can help you build a personalized checklist and walk you through what to do first.\n\nWould you like me to start building your action plan, or do you have a specific question?"
+        } else {
+            greeting = "Welcome to Lumeway. I see you have the **\(bundleName)** guide.\n\nTo personalize your action plan with the right deadlines, resources, and steps, what state are you in?"
+        }
+
+        messages.append(ChatMessage(id: UUID().uuidString, role: .assistant, content: greeting))
+    }
+
     func restoreSession(sid: String, messages: [ChatHistoryMessage]) {
         self.sessionId = sid
         self.messages = messages.enumerated().map { index, msg in
@@ -227,7 +253,15 @@ struct NavigatorChatView: View {
                 .environmentObject(appState)
             }
             .onAppear {
-                Task { await vm.loadMostRecentSession() }
+                Task {
+                    await vm.loadMostRecentSession()
+                    // If no messages loaded, auto-greet bundled users
+                    vm.autoGreetIfNeeded(
+                        tier: appState.effectiveTier,
+                        transitions: appState.activeTransitions,
+                        userState: appState.user?.usState
+                    )
+                }
             }
         }
     }
@@ -506,21 +540,14 @@ struct WelcomeBubble: View {
                 "I\u{2019}m feeling overwhelmed",
             ]
         } else if effectiveTier == "one_transition" || effectiveTier == "pass" {
-            if let state = userState, !state.isEmpty {
-                return [
-                    "What should I do first?",
-                    "Build my personalized checklist",
-                    "What are my most urgent deadlines?",
-                    "I\u{2019}m feeling overwhelmed",
-                ]
-            } else {
-                return [
-                    "I\u{2019}m in [my state] \u{2014} what do I do first?",
-                    "Build my personalized checklist",
-                    "What are my most urgent deadlines?",
-                    "I\u{2019}m feeling overwhelmed",
-                ]
-            }
+            // Bundled users get auto-greeted, so this rarely shows.
+            // But as a fallback, show reasonable starters.
+            return [
+                "What should I do first?",
+                "Build my personalized checklist",
+                "What are my most urgent deadlines?",
+                "I\u{2019}m feeling overwhelmed",
+            ]
         } else if effectiveTier == "all_transitions" || effectiveTier == "unlimited" {
             return [
                 "I recently lost a loved one and don\u{2019}t know where to start",

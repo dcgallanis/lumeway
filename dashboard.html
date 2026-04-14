@@ -1105,7 +1105,7 @@
       // Initialize navigator chat on first visit
       if (tab === 'navigator' && !window._ncInitialized) {
         window._ncInitialized = true;
-        ncLoadMostRecent();
+        ncInitChat();
       }
     }
 
@@ -7827,24 +7827,12 @@ guideLibrary['disability'] = {
         html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m feeling overwhelmed</button>';
         html += '      </div>';
       } else if (ncTier === 'one_transition' || ncTier === 'pass') {
-        // ── Bundled user, first time chatting ──
-        var bundleName = ncTransitions.length > 0 ? (ncTransitionLabels[ncTransitions[0]] || ncTransitions[0]) : 'your transition';
+        // ── Bundled user, first time chatting — welcome hidden, auto-greet handles this ──
+        // This welcome won't show because ncAutoGreet() hides it and adds a bot message.
+        // But as a fallback, show something reasonable.
         html += '      <h3>Let\'s get you set up</h3>';
-        if (ncState) {
-          html += '      <p>You have the <strong>' + bundleName + '</strong> guide and you\'re in <strong>' + ncState + '</strong>. I can walk you through what to do first and build your personalized checklist.</p>';
-        } else {
-          html += '      <p>You have the <strong>' + bundleName + '</strong> guide. Tell me what state you\'re in and I\'ll personalize your action plan with state-specific steps and deadlines.</p>';
-        }
-        html += '      <div class="nav-chat-starters">';
-        if (!ncState) {
-          html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m in ' + (ncState || '[tell me your state]') + ' \u2014 what do I do first?</button>';
-        } else {
-          html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">What should I do first?</button>';
-        }
-        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">Build my personalized checklist</button>';
-        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">What are my most urgent deadlines?</button>';
-        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m feeling overwhelmed</button>';
-        html += '      </div>';
+        html += '      <p>Your Navigator is ready to help.</p>';
+        html += '      <div class="nav-chat-starters"></div>';
       } else if (ncTier === 'all_transitions' || ncTier === 'unlimited') {
         // ── All-access user, first time chatting ──
         html += '      <h3>Your Transition Navigator</h3>';
@@ -10228,14 +10216,43 @@ guideLibrary['disability'] = {
       el.style.height = Math.min(el.scrollHeight, 120) + 'px';
     }
 
-    // ── Load most recent chat session ──
-    function ncLoadMostRecent() {
+    // ── Initialize chat: load recent session OR auto-greet bundled users ──
+    function ncInitChat() {
+      // Check for existing sessions first
       fetch('/api/chat/sessions').then(function(r) { return r.json(); }).then(function(data) {
         if (data.sessions && data.sessions.length > 0) {
+          // Has chat history — load the most recent session
           var latest = data.sessions[0];
           ncResumeSession(latest.id);
+        } else {
+          // No history — check if bundled user needs auto-greeting
+          ncAutoGreet();
         }
-      }).catch(function() {});
+      }).catch(function() {
+        // API failed — still try auto-greet
+        ncAutoGreet();
+      });
+    }
+
+    // ── Auto-greet bundled users with a bot message asking for state ──
+    function ncAutoGreet() {
+      var ncTier = (dashData && dashData.effective_tier) || 'free';
+      var ncTransitions = (dashData && dashData.active_transitions) || [];
+      var ncState = dashData && dashData.user && dashData.user.us_state;
+      var ncLabels = { 'job-loss': 'Job Loss & Income Crisis', 'estate': 'Estate & Survivor', 'divorce': 'Divorce & Separation', 'disability': 'Disability & Benefits', 'relocation': 'Relocation', 'retirement': 'Retirement' };
+
+      if ((ncTier === 'one_transition' || ncTier === 'pass') && ncTransitions.length > 0) {
+        var bundleName = ncLabels[ncTransitions[0]] || ncTransitions[0];
+        // Hide welcome screen and show bot greeting instead
+        var welcome = document.getElementById('ncWelcome');
+        if (welcome) welcome.style.display = 'none';
+        if (ncState) {
+          ncAddMessage('bot', 'I see you have the **' + bundleName + '** guide, and you\u2019re in **' + ncState + '**. I can help you build a personalized checklist and walk you through what to do first.\n\nWould you like me to start building your action plan, or do you have a specific question?');
+        } else {
+          ncAddMessage('bot', 'Welcome to Lumeway. I see you have the **' + bundleName + '** guide.\n\nTo personalize your action plan with the right deadlines, resources, and steps, what state are you in?');
+        }
+      }
+      // Free and all-access users just see the welcome screen with starters — no auto-greet
     }
 
     // ── Resume a specific session ──
