@@ -5499,53 +5499,9 @@ def auth_verify_code():
 
     # Demo account: full reset on every login so it feels like a fresh free user
     if email == DEMO_EMAIL and not is_new:
-        # Use a separate connection so failures don't poison the main transaction
+        # Reset user tier only — data cleanup happens on DEMOTEST code or logout
         try:
-            demo_conn = get_db()
-            dp = "%s" if USE_POSTGRES else "?"
-            for sql in [
-                f"DELETE FROM community_replies WHERE post_id IN (SELECT id FROM community_posts WHERE user_id = {dp})",
-                f"DELETE FROM community_replies WHERE user_id = {dp}",
-                f"DELETE FROM chat_messages WHERE session_id IN (SELECT id FROM chat_sessions WHERE user_id = {dp})",
-                f"DELETE FROM community_posts WHERE user_id = {dp}",
-                f"DELETE FROM checklist_items WHERE user_id = {dp}",
-                f"DELETE FROM user_deadlines WHERE user_id = {dp}",
-                f"DELETE FROM user_documents_needed WHERE user_id = {dp}",
-                f"DELETE FROM user_goals WHERE user_id = {dp}",
-                f"DELETE FROM user_notes WHERE user_id = {dp}",
-                f"DELETE FROM chat_sessions WHERE user_id = {dp}",
-                f"DELETE FROM user_files WHERE user_id = {dp}",
-                f"DELETE FROM etsy_redemptions WHERE user_id = {dp}",
-                f"DELETE FROM activity_log WHERE user_id = {dp}",
-                f"DELETE FROM user_access WHERE user_id = {dp}",
-            ]:
-                try:
-                    db_execute(demo_conn, sql, (user_id,))
-                    demo_conn.commit()
-                except Exception:
-                    try:
-                        demo_conn.rollback()
-                    except Exception:
-                        pass
-            try:
-                db_execute(demo_conn, f"DELETE FROM purchases WHERE email = {dp}", (email,))
-                demo_conn.commit()
-            except Exception:
-                try:
-                    demo_conn.rollback()
-                except Exception:
-                    pass
-            try:
-                db_execute(demo_conn, f"UPDATE gift_codes SET redeemed_by = NULL, redeemed_at = NULL WHERE redeemed_by = {dp}", (user_id,))
-                demo_conn.commit()
-            except Exception:
-                try:
-                    demo_conn.rollback()
-                except Exception:
-                    pass
-            db_execute(demo_conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL, active_transitions = '[]', transition_type = NULL, display_name = NULL, us_state = NULL, credit_cents = 0 WHERE id = {dp}", (user_id,))
-            demo_conn.commit()
-            demo_conn.close()
+            db_execute(conn, f"UPDATE users SET tier = 'free', tier_transition = NULL, tier_expires_at = NULL, stripe_customer_id = NULL, active_transitions = '[]', transition_type = NULL, display_name = NULL, us_state = NULL, credit_cents = 0 WHERE id = {param}", (user_id,))
         except Exception as e:
             print(f"DEMO reset error: {e}")
         is_new = True  # Force onboarding flow
