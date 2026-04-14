@@ -3904,7 +3904,7 @@ guideLibrary['disability'] = {
           result.innerHTML = '<span style="color:var(--green)">' + data.message + '</span>';
           document.getElementById('redeemCodeInput').value = '';
           if (data.reload) {
-            // Full reset — clear localStorage and reload fresh
+            // Full reset — clear all local state
             localStorage.removeItem('lumeway_onboarded');
             localStorage.removeItem('lumeway_tips_dismissed');
             localStorage.removeItem('lumeway_sig_name');
@@ -3916,12 +3916,12 @@ guideLibrary['disability'] = {
             localStorage.removeItem('lumeway_community_declined');
             localStorage.removeItem('lumeway_community_free_seen');
             sessionStorage.clear();
+            result.innerHTML = '<span style="color:var(--green)">Account reset. Logging out in 2 seconds\u2026</span>';
             // Log out and redirect to login
             setTimeout(function() {
               fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
-                .then(function() { window.location.href = '/login'; })
-                .catch(function() { window.location.href = '/login'; });
-            }, 1000);
+                .finally(function() { window.location.href = '/login'; });
+            }, 2000);
           } else {
             setTimeout(function() { loadDashboard(); }, 1500);
           }

@@ -3598,8 +3598,10 @@ def redeem_code():
     # Demo reset code — wipes the account back to a fresh new user (demo account only)
     if code == "DEMOTEST":
         if user.get("email") != "demo@lumeway.co":
+            print(f"DEMOTEST rejected: user email is {user.get('email')}, not demo@lumeway.co")
             return jsonify({"error": "This code is only for the demo account."}), 400
         uid = user["id"]
+        print(f"DEMOTEST: Resetting demo account (user_id={uid})")
         conn = get_db()
         param = "%s" if USE_POSTGRES else "?"
         # Clear all user data
@@ -3611,14 +3613,25 @@ def redeem_code():
             db_execute(conn, f"DELETE FROM community_replies WHERE user_id = {param}", (uid,))
         except Exception:
             pass
+        # Delete chat_messages first (linked to chat_sessions by session_id, no cascade)
+        try:
+            db_execute(conn, f"DELETE FROM chat_messages WHERE session_id IN (SELECT id FROM chat_sessions WHERE user_id = {param})", (uid,))
+        except Exception as e:
+            print(f"DEMOTEST: chat_messages cleanup error: {e}")
         for table in ["community_posts", "checklist_items", "user_deadlines", "user_documents_needed", "user_goals", "user_notes", "chat_sessions", "user_files"]:
             try:
                 db_execute(conn, f"DELETE FROM {table} WHERE user_id = {param}", (uid,))
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"DEMOTEST: {table} cleanup error: {e}")
         # Reset user profile to fresh state
         try:
-            db_execute(conn, f"UPDATE users SET tier = 'free', display_name = NULL, transition_type = NULL, us_state = NULL, active_transitions = NULL, credit_cents = 0, onboarding_source = NULL WHERE id = {param}", (uid,))
+            db_execute(conn, f"UPDATE users SET tier = 'free', display_name = NULL, transition_type = NULL, us_state = NULL, active_transitions = '[]', credit_cents = 0 WHERE id = {param}", (uid,))
+            conn.commit()
+        except Exception:
+            pass
+        try:
+            db_execute(conn, f"UPDATE users SET onboarding_source = NULL WHERE id = {param}", (uid,))
+            conn.commit()
         except Exception:
             pass
         # Clear user_access (purchased bundles)
@@ -3629,6 +3642,11 @@ def redeem_code():
         # Clear purchases tied to this email
         try:
             db_execute(conn, f"DELETE FROM purchases WHERE email = {param}", (user["email"],))
+        except Exception:
+            pass
+        # Un-redeem any gift codes so they can be reused for testing
+        try:
+            db_execute(conn, f"UPDATE gift_codes SET redeemed_by = NULL, redeemed_at = NULL WHERE redeemed_by = {param}", (uid,))
         except Exception:
             pass
         conn.commit()
