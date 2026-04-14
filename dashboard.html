@@ -7589,10 +7589,14 @@ guideLibrary['disability'] = {
         templatePurchases.forEach(function(p) {
           html += '<div class="purchase-item">';
           html += '  <div><div class="purchase-name">' + p.product_name + '</div><div class="purchase-date">' + formatDate(p.purchased_at) + '</div></div>';
-          html += '  <a href="/download/' + p.download_token + '" class="purchase-dl">Download</a>';
+          html += '  <div style="display:flex;gap:8px;align-items:center">';
+          html += '    <a href="/download/' + p.download_token + '" class="purchase-dl">Download</a>';
+          html += '    <button onclick="switchTab(\'files\')" style="padding:6px 14px;font-size:12px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--navy);cursor:pointer;font-family:inherit;white-space:nowrap">Open in Files</button>';
+          html += '  </div>';
           html += '</div>';
         });
         html += '</div>';
+        html += '<p style="font-size:12px;color:var(--muted);font-weight:300;margin-top:8px">Your templates are also in the <strong>Files</strong> tab where you can view, edit, and fill them out directly in your browser.</p>';
       } else {
         html += '<div class="dash-card" style="text-align:center;padding:40px 24px">';
         html += '  <p style="font-size:14px;color:var(--muted);font-weight:300">No templates yet. When you purchase a pass or bundle, your downloads will show up here.</p>';
@@ -7869,14 +7873,28 @@ guideLibrary['disability'] = {
         html += '      <div class="nav-chat-starters"></div>';
       } else if (ncTier === 'all_transitions' || ncTier === 'unlimited') {
         // ── All-access user, first time chatting ──
-        html += '      <h3>Your Transition Navigator</h3>';
-        html += '      <p>You have access to all transition guides. Tell me what you\'re going through and I\'ll help you figure out next steps.</p>';
-        html += '      <div class="nav-chat-starters">';
-        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I recently lost a loved one and don\'t know where to start</button>';
-        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I just got laid off \u2014 what do I do right away?</button>';
-        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m going through a divorce and feel overwhelmed</button>';
-        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">Help me with something else</button>';
-        html += '      </div>';
+        // If they have active transitions, acknowledge them
+        if (ncTransitions.length > 0 && ncTransitions.length < 6) {
+          var primaryTrans = ncTransitions[0];
+          var primaryLabel = ncTransitionLabels[typeof primaryTrans === 'object' ? primaryTrans.cat : primaryTrans] || primaryTrans;
+          html += '      <h3>Let\'s get started' + (ncName ? ', ' + ncName : '') + '</h3>';
+          html += '      <p>I see you have ' + primaryLabel + ' set up. I can walk you through what to do first, or help with any of your other transitions.</p>';
+          html += '      <div class="nav-chat-starters">';
+          html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">Walk me through ' + primaryLabel.toLowerCase() + ' step by step</button>';
+          html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">What should I do first this week?</button>';
+          html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">Help me with a different transition</button>';
+          html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m feeling overwhelmed and need guidance</button>';
+          html += '      </div>';
+        } else {
+          html += '      <h3>Your Transition Navigator</h3>';
+          html += '      <p>You have access to all transition guides. Tell me what you\'re going through and I\'ll help you figure out next steps.</p>';
+          html += '      <div class="nav-chat-starters">';
+          html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I recently lost a loved one and don\'t know where to start</button>';
+          html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I just got laid off \u2014 what do I do right away?</button>';
+          html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m going through a divorce and feel overwhelmed</button>';
+          html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">Help me with something else</button>';
+          html += '      </div>';
+        }
       } else {
         // ── Free user, first time chatting ──
         html += '      <h3>Your Transition Navigator</h3>';

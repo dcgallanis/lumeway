@@ -4087,38 +4087,69 @@ def handle_tier_upgrade(session_data, metadata):
             print(f"[preload] Error during tier upgrade preload for user {uid}: {pe}")
 
     # Send confirmation email
-    threading.Thread(target=send_tier_email, args=(email, tier, product_name), daemon=True).start()
+    tier_category = metadata.get("transition") or (bundles_to_grant[0] if bundles_to_grant else None)
+    threading.Thread(target=send_tier_email, args=(email, tier, product_name, tier_category), daemon=True).start()
     # Schedule post-purchase email sequence (plans are is_plan=True)
     threading.Thread(target=schedule_post_purchase_emails, args=(email, product_name, True), daemon=True).start()
 
-def send_tier_email(to_email, tier, product_name):
-    """Send tier upgrade confirmation email."""
+def send_tier_email(to_email, tier, product_name, category=None):
+    """Send tier upgrade confirmation email with template zip attached."""
     if not RESEND_API_KEY:
         print(f"RESEND_API_KEY not set, skipping tier email to {to_email}")
         return
     if tier == "all_transitions":
         body = "You now have full access to everything — all guides, scripts, and tools for every life change. Your dashboard is ready."
     elif tier == "unlimited":
-        # Legacy
         body = "You have full access to everything — all guides, scripts, and tools for every life change."
     else:
         body = f"Your {product_name} is now active. Your dashboard is ready with the full guide, checklists, scripts, and tools."
     html = email_wrap(f"""
 <p style="{_e_hi}">Hi there,</p>
 <p style="{_e_p}">{body}</p>
+<p style="{_e_p}">Your templates and worksheets are attached to this email as a zip file. They've also been added to the <strong>Files</strong> tab in your dashboard, where you can view, edit, and fill them out right in your browser.</p>
 {_e_btn('https://lumeway.co/dashboard', 'Go to Your Dashboard')}
-<p style="{_e_muted}">If you have any questions, just reply to this email.</p>""")
+<p style="{_e_muted}">Log in anytime at <strong>lumeway.co/login</strong> with this email address.</p>
+<p style="{_e_muted}">Questions? Email us at <a href="mailto:support@lumeway.co" style="color:#2C4A5E">support@lumeway.co</a></p>""")
+    # Build attachments from bundle zip files
+    import base64
+    attachments = []
+    categories_to_attach = []
+    if category and category in BUNDLE_FILES:
+        categories_to_attach = [category]
+    # For all_transitions, individual zips would be too large for email (~32MB total)
+    # Just attach the specific category if known, otherwise skip attachments
+    for cat in categories_to_attach:
+        zip_filename = BUNDLE_FILES.get(cat)
+        if not zip_filename:
+            continue
+        zip_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "bundles", zip_filename)
+        if os.path.exists(zip_path):
+            try:
+                with open(zip_path, "rb") as f:
+                    file_data = base64.b64encode(f.read()).decode("utf-8")
+                attachments.append({
+                    "filename": zip_filename,
+                    "content": file_data,
+                    "type": "application/zip",
+                })
+            except Exception as e:
+                print(f"[email] Error reading zip {zip_path}: {e}")
+    email_payload = {
+        "from": "Lumeway <hello@lumeway.co>",
+        "to": [to_email],
+        "subject": f"Your {product_name} is active",
+        "html": html,
+    }
+    if attachments:
+        email_payload["attachments"] = attachments
     try:
-        resp = http_requests.post("https://api.resend.com/emails", json={
-            "from": "Lumeway <hello@lumeway.co>",
-            "to": [to_email],
-            "subject": f"Your {product_name} is active",
-            "html": html,
-        }, headers={
+        resp = http_requests.post("https://api.resend.com/emails", json=email_payload, headers={
             "Authorization": f"Bearer {RESEND_API_KEY}",
             "Content-Type": "application/json",
-        }, timeout=10)
-        print(f"Tier email sent to {to_email}: {resp.status_code}")
+        }, timeout=30)
+        print(f"Tier email sent to {to_email}: {resp.status_code} (attachments: {len(attachments)})")
+        if resp.status_code != 200:
+            print(f"Resend response: {resp.text}")
     except Exception as e:
         print(f"Failed to send tier email to {to_email}: {e}")
 
@@ -4260,7 +4291,14 @@ def handle_cart_webhook(session_data, metadata):
     has_transition = any(pt in ("one_transition", "add_transition", "all_transitions") for pt in purchase_types)
     if has_transition:
         tier_label = "all_transitions" if "all_transitions" in purchase_types else "one_transition"
-        threading.Thread(target=send_tier_email, args=(email, tier_label, combined_name), daemon=True).start()
+        # Extract category for zip attachment
+        cart_category = None
+        for pid in product_ids:
+            cat = pid.replace("plan-", "").replace("bundle-", "")
+            if cat in VALID_CATEGORIES:
+                cart_category = cat
+                break
+        threading.Thread(target=send_tier_email, args=(email, tier_label, combined_name, cart_category), daemon=True).start()
     print(f"Cart webhook fulfilled: {email} bought {product_ids}")
 
 def _fulfill_transition_purchase(user, category, purchase_type, base_price, credit_applied, session_id, payment_intent):
@@ -4310,8 +4348,13 @@ def _fulfill_transition_purchase_db(conn, user_id, email, category, purchase_typ
             conn.commit()
         except Exception as e:
             print(f"Error granting transition bundle {category}: {e}")
+    # Preload template files into user's workspace
+    try:
+        preload_bundle_templates(user_id, category)
+    except Exception as e:
+        print(f"[preload] Error preloading templates for user {user_id}, category {category}: {e}")
     # Send confirmation email
-    threading.Thread(target=send_tier_email, args=(email, "one_transition", product_name), daemon=True).start()
+    threading.Thread(target=send_tier_email, args=(email, "one_transition", product_name, category), daemon=True).start()
     print(f"Transition purchase fulfilled: {email} got full access to {category}")
 
 def _fulfill_all_transitions(user, base_price, credit_applied, session_id, payment_intent):
@@ -4358,6 +4401,12 @@ def _fulfill_all_transitions_db(conn, user_id, email, base_price, credit_applied
                 conn.commit()
             except Exception as e:
                 print(f"Error granting all-trans bundle {cat}: {e}")
+    # Preload all template files into user's workspace
+    for cat in VALID_CATEGORIES:
+        try:
+            preload_bundle_templates(user_id, cat)
+        except Exception as e:
+            print(f"[preload] Error preloading templates for user {user_id}, category {cat}: {e}")
     threading.Thread(target=send_tier_email, args=(email, "all_transitions", "All Transitions"), daemon=True).start()
     print(f"All Transitions purchased: {email}")
 
@@ -4794,14 +4843,26 @@ def _fulfill_cart_item(email, item, user_id):
         if cat in VALID_CATEGORIES:
             add_user_category(user_id, cat, "full")
             update_user_tier_from_access(user_id)
+            try:
+                preload_bundle_templates(user_id, cat)
+            except Exception as e:
+                print(f"[preload] Cart preload error for {cat}: {e}")
     elif purchase_type == "add_transition" and user_id:
         cat = item.get("category", "")
         if cat in VALID_CATEGORIES:
             add_user_category(user_id, cat, "full")
             update_user_tier_from_access(user_id)
+            try:
+                preload_bundle_templates(user_id, cat)
+            except Exception as e:
+                print(f"[preload] Cart preload error for {cat}: {e}")
     elif purchase_type == "all_transitions" and user_id:
         for cat in VALID_CATEGORIES:
             add_user_category(user_id, cat, "full")
+            try:
+                preload_bundle_templates(user_id, cat)
+            except Exception as e:
+                print(f"[preload] Cart preload error for {cat}: {e}")
         update_user_tier_from_access(user_id)
     elif purchase_type == "bundle" and user_id:
         # Bundle = starter access for that category
