@@ -66,18 +66,12 @@ struct WelcomeBannerView: View {
     @State private var showText = false
     @State private var dismissing = false
     @State private var thinkingIndex = 0
+    @State private var sunRotation: Double = 0
 
     private let thinkingWords = [
-        "Gathering your stuff...",
-        "Sorting your checklist...",
-        "Checking your deadlines...",
-        "Brewing some motivation...",
-        "Counting your wins...",
-        "Rounding up your notes...",
-        "Polishing your progress...",
-        "Finding where you left off...",
-        "Warming up the dashboard...",
-        "Putting your ducks in a row...",
+        "Alright, let's do this.",
+        "Getting your world in order...",
+        "Almost ready. You look great, by the way.",
     ]
 
     var body: some View {
@@ -87,7 +81,7 @@ struct WelcomeBannerView: View {
             VStack(spacing: 0) {
                 Spacer()
 
-                // Sun icon
+                // Spinning sun icon
                 Image(systemName: "sun.max.fill")
                     .font(.system(size: 68, weight: .light))
                     .foregroundStyle(
@@ -99,35 +93,29 @@ struct WelcomeBannerView: View {
                     )
                     .scaleEffect(showSun ? 1.0 : 0.3)
                     .opacity(showSun ? 1 : 0)
-                    .rotationEffect(.degrees(showSun ? 0 : -90))
+                    .rotationEffect(.degrees(sunRotation))
 
                 Spacer().frame(height: 28)
 
-                // "Hey, there" or "Hey, name"
+                // "Hey, name"
                 Text("Hey, \(appState.user?.displayName ?? "there").")
                     .font(.custom("CormorantGaramond-Bold", size: 36))
                     .foregroundColor(.white)
                     .opacity(showText ? 1 : 0)
                     .offset(y: showText ? 0 : 16)
 
-                Spacer().frame(height: 8)
-
-                // "Loading your dashboard"
-                Text("Loading your dashboard")
-                    .font(.custom("Montserrat-Regular", size: 14))
-                    .foregroundColor(.white.opacity(0.5))
-                    .opacity(showText ? 1 : 0)
-
                 Spacer().frame(height: 24)
 
-                // Rotating fun thinking words
+                // Fun rotating sayings
                 Text(thinkingWords[thinkingIndex])
-                    .font(.custom("Montserrat-Medium", size: 22).italic())
+                    .font(.custom("Montserrat-Medium", size: 20).italic())
                     .foregroundColor(.lumeAccent)
                     .opacity(showText ? 1 : 0)
                     .animation(.easeInOut(duration: 0.3), value: thinkingIndex)
                     .id("thinking-\(thinkingIndex)")
                     .transition(.opacity)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
 
                 Spacer()
             }
@@ -138,21 +126,26 @@ struct WelcomeBannerView: View {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                 showSun = true
             }
+            // Start continuous sun spin
+            withAnimation(.linear(duration: 8).repeatForever(autoreverses: false)) {
+                sunRotation = 360
+            }
             withAnimation(.easeOut(duration: 0.5).delay(0.2)) {
                 showText = true
             }
 
-            // Rotate thinking words with progressive timing — each stays a bit longer
-            let delays: [UInt64] = [800_000_000, 1_000_000_000, 1_200_000_000, 1_400_000_000, 1_200_000_000]
-            for i in 0..<delays.count {
-                try? await Task.sleep(nanoseconds: delays[i])
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    thinkingIndex = (i + 1) % thinkingWords.count
-                }
+            // Rotate through sayings
+            try? await Task.sleep(nanoseconds: 1_200_000_000)
+            withAnimation(.easeInOut(duration: 0.25)) {
+                thinkingIndex = 1
+            }
+            try? await Task.sleep(nanoseconds: 1_400_000_000)
+            withAnimation(.easeInOut(duration: 0.25)) {
+                thinkingIndex = 2
             }
 
             // Auto-dismiss
-            try? await Task.sleep(nanoseconds: 500_000_000)
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
             withAnimation(.easeIn(duration: 0.35)) {
                 dismissing = true
             }

@@ -7494,7 +7494,7 @@ guideLibrary['disability'] = {
       html += '  <div class="card-label">Your Plan</div>';
       // catAccess already defined in tab section above
       var creditCents = dashData.credit_cents || 0;
-      var tierLabels = { free: 'Free', starter: 'Starter', one_transition: 'Bundled Plan', all_transitions: 'Everything', pass: 'Bundled Plan', unlimited: 'Everything' };
+      var tierLabels = { free: 'Free', starter: 'Starter', one_transition: 'Bundled Plan', all_transitions: 'All Access', pass: 'Bundled Plan', unlimited: 'All Access' };
       var tierLabel = tierLabels[tier] || 'Free';
       var transLabels = { 'job-loss': 'Job Loss', estate: 'Estate', divorce: 'Divorce', disability: 'Disability', relocation: 'Relocation', retirement: 'Retirement' };
       html += '  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">';
@@ -7563,7 +7563,7 @@ guideLibrary['disability'] = {
         html += '  <p style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:16px">Add another life change for $20, or get everything for $' + Math.max(0, (12500 - creditCents) / 100).toFixed(0) + '.</p>';
         html += '  <div style="display:flex;gap:10px;flex-wrap:wrap">';
         html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:var(--accent);color:var(--cream);border-radius:8px;font-size:13px;text-decoration:none;font-weight:500">Add Another — $20</a>';
-        html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:13px;text-decoration:none">Get Everything</a>';
+        html += '    <a href="/pricing" style="display:inline-block;padding:10px 20px;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:13px;text-decoration:none">Get All Access</a>';
         html += '  </div>';
         html += '</div>';
       }

@@ -172,12 +172,14 @@ struct CommunityView: View {
                     Task { await createPost(title: title, body: body, category: category) }
                 })
                 .presentationDetents([.large])
+                .presentationBackground(Color.lumeCream)
             }
             .sheet(isPresented: $showPostDetail) {
                 if let postId = selectedPostId {
                     PostDetailSheet(postId: postId, onDismiss: {
                         Task { await loadPosts() }
                     })
+                    .presentationBackground(Color.lumeCream)
                 }
             }
         }

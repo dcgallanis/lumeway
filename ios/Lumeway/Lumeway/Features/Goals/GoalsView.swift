@@ -98,28 +98,37 @@ struct GoalsView: View {
     // MARK: - Empty State
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "lightbulb.fill")
-                .font(.system(size: 48, weight: .light))
-                .foregroundColor(.lumeGold)
-            Text("Set a goal to get started")
-                .font(.lumeDisplaySmall)
-                .foregroundColor(.lumeNavy)
-            Text("Goals help you stay focused\nthrough your transition.")
-                .font(.lumeBodyLight)
-                .foregroundColor(.lumeMuted)
-                .multilineTextAlignment(.center)
+        ZStack(alignment: .topLeading) {
+            VStack(spacing: 16) {
+                Image(systemName: "lightbulb.fill")
+                    .font(.system(size: 48, weight: .light))
+                    .foregroundColor(.lumeGold)
+                Text("Set a goal to get started")
+                    .font(.lumeDisplaySmall)
+                    .foregroundColor(.lumeNavy)
+                Text("Goals help you stay focused\nthrough your transition.")
+                    .font(.lumeBodyLight)
+                    .foregroundColor(.lumeMuted)
+                    .multilineTextAlignment(.center)
 
-            Button(action: { showAddSheet = true }) {
-                Text("Add Your First Goal")
-                    .font(.lumeBodyMedium)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 28)
-                    .padding(.vertical, 14)
-                    .background(Color.lumeAccent)
-                    .cornerRadius(24)
+                Button(action: { showAddSheet = true }) {
+                    Text("Add Your First Goal")
+                        .font(.lumeBodyMedium)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 28)
+                        .padding(.vertical, 14)
+                        .background(Color.lumeAccent)
+                        .cornerRadius(24)
+                }
+                .padding(.top, 8)
             }
-            .padding(.top, 8)
+
+            // Back button when embedded
+            if isEmbedded {
+                EmbeddedBackButton()
+                    .padding(.leading, 16)
+                    .padding(.top, 8)
+            }
         }
     }
 

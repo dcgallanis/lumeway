@@ -64,7 +64,7 @@ struct UpgradeView: View {
                             // All access
                             if let allProduct = store.bundleAllProduct {
                                 PricingCard(
-                                    title: "Everything",
+                                    title: "All Access",
                                     price: allProduct.displayPrice,
                                     desc: "Full access to all 7 transition guides",
                                     isPopular: true

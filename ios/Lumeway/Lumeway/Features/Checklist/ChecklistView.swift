@@ -540,23 +540,29 @@ struct ChecklistItemRow: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            // Smaller toggle circle
+            // Toggle circle with generous tap target
             Button(action: onToggle) {
                 ZStack {
+                    // Invisible hit area
+                    Color.clear
+                        .frame(width: 44, height: 44)
+
                     Circle()
                         .stroke(item.isCompleted ? Color.clear : color.opacity(0.25), lineWidth: 1.5)
-                        .frame(width: 20, height: 20)
+                        .frame(width: 22, height: 22)
 
                     if item.isCompleted {
                         Circle()
                             .fill(color.opacity(0.8))
-                            .frame(width: 20, height: 20)
+                            .frame(width: 22, height: 22)
                         Image(systemName: "checkmark")
-                            .font(.system(size: 9, weight: .bold))
+                            .font(.system(size: 10, weight: .bold))
                             .foregroundColor(.white)
                     }
                 }
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
 
             NavigationLink {
                 TaskDetailView(item: item, color: color)

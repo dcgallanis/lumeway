@@ -33,10 +33,6 @@ struct DashboardView: View {
                         MotivationCard(
                             userName: appState.user?.displayName ?? "there",
                             userInitial: String((appState.user?.displayName ?? appState.user?.email ?? "U").prefix(1)).uppercased(),
-                            completedThisWeek: thisWeekTasks.filter(\.isCompleted).count,
-                            totalThisWeek: thisWeekTasks.count,
-                            allCompleted: checklistItems.filter(\.isCompleted).count,
-                            allTotal: checklistItems.count,
                             isRefreshing: isRefreshing,
                             onRefresh: {
                                 Task {
@@ -439,46 +435,39 @@ struct WeekAtGlanceCard: View {
     }
 }
 
-// MARK: - Motivation Card (navy, personalized encouragement + circular progress)
+// MARK: - Motivation Card (navy, fun sayings, no progress tracker)
 
 struct MotivationCard<Destination: View>: View {
     let userName: String
     let userInitial: String
-    let completedThisWeek: Int
-    let totalThisWeek: Int
-    let allCompleted: Int
-    let allTotal: Int
     let isRefreshing: Bool
     let onRefresh: () -> Void
     @ViewBuilder let profileDestination: () -> Destination
 
-    // Rotating motivational sayings
+    // Fun, interesting rotating sayings
     private static var sayings: [String] {
         [
             "You're doing better than you think.",
-            "One step at a time. You've got this.",
-            "Progress, not perfection.",
-            "Every small win matters.",
-            "Be kind to yourself today.",
-            "You're building something new.",
-            "Breathe. You're moving forward.",
-            "Trust the process.",
-            "Today is a fresh start.",
-            "You don't have to figure it all out today.",
-            "Courage looks different every day.",
-            "You've already survived 100% of your hardest days.",
+            "Plot twist: you're the main character.",
+            "Today's vibe: handling it.",
+            "Chaos is temporary. You are permanent.",
+            "Small steps still cover ground.",
+            "You didn't come this far to only come this far.",
+            "Permission to take it one thing at a time.",
+            "Future you is already proud.",
+            "Not all heroes wear capes. Some use checklists.",
+            "Deep breath. You've got this.",
+            "Your only competition is yesterday's you.",
+            "Messy progress beats perfect paralysis.",
+            "The hard part? You're already doing it.",
+            "Be the calm in your own storm.",
+            "You're literally rebuilding your life. That's badass.",
         ]
     }
 
     private var motivationalSaying: String {
-        // Rotate based on day of year so it changes daily
         let day = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
         return Self.sayings[day % Self.sayings.count]
-    }
-
-    private var weekProgress: CGFloat {
-        guard totalThisWeek > 0 else { return 0 }
-        return CGFloat(completedThisWeek) / CGFloat(totalThisWeek)
     }
 
     var body: some View {
@@ -491,7 +480,6 @@ struct MotivationCard<Destination: View>: View {
 
                 Spacer()
 
-                // Refresh button
                 Button(action: onRefresh) {
                     if isRefreshing {
                         ProgressView()
@@ -505,7 +493,6 @@ struct MotivationCard<Destination: View>: View {
                     }
                 }
 
-                // Profile avatar
                 NavigationLink {
                     profileDestination()
                 } label: {
@@ -520,56 +507,15 @@ struct MotivationCard<Destination: View>: View {
                 }
             }
 
-            Spacer().frame(height: 18)
+            Spacer().frame(height: 20)
 
-            // Middle: circular progress + motivational saying
-            HStack(spacing: 20) {
-                // Circular progress ring
-                ZStack {
-                    Circle()
-                        .stroke(Color.white.opacity(0.12), lineWidth: 5)
-                        .frame(width: 72, height: 72)
-
-                    Circle()
-                        .trim(from: 0, to: weekProgress)
-                        .stroke(
-                            LinearGradient(
-                                colors: [.lumeGold, .lumeGreen],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            style: StrokeStyle(lineWidth: 5, lineCap: .round)
-                        )
-                        .frame(width: 72, height: 72)
-                        .rotationEffect(.degrees(-90))
-
-                    VStack(spacing: 1) {
-                        Text("\(completedThisWeek)/\(totalThisWeek)")
-                            .font(.custom("Montserrat-SemiBold", size: 15))
-                            .foregroundColor(.white)
-                        Text("this week")
-                            .font(.custom("Montserrat-Regular", size: 9))
-                            .foregroundColor(.white.opacity(0.45))
-                    }
-                }
-
-                // Motivational saying in terracotta
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(motivationalSaying)
-                        .font(.custom("Montserrat-Medium", size: 15))
-                        .foregroundColor(.lumeAccent)
-                        .lineSpacing(4)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    if allTotal > 0 {
-                        Text("\(allCompleted) of \(allTotal) overall")
-                            .font(.custom("Montserrat-Regular", size: 12))
-                            .foregroundColor(.white.opacity(0.4))
-                    }
-                }
-
-                Spacer()
-            }
+            // Fun motivational saying — large, terracotta
+            Text(motivationalSaying)
+                .font(.custom("Montserrat-Medium", size: 20))
+                .foregroundColor(.lumeAccent)
+                .lineSpacing(5)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(24)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -627,6 +573,7 @@ struct ThisWeekTaskRow: View {
         HStack(spacing: 14) {
             Button(action: onToggle) {
                 ZStack {
+                    Color.clear.frame(width: 44, height: 44)
                     Circle()
                         .stroke(task.isCompleted ? Color.lumeGreen : Color.lumeBorder, lineWidth: 2)
                         .frame(width: 22, height: 22)
@@ -636,7 +583,9 @@ struct ThisWeekTaskRow: View {
                             .foregroundColor(.lumeGreen)
                     }
                 }
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
 
             NavigationLink {
                 TaskDetailView(item: task, color: .lumeNavy)
