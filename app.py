@@ -4252,6 +4252,13 @@ def handle_cart_webhook(session_data, metadata):
         elif pid.startswith("bundle-"):
             item["category"] = pid.replace("bundle-", "")
         _fulfill_cart_item(email, item, user_id)
+    # Send confirmation email for the cart purchase
+    product_names = [CATEGORY_LABELS.get(pid.replace("plan-", "").replace("bundle-", ""), pid) for pid in product_ids]
+    combined_name = ", ".join(product_names) if product_names else "Your Purchase"
+    has_transition = any(pt in ("one_transition", "add_transition", "all_transitions") for pt in purchase_types)
+    if has_transition:
+        tier_label = "all_transitions" if "all_transitions" in purchase_types else "one_transition"
+        threading.Thread(target=send_tier_email, args=(email, tier_label, combined_name), daemon=True).start()
     print(f"Cart webhook fulfilled: {email} bought {product_ids}")
 
 def _fulfill_transition_purchase(user, category, purchase_type, base_price, credit_applied, session_id, payment_intent):
@@ -4552,8 +4559,12 @@ h1{font-family:'Libre Baskerville',serif;font-size:32px;font-weight:300;margin-b
 .features li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:600}
 .btn{display:inline-block;padding:14px 36px;background:var(--accent);color:var(--cream);border-radius:100px;text-decoration:none;font-size:15px;font-weight:500;transition:all 0.2s}
 .btn:hover{filter:brightness(1.08)}
-.secondary{display:block;margin-top:16px;font-size:13px;color:var(--muted);text-decoration:none}
-.secondary:hover{color:var(--navy)}
+.email-notice{background:var(--cream);border-radius:12px;padding:20px;margin-bottom:24px;display:flex;align-items:flex-start;gap:12px;text-align:left}
+.email-notice .email-icon{font-size:24px;flex-shrink:0;margin-top:2px}
+.email-notice p{font-size:14px;color:var(--text);line-height:1.6;margin:0;font-weight:300}
+.login-info{background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:28px;text-align:center}
+.login-info p{font-size:13px;color:var(--muted);line-height:1.6;margin:0;font-weight:300}
+.login-info strong{color:var(--navy);font-weight:500}
 @media(max-width:640px){.card{padding:32px 24px}h1{font-size:26px}}
 </style></head><body>
 <div class="card">
@@ -4567,6 +4578,10 @@ Your Unlimited subscription is active. You have full access to every guide, chec
 Your plan is active. You have full access to your complete guide, checklists, scripts, and templates.
 {% endif %}
 </p>
+<div class="email-notice">
+<span class="email-icon">✉</span>
+<p>A confirmation email is on its way to your inbox. It may take a minute or two to arrive.</p>
+</div>
 <ul class="features">
 <li>Full step-by-step guides and checklists</li>
 <li>"What to say" phone and email scripts</li>
@@ -4574,8 +4589,10 @@ Your plan is active. You have full access to your complete guide, checklists, sc
 <li>Template worksheets ready to download</li>
 <li>Calendar deadlines and document tracker</li>
 </ul>
+<div class="login-info">
+<p>You can always access your dashboard by logging in at <strong>lumeway.co/login</strong> with the email you used to purchase.</p>
+</div>
 <a href="/dashboard" class="btn">Go to Your Dashboard</a>
-<a href="/chat" class="secondary">Or start a conversation with the Navigator →</a>
 </div>
 </body></html>"""
 
