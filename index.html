@@ -842,7 +842,12 @@
       // Resume session if ?session= param present
       const params = new URLSearchParams(window.location.search);
       const resumeId = params.get('session');
-      if (resumeId) resumeSession(resumeId);
+      if (resumeId) {
+        resumeSession(resumeId);
+      } else if (params.get('gift') === '1') {
+        // Gift redeemer — auto-start conversation
+        setTimeout(function() { sendMessage("Hi, I just received Lumeway as a gift. Can you help me get set up?"); }, 500);
+      }
     }
   }).catch(() => {});
 

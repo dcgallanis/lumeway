@@ -8387,12 +8387,31 @@ def chat():
 
         boundary_cat = detect_boundary_category(user_message)
 
+        # Build system prompt — add gift context if applicable
+        chat_system_prompt = SYSTEM_PROMPT
+        user = get_current_user()
+        if user:
+            try:
+                conn_ctx = get_db()
+                param_ctx = "%s" if USE_POSTGRES else "?"
+                cur_ctx = db_execute(conn_ctx, f"SELECT onboarding_source, tier, active_transitions FROM users WHERE id = {param_ctx}", (user["id"],))
+                ctx_row = cur_ctx.fetchone()
+                conn_ctx.close()
+                if ctx_row and ctx_row[0] == "gift":
+                    tier = ctx_row[1] or "unknown"
+                    transitions = ctx_row[2] or ""
+                    chat_system_prompt += f"""
+
+IMPORTANT CONTEXT: This user received Lumeway as a gift. They are brand new and may not know what Lumeway does yet. Their tier is "{tier}". Be extra warm and welcoming. In your first response, briefly acknowledge they received a gift, ask what life transition they're going through so you can help set up their dashboard, and ask what state they're in (this matters for state-specific legal deadlines and resources). Keep it conversational and low-pressure — they may be going through a hard time."""
+            except Exception:
+                pass
+
         def generate():
             full_reply = ""
             with client.messages.stream(
                 model="claude-sonnet-4-6",
                 max_tokens=2048,
-                system=SYSTEM_PROMPT,
+                system=chat_system_prompt,
                 messages=messages
             ) as stream:
                 for text in stream.text_stream:
