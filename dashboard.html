@@ -337,9 +337,8 @@
     .doc-name { font-size: 14px; font-weight: 400; }
     .doc-desc { font-size: 12px; font-weight: 300; color: var(--muted); margin-top: 2px; }
 
-    /* Document Workspace — folder sidebar + editor */
-    .ws-main { display: grid; grid-template-columns: 25% 1fr; gap: 0; min-height: calc(100vh - 160px); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
-    @media (max-width: 768px) { .ws-main { grid-template-columns: 1fr; min-height: auto; } }
+    /* Document Workspace — card-based layout */
+    .ws-main { display: flex; flex-direction: column; gap: 0; min-height: 400px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
     .ws-sticky-note { position: fixed; z-index: 999; width: 280px; min-height: 40px; background: #FFF9C4; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1); display: none; flex-direction: column; font-family: 'Plus Jakarta Sans', sans-serif; resize: both; overflow: auto; min-width: 200px; max-width: 500px; }
     .ws-sticky-note.open { display: flex; }
     .ws-sticky-note.collapsed { height: auto !important; min-height: 40px; resize: none; overflow: hidden; }
@@ -364,28 +363,42 @@
     .ws-note-hint { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 6px; background: var(--navy); color: var(--cream); font-size: 11px; font-weight: 500; padding: 8px 14px; border-radius: 8px; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 30; animation: noteHintPulse 2s ease infinite; }
     .ws-note-hint::before { content: ''; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid var(--navy); }
     @keyframes noteHintPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-    .ws-sidebar { background: var(--cream); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
-    .ws-sidebar-top { padding: 14px 14px 10px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
-    .ws-drop { border: 2px dashed var(--border); border-radius: 10px; padding: 10px 14px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--warm-white); display: flex; align-items: center; gap: 8px; justify-content: center; font-size: 12px; color: var(--muted); }
+    .ws-sidebar { background: var(--cream); display: flex; flex-direction: column; overflow: hidden; }
+    .ws-sidebar-top { padding: 18px 20px 14px; display: flex; flex-direction: column; gap: 10px; }
+    .ws-drop { border: 2px dashed var(--border); border-radius: 10px; padding: 12px 16px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--warm-white); display: flex; align-items: center; gap: 8px; justify-content: center; font-size: 13px; color: var(--muted); }
     .ws-drop:hover, .ws-drop.dragover { border-color: var(--gold); background: #FAF5EE; }
     .ws-drop.uploading { pointer-events: none; opacity: 0.6; }
     .ws-cat-select { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 11px; background: var(--warm-white); color: var(--text); }
-    .ws-search { width: 100%; padding: 7px 10px 7px 30px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; background: var(--warm-white); color: var(--text); }
+    .ws-search { width: 100%; padding: 9px 12px 9px 34px; border: 1px solid var(--border); border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; background: var(--warm-white); color: var(--text); }
     .ws-search:focus { outline: none; border-color: var(--gold); }
     .ws-search-wrap { position: relative; }
-    .ws-search-icon { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
-    .ws-folders { flex: 1; overflow-y: auto; padding: 8px 0; }
-    .ws-folder { padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text); transition: all 0.1s; border-left: 3px solid transparent; }
-    .ws-folder:hover { background: var(--warm-white); }
-    .ws-folder.active { background: var(--warm-white); border-left-color: var(--navy); font-weight: 600; color: var(--navy); }
-    .ws-folder-icon { font-size: 14px; width: 20px; text-align: center; }
-    .ws-folder-name { flex: 1; }
-    .ws-folder-count { font-size: 10px; color: var(--muted); background: var(--cream); padding: 1px 6px; border-radius: 8px; }
-    .ws-status-tabs { display: flex; gap: 2px; padding: 4px 10px; border-bottom: 1px solid var(--border); background: var(--cream); }
-    .ws-status-tab { padding: 4px 10px; border: none; border-radius: 4px; font-size: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; cursor: pointer; background: transparent; color: var(--muted); transition: all 0.15s; }
-    .ws-status-tab:hover { color: var(--text); }
-    .ws-status-tab.active { background: var(--warm-white); color: var(--navy); }
-    .ws-file-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; cursor: pointer; border: 2px solid var(--border); position: relative; transition: all 0.15s; }
+    .ws-search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .ws-folders { flex: 1; overflow-y: auto; padding: 10px 16px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .ws-status-tabs { display: flex; gap: 6px; padding: 10px 20px; flex-wrap: wrap; }
+    .ws-status-tab { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; cursor: pointer; background: var(--warm-white); color: var(--muted); transition: all 0.15s; }
+    .ws-status-tab:hover { color: var(--text); border-color: var(--navy); }
+    .ws-status-tab.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    /* Category card */
+    .ws-cat-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.15s; }
+    .ws-cat-card:hover { border-color: var(--gold); }
+    .ws-cat-header { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; user-select: none; }
+    .ws-cat-header:hover { background: var(--cream); }
+    .ws-cat-icon { font-size: 16px; width: 24px; text-align: center; flex-shrink: 0; }
+    .ws-cat-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--navy); }
+    .ws-cat-count { font-size: 11px; color: var(--muted); background: var(--cream); padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+    .ws-cat-chevron { font-size: 10px; color: var(--muted); transition: transform 0.2s; }
+    .ws-cat-card.open .ws-cat-chevron { transform: rotate(90deg); }
+    .ws-cat-files { display: none; border-top: 1px solid var(--border); }
+    .ws-cat-card.open .ws-cat-files { display: block; }
+    /* File row inside category */
+    .ws-file-row { display: flex; align-items: center; gap: 10px; padding: 10px 16px; cursor: pointer; transition: background 0.1s; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
+    .ws-file-row:last-child { border-bottom: none; }
+    .ws-file-row:hover { background: var(--cream); }
+    .ws-file-row.active { background: var(--cream); font-weight: 500; color: var(--navy); }
+    .ws-file-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+    .ws-file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ws-file-meta { font-size: 11px; color: var(--muted); white-space: nowrap; }
+    .ws-file-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; cursor: pointer; border: 2px solid var(--border); position: relative; transition: all 0.15s; }
     .ws-file-dot:hover { transform: scale(1.2); box-shadow: 0 0 0 3px rgba(44,74,94,0.08); }
     .ws-file-dot.todo { background: var(--green); border-color: var(--green); }
     .ws-file-dot.in-progress { background: #D4A843; border-color: #D4A843; }
@@ -400,14 +413,12 @@
     .ws-status-dot.c-in-progress { background: #D4A843; }
     .ws-status-dot.c-need-action { background: var(--accent); }
     .ws-status-dot.c-done { background: var(--navy); }
-    .ws-folder-files { padding: 0 8px 4px 34px; display: none; }
-    .ws-folder.active + .ws-folder-files, .ws-folder.open + .ws-folder-files { display: block; }
-    .ws-folder-file { padding: 5px 8px; border-radius: 6px; font-size: 11px; color: var(--muted); cursor: pointer; text-overflow: ellipsis; white-space: nowrap; transition: all 0.1s; position: relative; }
-    .ws-folder-file:hover { background: var(--cream); color: var(--text); }
-    .ws-folder-file:hover .ws-file-dot { transform: scale(1.3); }
-    .ws-folder-file.active { color: var(--navy); font-weight: 500; background: var(--cream); }
-    .ws-sidebar-footer { padding: 10px 14px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--muted); }
-    .ws-editor { display: flex; flex-direction: column; overflow: hidden; }
+    .ws-file-delete { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0 4px; opacity: 0; transition: all 0.15s; flex-shrink: 0; }
+    .ws-file-row:hover .ws-file-delete { opacity: 0.5; }
+    .ws-file-delete:hover { opacity: 1 !important; color: var(--accent); }
+    .ws-sidebar-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+    .ws-editor { display: none; flex-direction: column; overflow: hidden; border-top: 1px solid var(--border); min-height: 500px; }
+    .ws-editor.open { display: flex; }
     .ws-viewer-header { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--border); background: var(--cream); flex-shrink: 0; }
     .ws-viewer-title { font-size: 13px; font-weight: 500; color: var(--navy); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .ws-viewer-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 11px; color: var(--navy); cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 4px; }
@@ -4381,115 +4392,149 @@ guideLibrary['disability'] = {
       return labels[status] || '';
     }
 
+    // Track which categories are expanded
+    var wsOpenCats = {};
+
     function renderUserFiles() {
       var container = document.getElementById('wsFolders');
       if (!container) return;
-      // Show sorting tip for first 5 visits
-      var fileVisits = parseInt(localStorage.getItem('lumeway_files_visits') || '0');
-      if (fileVisits < 5 && userFiles && userFiles.length > 0 && !document.getElementById('wsSortTip')) {
-        localStorage.setItem('lumeway_files_visits', fileVisits + 1);
-        var tip = document.createElement('div');
-        tip.id = 'wsSortTip';
-        tip.style.cssText = 'margin:8px 10px 4px;padding:10px 12px;background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border:1px solid #E8D5C4;border-radius:8px;font-size:11px;color:var(--text);line-height:1.5;position:relative';
-        tip.innerHTML = '<button onclick="this.parentNode.remove()" style="position:absolute;top:4px;right:6px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px">&times;</button>'
-          + '<strong style="font-size:11px;color:var(--navy)">Track your file status</strong><br>'
-          + 'Click the <span style="display:inline-block;width:8px;height:8px;border-radius:50%;border:1.5px solid var(--muted);vertical-align:middle;margin:0 2px"></span> circle next to any file to color-code its status: '
-          + '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#C4704E;vertical-align:middle;margin:0 1px"></span> to-do, '
-          + '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#B8977E;vertical-align:middle;margin:0 1px"></span> in progress, '
-          + '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4A7C59;vertical-align:middle;margin:0 1px"></span> done. '
-          + 'Use the filter buttons above to quickly find files by status.';
-        container.parentNode.insertBefore(tip, container);
-        setTimeout(function() { if (tip.parentNode) tip.remove(); }, 15000);
-      }
-      var catIcons = {all:'\uD83D\uDCC2', legal:'\uD83D\uDCDC', financial:'\uD83D\uDCB3', insurance:'\uD83D\uDEE1\uFE0F', medical:'\u2695\uFE0F', personal:'\uD83D\uDC64', other:'\uD83D\uDCC1', templates:'\uD83D\uDCE6'};
-      var catLabels = {all:'All Files', legal:'Legal', financial:'Financial', insurance:'Insurance', medical:'Medical', personal:'Personal', other:'Other', templates:'Purchased Templates'};
-      var catOrder = ['all','legal','financial','insurance','medical','personal','other'];
-      var groups = {all: []};
+
+      var catIcons = {legal:'\uD83D\uDCDC', financial:'\uD83D\uDCB3', insurance:'\uD83D\uDEE1\uFE0F', medical:'\u2695\uFE0F', personal:'\uD83D\uDC64', other:'\uD83D\uDCC1', templates:'\uD83D\uDCE6'};
+      var catLabels = {legal:'Legal', financial:'Financial', insurance:'Insurance', medical:'Medical', personal:'Personal', other:'Other', templates:'Purchased Templates'};
+      var catOrder = ['legal','financial','insurance','medical','personal','other'];
+      var groups = {};
+      var totalCount = 0;
+
       var filtered = userFiles.filter(function(f) {
         if (!wsFilterText) return true;
         return f.original_name.toLowerCase().indexOf(wsFilterText) >= 0;
       });
+
       filtered.forEach(function(f) {
-        // Apply status filter
         if (wsStatusFilter !== 'all') {
           var fStatus = getFileStatus(f.id);
-          if (wsStatusFilter === 'todo' && fStatus !== 'todo') return;
-          if (wsStatusFilter === 'in-progress' && fStatus !== 'in-progress') return;
-          if (wsStatusFilter === 'need-action' && fStatus !== 'need-action') return;
-          if (wsStatusFilter === 'done' && fStatus !== 'done') return;
+          if (wsStatusFilter !== fStatus) return;
         }
-        groups.all.push(f);
+        totalCount++;
         var cat = f.category || 'other';
         if (!groups[cat]) groups[cat] = [];
         groups[cat].push(f);
       });
-      // Add templates folder if user has template files or purchased bundles
+
+      // Add templates if user has template files or purchased bundles
       var templatePurchases = (dashData.purchases || []).filter(function(p) { return p.download_token && p.product_id !== 'unlimited' && !p.product_id.startsWith('pass-'); });
       var hasTemplateFiles = groups['templates'] && groups['templates'].length > 0;
       if (hasTemplateFiles || templatePurchases.length > 0) catOrder.push('templates');
 
       var html = '';
-      catOrder.forEach(function(cat) {
-        var files = cat === 'templates' ? templatePurchases : (groups[cat] || []);
-        if (cat !== 'all' && cat !== 'templates' && (!files || files.length === 0)) return;
-        var isActive = wsActiveFolder === cat;
-        html += '<div class="ws-folder' + (isActive ? ' active' : '') + '" onclick="selectFolder(\'' + cat + '\')">';
-        html += '  <span class="ws-folder-icon">' + (catIcons[cat] || '\uD83D\uDCC1') + '</span>';
-        html += '  <span class="ws-folder-name">' + catLabels[cat] + '</span>';
-        if (files.length > 0) html += '  <span class="ws-folder-count">' + files.length + '</span>';
+
+      // File count summary
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">';
+      html += '  <span style="font-size:12px;color:var(--muted)">' + totalCount + ' file' + (totalCount === 1 ? '' : 's') + '</span>';
+      if (totalCount > 0) {
+        html += '  <button onclick="toggleAllCats()" style="background:none;border:none;font-size:11px;color:var(--accent);cursor:pointer;font-family:inherit;font-weight:500">' + (Object.keys(wsOpenCats).length > 0 ? 'Collapse all' : 'Expand all') + '</button>';
+      }
+      html += '</div>';
+
+      if (totalCount === 0 && userFiles.length > 0) {
+        html += '<div style="text-align:center;padding:32px 16px;color:var(--muted);font-size:13px">No files match your current filter.</div>';
+      } else if (totalCount === 0) {
+        html += '<div style="text-align:center;padding:32px 16px">';
+        html += '  <div style="font-size:24px;margin-bottom:8px">\uD83D\uDCC2</div>';
+        html += '  <div style="font-size:14px;font-weight:500;color:var(--navy);margin-bottom:4px">No files yet</div>';
+        html += '  <div style="font-size:12px;color:var(--muted)">Upload your first file to get started.</div>';
         html += '</div>';
-        // File list inside folder
-        if (isActive) {
-          html += '<div class="ws-folder-files" style="display:block">';
-          if (cat === 'templates' && hasTemplateFiles) {
-            // Show real template files (editable in workspace)
+      }
+
+      catOrder.forEach(function(cat) {
+        var files = groups[cat] || [];
+        if (cat !== 'templates' && files.length === 0) return;
+        if (cat === 'templates' && !hasTemplateFiles && templatePurchases.length === 0) return;
+
+        var isOpen = wsOpenCats[cat] === true;
+        var icon = catIcons[cat] || '\uD83D\uDCC1';
+        var label = catLabels[cat] || cat;
+        var count = cat === 'templates' ? (hasTemplateFiles ? (groups['templates'] || []).length : templatePurchases.length) : files.length;
+
+        html += '<div class="ws-cat-card' + (isOpen ? ' open' : '') + '">';
+        html += '  <div class="ws-cat-header" onclick="toggleCat(\'' + cat + '\')">';
+        html += '    <span class="ws-cat-icon">' + icon + '</span>';
+        html += '    <span class="ws-cat-name">' + label + '</span>';
+        html += '    <span class="ws-cat-count">' + count + '</span>';
+        html += '    <span class="ws-cat-chevron">&#9654;</span>';
+        html += '  </div>';
+        html += '  <div class="ws-cat-files">';
+
+        if (cat === 'templates') {
+          if (hasTemplateFiles) {
             (groups['templates'] || []).forEach(function(f) {
-              var fActive = wsActiveFileId === f.id ? ' active' : '';
-              var fStatus = getFileStatus(f.id);
-              html += '<div class="ws-folder-file' + fActive + '" style="display:flex;align-items:center;gap:5px;position:relative" onclick="event.stopPropagation();openFileViewer(' + f.id + ')" title="' + f.original_name + '">';
-              html += '<div class="ws-file-dot ' + fStatus + '" onclick="toggleStatusMenu(' + f.id + ',event)" title="' + (fStatus ? getStatusLabel(fStatus) : 'Set status') + '"></div>';
-              html += '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + getFileIcon(f.original_name) + ' ' + f.original_name + '</span>';
-              html += '<div class="ws-status-menu" id="statusMenu-' + f.id + '">';
-              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'todo\');event.stopPropagation()"><span class="ws-status-dot c-todo"></span> To Do</button>';
-              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'in-progress\');event.stopPropagation()"><span class="ws-status-dot c-in-progress"></span> In Progress</button>';
-              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'done\');event.stopPropagation()"><span class="ws-status-dot c-done"></span> Done</button>';
-              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'\');event.stopPropagation()" style="color:var(--muted)">Clear</button>';
-              html += '</div>';
-              html += '</div>';
-            });
-          } else if (cat === 'templates') {
-            // Fallback: show bundle download links for older purchases
-            templatePurchases.forEach(function(p) {
-              html += '<div class="ws-folder-file" onclick="event.stopPropagation()" style="display:flex;align-items:center;gap:6px">';
-              html += '  <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + p.product_name + '</span>';
-              html += '  <a href="/download/' + p.download_token + '" style="color:var(--navy);font-size:10px" title="Download">DL</a>';
-              html += '</div>';
+              html += renderFileRow(f);
             });
           } else {
-            files.forEach(function(f) {
-              var fActive = wsActiveFileId === f.id ? ' active' : '';
-              var fStatus = getFileStatus(f.id);
-              html += '<div class="ws-folder-file' + fActive + '" style="display:flex;align-items:center;gap:5px;position:relative" onclick="event.stopPropagation();openFileViewer(' + f.id + ')" title="' + f.original_name + '">';
-              html += '<div class="ws-file-dot ' + fStatus + '" onclick="toggleStatusMenu(' + f.id + ',event)" title="' + (fStatus ? getStatusLabel(fStatus) : 'Set status') + '"></div>';
-              html += '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + getFileIcon(f.original_name) + ' ' + f.original_name + '</span>';
-              html += '<div class="ws-status-menu" id="statusMenu-' + f.id + '">';
-              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'todo\');event.stopPropagation()"><span class="ws-status-dot c-todo"></span> To Do</button>';
-              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'in-progress\');event.stopPropagation()"><span class="ws-status-dot c-in-progress"></span> In Progress</button>';
-              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'need-action\');event.stopPropagation()"><span class="ws-status-dot c-need-action"></span> Need Action</button>';
-              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'done\');event.stopPropagation()"><span class="ws-status-dot c-done"></span> Done</button>';
-              html += '  <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'\');event.stopPropagation()" style="color:var(--muted)">Clear</button>';
-              html += '</div>';
-              html += '<button onclick="event.stopPropagation();deleteFile(' + f.id + ')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0 2px;opacity:0.4;flex-shrink:0" title="Delete" onmouseover="this.style.opacity=1;this.style.color=\'var(--accent)\'" onmouseout="this.style.opacity=0.4;this.style.color=\'var(--muted)\'">&times;</button>';
+            templatePurchases.forEach(function(p) {
+              html += '<div class="ws-file-row" style="cursor:default">';
+              html += '  <span class="ws-file-icon">\uD83D\uDCE6</span>';
+              html += '  <span class="ws-file-name">' + p.product_name + '</span>';
+              html += '  <a href="/download/' + p.download_token + '" style="font-size:11px;color:var(--navy);text-decoration:none;font-weight:500" title="Download">Download</a>';
               html += '</div>';
             });
           }
-          if (cat !== 'all' && cat !== 'templates' && files.length === 0) {
-            html += '<div class="ws-folder-file" style="color:var(--muted);cursor:default">No files</div>';
-          }
-          html += '</div>';
+        } else {
+          files.forEach(function(f) {
+            html += renderFileRow(f);
+          });
         }
+
+        html += '  </div>';
+        html += '</div>';
       });
+
       container.innerHTML = html;
+    }
+
+    function renderFileRow(f) {
+      var fActive = wsActiveFileId === f.id ? ' active' : '';
+      var fStatus = getFileStatus(f.id);
+      var fileSize = f.file_size ? formatFileSize(f.file_size) : '';
+      var html = '';
+      html += '<div class="ws-file-row' + fActive + '" onclick="openFileViewer(' + f.id + ')" title="' + f.original_name + '">';
+      html += '  <div class="ws-file-dot ' + fStatus + '" onclick="toggleStatusMenu(' + f.id + ',event)" title="' + (fStatus ? getStatusLabel(fStatus) : 'Set status') + '">';
+      html += '    <div class="ws-status-menu" id="statusMenu-' + f.id + '">';
+      html += '      <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'todo\');event.stopPropagation()"><span class="ws-status-dot c-todo"></span> To Do</button>';
+      html += '      <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'in-progress\');event.stopPropagation()"><span class="ws-status-dot c-in-progress"></span> In Progress</button>';
+      html += '      <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'need-action\');event.stopPropagation()"><span class="ws-status-dot c-need-action"></span> Need Action</button>';
+      html += '      <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'done\');event.stopPropagation()"><span class="ws-status-dot c-done"></span> Done</button>';
+      html += '      <button class="ws-status-opt" onclick="setFileStatus(' + f.id + ',\'\');event.stopPropagation()" style="color:var(--muted)">Clear</button>';
+      html += '    </div>';
+      html += '  </div>';
+      html += '  <span class="ws-file-icon">' + getFileIcon(f.original_name) + '</span>';
+      html += '  <span class="ws-file-name">' + f.original_name + '</span>';
+      if (fileSize) html += '  <span class="ws-file-meta">' + fileSize + '</span>';
+      html += '  <button class="ws-file-delete" onclick="event.stopPropagation();deleteFile(' + f.id + ')" title="Delete">&times;</button>';
+      html += '</div>';
+      return html;
+    }
+
+    function formatFileSize(bytes) {
+      if (!bytes) return '';
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function toggleCat(cat) {
+      if (wsOpenCats[cat]) { delete wsOpenCats[cat]; } else { wsOpenCats[cat] = true; }
+      renderUserFiles();
+    }
+
+    function toggleAllCats() {
+      if (Object.keys(wsOpenCats).length > 0) {
+        wsOpenCats = {};
+      } else {
+        var catOrder = ['legal','financial','insurance','medical','personal','other','templates'];
+        catOrder.forEach(function(c) { wsOpenCats[c] = true; });
+      }
+      renderUserFiles();
     }
 
     function selectFolder(cat) {
@@ -4846,6 +4891,22 @@ guideLibrary['disability'] = {
       wsQuill = null;
     }
 
+    function closeFileViewer() {
+      if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
+      cleanupEditor();
+      cleanupPdfState();
+      wsActiveFileId = null;
+      var editorArea = document.getElementById('wsEditorArea');
+      if (editorArea) editorArea.classList.remove('open');
+      var header = document.getElementById('wsViewerHeader');
+      if (header) header.style.display = 'none';
+      var body = document.getElementById('wsViewerBody');
+      if (body) body.innerHTML = '';
+      var welcome = document.getElementById('wsWelcome');
+      if (welcome) welcome.style.display = 'block';
+      renderUserFiles();
+    }
+
     function openFileViewer(fileId) {
       // Save current edit before switching
       if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
@@ -4873,6 +4934,9 @@ guideLibrary['disability'] = {
       wsQuill = null;
       wsEditorDirty = false;
       renderUserFiles(); // highlight active file
+      // Show the editor panel
+      var editorArea = document.getElementById('wsEditorArea');
+      if (editorArea) editorArea.classList.add('open');
       var header = document.getElementById('wsViewerHeader');
       var title = document.getElementById('wsViewerTitle');
       var dlBtn = document.getElementById('wsViewerDl');
@@ -6858,15 +6922,21 @@ guideLibrary['disability'] = {
       }
       html += '<div class="ws-main"' + (!filesUnlocked ? ' style="display:none"' : '') + '>';
 
-      // ── SIDEBAR: upload, folders, files ──
+      // ── Card-based file browser ──
       html += '<div class="ws-sidebar">';
       html += '<div class="ws-sidebar-top">';
-      // Hide upload area for starter/Etsy users (templates only, no new uploads)
+      // Upload + search row
       var canUpload = unlocked;
-      html += '  <div class="ws-drop" id="dropZone"' + (canUpload ? ' onclick="document.getElementById(\'fileUploadInput\').click()"' : ' style="display:none"') + '>';
-      html += '    <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.xls,.jpg,.jpeg,.png,.gif,.webp" style="display:none">';
-      html += '    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
-      html += '    <span id="dropZoneText">Upload file</span>';
+      html += '  <div style="display:flex;gap:10px;align-items:center">';
+      html += '    <div class="ws-search-wrap" style="flex:1">';
+      html += '      <svg class="ws-search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>';
+      html += '      <input class="ws-search" id="wsSearch" placeholder="Search files\u2026" oninput="filterFiles(this.value)">';
+      html += '    </div>';
+      html += '    <div class="ws-drop" id="dropZone"' + (canUpload ? ' onclick="document.getElementById(\'fileUploadInput\').click()"' : ' style="display:none"') + ' style="' + (canUpload ? 'flex-shrink:0;padding:9px 16px' : 'display:none') + '">';
+      html += '      <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.xls,.jpg,.jpeg,.png,.gif,.webp" style="display:none">';
+      html += '      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
+      html += '      <span id="dropZoneText">Upload</span>';
+      html += '    </div>';
       html += '  </div>';
       html += '  <div id="wsConfirmBar" style="display:none">';
       html += '    <select id="fileCategory" class="ws-cat-select" style="margin-bottom:6px">';
@@ -6879,22 +6949,18 @@ guideLibrary['disability'] = {
       html += '      <button onclick="cancelStaged()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer;color:var(--muted)">Cancel</button>';
       html += '    </div>';
       html += '  </div>';
-      html += '  <div class="ws-search-wrap">';
-      html += '    <svg class="ws-search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>';
-      html += '    <input class="ws-search" id="wsSearch" placeholder="Search\u2026" oninput="filterFiles(this.value)">';
-      html += '  </div>';
       html += '</div>';
 
-      // Status filter tabs
+      // Status filter pills
       html += '<div class="ws-status-tabs">';
       html += '  <button class="ws-status-tab active" data-status="all" onclick="filterFileStatus(\'all\',this)">All</button>';
-      html += '  <button class="ws-status-tab" data-status="todo" onclick="filterFileStatus(\'todo\',this)"><span class="ws-status-dot c-todo" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px;vertical-align:middle"></span>To Do</button>';
-      html += '  <button class="ws-status-tab" data-status="in-progress" onclick="filterFileStatus(\'in-progress\',this)"><span class="ws-status-dot c-in-progress" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px;vertical-align:middle"></span>In Progress</button>';
-      html += '  <button class="ws-status-tab" data-status="need-action" onclick="filterFileStatus(\'need-action\',this)"><span class="ws-status-dot c-need-action" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px;vertical-align:middle"></span>Need Action</button>';
-      html += '  <button class="ws-status-tab" data-status="done" onclick="filterFileStatus(\'done\',this)"><span class="ws-status-dot c-done" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px;vertical-align:middle"></span>Done</button>';
+      html += '  <button class="ws-status-tab" data-status="todo" onclick="filterFileStatus(\'todo\',this)"><span class="ws-status-dot c-todo" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle"></span>To Do</button>';
+      html += '  <button class="ws-status-tab" data-status="in-progress" onclick="filterFileStatus(\'in-progress\',this)"><span class="ws-status-dot c-in-progress" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle"></span>In Progress</button>';
+      html += '  <button class="ws-status-tab" data-status="need-action" onclick="filterFileStatus(\'need-action\',this)"><span class="ws-status-dot c-need-action" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle"></span>Need Action</button>';
+      html += '  <button class="ws-status-tab" data-status="done" onclick="filterFileStatus(\'done\',this)"><span class="ws-status-dot c-done" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle"></span>Done</button>';
       html += '</div>';
 
-      // Folder list (rendered by JS)
+      // Category cards (rendered by JS)
       html += '<div class="ws-folders" id="wsFolders"></div>';
 
       html += '<div class="ws-sidebar-footer" style="justify-content:space-between">';
@@ -6909,9 +6975,10 @@ guideLibrary['disability'] = {
       html += '</div>';
       html += '</div>'; // ws-sidebar
 
-      // ── EDITOR AREA ──
-      html += '<div class="ws-editor">';
+      // ── EDITOR AREA (hidden until a file is opened) ──
+      html += '<div class="ws-editor" id="wsEditorArea">';
       html += '<div class="ws-viewer-header" id="wsViewerHeader" style="display:none">';
+      html += '  <button class="ws-viewer-btn" onclick="closeFileViewer()" title="Close viewer" style="padding:4px 8px">✕</button>';
       html += '  <span class="ws-viewer-title" id="wsViewerTitle"></span>';
       html += '  <div id="wsSigBtnWrap" style="display:none;position:relative">';
       html += '    <div style="display:flex;align-items:center;border:1px solid var(--border);border-radius:6px;overflow:hidden">';
