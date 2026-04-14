@@ -116,6 +116,12 @@
           document.getElementById('codeEmail').textContent = email;
           document.getElementById('step-email').style.display = 'none';
           document.getElementById('step-code').style.display = 'block';
+          // Demo account: auto-fill the code
+          if (res.data.demo && res.data.demo_code) {
+            document.getElementById('code').value = res.data.demo_code;
+            document.getElementById('codeMsg').className = 'login-msg success';
+            document.getElementById('codeMsg').textContent = 'Demo account — code pre-filled. Just hit Log in.';
+          }
           document.getElementById('code').focus();
         } else {
           var msg = document.getElementById('emailMsg');
