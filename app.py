@@ -2676,6 +2676,7 @@ def create_checkout():
                 "quantity": 1,
             }],
             mode="payment",
+            allow_promotion_codes=True,
             success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=request.host_url + "templates#" + product_id,
             metadata={"product_id": product_id},
@@ -2708,6 +2709,7 @@ def create_pass_checkout():
                 "quantity": 1,
             }],
             mode="payment",
+            allow_promotion_codes=True,
             success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=request.host_url + "pricing",
             metadata={"product_id": pass_id, "purchase_type": "pass", "transition": product["transition"], "user_id": str(user["id"])},
@@ -2759,6 +2761,7 @@ def create_transition_checkout():
                 "quantity": 1,
             }],
             mode="payment",
+            allow_promotion_codes=True,
             success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=request.host_url + "pricing",
             metadata={
@@ -2797,6 +2800,7 @@ def create_all_transitions_checkout():
                 "quantity": 1,
             }],
             mode="payment",
+            allow_promotion_codes=True,
             success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=request.host_url + "pricing",
             metadata={
@@ -2832,6 +2836,7 @@ def create_individual_template_checkout():
                 "quantity": 1,
             }],
             mode="payment",
+            allow_promotion_codes=True,
             success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=request.host_url + "templates",
             metadata={
@@ -2895,6 +2900,7 @@ def create_gift_checkout():
                 "quantity": 1,
             }],
             mode="payment",
+            allow_promotion_codes=True,
             success_url=request.host_url + "gift/success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=request.host_url + "pricing",
             metadata={
@@ -4707,6 +4713,7 @@ def cart_checkout():
             customer_email=email,
             line_items=line_items,
             mode="payment",
+            allow_promotion_codes=True,
             success_url=request.host_url + "purchase-success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=request.host_url + "cart",
             metadata=meta,
