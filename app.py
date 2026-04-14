@@ -5423,9 +5423,20 @@ def auth_send_code():
     if not email or not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
         return jsonify({"error": "Please enter a valid email address."}), 400
 
-    # Rate limit: max 5 codes per email per hour
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc).isoformat()
+    expires = (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
+
+    # Demo account: use fixed code, skip email, skip rate limit
+    if email == "demo@lumeway.co":
+        code = "000000"
+        db_execute(conn, f"INSERT INTO auth_codes (email, code, created_at, expires_at) VALUES ({param}, {param}, {param}, {param})", (email, code, now, expires))
+        conn.commit()
+        conn.close()
+        return jsonify({"ok": True, "message": "Demo account — use code 000000.", "demo": True, "demo_code": "000000"})
+
+    # Rate limit: max 5 codes per email per hour
     one_hour_ago = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
     cur = db_execute(conn, f"SELECT COUNT(*) FROM auth_codes WHERE email = {param} AND created_at > {param}", (email, one_hour_ago))
     count = cur.fetchone()[0]
@@ -5434,16 +5445,6 @@ def auth_send_code():
         return jsonify({"error": "Too many attempts. Please try again later."}), 429
 
     code = str(random.randint(100000, 999999))
-    now = datetime.now(timezone.utc).isoformat()
-    expires = (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
-
-    # Demo account: use fixed code, skip email
-    if email == "demo@lumeway.co":
-        code = "000000"
-        db_execute(conn, f"INSERT INTO auth_codes (email, code, created_at, expires_at) VALUES ({param}, {param}, {param}, {param})", (email, code, now, expires))
-        conn.commit()
-        conn.close()
-        return jsonify({"ok": True, "message": "Demo account — use code 000000.", "demo": True, "demo_code": "000000"})
 
     db_execute(conn, f"INSERT INTO auth_codes (email, code, created_at, expires_at) VALUES ({param}, {param}, {param}, {param})", (email, code, now, expires))
     conn.commit()
