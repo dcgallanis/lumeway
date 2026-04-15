@@ -14,6 +14,12 @@
       "runtimeArgs": ["-e", "require('http').createServer((q,r)=>{require('fs').readFile('.'+q.url.split('?')[0],(e,d)=>{if(e){r.writeHead(404);r.end()}else{r.writeHead(200,{'Content-Type':'text/html'});r.end(d)}});}).listen(8765)"],
       "port": 8765,
       "autoPort": true
+    },
+    {
+      "name": "ios-preview",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8090", "--directory", "/Users/carol/Desktop/lumeway/ios-preview"],
+      "port": 8090
     }
   ]
 }

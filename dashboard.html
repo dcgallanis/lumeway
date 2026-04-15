@@ -5455,6 +5455,26 @@ guideLibrary['disability'] = {
               }
               editor.setContent(html);
               wsEditorDirty = false;
+              // Insert page break after "form begins on next page" text
+              var body = editor.getBody();
+              var walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false);
+              var node;
+              while (node = walker.nextNode()) {
+                if (/form\s+begins\s+on\s+next\s+page/i.test(node.textContent)) {
+                  var el = node.parentElement;
+                  // Walk up to find the block-level parent (p, div, tr, etc.)
+                  while (el && el !== body && !['P','DIV','TR','TABLE','H1','H2','H3','H4','H5','H6'].includes(el.tagName)) {
+                    el = el.parentElement;
+                  }
+                  if (el && el !== body) {
+                    // If inside a table row, target the whole table
+                    if (el.tagName === 'TR') el = el.closest('table') || el;
+                    var pageBreak = editor.dom.create('div', { style: 'page-break-after: always; break-after: page; border-bottom: 2px dashed var(--border); margin: 20px 0; height: 1px;' });
+                    el.parentNode.insertBefore(pageBreak, el.nextSibling);
+                  }
+                  break;
+                }
+              }
             });
             editor.on('change keyup', function() {
               wsEditorDirty = true;
