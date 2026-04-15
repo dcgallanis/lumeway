@@ -2976,7 +2976,7 @@ def gift_redeem():
             db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (uid,))
             conn.commit()
             cat_label = CATEGORY_LABELS.get(effective_cat, gift_label)
-            msg = f"Gift redeemed! You now have full access to {cat_label}. Head to your dashboard to get started."
+            msg = f"Gift redeemed! You now have full access to {cat_label}. Your dashboard is ready with step-by-step guides, worksheets, and tools. If you'd like to switch to a different transition, email cara@lumeway.co."
             # Preload templates
             try:
                 preload_bundle_templates(uid, effective_cat)
@@ -3144,7 +3144,7 @@ def gift_redeem_verify():
                 except Exception as e:
                     print(f"[gift] Error preloading {gift_cat} templates: {e}")
             cat_label = CATEGORY_LABELS.get(gift_cat, gift_cat)
-            msg = f"Gift redeemed! You have the {cat_label} bundle."
+            msg = f"Gift redeemed! You have the {cat_label} bundle. Your dashboard is ready with step-by-step guides, worksheets, and tools. If you'd like to switch to a different transition, email cara@lumeway.co."
         else:
             # No category on gift — ask user to pick
             # Don't mark as redeemed yet, undo the redeemed_by
