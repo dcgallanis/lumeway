@@ -5761,6 +5761,7 @@ guideLibrary['disability'] = {
       div.innerHTML = html;
       var tables = div.querySelectorAll('table');
       var result = { _date: '' };
+      // currentSection persists ACROSS tables because headers and data are often in separate tables
       var currentSection = '_ungrouped';
 
       for (var t = 0; t < tables.length; t++) {
@@ -5770,11 +5771,13 @@ guideLibrary['disability'] = {
           if (cells.length === 0) continue;
 
           // Check if this is a section header (dark navy background)
+          // Templates use #1b4f72 as the header color
           var firstCell = cells[0];
           var bg = firstCell.style.background || firstCell.style.backgroundColor || '';
           var cellHtml = firstCell.outerHTML || '';
-          var isHeader = bg.toLowerCase().indexOf('1b3a5c') >= 0 || bg.toLowerCase().indexOf('1B3A5C') >= 0 ||
-                         cellHtml.indexOf('1B3A5C') >= 0 || cellHtml.indexOf('1b3a5c') >= 0;
+          var bgLower = (bg + ' ' + cellHtml).toLowerCase();
+          var isHeader = bgLower.indexOf('1b4f72') >= 0 || bgLower.indexOf('1b3a5c') >= 0 ||
+                         bgLower.indexOf('1B4F72') >= 0 || bgLower.indexOf('1B3A5C') >= 0;
 
           if (isHeader) {
             var headerText = firstCell.textContent.trim();
