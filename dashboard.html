@@ -474,6 +474,8 @@
     .ws-letter-page .letter-enclosures { margin-top: 28px; border-top: 1px solid #e0dcd6; padding-top: 16px; font-size: 12px; color: #555; }
     .ws-letter-page .letter-enclosures strong { font-weight: 600; }
     .ws-letter-page .letter-enclosures ul { margin: 4px 0 0; padding-left: 18px; }
+    .ws-letter-page:focus { outline: none; }
+    .ws-letter-page [style*="color:#999"]:focus { color: #1a1a1a !important; }
     .ws-letter-gen-btn { background: linear-gradient(135deg, var(--navy), #2a5070); color: var(--cream); border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 5px; transition: all 0.15s; }
     .ws-letter-gen-btn:hover { filter: brightness(1.15); }
     @media print {
@@ -5700,38 +5702,45 @@ guideLibrary['disability'] = {
 
           if (!result[currentSection]) result[currentSection] = {};
 
-          // Check for checkbox rows (Action | Requested pattern)
-          var hasCheckbox = false;
-          for (var c = 0; c < cells.length; c++) {
-            var txt = cells[c].textContent.trim();
-            if (txt === '\u2611' || txt === '\u2612' || txt === '\u2713' || txt === 'X' || txt === 'x' || txt === '\u2714') {
-              hasCheckbox = true;
-              break;
+          // Check for checkbox rows: templates use a two-column layout
+          // Column 1 = action/document text, Column 2 = ☐ (unchecked) or user types X/☒/☑/✓ to check
+          if (cells.length >= 2) {
+            var lastCell = cells[cells.length - 1];
+            var lastTxt = lastCell.textContent.trim();
+            var firstTxt = cells[0].textContent.trim();
+            // Skip header rows like "Action | Requested" or "Document | Included"
+            var isCheckboxHeader = (firstTxt === 'Action' && lastTxt === 'Requested') || (firstTxt === 'Document' && lastTxt === 'Included');
+            // Detect if this is a checkbox-style row: last cell contains a check marker or empty checkbox
+            var isCheckboxRow = !isCheckboxHeader && (lastTxt === '\u2610' || lastTxt === '\u2611' || lastTxt === '\u2612' || lastTxt === '\u2713' || lastTxt === '\u2714' || lastTxt === 'X' || lastTxt === 'x' || lastTxt === '\u2714\uFE0F' || lastTxt === '\u2705');
+            // Also detect if the last cell innerHTML has checkbox Unicode
+            if (!isCheckboxRow && !isCheckboxHeader) {
+              var lastInner = lastCell.innerHTML || '';
+              if (lastInner.indexOf('\u2610') >= 0 || lastInner.indexOf('\u2611') >= 0 || lastInner.indexOf('\u2612') >= 0) isCheckboxRow = true;
             }
-            // Check for checked checkbox in innerHTML (TinyMCE may use different representations)
-            var cellInner = cells[c].innerHTML || '';
-            if (cellInner.indexOf('checked') >= 0 || cellInner.indexOf('\u2611') >= 0 || cellInner.indexOf('\u2612') >= 0 || cellInner.indexOf('\u2714') >= 0) {
-              hasCheckbox = true;
-              break;
-            }
-          }
-
-          if (hasCheckbox && cells.length >= 2) {
-            // This is a checked action/document row
-            var actionText = cells[0].textContent.trim();
-            if (actionText && actionText.indexOf('Other:') !== 0 && actionText !== 'Action' && actionText !== 'Document') {
-              if (!result[currentSection]._checked) result[currentSection]._checked = [];
-              result[currentSection]._checked.push(actionText);
-            }
-            // Handle "Other: ___" with user text
-            if (actionText.indexOf('Other:') === 0) {
-              var otherVal = actionText.replace('Other:', '').replace(/_+/g, '').trim();
-              if (otherVal) {
-                if (!result[currentSection]._checked) result[currentSection]._checked = [];
-                result[currentSection]._checked.push(otherVal);
+            if (isCheckboxRow) {
+              // Determine if it's checked: anything other than ☐ (empty checkbox) means checked
+              var isChecked = lastTxt !== '\u2610' && lastTxt !== '' && lastTxt !== '\u25A1';
+              // Also check innerHTML for ☑ or ☒
+              if (!isChecked) {
+                var li = lastCell.innerHTML || '';
+                isChecked = li.indexOf('\u2611') >= 0 || li.indexOf('\u2612') >= 0 || li.indexOf('\u2713') >= 0 || li.indexOf('\u2714') >= 0;
               }
+              if (isChecked && firstTxt) {
+                // Handle "Other: ___" rows
+                if (firstTxt.indexOf('Other:') === 0) {
+                  var otherVal = firstTxt.replace('Other:', '').replace(/_+/g, '').trim();
+                  if (otherVal) {
+                    if (!result[currentSection]._checked) result[currentSection]._checked = [];
+                    result[currentSection]._checked.push(otherVal);
+                  }
+                } else {
+                  if (!result[currentSection]._checked) result[currentSection]._checked = [];
+                  result[currentSection]._checked.push(firstTxt);
+                }
+              }
+              continue;
             }
-            continue;
+            if (isCheckboxHeader) continue;
           }
 
           // Parse label:value pairs from cells
@@ -5752,21 +5761,28 @@ guideLibrary['disability'] = {
     }
 
     function buildLetterHtml(data) {
-      var html = '<div class="ws-letter-page">';
+      var html = '<div class="ws-letter-page" contenteditable="true" spellcheck="true">';
       // Date
-      if (data.date) html += '<div class="letter-date">' + escapeHtml(data.date) + '</div>';
+      html += '<div class="letter-date">' + (data.date ? escapeHtml(data.date) : '<span style="color:#999">[Date]</span>') + '</div>';
       // Sender block
       var senderLines = [data.senderName, data.senderAddress, data.senderCityStateZip].filter(Boolean);
       var contactParts = [data.senderPhone, data.senderEmail].filter(Boolean);
       if (contactParts.length) senderLines.push(contactParts.join(' \u2022 '));
       if (senderLines.length) {
         html += '<div class="letter-sender-block">' + senderLines.map(function(l) { return escapeHtml(l); }).join('<br>') + '</div>';
+      } else {
+        html += '<div class="letter-sender-block"><span style="color:#999">[Your Name]<br>[Your Address]<br>[City, State ZIP]<br>[Phone] \u2022 [Email]</span></div>';
       }
       // Recipient block
-      var recipLines = [data.recipientName, data.recipientAddress].filter(Boolean);
-      if (recipLines.length) {
-        html += '<div class="letter-recipient-block">' + recipLines.map(function(l) { return escapeHtml(l); }).join('<br>') + '</div>';
+      var hasRecip = data.recipientName && data.recipientName !== 'To Whom It May Concern' && data.recipientName !== 'Credit Bureau';
+      html += '<div class="letter-recipient-block">';
+      if (hasRecip) {
+        var recipLines = [data.recipientName, data.recipientAddress].filter(Boolean);
+        html += recipLines.map(function(l) { return escapeHtml(l); }).join('<br>');
+      } else {
+        html += '<span style="color:#999">[Recipient Name]<br>[Company / Organization]<br>[Address]<br>[City, State ZIP]</span>';
       }
+      html += '</div>';
       // Subject
       if (data.subject) html += '<div class="letter-subject">Re: ' + escapeHtml(data.subject) + '</div>';
       // Salutation
@@ -5774,7 +5790,6 @@ guideLibrary['disability'] = {
       // Body
       html += '<div class="letter-body">';
       (data.bodyParagraphs || []).forEach(function(p) {
-        // Handle paragraphs with bullet points
         var lines = p.split('\n');
         html += '<p>' + lines.map(function(l) { return escapeHtml(l); }).join('<br>') + '</p>';
       });
@@ -5782,8 +5797,8 @@ guideLibrary['disability'] = {
       // Closing
       html += '<div class="letter-closing">' + escapeHtml(data.closing || 'Sincerely') + ',</div>';
       // Signature
-      if (data.signatureName) html += '<div class="letter-signature">' + escapeHtml(data.signatureName) + '</div>';
-      if (data.printedName) html += '<div class="letter-printed-name">' + escapeHtml(data.printedName) + '</div>';
+      html += '<div class="letter-signature">' + (data.signatureName ? escapeHtml(data.signatureName) : '<span style="color:#999">[Signature]</span>') + '</div>';
+      html += '<div class="letter-printed-name">' + (data.printedName ? escapeHtml(data.printedName) : '<span style="color:#999">[Printed Name]</span>') + '</div>';
       // Enclosures
       if (data.enclosures && data.enclosures.length > 0) {
         html += '<div class="letter-enclosures"><strong>Enclosures:</strong><ul>';
@@ -5815,14 +5830,20 @@ guideLibrary['disability'] = {
       showLetterPreview(letterHtml, config.title);
     }
 
+    var wsHiddenForLetter = []; // track elements hidden when entering letter mode
+
     function showLetterPreview(letterContentHtml, title) {
       wsInLetterMode = true;
-      // Hide TinyMCE
-      var editorContainers = document.querySelectorAll('#wsViewerBody .tox, #wsViewerBody > div:not(.ws-letter-preview-wrap)');
-      for (var i = 0; i < editorContainers.length; i++) {
-        editorContainers[i].style.display = 'none';
+      wsHiddenForLetter = [];
+      // Hide only the TinyMCE editor elements (not welcome or other panels)
+      var els = document.querySelectorAll('#wsViewerBody .tox, #wsViewerBody .tox-tinymce');
+      for (var i = 0; i < els.length; i++) {
+        if (els[i].style.display !== 'none') {
+          wsHiddenForLetter.push(els[i]);
+          els[i].style.display = 'none';
+        }
       }
-      // Hide the generate letter button, show it again on back
+      // Hide the generate letter button
       var genBtn = document.getElementById('wsGenLetterBtn');
       if (genBtn) genBtn.style.display = 'none';
 
@@ -5852,11 +5873,11 @@ guideLibrary['disability'] = {
       wsInLetterMode = false;
       var wrap = document.querySelector('.ws-letter-preview-wrap');
       if (wrap) wrap.remove();
-      // Show TinyMCE again
-      var editorContainers = document.querySelectorAll('#wsViewerBody .tox, #wsViewerBody > div');
-      for (var i = 0; i < editorContainers.length; i++) {
-        editorContainers[i].style.display = '';
+      // Restore only the elements we hid
+      for (var i = 0; i < wsHiddenForLetter.length; i++) {
+        wsHiddenForLetter[i].style.display = '';
       }
+      wsHiddenForLetter = [];
       // Show generate letter button again
       var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
       if (file && getLetterTemplate(file.original_name)) {
