@@ -573,8 +573,8 @@
     #sheetTableWrap .jexcel td { font-family: 'Plus Jakarta Sans', sans-serif; }
     #sheetTableWrap .jexcel_content { max-height: none !important; overflow: visible !important; }
     /* TinyMCE overrides */
-    .ws-viewer-body .tox-tinymce { border: none !important; border-radius: 0 !important; position: absolute !important; top: 0; left: 0; right: 0; bottom: 0; height: auto !important; }
-    .ws-viewer-body #wsDocEditor { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+    .ws-viewer-body .tox-tinymce { border: none !important; border-radius: 0 !important; height: 100% !important; }
+    .ws-viewer-body #wsDocEditor { height: 100%; }
     .ws-viewer-body .tox .tox-toolbar__primary { background: var(--cream) !important; border-bottom: 1px solid var(--border) !important; }
     .ws-viewer-body .tox .tox-statusbar { background: var(--cream) !important; border-top: 1px solid var(--border) !important; }
 
@@ -5214,8 +5214,9 @@ guideLibrary['disability'] = {
     }
 
     function cleanupEditor() {
-      if (typeof tinymce !== 'undefined') {
-        tinymce.editors.slice().forEach(function(ed) { try { ed.remove(); } catch(e) {} });
+      if (wsQuill && wsQuill._tinymce && typeof tinymce !== 'undefined') {
+        var ed = tinymce.get('wsDocEditor');
+        if (ed) ed.remove();
       }
       wsQuill = null;
     }
@@ -5413,21 +5414,11 @@ guideLibrary['disability'] = {
     }
 
     function initQuillEditor(body, html, fileId) {
-      // Pre-process HTML: insert page break markers after "begins on next page" text
-      var pbMarker = '<div class="page-break-marker" contenteditable="false">\u200b</div>';
-      html = html.replace(/(<\/p>|<\/div>|<\/h[1-4]>|<\/li>)/gi, function(match, tag, offset) {
-        // Look backward from this closing tag to find the opening tag content
-        var chunk = html.substring(Math.max(0, offset - 300), offset).toLowerCase();
-        if (chunk.indexOf('begins on next page') >= 0 || chunk.indexOf('form on next page') >= 0 || chunk.indexOf('start on next page') >= 0 || chunk.indexOf('continue on next page') >= 0) {
-          return match + pbMarker;
-        }
-        return match;
-      });
-      body.innerHTML = '<div id="wsDocEditor"></div>';
+      body.innerHTML = '<div id="wsDocEditor" style="min-height:400px"></div>';
       // Use TinyMCE for full Word-like editing with tables
       if (typeof tinymce !== 'undefined') {
-        // Remove ALL existing TinyMCE instances to prevent stale editors
-        tinymce.editors.slice().forEach(function(ed) { try { ed.remove(); } catch(e) {} });
+        // Remove any existing TinyMCE instance
+        if (tinymce.get('wsDocEditor')) tinymce.get('wsDocEditor').remove();
         tinymce.init({
           selector: '#wsDocEditor',
           height: '100%',
@@ -5436,7 +5427,7 @@ guideLibrary['disability'] = {
           toolbar: 'undo redo | fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link pagebreak | removeformat code',
           font_family_formats: 'Sans Serif=Plus Jakarta Sans,sans-serif; Arial=Arial,sans-serif; Times New Roman=Times New Roman,serif; Georgia=Georgia,serif; Verdana=Verdana,sans-serif; Courier New=Courier New,monospace; Trebuchet MS=Trebuchet MS,sans-serif; Calibri=Calibri,sans-serif',
           font_size_formats: '8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 24pt 36pt',
-          content_style: 'html { background: #e8e4df; } body { font-family: Plus Jakarta Sans, Calibri, sans-serif; font-size: 11pt; line-height: 1.7; color: #2C3E50; max-width: 8.5in; min-height: 11in; margin: 32px auto; padding: 1in 1.25in; background: #fff; box-shadow: 0 1px 8px rgba(0,0,0,0.1); border-radius: 2px; box-sizing: border-box; } .page-break-marker { display: block; height: 40px; margin: 20px -1.25in; width: calc(100% + 2.5in); background: #e8e4df; box-shadow: inset 0 6px 6px -4px rgba(0,0,0,0.07), inset 0 -6px 6px -4px rgba(0,0,0,0.07); pointer-events: none; } .mce-pagebreak { display: block; border: 0; height: 40px; margin: 20px -1.25in; width: calc(100% + 2.5in); background: #e8e4df; box-shadow: inset 0 8px 6px -6px rgba(0,0,0,0.06), inset 0 -8px 6px -6px rgba(0,0,0,0.06); cursor: default; page-break-before: always; } table { border-collapse: collapse; margin: 12px 0; table-layout: auto; } table:not([style*="width"]) { width: 100%; } td, th { border: 1px solid #d0d7de; padding: 10px 14px; font-size: 11pt; vertical-align: top; min-width: 60px; word-wrap: break-word; } th { background: #f0f2f4; font-weight: 600; } h1 { font-size: 18pt; color: #2C4A5E; } h2 { font-size: 14pt; color: #2C4A5E; } h3 { font-size: 12pt; color: #2C4A5E; }',
+          content_style: 'html { background: #e8e4df; } body { font-family: Plus Jakarta Sans, Calibri, sans-serif; font-size: 11pt; line-height: 1.7; color: #2C3E50; max-width: 8.5in; min-height: 11in; margin: 32px auto; padding: 1in 1.25in; background: #fff; box-shadow: 0 1px 8px rgba(0,0,0,0.1); border-radius: 2px; box-sizing: border-box; } .mce-pagebreak { display: block; border: 0; width: 100%; height: 40px; margin: 0 -1.25in; padding: 0; width: calc(100% + 2.5in); background: #e8e4df; box-shadow: inset 0 8px 6px -6px rgba(0,0,0,0.06), inset 0 -8px 6px -6px rgba(0,0,0,0.06); cursor: default; page-break-before: always; } table { border-collapse: collapse; margin: 12px 0; table-layout: auto; } table:not([style*="width"]) { width: 100%; } td, th { border: 1px solid #d0d7de; padding: 10px 14px; font-size: 11pt; vertical-align: top; min-width: 60px; word-wrap: break-word; } th { background: #f0f2f4; font-weight: 600; } h1 { font-size: 18pt; color: #2C4A5E; } h2 { font-size: 14pt; color: #2C4A5E; } h3 { font-size: 12pt; color: #2C4A5E; }',
           promotion: false,
           branding: false,
           skin: 'oxide',
@@ -5483,7 +5474,7 @@ guideLibrary['disability'] = {
       if (wsQuill && wsQuill._tinymce && tinymce.activeEditor) {
         var content = tinymce.activeEditor.getContent();
         // Strip visual page break markers before saving
-        content = content.replace(/<div class="page-break-marker"[^>]*>[\s\S]*?<\/div>/g, '');
+        content = content.replace(/<div class="page-break-marker"[^>]*><\/div>/g, '');
         return content;
       }
       return '';
