@@ -7853,17 +7853,35 @@ guideLibrary['disability'] = {
       html += '    <div class="nav-chat-welcome" id="ncWelcome">';
       html += '      <img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" style="width:48px;height:48px;object-fit:contain;margin-bottom:4px">';
 
-      html += '      <h3>Your Transition Navigator</h3>';
-      html += '      <p>Lumeway helps you through life\'s hardest transitions. Tell me what\'s going on and I\'ll walk you through what to do next.</p>';
-      html += '      <div class="nav-chat-starters">';
-      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I recently lost a loved one and don\'t know where to start.</button>';
-      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I just got laid off. What do I need to do right away?</button>';
-      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m going through a divorce and feel completely overwhelmed.</button>';
-      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m moving to a new state and need help with everything.</button>';
-      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m applying for disability benefits and don\'t know where to begin.</button>';
-      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m getting ready to retire and want to make sure I don\'t miss anything.</button>';
-      html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">Something else is going on\u2026</button>';
-      html += '      </div>';
+      if (ncHasHistory) {
+        // ── Returning user with chat history ──
+        var lastPreview = ncSessions[0].preview || '';
+        var lastSessionId = ncSessions[0].id || '';
+        html += '      <h3>Welcome back' + (ncName ? ', ' + ncName : '') + '</h3>';
+        if (lastPreview) {
+          html += '      <p>Last time we talked about: <em>' + lastPreview.replace(/</g, '&lt;').substring(0, 80) + (lastPreview.length > 80 ? '\u2026' : '') + '</em></p>';
+        }
+        html += '      <div class="nav-chat-starters">';
+        html += '        <button class="nav-chat-starter" onclick="ncResumeSession(\'' + lastSessionId + '\')">Pick up where we left off</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncStartNewChat()">Start something new</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">What should I focus on next?</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m feeling overwhelmed</button>';
+        html += '      </div>';
+      } else {
+        // ── Default welcome for all tiers (generic starters matching /chat page) ──
+        // For bundled users with no history, ncAutoGreet() will hide this and add a bot message instead
+        html += '      <h3>Your Transition Navigator</h3>';
+        html += '      <p>Lumeway helps you through life\'s hardest transitions. Tell me what\'s going on and I\'ll walk you through what to do next.</p>';
+        html += '      <div class="nav-chat-starters">';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I recently lost a loved one and don\'t know where to start.</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I just got laid off. What do I need to do right away?</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m going through a divorce and feel completely overwhelmed.</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m moving to a new state and need help with everything.</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m applying for disability benefits and don\'t know where to begin.</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m getting ready to retire and want to make sure I don\'t miss anything.</button>';
+        html += '        <button class="nav-chat-starter" onclick="ncSend(this.textContent)">Something else is going on\u2026</button>';
+        html += '      </div>';
+      }
       html += '    </div>';
       html += '  </div>';
       html += '  <div class="nav-chat-input-area">';
@@ -10226,14 +10244,40 @@ guideLibrary['disability'] = {
       el.style.height = Math.min(el.scrollHeight, 120) + 'px';
     }
 
-    // ── Initialize chat: load most recent session if exists ──
+    // ── Initialize chat: auto-greet bundled users if no history ──
+    // Returning users see the "Welcome back" screen and choose to resume or start fresh.
+    // Only bundled users with no history get an auto-greet bot message.
     function ncInitChat() {
       fetch('/api/chat/sessions').then(function(r) { return r.json(); }).then(function(data) {
-        if (data.sessions && data.sessions.length > 0) {
-          var latest = data.sessions[0];
-          ncResumeSession(latest.id);
+        if (!data.sessions || data.sessions.length === 0) {
+          // No history — check if bundled user needs auto-greeting
+          ncAutoGreet();
         }
-      }).catch(function() {});
+        // If has history, do nothing — let the "Welcome back" screen stay visible
+      }).catch(function() {
+        ncAutoGreet();
+      });
+    }
+
+    // ── Auto-greet bundled users with a bot message asking for state ──
+    function ncAutoGreet() {
+      var ncTier = (dashData && dashData.effective_tier) || 'free';
+      var ncTransitions = (dashData && dashData.active_transitions) || [];
+      var ncState = dashData && dashData.user && dashData.user.us_state;
+      var ncLabels = { 'job-loss': 'Job Loss & Income Crisis', 'estate': 'Estate & Survivor', 'divorce': 'Divorce & Separation', 'disability': 'Disability & Benefits', 'relocation': 'Relocation', 'retirement': 'Retirement' };
+
+      if ((ncTier === 'one_transition' || ncTier === 'pass') && ncTransitions.length > 0) {
+        var bundleName = ncLabels[ncTransitions[0]] || ncTransitions[0];
+        // Hide welcome screen and show bot greeting instead
+        var welcome = document.getElementById('ncWelcome');
+        if (welcome) welcome.style.display = 'none';
+        if (ncState) {
+          ncAddMessage('bot', 'I see you have the **' + bundleName + '** guide, and you\u2019re in **' + ncState + '**. I can help you build a personalized checklist and walk you through what to do first.\n\nWould you like me to start building your action plan, or do you have a specific question?');
+        } else {
+          ncAddMessage('bot', 'Welcome to Lumeway. I see you have the **' + bundleName + '** guide.\n\nTo personalize your action plan with the right deadlines, resources, and steps, what state are you in?');
+        }
+      }
+      // Free and all-access users just see the welcome screen with starters — no auto-greet
     }
 
     // ── Resume a specific session ──
@@ -10298,8 +10342,25 @@ guideLibrary['disability'] = {
       var existing = msgs.querySelectorAll('.nc-msg, .nc-quick-replies');
       existing.forEach(function(el) { el.remove(); });
       var welcome = document.getElementById('ncWelcome');
-      if (welcome) welcome.style.display = '';
-      ncToggleSessions(); // close panel
+      if (welcome) {
+        // Replace with generic starters so returning users get a fresh start
+        welcome.innerHTML = '<img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" style="width:48px;height:48px;object-fit:contain;margin-bottom:4px">'
+          + '<h3>Your Transition Navigator</h3>'
+          + '<p>Lumeway helps you through life\'s hardest transitions. Tell me what\'s going on and I\'ll walk you through what to do next.</p>'
+          + '<div class="nav-chat-starters">'
+          + '<button class="nav-chat-starter" onclick="ncSend(this.textContent)">I recently lost a loved one and don\'t know where to start.</button>'
+          + '<button class="nav-chat-starter" onclick="ncSend(this.textContent)">I just got laid off. What do I need to do right away?</button>'
+          + '<button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m going through a divorce and feel completely overwhelmed.</button>'
+          + '<button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m moving to a new state and need help with everything.</button>'
+          + '<button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m applying for disability benefits and don\'t know where to begin.</button>'
+          + '<button class="nav-chat-starter" onclick="ncSend(this.textContent)">I\'m getting ready to retire and want to make sure I don\'t miss anything.</button>'
+          + '<button class="nav-chat-starter" onclick="ncSend(this.textContent)">Something else is going on\u2026</button>'
+          + '</div>';
+        welcome.style.display = '';
+      }
+      // Close sessions panel if it was open
+      var sessionsPanel = document.getElementById('ncSessionsList');
+      if (sessionsPanel && sessionsPanel.style.display !== 'none') ncToggleSessions();
     }
   </script>
   <script>
