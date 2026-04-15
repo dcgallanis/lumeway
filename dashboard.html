@@ -5588,7 +5588,12 @@ guideLibrary['disability'] = {
     // Sections to skip when building letter body (info tables, branding, etc.)
     var SKIP_SECTIONS = ['ABOUT THIS TEMPLATE', 'SIGNATURE', '_ungrouped'];
     // Sections that contain sender/from info
-    var SENDER_PATTERNS = ['SENDER', 'POLICYHOLDER', 'YOUR INFORMATION', 'APPLICANT', 'REQUESTOR', 'FROM'];
+    var SENDER_PATTERNS = ['SENDER', 'POLICYHOLDER', 'YOUR INFORMATION', 'APPLICANT', 'REQUESTOR',
+      'FROM', 'PARENT / GUARDIAN 1', 'PARENT/GUARDIAN 1', 'PARENT / GUARDIAN INFO',
+      'EMPLOYEE', 'TENANT', 'RETIREE', 'CLAIMANT', 'EXECUTOR', 'BORROWER',
+      'ACCOUNT HOLDER', 'ACCOUNT / POLICY HOLDER', 'REQUESTING PARTY', 'FILING PARTY',
+      'CURRENT OWNER', 'PERSON GRANTING', 'AUTHORIZING PERSON', 'PATIENT',
+      'DONOR', 'AFFIANT', 'PERSONAL INFORMATION', 'PERSON WRITING'];
     // Sections that contain checked items (actions, documents, changes)
     var CHECKLIST_PATTERNS = ['ACTION', 'REQUEST', 'ENCLOSED', 'DOCUMENT', 'ATTACHMENT'];
 
@@ -5830,7 +5835,21 @@ guideLibrary['disability'] = {
       } else if (nameUpper.indexOf('CUSTODY') >= 0 || nameUpper.indexOf('SCHOOL NOTIFICATION') >= 0) {
         bodyHtml.push('<p>I am writing to notify you of a change in custody arrangements and to request that your records be updated to reflect the new authorized contacts and guardianship information for my child.</p>');
       } else if (nameUpper.indexOf('PARENTAL CONSENT') >= 0) {
-        bodyHtml.push('<p>I am writing to provide my formal written consent for the activity or arrangement described below involving my child.</p>');
+        var childName = findField(fields, ["Child's Full Legal Name", 'Child Full Name', 'Child Name']);
+        var activityDesc = findField(fields, ['Description of Activity', 'Type of Permission']);
+        var activityDest = findField(fields, ['Destination']);
+        var activityStart = findField(fields, ['Start Date']);
+        var activityEnd = findField(fields, ['End Date']);
+        var consentBody = 'I am writing to provide my consent and permission for my child, ' + escapeHtml(childName || '[Child\'s Full Name]');
+        if (activityDesc) consentBody += ', to ' + escapeHtml(activityDesc);
+        if (activityDest) consentBody += ' at ' + escapeHtml(activityDest);
+        consentBody += '.';
+        if (activityStart) {
+          consentBody += ' The dates of this activity are ' + escapeHtml(activityStart) + (activityEnd ? ' through ' + escapeHtml(activityEnd) : '') + '.';
+        }
+        bodyHtml.push('<p>' + consentBody + '</p>');
+        // Skip permission details from body — already in opening
+        skipDetailSections.push('PERMISSION DETAIL');
       } else if (nameUpper.indexOf('FMLA') >= 0) {
         bodyHtml.push('<p>I am writing to request leave under the Family and Medical Leave Act (FMLA). I am providing this notice as required, and I am committed to working with you to ensure a smooth transition during my absence.</p>');
       } else if (nameUpper.indexOf('DISABILITY') >= 0 && nameUpper.indexOf('ACCOMMODATION') >= 0) {
@@ -5951,7 +5970,10 @@ guideLibrary['disability'] = {
       var subject = prettyName;
       // Account number specifically (not court case numbers)
       var acctForSubject = findField(fields, ['Account Number', 'Policy Number', 'Loan Number']);
-      if (nameUpper.indexOf('NAME CHANGE') >= 0) {
+      if (nameUpper.indexOf('PARENTAL CONSENT') >= 0) {
+        var childNameSubj = findField(fields, ["Child's Full Legal Name", 'Child Full Name', 'Child Name']);
+        subject = 'Parental Consent and Permission' + (childNameSubj ? ' for ' + childNameSubj : '');
+      } else if (nameUpper.indexOf('NAME CHANGE') >= 0) {
         subject = 'Notification of Legal Name Change';
       } else if (acctForSubject) {
         if (nameUpper.indexOf('DEATH') >= 0 || nameUpper.indexOf('EXECUTOR') >= 0) {
