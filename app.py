@@ -2966,25 +2966,31 @@ def gift_redeem():
         conn.commit()
         msg = "Gift redeemed! You now have All Access — every transition, every feature."
     elif gift_type == "one_transition":
-        # Grant full access to the specific transition category
-        if transition_category and transition_category in VALID_CATEGORIES:
-            add_user_category(uid, transition_category, "full", conn)
+        # Check if user chose a category during redemption (or if gift already has one)
+        chosen_category = (request.get_json() or {}).get("chosen_category", "")
+        effective_cat = transition_category if (transition_category and transition_category in VALID_CATEGORIES) else chosen_category
+        if effective_cat and effective_cat in VALID_CATEGORIES:
+            add_user_category(uid, effective_cat, "full", conn)
             update_user_tier_from_access(uid, conn)
             # Track credit for upgrade pricing
             db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (uid,))
             conn.commit()
-            cat_label = CATEGORY_LABELS.get(transition_category, gift_label)
+            cat_label = CATEGORY_LABELS.get(effective_cat, gift_label)
             msg = f"Gift redeemed! You now have full access to {cat_label}. Head to your dashboard to get started."
             # Preload templates
             try:
-                preload_bundle_templates(uid, transition_category)
+                preload_bundle_templates(uid, effective_cat)
             except Exception as e:
                 print(f"[preload] Error during gift preload for user {uid}: {e}")
         else:
-            # Fallback: no category specified, grant credit
-            db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (uid,))
-            conn.commit()
-            msg = f"Gift redeemed! You have $39 in credit toward any transition plan."
+            # No category on gift and none chosen — ask user to pick
+            conn.close()
+            return jsonify({
+                "ok": False,
+                "needs_category": True,
+                "message": "This gift is for one transition bundle. Which one would you like?",
+                "categories": {k: v for k, v in CATEGORY_LABELS.items()}
+            })
     elif gift_type == "starter":
         db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 1600 WHERE id = {param}", (uid,))
         conn.commit()
@@ -3123,11 +3129,13 @@ def gift_redeem_verify():
                     print(f"[gift] Error preloading {cat} templates: {e}")
         msg = "Gift redeemed! You now have All Access — every transition, every feature."
     elif gift_type == "one_transition":
-        # Grant access to the specific transition the buyer chose
-        gift_cat = gift_transition if gift_transition in VALID_CATEGORIES else None
+        # Grant access to the specific transition the buyer chose, or let redeemer pick
+        chosen_category = data.get("chosen_category", "")
+        gift_cat = gift_transition if gift_transition in VALID_CATEGORIES else (chosen_category if chosen_category in VALID_CATEGORIES else None)
         if gift_cat:
             add_user_category(user_id, gift_cat, "full", conn)
             db_execute(conn, f"UPDATE users SET transition_type = {param} WHERE id = {param}", (gift_cat, user_id))
+            db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (user_id,))
             conn.commit()
             # Auto-load templates for this transition
             if gift_cat in BUNDLE_FILES:
@@ -3136,12 +3144,22 @@ def gift_redeem_verify():
                 except Exception as e:
                     print(f"[gift] Error preloading {gift_cat} templates: {e}")
             cat_label = CATEGORY_LABELS.get(gift_cat, gift_cat)
-            msg = f"Gift redeemed! You have the {cat_label} bundle. If you'd like to switch to a different transition, email cara@lumeway.co."
+            msg = f"Gift redeemed! You have the {cat_label} bundle."
         else:
-            # Fallback: give credit if no category specified
-            db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (user_id,))
+            # No category on gift — ask user to pick
+            # Don't mark as redeemed yet, undo the redeemed_by
+            db_execute(conn, f"UPDATE gift_codes SET redeemed_by = NULL, redeemed_at = NULL WHERE id = {param}", (gift_id,))
             conn.commit()
-            msg = "Gift redeemed! You have $39 in credit toward any transition plan."
+            flask_session["user_id"] = user_id
+            flask_session.permanent = True
+            conn.close()
+            return jsonify({
+                "ok": False,
+                "needs_category": True,
+                "logged_in": True,
+                "message": "This gift is for one transition. Which one would you like?",
+                "categories": {k: v for k, v in CATEGORY_LABELS.items()}
+            })
     else:
         msg = "Gift redeemed!"
 
@@ -3176,6 +3194,8 @@ def handle_gift_webhook(session_data, metadata):
     purchaser_email = metadata.get("purchaser_email", email)
     recipient_name = metadata.get("recipient_name", "")
     transition_category = metadata.get("transition_category", "")
+
+    print(f"[gift webhook] type={gift_type}, label={gift_label}, category={transition_category}, product={gift_product_id}, meta_keys={list(metadata.keys()) if isinstance(metadata, dict) else 'not-dict'}")
 
     if not purchaser_email:
         print(f"Cannot handle gift: no email")
@@ -4014,7 +4034,7 @@ def stripe_webhook():
                     for k in raw_meta:
                         metadata[k] = raw_meta[k]
                 except Exception:
-                    metadata = {k: getattr(raw_meta, k, None) for k in ["purchase_type", "product_id", "product_ids", "purchase_types", "transition", "user_id", "email", "credit_used", "category", "base_price", "credit_applied", "gift_type", "gift_label", "gift_category", "gift_message", "sender_name"] if getattr(raw_meta, k, None) is not None}
+                    metadata = {k: getattr(raw_meta, k, None) for k in ["purchase_type", "product_id", "product_ids", "purchase_types", "transition", "user_id", "email", "credit_used", "category", "base_price", "credit_applied", "gift_type", "gift_label", "gift_category", "gift_message", "sender_name", "transition_category", "gift_product_id", "purchaser_name", "purchaser_email", "recipient_name"] if getattr(raw_meta, k, None) is not None}
             else:
                 metadata = raw_meta or {}
         purchase_type = metadata.get("purchase_type", "") if isinstance(metadata, dict) else getattr(metadata, "purchase_type", "")
