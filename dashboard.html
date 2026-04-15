@@ -357,7 +357,7 @@
     .doc-desc { font-size: 12px; font-weight: 300; color: var(--muted); margin-top: 2px; }
 
     /* Document Workspace — sidebar + editor layout */
-    .ws-main { display: grid; grid-template-columns: 300px 1fr; gap: 0; height: calc(100vh - 160px); min-height: 700px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
+    .ws-main { display: grid; grid-template-columns: 300px 1fr; gap: 0; height: calc(100vh - 120px); min-height: 800px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
     @media (max-width: 768px) { .ws-main { grid-template-columns: 1fr; } }
     .ws-sticky-note { position: fixed; z-index: 999; width: 280px; min-height: 40px; background: #FFF9C4; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1); display: none; flex-direction: column; font-family: 'Plus Jakarta Sans', sans-serif; resize: both; overflow: auto; min-width: 200px; max-width: 500px; }
     .ws-sticky-note.open { display: flex; }
@@ -394,7 +394,7 @@
     .ws-search-wrap { position: relative; }
     .ws-search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
     .ws-folders { flex: 1; overflow-y: auto; padding: 10px 16px 16px; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
-    .ws-status-tabs { display: flex; gap: 6px; padding: 10px 20px; flex-wrap: wrap; }
+    .ws-status-tabs { display: flex; gap: 6px; padding: 10px 20px; flex-wrap: wrap; flex-shrink: 0; }
     .ws-status-tab { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; cursor: pointer; background: var(--warm-white); color: var(--muted); transition: all 0.15s; }
     .ws-status-tab:hover { color: var(--text); border-color: var(--navy); }
     .ws-status-tab.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
@@ -408,7 +408,7 @@
     .ws-cat-count { font-size: 11px; color: var(--muted); background: var(--cream); padding: 2px 8px; border-radius: 10px; font-weight: 500; }
     .ws-cat-chevron { font-size: 10px; color: var(--muted); transition: transform 0.2s; }
     .ws-cat-card.open .ws-cat-chevron { transform: rotate(90deg); }
-    .ws-cat-files { display: none; border-top: 1px solid var(--border); overflow-y: auto; }
+    .ws-cat-files { display: none; border-top: 1px solid var(--border); }
     .ws-cat-card.open .ws-cat-files { display: block; }
     /* Right-click context menu for file categorization */
     .ws-file-context-menu { position: fixed; z-index: 200; background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.12); padding: 6px 0; min-width: 200px; display: none; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -449,7 +449,7 @@
     .ws-file-delete { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0 4px; opacity: 0; transition: all 0.15s; flex-shrink: 0; }
     .ws-file-row:hover .ws-file-delete { opacity: 0.5; }
     .ws-file-delete:hover { opacity: 1 !important; color: var(--accent); }
-    .ws-sidebar-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+    .ws-sidebar-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); flex-shrink: 0; }
     .ws-editor { display: flex; flex-direction: column; overflow: hidden; border-left: 1px solid var(--border); min-height: 500px; }
     @media (max-width: 768px) { .ws-editor { border-left: none; border-top: 1px solid var(--border); } }
     .ws-viewer-header { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--border); background: var(--cream); flex-shrink: 0; }
@@ -5411,6 +5411,28 @@ guideLibrary['disability'] = {
             editor.on('init', function() {
               editor.setContent(html);
               wsEditorDirty = false;
+              // Inject page break after "form begins on next page" text if not already present
+              var edBody = editor.getBody();
+              var walker = document.createTreeWalker(edBody, NodeFilter.SHOW_TEXT, null, false);
+              var textNode;
+              while (textNode = walker.nextNode()) {
+                if (/form\s+begins\s+on\s+(the\s+)?next\s+page/i.test(textNode.textContent)) {
+                  var el = textNode.parentElement;
+                  while (el && el !== edBody && !['P','DIV','TR','TABLE','H1','H2','H3','H4','H5','H6'].includes(el.tagName)) {
+                    el = el.parentElement;
+                  }
+                  if (el && el !== edBody) {
+                    if (el.tagName === 'TR') el = el.closest('table') || el;
+                    // Check if a page break already follows
+                    var next = el.nextElementSibling;
+                    if (!next || !next.classList.contains('docx-page-break')) {
+                      var pb = editor.dom.create('div', { 'class': 'docx-page-break' });
+                      el.parentNode.insertBefore(pb, el.nextSibling);
+                    }
+                  }
+                  break;
+                }
+              }
             });
             editor.on('change keyup', function() {
               wsEditorDirty = true;
