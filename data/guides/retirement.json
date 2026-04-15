@@ -219,7 +219,7 @@
             "Calculate how many months you need to bridge — coverage must be continuous until your Medicare start date.",
             "Option 1 — COBRA: elect within 60 days of losing employer coverage; you pay the full premium (often $600–$1,800/month for a family) plus a 2% administrative fee; coverage lasts up to 18 months.",
             "Option 2 — Spouse's employer plan: if your spouse is still working, joining their plan is often the least expensive option; do this within 30 days of losing your own coverage to qualify for a special enrollment period.",
-            "Option 3 — ACA Marketplace plan: losing job-based coverage is a qualifying life event; shop at healthcare.gov within 60 days. If your income is under 400% of the federal poverty level (~$64,400 for a single person in 2026), you may qualify for premium tax credits.",
+            "Option 3 — ACA Marketplace plan: losing job-based coverage is a qualifying life event; shop at healthcare.gov within 60 days. If your income is under 400% of the federal poverty level (~$62,600 for a single person in 2026), you may qualify for premium tax credits.",
             "Option 4 — Retiree health plan: some employers offer retiree coverage; ask HR before your last day, as enrollment windows are often very short.",
             "Avoid short-term health plans as a primary strategy — they routinely exclude pre-existing conditions and are not ACA-compliant.",
             "If you have an HSA, use it to pay COBRA or Marketplace premiums tax-free — HSA funds can cover premiums while receiving unemployment benefits.",
@@ -425,7 +425,7 @@
           "why": "The years between retiring and turning 73 are often your lowest-income years — a rare window to convert pre-tax savings to tax-free Roth money at a lower rate than you'll face when RMDs kick in.",
           "steps": [
             "Identify your conversion window: the years after you stop working (and before Social Security, RMDs, or pension income fully phase in) when your taxable income is lowest.",
-            "Calculate how much to convert each year to \"fill up\" a tax bracket without crossing into a higher one. In 2026, the 22% bracket tops out at $106,150 taxable income for married filers; the 24% bracket goes to $201,050.",
+            "Calculate how much to convert each year to \"fill up\" a tax bracket without crossing into a higher one. In 2026, the 22% bracket tops out at $105,700 taxable income for single filers; the 24% bracket goes to $201,775.",
             "Remember that conversion income can also trigger Social Security taxation (if you're already collecting), IRMAA surcharges two years later, and loss of ACA premium tax credits if you're on a Marketplace plan.",
             "Use tax software or a fee-only planner to model the conversion amount that maximizes long-term after-tax wealth — conversion math is counterintuitive without modeling.",
             "Pay the conversion tax from taxable accounts, not from the converted IRA funds, to maximize the amount moved to Roth.",
