@@ -911,7 +911,17 @@
     }
 
     /* ── Navigator Chat Tab ── */
-    #panel-navigator { max-width: 800px; margin-left: auto; margin-right: auto; }
+    #panel-navigator { max-width: 900px; margin-left: auto; margin-right: auto; display: flex; gap: 16px; flex-wrap: wrap; }
+    #panel-navigator .nav-chat-wrap { flex: 1; min-width: 0; }
+    .nc-docs-sidebar { width: 240px; flex-shrink: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 16px; max-height: calc(100vh - 240px); overflow-y: auto; }
+    .nc-docs-header { font-size: 12px; font-weight: 600; color: var(--navy); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .nc-docs-count { display: inline-flex; align-items: center; justify-content: center; background: var(--gold); color: white; font-size: 10px; font-weight: 600; width: 18px; height: 18px; border-radius: 50%; margin-left: auto; }
+    .nc-docs-list { list-style: none; padding: 0; margin: 0; }
+    .nc-docs-list li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); font-weight: 300; line-height: 1.4; animation: fadeIn 0.3s ease; }
+    .nc-docs-list li:last-child { border-bottom: none; }
+    .nc-docs-list li a { color: var(--navy); text-decoration: none; font-weight: 400; }
+    .nc-docs-list li a:hover { color: var(--accent); }
+    @media (max-width: 768px) { .nc-docs-sidebar { width: 100%; order: 1; max-height: none; } }
     .nav-chat-wrap { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; height: calc(100vh - 240px); min-height: 400px; }
     .nav-chat-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--cream); }
     .nav-chat-header-left { display: flex; align-items: center; gap: 10px; }
@@ -7892,6 +7902,10 @@ guideLibrary['disability'] = {
       html += '  </div>';
       html += '  <div class="nav-chat-footer"><span>Lumeway is a guidance tool, not a licensed professional. Always consult a qualified advisor.</span></div>';
       html += '</div>'; // nav-chat-wrap
+      html += '<div class="nc-docs-sidebar" id="ncDocsSidebar" style="display:none">';
+      html += '  <div class="nc-docs-header"><span>&#x1F4C4;</span> Documents that may help you <span class="nc-docs-count" id="ncDocsCount">0</span></div>';
+      html += '  <ul class="nc-docs-list" id="ncDocsList"></ul>';
+      html += '</div>';
       html += '</div>'; // panel-navigator
 
       // Settings panel removed — merged into Account Settings tab above
@@ -10078,6 +10092,46 @@ guideLibrary['disability'] = {
       return output.join('');
     }
 
+    // ── Doc suggestions sidebar ──
+    var ncSuggestedDocs = [];
+    var ncDocCategoryMap = {
+      'Budget Worksheet': 'job-loss', 'Severance Review Checklist': 'job-loss', 'COBRA Decision Guide': 'job-loss',
+      'Job Search Tracker': 'job-loss', 'Unemployment Filing Guide': 'job-loss',
+      'Estate Inventory Worksheet': 'estate', 'Probate Checklist': 'estate', 'Notification Letter Template': 'estate',
+      'Account Closure Checklist': 'estate', 'Beneficiary Update Tracker': 'estate',
+      'Asset & Debt Inventory': 'divorce', 'Co-Parenting Schedule Template': 'divorce', 'Legal Document Checklist': 'divorce',
+      'Moving Checklist': 'relocation', 'Address Change Tracker': 'relocation', 'Utility Setup Guide': 'relocation',
+      'Benefits Application Checklist': 'disability', 'Medical Records Tracker': 'disability',
+      'Retirement Budget Planner': 'retirement', 'Social Security Timeline': 'retirement'
+    };
+    function ncAddDocSuggestions(docs) {
+      var sidebar = document.getElementById('ncDocsSidebar');
+      var list = document.getElementById('ncDocsList');
+      var countEl = document.getElementById('ncDocsCount');
+      if (!sidebar || !list) return;
+      docs.forEach(function(doc) {
+        if (ncSuggestedDocs.indexOf(doc) === -1) {
+          ncSuggestedDocs.push(doc);
+          var li = document.createElement('li');
+          var cat = ncDocCategoryMap[doc];
+          if (cat) {
+            var a = document.createElement('a');
+            a.href = '/dashboard#files';
+            a.textContent = doc;
+            a.onclick = function(e) { e.preventDefault(); switchTab('files'); };
+            li.appendChild(a);
+          } else {
+            li.textContent = doc;
+          }
+          list.appendChild(li);
+        }
+      });
+      if (ncSuggestedDocs.length > 0) {
+        sidebar.style.display = '';
+        if (countEl) countEl.textContent = ncSuggestedDocs.length;
+      }
+    }
+
     // ── Parse quick replies from response ──
     function ncParseQuickReplies(text) {
       var match = text.match(/\[QUICK_REPLIES:\s*(.+?)\]\s*$/);
@@ -10211,6 +10265,12 @@ guideLibrary['disability'] = {
         }
 
         function finishStream() {
+          // Parse doc suggestions before cleaning
+          var docsMatch = fullText.match(/\[DOCS:\s*(.+?)\]\s*/);
+          if (docsMatch) {
+            var docs = docsMatch[1].split('|').map(function(d) { return d.trim(); }).filter(Boolean);
+            ncAddDocSuggestions(docs);
+          }
           // Clean up special tags and show quick replies
           var cleanedText = fullText.replace(/\[DOCS:\s*.+?\]\s*/g, '').replace(/\[TEMPLATE_IDEA:\s*.+?\]\s*/g, '');
           var parsed = ncParseQuickReplies(cleanedText);
