@@ -5859,12 +5859,21 @@ guideLibrary['disability'] = {
 
           // Check if this is a section header (dark navy background)
           // Templates use #1b4f72 as the header color
+          // Browser DOM may convert hex to rgb(), so check both formats
           var firstCell = cells[0];
           var bg = firstCell.style.background || firstCell.style.backgroundColor || '';
           var cellHtml = firstCell.outerHTML || '';
-          var bgLower = (bg + ' ' + cellHtml).toLowerCase();
-          var isHeader = bgLower.indexOf('1b4f72') >= 0 || bgLower.indexOf('1b3a5c') >= 0 ||
-                         bgLower.indexOf('1B4F72') >= 0 || bgLower.indexOf('1B3A5C') >= 0;
+          var bgCheck = (bg + ' ' + cellHtml).toLowerCase();
+          var isHeader = bgCheck.indexOf('1b4f72') >= 0 || bgCheck.indexOf('1b3a5c') >= 0 ||
+                         bgCheck.indexOf('rgb(27, 79, 114)') >= 0 || bgCheck.indexOf('rgb(27,79,114)') >= 0 ||
+                         bgCheck.indexOf('rgb(27, 58, 92)') >= 0 || bgCheck.indexOf('rgb(27,58,92)') >= 0;
+          // Fallback: detect headers by pattern — single cell, ALL CAPS text, no colon
+          if (!isHeader && cells.length === 1) {
+            var hdrText = firstCell.textContent.trim();
+            if (hdrText.length > 3 && hdrText === hdrText.toUpperCase() && hdrText.indexOf(':') < 0 && /^[A-Z\s\/\-\(\)]+$/.test(hdrText)) {
+              isHeader = true;
+            }
+          }
 
           if (isHeader) {
             var headerText = firstCell.textContent.trim();
