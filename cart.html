@@ -69,6 +69,7 @@
     .cart-item-type.bundle { background: var(--navy); color: var(--cream); }
     .cart-item-type.individual { background: var(--cream); color: var(--navy); border: 1px solid var(--border); }
     .cart-item-type.plan { background: var(--accent); color: var(--cream); }
+    .cart-item-type.gift { background: var(--gold); color: white; }
     .cart-item-name { font-size: 15px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .cart-item-right { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
     .cart-item-price { font-family: 'Libre Baskerville', serif; font-size: 17px; font-weight: 500; color: var(--navy); }
@@ -301,12 +302,23 @@
 
       var html = '';
       var subtotal = 0;
+      var hasGift = false;
+      var hasGiftTransition = false;
       items.forEach(function(item) {
         subtotal += item.price;
-        var typeLabel = item.type === 'plan' ? 'plan' : item.type;
-        var typeClass = item.type === 'plan' ? 'bundle' : item.type;
+        var typeLabel = item.type === 'plan' ? 'plan' : (item.type === 'gift' ? 'gift' : item.type);
+        var typeClass = item.type === 'plan' ? 'bundle' : (item.type === 'gift' ? 'gift' : item.type);
         var desc = '';
-        if (item.type === 'bundle') {
+        if (item.type === 'gift') {
+          hasGift = true;
+          if (item.gift_type === 'one_transition') {
+            hasGiftTransition = true;
+            var catLabel = item.category ? ({'job-loss':'Job Loss','estate':'Estate','divorce':'Divorce','disability':'Disability','relocation':'Relocation','retirement':'Retirement'}[item.category] || item.category) : '';
+            desc = '<div style="font-size:12px;color:var(--muted);margin-top:2px">Gift certificate — ' + (catLabel || 'select a transition below') + '</div>';
+          } else {
+            desc = '<div style="font-size:12px;color:var(--muted);margin-top:2px">Gift certificate — all 6 transitions</div>';
+          }
+        } else if (item.type === 'bundle') {
           desc = '<div style="font-size:12px;color:var(--muted);margin-top:2px">Worksheet bundle + basic dashboard access</div>';
         } else if (item.type === 'plan' && item.purchase_type === 'one_transition') {
           desc = '<div style="font-size:12px;color:var(--muted);margin-top:2px">Full guides, calendar, documents, and dashboard tools</div>';
@@ -328,7 +340,39 @@
           + '</div>'
           + '</div>';
       });
+
+      // Gift options: transition picker + purchaser name
+      if (hasGift) {
+        html += '<div style="padding:20px 24px;background:var(--warm-white);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px">';
+        if (hasGiftTransition) {
+          html += '<div style="margin-bottom:14px">'
+            + '<label style="font-size:12px;font-weight:500;color:var(--navy);display:block;margin-bottom:6px">Which transition is this gift for?</label>'
+            + '<select id="giftCategory" onchange="updateGiftCategory(this.value)" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;background:var(--warm-white);color:var(--text)">'
+            + '<option value="">Select a transition</option>'
+            + '<option value="job-loss">Job Loss &amp; Income Crisis</option>'
+            + '<option value="estate">Death &amp; Estate</option>'
+            + '<option value="divorce">Divorce &amp; Separation</option>'
+            + '<option value="disability">Disability &amp; Benefits</option>'
+            + '<option value="relocation">Moving &amp; Relocation</option>'
+            + '<option value="retirement">Retirement Planning</option>'
+            + '</select></div>';
+        }
+        html += '<div>'
+          + '<label style="font-size:12px;font-weight:500;color:var(--navy);display:block;margin-bottom:6px">Your name (for the gift certificate)</label>'
+          + '<input type="text" id="giftPurchaserName" placeholder="Your name" oninput="giftPurchaserName=this.value" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;background:var(--warm-white);color:var(--text)">'
+          + '</div></div>';
+      }
+
       itemsEl.innerHTML = html;
+
+      // Restore selected gift category if already set
+      if (hasGiftTransition) {
+        var giftItem = items.find(function(i) { return i.type === 'gift' && i.gift_type === 'one_transition'; });
+        if (giftItem && giftItem.category) {
+          var sel = document.getElementById('giftCategory');
+          if (sel) sel.value = giftItem.category;
+        }
+      }
       subtotalEl.textContent = formatPrice(subtotal);
 
       // Apply credit display
@@ -397,6 +441,21 @@
       .then(function(data) { renderCart(data.items); });
     }
 
+    var giftPurchaserName = '';
+
+    function updateGiftCategory(category) {
+      // Find the gift-transition item and update its category on server
+      var giftItem = cartItems.find(function(i) { return i.product_id === 'gift-transition'; });
+      if (!giftItem) return;
+      fetch('/api/cart/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_id: 'gift-transition', category: category })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) { renderCart(data.items); });
+    }
+
     function loadCart() {
       fetch('/api/cart')
         .then(function(r) { return r.json(); })
@@ -424,10 +483,12 @@
       var btn = document.getElementById('btnCheckout');
       btn.disabled = true;
       btn.textContent = 'Processing...';
+      var nameEl = document.getElementById('giftPurchaserName');
+      var pName = nameEl ? nameEl.value.trim() : '';
       fetch('/api/cart/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email })
+        body: JSON.stringify({ email: email, purchaser_name: pName })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {

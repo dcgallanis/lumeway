@@ -333,36 +333,16 @@
         <h3>🎁 Gift a Plan</h3>
         <div class="addon-desc" style="margin-top:6px">Know someone going through it? Gift them a Lumeway plan.</div>
         <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-          <button class="gift-opt" onclick="selectGift(this,'gift-transition')" style="flex:1;background:var(--cream);border:2px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-family:inherit;transition:all 0.2s;text-align:center;min-width:100px">
+          <button onclick="addGiftToCart('gift-transition')" style="flex:1;background:var(--cream);border:2px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-family:inherit;transition:all 0.2s;text-align:center;min-width:100px">
             <div style="font-size:11px;font-weight:600;color:var(--navy)">Bundled Plan</div>
             <div style="font-size:16px;font-weight:500;color:var(--navy);margin-top:2px">$39</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:4px">Add to cart</div>
           </button>
-          <button class="gift-opt" onclick="selectGift(this,'gift-all')" style="flex:1;background:var(--cream);border:2px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-family:inherit;transition:all 0.2s;text-align:center;min-width:100px">
+          <button onclick="addGiftToCart('gift-all')" style="flex:1;background:var(--cream);border:2px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-family:inherit;transition:all 0.2s;text-align:center;min-width:100px">
             <div style="font-size:11px;font-weight:600;color:var(--navy)">All Access</div>
             <div style="font-size:16px;font-weight:500;color:var(--navy);margin-top:2px">$125</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:4px">Add to cart</div>
           </button>
-        </div>
-        <div id="giftForm" style="display:none;margin-top:14px;text-align:left">
-          <div id="giftTransitionPicker" style="display:none;margin-bottom:10px">
-            <label style="font-size:11px;font-weight:500;color:var(--navy);margin-bottom:4px;display:block">Which transition is this for?</label>
-            <select id="giftTransition" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none;background:var(--cream);color:var(--text)">
-              <option value="">Select a transition</option>
-              <option value="job-loss">Job Loss & Income Crisis</option>
-              <option value="estate">Death & Estate</option>
-              <option value="divorce">Divorce & Separation</option>
-              <option value="disability">Disability & Benefits</option>
-              <option value="relocation">Moving & Relocation</option>
-              <option value="retirement">Retirement Planning</option>
-            </select>
-          </div>
-          <div style="margin-bottom:8px">
-            <input type="text" id="giftFrom" placeholder="Your name (for the certificate)" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none">
-          </div>
-          <div style="margin-bottom:10px">
-            <input type="email" id="giftEmail" placeholder="Your email" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none">
-          </div>
-          <button id="giftCheckoutBtn" onclick="purchaseGift()" style="width:100%;padding:12px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s">Purchase Gift</button>
-          <p id="giftError" style="display:none;margin-top:8px;font-size:11px;color:var(--accent);text-align:center"></p>
         </div>
       </div>
     </div>
@@ -737,59 +717,25 @@
       });
     }
 
-    // Gift purchase
-    var selectedGiftProduct = null;
-    function selectGift(el, productId) {
-      selectedGiftProduct = productId;
-      document.querySelectorAll('.gift-opt').forEach(function(b) { b.style.borderColor = 'var(--border)'; b.style.background = 'var(--cream)'; });
-      el.style.borderColor = 'var(--navy)';
-      el.style.background = 'var(--warm-white)';
-      document.getElementById('giftForm').style.display = 'block';
-      // Show transition picker only for single bundle
-      document.getElementById('giftTransitionPicker').style.display = (productId === 'gift-transition') ? 'block' : 'none';
-    }
-    function purchaseGift() {
-      var from = document.getElementById('giftFrom').value.trim();
-      var email = document.getElementById('giftEmail').value.trim();
-      var errEl = document.getElementById('giftError');
-      errEl.style.display = 'none';
-      if (!email) { errEl.textContent = 'Please enter your email.'; errEl.style.display = 'block'; return; }
-      if (!selectedGiftProduct) { errEl.textContent = 'Please select a gift option.'; errEl.style.display = 'block'; return; }
-      var transitionCategory = '';
-      if (selectedGiftProduct === 'gift-transition') {
-        transitionCategory = document.getElementById('giftTransition').value;
-        if (!transitionCategory) { errEl.textContent = 'Please select which transition this gift is for.'; errEl.style.display = 'block'; return; }
-      }
-      var btn = document.getElementById('giftCheckoutBtn');
-      btn.disabled = true;
-      btn.textContent = 'Processing...';
-      fetch('/api/create-gift-checkout', {
+    // Gift — add to cart, pick bundle in cart
+    function addGiftToCart(productId) {
+      var price = productId === 'gift-all' ? 125 : 39;
+      var name = productId === 'gift-all' ? 'Gift — All Access' : 'Gift — Bundled Plan';
+      var giftType = productId === 'gift-all' ? 'all_transitions' : 'one_transition';
+      fetch('/api/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          product_id: selectedGiftProduct,
-          purchaser_name: from,
-          purchaser_email: email,
-          transition_category: transitionCategory
+          product_id: productId,
+          name: name,
+          price: price,
+          type: 'gift',
+          purchase_type: 'gift',
+          gift_type: giftType
         })
       })
       .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.url) {
-          window.location.href = data.url;
-        } else {
-          errEl.textContent = data.error || 'Something went wrong.';
-          errEl.style.display = 'block';
-          btn.disabled = false;
-          btn.textContent = 'Purchase Gift';
-        }
-      })
-      .catch(function() {
-        errEl.textContent = 'Something went wrong. Please try again.';
-        errEl.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = 'Purchase Gift';
-      });
+      .then(function() { window.location.href = '/cart'; });
     }
   </script>
   <script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>

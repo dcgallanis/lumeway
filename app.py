@@ -4696,7 +4696,8 @@ def add_to_cart():
     item_type = data.get("type")  # "bundle", "individual", "plan"
     purchase_type = data.get("purchase_type", item_type)  # "bundle", "individual", "one_transition", "add_transition", "all_transitions"
     category = data.get("category", "")
-    if not product_id or not name or price is None or item_type not in ("bundle", "individual", "plan"):
+    gift_type = data.get("gift_type", "")
+    if not product_id or not name or price is None or item_type not in ("bundle", "individual", "plan", "gift"):
         return jsonify({"error": "Missing or invalid fields"}), 400
     cart = flask_session.get("cart", [])
     # Prevent duplicates
@@ -4706,7 +4707,27 @@ def add_to_cart():
     cart_item = {"product_id": product_id, "name": name, "price": price, "type": item_type, "purchase_type": purchase_type}
     if category:
         cart_item["category"] = category
+    if gift_type:
+        cart_item["gift_type"] = gift_type
     cart.append(cart_item)
+    flask_session["cart"] = cart
+    return jsonify({"items": cart})
+
+@app.route("/api/cart/update", methods=["POST"])
+def update_cart_item():
+    """Update fields on an existing cart item (e.g. gift category, purchaser name)."""
+    data = request.get_json() or {}
+    product_id = data.get("product_id")
+    cart = flask_session.get("cart", [])
+    for item in cart:
+        if item["product_id"] == product_id:
+            if "category" in data:
+                item["category"] = data["category"]
+            if "purchaser_name" in data:
+                item["purchaser_name"] = data["purchaser_name"]
+            if "gift_type" in data:
+                item["gift_type"] = data["gift_type"]
+            break
     flask_session["cart"] = cart
     return jsonify({"items": cart})
 
@@ -4726,14 +4747,81 @@ def cart_checkout():
         return jsonify({"error": "Cart is empty"}), 400
     data = request.get_json() or {}
     email = data.get("email", "").strip().lower()
+    purchaser_name = data.get("purchaser_name", "").strip()
     if not email or "@" not in email:
         return jsonify({"error": "Email is required"}), 400
-    # Calculate total and build line items
+
+    # Separate gift items from regular items
+    gift_items = [i for i in cart if i.get("purchase_type") == "gift"]
+    regular_items = [i for i in cart if i.get("purchase_type") != "gift"]
+
+    # If cart has gift items, route through gift checkout
+    if gift_items:
+        # For now, handle one gift at a time (most common case)
+        gift = gift_items[0]
+        gift_type = gift.get("gift_type", "one_transition")
+        transition_category = gift.get("category", "")
+        product_id = gift["product_id"]
+
+        # Validate: single-bundle gifts need a transition category
+        if gift_type == "one_transition" and not transition_category:
+            return jsonify({"error": "Please select which transition this gift is for."}), 400
+
+        gp = GIFT_PRODUCTS.get(product_id, {})
+        label = gp.get("label", gift["name"])
+        if gift_type == "one_transition" and transition_category in CATEGORY_LABELS:
+            label = f"Bundled Plan — {CATEGORY_LABELS[transition_category]}"
+
+        try:
+            # Build line items: gift + any regular items
+            all_line_items = []
+            for item in cart:
+                amount_cents = int(item["price"] * 100)
+                all_line_items.append({
+                    "price_data": {
+                        "currency": "usd",
+                        "product_data": {"name": item["name"]},
+                        "unit_amount": amount_cents,
+                    },
+                    "quantity": 1,
+                })
+
+            meta = {
+                "purchase_type": "gift",
+                "gift_product_id": product_id,
+                "gift_type": gift_type,
+                "gift_label": label,
+                "purchaser_name": purchaser_name,
+                "purchaser_email": email,
+                "recipient_name": "",
+                "transition_category": transition_category,
+            }
+            # If there are also regular items, include their info
+            if regular_items:
+                meta["regular_product_ids"] = ",".join(i["product_id"] for i in regular_items)
+                meta["regular_purchase_types"] = ",".join(i.get("purchase_type", "bundle") for i in regular_items)
+
+            session = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                customer_email=email,
+                line_items=all_line_items,
+                mode="payment",
+                allow_promotion_codes=True,
+                success_url=request.host_url + "gift/success?session_id={CHECKOUT_SESSION_ID}",
+                cancel_url=request.host_url + "cart",
+                metadata=meta,
+            )
+            flask_session["cart"] = []
+            return jsonify({"url": session.url})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    # Regular (non-gift) cart checkout
     line_items = []
     product_ids = []
     purchase_types = []
     total_cents = 0
-    for item in cart:
+    for item in regular_items:
         amount_cents = int(item["price"] * 100)
         total_cents += amount_cents
         product_ids.append(item["product_id"])
@@ -4787,19 +4875,10 @@ def cart_checkout():
     # Otherwise create Stripe checkout
     # If credit applies, adjust the line items
     if credit_used > 0 and len(line_items) > 0:
-        line_items.append({
-            "price_data": {
-                "currency": "usd",
-                "product_data": {"name": f"Account credit applied"},
-                "unit_amount": -credit_used if credit_used > 0 else 0,
-            },
-            "quantity": 1,
-        })
-        # Stripe doesn't support negative amounts, so recalculate as single line
         line_items = [{
             "price_data": {
                 "currency": "usd",
-                "product_data": {"name": "Lumeway — " + ", ".join(item["name"] for item in cart)},
+                "product_data": {"name": "Lumeway — " + ", ".join(item["name"] for item in regular_items)},
                 "unit_amount": charge_cents,
             },
             "quantity": 1,
