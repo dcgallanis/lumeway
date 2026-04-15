@@ -5214,9 +5214,8 @@ guideLibrary['disability'] = {
     }
 
     function cleanupEditor() {
-      if (wsQuill && wsQuill._tinymce && typeof tinymce !== 'undefined') {
-        var ed = tinymce.get('wsDocEditor');
-        if (ed) ed.remove();
+      if (typeof tinymce !== 'undefined') {
+        tinymce.editors.slice().forEach(function(ed) { try { ed.remove(); } catch(e) {} });
       }
       wsQuill = null;
     }
@@ -5460,7 +5459,7 @@ guideLibrary['disability'] = {
               var walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false);
               var node;
               while (node = walker.nextNode()) {
-                if (/form\s+begins\s+on\s+next\s+page/i.test(node.textContent)) {
+                if (/form\s+begins\s+on\s+(the\s+)?next\s+page/i.test(node.textContent)) {
                   var el = node.parentElement;
                   // Walk up to find the block-level parent (p, div, tr, etc.)
                   while (el && el !== body && !['P','DIV','TR','TABLE','H1','H2','H3','H4','H5','H6'].includes(el.tagName)) {
