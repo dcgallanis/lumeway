@@ -11,4 +11,4 @@ PyJWT
 python-dotenv
 requests
 stripe
-weasyprint
+fpdf2

@@ -2938,13 +2938,13 @@ def gift_redeem():
 
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
-    cur = db_execute(conn, f"SELECT id, gift_type, gift_label, redeemed_by, redeemed_at FROM gift_codes WHERE code = {param}", (code,))
+    cur = db_execute(conn, f"SELECT id, gift_type, gift_label, redeemed_by, redeemed_at, transition_category FROM gift_codes WHERE code = {param}", (code,))
     row = cur.fetchone()
     if not row:
         conn.close()
         return jsonify({"error": "That code doesn't look right. Double-check and try again."}), 400
 
-    gift_id, gift_type, gift_label, redeemed_by, redeemed_at = row
+    gift_id, gift_type, gift_label, redeemed_by, redeemed_at, transition_category = row
     if redeemed_by is not None:
         conn.close()
         return jsonify({"error": "This gift code has already been redeemed."}), 400
@@ -2966,14 +2966,25 @@ def gift_redeem():
         conn.commit()
         msg = "Gift redeemed! You now have All Access — every transition, every feature."
     elif gift_type == "one_transition":
-        # Get the transition category from the gift record
-        cur2 = db_execute(conn, f"SELECT gift_label FROM gift_codes WHERE id = {param}", (gift_id,))
-        # Try to extract category from label, or grant a choosable one
-        # For now, grant full access to one category — they pick on dashboard
-        msg = f"Gift redeemed! You have access to the {gift_label}. Head to your dashboard to get started."
-        # Grant credit equivalent
-        db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (uid,))
-        conn.commit()
+        # Grant full access to the specific transition category
+        if transition_category and transition_category in VALID_CATEGORIES:
+            add_user_category(uid, transition_category, "full", conn)
+            update_user_tier_from_access(uid, conn)
+            # Track credit for upgrade pricing
+            db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (uid,))
+            conn.commit()
+            cat_label = CATEGORY_LABELS.get(transition_category, gift_label)
+            msg = f"Gift redeemed! You now have full access to {cat_label}. Head to your dashboard to get started."
+            # Preload templates
+            try:
+                preload_bundle_templates(uid, transition_category)
+            except Exception as e:
+                print(f"[preload] Error during gift preload for user {uid}: {e}")
+        else:
+            # Fallback: no category specified, grant credit
+            db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 3900 WHERE id = {param}", (uid,))
+            conn.commit()
+            msg = f"Gift redeemed! You have $39 in credit toward any transition plan."
     elif gift_type == "starter":
         db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 1600 WHERE id = {param}", (uid,))
         conn.commit()
@@ -3229,18 +3240,9 @@ def send_gift_email(to_email, purchaser_name, recipient_name, code, gift_label, 
     </p>
     """)
 
-    # Convert certificate HTML to PDF using weasyprint
-    try:
-        from weasyprint import HTML as WeasyprintHTML
-        pdf_bytes = WeasyprintHTML(string=certificate_html).write_pdf()
-        cert_b64 = base64.b64encode(pdf_bytes).decode("utf-8")
-        attachment_filename = "lumeway-gift-certificate.pdf"
-        attachment_content_type = "application/pdf"
-    except Exception as pdf_err:
-        print(f"PDF conversion failed, falling back to HTML attachment: {pdf_err}")
-        cert_b64 = base64.b64encode(certificate_html.encode("utf-8")).decode("utf-8")
-        attachment_filename = "lumeway-gift-certificate.html"
-        attachment_content_type = "text/html"
+    # Build PDF certificate using fpdf2 (pure Python, no system deps)
+    pdf_bytes = build_gift_certificate_pdf(purchaser_name, recipient_name, code, gift_label, amount_cents)
+    cert_b64 = base64.b64encode(pdf_bytes).decode("utf-8")
 
     # Send with PDF attachment via Resend
     try:
@@ -3250,9 +3252,9 @@ def send_gift_email(to_email, purchaser_name, recipient_name, code, gift_label, 
             "subject": "Your Lumeway gift certificate is ready",
             "html": body,
             "attachments": [{
-                "filename": attachment_filename,
+                "filename": "lumeway-gift-certificate.pdf",
                 "content": cert_b64,
-                "content_type": attachment_content_type,
+                "content_type": "application/pdf",
             }],
         }, headers={
             "Authorization": f"Bearer {RESEND_API_KEY}",
@@ -3264,6 +3266,153 @@ def send_gift_email(to_email, purchaser_name, recipient_name, code, gift_label, 
             print(f"Gift email error ({resp.status_code}): {resp.text}")
     except Exception as e:
         print(f"Failed to send gift email: {e}")
+
+
+def build_gift_certificate_pdf(purchaser_name, recipient_name, code, gift_label, amount_cents):
+    """Build a printable PDF gift certificate matching the designed template."""
+    from fpdf import FPDF
+
+    class CertPDF(FPDF):
+        pass
+
+    pdf = CertPDF(orientation='P', unit='in', format='Letter')
+    pdf.set_auto_page_break(auto=False)
+    pdf.add_page()
+
+    # Page dimensions
+    W, H = 8.5, 11.0
+
+    # ── Background ──
+    pdf.set_fill_color(247, 244, 239)  # #f7f4ef
+    pdf.rect(0, 0, W, H, 'F')
+
+    # ── Double border frame ──
+    pdf.set_draw_color(141, 119, 104)  # #8d7768
+    pdf.set_line_width(0.008)
+    # Outer frame
+    pdf.rect(0.55, 0.55, W - 1.1, H - 1.1)
+    # Inner frame
+    pdf.set_line_width(0.006)
+    pdf.rect(0.63, 0.63, W - 1.26, H - 1.26)
+
+    # ── Sun mark (simple circle + rays) ──
+    cx, cy = W / 2, 2.2
+    pdf.set_fill_color(92, 77, 67)  # #5c4d43
+    pdf.set_draw_color(92, 77, 67)
+    # Center circle
+    pdf.ellipse(cx - 0.12, cy - 0.12, 0.24, 0.24, 'F')
+    # Rays (4 cardinal + 4 diagonal)
+    pdf.set_line_width(0.012)
+    ray_len = 0.18
+    ray_start = 0.18
+    for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0), (-0.707, -0.707), (0.707, 0.707), (-0.707, 0.707), (0.707, -0.707)]:
+        pdf.line(cx + dx * ray_start, cy + dy * ray_start, cx + dx * (ray_start + ray_len), cy + dy * (ray_start + ray_len))
+
+    # ── LUMEWAY brand name ──
+    pdf.set_font('Helvetica', '', 11)
+    pdf.set_text_color(27, 58, 92)  # #1b3a5c
+    brand = 'L  U  M  E  W  A  Y'
+    pdf.set_xy(0, 2.6)
+    pdf.cell(W, 0.25, brand, align='C')
+
+    # ── Top divider ──
+    pdf.set_draw_color(196, 181, 166)  # #c4b5a6
+    pdf.set_line_width(0.006)
+    pdf.line(W / 2 - 0.4, 3.0, W / 2 + 0.4, 3.0)
+
+    # ── "Someone is thinking of you." ──
+    pdf.set_font('Helvetica', '', 26)
+    pdf.set_text_color(27, 58, 92)
+    pdf.set_xy(0, 3.25)
+    pdf.cell(W, 0.35, 'Someone is thinking of you.', align='C')
+
+    # ── "You've been gifted..." ──
+    pdf.set_font('Helvetica', 'I', 18)
+    pdf.set_text_color(141, 119, 104)  # #8d7768
+    pdf.set_xy(0, 3.75)
+    pdf.cell(W, 0.28, "You've been gifted a Lumeway bundle", align='C')
+    pdf.set_xy(0, 4.05)
+    pdf.cell(W, 0.28, 'to help you through this change.', align='C')
+
+    # ── Blurb ──
+    pdf.set_font('Helvetica', '', 8.5)
+    pdf.set_text_color(107, 91, 80)  # #6b5b50
+    blurb = "Lumeway helps people navigate life's hardest moments -- job loss, divorce, loss of a loved one, disability, relocation, and retirement. With step-by-step worksheets, planning tools, and practical resources, we help you understand what comes next."
+    pdf.set_xy(1.5, 4.55)
+    pdf.multi_cell(W - 3.0, 0.18, blurb, align='C')
+
+    # ── YOUR REDEMPTION CODE ──
+    pdf.set_font('Helvetica', '', 8)
+    pdf.set_text_color(141, 119, 104)
+    pdf.set_xy(0, 5.35)
+    pdf.cell(W, 0.15, 'Y O U R   R E D E M P T I O N   C O D E', align='C')
+
+    # Code box
+    code_w = 2.8
+    code_h = 0.55
+    code_x = (W - code_w) / 2
+    code_y = 5.6
+    pdf.set_draw_color(141, 119, 104)
+    pdf.set_line_width(0.01)
+    pdf.dashed_line(code_x, code_y, code_x + code_w, code_y, 0.06, 0.04)
+    pdf.dashed_line(code_x + code_w, code_y, code_x + code_w, code_y + code_h, 0.06, 0.04)
+    pdf.dashed_line(code_x + code_w, code_y + code_h, code_x, code_y + code_h, 0.06, 0.04)
+    pdf.dashed_line(code_x, code_y + code_h, code_x, code_y, 0.06, 0.04)
+
+    pdf.set_font('Helvetica', 'B', 20)
+    pdf.set_text_color(27, 58, 92)
+    pdf.set_xy(code_x, code_y + 0.12)
+    pdf.cell(code_w, 0.3, code, align='C')
+
+    # ── HOW TO REDEEM ──
+    pdf.set_font('Helvetica', '', 8)
+    pdf.set_text_color(141, 119, 104)
+    pdf.set_xy(0, 6.4)
+    pdf.cell(W, 0.15, 'H O W   T O   R E D E E M', align='C')
+
+    steps = [
+        '1.  Visit lumeway.co/gift/redeem',
+        '2.  Enter your code and email address',
+        '3.  Check your email for a login link',
+        '4.  Log in -- your bundle and guide will be ready in your dashboard',
+    ]
+    pdf.set_font('Helvetica', '', 9)
+    pdf.set_text_color(92, 77, 67)
+    step_y = 6.7
+    for step in steps:
+        pdf.set_xy(2.4, step_y)
+        pdf.cell(4, 0.18, step)
+        step_y += 0.22
+
+    pdf.set_font('Helvetica', 'I', 7.5)
+    pdf.set_text_color(141, 119, 104)
+    pdf.set_xy(0, step_y + 0.08)
+    pdf.cell(W, 0.15, 'Your code never expires. Take your time.', align='C')
+
+    # ── Personal note ──
+    pdf.set_font('Helvetica', '', 7.5)
+    pdf.set_text_color(107, 91, 80)
+    pdf.set_xy(1.8, step_y + 0.45)
+    pdf.multi_cell(W - 3.6, 0.15, "Not sure where to start, or having trouble redeeming your code?\nOur founder Cara is happy to help -- reach out at cara@lumeway.co", align='C')
+
+    # ── Bottom divider ──
+    pdf.set_draw_color(196, 181, 166)
+    pdf.set_line_width(0.006)
+    div_y = step_y + 0.95
+    pdf.line(W / 2 - 0.4, div_y, W / 2 + 0.4, div_y)
+
+    # ── Footer ──
+    pdf.set_font('Helvetica', 'I', 9.5)
+    pdf.set_text_color(141, 119, 104)
+    pdf.set_xy(0, div_y + 0.18)
+    pdf.cell(W, 0.2, 'Helping you find your way through.', align='C')
+
+    pdf.set_font('Helvetica', '', 7.5)
+    pdf.set_text_color(184, 161, 146)  # #b8a192
+    pdf.set_xy(0, div_y + 0.42)
+    pdf.cell(W, 0.15, 'lumeway.co', align='C')
+
+    return pdf.output()
 
 
 def build_gift_certificate(purchaser_name, recipient_name, code, gift_label, amount_cents):
