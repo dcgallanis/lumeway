@@ -4787,6 +4787,15 @@ def purchase_success():
                         handle_tier_upgrade(session_data, metadata)
                     product_name = PASS_PRODUCTS.get(product_id, {}).get("name", "Your Plan")
                     return render_template_string(TIER_SUCCESS_HTML, product_name=product_name, tier=purchase_type)
+                elif purchase_type == "cart":
+                    # Cart purchase — fulfill via cart webhook handler if not already done
+                    if not row:
+                        print(f"Cart purchase-success fallback: fulfilling now...")
+                        handle_cart_webhook(session_data, metadata)
+                    product_ids = metadata.get("product_ids", "").split(",")
+                    product_names = [CATEGORY_LABELS.get(pid.replace("plan-", "").replace("bundle-", ""), pid) for pid in product_ids]
+                    combined_name = ", ".join(product_names) if product_names else "Your Purchase"
+                    return render_template_string(PURCHASE_SUCCESS_HTML, product_name=combined_name)
                 else:
                     # Template bundle purchase
                     product = PRODUCTS.get(product_id, {})
