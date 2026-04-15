@@ -753,11 +753,11 @@ def init_subscribers_db():
             conn_obs.close()
         except Exception:
             pass
-    # Etsy redemptions table (idempotent)
+    # Code redemptions table (idempotent)
     try:
-        conn_etsy = get_db()
+        conn_codes = get_db()
         if USE_POSTGRES:
-            db_execute(conn_etsy, """CREATE TABLE IF NOT EXISTS etsy_redemptions (
+            db_execute(conn_codes, """CREATE TABLE IF NOT EXISTS etsy_redemptions (
                 id SERIAL PRIMARY KEY,
                 user_id INTEGER NOT NULL,
                 code TEXT NOT NULL,
@@ -766,7 +766,7 @@ def init_subscribers_db():
                 redeemed_at TEXT NOT NULL
             )""")
         else:
-            db_execute(conn_etsy, """CREATE TABLE IF NOT EXISTS etsy_redemptions (
+            db_execute(conn_codes, """CREATE TABLE IF NOT EXISTS etsy_redemptions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
                 code TEXT NOT NULL,
@@ -774,11 +774,11 @@ def init_subscribers_db():
                 credit_cents INTEGER NOT NULL DEFAULT 1600,
                 redeemed_at TEXT NOT NULL
             )""")
-        conn_etsy.commit()
-        conn_etsy.close()
+        conn_codes.commit()
+        conn_codes.close()
     except Exception:
         try:
-            conn_etsy.close()
+            conn_codes.close()
         except Exception:
             pass
     # Gift codes table (idempotent)
@@ -861,7 +861,7 @@ def init_subscribers_db():
             conn3.close()
         except Exception:
             pass
-    # Revenue entries table (for manual revenue like Etsy sales)
+    # Revenue entries table (for manual revenue tracking)
     try:
         conn4 = get_db()
         if USE_POSTGRES:
@@ -1418,8 +1418,8 @@ PROMO_CODES = {
     "LUMEFRIEND": {"tier": "all_transitions", "label": "Full Access — All Transitions"},
 }
 
-# Etsy redemption codes — one per category, reusable
-ETSY_CODES = {
+# Redemption codes — one per category, reusable
+REDEMPTION_CODES = {
     "LUMEWAY-JOBLOSS1": {"category": "job-loss", "credit_cents": 1600},
     "LUMEWAY-ESTATE2": {"category": "estate", "credit_cents": 1600},
     "LUMEWAY-DIVORCE5": {"category": "divorce", "credit_cents": 1600},
@@ -2573,7 +2573,7 @@ BUNDLE_FILES = {
 
 def preload_bundle_templates(user_id, category):
     """Extract individual template files from a bundle zip and add them to the user's workspace.
-    Called after purchase fulfillment or Etsy code redemption."""
+    Called after purchase fulfillment or code redemption."""
     import zipfile as _zipfile
 
     # For master bundle, preload all individual bundles
@@ -3201,7 +3201,7 @@ def handle_gift_webhook(session_data, metadata):
 
 
 def send_gift_email(to_email, purchaser_name, recipient_name, code, gift_label, amount_cents):
-    """Send the gift purchase confirmation with HTML certificate attached."""
+    """Send the gift purchase confirmation with printable PDF certificate attached."""
     import base64
 
     # Build the HTML certificate
@@ -3225,12 +3225,24 @@ def send_gift_email(to_email, purchaser_name, recipient_name, code, gift_label, 
         <li>Enter the code above</li>
     </ol>
     <p style="font-size:13px;line-height:1.7;margin:0 0 8px;color:#6B7B8D;">
-        We also attached a printable gift certificate to this email — feel free to print it out or forward this email.
+        We also attached a printable gift certificate — open the PDF, print it out, or forward this email.
     </p>
     """)
 
-    # Send with attachment via Resend
-    cert_b64 = base64.b64encode(certificate_html.encode("utf-8")).decode("utf-8")
+    # Convert certificate HTML to PDF using weasyprint
+    try:
+        from weasyprint import HTML as WeasyprintHTML
+        pdf_bytes = WeasyprintHTML(string=certificate_html).write_pdf()
+        cert_b64 = base64.b64encode(pdf_bytes).decode("utf-8")
+        attachment_filename = "lumeway-gift-certificate.pdf"
+        attachment_content_type = "application/pdf"
+    except Exception as pdf_err:
+        print(f"PDF conversion failed, falling back to HTML attachment: {pdf_err}")
+        cert_b64 = base64.b64encode(certificate_html.encode("utf-8")).decode("utf-8")
+        attachment_filename = "lumeway-gift-certificate.html"
+        attachment_content_type = "text/html"
+
+    # Send with PDF attachment via Resend
     try:
         resp = http_requests.post("https://api.resend.com/emails", json={
             "from": "Lumeway <hello@lumeway.co>",
@@ -3238,8 +3250,9 @@ def send_gift_email(to_email, purchaser_name, recipient_name, code, gift_label, 
             "subject": "Your Lumeway gift certificate is ready",
             "html": body,
             "attachments": [{
-                "filename": "lumeway-gift-certificate.html",
+                "filename": attachment_filename,
                 "content": cert_b64,
+                "content_type": attachment_content_type,
             }],
         }, headers={
             "Authorization": f"Bearer {RESEND_API_KEY}",
@@ -3588,7 +3601,7 @@ def build_gift_certificate(purchaser_name, recipient_name, code, gift_label, amo
 
 @app.route("/api/redeem-code", methods=["POST"])
 def redeem_code():
-    """Redeem a promo code or Etsy purchase code."""
+    """Redeem a promo code or purchase code."""
     user = get_current_user()
     if not user:
         return jsonify({"error": "Please log in first."}), 401
@@ -3720,9 +3733,9 @@ def redeem_code():
             "message": msg
         })
 
-    if code not in ETSY_CODES:
+    if code not in REDEMPTION_CODES:
         return jsonify({"error": "That code doesn't look right. Double-check and try again."}), 400
-    code_info = ETSY_CODES[code]
+    code_info = REDEMPTION_CODES[code]
     category = code_info["category"]
     credit_amount = code_info["credit_cents"]
     # Check if already redeemed by this user for this category
@@ -3758,16 +3771,16 @@ def redeem_code():
                     """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                     (user["email"], cat, bundle_product.get("name", f"{cat.title()} Bundle"), 0,
-                     f"etsy-redeem-{cat}-{now}", None, now, bundle_token, True if USE_POSTGRES else 1))
+                     f"code-redeem-{cat}-{now}", None, now, bundle_token, True if USE_POSTGRES else 1))
                 conn.commit()
             except Exception as e:
-                print(f"Error granting etsy bundle {cat}: {e}")
+                print(f"Error granting bundle {cat}: {e}")
     conn.close()
     # Preload individual template files into user's workspace
     try:
         preload_bundle_templates(user["id"], category)
     except Exception as e:
-        print(f"[preload] Error during Etsy preload for user {user['id']}: {e}")
+        print(f"[preload] Error during preload for user {user['id']}: {e}")
     return jsonify({
         "ok": True,
         "category": category,
@@ -4926,11 +4939,22 @@ def _fulfill_cart_item(email, item, user_id):
     except Exception as e:
         print(f"Error recording cart purchase: {e}")
     # Grant appropriate access based on purchase type
+    amount_cents = int(item["price"] * 100)
     if purchase_type == "one_transition" and user_id:
         cat = item.get("category", "")
         if cat in VALID_CATEGORIES:
             add_user_category(user_id, cat, "full")
             update_user_tier_from_access(user_id)
+            # Track what they paid as credit toward future upgrades
+            if amount_cents > 0:
+                try:
+                    conn2 = get_db()
+                    p = "%s" if USE_POSTGRES else "?"
+                    db_execute(conn2, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + {p} WHERE id = {p}", (amount_cents, user_id))
+                    conn2.commit()
+                    conn2.close()
+                except Exception as e:
+                    print(f"Error updating credit for cart one_transition: {e}")
             try:
                 preload_bundle_templates(user_id, cat)
             except Exception as e:
@@ -4940,6 +4964,16 @@ def _fulfill_cart_item(email, item, user_id):
         if cat in VALID_CATEGORIES:
             add_user_category(user_id, cat, "full")
             update_user_tier_from_access(user_id)
+            # Track what they paid as credit toward future upgrades
+            if amount_cents > 0:
+                try:
+                    conn2 = get_db()
+                    p = "%s" if USE_POSTGRES else "?"
+                    db_execute(conn2, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + {p} WHERE id = {p}", (amount_cents, user_id))
+                    conn2.commit()
+                    conn2.close()
+                except Exception as e:
+                    print(f"Error updating credit for cart add_transition: {e}")
             try:
                 preload_bundle_templates(user_id, cat)
             except Exception as e:

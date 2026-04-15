@@ -48,11 +48,11 @@
     .nav-drop-btn:hover { color: var(--navy); }
     .nav-drop-btn .chev { display: inline-block; font-size: 10px; transition: transform 0.2s ease; }
     .nav-dropdown:hover .nav-drop-btn .chev { transform: rotate(180deg); }
-    .nav-drop-menu { display: none; position: absolute; top: 100%; left: -8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 210px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
+    .nav-drop-menu { display: none; position: absolute; top: 100%; left: -8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 14px 6px 6px; min-width: 210px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
     .nav-drop-menu a { display: block; padding: 9px 14px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 8px; transition: background 0.12s; }
     .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--cream); color: var(--navy); }
     .nav-drop-menu .menu-div { height: 1px; background: var(--border); margin: 4px 6px; }
-    .nav-dropdown:hover .nav-drop-menu { display: block; }
+    .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
     .hero { width: 100%; padding: 140px 5% 60px; text-align: center; }
     .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
     .hero-title { font-family: 'Libre Baskerville', serif; font-size: clamp(40px, 7vw, 72px); font-weight: 300; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 24px; }

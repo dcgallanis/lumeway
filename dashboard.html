@@ -6600,7 +6600,7 @@ guideLibrary['disability'] = {
       var hasStarterCat = Object.keys(catAccess).some(function(k) { return catAccess[k] === 'starter'; });
       var unlocked = hasFullAccess || hasSomeFullCat;
       window._dashUnlocked = unlocked;
-      // Starter/Etsy users: unlock files tab (templates only) but not other gated tabs
+      // Starter users: unlock files tab (templates only) but not other gated tabs
       var filesUnlocked = unlocked || hasStarterCat;
       var lockIcon = '<span class="tab-lock">🔒</span>';
 
@@ -7695,7 +7695,7 @@ guideLibrary['disability'] = {
       var creditCents = dashData.credit_cents || 0;
       var tierLabels = { free: 'Free', starter: 'Starter', one_transition: 'Bundled Plan', all_transitions: 'All Access', pass: 'Bundled Plan', unlimited: 'All Access' };
       var tierLabel = tierLabels[tier] || 'Free';
-      var transLabels = { 'job-loss': 'Job Loss', estate: 'Estate', divorce: 'Divorce', disability: 'Disability', relocation: 'Relocation', retirement: 'Retirement' };
+      var transLabels = { 'job-loss': 'Job Loss', estate: 'Estate', divorce: 'Divorce', disability: 'Disability', relocation: 'Relocation', retirement: 'Retirement', addiction: 'Addiction & Recovery' };
       html += '  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">';
       html += '    <span style="display:inline-block;padding:6px 16px;background:' + (tier === 'free' ? 'var(--cream)' : 'var(--navy)') + ';color:' + (tier === 'free' ? 'var(--text)' : 'var(--cream)') + ';border-radius:100px;font-size:13px;font-weight:500;border:1px solid var(--border)">' + tierLabel + '</span>';
       // Show which categories they have access to
@@ -7767,10 +7767,10 @@ guideLibrary['disability'] = {
         html += '</div>';
       }
 
-      // Code Redemption (promo codes + Etsy codes)
+      // Code Redemption (promo codes + purchase codes)
       html += '<div class="dash-card" style="margin-top:16px">';
       html += '  <div class="card-label">Redeem a Code</div>';
-      html += '  <p style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:12px">Have a promo code or Etsy purchase code? Enter it here to unlock access.</p>';
+      html += '  <p style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:12px">Have a redemption code? Enter it here to unlock access.</p>';
       html += '  <div style="display:flex;gap:8px">';
       html += '    <input id="redeemCodeInput" placeholder="" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;background:var(--warm-white);color:var(--text);text-transform:uppercase">';
       html += '    <button onclick="redeemCode()" style="padding:10px 20px;background:var(--accent);color:var(--cream);border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:Plus Jakarta Sans,sans-serif;font-weight:500">Redeem</button>';
@@ -9437,7 +9437,7 @@ guideLibrary['disability'] = {
       .then(function(data) {
         var post = data.post;
         var replies = data.replies || [];
-        var transLabels = {"job-loss":"Job Loss & Income Crisis","estate":"Death & Estate","divorce":"Divorce & Separation","disability":"Disability & Benefits","relocation":"Moving & Relocation","retirement":"Retirement Planning"};
+        var transLabels = {"job-loss":"Job Loss & Income Crisis","estate":"Death & Estate","divorce":"Divorce & Separation","disability":"Disability & Benefits","relocation":"Moving & Relocation","retirement":"Retirement Planning","addiction":"Addiction & Recovery"};
         var cats = [{"id":"general","label":"General"},{"id":"emotional-support","label":"Emotional Support"},{"id":"legal-questions","label":"Legal Questions"},{"id":"financial","label":"Financial"},{"id":"success-stories","label":"Success Stories"},{"id":"ask-cara","label":"Ask Cara"}];
         var catLabel = '';
         cats.forEach(function(c) { if (c.id === post.category) catLabel = c.label; });
@@ -9900,7 +9900,7 @@ guideLibrary['disability'] = {
       showChatRecommendBanner(key);
     }
     function showChatRecommendBanner(transitionKey) {
-      var transLabels = { 'estate': 'loss of a loved one', 'divorce': 'divorce or separation', 'job-loss': 'job loss', 'relocation': 'a move', 'disability': 'disability', 'retirement': 'retirement' };
+      var transLabels = { 'estate': 'loss of a loved one', 'divorce': 'divorce or separation', 'job-loss': 'job loss', 'relocation': 'a move', 'disability': 'disability', 'retirement': 'retirement', 'addiction': 'addiction recovery' };
       var label = transLabels[transitionKey] || 'your transition';
       // Remove existing banner if any
       var old = document.getElementById('chatRecommendBanner');
@@ -10271,11 +10271,15 @@ guideLibrary['disability'] = {
         // Hide welcome screen and show bot greeting instead
         var welcome = document.getElementById('ncWelcome');
         if (welcome) welcome.style.display = 'none';
+        var greetMsg;
         if (ncState) {
-          ncAddMessage('bot', 'I see you have the **' + bundleName + '** guide, and you\u2019re in **' + ncState + '**. I can help you build a personalized checklist and walk you through what to do first.\n\nWould you like me to start building your action plan, or do you have a specific question?');
+          greetMsg = 'I see you have the **' + bundleName + '** guide, and you\u2019re in **' + ncState + '**. I can help you build a personalized checklist and walk you through what to do first.\n\nWould you like me to start building your action plan, or do you have a specific question?';
         } else {
-          ncAddMessage('bot', 'Welcome to Lumeway. I see you have the **' + bundleName + '** guide.\n\nTo personalize your action plan with the right deadlines, resources, and steps, what state are you in?');
+          greetMsg = 'Welcome to Lumeway. I see you have the **' + bundleName + '** guide.\n\nTo personalize your action plan with the right deadlines, resources, and steps, what state are you in?';
         }
+        ncAddMessage('bot', greetMsg);
+        // Add to history so the AI knows what was already said
+        ncHistory.push({ role: 'assistant', content: greetMsg });
       }
       // Free and all-access users just see the welcome screen with starters — no auto-greet
     }

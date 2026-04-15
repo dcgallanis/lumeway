@@ -156,7 +156,7 @@ tr:hover { background: var(--cream); }
             <option>Web Hosting & Domain</option>
             <option>AI & API Costs</option>
             <option>Payment Processing</option>
-            <option>Etsy Fees</option>
+            <option>Platform Fees</option>
             <option>Notary Expenses</option>
             <option>Professional Services</option>
             <option>Education & Training</option>
@@ -263,7 +263,7 @@ tr:hover { background: var(--cream); }
           <label>Category</label>
           <select id="rev-category" required>
             <option value="">Select...</option>
-            <option>Etsy Revenue</option>
+            <option>External Revenue</option>
             <option>Dashboard Revenue</option>
             <option>Template Sales</option>
             <option>Consulting</option>
@@ -273,7 +273,7 @@ tr:hover { background: var(--cream); }
         </div>
         <div class="form-group">
           <label>Description</label>
-          <input type="text" id="rev-desc" placeholder="e.g. Etsy March sales" required>
+          <input type="text" id="rev-desc" placeholder="e.g. March external sales" required>
         </div>
       </div>
       <div class="form-row">
@@ -633,7 +633,7 @@ function renderPnl(pnl, entries) {
     revHtml += '<div class="rev-item" style="border-top:2px solid var(--border);font-weight:600"><div>Subtotal</div><div class="rev-amount">' + fmt(pnl.stripe_revenue.total) + '</div></div>';
   }
   if (pnl.manual_revenue.categories.length > 0) {
-    revHtml += '<div style="margin:16px 0 12px"><span style="font-size:12px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:0.05em">Manual / Etsy</span></div>';
+    revHtml += '<div style="margin:16px 0 12px"><span style="font-size:12px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:0.05em">Manual / External</span></div>';
     pnl.manual_revenue.categories.forEach(function(c) {
       revHtml += '<div class="rev-item"><div class="rev-name">' + c.category + '</div><div class="rev-amount">' + fmt(c.amount_cents) + '</div></div>';
     });
