@@ -3604,52 +3604,34 @@ def redeem_code():
         print(f"DEMOTEST: Resetting demo account (user_id={uid})")
         conn = get_db()
         param = "%s" if USE_POSTGRES else "?"
-        # Clear all user data
-        try:
-            db_execute(conn, f"DELETE FROM community_replies WHERE post_id IN (SELECT id FROM community_posts WHERE user_id = {param})", (uid,))
-        except Exception:
-            pass
-        try:
-            db_execute(conn, f"DELETE FROM community_replies WHERE user_id = {param}", (uid,))
-        except Exception:
-            pass
-        # Delete chat_messages first (linked to chat_sessions by session_id, no cascade)
-        try:
-            db_execute(conn, f"DELETE FROM chat_messages WHERE session_id IN (SELECT id FROM chat_sessions WHERE user_id = {param})", (uid,))
-        except Exception as e:
-            print(f"DEMOTEST: chat_messages cleanup error: {e}")
-        for table in ["community_posts", "checklist_items", "user_deadlines", "user_documents_needed", "user_goals", "user_notes", "chat_sessions", "user_files"]:
+
+        # Helper: run a cleanup query, rollback on failure so PostgreSQL transaction stays alive
+        def safe_exec(sql, params):
             try:
-                db_execute(conn, f"DELETE FROM {table} WHERE user_id = {param}", (uid,))
+                db_execute(conn, sql, params)
+                conn.commit()
             except Exception as e:
-                print(f"DEMOTEST: {table} cleanup error: {e}")
+                print(f"DEMOTEST cleanup error: {e}")
+                try:
+                    conn.rollback()
+                except Exception:
+                    pass
+
+        # Clear all user data — each in its own mini-transaction for PostgreSQL safety
+        safe_exec(f"DELETE FROM community_replies WHERE post_id IN (SELECT id FROM community_posts WHERE user_id = {param})", (uid,))
+        safe_exec(f"DELETE FROM community_replies WHERE user_id = {param}", (uid,))
+        safe_exec(f"DELETE FROM chat_messages WHERE session_id IN (SELECT id FROM chat_sessions WHERE user_id = {param})", (uid,))
+        for table in ["community_posts", "checklist_items", "user_deadlines", "user_documents_needed", "user_goals", "user_notes", "chat_sessions", "user_files"]:
+            safe_exec(f"DELETE FROM {table} WHERE user_id = {param}", (uid,))
         # Reset user profile to fresh state
-        try:
-            db_execute(conn, f"UPDATE users SET tier = 'free', display_name = NULL, transition_type = NULL, us_state = NULL, active_transitions = '[]', credit_cents = 0 WHERE id = {param}", (uid,))
-            conn.commit()
-        except Exception:
-            pass
-        try:
-            db_execute(conn, f"UPDATE users SET onboarding_source = NULL WHERE id = {param}", (uid,))
-            conn.commit()
-        except Exception:
-            pass
+        safe_exec(f"UPDATE users SET tier = 'free', display_name = NULL, transition_type = NULL, us_state = NULL, active_transitions = '[]', credit_cents = 0, onboarding_source = NULL WHERE id = {param}", (uid,))
         # Clear user_access (purchased bundles)
-        try:
-            db_execute(conn, f"DELETE FROM user_access WHERE user_id = {param}", (uid,))
-        except Exception:
-            pass
+        safe_exec(f"DELETE FROM user_access WHERE user_id = {param}", (uid,))
         # Clear purchases tied to this email
-        try:
-            db_execute(conn, f"DELETE FROM purchases WHERE email = {param}", (user["email"],))
-        except Exception:
-            pass
+        safe_exec(f"DELETE FROM purchases WHERE email = {param}", (user["email"],))
         # Un-redeem any gift codes so they can be reused for testing
-        try:
-            db_execute(conn, f"UPDATE gift_codes SET redeemed_by = NULL, redeemed_at = NULL WHERE redeemed_by = {param}", (uid,))
-        except Exception:
-            pass
-        conn.commit()
+        safe_exec(f"UPDATE gift_codes SET redeemed_by = NULL, redeemed_at = NULL WHERE redeemed_by = {param}", (uid,))
+
         conn.close()
         return jsonify({"ok": True, "message": "Account reset to new user. Refreshing...", "reload": True})
 
