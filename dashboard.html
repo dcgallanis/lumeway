@@ -141,6 +141,7 @@
 
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
+    .tab-panel#panel-navigator.active { display: flex; }
 
     /* Cards */
     .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
@@ -911,7 +912,7 @@
     }
 
     /* ── Navigator Chat Tab ── */
-    #panel-navigator { max-width: 900px; margin-left: auto; margin-right: auto; display: flex; gap: 16px; flex-wrap: wrap; }
+    #panel-navigator { max-width: 900px; margin-left: auto; margin-right: auto; gap: 16px; flex-wrap: wrap; }
     #panel-navigator .nav-chat-wrap { flex: 1; min-width: 0; }
     .nc-docs-sidebar { width: 240px; flex-shrink: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 16px; max-height: calc(100vh - 240px); overflow-y: auto; }
     .nc-docs-header { font-size: 12px; font-weight: 600; color: var(--navy); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
