@@ -4513,12 +4513,6 @@ def handle_individual_template_webhook(session_data, metadata):
         conn.commit()
     except Exception as e:
         print(f"Error recording individual template purchase: {e}")
-    # Add $3 credit to user
-    try:
-        db_execute(conn, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 300 WHERE email = {param}", (email,))
-        conn.commit()
-    except Exception as e:
-        print(f"Error adding credit for individual template: {e}")
     conn.close()
     # Upload template file to user's dashboard
     try:
@@ -4825,6 +4819,57 @@ def download_page(token):
     filename = BUNDLE_FILES.get(product_id, "")
     return render_template_string(DOWNLOAD_PAGE_HTML, product_name=product_name, product_id=product_id, filename=filename, token=token)
 
+def _resolve_individual_template(product_id):
+    """Given an individual template product_id, find the matching file in the bundle zip.
+    Returns (zip_path, entry_name, basename) or (None, None, None)."""
+    import re as _re
+    import zipfile as _zipfile
+    # Handle both formats: "template-individual-folder-..." and "individual-folder-..."
+    pid = product_id
+    if pid.startswith("template-"):
+        pid = pid[len("template-"):]
+    if not pid.startswith("individual-"):
+        return None, None, None
+    rest = pid[len("individual-"):]
+    # Find folder/category
+    folder = None
+    category = None
+    for f, cat in FOLDER_TO_CATEGORY.items():
+        if rest.startswith(f + "-"):
+            folder = f
+            category = cat
+            rest = rest[len(f) + 1:]
+            break
+    if not folder or not category:
+        return None, None, None
+    # Build the expected filename base
+    file_base = _re.sub(r'-\d+$', '', rest)
+    file_base = file_base.replace('._', '. ', 1)
+    zip_filename = BUNDLE_FILES.get(category)
+    if not zip_filename:
+        return None, None, None
+    zip_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "bundles", zip_filename)
+    if not os.path.exists(zip_path):
+        return None, None, None
+    # Find the matching file in the zip
+    try:
+        with _zipfile.ZipFile(zip_path, "r") as zf:
+            for entry in zf.namelist():
+                if entry.endswith("/") or "__MACOSX" in entry:
+                    continue
+                basename = os.path.basename(entry)
+                if not basename or basename.startswith("."):
+                    continue
+                ext = os.path.splitext(basename)[1].lower()
+                if ext not in (".docx", ".pdf"):
+                    continue
+                name_no_ext = os.path.splitext(basename)[0]
+                if name_no_ext == file_base:
+                    return zip_path, entry, basename
+    except Exception as e:
+        print(f"Error resolving individual template: {e}")
+    return None, None, None
+
 @app.route("/download/<token>/file")
 def download_file_purchase(token):
     conn = get_db()
@@ -4834,10 +4879,27 @@ def download_file_purchase(token):
     if not row:
         return "Invalid download link.", 404
     product_id = row[0]
+    # Check if this is a bundle download
     filename = BUNDLE_FILES.get(product_id)
-    if not filename:
-        return "File not found.", 404
-    return send_from_directory("static/bundles", filename, as_attachment=True)
+    if filename:
+        return send_from_directory("static/bundles", filename, as_attachment=True)
+    # Check if this is an individual template download
+    zip_path, entry_name, basename = _resolve_individual_template(product_id)
+    if zip_path and entry_name:
+        import zipfile as _zipfile
+        try:
+            with _zipfile.ZipFile(zip_path, "r") as zf:
+                file_data = zf.read(entry_name)
+                ext = os.path.splitext(basename)[1].lower()
+                content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document" if ext == ".docx" else "application/pdf"
+                return Response(file_data, mimetype=content_type, headers={
+                    "Content-Disposition": f'attachment; filename="{basename}"',
+                    "Content-Length": str(len(file_data)),
+                })
+        except Exception as e:
+            print(f"Error serving individual template: {e}")
+            return "Error downloading file.", 500
+    return "File not found.", 404
 
 PURCHASE_SUCCESS_HTML = """<!DOCTYPE html>
 <html lang="en"><head>
@@ -5296,16 +5358,7 @@ def _fulfill_cart_item(email, item, user_id):
             add_user_category(user_id, cat, "starter")
             update_user_tier_from_access(user_id)
     elif purchase_type == "individual" and user_id:
-        # Individual template purchase — add $3 credit and upload to dashboard
-        try:
-            conn2 = get_db()
-            p = "%s" if USE_POSTGRES else "?"
-            db_execute(conn2, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 300 WHERE id = {p}", (user_id,))
-            conn2.commit()
-            conn2.close()
-        except Exception as e:
-            print(f"Error adding credit for cart individual template: {e}")
-        # Upload the template file to user's dashboard
+        # Individual template purchase — upload to dashboard (no credit for individual purchases)
         try:
             preload_single_template(user_id, product_id)
         except Exception as e:
