@@ -4611,6 +4611,13 @@ guideLibrary['disability'] = {
         groups[cat].push(f);
       });
 
+      // Sort files within each category numerically (1, 2, 3...)
+      Object.keys(groups).forEach(function(cat) {
+        groups[cat].sort(function(a, b) {
+          return a.original_name.localeCompare(b.original_name, undefined, { numeric: true });
+        });
+      });
+
       // Dynamically add transition categories that have files
       ['job-loss','estate','divorce','disability','relocation','retirement'].forEach(function(tc) {
           if (groups[tc] && groups[tc].length > 0 && catOrder.indexOf(tc) === -1) catOrder.push(tc);
