@@ -2570,6 +2570,105 @@ BUNDLE_FILES = {
     "retirement": "retirement.zip",
 }
 
+FOLDER_TO_CATEGORY = {
+    "jobloss": "job-loss",
+    "estate": "estate",
+    "divorce": "divorce",
+    "disability": "disability",
+    "relocation": "relocation",
+    "retirement": "retirement",
+}
+
+
+def preload_single_template(user_id, product_id):
+    """Upload a single purchased individual template to the user's dashboard files.
+    product_id format: 'individual-{folder}-{img_base}' e.g. 'individual-jobloss-1._Severance_Response_Letter-1'"""
+    import zipfile as _zipfile
+    import re as _re
+
+    if not product_id.startswith("individual-"):
+        print(f"[preload-single] Not an individual template: {product_id}")
+        return
+
+    rest = product_id[len("individual-"):]  # e.g. "jobloss-1._Severance_Response_Letter-1"
+
+    # Find which folder/category this belongs to
+    folder = None
+    category = None
+    for f, cat in FOLDER_TO_CATEGORY.items():
+        if rest.startswith(f + "-"):
+            folder = f
+            category = cat
+            rest = rest[len(f) + 1:]  # e.g. "1._Severance_Response_Letter-1"
+            break
+    if not folder or not category:
+        print(f"[preload-single] Could not parse folder from product_id: {product_id}")
+        return
+
+    # Strip trailing page number from screenshot name: "-1", "-2", etc.
+    file_base = _re.sub(r'-\d+$', '', rest)  # "1._Severance_Response_Letter"
+    # Convert back to match zip naming: "1._" -> "1. "
+    file_base = file_base.replace('._', '. ', 1)  # "1. Severance_Response_Letter"
+
+    zip_filename = BUNDLE_FILES.get(category)
+    if not zip_filename:
+        print(f"[preload-single] No bundle zip for category: {category}")
+        return
+
+    zip_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "bundles", zip_filename)
+    if not os.path.exists(zip_path):
+        print(f"[preload-single] Bundle zip not found: {zip_path}")
+        return
+
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.utcnow().isoformat()
+
+    try:
+        with _zipfile.ZipFile(zip_path, "r") as zf:
+            for entry in zf.namelist():
+                if entry.endswith("/") or "__MACOSX" in entry:
+                    continue
+                basename = os.path.basename(entry)
+                if not basename or basename.startswith("."):
+                    continue
+                ext = os.path.splitext(basename)[0]
+                file_ext = os.path.splitext(basename)[1].lower()
+                if file_ext not in (".docx", ".pdf"):
+                    continue
+                # Check if this file matches our target
+                if ext == file_base:
+                    # Check if already uploaded
+                    cur = db_execute(conn, f"SELECT id FROM user_files WHERE user_id = {param} AND original_name = {param}", (user_id, basename))
+                    if cur.fetchone():
+                        print(f"[preload-single] Already uploaded: {basename}")
+                        conn.close()
+                        return
+                    # Read, encrypt, store
+                    file_data = zf.read(entry)
+                    file_size = len(file_data)
+                    content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document" if file_ext == ".docx" else "application/pdf"
+                    stored_name = f"{uuid.uuid4().hex}{file_ext}"
+                    encrypted_data = file_cipher.encrypt(file_data)
+                    storage_save(user_id, stored_name, encrypted_data)
+                    db_execute(conn, f"""INSERT INTO user_files (user_id, original_name, stored_name, category, file_size, content_type, uploaded_at)
+                        VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param})""",
+                        (user_id, basename, stored_name, category, file_size, content_type, now))
+                    conn.commit()
+                    print(f"[preload-single] Uploaded {basename} for user {user_id}")
+                    conn.close()
+                    return
+        print(f"[preload-single] No matching file found for '{file_base}' in {zip_filename}")
+        conn.close()
+    except Exception as e:
+        print(f"[preload-single] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        try:
+            conn.close()
+        except:
+            pass
+
 
 def preload_bundle_templates(user_id, category):
     """Extract individual template files from a bundle zip and add them to the user's workspace.
@@ -4421,6 +4520,16 @@ def handle_individual_template_webhook(session_data, metadata):
     except Exception as e:
         print(f"Error adding credit for individual template: {e}")
     conn.close()
+    # Upload template file to user's dashboard
+    try:
+        conn2 = get_db()
+        cur2 = db_execute(conn2, f"SELECT id FROM users WHERE email = {param}", (email,))
+        row2 = cur2.fetchone()
+        conn2.close()
+        if row2:
+            preload_single_template(row2[0], template_id)
+    except Exception as e:
+        print(f"[preload-single] Error uploading individual template to dashboard: {e}")
     # Send download email
     threading.Thread(target=send_purchase_email, args=(email, f"template-{template_id}", template_name, token), daemon=True).start()
     print(f"Individual template purchased: {email} bought {template_name}")
@@ -4461,6 +4570,7 @@ def handle_cart_webhook(session_data, metadata):
     except:
         pass
     # Fulfill each product
+    individual_items = []  # Track individual template items for email
     for i, pid in enumerate(product_ids):
         ptype = purchase_types[i] if i < len(purchase_types) else "bundle"
         # Build an item dict for _fulfill_cart_item
@@ -4475,7 +4585,20 @@ def handle_cart_webhook(session_data, metadata):
             item["category"] = cat
         elif pid.startswith("bundle-"):
             item["category"] = pid.replace("bundle-", "")
-        _fulfill_cart_item(email, item, user_id)
+        # For individual templates, build a readable name from the product_id
+        if ptype == "individual" and pid.startswith("individual-"):
+            # pid like "individual-divorce-1._Divorce_Financial_Disclosure_Worksheet-1"
+            parts = pid.split("-", 2)  # ["individual", "folder", "rest"]
+            if len(parts) >= 3:
+                raw_name = parts[2]
+                import re as _re
+                raw_name = _re.sub(r'-\d+$', '', raw_name)  # strip page number
+                raw_name = raw_name.replace('._', '. ', 1)  # "1._" -> "1. "
+                raw_name = raw_name.replace('_', ' ')  # underscores to spaces
+                item["name"] = raw_name
+        token = _fulfill_cart_item(email, item, user_id)
+        if ptype == "individual":
+            individual_items.append({"product_id": pid, "name": item["name"], "token": token})
     # Send confirmation email for the cart purchase
     product_names = [CATEGORY_LABELS.get(pid.replace("plan-", "").replace("bundle-", ""), pid) for pid in product_ids]
     combined_name = ", ".join(product_names) if product_names else "Your Purchase"
@@ -4490,6 +4613,9 @@ def handle_cart_webhook(session_data, metadata):
                 cart_category = cat
                 break
         threading.Thread(target=send_tier_email, args=(email, tier_label, combined_name, cart_category), daemon=True).start()
+    # Send download emails for individual template purchases
+    for ind_item in individual_items:
+        threading.Thread(target=send_purchase_email, args=(email, f"template-{ind_item['product_id']}", ind_item["name"], ind_item["token"]), daemon=True).start()
     print(f"Cart webhook fulfilled: {email} bought {product_ids}")
 
 def _fulfill_transition_purchase(user, category, purchase_type, base_price, credit_applied, session_id, payment_intent):
@@ -5049,7 +5175,11 @@ def cart_checkout():
             conn.close()
             # Fulfill each item in cart
             for item in cart:
-                _fulfill_cart_item(email, item, user_id)
+                token = _fulfill_cart_item(email, item, user_id)
+                # Send download email for individual template purchases
+                if item.get("purchase_type") == "individual" and token:
+                    t_name = item.get("name", "Individual Template")
+                    threading.Thread(target=send_purchase_email, args=(email, f"template-{item['product_id']}", t_name, token), daemon=True).start()
             flask_session["cart"] = []
             return jsonify({"fulfilled": True, "redirect": "/dashboard"})
         except Exception as e:
@@ -5091,7 +5221,7 @@ def cart_checkout():
         return jsonify({"error": str(e)}), 500
 
 def _fulfill_cart_item(email, item, user_id):
-    """Fulfill a single cart item after payment."""
+    """Fulfill a single cart item after payment. Returns download token."""
     product_id = item["product_id"]
     purchase_type = item.get("purchase_type", "bundle")
     now = datetime.now(timezone.utc).isoformat()
@@ -5165,6 +5295,22 @@ def _fulfill_cart_item(email, item, user_id):
         if cat:
             add_user_category(user_id, cat, "starter")
             update_user_tier_from_access(user_id)
+    elif purchase_type == "individual" and user_id:
+        # Individual template purchase — add $3 credit and upload to dashboard
+        try:
+            conn2 = get_db()
+            p = "%s" if USE_POSTGRES else "?"
+            db_execute(conn2, f"UPDATE users SET credit_cents = COALESCE(credit_cents, 0) + 300 WHERE id = {p}", (user_id,))
+            conn2.commit()
+            conn2.close()
+        except Exception as e:
+            print(f"Error adding credit for cart individual template: {e}")
+        # Upload the template file to user's dashboard
+        try:
+            preload_single_template(user_id, product_id)
+        except Exception as e:
+            print(f"[preload-single] Cart preload error for {product_id}: {e}")
+    return token
 
 @app.route("/pricing")
 def pricing():
