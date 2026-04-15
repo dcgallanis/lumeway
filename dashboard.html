@@ -5656,14 +5656,13 @@ guideLibrary['disability'] = {
         if (sec.charAt(0) === '_' || isSkipSection(sec) || isSenderSection(sec) || isChecklistSection(sec)) continue;
         var s = fields[sec];
         if (typeof s !== 'object') continue;
-        // Look for institution/company/organization name fields
         var nameVal = s['Institution Name'] || s['Insurance Company'] || s['Company Name'] || s['Organization'] || s['Agency Name'] || s['Employer Name'] || s['Creditor Name'] || s['Lender Name'] || '';
         if (nameVal && !recipientName) recipientName = nameVal;
         var addrVal = s['Branch'] || s['Agent Name / Contact'] || s['Department'] || '';
         if (addrVal && !recipientAddress) recipientAddress = addrVal;
       }
 
-      // Build body paragraphs from all non-sender, non-checklist sections
+      // Collect all data sections, checked actions, and checked documents
       var bodyParts = [];
       var allCheckedActions = [];
       var allCheckedDocs = [];
@@ -5676,7 +5675,6 @@ guideLibrary['disability'] = {
         if (typeof s !== 'object') continue;
 
         if (isChecklistSection(sec)) {
-          // Collect checked items
           var checked = s._checked || [];
           if (checked.length > 0) {
             var upper = sec.toUpperCase();
@@ -5689,7 +5687,7 @@ guideLibrary['disability'] = {
           continue;
         }
 
-        // Regular data section — collect all filled fields
+        // Regular data section
         var filledFields = [];
         var fieldKeys = Object.keys(s);
         for (var j = 0; j < fieldKeys.length; j++) {
@@ -5703,22 +5701,68 @@ guideLibrary['disability'] = {
         }
       }
 
-      // Build the letter body text
-      // Friendly title from template name
+      // Build natural-sounding letter body based on template context
       var prettyName = templateName.replace(/^\d+\.\s*/, '').replace(/\.[^.]+$/, '').replace(/_/g, ' ');
+      var nameUpper = prettyName.toUpperCase();
 
-      // Opening paragraph referencing the purpose
-      bodyParts.push('I am writing regarding the matter referenced above. Please find the relevant details below for your review and action.');
+      // Smart opening paragraph based on template type
+      if (nameUpper.indexOf('DEATH') >= 0 || nameUpper.indexOf('EXECUTOR') >= 0 || nameUpper.indexOf('OBITUARY') >= 0 || nameUpper.indexOf('SURVIVOR') >= 0) {
+        // Estate/death-related
+        var deceasedName = '';
+        var deathDate = '';
+        for (var i = 0; i < detailSections.length; i++) {
+          for (var j = 0; j < detailSections[i].fields.length; j++) {
+            var f = detailSections[i].fields[j];
+            if (f.label.indexOf('Full Legal Name') >= 0 || f.label === 'Full Name') deceasedName = deceasedName || f.value;
+            if (f.label.indexOf('Date of Death') >= 0) deathDate = f.value;
+          }
+        }
+        var relationship = sender['Relationship to Deceased'] || 'authorized representative';
+        bodyParts.push('I am writing to formally notify you of the passing of ' + (deceasedName || '[Name]') + (deathDate ? ', who passed away on ' + deathDate : '') + '. I am the ' + relationship + ' handling the estate and related matters.');
+      } else if (nameUpper.indexOf('DIVORCE') >= 0 || nameUpper.indexOf('REMOVAL') >= 0 || nameUpper.indexOf('SEPARATION') >= 0 || nameUpper.indexOf('CUSTODY') >= 0) {
+        bodyParts.push('I am writing to formally notify you of a change in my marital status and to request that your records be updated accordingly.');
+      } else if (nameUpper.indexOf('FMLA') >= 0 || nameUpper.indexOf('DISABILITY') >= 0 || nameUpper.indexOf('ACCOMMODATION') >= 0 || nameUpper.indexOf('RETURN TO WORK') >= 0) {
+        bodyParts.push('I am writing regarding my employment status and to formally submit the request detailed below.');
+      } else if (nameUpper.indexOf('RETIREMENT') >= 0 || nameUpper.indexOf('RMD') >= 0 || nameUpper.indexOf('PENSION') >= 0 || nameUpper.indexOf('BENEFICIARY') >= 0 || nameUpper.indexOf('MEDICARE') >= 0) {
+        bodyParts.push('I am writing regarding my retirement account and to formally submit the request outlined below.');
+      } else if (nameUpper.indexOf('LEASE') >= 0 || nameUpper.indexOf('LANDLORD') >= 0 || nameUpper.indexOf('MOVE') >= 0 || nameUpper.indexOf('HOA') >= 0 || nameUpper.indexOf('RESIDENCY') >= 0) {
+        bodyParts.push('I am writing to formally notify you of my upcoming change of residence and to request that your records be updated accordingly.');
+      } else if (nameUpper.indexOf('HARDSHIP') >= 0 || nameUpper.indexOf('CREDITOR') >= 0) {
+        bodyParts.push('I am writing to inform you of a financial hardship and to request your consideration regarding the matter detailed below.');
+      } else if (nameUpper.indexOf('SEVERANCE') >= 0) {
+        bodyParts.push('I am writing in response to the severance terms presented to me and wish to formally communicate the following.');
+      } else if (nameUpper.indexOf('COBRA') >= 0) {
+        bodyParts.push('I am writing to formally communicate my election regarding continuation of health coverage under COBRA.');
+      } else if (nameUpper.indexOf('ROLLOVER') >= 0 || nameUpper.indexOf('401') >= 0) {
+        bodyParts.push('I am writing to formally request a rollover of my retirement account as detailed below.');
+      } else if (nameUpper.indexOf('AUTHORIZATION') >= 0 || nameUpper.indexOf('CONSENT') >= 0) {
+        bodyParts.push('I am writing to formally authorize the actions described below.');
+      } else if (nameUpper.indexOf('CANCELLATION') >= 0 || nameUpper.indexOf('SUBSCRIPTION') >= 0) {
+        bodyParts.push('I am writing to formally request the cancellation of the account or service detailed below.');
+      } else if (nameUpper.indexOf('TRANSFER') >= 0) {
+        bodyParts.push('I am writing to formally request the transfer described below.');
+      } else if (nameUpper.indexOf('SCHOOL') >= 0) {
+        bodyParts.push('I am writing to formally notify you of a change and to request that your records be updated accordingly.');
+      } else if (nameUpper.indexOf('NAME CHANGE') >= 0) {
+        bodyParts.push('I am writing to formally notify you of a legal name change and to request that your records be updated accordingly.');
+      } else if (nameUpper.indexOf('REFERENCE') >= 0 || nameUpper.indexOf('NETWORKING') >= 0) {
+        bodyParts.push('I am writing to respectfully request your assistance with the matter described below.');
+      } else if (nameUpper.indexOf('INSURANCE') >= 0 || nameUpper.indexOf('CLAIM') >= 0) {
+        bodyParts.push('I am writing regarding the insurance matter detailed below and to formally submit this request.');
+      } else {
+        bodyParts.push('I am writing regarding the matter referenced in the subject line above. Please find the relevant details below for your review and action.');
+      }
 
-      // Detail sections become paragraphs
+      // Detail sections become prose paragraphs
       for (var i = 0; i < detailSections.length; i++) {
         var ds = detailSections[i];
         var sectionTitle = ds.name.charAt(0) + ds.name.slice(1).toLowerCase();
-        var lines = [];
+        // Build as a readable sentence listing the details
+        var details = [];
         for (var j = 0; j < ds.fields.length; j++) {
-          lines.push(ds.fields[j].label + ': ' + ds.fields[j].value);
+          details.push(ds.fields[j].label + ': ' + ds.fields[j].value);
         }
-        bodyParts.push(sectionTitle + ':\n' + lines.join('\n'));
+        bodyParts.push('The relevant ' + sectionTitle.toLowerCase() + ' is as follows: ' + details.join('; ') + '.');
       }
 
       // Checked actions
@@ -5750,7 +5794,6 @@ guideLibrary['disability'] = {
         salutation: recipientAddress ? 'Dear ' + recipientAddress.replace(/^Attn:\s*/i, '') : 'To Whom It May Concern',
         bodyParagraphs: bodyParts,
         closing: 'Sincerely',
-        signatureName: sig['Signature'] || senderName || '',
         printedName: sig['Printed Name'] || senderName || '',
         enclosures: allCheckedDocs
       };
@@ -5898,9 +5941,8 @@ guideLibrary['disability'] = {
       html += '</div>';
       // Closing
       html += '<div class="letter-closing">' + escapeHtml(data.closing || 'Sincerely') + ',</div>';
-      // Signature
-      html += '<div class="letter-signature">' + (data.signatureName ? escapeHtml(data.signatureName) : '<span style="color:#999">[Signature]</span>') + '</div>';
-      html += '<div class="letter-printed-name">' + (data.printedName ? escapeHtml(data.printedName) : '<span style="color:#999">[Printed Name]</span>') + '</div>';
+      // Name (signature can be added via the signature stamper)
+      html += '<div class="letter-printed-name">' + (data.printedName ? escapeHtml(data.printedName) : '<span style="color:#999">[Your Name]</span>') + '</div>';
       // Enclosures already listed in body paragraphs
       html += '</div>';
       return html;
@@ -6000,7 +6042,8 @@ guideLibrary['disability'] = {
       var letterHtml = letterPage.innerHTML;
 
       // Build a DOCX blob for the file upload
-      var docxHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:Georgia,serif;font-size:12pt;line-height:1.8;color:#1a1a1a;max-width:650px;margin:0 auto;padding:40px}p{margin:0 0 14px}</style></head><body>' + letterHtml + '</body></html>';
+      var letterStyles = 'body{font-family:Georgia,serif;font-size:12pt;line-height:1.8;color:#1a1a1a;max-width:650px;margin:0 auto;padding:40px}.letter-date{margin-bottom:28px}.letter-sender-block,.letter-recipient-block{margin-bottom:24px;line-height:1.6}.letter-subject{font-weight:bold;margin-bottom:20px}.letter-salutation{margin-bottom:16px}.letter-body p{margin:0 0 14px;text-align:justify}.letter-closing{margin-top:28px;margin-bottom:48px}.letter-printed-name{font-weight:bold}';
+      var docxHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>' + letterStyles + '</style></head><body>' + letterHtml + '</body></html>';
       var blob;
       if (typeof htmlDocx !== 'undefined' && htmlDocx.asBlob) {
         blob = htmlDocx.asBlob(docxHtml);
