@@ -21,11 +21,17 @@ final class ChatViewModel: ObservableObject {
     let api = APIClient.shared
     let notesService = NotesService()
 
-    /// Restore the most recent conversation on first load
-    func loadMostRecentSession() async {
+    /// Check for existing sessions (for welcome screen state) but don't auto-load
+    func checkForExistingSessions() async {
         guard !hasLoadedInitialSession else { return }
         hasLoadedInitialSession = true
+        // We no longer auto-load the last session on app launch.
+        // The welcome screen shows "Pick up where we left off" which the user can tap.
+        // This just ensures hasLoadedInitialSession is set so autoGreet can fire.
+    }
 
+    /// Resume the most recent session (called when user taps "Pick up where we left off")
+    func resumeMostRecentSession() async {
         // First try the persisted session ID
         if let lastSid = UserDefaults.standard.string(forKey: "nc_last_session_id") {
             do {
@@ -34,9 +40,7 @@ final class ChatViewModel: ObservableObject {
                     restoreSession(sid: lastSid, messages: response.messages)
                     return
                 }
-            } catch {
-                // Session may have been deleted or expired — fall through
-            }
+            } catch {}
         }
 
         // Fallback: fetch session list and load the most recent one
@@ -115,8 +119,15 @@ struct NavigatorChatView: View {
                                 if vm.messages.isEmpty {
                                     WelcomeBubble(
                                         onSuggestionTap: { suggestion in
+                                            guard !suggestion.isEmpty else {
+                                                // "Start something new" — just dismiss welcome, user types
+                                                return
+                                            }
                                             vm.inputText = suggestion
                                             sendMessage()
+                                        },
+                                        onResumeTap: {
+                                            Task { await vm.resumeMostRecentSession() }
                                         },
                                         activeTransitions: appState.activeTransitions,
                                         effectiveTier: appState.effectiveTier,
@@ -254,7 +265,7 @@ struct NavigatorChatView: View {
             }
             .onAppear {
                 Task {
-                    await vm.loadMostRecentSession()
+                    await vm.checkForExistingSessions()
                     // If no messages loaded, auto-greet bundled users
                     vm.autoGreetIfNeeded(
                         tier: appState.effectiveTier,
@@ -484,6 +495,7 @@ struct ChatBubble: View {
 
 struct WelcomeBubble: View {
     var onSuggestionTap: ((String) -> Void)?
+    var onResumeTap: (() -> Void)?
     var activeTransitions: [String] = []
     var effectiveTier: String = "free"
     var userState: String? = nil
@@ -503,8 +515,6 @@ struct WelcomeBubble: View {
     private var heading: String {
         if hasHistory {
             return "Welcome back\(userName.map { ", \($0)" } ?? "")"
-        } else if effectiveTier == "one_transition" || effectiveTier == "pass" {
-            return "Let\u{2019}s get you set up"
         } else {
             return "Your Transition Navigator"
         }
@@ -517,52 +527,29 @@ struct WelcomeBubble: View {
                 return "Last time we talked about: \(trimmed)"
             }
             return "Ready to pick up where you left off, or start something new."
-        } else if effectiveTier == "one_transition" || effectiveTier == "pass" {
-            let bundleName = activeTransitions.first.flatMap { transitionLabels[$0] } ?? "your transition"
-            if let state = userState, !state.isEmpty {
-                return "You have the \(bundleName) guide and you\u{2019}re in \(state). I can walk you through what to do first and build your personalized checklist."
-            } else {
-                return "You have the \(bundleName) guide. Tell me what state you\u{2019}re in and I\u{2019}ll personalize your action plan with state-specific steps and deadlines."
-            }
-        } else if effectiveTier == "all_transitions" || effectiveTier == "unlimited" {
-            return "You have access to all transition guides. Tell me what you\u{2019}re going through and I\u{2019}ll help you figure out next steps."
         } else {
             return "Lumeway helps you through life\u{2019}s hardest transitions. Tell me what\u{2019}s going on and I\u{2019}ll walk you through what to do next."
         }
     }
 
-    private var starters: [String] {
-        if hasHistory {
-            return [
-                "Pick up where we left off",
-                "What should I focus on next?",
-                "I have a new question",
-                "I\u{2019}m feeling overwhelmed",
-            ]
-        } else if effectiveTier == "one_transition" || effectiveTier == "pass" {
-            // Bundled users get auto-greeted, so this rarely shows.
-            // But as a fallback, show reasonable starters.
-            return [
-                "What should I do first?",
-                "Build my personalized checklist",
-                "What are my most urgent deadlines?",
-                "I\u{2019}m feeling overwhelmed",
-            ]
-        } else if effectiveTier == "all_transitions" || effectiveTier == "unlimited" {
-            return [
-                "I recently lost a loved one and don\u{2019}t know where to start",
-                "I just got laid off \u{2014} what do I do right away?",
-                "I\u{2019}m going through a divorce and feel overwhelmed",
-                "Help me with something else",
-            ]
-        } else {
-            return [
-                "I recently lost a loved one and don\u{2019}t know where to start",
-                "I just got laid off \u{2014} what do I do right away?",
-                "I\u{2019}m going through a divorce and feel overwhelmed",
-                "I\u{2019}m dealing with something else",
-            ]
-        }
+    /// Returning users get resume/new options; everyone else gets the same generic starters
+    private var returningStarters: [String] {
+        [
+            "What should I focus on next?",
+            "I\u{2019}m feeling overwhelmed",
+        ]
+    }
+
+    private var genericStarters: [String] {
+        [
+            "I recently lost a loved one and don\u{2019}t know where to start.",
+            "I just got laid off. What do I need to do right away?",
+            "I\u{2019}m going through a divorce and feel completely overwhelmed.",
+            "I\u{2019}m moving to a new state and need help with everything.",
+            "I\u{2019}m applying for disability benefits and don\u{2019}t know where to begin.",
+            "I\u{2019}m getting ready to retire and want to make sure I don\u{2019}t miss anything.",
+            "Something else is going on\u{2026}",
+        ]
     }
 
     var body: some View {
@@ -602,11 +589,31 @@ struct WelcomeBubble: View {
                     .foregroundColor(.lumeText)
                     .padding(.bottom, 2)
 
-                ForEach(starters, id: \.self) { starter in
+                if hasHistory {
+                    // Resume button — loads last session
                     Button {
-                        onSuggestionTap?(starter)
+                        onResumeTap?()
                     } label: {
-                        Text(starter)
+                        Text("Pick up where we left off")
+                            .font(.lumeBody)
+                            .foregroundColor(.lumeNavy)
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(16)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.lumeNavy.opacity(0.3), lineWidth: 1)
+                            )
+                    }
+
+                    // Start fresh button
+                    Button {
+                        onSuggestionTap?("")  // Empty string signals "start new" — handled in parent
+                    } label: {
+                        Text("Start something new")
                             .font(.lumeBody)
                             .foregroundColor(.lumeNavy)
                             .multilineTextAlignment(.leading)
@@ -619,6 +626,46 @@ struct WelcomeBubble: View {
                                 RoundedRectangle(cornerRadius: 16)
                                     .stroke(Color.lumeBorder, lineWidth: 1)
                             )
+                    }
+
+                    ForEach(returningStarters, id: \.self) { starter in
+                        Button {
+                            onSuggestionTap?(starter)
+                        } label: {
+                            Text(starter)
+                                .font(.lumeBody)
+                                .foregroundColor(.lumeNavy)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                                .background(Color.lumeWarmWhite)
+                                .cornerRadius(16)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.lumeBorder, lineWidth: 1)
+                                )
+                        }
+                    }
+                } else {
+                    ForEach(genericStarters, id: \.self) { starter in
+                        Button {
+                            onSuggestionTap?(starter)
+                        } label: {
+                            Text(starter)
+                                .font(.lumeBody)
+                                .foregroundColor(.lumeNavy)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                                .background(Color.lumeWarmWhite)
+                                .cornerRadius(16)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.lumeBorder, lineWidth: 1)
+                                )
+                        }
                     }
                 }
             }

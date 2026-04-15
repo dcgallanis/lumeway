@@ -208,10 +208,8 @@ struct MoreView: View {
 
                                     Divider().padding(.leading, 62)
 
-                                    Button {
-                                        if let url = URL(string: "mailto:support@lumeway.co") {
-                                            UIApplication.shared.open(url)
-                                        }
+                                    NavigationLink {
+                                        ContactSupportView()
                                     } label: {
                                         ProfileSettingRow(
                                             icon: "paperplane.fill",
@@ -281,9 +279,6 @@ struct MoreView: View {
                                         .stroke(Color.lumeBorder, lineWidth: 1)
                                 )
                             }
-
-                            // Having troubles? Contact support
-                            SupportContactCard()
 
                             // Sign out
                             Button {
@@ -1124,7 +1119,7 @@ struct PromoCodeView: View {
                                 .fontWeight(.medium)
                                 .foregroundColor(.lumeNavy)
 
-                            Text("Promo codes are shared through Lumeway campaigns. Purchase codes are included in your Etsy order confirmation email.")
+                            Text("Promo codes are shared through Lumeway campaigns. Purchase codes are included in your order confirmation email.")
                                 .font(.lumeSmall)
                                 .foregroundColor(.lumeMuted)
                                 .lineSpacing(3)
@@ -1181,6 +1176,84 @@ struct PromoCodeView: View {
     }
 }
 
+// MARK: - Contact Support (full page inside "Contact Us")
+
+struct ContactSupportView: View {
+    var body: some View {
+        ZStack {
+            Color(hex: "F0EDE8").ignoresSafeArea()
+
+            ScrollView {
+                VStack(spacing: 0) {
+                    ZStack {
+                        Color.lumeNavy
+
+                        VStack(spacing: 10) {
+                            Image(systemName: "paperplane.fill")
+                                .font(.system(size: 28))
+                                .foregroundColor(.lumeGold)
+                            Text("Contact Us")
+                                .font(.lumeDisplaySmall)
+                                .foregroundColor(.white)
+                            Text("We're here to help")
+                                .font(.lumeCaption)
+                                .foregroundColor(.white.opacity(0.6))
+                        }
+                        .padding(.top, 60)
+                        .padding(.bottom, 28)
+                    }
+                    .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
+
+                    VStack(spacing: 20) {
+                        // Email option
+                        Button {
+                            if let url = URL(string: "mailto:support@lumeway.co") {
+                                UIApplication.shared.open(url)
+                            }
+                        } label: {
+                            HStack(spacing: 14) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(Color(hex: "E0EDF0"))
+                                        .frame(width: 40, height: 40)
+                                    Image(systemName: "envelope.fill")
+                                        .font(.system(size: 16))
+                                        .foregroundColor(Color(hex: "5E8C9A"))
+                                }
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Email Us")
+                                        .font(.lumeBodyMedium)
+                                        .foregroundColor(.lumeNavy)
+                                    Text("support@lumeway.co")
+                                        .font(.lumeSmall)
+                                        .foregroundColor(.lumeMuted)
+                                }
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.lumeBorder)
+                            }
+                            .padding(16)
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(14)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                            )
+                        }
+
+                        // In-app support form
+                        SupportContactCard()
+                    }
+                    .padding(24)
+                }
+            }
+            .ignoresSafeArea(edges: .top)
+        }
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
 // MARK: - Support Contact Card
 
 struct SupportContactCard: View {
@@ -1209,6 +1282,7 @@ struct SupportContactCard: View {
             TextEditor(text: $message)
                 .font(.lumeBody)
                 .foregroundColor(.lumeText)
+                .scrollContentBackground(.hidden)
                 .frame(minHeight: 80, maxHeight: 140)
                 .padding(10)
                 .background(Color(hex: "FAF7F2"))
@@ -1415,25 +1489,31 @@ struct PricingView: View {
                             .padding(.horizontal, 20)
                             .padding(.top, 8)
 
-                        // Gift blurb
-                        VStack(spacing: 8) {
-                            Text("🎁")
-                                .font(.system(size: 24))
-                            Text("Know someone going through it?")
-                                .font(.lumeBodyMedium)
-                                .foregroundColor(.lumeNavy)
-                            Text("Gift a Lumeway plan at lumeway.co/pricing")
-                                .font(.lumeSmall)
-                                .foregroundColor(.lumeMuted)
+                        // Gift blurb — tappable link
+                        Button {
+                            if let url = URL(string: "https://lumeway.co/pricing") {
+                                UIApplication.shared.open(url)
+                            }
+                        } label: {
+                            VStack(spacing: 8) {
+                                Text("🎁")
+                                    .font(.system(size: 24))
+                                Text("Know someone going through it?")
+                                    .font(.lumeBodyMedium)
+                                    .foregroundColor(.lumeNavy)
+                                Text("Gift a Lumeway plan")
+                                    .font(.lumeSmall)
+                                    .foregroundColor(.lumeAccent)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(20)
+                            .background(Color.lumeWarmWhite)
+                            .cornerRadius(14)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color.lumeBorder, lineWidth: 1)
+                            )
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(20)
-                        .background(Color.lumeWarmWhite)
-                        .cornerRadius(14)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(Color.lumeBorder, lineWidth: 1)
-                        )
                         .padding(.horizontal, 20)
                         .padding(.top, 12)
                     }
