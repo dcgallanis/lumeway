@@ -470,12 +470,16 @@
     .ws-letter-page .letter-subject { font-weight: 600; margin-bottom: 20px; }
     .ws-letter-page .letter-salutation { margin-bottom: 16px; }
     .ws-letter-page .letter-body p { margin: 0 0 14px; text-align: justify; }
-    .ws-letter-page .letter-closing { margin-top: 28px; margin-bottom: 48px; }
-    .ws-letter-page .letter-signature { margin-bottom: 6px; font-style: italic; }
-    .ws-letter-page .letter-printed-name { font-weight: 600; }
-    .ws-letter-page .letter-enclosures { margin-top: 28px; border-top: 1px solid #e0dcd6; padding-top: 16px; font-size: 12px; color: #555; }
-    .ws-letter-page .letter-enclosures strong { font-weight: 600; }
-    .ws-letter-page .letter-enclosures ul { margin: 4px 0 0; padding-left: 18px; }
+    .ws-letter-page .letter-closing { margin-top: 28px; margin-bottom: 8px; }
+    .ws-letter-page .letter-signature-line { margin-top: 32px; margin-bottom: 6px; color: #1a1a1a; }
+    .ws-letter-page .letter-printed-name { font-weight: 600; margin-bottom: 2px; }
+    .ws-letter-page .letter-date-line { margin-bottom: 0; font-size: 13px; }
+    .ws-letter-page .letter-body h3 { font-size: 13px; font-weight: 700; margin: 18px 0 8px; }
+    .ws-letter-page .letter-body ol { margin: 0 0 14px; padding-left: 22px; }
+    .ws-letter-page .letter-body ol li { margin-bottom: 4px; }
+    .ws-letter-page .letter-enclosures { margin-top: 28px; padding-top: 0; font-size: 13px; color: #1a1a1a; }
+    .ws-letter-page .letter-enclosures strong { font-weight: 700; }
+    .ws-letter-page .letter-enclosures .enclosure-list { margin: 4px 0 0; padding-left: 0; list-style: none; }
     .ws-letter-page:focus { outline: none; }
     .ws-letter-page [style*="color:#999"]:focus { color: #1a1a1a !important; }
     .ws-letter-gen-btn { background: linear-gradient(135deg, var(--navy), #2a5070); color: var(--cream); border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 5px; transition: all 0.15s; }
@@ -5631,35 +5635,59 @@ guideLibrary['disability'] = {
       return upper.indexOf('SIGNATURE') >= 0;
     }
 
+    // Helper: find a field value across all sections
+    function findField(fields, labels) {
+      var sections = Object.keys(fields);
+      for (var i = 0; i < sections.length; i++) {
+        var s = fields[sections[i]];
+        if (typeof s !== 'object') continue;
+        for (var j = 0; j < labels.length; j++) {
+          if (s[labels[j]] && s[labels[j]].trim()) return s[labels[j]].trim();
+        }
+      }
+      return '';
+    }
+
+    // Helper: find a field in a specific section object
+    function sectionField(sec, labels) {
+      if (!sec || typeof sec !== 'object') return '';
+      for (var i = 0; i < labels.length; i++) {
+        if (sec[labels[i]] && sec[labels[i]].trim()) return sec[labels[i]].trim();
+      }
+      return '';
+    }
+
     // Build a letter universally from any parsed template fields
     function universalGenerate(fields, templateName) {
       var sender = findSenderSection(fields);
       var sig = findSignatureSection(fields);
-      var senderName = sender['Full Name'] || sender['Name'] || '';
-      var senderAddress = sender['Mailing Address'] || sender['Address'] || '';
-      var senderCity = sender['City'] || '';
-      var senderStateZip = sender['State / ZIP'] || sender['State/ZIP'] || sender['State'] || '';
+      var senderName = sectionField(sender, ['Full Name', 'Name', 'Your Full Name', 'Policyholder Name', 'Employee Name']);
+      var senderAddress = sectionField(sender, ['Mailing Address', 'Address', 'Street Address', 'Your Address']);
+      var senderCity = sectionField(sender, ['City', 'City/Town']);
+      var senderStateZip = sectionField(sender, ['State / ZIP', 'State/ZIP', 'State, ZIP', 'State']);
       var senderCityStateZip = senderCity + (senderStateZip ? ', ' + senderStateZip : '');
-      var senderPhone = sender['Phone'] || sender['Phone Number'] || '';
-      var senderEmail = sender['Email'] || sender['Email Address'] || '';
+      var senderPhone = sectionField(sender, ['Phone', 'Phone Number', 'Your Phone Number', 'Daytime Phone']);
+      var senderEmail = sectionField(sender, ['Email', 'Email Address', 'Your Email Address', 'Your Email']);
 
-      // Try to find a recipient from non-sender, non-checklist sections
-      var recipientName = '';
-      var recipientAddress = '';
+      // Try to find recipient info from non-sender sections
+      var recipientOrg = '';
+      var recipientDept = '';
+      var recipientAddr = '';
+      var recipientCityStateZip = '';
+      var recipientAttn = '';
       var sections = Object.keys(fields);
       for (var i = 0; i < sections.length; i++) {
         var sec = sections[i];
         if (sec.charAt(0) === '_' || isSkipSection(sec) || isSenderSection(sec) || isChecklistSection(sec)) continue;
         var s = fields[sec];
         if (typeof s !== 'object') continue;
-        var nameVal = s['Institution Name'] || s['Insurance Company'] || s['Company Name'] || s['Organization'] || s['Agency Name'] || s['Employer Name'] || s['Creditor Name'] || s['Lender Name'] || '';
-        if (nameVal && !recipientName) recipientName = nameVal;
-        var addrVal = s['Branch'] || s['Agent Name / Contact'] || s['Department'] || '';
-        if (addrVal && !recipientAddress) recipientAddress = addrVal;
+        if (!recipientOrg) recipientOrg = sectionField(s, ['Institution Name', 'Insurance Company', 'Insurance Company Name', 'Company Name', 'Organization', 'Agency Name', 'Employer Name', 'Creditor Name', 'Lender Name', 'Bank Name', 'Landlord Name', 'Landlord/Property Manager Name', 'Property Management Company', 'School Name', 'HOA Name', 'Brokerage/Custodian Name']);
+        if (!recipientDept) recipientDept = sectionField(s, ['Department', 'Customer Service', 'Claims Department']);
+        if (!recipientAddr) recipientAddr = sectionField(s, ['Branch', 'Branch Address', 'Company Address', 'Street Address', 'Address']);
+        if (!recipientAttn) recipientAttn = sectionField(s, ['Agent Name / Contact', 'Agent Name', 'Contact Person', 'HR Manager Name', 'Manager Name', 'Attn']);
       }
 
       // Collect all data sections, checked actions, and checked documents
-      var bodyParts = [];
       var allCheckedActions = [];
       var allCheckedDocs = [];
       var detailSections = [];
@@ -5683,7 +5711,7 @@ guideLibrary['disability'] = {
           continue;
         }
 
-        // Regular data section
+        // Regular data section — collect filled fields
         var filledFields = [];
         var fieldKeys = Object.keys(s);
         for (var j = 0; j < fieldKeys.length; j++) {
@@ -5697,85 +5725,206 @@ guideLibrary['disability'] = {
         }
       }
 
-      // Build natural-sounding letter body based on template context
+      // Commonly needed data points across all template types
       var prettyName = templateName.replace(/^\d+\.\s*/, '').replace(/\.[^.]+$/, '').replace(/_/g, ' ');
       var nameUpper = prettyName.toUpperCase();
+      var deceasedName = findField(fields, ['Full Legal Name', 'Deceased Full Legal Name', 'Deceased Full Name', 'Name of Deceased']);
+      var deathDate = findField(fields, ['Date of Death', 'Date of Passing']);
+      var relationship = sectionField(sender, ['Relationship to Deceased', 'Relationship', 'Your Relationship']);
+      var accountNum = findField(fields, ['Account Number', 'Policy Number', 'Loan Number', 'Case Number']);
+      var accountType = findField(fields, ['Account Type', 'Policy Type']);
+      var exSpouseName = findField(fields, ['Ex-Spouse Full Name', 'Ex-Spouse Name', 'Spouse Name', 'Person to Remove', 'Former Spouse Name']);
+      var divorceDate = findField(fields, ['Divorce Decree Date', 'Date of Divorce', 'Divorce Date']);
+      var caseNumber = findField(fields, ['Case Number', 'Court Case Number', 'Docket Number']);
+      var courtName = findField(fields, ['Court Name', 'Court']);
+      var propertyAddr = findField(fields, ['Property Address', 'Rental Address', 'Lease Address']);
+      var leaseEndDate = findField(fields, ['Original Lease End Date', 'Lease End Date', 'Lease Expiration']);
+      var moveOutDate = findField(fields, ['Proposed Move-Out Date', 'Move-Out Date', 'Vacate Date']);
+      var employerName = findField(fields, ['Employer Name', 'Company Name']);
+      var jobTitle = findField(fields, ['Position', 'Job Title', 'Position/Job Title', 'Title']);
+      var effectiveDate = fields['_effective_date'] || findField(fields, ['Effective Date', 'Effective Date of Change', 'Start Date']);
+      var reasonForLeave = findField(fields, ['Reason for Leave', 'Reason', 'Specific Reason']);
 
-      // Smart opening paragraph based on template type
-      if (nameUpper.indexOf('DEATH') >= 0 || nameUpper.indexOf('EXECUTOR') >= 0 || nameUpper.indexOf('OBITUARY') >= 0 || nameUpper.indexOf('SURVIVOR') >= 0) {
-        // Estate/death-related
-        var deceasedName = '';
-        var deathDate = '';
-        for (var i = 0; i < detailSections.length; i++) {
-          for (var j = 0; j < detailSections[i].fields.length; j++) {
-            var f = detailSections[i].fields[j];
-            if (f.label.indexOf('Full Legal Name') >= 0 || f.label === 'Full Name') deceasedName = deceasedName || f.value;
-            if (f.label.indexOf('Date of Death') >= 0) deathDate = f.value;
-          }
+      // Build body paragraphs as HTML (can include <h3>, <ol>, <p>)
+      var bodyHtml = [];
+
+      // Context-aware opening paragraph that weaves in key data
+      if (nameUpper.indexOf('DEATH') >= 0 || nameUpper.indexOf('EXECUTOR') >= 0 || nameUpper.indexOf('SURVIVOR') >= 0) {
+        var dn = deceasedName || '[Deceased\'s Full Name]';
+        var dd = deathDate ? ' on ' + deathDate : '';
+        var rel = relationship || 'authorized representative';
+        if (nameUpper.indexOf('BANK') >= 0) {
+          bodyHtml.push('<p>I am writing to notify you of the passing of ' + escapeHtml(dn) + dd + '. ' + escapeHtml(dn) + ' held accounts with your institution, and I need to initiate the process to settle the banking affairs. I am the ' + escapeHtml(rel) + ' handling the estate.</p>');
+        } else if (nameUpper.indexOf('CREDIT BUREAU') >= 0) {
+          bodyHtml.push('<p>I am writing to notify you of the death of ' + escapeHtml(dn) + dd + '. I am the ' + escapeHtml(rel) + ' and I am requesting that you update your records to reflect this and prevent any unauthorized use of the deceased\'s identity.</p>');
+        } else if (nameUpper.indexOf('EXECUTOR') >= 0) {
+          bodyHtml.push('<p>I am writing to introduce myself as the executor of the estate of ' + escapeHtml(dn) + ', who passed away' + dd + '. I have been appointed by ' + (courtName ? escapeHtml(courtName) : 'the court') + ' to administer the estate and am reaching out to coordinate the necessary steps.</p>');
+        } else if (nameUpper.indexOf('EMPLOYER') >= 0) {
+          bodyHtml.push('<p>I am writing to notify you of the passing of ' + escapeHtml(dn) + dd + '. I am the ' + escapeHtml(rel) + ' and am writing to address outstanding employment-related matters including final wages, benefits, and any personal property.</p>');
+        } else if (nameUpper.indexOf('UTILITY') >= 0 || nameUpper.indexOf('SUBSCRIPTION') >= 0 || nameUpper.indexOf('CANCELLATION') >= 0) {
+          bodyHtml.push('<p>I am writing to notify you of the passing of ' + escapeHtml(dn) + dd + '. I am the ' + escapeHtml(rel) + ' handling the estate and need to address the account held in the deceased\'s name.</p>');
+        } else if (nameUpper.indexOf('VEHICLE') >= 0) {
+          bodyHtml.push('<p>I am writing to request the transfer of a vehicle title following the death of ' + escapeHtml(dn) + dd + '. I am the ' + escapeHtml(rel) + ' and need to transfer the vehicle into the appropriate name.</p>');
+        } else if (nameUpper.indexOf('SAFE DEPOSIT') >= 0) {
+          bodyHtml.push('<p>I am writing to request access to a safe deposit box following the death of ' + escapeHtml(dn) + dd + '. I am the ' + escapeHtml(rel) + ' handling the estate and need to access the contents as part of the estate administration.</p>');
+        } else {
+          bodyHtml.push('<p>I am writing to notify you of the passing of ' + escapeHtml(dn) + dd + '. I am the ' + escapeHtml(rel) + ' handling the estate and related matters.</p>');
         }
-        var relationship = sender['Relationship to Deceased'] || 'authorized representative';
-        bodyParts.push('I am writing to formally notify you of the passing of ' + (deceasedName || '[Name]') + (deathDate ? ', who passed away on ' + deathDate : '') + '. I am the ' + relationship + ' handling the estate and related matters.');
-      } else if (nameUpper.indexOf('DIVORCE') >= 0 || nameUpper.indexOf('REMOVAL') >= 0 || nameUpper.indexOf('SEPARATION') >= 0 || nameUpper.indexOf('CUSTODY') >= 0) {
-        bodyParts.push('I am writing to formally notify you of a change in my marital status and to request that your records be updated accordingly.');
-      } else if (nameUpper.indexOf('FMLA') >= 0 || nameUpper.indexOf('DISABILITY') >= 0 || nameUpper.indexOf('ACCOMMODATION') >= 0 || nameUpper.indexOf('RETURN TO WORK') >= 0) {
-        bodyParts.push('I am writing regarding my employment status and to formally submit the request detailed below.');
-      } else if (nameUpper.indexOf('RETIREMENT') >= 0 || nameUpper.indexOf('RMD') >= 0 || nameUpper.indexOf('PENSION') >= 0 || nameUpper.indexOf('BENEFICIARY') >= 0 || nameUpper.indexOf('MEDICARE') >= 0) {
-        bodyParts.push('I am writing regarding my retirement account and to formally submit the request outlined below.');
-      } else if (nameUpper.indexOf('LEASE') >= 0 || nameUpper.indexOf('LANDLORD') >= 0 || nameUpper.indexOf('MOVE') >= 0 || nameUpper.indexOf('HOA') >= 0 || nameUpper.indexOf('RESIDENCY') >= 0) {
-        bodyParts.push('I am writing to formally notify you of my upcoming change of residence and to request that your records be updated accordingly.');
-      } else if (nameUpper.indexOf('HARDSHIP') >= 0 || nameUpper.indexOf('CREDITOR') >= 0) {
-        bodyParts.push('I am writing to inform you of a financial hardship and to request your consideration regarding the matter detailed below.');
-      } else if (nameUpper.indexOf('SEVERANCE') >= 0) {
-        bodyParts.push('I am writing in response to the severance terms presented to me and wish to formally communicate the following.');
-      } else if (nameUpper.indexOf('COBRA') >= 0) {
-        bodyParts.push('I am writing to formally communicate my election regarding continuation of health coverage under COBRA.');
-      } else if (nameUpper.indexOf('ROLLOVER') >= 0 || nameUpper.indexOf('401') >= 0) {
-        bodyParts.push('I am writing to formally request a rollover of my retirement account as detailed below.');
-      } else if (nameUpper.indexOf('AUTHORIZATION') >= 0 || nameUpper.indexOf('CONSENT') >= 0) {
-        bodyParts.push('I am writing to formally authorize the actions described below.');
-      } else if (nameUpper.indexOf('CANCELLATION') >= 0 || nameUpper.indexOf('SUBSCRIPTION') >= 0) {
-        bodyParts.push('I am writing to formally request the cancellation of the account or service detailed below.');
-      } else if (nameUpper.indexOf('TRANSFER') >= 0) {
-        bodyParts.push('I am writing to formally request the transfer described below.');
-      } else if (nameUpper.indexOf('SCHOOL') >= 0) {
-        bodyParts.push('I am writing to formally notify you of a change and to request that your records be updated accordingly.');
+      } else if (nameUpper.indexOf('DIVORCE') >= 0 || nameUpper.indexOf('CREDITOR NOTIFICATION') >= 0) {
+        var acctInfo = accountNum ? ' (' + escapeHtml(accountType || 'account') + ' number ' + escapeHtml(accountNum) + ')' : '';
+        var divInfo = divorceDate ? ' As of ' + escapeHtml(divorceDate) + ', I am divorced.' : '';
+        var caseInfo = caseNumber ? ' Per the terms of my divorce decree (case number ' + escapeHtml(caseNumber) + (courtName ? ', ' + escapeHtml(courtName) : '') + ')' : ' Per the terms of my divorce decree';
+        bodyHtml.push('<p>I am writing regarding an account' + acctInfo + ' held in my name and my former spouse\'s name.' + divInfo + caseInfo + ', I am requesting that this account be modified as described below.</p>');
+      } else if (nameUpper.indexOf('INSURANCE REMOVAL') >= 0 || nameUpper.indexOf('REMOVAL REQUEST') >= 0) {
+        var pType = accountType || 'insurance';
+        var divDate = divorceDate ? ' I was divorced on ' + escapeHtml(divorceDate) : '';
+        var cInfo = caseNumber ? ' (case number ' + escapeHtml(caseNumber) + (courtName ? ', ' + escapeHtml(courtName) : '') + ')' : '';
+        bodyHtml.push('<p>I am writing to request the removal of my former spouse from a ' + escapeHtml(pType) + ' insurance policy.' + divDate + cInfo + ', and per the terms of my divorce decree, I am requesting that ' + escapeHtml(exSpouseName || 'my ex-spouse') + ' be removed from this policy effective immediately or as soon as legally permitted.</p>');
+      } else if (nameUpper.indexOf('JOINT ACCOUNT') >= 0 || nameUpper.indexOf('SEPARATION') >= 0) {
+        bodyHtml.push('<p>I am writing to request the separation of a joint account following my divorce' + (divorceDate ? ' on ' + escapeHtml(divorceDate) : '') + '. Per the terms of my divorce decree' + (caseNumber ? ' (case number ' + escapeHtml(caseNumber) + ')' : '') + ', I am requesting the modifications described below.</p>');
       } else if (nameUpper.indexOf('NAME CHANGE') >= 0) {
-        bodyParts.push('I am writing to formally notify you of a legal name change and to request that your records be updated accordingly.');
-      } else if (nameUpper.indexOf('REFERENCE') >= 0 || nameUpper.indexOf('NETWORKING') >= 0) {
-        bodyParts.push('I am writing to respectfully request your assistance with the matter described below.');
+        var newName = findField(fields, ['New Legal Name', 'New Name']);
+        bodyHtml.push('<p>I am writing to formally notify you of a legal name change. My name has been changed from ' + escapeHtml(senderName || '[Previous Name]') + ' to ' + escapeHtml(newName || '[New Name]') + ', and I am requesting that your records be updated accordingly.</p>');
+      } else if (nameUpper.indexOf('CUSTODY') >= 0 || nameUpper.indexOf('SCHOOL NOTIFICATION') >= 0) {
+        bodyHtml.push('<p>I am writing to notify you of a change in custody arrangements and to request that your records be updated to reflect the new authorized contacts and guardianship information for my child.</p>');
+      } else if (nameUpper.indexOf('PARENTAL CONSENT') >= 0) {
+        bodyHtml.push('<p>I am writing to provide my formal written consent for the activity or arrangement described below involving my child.</p>');
+      } else if (nameUpper.indexOf('FMLA') >= 0) {
+        bodyHtml.push('<p>I am writing to request leave under the Family and Medical Leave Act (FMLA). I am providing this notice as required, and I am committed to working with you to ensure a smooth transition during my absence.</p>');
+      } else if (nameUpper.indexOf('DISABILITY') >= 0 && nameUpper.indexOf('ACCOMMODATION') >= 0) {
+        bodyHtml.push('<p>I am writing to follow up on my previous accommodation request and to provide additional information as needed to support the implementation of reasonable workplace accommodations.</p>');
+      } else if (nameUpper.indexOf('ACCOMMODATION') >= 0 || nameUpper.indexOf('ADA') >= 0) {
+        bodyHtml.push('<p>I am writing to formally request a reasonable workplace accommodation under the Americans with Disabilities Act (ADA). I am committed to continuing to perform my job duties effectively and believe the accommodations described below will allow me to do so.</p>');
+      } else if (nameUpper.indexOf('RETURN TO WORK') >= 0) {
+        bodyHtml.push('<p>I am writing to notify you of my intent to return to work following my period of leave. I am prepared to resume my duties and would like to discuss any transition arrangements.</p>');
+      } else if (nameUpper.indexOf('LETTER TO EMPLOYER DURING') >= 0) {
+        bodyHtml.push('<p>I am writing to provide an update on my current leave status and to maintain communication regarding my anticipated return and any interim matters that may need attention.</p>');
+      } else if (nameUpper.indexOf('CAREGIVER') >= 0) {
+        bodyHtml.push('<p>I am writing to formally designate a caregiver who is authorized to act on my behalf in the matters described below.</p>');
+      } else if (nameUpper.indexOf('MEDICAL AUTHORIZATION') >= 0) {
+        bodyHtml.push('<p>I am writing to authorize the release of medical information and/or to designate an individual to make medical decisions on my behalf as described below.</p>');
+      } else if (nameUpper.indexOf('SEVERANCE') >= 0 && nameUpper.indexOf('COUNTER') >= 0) {
+        bodyHtml.push('<p>Thank you for the severance offer' + (effectiveDate ? ' dated ' + escapeHtml(effectiveDate) : '') + '. I appreciate the opportunity to review the terms, and I would like to propose several modifications that would better reflect my tenure and circumstances.</p>');
+      } else if (nameUpper.indexOf('SEVERANCE') >= 0) {
+        bodyHtml.push('<p>I am writing in response to the severance terms presented to me' + (effectiveDate ? ' on ' + escapeHtml(effectiveDate) : '') + ' and wish to formally communicate my position regarding the proposed agreement.</p>');
+      } else if (nameUpper.indexOf('COBRA') >= 0) {
+        bodyHtml.push('<p>I am writing to formally communicate my election regarding continuation of health coverage under COBRA, following my recent qualifying event.</p>');
+      } else if (nameUpper.indexOf('ROLLOVER') >= 0 || nameUpper.indexOf('401') >= 0) {
+        bodyHtml.push('<p>I am writing to formally request a rollover of my retirement account. Please transfer the funds as specified below to the designated receiving institution.</p>');
+      } else if (nameUpper.indexOf('HARDSHIP') >= 0) {
+        bodyHtml.push('<p>I am writing to inform you of a financial hardship that is affecting my ability to meet my current payment obligations. I am requesting your consideration for a modified payment arrangement as described below.</p>');
+      } else if (nameUpper.indexOf('AUTHORIZATION') >= 0 || nameUpper.indexOf('CONSENT') >= 0) {
+        bodyHtml.push('<p>I am writing to formally authorize the actions described below and to grant the necessary permissions for their execution.</p>');
+      } else if (nameUpper.indexOf('CANCELLATION') >= 0 || nameUpper.indexOf('SUBSCRIPTION') >= 0) {
+        bodyHtml.push('<p>I am writing to formally request the cancellation of the account or service detailed below, effective immediately or at the earliest available date.</p>');
+      } else if (nameUpper.indexOf('TRANSFER') >= 0) {
+        bodyHtml.push('<p>I am writing to formally request the transfer described below. Please process this request and confirm completion in writing.</p>');
+      } else if (nameUpper.indexOf('LEASE') >= 0 || nameUpper.indexOf('EARLY LEASE') >= 0) {
+        bodyHtml.push('<p>I am writing to request early termination of my lease for the property at ' + escapeHtml(propertyAddr || '[Property Address]') + '. My current lease runs through ' + escapeHtml(leaseEndDate || '[Lease End Date]') + ', but I am requesting to be released from the lease effective ' + escapeHtml(moveOutDate || '[Proposed Move-Out Date]') + '.</p>');
+      } else if (nameUpper.indexOf('LANDLORD') >= 0 && nameUpper.indexOf('MOVEOUT') >= 0) {
+        bodyHtml.push('<p>I am writing to provide formal notice that I will be vacating the property at ' + escapeHtml(propertyAddr || '[Property Address]') + ' on ' + escapeHtml(moveOutDate || '[Move-Out Date]') + '.</p>');
+      } else if (nameUpper.indexOf('LANDLORD REFERENCE') >= 0) {
+        bodyHtml.push('<p>I am writing to respectfully request a reference letter regarding my tenancy at ' + escapeHtml(propertyAddr || '[Property Address]') + '.</p>');
+      } else if (nameUpper.indexOf('PROOF OF RESIDENCY') >= 0) {
+        bodyHtml.push('<p>I am writing to confirm my current residency at the address listed above for the purposes described below.</p>');
+      } else if (nameUpper.indexOf('SCHOOL TRANSFER') >= 0) {
+        bodyHtml.push('<p>I am writing to formally request a transfer for my child to a new school due to a change in residence.</p>');
+      } else if (nameUpper.indexOf('REMOTE WORK') >= 0 || nameUpper.indexOf('STATE CHANGE') >= 0) {
+        bodyHtml.push('<p>I am writing to formally notify you that I will be relocating to a new state and to discuss any implications for my remote work arrangement, tax withholding, and benefits.</p>');
+      } else if (nameUpper.indexOf('HOA') >= 0) {
+        bodyHtml.push('<p>I am writing to notify you of a change in property ownership and to provide the information needed to transfer the HOA account and responsibilities.</p>');
+      } else if (nameUpper.indexOf('RETIREMENT') >= 0 && nameUpper.indexOf('NOTIFICATION') >= 0) {
+        bodyHtml.push('<p>I am writing to formally notify you of my decision to retire from my position' + (jobTitle ? ' as ' + escapeHtml(jobTitle) : '') + (effectiveDate ? ', effective ' + escapeHtml(effectiveDate) : '') + '.</p>');
+      } else if (nameUpper.indexOf('RMD') >= 0) {
+        bodyHtml.push('<p>I am writing to request a Required Minimum Distribution (RMD) from my retirement account as detailed below.</p>');
+      } else if (nameUpper.indexOf('BENEFICIARY') >= 0) {
+        bodyHtml.push('<p>I am writing to request an update to the beneficiary designation on my retirement account as described below.</p>');
+      } else if (nameUpper.indexOf('HEALTH INSURANCE CONTINUATION') >= 0 || nameUpper.indexOf('RETIREE HEALTH') >= 0) {
+        bodyHtml.push('<p>I am writing to request continuation of my health insurance benefits following my retirement.</p>');
+      } else if (nameUpper.indexOf('INSTRUCTION TO HEIRS') >= 0 || nameUpper.indexOf('LEGACY') >= 0 || nameUpper.indexOf('ETHICAL WILL') >= 0) {
+        bodyHtml.push('<p>I am writing this letter to provide guidance and personal instructions to my heirs and loved ones.</p>');
+      } else if (nameUpper.indexOf('MEDICARE') >= 0) {
+        bodyHtml.push('<p>I am writing regarding my Medicare enrollment and to provide the necessary information for processing my application.</p>');
+      } else if (nameUpper.indexOf('REFERENCE REQUEST') >= 0 || nameUpper.indexOf('NETWORKING') >= 0) {
+        bodyHtml.push('<p>I am writing to respectfully request your assistance during my career transition. Your perspective and professional network would be invaluable as I explore new opportunities.</p>');
+      } else if (nameUpper.indexOf('APPEAL') >= 0) {
+        bodyHtml.push('<p>I am writing to formally appeal the decision described below and to provide supporting documentation for your review.</p>');
       } else if (nameUpper.indexOf('INSURANCE') >= 0 || nameUpper.indexOf('CLAIM') >= 0) {
-        bodyParts.push('I am writing regarding the insurance matter detailed below and to formally submit this request.');
+        bodyHtml.push('<p>I am writing regarding the insurance matter detailed below and to formally submit this request for processing.</p>');
       } else {
-        bodyParts.push('I am writing regarding the matter referenced in the subject line above. Please find the relevant details below for your review and action.');
+        bodyHtml.push('<p>I am writing regarding the matter referenced above. Please find the relevant details below for your review and action.</p>');
       }
 
-      // Detail sections become prose paragraphs
+      // Detail sections: render as titled paragraphs with clean key-value lines
       for (var i = 0; i < detailSections.length; i++) {
         var ds = detailSections[i];
-        var sectionTitle = ds.name.charAt(0) + ds.name.slice(1).toLowerCase();
-        // Build as a readable sentence listing the details
-        var details = [];
+        // Title case the section name
+        var sectionTitle = ds.name.toLowerCase().replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        var secHtml = '<h3>' + escapeHtml(sectionTitle) + '</h3>';
+        // Render as numbered list for cleaner presentation
+        secHtml += '<ol>';
         for (var j = 0; j < ds.fields.length; j++) {
-          details.push(ds.fields[j].label + ': ' + ds.fields[j].value);
+          secHtml += '<li>' + escapeHtml(ds.fields[j].label) + ': ' + escapeHtml(ds.fields[j].value) + '</li>';
         }
-        bodyParts.push('The relevant ' + sectionTitle.toLowerCase() + ' is as follows: ' + details.join('; ') + '.');
+        secHtml += '</ol>';
+        bodyHtml.push(secHtml);
       }
 
-      // Checked actions
+      // Checked actions as a titled numbered list
       if (allCheckedActions.length > 0) {
-        bodyParts.push('I respectfully request the following actions be taken:\n' + allCheckedActions.map(function(a) { return '\u2022 ' + a; }).join('\n'));
+        var actHtml = '<h3>Requested Actions</h3><p>Please:</p><ol>';
+        for (var i = 0; i < allCheckedActions.length; i++) {
+          actHtml += '<li>' + escapeHtml(allCheckedActions[i]) + '</li>';
+        }
+        actHtml += '</ol>';
+        bodyHtml.push(actHtml);
       }
 
-      // Enclosed documents
+      // Attached documents mentioned in body
       if (allCheckedDocs.length > 0) {
-        bodyParts.push('Enclosed with this letter, please find the following supporting documents:\n' + allCheckedDocs.map(function(d) { return '\u2022 ' + d; }).join('\n'));
+        var docText = allCheckedDocs.length === 1
+          ? 'Attached is a copy of ' + escapeHtml(allCheckedDocs[0].toLowerCase()) + '.'
+          : 'Enclosed with this letter, please find: ' + allCheckedDocs.map(function(d) { return escapeHtml(d); }).join(', ') + '.';
+        bodyHtml.push('<p>' + docText + '</p>');
       }
 
-      // Closing paragraph
-      bodyParts.push('Please contact me at your earliest convenience to confirm receipt of this letter and to advise of any additional documentation or steps required. Thank you for your prompt attention to this matter.');
+      // Closing paragraph with contact info
+      var contactLine = '';
+      if (senderPhone || senderEmail) {
+        var parts = [];
+        if (senderPhone) parts.push(escapeHtml(senderPhone));
+        if (senderEmail) parts.push(escapeHtml(senderEmail));
+        contactLine = ' I can be reached at ' + parts.join(' or ') + '.';
+      }
+      bodyHtml.push('<p>Please let me know if you need any additional information or documentation to process this request.' + contactLine + ' Thank you for your prompt attention to this matter.</p>');
 
-      // Build subject line from template name
+      // Build a contextual subject line
       var subject = prettyName;
+      if (accountNum) {
+        if (nameUpper.indexOf('DEATH') >= 0 || nameUpper.indexOf('EXECUTOR') >= 0) {
+          subject = 'Death Notification \u2014 Account ' + accountNum;
+        } else if (nameUpper.indexOf('DIVORCE') >= 0 || nameUpper.indexOf('CREDITOR') >= 0) {
+          subject = 'Account Modification Request \u2014 Divorce Settlement';
+        } else if (nameUpper.indexOf('INSURANCE') >= 0 || nameUpper.indexOf('REMOVAL') >= 0) {
+          subject = 'Request for Removal from ' + (accountType || 'Insurance') + ' Policy';
+        } else {
+          subject = prettyName + ' \u2014 Account ' + accountNum;
+        }
+      } else if (nameUpper.indexOf('FMLA') >= 0) {
+        subject = 'Request for Family and Medical Leave Act (FMLA) Leave';
+      } else if (nameUpper.indexOf('SEVERANCE') >= 0 && nameUpper.indexOf('COUNTER') >= 0) {
+        subject = 'Response to Severance Offer \u2014 Requested Modifications';
+      } else if (nameUpper.indexOf('LEASE') >= 0) {
+        subject = 'Request for Early Lease Termination';
+      } else if (nameUpper.indexOf('ACCOMMODATION') >= 0 || nameUpper.indexOf('ADA') >= 0) {
+        subject = 'Request for Reasonable Workplace Accommodation';
+      } else if (nameUpper.indexOf('RETIREMENT') >= 0 && nameUpper.indexOf('NOTIFICATION') >= 0) {
+        subject = 'Retirement Notification' + (effectiveDate ? ' \u2014 Effective ' + effectiveDate : '');
+      }
+
+      // Determine salutation — prefer a person's name, fall back to org
+      var salutationName = recipientAttn || '';
+      if (!salutationName && recipientOrg) salutationName = recipientOrg;
 
       return {
         date: fields._date || '',
@@ -5784,14 +5933,18 @@ guideLibrary['disability'] = {
         senderCityStateZip: senderCityStateZip,
         senderPhone: senderPhone,
         senderEmail: senderEmail,
-        recipientName: recipientName || '',
-        recipientAddress: recipientAddress || '',
+        recipientOrg: recipientOrg || '',
+        recipientDept: recipientDept || '',
+        recipientAddr: recipientAddr || '',
+        recipientCityStateZip: recipientCityStateZip || '',
+        recipientAttn: recipientAttn || '',
         subject: subject,
-        salutation: recipientAddress ? 'Dear ' + recipientAddress.replace(/^Attn:\s*/i, '') : 'To Whom It May Concern',
-        bodyParagraphs: bodyParts,
+        salutation: salutationName ? 'Dear ' + salutationName : 'To Whom It May Concern',
+        bodyHtml: bodyHtml,
         closing: 'Sincerely',
-        printedName: sig['Printed Name'] || senderName || '',
-        enclosures: allCheckedDocs
+        printedName: sectionField(sig, ['Printed Name', 'Full Name', 'Name']) || senderName || '',
+        enclosures: allCheckedDocs,
+        templateDisplayName: prettyName
       };
     }
 
@@ -5912,43 +6065,59 @@ guideLibrary['disability'] = {
 
     function buildLetterHtml(data) {
       var html = '<div class="ws-letter-page" contenteditable="true" spellcheck="true">';
-      // Date
-      html += '<div class="letter-date">' + (data.date ? escapeHtml(data.date) : '<span style="color:#999">[Date]</span>') + '</div>';
-      // Sender block
+
+      // Sender block (top of letter, like a letterhead)
       var senderLines = [data.senderName, data.senderAddress, data.senderCityStateZip].filter(Boolean);
       var contactParts = [data.senderPhone, data.senderEmail].filter(Boolean);
-      if (contactParts.length) senderLines.push(contactParts.join(' \u2022 '));
+      if (contactParts.length) senderLines.push(contactParts.join(' | '));
       if (senderLines.length) {
         html += '<div class="letter-sender-block">' + senderLines.map(function(l) { return escapeHtml(l); }).join('<br>') + '</div>';
       } else {
-        html += '<div class="letter-sender-block"><span style="color:#999">[Your Name]<br>[Your Address]<br>[City, State ZIP]<br>[Phone] \u2022 [Email]</span></div>';
+        html += '<div class="letter-sender-block"><span style="color:#999">[Your Full Name]<br>[Your Street Address]<br>[City, State ZIP]<br>[Your Phone Number] | [Your Email Address]</span></div>';
       }
+
+      // Date
+      html += '<div class="letter-date">' + (data.date ? escapeHtml(data.date) : '<span style="color:#999">[Date]</span>') + '</div>';
+
       // Recipient block
-      var hasRecip = data.recipientName && data.recipientName !== 'To Whom It May Concern' && data.recipientName !== 'Credit Bureau';
+      var recipLines = [data.recipientOrg, data.recipientDept, data.recipientAddr, data.recipientCityStateZip].filter(Boolean);
+      if (data.recipientAttn && data.recipientAttn !== data.recipientOrg) recipLines.push('Attn: ' + data.recipientAttn);
       html += '<div class="letter-recipient-block">';
-      if (hasRecip) {
-        var recipLines = [data.recipientName, data.recipientAddress].filter(Boolean);
+      if (recipLines.length) {
         html += recipLines.map(function(l) { return escapeHtml(l); }).join('<br>');
       } else {
         html += '<span style="color:#999">[Recipient Name]<br>[Company / Organization]<br>[Address]<br>[City, State ZIP]</span>';
       }
       html += '</div>';
-      // Subject
+
+      // Subject line
       if (data.subject) html += '<div class="letter-subject">Re: ' + escapeHtml(data.subject) + '</div>';
+
       // Salutation
       html += '<div class="letter-salutation">' + escapeHtml(data.salutation || 'To Whom It May Concern') + ',</div>';
-      // Body
+
+      // Body — already contains HTML from universalGenerate
       html += '<div class="letter-body">';
-      (data.bodyParagraphs || []).forEach(function(p) {
-        var lines = p.split('\n');
-        html += '<p>' + lines.map(function(l) { return escapeHtml(l); }).join('<br>') + '</p>';
+      (data.bodyHtml || []).forEach(function(block) {
+        html += block;
       });
       html += '</div>';
-      // Closing
+
+      // Closing + signature space + printed name
       html += '<div class="letter-closing">' + escapeHtml(data.closing || 'Sincerely') + ',</div>';
-      // Name (signature can be added via the signature stamper)
+      html += '<div class="letter-signature-line"><br><br><br></div>';
       html += '<div class="letter-printed-name">' + (data.printedName ? escapeHtml(data.printedName) : '<span style="color:#999">[Your Name]</span>') + '</div>';
-      // Enclosures already listed in body paragraphs
+
+      // Enclosures section (separate from body)
+      if (data.enclosures && data.enclosures.length > 0) {
+        html += '<div class="letter-enclosures"><strong>Enclosures:</strong>';
+        html += '<div class="enclosure-list">';
+        data.enclosures.forEach(function(doc) {
+          html += '<div>' + escapeHtml(doc) + '</div>';
+        });
+        html += '</div></div>';
+      }
+
       html += '</div>';
       return html;
     }
@@ -6047,7 +6216,7 @@ guideLibrary['disability'] = {
       var letterHtml = letterPage.innerHTML;
 
       // Build a DOCX blob for the file upload
-      var letterStyles = 'body{font-family:Georgia,serif;font-size:12pt;line-height:1.8;color:#1a1a1a;max-width:650px;margin:0 auto;padding:40px}.letter-date{margin-bottom:28px}.letter-sender-block,.letter-recipient-block{margin-bottom:24px;line-height:1.6}.letter-subject{font-weight:bold;margin-bottom:20px}.letter-salutation{margin-bottom:16px}.letter-body p{margin:0 0 14px;text-align:justify}.letter-closing{margin-top:28px;margin-bottom:48px}.letter-printed-name{font-weight:bold}';
+      var letterStyles = 'body{font-family:Georgia,serif;font-size:12pt;line-height:1.8;color:#1a1a1a;max-width:650px;margin:0 auto;padding:40px}.letter-sender-block{margin-bottom:24px;line-height:1.6}.letter-date{margin-bottom:28px}.letter-recipient-block{margin-bottom:24px;line-height:1.6}.letter-subject{font-weight:bold;margin-bottom:20px}.letter-salutation{margin-bottom:16px}.letter-body p{margin:0 0 14px;text-align:justify}.letter-body h3{font-size:12pt;font-weight:bold;margin:18px 0 8px}.letter-body ol{margin:0 0 14px;padding-left:22px}.letter-body ol li{margin-bottom:4px}.letter-closing{margin-top:28px;margin-bottom:8px}.letter-signature-line{margin-top:32px;margin-bottom:6px}.letter-printed-name{font-weight:bold}.letter-enclosures{margin-top:28px;font-size:11pt}.letter-enclosures .enclosure-list div{margin:2px 0}';
       var docxHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>' + letterStyles + '</style></head><body>' + letterHtml + '</body></html>';
       var blob;
       if (typeof htmlDocx !== 'undefined' && htmlDocx.asBlob) {
@@ -6100,7 +6269,7 @@ guideLibrary['disability'] = {
       if (!content) return;
       var letterPage = content.querySelector('.ws-letter-page');
       if (!letterPage) return;
-      var fullHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:Georgia,serif;font-size:12pt;line-height:1.8;color:#1a1a1a;max-width:650px;margin:0 auto;padding:40px}.letter-date{margin-bottom:28px}.letter-sender-block,.letter-recipient-block{margin-bottom:24px;line-height:1.6}.letter-subject{font-weight:bold;margin-bottom:20px}.letter-salutation{margin-bottom:16px}.letter-body p{margin:0 0 14px;text-align:justify}.letter-closing{margin-top:28px;margin-bottom:48px}.letter-signature{font-style:italic;margin-bottom:6px}.letter-printed-name{font-weight:bold}.letter-enclosures{margin-top:28px;border-top:1px solid #ccc;padding-top:16px;font-size:11pt;color:#555}.letter-enclosures ul{margin:4px 0 0;padding-left:18px}</style></head><body>' + letterPage.innerHTML + '</body></html>';
+      var fullHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:Georgia,serif;font-size:12pt;line-height:1.8;color:#1a1a1a;max-width:650px;margin:0 auto;padding:40px}.letter-sender-block{margin-bottom:24px;line-height:1.6}.letter-date{margin-bottom:28px}.letter-recipient-block{margin-bottom:24px;line-height:1.6}.letter-subject{font-weight:bold;margin-bottom:20px}.letter-salutation{margin-bottom:16px}.letter-body p{margin:0 0 14px;text-align:justify}.letter-body h3{font-size:12pt;font-weight:bold;margin:18px 0 8px}.letter-body ol{margin:0 0 14px;padding-left:22px}.letter-body ol li{margin-bottom:4px}.letter-closing{margin-top:28px;margin-bottom:8px}.letter-signature-line{margin-top:32px;margin-bottom:6px}.letter-printed-name{font-weight:bold}.letter-enclosures{margin-top:28px;font-size:11pt}.letter-enclosures .enclosure-list div{margin:2px 0}</style></head><body>' + letterPage.innerHTML + '</body></html>';
       var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
       var baseName = file ? file.original_name.replace(/\.[^.]+$/, '') : 'letter';
       if (typeof htmlDocx !== 'undefined' && htmlDocx.asBlob) {
