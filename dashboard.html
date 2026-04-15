@@ -5684,6 +5684,7 @@ guideLibrary['disability'] = {
       var recipientAddr = '';
       var recipientCityStateZip = '';
       var recipientAttn = '';
+      var recipientSectionName = '';
       var sections = Object.keys(fields);
       for (var i = 0; i < sections.length; i++) {
         var sec = sections[i];
@@ -5693,6 +5694,7 @@ guideLibrary['disability'] = {
         var orgVal = sectionField(s, ['Institution Name', 'Insurance Company', 'Insurance Company Name', 'Company Name', 'Organization', 'Agency Name', 'Employer Name', 'Creditor Name', 'Lender Name', 'Bank Name', 'Landlord Name', 'Landlord/Property Manager Name', 'Property Management Company', 'School Name', 'HOA Name', 'Brokerage/Custodian Name']);
         if (orgVal && !recipientOrg) {
           recipientOrg = orgVal;
+          recipientSectionName = sec;
           // Extract address fields from the same section as the org
           recipientDept = sectionField(s, ['Department', 'Customer Service', 'Claims Department']);
           recipientAddr = sectionField(s, ['Branch', 'Branch Address', 'Company Address', 'Street Address', 'Mailing Address', 'Address']);
@@ -5703,9 +5705,11 @@ guideLibrary['disability'] = {
         }
       }
 
-      // Sections whose data is already used in the recipient block or opening paragraph
+      // Sections whose data is already used in the recipient block
       var RECIPIENT_SECTION_PATTERNS = ['INSTITUTION', 'NOTIFIED', 'BEING NOTIFIED'];
       function isRecipientSection(sn) {
+        // If this is the exact section we extracted recipient from, always skip
+        if (recipientSectionName && sn === recipientSectionName) return true;
         var u = sn.toUpperCase();
         for (var i = 0; i < RECIPIENT_SECTION_PATTERNS.length; i++) {
           if (u.indexOf(RECIPIENT_SECTION_PATTERNS[i]) >= 0) return true;
@@ -5757,6 +5761,17 @@ guideLibrary['disability'] = {
       var prettyName = templateName.replace(/^\d+\.\s*/, '').replace(/\.[^.]+$/, '').replace(/_/g, ' ');
       var nameUpper = prettyName.toUpperCase();
       var deceasedName = findField(fields, ['Full Legal Name', 'Deceased Full Legal Name', 'Deceased Full Name', 'Name of Deceased']);
+      // Fallback: search for "Full Name" specifically in deceased-type sections (not sender)
+      if (!deceasedName) {
+        var decSections = Object.keys(fields);
+        for (var ds = 0; ds < decSections.length; ds++) {
+          var dsUp = decSections[ds].toUpperCase();
+          if (dsUp.indexOf('DECEASED') >= 0 || dsUp.indexOf('DECEDENT') >= 0) {
+            var dsVal = sectionField(fields[decSections[ds]], ['Full Name', 'Name']);
+            if (dsVal) { deceasedName = dsVal; break; }
+          }
+        }
+      }
       var deathDate = findField(fields, ['Date of Death', 'Date of Passing']);
       var relationship = sectionField(sender, ['Relationship to Deceased', 'Relationship', 'Your Relationship']);
       var accountNum = findField(fields, ['Account Number', 'Policy Number', 'Loan Number', 'Case Number']);
@@ -5800,16 +5815,43 @@ guideLibrary['disability'] = {
         } else {
           bodyHtml.push('<p>I am writing to notify you of the passing of ' + escapeHtml(dn) + dd + '. I am the ' + escapeHtml(rel) + ' handling the estate and related matters.</p>');
         }
+        // For estate letters, add a paragraph with key deceased identifiers if available
+        var dob = findField(fields, ['Date of Birth', 'DOB']);
+        var ssn = findField(fields, ['SSN', 'SSN (last 4)', 'Social Security Number', 'Last 4 of SSN']);
+        if (dob || ssn) {
+          var idLine = escapeHtml(dn) + ' was born' + (dob ? ' on ' + escapeHtml(dob) : '') + (ssn ? ' and the Social Security number ends in ' + escapeHtml(ssn) : '') + '.';
+          bodyHtml.push('<p>' + idLine + '</p>');
+        }
+        // Skip the deceased info section — data already in opening
+        skipDetailSections.push('DECEASED', 'DECEDENT');
       } else if (nameUpper.indexOf('DIVORCE') >= 0 || nameUpper.indexOf('CREDITOR NOTIFICATION') >= 0) {
         var acctInfo = accountNum ? ' (' + escapeHtml(accountType || 'account') + ' number ' + escapeHtml(accountNum) + ')' : '';
         var divInfo = divorceDate ? ' As of ' + escapeHtml(divorceDate) + ', I am divorced.' : '';
         var caseInfo = caseNumber ? ' Per the terms of my divorce decree (case number ' + escapeHtml(caseNumber) + (courtName ? ', ' + escapeHtml(courtName) : '') + ')' : ' Per the terms of my divorce decree';
         bodyHtml.push('<p>I am writing regarding an account' + acctInfo + ' held in my name and my former spouse\'s name.' + divInfo + caseInfo + ', I am requesting that this account be modified as described below.</p>');
+        // Account details block
+        var acctLines = [];
+        if (accountNum) acctLines.push('Account Number: ' + escapeHtml(accountNum));
+        if (exSpouseName) acctLines.push('Account Holders: ' + escapeHtml(senderName) + ' and ' + escapeHtml(exSpouseName));
+        if (accountType) acctLines.push('Account Type: ' + escapeHtml(accountType));
+        var balance = findField(fields, ['Current Balance', 'Balance']);
+        if (balance) acctLines.push('Current Balance: ' + escapeHtml(balance));
+        if (acctLines.length) bodyHtml.push('<h3>Account Details</h3><p>' + acctLines.join('<br>') + '</p>');
+        skipDetailSections.push('ACCOUNT', 'JOINT', 'PERSON TO REMOVE', 'EX-SPOUSE', 'FORMER SPOUSE');
       } else if (nameUpper.indexOf('INSURANCE REMOVAL') >= 0 || nameUpper.indexOf('REMOVAL REQUEST') >= 0) {
         var pType = accountType || 'insurance';
         var divDate = divorceDate ? ' I was divorced on ' + escapeHtml(divorceDate) : '';
         var cInfo = caseNumber ? ' (case number ' + escapeHtml(caseNumber) + (courtName ? ', ' + escapeHtml(courtName) : '') + ')' : '';
         bodyHtml.push('<p>I am writing to request the removal of my former spouse from a ' + escapeHtml(pType) + ' insurance policy.' + divDate + cInfo + ', and per the terms of my divorce decree, I am requesting that ' + escapeHtml(exSpouseName || 'my ex-spouse') + ' be removed from this policy effective immediately or as soon as legally permitted.</p>');
+        // Policy details block
+        var polLines = [];
+        if (accountType) polLines.push('Policy Type: ' + escapeHtml(accountType));
+        if (accountNum) polLines.push('Policy Number: ' + escapeHtml(accountNum));
+        polLines.push('Policyholder Name: ' + escapeHtml(senderName || '[Your Name]'));
+        if (exSpouseName) polLines.push('Spouse to Remove: ' + escapeHtml(exSpouseName));
+        if (effectiveDate) polLines.push('Effective Date of Removal: ' + escapeHtml(effectiveDate));
+        if (polLines.length > 1) bodyHtml.push('<h3>Policy Information</h3><p>' + polLines.join('<br>') + '</p>');
+        skipDetailSections.push('INSURANCE POLICY', 'PERSON TO REMOVE', 'EX-SPOUSE', 'POLICY');
       } else if (nameUpper.indexOf('JOINT ACCOUNT') >= 0 || nameUpper.indexOf('SEPARATION') >= 0) {
         bodyHtml.push('<p>I am writing to request the separation of a joint account following my divorce' + (divorceDate ? ' on ' + escapeHtml(divorceDate) : '') + '. Per the terms of my divorce decree' + (caseNumber ? ' (case number ' + escapeHtml(caseNumber) + ')' : '') + ', I am requesting the modifications described below.</p>');
       } else if (nameUpper.indexOf('NAME CHANGE') >= 0) {
@@ -5964,36 +6006,80 @@ guideLibrary['disability'] = {
         skipDetailSections.push('PERMISSION', 'CHILD', 'AUTHORIZED', 'SUPERVISING', 'PARENT / GUARDIAN 2', 'MEDICAL', 'ADDITIONAL CONDITION');
       } else if (nameUpper.indexOf('FMLA') >= 0) {
         bodyHtml.push('<p>I am writing to request leave under the Family and Medical Leave Act (FMLA). I am providing this notice as required, and I am committed to working with you to ensure a smooth transition during my absence.</p>');
+        // Employee info block
+        var empLines = [];
+        if (senderName) empLines.push('Full Name: ' + escapeHtml(senderName));
+        if (jobTitle) empLines.push('Position/Job Title: ' + escapeHtml(jobTitle));
+        var dept = findField(fields, ['Department', 'Department Name']);
+        if (dept) empLines.push('Department: ' + escapeHtml(dept));
+        var empId = findField(fields, ['Employee ID', 'ID Number', 'Employee ID Number']);
+        if (empId) empLines.push('Employee ID: ' + escapeHtml(empId));
+        if (empLines.length) bodyHtml.push('<h3>Employee Information</h3><p>' + empLines.join('<br>') + '</p>');
+        // Reason and timeline
+        if (reasonForLeave) bodyHtml.push('<h3>Reason for Leave</h3><p>' + escapeHtml(reasonForLeave) + '</p>');
+        var leaveStart = findField(fields, ['Anticipated Start Date', 'Start Date', 'Leave Start Date']);
+        var leaveEnd = findField(fields, ['Expected Return Date', 'Return Date', 'End Date']);
+        var leaveDur = findField(fields, ['Estimated Duration', 'Duration']);
+        if (leaveStart || leaveEnd || leaveDur) {
+          var tlLines = [];
+          if (leaveStart) tlLines.push('Anticipated start date: ' + escapeHtml(leaveStart));
+          if (leaveEnd) tlLines.push('Expected return to work date: ' + escapeHtml(leaveEnd));
+          if (leaveDur) tlLines.push('Estimated duration: ' + escapeHtml(leaveDur));
+          bodyHtml.push('<h3>Leave Timeline</h3><p>' + tlLines.join('<br>') + '</p>');
+        }
+        bodyHtml.push('<p>I am prepared to provide medical certification from my healthcare provider in support of this request, as required by law.</p>');
+        skipDetailSections.push('EMPLOYEE', 'REASON', 'LEAVE', 'TIMELINE', 'MEDICAL CERT', 'BENEFITS', 'JOB PROTECTION');
       } else if (nameUpper.indexOf('DISABILITY') >= 0 && nameUpper.indexOf('ACCOMMODATION') >= 0) {
-        bodyHtml.push('<p>I am writing to follow up on my previous accommodation request and to provide additional information as needed to support the implementation of reasonable workplace accommodations.</p>');
+        var origDate = findField(fields, ['Date of Original Request', 'Original Request Date']);
+        bodyHtml.push('<p>I am writing to follow up on my accommodation request' + (origDate ? ' submitted on ' + escapeHtml(origDate) : '') + ' and to provide additional information as needed to support the implementation of reasonable workplace accommodations.</p>');
       } else if (nameUpper.indexOf('ACCOMMODATION') >= 0 || nameUpper.indexOf('ADA') >= 0) {
         bodyHtml.push('<p>I am writing to formally request a reasonable workplace accommodation under the Americans with Disabilities Act (ADA). I am committed to continuing to perform my job duties effectively and believe the accommodations described below will allow me to do so.</p>');
+        // Employee info
+        var empLines2 = [];
+        if (senderName) empLines2.push('Full Name: ' + escapeHtml(senderName));
+        if (jobTitle) empLines2.push('Position: ' + escapeHtml(jobTitle));
+        var dept2 = findField(fields, ['Department', 'Department Name']);
+        if (dept2) empLines2.push('Department: ' + escapeHtml(dept2));
+        var supervisor = findField(fields, ['Supervisor Name', 'Manager Name']);
+        if (supervisor) empLines2.push('Supervisor: ' + escapeHtml(supervisor));
+        if (empLines2.length) bodyHtml.push('<h3>Employee Information</h3><p>' + empLines2.join('<br>') + '</p>');
+        skipDetailSections.push('EMPLOYEE');
       } else if (nameUpper.indexOf('RETURN TO WORK') >= 0) {
-        bodyHtml.push('<p>I am writing to notify you of my intent to return to work following my period of leave. I am prepared to resume my duties and would like to discuss any transition arrangements.</p>');
+        var returnDate = findField(fields, ['Return Date', 'Planned Return Date', 'Return to Work Date']);
+        var leaveReason = findField(fields, ['Reason for Leave', 'Reason', 'Leave Type']);
+        bodyHtml.push('<p>I am writing to confirm that I am ready to return to work following my recent leave' + (leaveReason ? ' for ' + escapeHtml(leaveReason) : '') + '.' + (returnDate ? ' I plan to return on ' + escapeHtml(returnDate) + '.' : '') + ' I am prepared to resume my duties and would like to discuss any transition arrangements.</p>');
       } else if (nameUpper.indexOf('LETTER TO EMPLOYER DURING') >= 0) {
-        bodyHtml.push('<p>I am writing to provide an update on my current leave status and to maintain communication regarding my anticipated return and any interim matters that may need attention.</p>');
+        var leaveStartDate = findField(fields, ['Leave Start Date', 'Start Date']);
+        bodyHtml.push('<p>I am writing to provide an update on my status during my Family and Medical Leave Act (FMLA) leave' + (leaveStartDate ? ', which began on ' + escapeHtml(leaveStartDate) : '') + '. I want to maintain communication regarding my anticipated return and any interim matters that may need attention.</p>');
       } else if (nameUpper.indexOf('CAREGIVER') >= 0) {
-        bodyHtml.push('<p>I am writing to formally designate a caregiver who is authorized to act on my behalf in the matters described below.</p>');
+        var caregiverName = findField(fields, ['Caregiver Name', 'Designated Caregiver', 'Full Name']);
+        bodyHtml.push('<p>I am writing to authorize ' + escapeHtml(caregiverName || '[Caregiver Name]') + ' to act on my behalf in matters related to my care and personal affairs as described below.</p>');
       } else if (nameUpper.indexOf('MEDICAL AUTHORIZATION') >= 0) {
-        bodyHtml.push('<p>I am writing to authorize the release of medical information and/or to designate an individual to make medical decisions on my behalf as described below.</p>');
+        bodyHtml.push('<p>I am writing to authorize the release of my medical records and health information to the person or entity named below.</p>');
       } else if (nameUpper.indexOf('SEVERANCE') >= 0 && nameUpper.indexOf('COUNTER') >= 0) {
         bodyHtml.push('<p>Thank you for the severance offer' + (effectiveDate ? ' dated ' + escapeHtml(effectiveDate) : '') + '. I appreciate the opportunity to review the terms, and I would like to propose several modifications that would better reflect my tenure and circumstances.</p>');
+        bodyHtml.push('<p>I am asking for your consideration on the following points:</p>');
       } else if (nameUpper.indexOf('SEVERANCE') >= 0) {
         bodyHtml.push('<p>I am writing in response to the severance terms presented to me' + (effectiveDate ? ' on ' + escapeHtml(effectiveDate) : '') + ' and wish to formally communicate my position regarding the proposed agreement.</p>');
       } else if (nameUpper.indexOf('COBRA') >= 0) {
-        bodyHtml.push('<p>I am writing to formally communicate my election regarding continuation of health coverage under COBRA, following my recent qualifying event.</p>');
+        var lastDay = findField(fields, ['Last Day of Employment', 'Termination Date', 'Qualifying Event Date']);
+        bodyHtml.push('<p>I am writing to formally elect continuation of health insurance coverage under COBRA' + (lastDay ? ' following my employment termination on ' + escapeHtml(lastDay) : ', following my recent qualifying event') + '.</p>');
       } else if (nameUpper.indexOf('ROLLOVER') >= 0 || nameUpper.indexOf('401') >= 0) {
-        bodyHtml.push('<p>I am writing to formally request a rollover of my retirement account. Please transfer the funds as specified below to the designated receiving institution.</p>');
+        var receivingInst = findField(fields, ['Receiving Institution', 'New Custodian', 'Rollover To']);
+        bodyHtml.push('<p>I am writing to request a rollover of my 401(k) account balance' + (receivingInst ? ' to ' + escapeHtml(receivingInst) : '') + ', effective immediately. Please transfer the funds as specified below.</p>');
       } else if (nameUpper.indexOf('HARDSHIP') >= 0) {
-        bodyHtml.push('<p>I am writing to inform you of a financial hardship that is affecting my ability to meet my current payment obligations. I am requesting your consideration for a modified payment arrangement as described below.</p>');
+        bodyHtml.push('<p>I am writing to inform you of a temporary financial hardship that is affecting my ability to meet my current payment obligations. I am requesting your assistance in restructuring my account to help me through this difficult period.</p>');
       } else if (nameUpper.indexOf('AUTHORIZATION') >= 0 || nameUpper.indexOf('CONSENT') >= 0) {
-        bodyHtml.push('<p>I am writing to formally authorize the actions described below and to grant the necessary permissions for their execution.</p>');
+        var authPerson = findField(fields, ['Authorized Person', 'Authorized Person Full Name', 'Representative Name']);
+        bodyHtml.push('<p>I, ' + escapeHtml(senderName || '[Your Full Name]') + ', hereby authorize ' + escapeHtml(authPerson || '[Authorized Person]') + ' to act on my behalf for the purposes described below.</p>');
       } else if (nameUpper.indexOf('CANCELLATION') >= 0 || nameUpper.indexOf('SUBSCRIPTION') >= 0) {
-        bodyHtml.push('<p>I am writing to formally request the cancellation of the account or service detailed below, effective immediately or at the earliest available date.</p>');
+        bodyHtml.push('<p>I am writing to request the cancellation of the account or service detailed below, effective immediately or at the earliest available date.</p>');
       } else if (nameUpper.indexOf('TRANSFER') >= 0) {
         bodyHtml.push('<p>I am writing to formally request the transfer described below. Please process this request and confirm completion in writing.</p>');
       } else if (nameUpper.indexOf('LEASE') >= 0 || nameUpper.indexOf('EARLY LEASE') >= 0) {
+        var leaseReason = findField(fields, ['Reason', 'Reason for Early Termination']);
         bodyHtml.push('<p>I am writing to request early termination of my lease for the property at ' + escapeHtml(propertyAddr || '[Property Address]') + '. My current lease runs through ' + escapeHtml(leaseEndDate || '[Lease End Date]') + ', but I am requesting to be released from the lease effective ' + escapeHtml(moveOutDate || '[Proposed Move-Out Date]') + '.</p>');
+        if (leaseReason) bodyHtml.push('<h3>Reason for Early Termination</h3><p>' + escapeHtml(leaseReason) + '. This move is necessary and was not anticipated when I signed the lease.</p>');
       } else if (nameUpper.indexOf('LANDLORD') >= 0 && nameUpper.indexOf('MOVEOUT') >= 0) {
         bodyHtml.push('<p>I am writing to provide formal notice that I will be vacating the property at ' + escapeHtml(propertyAddr || '[Property Address]') + ' on ' + escapeHtml(moveOutDate || '[Move-Out Date]') + '.</p>');
       } else if (nameUpper.indexOf('LANDLORD REFERENCE') >= 0) {
@@ -6040,13 +6126,12 @@ guideLibrary['disability'] = {
         if (skipThis) continue;
         // Title case the section name
         var sectionTitle = ds.name.toLowerCase().replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-        var secHtml = '<h3>' + escapeHtml(sectionTitle) + '</h3>';
-        // Render as numbered list for cleaner presentation
-        secHtml += '<ol>';
+        var secHtml = '<h3>' + escapeHtml(sectionTitle) + '</h3><p>';
+        var fieldLines = [];
         for (var j = 0; j < ds.fields.length; j++) {
-          secHtml += '<li>' + escapeHtml(ds.fields[j].label) + ': ' + escapeHtml(ds.fields[j].value) + '</li>';
+          fieldLines.push(escapeHtml(ds.fields[j].label) + ': ' + escapeHtml(ds.fields[j].value));
         }
-        secHtml += '</ol>';
+        secHtml += fieldLines.join('<br>') + '</p>';
         bodyHtml.push(secHtml);
       }
 
