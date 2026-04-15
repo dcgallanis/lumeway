@@ -8016,6 +8016,74 @@ def convert_docx_to_html(file_id):
     try:
         decrypted_data = file_cipher.decrypt(encrypted_data)
         doc = DocxDocument(io.BytesIO(decrypted_data))
+        # Helper: convert a DOCX run element to HTML with full formatting
+        hl_colors = {'yellow': '#FFFF00', 'green': '#00FF00', 'cyan': '#00FFFF',
+                     'magenta': '#FF00FF', 'blue': '#0000FF', 'red': '#FF0000',
+                     'darkBlue': '#00008B', 'darkCyan': '#008B8B', 'darkGreen': '#006400',
+                     'darkMagenta': '#8B008B', 'darkRed': '#8B0000', 'darkYellow': '#808000',
+                     'darkGray': '#A9A9A9', 'lightGray': '#D3D3D3', 'black': '#000000'}
+
+        def convert_run(run):
+            """Convert a single w:r element to formatted HTML."""
+            rPr = run.find(qn('w:rPr'))
+            # Check for page break (w:br type="page")
+            br = run.find(qn('w:br'))
+            if br is not None and br.get(qn('w:type')) == 'page':
+                return '<div class="docx-page-break"></div>'
+            t = run.find(qn('w:t'))
+            txt = t.text if t is not None and t.text else ''
+            if not txt:
+                return ''
+            bold = rPr is not None and rPr.find(qn('w:b')) is not None
+            italic = rPr is not None and rPr.find(qn('w:i')) is not None
+            underline = rPr is not None and rPr.find(qn('w:u')) is not None
+            strike = rPr is not None and rPr.find(qn('w:strike')) is not None
+            run_styles = []
+            if rPr is not None:
+                color_el = rPr.find(qn('w:color'))
+                if color_el is not None:
+                    cval = color_el.get(qn('w:val'), '')
+                    if cval and cval not in ('auto', '000000'):
+                        run_styles.append('color:#{}'.format(cval))
+                sz_el = rPr.find(qn('w:sz'))
+                if sz_el is not None:
+                    szval = sz_el.get(qn('w:val'), '')
+                    if szval:
+                        try:
+                            run_styles.append('font-size:{}pt'.format(round(int(szval) / 2)))
+                        except ValueError:
+                            pass
+                rFonts = rPr.find(qn('w:rFonts'))
+                if rFonts is not None:
+                    font_name = rFonts.get(qn('w:ascii'), '') or rFonts.get(qn('w:hAnsi'), '')
+                    if font_name:
+                        run_styles.append("font-family:'{}',sans-serif".format(font_name))
+                highlight = rPr.find(qn('w:highlight'))
+                if highlight is not None:
+                    hl_val = highlight.get(qn('w:val'), '')
+                    if hl_val in hl_colors:
+                        run_styles.append('background-color:{}'.format(hl_colors[hl_val]))
+                # Run-level shading (different from highlight)
+                rShd = rPr.find(qn('w:shd'))
+                if rShd is not None:
+                    rfill = rShd.get(qn('w:fill'), '')
+                    if rfill and rfill not in ('auto', 'FFFFFF'):
+                        run_styles.append('background-color:#{}'.format(rfill))
+            if bold: txt = '<strong>' + txt + '</strong>'
+            if italic: txt = '<em>' + txt + '</em>'
+            if underline: txt = '<u>' + txt + '</u>'
+            if strike: txt = '<s>' + txt + '</s>'
+            if run_styles:
+                txt = '<span style="{}">{}</span>'.format('; '.join(run_styles), txt)
+            return txt
+
+        def convert_paragraph_runs(p_element):
+            """Convert all runs in a paragraph element to HTML."""
+            parts = []
+            for run in p_element.findall(qn('w:r')):
+                parts.append(convert_run(run))
+            return ''.join(parts)
+
         html_parts = []
         for element in doc.element.body:
             tag = element.tag.split('}')[-1] if '}' in element.tag else element.tag
@@ -8025,10 +8093,14 @@ def convert_docx_to_html(file_id):
                 style_name = ''
                 p_styles = []
                 pPr = p.find(qn('w:pPr'))
+                has_page_break = False
                 if pPr is not None:
                     pStyle = pPr.find(qn('w:pStyle'))
                     if pStyle is not None:
                         style_name = pStyle.get(qn('w:val'), '')
+                    # Check for page break before this paragraph
+                    if pPr.find(qn('w:pageBreakBefore')) is not None:
+                        has_page_break = True
                     # Paragraph alignment
                     jc = pPr.find(qn('w:jc'))
                     if jc is not None:
@@ -8052,53 +8124,24 @@ def convert_docx_to_html(file_id):
                                 p_styles.append('margin-left:{}pt'.format(round(int(left_ind) / 20)))
                             except ValueError:
                                 pass
-                text_parts = []
-                for run in p.findall(qn('w:r')):
-                    rPr = run.find(qn('w:rPr'))
-                    bold = rPr is not None and rPr.find(qn('w:b')) is not None
-                    italic = rPr is not None and rPr.find(qn('w:i')) is not None
-                    underline = rPr is not None and rPr.find(qn('w:u')) is not None
-                    t = run.find(qn('w:t'))
-                    txt = t.text if t is not None and t.text else ''
-                    # Run-level formatting: color, size, font, highlight
-                    run_styles = []
-                    if rPr is not None:
-                        color_el = rPr.find(qn('w:color'))
-                        if color_el is not None:
-                            cval = color_el.get(qn('w:val'), '')
-                            if cval and cval not in ('auto', '000000'):
-                                run_styles.append('color:#{}'.format(cval))
-                        sz_el = rPr.find(qn('w:sz'))
-                        if sz_el is not None:
-                            szval = sz_el.get(qn('w:val'), '')
-                            if szval:
-                                try:
-                                    # w:sz is in half-points
-                                    run_styles.append('font-size:{}pt'.format(round(int(szval) / 2)))
-                                except ValueError:
-                                    pass
-                        rFonts = rPr.find(qn('w:rFonts'))
-                        if rFonts is not None:
-                            font_name = rFonts.get(qn('w:ascii'), '') or rFonts.get(qn('w:hAnsi'), '')
-                            if font_name and font_name not in ('Calibri', 'Arial', 'Times New Roman'):
-                                run_styles.append("font-family:'{}'".format(font_name))
-                        highlight = rPr.find(qn('w:highlight'))
-                        if highlight is not None:
-                            hl_val = highlight.get(qn('w:val'), '')
-                            hl_colors = {'yellow': '#FFFF00', 'green': '#00FF00', 'cyan': '#00FFFF',
-                                         'magenta': '#FF00FF', 'blue': '#0000FF', 'red': '#FF0000',
-                                         'darkBlue': '#00008B', 'darkCyan': '#008B8B', 'darkGreen': '#006400',
-                                         'darkMagenta': '#8B008B', 'darkRed': '#8B0000', 'darkYellow': '#808000',
-                                         'darkGray': '#A9A9A9', 'lightGray': '#D3D3D3', 'black': '#000000'}
-                            if hl_val in hl_colors:
-                                run_styles.append('background-color:{}'.format(hl_colors[hl_val]))
-                    if bold: txt = '<strong>' + txt + '</strong>'
-                    if italic: txt = '<em>' + txt + '</em>'
-                    if underline: txt = '<u>' + txt + '</u>'
-                    if run_styles:
-                        txt = '<span style="{}">{}</span>'.format('; '.join(run_styles), txt)
-                    text_parts.append(txt)
-                content = ''.join(text_parts)
+                    # Paragraph spacing (before/after)
+                    spacing = pPr.find(qn('w:spacing'))
+                    if spacing is not None:
+                        sp_before = spacing.get(qn('w:before'), '')
+                        sp_after = spacing.get(qn('w:after'), '')
+                        if sp_before:
+                            try:
+                                p_styles.append('margin-top:{}pt'.format(round(int(sp_before) / 20)))
+                            except ValueError:
+                                pass
+                        if sp_after:
+                            try:
+                                p_styles.append('margin-bottom:{}pt'.format(round(int(sp_after) / 20)))
+                            except ValueError:
+                                pass
+                if has_page_break:
+                    html_parts.append('<div class="docx-page-break"></div>')
+                content = convert_paragraph_runs(p)
                 p_attr = ''
                 if p_styles:
                     p_attr = ' style="{}"'.format('; '.join(p_styles))
@@ -8153,19 +8196,20 @@ def convert_docx_to_html(file_id):
                     for tc in tr.findall(qn('w:tc')):
                         cell_text = []
                         for cp in tc.findall(qn('w:p')):
-                            parts = []
-                            for run in cp.findall(qn('w:r')):
-                                rPr = run.find(qn('w:rPr'))
-                                bold = rPr is not None and rPr.find(qn('w:b')) is not None
-                                italic = rPr is not None and rPr.find(qn('w:i')) is not None
-                                underline = rPr is not None and rPr.find(qn('w:u')) is not None
-                                t = run.find(qn('w:t'))
-                                txt = t.text if t is not None and t.text else ''
-                                if bold: txt = '<strong>' + txt + '</strong>'
-                                if italic: txt = '<em>' + txt + '</em>'
-                                if underline: txt = '<u>' + txt + '</u>'
-                                parts.append(txt)
-                            cell_text.append(''.join(parts))
+                            # Use same full formatting as paragraphs
+                            cp_styles = []
+                            cpPr = cp.find(qn('w:pPr'))
+                            if cpPr is not None:
+                                jc = cpPr.find(qn('w:jc'))
+                                if jc is not None:
+                                    align_val = jc.get(qn('w:val'), '')
+                                    align_map = {'center': 'center', 'right': 'right', 'both': 'justify', 'left': 'left'}
+                                    if align_val in align_map:
+                                        cp_styles.append('text-align:{}'.format(align_map[align_val]))
+                            content = convert_paragraph_runs(cp)
+                            if cp_styles:
+                                content = '<div style="{}">{}</div>'.format('; '.join(cp_styles), content)
+                            cell_text.append(content)
                         # Build cell style: width + shading + colspan
                         styles = []
                         tcPr = tc.find(qn('w:tcPr'))
@@ -8196,6 +8240,13 @@ def convert_docx_to_html(file_id):
                                 fill = shd.get(qn('w:fill'), '')
                                 if fill and fill != 'auto' and fill != 'FFFFFF':
                                     styles.append('background:#{}'.format(fill))
+                            # Vertical alignment
+                            vAlign = tcPr.find(qn('w:vAlign'))
+                            if vAlign is not None:
+                                va_val = vAlign.get(qn('w:val'), '')
+                                va_map = {'center': 'middle', 'bottom': 'bottom', 'top': 'top'}
+                                if va_val in va_map:
+                                    styles.append('vertical-align:{}'.format(va_map[va_val]))
                             # Column span
                             gridSpan = tcPr.find(qn('w:gridSpan'))
                             if gridSpan is not None:

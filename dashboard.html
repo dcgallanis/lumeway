@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --cream: #FAF7F2; --warm-white: #FDFCFA; --text: #2C3E50; --muted: #6B7B8D; --navy: #2C4A5E; --gold: #B8977E; --accent: #C4704E; --accent-light: #D4896C; --border: #E8E0D6; --green: #6B8F5E; --red: #C4704E; }
@@ -357,7 +357,7 @@
     .doc-desc { font-size: 12px; font-weight: 300; color: var(--muted); margin-top: 2px; }
 
     /* Document Workspace — sidebar + editor layout */
-    .ws-main { display: grid; grid-template-columns: 300px 1fr; gap: 0; min-height: 600px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
+    .ws-main { display: grid; grid-template-columns: 300px 1fr; gap: 0; height: calc(100vh - 160px); min-height: 700px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
     @media (max-width: 768px) { .ws-main { grid-template-columns: 1fr; } }
     .ws-sticky-note { position: fixed; z-index: 999; width: 280px; min-height: 40px; background: #FFF9C4; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1); display: none; flex-direction: column; font-family: 'Plus Jakarta Sans', sans-serif; resize: both; overflow: auto; min-width: 200px; max-width: 500px; }
     .ws-sticky-note.open { display: flex; }
@@ -384,7 +384,7 @@
     .ws-note-hint::before { content: ''; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid var(--navy); }
     @keyframes noteHintPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     .ws-sidebar { background: var(--cream); display: flex; flex-direction: column; overflow: hidden; }
-    .ws-sidebar-top { padding: 18px 20px 14px; display: flex; flex-direction: column; gap: 10px; }
+    .ws-sidebar-top { padding: 18px 20px 14px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
     .ws-drop { border: 2px dashed var(--border); border-radius: 10px; padding: 12px 16px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--warm-white); display: flex; align-items: center; gap: 8px; justify-content: center; font-size: 13px; color: var(--muted); }
     .ws-drop:hover, .ws-drop.dragover { border-color: var(--gold); background: #FAF5EE; }
     .ws-drop.uploading { pointer-events: none; opacity: 0.6; }
@@ -484,7 +484,9 @@
       .ws-letter-page { position: absolute; left: 0; top: 0; width: 100%; padding: 40px; box-shadow: none; }
       .ws-letter-toolbar { display: none !important; }
     }
-    .ws-viewer-body { flex: 1; overflow: auto; position: relative; background: var(--cream); }
+    .ws-viewer-body { flex: 1; overflow: auto; position: relative; background: var(--cream); min-height: 0; }
+    .ws-viewer-body .tox-tinymce { height: 100% !important; border: none !important; border-radius: 0 !important; }
+    .ws-viewer-body #wsDocEditor { height: 100%; }
     .ws-viewer-body iframe { width: 100%; height: 100%; border: none; }
     .ws-viewer-body img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; margin: 20px auto; }
     .ws-viewer-body .ws-text-editor { width: 100%; height: 100%; border: none; padding: 24px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; line-height: 1.7; color: var(--text); background: var(--warm-white); resize: none; outline: none; }
@@ -573,7 +575,6 @@
     #sheetTableWrap .jexcel td { font-family: 'Plus Jakarta Sans', sans-serif; }
     #sheetTableWrap .jexcel_content { max-height: none !important; overflow: visible !important; }
     /* TinyMCE overrides */
-    .ws-viewer-body .tox-tinymce { border: none !important; border-radius: 0 !important; }
     .ws-viewer-body .tox .tox-toolbar__primary { background: var(--cream) !important; border-bottom: 1px solid var(--border) !important; }
     .ws-viewer-body .tox .tox-statusbar { background: var(--cream) !important; border-top: 1px solid var(--border) !important; }
 
@@ -5373,20 +5374,21 @@ guideLibrary['disability'] = {
     }
 
     function initQuillEditor(body, html, fileId) {
-      body.innerHTML = '<div id="wsDocEditor" style="min-height:400px"></div>';
+      body.innerHTML = '<div id="wsDocEditor" style="height:100%"></div>';
       // Use TinyMCE for full Word-like editing with tables
       if (typeof tinymce !== 'undefined') {
         // Remove any existing TinyMCE instances
         if (tinymce.get('wsDocEditor')) tinymce.get('wsDocEditor').remove();
         tinymce.init({
           selector: '#wsDocEditor',
-          height: 'calc(100vh - 200px)',
+          height: '100%',
           menubar: 'edit view insert format table',
-          plugins: 'lists link table code wordcount searchreplace autolink',
-          toolbar: 'undo redo | fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link | removeformat code',
-          font_family_formats: 'Sans Serif=Plus Jakarta Sans,sans-serif; Arial=Arial,sans-serif; Times New Roman=Times New Roman,serif; Georgia=Georgia,serif; Verdana=Verdana,sans-serif; Courier New=Courier New,monospace; Trebuchet MS=Trebuchet MS,sans-serif; Calibri=Calibri,sans-serif',
-          font_size_formats: '8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 24pt 36pt',
-          content_style: 'body { font-family: Plus Jakarta Sans, Calibri, sans-serif; font-size: 11pt; line-height: 1.7; color: #2C3E50; padding: 32px 40px; } table { border-collapse: collapse; margin: 12px 0; table-layout: auto; } table:not([style*="width"]) { width: 100%; } td, th { border: 1px solid #d0d7de; padding: 10px 14px; font-size: 11pt; vertical-align: top; min-width: 60px; word-wrap: break-word; } th { background: #f0f2f4; font-weight: 600; } h1 { font-size: 18pt; color: #2C4A5E; } h2 { font-size: 14pt; color: #2C4A5E; } h3 { font-size: 12pt; color: #2C4A5E; }',
+          plugins: 'lists link table code wordcount searchreplace autolink pagebreak',
+          toolbar: 'undo redo | fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link pagebreak | removeformat code',
+          font_family_formats: 'Montserrat=Montserrat,sans-serif; Plus Jakarta Sans=Plus Jakarta Sans,sans-serif; Arial=Arial,sans-serif; Times New Roman=Times New Roman,serif; Georgia=Georgia,serif; Verdana=Verdana,sans-serif; Courier New=Courier New,monospace; Trebuchet MS=Trebuchet MS,sans-serif; Calibri=Calibri,sans-serif',
+          font_size_formats: '8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 24pt 36pt',
+          content_style: 'html { background: #e8e4df; } body { font-family: Plus Jakarta Sans, Calibri, sans-serif; font-size: 11pt; line-height: 1.7; color: #2C3E50; max-width: 8.5in; min-height: 11in; margin: 32px auto; padding: 1in 1.25in; background: #fff; box-shadow: 0 1px 8px rgba(0,0,0,0.1); border-radius: 2px; box-sizing: border-box; } .docx-page-break { display: block; border: 0; width: calc(100% + 2.5in); height: 40px; margin: 24px -1.25in; background: #e8e4df; box-shadow: inset 0 8px 6px -6px rgba(0,0,0,0.06), inset 0 -8px 6px -6px rgba(0,0,0,0.06); page-break-before: always; } .mce-pagebreak { display: block; border: 0; width: calc(100% + 2.5in); height: 40px; margin: 24px -1.25in; background: #e8e4df; box-shadow: inset 0 8px 6px -6px rgba(0,0,0,0.06), inset 0 -8px 6px -6px rgba(0,0,0,0.06); page-break-before: always; } table { border-collapse: collapse; margin: 12px 0; table-layout: auto; } table:not([style*="width"]) { width: 100%; } td, th { border: 1px solid #d0d7de; padding: 10px 14px; font-size: 11pt; vertical-align: top; min-width: 60px; word-wrap: break-word; } th { background: #f0f2f4; font-weight: 600; } h1 { font-size: 18pt; color: #2C4A5E; } h2 { font-size: 14pt; color: #2C4A5E; } h3 { font-size: 12pt; color: #2C4A5E; }',
+          content_css: 'https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,700&display=swap',
           promotion: false,
           branding: false,
           skin: 'oxide',
