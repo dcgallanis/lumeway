@@ -27,7 +27,7 @@
             },
             {
               "term": "SGA (Substantial Gainful Activity)",
-              "def": "The earnings threshold ($1,620/month in 2025) above which SSA considers you capable of working."
+              "def": "The earnings threshold ($1,690/month in 2026) above which SSA considers you capable of working."
             }
           ],
           "contacts": "Social Security Administration: 1-800-772-1213 • ssa.gov • Local SSA office: ssa.gov/locator",
@@ -151,10 +151,10 @@
           "what": "Apply for SSI, Medicaid, SNAP, and other programs to bridge income while SSDI is pending.",
           "why": "SSDI applicants wait 3–24 months for a decision — interim programs provide cash, healthcare, and food assistance during this period.",
           "steps": [
-            "Apply for SSI at the same time as SSDI if your income and assets are low — SSI has no waiting period and pays up to $967/month.",
+            "Apply for SSI at the same time as SSDI if your income and assets are low — SSI has no waiting period and pays up to $994/month.",
             "Apply for Medicaid at your state agency or healthcare.gov.",
-            "Apply for SNAP online at your state's portal — a single person may qualify for up to $292/month.",
-            "Check eligibility for state disability programs (CA, HI, NJ, NY, RI, and WA have their own).",
+            "Apply for SNAP online at your state's portal — a single person may qualify for up to $298/month.",
+            "Check eligibility for state disability programs — CA, HI, NJ, NY, and RI have mandatory SDI; many more states (CO, CT, MA, OR, WA, and others) have Paid Family & Medical Leave (PFML), which is different but may also provide wage replacement.",
             "Contact 211 for local emergency assistance including food banks and rental assistance.",
             "Re-evaluate eligibility for all programs every 6 months."
           ],

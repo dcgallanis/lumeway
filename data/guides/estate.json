@@ -226,7 +226,7 @@
           "id": "es-2-3",
           "title": "Manage Estate Taxes and Final Tax Returns",
           "what": "Filing the deceased's final income tax return and understanding estate tax liability for large estates.",
-          "why": "The final return is due April 15 of the following year. Large estates (over $13.61M) owe 40% federal estate tax. Failing to file triggers penalties and interest.",
+          "why": "The final return is due April 15 of the following year. Large estates (over $15M) owe 40% federal estate tax. Failing to file triggers penalties and interest.",
           "steps": [
             "Determine if a final tax return is required (income threshold: ~$14,600 for single filers).",
             "Gather income documents: W-2s, 1099s, K-1s, rental income statements.",
@@ -234,7 +234,7 @@
             "Understand stepped-up basis — inherited assets reset to fair market value at death, eliminating capital gains.",
             "File final Form 1040 marked \"Deceased\" by April 15.",
             "File estate income tax return (Form 1041) if estate income exceeds $600/year.",
-            "Determine if federal estate tax (Form 706) is owed — only if estate exceeds $13.61M."
+            "Determine if federal estate tax (Form 706) is owed — only if estate exceeds $15M."
           ],
           "terms": [
             {
@@ -243,7 +243,7 @@
             },
             {
               "term": "Estate tax",
-              "def": "Federal tax (40%) on estates exceeding the exemption threshold ($13.61M in 2024)."
+              "def": "Federal tax (40%) on estates exceeding the exemption threshold ($15M in 2026)."
             },
             {
               "term": "Form 706",
@@ -254,7 +254,7 @@
           "mistakes": [
             "Not filing a final return when required — triggers IRS penalties.",
             "Not understanding stepped-up basis and triggering unnecessary capital gains taxes.",
-            "Assuming all estates owe estate tax — only very large estates (over $13.61M) do.",
+            "Assuming all estates owe estate tax — only very large estates (over $15M) do.",
             "Paying estate taxes before consulting a CPA."
           ]
         },
@@ -625,7 +625,7 @@
           "why": "VA benefits provide $1,500–$3,500/month and CHAMPVA healthcare. Burial benefits cover $2,000–$23,000+. Filing within 6–12 months maximizes retroactive payment to the death date.",
           "steps": [
             "Verify eligibility: service-connected death, 100% disability rating, or active duty death (call 1-800-827-1000).",
-            "File VA Form 21-534 for DIC ($1,594/month for widow/widower in 2026).",
+            "File VA Form 21-534 for DIC ($1,699.35/month for widow/widower in 2026).",
             "File for VA burial benefits ($2,000–$23,000+) within 2 years of death (VA Form 21P-530).",
             "Enroll in CHAMPVA healthcare (no premium, no age limit) — call 1-800-733-8387.",
             "Claim accrued benefits (back pay from death date to filing date).",
@@ -697,14 +697,14 @@
           "id": "es-7-1",
           "title": "File Final Tax Returns",
           "what": "Filing the deceased's final federal and state returns (Form 1040), estate income tax (Form 1041), and estate tax (Form 706) if applicable.",
-          "why": "Final returns must be filed even if income was low — IRS penalties accrue. Estate income tax is required if estate income exceeds $600/year. Most estates don't owe federal estate tax (threshold: $13.61M+).",
+          "why": "Final returns must be filed even if income was low — IRS penalties accrue. Estate income tax is required if estate income exceeds $600/year. Most estates don't owe federal estate tax (threshold: $15M+).",
           "steps": [
-            "Determine if a final 1040 is required (income threshold: $13,850 single, $27,700 married in 2026).",
+            "Determine if a final 1040 is required (income threshold: $16,100 single, $32,200 married in 2026).",
             "Gather income documents: W-2s, 1099s, K-1s, rental income statements.",
             "File final 1040 marked \"Deceased\" by April 15 (or request extension via Form 4868).",
             "Understand stepped-up basis — saves heirs tens of thousands on appreciated assets.",
             "File Form 1041 (estate income tax) if estate earns over $600/year during probate.",
-            "File Form 706 only if estate exceeds $13.61M (95%+ of estates don't).",
+            "File Form 706 only if estate exceeds $15M (95%+ of estates don't).",
             "Check state estate and inheritance tax requirements — rules vary widely.",
             "Provide K-1 forms to beneficiaries showing their share of estate income."
           ],

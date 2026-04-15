@@ -13,7 +13,7 @@
             "Find your full retirement age (FRA): born 1943–1954 = 66; born 1960 or later = 67; years in between are graduated at 2-month increments.",
             "Look up your estimated benefit at each age by creating a my Social Security account at ssa.gov/myaccount.",
             "Calculate your break-even age: divide the total dollars gained by delaying by the monthly difference in benefit. Most break-even points fall between ages 78–82.",
-            "Factor in your health, other income sources, and whether you're still working — earning more than $22,320/year (2025) before FRA triggers a temporary benefit reduction.",
+            "Factor in your health, other income sources, and whether you're still working — earning more than $24,480/year (2026) before FRA triggers a temporary benefit reduction.",
             "If married, model spousal benefits: a spouse can claim up to 50% of your FRA benefit, so the higher earner delaying to 70 often maximizes household lifetime income.",
             "Consider survivor benefits: when one spouse dies, the survivor keeps only the larger of the two benefits, making the higher earner's delay even more valuable.",
             "Run scenarios using the Social Security Administration's online calculator or a tool like Open Social Security (opensocialsecurity.com) for a free optimization report.",
@@ -128,7 +128,7 @@
             "If you're already receiving Social Security when you turn 65, you're automatically enrolled in Medicare Parts A and B — watch your mail for your red, white, and blue card.",
             "If not auto-enrolled, apply for Medicare at ssa.gov/medicare or call 800-772-1213 during your IEP.",
             "Enroll in Part A (hospital insurance) first — it's premium-free for most people with 40+ quarters of work history.",
-            "Decide on Part B (outpatient coverage, $185/month standard premium in 2025) — you can delay Part B penalty-free only if covered by a qualifying employer group health plan through active employment.",
+            "Decide on Part B (outpatient coverage, $202.90/month standard premium in 2026) — you can delay Part B penalty-free only if covered by a qualifying employer group health plan through active employment.",
             "Do not confuse COBRA or retiree health coverage with qualifying coverage — neither exempts you from the Part B penalty clock.",
             "Sign up for Part D (prescription drug coverage) during your IEP or within 63 days of losing other creditable drug coverage to avoid the Part D late enrollment penalty (1% per month).",
             "If you miss your IEP without a qualifying exemption, your next chance is the General Enrollment Period: January 1–March 31 each year, with coverage starting July 1."
@@ -174,11 +174,11 @@
           "why": "This choice affects your out-of-pocket costs, which doctors you can see, and your flexibility in getting specialized care — and switching later can be difficult or impossible.",
           "steps": [
             "Understand the two paths: Original Medicare (Parts A + B) with a Medigap supplement and Part D drug plan, versus Medicare Advantage (Part C), which replaces Original Medicare with a private plan.",
-            "Compare Medigap benefits: Plan G (most popular in 2025) covers nearly all out-of-pocket costs after the Part B deductible ($257 in 2025); premiums average $100–$200/month depending on age and location.",
+            "Compare Medigap benefits: Plan G (most popular in 2026) covers nearly all out-of-pocket costs after the Part B deductible ($283 in 2026); premiums average $100–$200/month depending on age and location.",
             "With Medigap, you can see any provider that accepts Medicare nationwide — no referrals needed, no networks — making it preferable for frequent travelers and those with complex medical needs.",
             "Compare Medicare Advantage: typically $0 or low monthly premiums, but you pay copays and coinsurance at the time of service, and most plans use provider networks (HMO or PPO).",
             "Check whether your current doctors and any preferred hospitals are in-network before selecting a Medicare Advantage plan at medicare.gov/plan-compare.",
-            "Look at Medicare Advantage out-of-pocket maximums (capped at $9,350 in-network for 2025) — this is your worst-case annual cost.",
+            "Look at Medicare Advantage out-of-pocket maximums (capped at $8,850 in-network for 2026) — this is your worst-case annual cost.",
             "Understand the switching risk: you can switch from Medigap to Medicare Advantage anytime, but going back to Medigap may require medical underwriting (and you could be denied) in most states.",
             "During your initial Medigap Open Enrollment (the 6 months starting when you're 65 and enrolled in Part B), you have guaranteed issue rights — no health questions asked."
           ],
@@ -264,7 +264,7 @@
             "For 401(k)s, each account must satisfy its own RMD separately — you cannot aggregate them like IRAs.",
             "If you're still working at 73 and participating in your current employer's 401(k), you can delay RMDs from that specific plan until you retire (the Still Working Exception) — but not from IRAs or old employer plans.",
             "Set up automatic annual distributions with your custodian if you want to avoid missing the deadline — most major brokerages (Fidelity, Schwab, Vanguard) offer this service.",
-            "Consider a Qualified Charitable Distribution (QCD): if you're 70½ or older, you can donate up to $105,000/year (2025) directly from your IRA to a qualified charity, satisfying the RMD and excluding that amount from taxable income."
+            "Consider a Qualified Charitable Distribution (QCD): if you're 70½ or older, you can donate up to $108,000/year (2026) directly from your IRA to a qualified charity, satisfying the RMD and excluding that amount from taxable income."
           ],
           "terms": [
             {
@@ -277,7 +277,7 @@
             },
             {
               "term": "Qualified Charitable Distribution (QCD)",
-              "def": "A direct transfer of up to $105,000 (2025) from an IRA to a qualified charity that counts toward your RMD but is excluded from your taxable income."
+              "def": "A direct transfer of up to $108,000 (2026) from an IRA to a qualified charity that counts toward your RMD but is excluded from your taxable income."
             },
             {
               "term": "Still Working Exception",
@@ -345,7 +345,7 @@
             "Understand survivor options: a \"joint and 50% survivor\" annuity pays you less monthly but continues at 50% to a surviving spouse; a \"joint and 100% survivor\" pays even less but continues the full amount. Never waive survivor benefits without your spouse's written, notarized consent.",
             "If taking the lump sum, roll it directly to an IRA (trustee-to-trustee transfer) to avoid the mandatory 20% federal tax withholding on distributions paid directly to you.",
             "Ask about Cost of Living Adjustments (COLAs): a pension with annual COLAs is far more valuable in an inflationary environment than one with a flat payment.",
-            "Factor in pension insurance: most private-sector pensions are insured by the PBGC up to $7,107.95/month (2025) for a 65-year-old; public pensions are typically backed by the state but may face funding issues.",
+            "Factor in pension insurance: most private-sector pensions are insured by the PBGC up to $7,789.77/month (2026) for a 65-year-old; public pensions are typically backed by the state but may face funding issues.",
             "Consider the \"pension max\" strategy only with professional guidance: taking the single-life annuity and buying life insurance to protect your spouse is sometimes advantageous but requires careful comparison of insurance costs and health qualifications."
           ],
           "terms": [
@@ -386,7 +386,7 @@
           "steps": [
             "Understand the Social Security tax threshold: up to 85% of your Social Security benefit is taxable if your \"combined income\" (AGI + nontaxable interest + half of SS) exceeds $34,000 (single) or $44,000 (married). Below $25,000/$32,000, Social Security is tax-free.",
             "Know that RMDs and traditional IRA/401(k) withdrawals are taxed as ordinary income — they can push you into a higher bracket and trigger Medicare IRMAA surcharges.",
-            "IRMAA (Income-Related Monthly Adjustment Amount) adds surcharges to Medicare Parts B and D premiums for higher-income retirees; in 2025, surcharges kick in above $106,000 (single) or $212,000 (married), and can add hundreds of dollars per month per person.",
+            "IRMAA (Income-Related Monthly Adjustment Amount) adds surcharges to Medicare Parts B and D premiums for higher-income retirees; in 2026, surcharges kick in above $109,000 (single) or $218,000 (married), and can add hundreds of dollars per month per person.",
             "Long-term capital gains from taxable brokerage accounts are taxed at 0%, 15%, or 20% depending on income — far more favorable than ordinary income rates for most retirees.",
             "Qualified dividends are taxed at the same rates as long-term capital gains — keep this in mind when building a tax-efficient portfolio.",
             "State income taxes vary widely: some states (FL, TX, WA, and others) have no income tax; some exempt pension income; some partially exempt Social Security. Review your state's rules if you're considering relocating.",
