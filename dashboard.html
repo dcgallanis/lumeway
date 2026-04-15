@@ -456,6 +456,32 @@
     .ws-viewer-title { font-size: 13px; font-weight: 500; color: var(--navy); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .ws-viewer-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 11px; color: var(--navy); cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 4px; }
     .ws-viewer-btn:hover { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+
+    /* ── Letter Preview ── */
+    .ws-letter-toolbar { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--border); background: var(--cream); flex-shrink: 0; }
+    .ws-letter-badge { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gold); background: rgba(196,164,105,0.12); border: 1px solid rgba(196,164,105,0.25); border-radius: 20px; padding: 2px 10px; }
+    .ws-letter-wrap { flex: 1; overflow: auto; background: #e8e4df; padding: 40px 20px; }
+    .ws-letter-page { max-width: 700px; margin: 0 auto; background: #fff; padding: 60px 64px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); border-radius: 2px; font-family: 'Libre Baskerville', 'Georgia', serif; font-size: 13px; line-height: 1.8; color: #1a1a1a; }
+    .ws-letter-page .letter-date { margin-bottom: 28px; }
+    .ws-letter-page .letter-sender-block { margin-bottom: 24px; line-height: 1.6; }
+    .ws-letter-page .letter-recipient-block { margin-bottom: 24px; line-height: 1.6; }
+    .ws-letter-page .letter-subject { font-weight: 600; margin-bottom: 20px; }
+    .ws-letter-page .letter-salutation { margin-bottom: 16px; }
+    .ws-letter-page .letter-body p { margin: 0 0 14px; text-align: justify; }
+    .ws-letter-page .letter-closing { margin-top: 28px; margin-bottom: 48px; }
+    .ws-letter-page .letter-signature { margin-bottom: 6px; font-style: italic; }
+    .ws-letter-page .letter-printed-name { font-weight: 600; }
+    .ws-letter-page .letter-enclosures { margin-top: 28px; border-top: 1px solid #e0dcd6; padding-top: 16px; font-size: 12px; color: #555; }
+    .ws-letter-page .letter-enclosures strong { font-weight: 600; }
+    .ws-letter-page .letter-enclosures ul { margin: 4px 0 0; padding-left: 18px; }
+    .ws-letter-gen-btn { background: linear-gradient(135deg, var(--navy), #2a5070); color: var(--cream); border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 5px; transition: all 0.15s; }
+    .ws-letter-gen-btn:hover { filter: brightness(1.15); }
+    @media print {
+      body * { visibility: hidden !important; }
+      .ws-letter-page, .ws-letter-page * { visibility: visible !important; }
+      .ws-letter-page { position: absolute; left: 0; top: 0; width: 100%; padding: 40px; box-shadow: none; }
+      .ws-letter-toolbar { display: none !important; }
+    }
     .ws-viewer-body { flex: 1; overflow: auto; position: relative; background: var(--cream); }
     .ws-viewer-body iframe { width: 100%; height: 100%; border: none; }
     .ws-viewer-body img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; margin: 20px auto; }
@@ -5169,6 +5195,7 @@ guideLibrary['disability'] = {
     }
 
     function closeFileViewer() {
+      if (wsInLetterMode) { wsInLetterMode = false; var lw = document.querySelector('.ws-letter-preview-wrap'); if (lw) lw.remove(); }
       if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
       cleanupEditor();
       cleanupPdfState();
@@ -5225,6 +5252,12 @@ guideLibrary['disability'] = {
       if (sigDd) sigDd.classList.remove('open');
       var printBtn = document.getElementById('wsPrintBtn');
       if (printBtn) printBtn.style.display = 'flex';
+
+      // Show/hide Generate Letter button for letter-type templates
+      var genLetterBtn = document.getElementById('wsGenLetterBtn');
+      if (genLetterBtn) {
+        genLetterBtn.style.display = getLetterTemplate(file.original_name) ? 'flex' : 'none';
+      }
 
       var ext = file.original_name.split('.').pop().toLowerCase();
       var previewUrl = '/api/files/' + fileId + '/preview';
@@ -5469,6 +5502,393 @@ guideLibrary['disability'] = {
         var a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = name;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }
+    }
+
+    // ── Letter Generator ──
+    var wsInLetterMode = false;
+
+    function normalizeTemplateName(filename) {
+      // Strip numeric prefix like "7. " or "12. " and extension, lowercase
+      return filename.replace(/^\d+\.\s*/, '').replace(/\.[^.]+$/, '').toLowerCase().replace(/\s+/g, '_');
+    }
+
+    var LETTER_TEMPLATES = {
+      'bank_death_notification_letter': {
+        title: 'Bank Death Notification Letter',
+        recipientLabel: 'Bank / Financial Institution',
+        generate: function(f) {
+          var sender = f['SENDER INFORMATION'] || {};
+          var deceased = f['DECEASED ACCOUNT HOLDER'] || {};
+          var account = f['ACCOUNT INFORMATION'] || {};
+          var actions = f['ACTIONS REQUESTED'] || {};
+          var enclosed = f['ENCLOSED DOCUMENTS'] || {};
+          var sig = f['SIGNATURE'] || {};
+          var checkedActions = actions._checked || [];
+          var checkedDocs = enclosed._checked || [];
+          var accountLines = [];
+          if (account['Account 1 Number']) accountLines.push('Account #' + account['Account 1 Number'] + (account['Account Type'] ? ' (' + account['Account Type'] + ')' : ''));
+          if (account['Account 2 Number']) accountLines.push('Account #' + account['Account 2 Number']);
+          if (account['Account 3 Number']) accountLines.push('Account #' + account['Account 3 Number']);
+          var bodyParts = [];
+          bodyParts.push('I am writing to formally notify you of the death of ' + (deceased['Full Legal Name'] || '[Name]') + ', who passed away on ' + (deceased['Date of Death'] || '[Date]') + '. I am the authorized representative handling the estate and related financial matters.');
+          if (accountLines.length > 0) {
+            bodyParts.push('The deceased held the following account(s) at your institution: ' + accountLines.join('; ') + '.');
+          }
+          if (checkedActions.length > 0) {
+            bodyParts.push('I respectfully request the following actions be taken:\n' + checkedActions.map(function(a) { return '\u2022 ' + a; }).join('\n'));
+          }
+          if (checkedDocs.length > 0) {
+            bodyParts.push('Enclosed with this letter, please find the following supporting documents for your review.');
+          }
+          bodyParts.push('Please contact me at your earliest convenience to confirm receipt of this letter and to advise of any additional documentation or steps required to process these requests. Thank you for your prompt attention to this matter.');
+          return {
+            date: f._date || '',
+            senderName: sender['Full Name'] || '',
+            senderAddress: sender['Mailing Address'] || '',
+            senderCityStateZip: (sender['City'] || '') + (sender['State / ZIP'] ? ', ' + sender['State / ZIP'] : ''),
+            senderPhone: sender['Phone'] || '',
+            senderEmail: sender['Email'] || '',
+            recipientName: account['Institution Name'] || 'To Whom It May Concern',
+            recipientAddress: account['Branch'] || '',
+            subject: 'Notification of Death \u2014 ' + (deceased['Full Legal Name'] || '') + (deceased['SSN (last 4)'] ? ' (SSN ending ' + deceased['SSN (last 4)'] + ')' : ''),
+            salutation: 'Dear Sir or Madam',
+            bodyParagraphs: bodyParts,
+            closing: 'Sincerely',
+            signatureName: sig['Signature'] || sender['Full Name'] || '',
+            printedName: sig['Printed Name'] || sender['Full Name'] || '',
+            enclosures: checkedDocs
+          };
+        }
+      },
+      'credit_bureau_death_notification_letter': {
+        title: 'Credit Bureau Death Notification Letter',
+        recipientLabel: 'Credit Bureau',
+        generate: function(f) {
+          var sender = f['SENDER INFORMATION'] || {};
+          var deceased = f['DECEASED INDIVIDUAL'] || {};
+          var actions = f['ACTIONS REQUESTED'] || {};
+          var enclosed = f['ENCLOSED DOCUMENTS'] || {};
+          var sig = f['SIGNATURE'] || {};
+          var checkedActions = actions._checked || [];
+          var checkedDocs = enclosed._checked || [];
+          var bodyParts = [];
+          bodyParts.push('I am writing to notify you of the death of ' + (deceased['Full Legal Name'] || '[Name]') + ', who passed away on ' + (deceased['Date of Death'] || '[Date]') + '. I am the ' + (sender['Relationship to Deceased'] || 'authorized representative') + ' and am requesting that you update your records accordingly.');
+          bodyParts.push('The deceased\u2019s information is as follows: Date of Birth: ' + (deceased['Date of Birth'] || 'N/A') + '; Social Security Number: ' + (deceased['Social Security Number'] || 'N/A') + '; Last Known Address: ' + (deceased['Last Known Address'] || 'N/A') + '.');
+          if (checkedActions.length > 0) {
+            bodyParts.push('I respectfully request the following actions:\n' + checkedActions.map(function(a) { return '\u2022 ' + a; }).join('\n'));
+          }
+          if (checkedDocs.length > 0) {
+            bodyParts.push('Enclosed please find the supporting documentation listed below for your records.');
+          }
+          bodyParts.push('Please confirm receipt of this notification and advise if any additional information is required. Taking prompt action will help protect the deceased\u2019s identity and prevent potential fraud. Thank you for your assistance.');
+          return {
+            date: f._date || '',
+            senderName: sender['Full Name'] || '',
+            senderAddress: sender['Mailing Address'] || '',
+            senderCityStateZip: (sender['City'] || '') + (sender['State / ZIP'] ? ', ' + sender['State / ZIP'] : ''),
+            senderPhone: sender['Phone'] || '',
+            senderEmail: sender['Email'] || '',
+            recipientName: 'Credit Bureau',
+            recipientAddress: '',
+            subject: 'Deceased Consumer Notification \u2014 ' + (deceased['Full Legal Name'] || '') + (deceased['Social Security Number'] ? ' (SSN: ' + deceased['Social Security Number'] + ')' : ''),
+            salutation: 'To Whom It May Concern',
+            bodyParagraphs: bodyParts,
+            closing: 'Sincerely',
+            signatureName: sig['Signature'] || sender['Full Name'] || '',
+            printedName: sig['Printed Name'] || sender['Full Name'] || '',
+            enclosures: checkedDocs
+          };
+        }
+      },
+      'insurance_removal_request_letter': {
+        title: 'Insurance Removal Request Letter',
+        recipientLabel: 'Insurance Company',
+        generate: function(f) {
+          var sender = f['POLICYHOLDER INFORMATION'] || {};
+          var policy = f['INSURANCE POLICY INFORMATION'] || {};
+          var person = f['PERSON TO REMOVE'] || {};
+          var changes = f['REQUESTED CHANGES'] || {};
+          var enclosed = f['ENCLOSED DOCUMENTS'] || {};
+          var sig = f['SIGNATURE'] || {};
+          var effective = f['_effective_date'] || '';
+          var checkedChanges = changes._checked || [];
+          var checkedDocs = enclosed._checked || [];
+          var bodyParts = [];
+          bodyParts.push('I am writing to formally request changes to my ' + (policy['Policy Type'] || 'insurance') + ' policy, number ' + (policy['Policy Number'] || '[Policy Number]') + ', held with ' + (policy['Insurance Company'] || 'your company') + '.');
+          bodyParts.push('Specifically, I am requesting the removal of ' + (person['Full Name'] || '[Name]') + ' from this policy. The reason for this request is: ' + (person['Reason for Removal'] || 'divorce/separation') + '. The date of divorce or separation was ' + (person['Date of Divorce / Separation'] || '[Date]') + '.');
+          if (checkedChanges.length > 0) {
+            bodyParts.push('The following changes are requested:\n' + checkedChanges.map(function(a) { return '\u2022 ' + a; }).join('\n'));
+          }
+          if (effective) {
+            bodyParts.push('I request these changes take effect as of ' + effective + '.');
+          }
+          if (checkedDocs.length > 0) {
+            bodyParts.push('Enclosed please find the supporting documentation for this request.');
+          }
+          bodyParts.push('Please contact me at your earliest convenience to confirm receipt and to advise of any additional steps required. Thank you for your prompt attention to this matter.');
+          return {
+            date: f._date || '',
+            senderName: sender['Full Name'] || '',
+            senderAddress: sender['Mailing Address'] || '',
+            senderCityStateZip: (sender['City'] || '') + (sender['State / ZIP'] ? ', ' + sender['State / ZIP'] : ''),
+            senderPhone: sender['Phone'] || '',
+            senderEmail: sender['Email'] || '',
+            recipientName: policy['Insurance Company'] || 'Insurance Company',
+            recipientAddress: policy['Agent Name / Contact'] ? 'Attn: ' + policy['Agent Name / Contact'] : '',
+            subject: 'Policy Modification Request \u2014 Policy #' + (policy['Policy Number'] || ''),
+            salutation: 'Dear ' + (policy['Agent Name / Contact'] || 'Sir or Madam'),
+            bodyParagraphs: bodyParts,
+            closing: 'Sincerely',
+            signatureName: sig['Signature'] || sender['Full Name'] || '',
+            printedName: sig['Printed Name'] || sender['Full Name'] || '',
+            enclosures: checkedDocs
+          };
+        }
+      }
+    };
+
+    function getLetterTemplate(filename) {
+      var norm = normalizeTemplateName(filename);
+      return LETTER_TEMPLATES[norm] || null;
+    }
+
+    function parseTemplateFields(html) {
+      var div = document.createElement('div');
+      div.innerHTML = html;
+      var tables = div.querySelectorAll('table');
+      var result = { _date: '' };
+      var currentSection = '_ungrouped';
+
+      for (var t = 0; t < tables.length; t++) {
+        var rows = tables[t].querySelectorAll('tr');
+        for (var r = 0; r < rows.length; r++) {
+          var cells = rows[r].querySelectorAll('td, th');
+          if (cells.length === 0) continue;
+
+          // Check if this is a section header (dark navy background)
+          var firstCell = cells[0];
+          var bg = firstCell.style.background || firstCell.style.backgroundColor || '';
+          var cellHtml = firstCell.outerHTML || '';
+          var isHeader = bg.toLowerCase().indexOf('1b3a5c') >= 0 || bg.toLowerCase().indexOf('1B3A5C') >= 0 ||
+                         cellHtml.indexOf('1B3A5C') >= 0 || cellHtml.indexOf('1b3a5c') >= 0;
+
+          if (isHeader) {
+            var headerText = firstCell.textContent.trim();
+            if (headerText && headerText !== 'ABOUT THIS TEMPLATE') {
+              currentSection = headerText;
+              if (!result[currentSection]) result[currentSection] = {};
+            }
+            continue;
+          }
+
+          // Check for Date row (standalone, no section)
+          if (cells.length >= 2) {
+            var label0 = cells[0].textContent.trim();
+            if (label0 === 'Date:' && !result._date) {
+              result._date = cells[1].textContent.trim();
+              continue;
+            }
+            // Check for effective date
+            if (label0 === 'Effective Date of Change:') {
+              result['_effective_date'] = cells[1].textContent.trim();
+              continue;
+            }
+          }
+
+          if (!result[currentSection]) result[currentSection] = {};
+
+          // Check for checkbox rows (Action | Requested pattern)
+          var hasCheckbox = false;
+          for (var c = 0; c < cells.length; c++) {
+            var txt = cells[c].textContent.trim();
+            if (txt === '\u2611' || txt === '\u2612' || txt === '\u2713' || txt === 'X' || txt === 'x' || txt === '\u2714') {
+              hasCheckbox = true;
+              break;
+            }
+            // Check for checked checkbox in innerHTML (TinyMCE may use different representations)
+            var cellInner = cells[c].innerHTML || '';
+            if (cellInner.indexOf('checked') >= 0 || cellInner.indexOf('\u2611') >= 0 || cellInner.indexOf('\u2612') >= 0 || cellInner.indexOf('\u2714') >= 0) {
+              hasCheckbox = true;
+              break;
+            }
+          }
+
+          if (hasCheckbox && cells.length >= 2) {
+            // This is a checked action/document row
+            var actionText = cells[0].textContent.trim();
+            if (actionText && actionText.indexOf('Other:') !== 0 && actionText !== 'Action' && actionText !== 'Document') {
+              if (!result[currentSection]._checked) result[currentSection]._checked = [];
+              result[currentSection]._checked.push(actionText);
+            }
+            // Handle "Other: ___" with user text
+            if (actionText.indexOf('Other:') === 0) {
+              var otherVal = actionText.replace('Other:', '').replace(/_+/g, '').trim();
+              if (otherVal) {
+                if (!result[currentSection]._checked) result[currentSection]._checked = [];
+                result[currentSection]._checked.push(otherVal);
+              }
+            }
+            continue;
+          }
+
+          // Parse label:value pairs from cells
+          for (var c = 0; c < cells.length; c++) {
+            var cellText = cells[c].textContent.trim();
+            if (cellText.slice(-1) === ':' && c + 1 < cells.length) {
+              var label = cellText.slice(0, -1).trim();
+              var value = cells[c + 1].textContent.trim();
+              if (label && label !== 'Action' && label !== 'Document' && label !== 'Requested' && label !== 'Included') {
+                result[currentSection][label] = value;
+              }
+              c++; // skip value cell
+            }
+          }
+        }
+      }
+      return result;
+    }
+
+    function buildLetterHtml(data) {
+      var html = '<div class="ws-letter-page">';
+      // Date
+      if (data.date) html += '<div class="letter-date">' + escapeHtml(data.date) + '</div>';
+      // Sender block
+      var senderLines = [data.senderName, data.senderAddress, data.senderCityStateZip].filter(Boolean);
+      var contactParts = [data.senderPhone, data.senderEmail].filter(Boolean);
+      if (contactParts.length) senderLines.push(contactParts.join(' \u2022 '));
+      if (senderLines.length) {
+        html += '<div class="letter-sender-block">' + senderLines.map(function(l) { return escapeHtml(l); }).join('<br>') + '</div>';
+      }
+      // Recipient block
+      var recipLines = [data.recipientName, data.recipientAddress].filter(Boolean);
+      if (recipLines.length) {
+        html += '<div class="letter-recipient-block">' + recipLines.map(function(l) { return escapeHtml(l); }).join('<br>') + '</div>';
+      }
+      // Subject
+      if (data.subject) html += '<div class="letter-subject">Re: ' + escapeHtml(data.subject) + '</div>';
+      // Salutation
+      html += '<div class="letter-salutation">' + escapeHtml(data.salutation || 'To Whom It May Concern') + ',</div>';
+      // Body
+      html += '<div class="letter-body">';
+      (data.bodyParagraphs || []).forEach(function(p) {
+        // Handle paragraphs with bullet points
+        var lines = p.split('\n');
+        html += '<p>' + lines.map(function(l) { return escapeHtml(l); }).join('<br>') + '</p>';
+      });
+      html += '</div>';
+      // Closing
+      html += '<div class="letter-closing">' + escapeHtml(data.closing || 'Sincerely') + ',</div>';
+      // Signature
+      if (data.signatureName) html += '<div class="letter-signature">' + escapeHtml(data.signatureName) + '</div>';
+      if (data.printedName) html += '<div class="letter-printed-name">' + escapeHtml(data.printedName) + '</div>';
+      // Enclosures
+      if (data.enclosures && data.enclosures.length > 0) {
+        html += '<div class="letter-enclosures"><strong>Enclosures:</strong><ul>';
+        data.enclosures.forEach(function(e) { html += '<li>' + escapeHtml(e) + '</li>'; });
+        html += '</ul></div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function generateLetterFromTemplate() {
+      var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
+      if (!file) return;
+      var config = getLetterTemplate(file.original_name);
+      if (!config) return;
+
+      // Save any pending edits first
+      if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
+
+      var html = getEditorHtml();
+      var fields = parseTemplateFields(html);
+      var letterData = config.generate(fields);
+      var letterHtml = buildLetterHtml(letterData);
+      showLetterPreview(letterHtml, config.title);
+    }
+
+    function showLetterPreview(letterContentHtml, title) {
+      wsInLetterMode = true;
+      // Hide TinyMCE
+      var editorContainers = document.querySelectorAll('#wsViewerBody .tox, #wsViewerBody > div:not(.ws-letter-preview-wrap)');
+      for (var i = 0; i < editorContainers.length; i++) {
+        editorContainers[i].style.display = 'none';
+      }
+      // Hide the generate letter button, show it again on back
+      var genBtn = document.getElementById('wsGenLetterBtn');
+      if (genBtn) genBtn.style.display = 'none';
+
+      var wrap = document.createElement('div');
+      wrap.className = 'ws-letter-preview-wrap';
+      wrap.style.cssText = 'display:flex;flex-direction:column;height:100%';
+
+      var toolbar = document.createElement('div');
+      toolbar.className = 'ws-letter-toolbar';
+      toolbar.innerHTML = '<button class="ws-viewer-btn" onclick="backToTemplate()" title="Back to template"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Back to Template</button>' +
+        '<span class="ws-letter-badge">Generated Letter</span>' +
+        '<span style="flex:1"></span>' +
+        '<button class="ws-viewer-btn" onclick="printLetterPreview()" title="Print letter"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print</button>' +
+        '<button class="ws-viewer-btn" onclick="downloadLetterDocx()" title="Download as Word document"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>';
+
+      var content = document.createElement('div');
+      content.className = 'ws-letter-wrap';
+      content.id = 'wsLetterContent';
+      content.innerHTML = letterContentHtml;
+
+      wrap.appendChild(toolbar);
+      wrap.appendChild(content);
+      document.getElementById('wsViewerBody').appendChild(wrap);
+    }
+
+    function backToTemplate() {
+      wsInLetterMode = false;
+      var wrap = document.querySelector('.ws-letter-preview-wrap');
+      if (wrap) wrap.remove();
+      // Show TinyMCE again
+      var editorContainers = document.querySelectorAll('#wsViewerBody .tox, #wsViewerBody > div');
+      for (var i = 0; i < editorContainers.length; i++) {
+        editorContainers[i].style.display = '';
+      }
+      // Show generate letter button again
+      var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
+      if (file && getLetterTemplate(file.original_name)) {
+        var genBtn = document.getElementById('wsGenLetterBtn');
+        if (genBtn) genBtn.style.display = 'flex';
+      }
+    }
+
+    function printLetterPreview() {
+      window.print();
+    }
+
+    function downloadLetterDocx() {
+      var content = document.getElementById('wsLetterContent');
+      if (!content) return;
+      var letterPage = content.querySelector('.ws-letter-page');
+      if (!letterPage) return;
+      var fullHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:Georgia,serif;font-size:12pt;line-height:1.8;color:#1a1a1a;max-width:650px;margin:0 auto;padding:40px}.letter-date{margin-bottom:28px}.letter-sender-block,.letter-recipient-block{margin-bottom:24px;line-height:1.6}.letter-subject{font-weight:bold;margin-bottom:20px}.letter-salutation{margin-bottom:16px}.letter-body p{margin:0 0 14px;text-align:justify}.letter-closing{margin-top:28px;margin-bottom:48px}.letter-signature{font-style:italic;margin-bottom:6px}.letter-printed-name{font-weight:bold}.letter-enclosures{margin-top:28px;border-top:1px solid #ccc;padding-top:16px;font-size:11pt;color:#555}.letter-enclosures ul{margin:4px 0 0;padding-left:18px}</style></head><body>' + letterPage.innerHTML + '</body></html>';
+      var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
+      var baseName = file ? file.original_name.replace(/\.[^.]+$/, '') : 'letter';
+      if (typeof htmlDocx !== 'undefined' && htmlDocx.asBlob) {
+        var blob = htmlDocx.asBlob(fullHtml);
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = baseName + '-letter.docx';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      } else {
+        var blob = new Blob([fullHtml], { type: 'text/html' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = baseName + '-letter.html';
         a.click();
         URL.revokeObjectURL(a.href);
       }
@@ -6457,6 +6877,7 @@ guideLibrary['disability'] = {
     }
 
     function closeViewer() {
+      if (wsInLetterMode) { wsInLetterMode = false; var lw = document.querySelector('.ws-letter-preview-wrap'); if (lw) lw.remove(); }
       if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
       cleanupEditor();
       cleanupPdfState();
@@ -7286,6 +7707,7 @@ guideLibrary['disability'] = {
       html += '      <button class="ws-sig-stamp" onclick="stampSignature()" style="width:100%;padding:10px;font-size:13px">Place signature</button>';
       html += '    </div>';
       html += '  </div>';
+      html += '  <button class="ws-letter-gen-btn" id="wsGenLetterBtn" onclick="generateLetterFromTemplate()" title="Generate a formatted letter from this template" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Generate Letter</button>';
       html += '  <button class="ws-viewer-btn" id="wsPrintBtn" onclick="printCurrentFile()" title="Print" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>';
       html += '  <button class="ws-viewer-btn" onclick="toggleStickyNote()" title="Quick note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>';
       html += '  <a class="ws-viewer-btn" id="wsViewerDl" href="#" title="Download original"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>';
