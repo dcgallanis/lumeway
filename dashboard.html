@@ -5728,7 +5728,7 @@ guideLibrary['disability'] = {
 
       // Enclosed documents
       if (allCheckedDocs.length > 0) {
-        bodyParts.push('Enclosed with this letter, please find the following supporting documents for your review.');
+        bodyParts.push('Enclosed with this letter, please find the following supporting documents:\n' + allCheckedDocs.map(function(d) { return '\u2022 ' + d; }).join('\n'));
       }
 
       // Closing paragraph
@@ -5901,12 +5901,7 @@ guideLibrary['disability'] = {
       // Signature
       html += '<div class="letter-signature">' + (data.signatureName ? escapeHtml(data.signatureName) : '<span style="color:#999">[Signature]</span>') + '</div>';
       html += '<div class="letter-printed-name">' + (data.printedName ? escapeHtml(data.printedName) : '<span style="color:#999">[Printed Name]</span>') + '</div>';
-      // Enclosures
-      if (data.enclosures && data.enclosures.length > 0) {
-        html += '<div class="letter-enclosures"><strong>Enclosures:</strong><ul>';
-        data.enclosures.forEach(function(e) { html += '<li>' + escapeHtml(e) + '</li>'; });
-        html += '</ul></div>';
-      }
+      // Enclosures already listed in body paragraphs
       html += '</div>';
       return html;
     }
