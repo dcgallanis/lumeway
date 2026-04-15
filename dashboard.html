@@ -4690,7 +4690,24 @@ guideLibrary['disability'] = {
         html += '</div>';
       });
 
+      // Save scroll positions before replacing DOM
+      var scrollTop = container.scrollTop;
+      var catScrolls = {};
+      var openCatEls = container.querySelectorAll('.ws-cat-card.open .ws-cat-files');
+      for (var s = 0; s < openCatEls.length; s++) {
+        var catCard = openCatEls[s].parentElement;
+        var catName = catCard ? catCard.querySelector('.ws-cat-name') : null;
+        if (catName) catScrolls[catName.textContent] = openCatEls[s].scrollTop;
+      }
       container.innerHTML = html;
+      // Restore scroll positions after DOM rebuild
+      container.scrollTop = scrollTop;
+      var newCatEls = container.querySelectorAll('.ws-cat-card.open .ws-cat-files');
+      for (var s2 = 0; s2 < newCatEls.length; s2++) {
+        var catCard2 = newCatEls[s2].parentElement;
+        var catName2 = catCard2 ? catCard2.querySelector('.ws-cat-name') : null;
+        if (catName2 && catScrolls[catName2.textContent]) newCatEls[s2].scrollTop = catScrolls[catName2.textContent];
+      }
     }
 
     function renderFileRow(f) {
@@ -5244,7 +5261,13 @@ guideLibrary['disability'] = {
       wsActiveFileId = fileId;
       wsQuill = null;
       wsEditorDirty = false;
-      renderUserFiles(); // highlight active file
+      // Swap active highlight without full re-render (preserves scroll position)
+      var allRows = document.querySelectorAll('#wsFolders .ws-file-row');
+      for (var i = 0; i < allRows.length; i++) {
+        allRows[i].classList.remove('active');
+      }
+      var activeRow = document.querySelector('#wsFolders .ws-file-row[onclick*="openFileViewer(' + fileId + ')"]');
+      if (activeRow) activeRow.classList.add('active');
       var header = document.getElementById('wsViewerHeader');
       var title = document.getElementById('wsViewerTitle');
       var dlBtn = document.getElementById('wsViewerDl');
