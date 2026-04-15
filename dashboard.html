@@ -5993,17 +5993,19 @@ guideLibrary['disability'] = {
       var letterPage = content.querySelector('.ws-letter-page');
       if (!letterPage) return;
       var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
-      var baseName = file ? file.original_name.replace(/\.[^.]+$/, '') : 'Letter';
-      var saveName = baseName + ' - Generated Letter.docx';
+      var baseName = file ? file.original_name.replace(/^\d+\.\s*/, '').replace(/\.[^.]+$/, '').replace(/_/g, ' ') : 'Letter';
+      var saveName = baseName + ' - Letter Form.docx';
 
-      var fullHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:Georgia,serif;font-size:12pt;line-height:1.8;color:#1a1a1a;max-width:650px;margin:0 auto;padding:40px}.letter-date{margin-bottom:28px}.letter-sender-block,.letter-recipient-block{margin-bottom:24px;line-height:1.6}.letter-subject{font-weight:bold;margin-bottom:20px}.letter-salutation{margin-bottom:16px}.letter-body p{margin:0 0 14px;text-align:justify}.letter-closing{margin-top:28px;margin-bottom:48px}.letter-signature{font-style:italic;margin-bottom:6px}.letter-printed-name{font-weight:bold}.letter-enclosures{margin-top:28px;border-top:1px solid #ccc;padding-top:16px;font-size:11pt;color:#555}.letter-enclosures ul{margin:4px 0 0;padding-left:18px}</style></head><body>' + letterPage.innerHTML + '</body></html>';
+      // Get the letter HTML content (without contenteditable)
+      var letterHtml = letterPage.innerHTML;
 
-      // Build a DOCX blob and upload it as a new file
+      // Build a DOCX blob for the file upload
+      var docxHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:Georgia,serif;font-size:12pt;line-height:1.8;color:#1a1a1a;max-width:650px;margin:0 auto;padding:40px}p{margin:0 0 14px}</style></head><body>' + letterHtml + '</body></html>';
       var blob;
       if (typeof htmlDocx !== 'undefined' && htmlDocx.asBlob) {
-        blob = htmlDocx.asBlob(fullHtml);
+        blob = htmlDocx.asBlob(docxHtml);
       } else {
-        blob = new Blob([fullHtml], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+        blob = new Blob([docxHtml], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
       }
 
       var formData = new FormData();
@@ -6018,11 +6020,19 @@ guideLibrary['disability'] = {
         .then(function(d) {
           if (d.error) {
             alert('Could not save: ' + d.error);
-          } else {
-            if (saveBtn) saveBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Saved!';
-            // Refresh file list so the new file appears
-            loadUserFiles();
+            return;
           }
+          // Save the letter HTML as the file's edit content so it loads properly in the editor
+          var newFileId = d.file && d.file.id;
+          if (newFileId) {
+            fetch('/api/files/' + newFileId + '/edit', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ html: letterHtml })
+            });
+          }
+          if (saveBtn) saveBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Saved!';
+          loadUserFiles();
         })
         .catch(function() {
           alert('Could not save the letter. Please try downloading instead.');
