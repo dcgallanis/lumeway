@@ -480,6 +480,10 @@
     .ws-letter-page .letter-enclosures { margin-top: 28px; padding-top: 0; font-size: 13px; color: #1a1a1a; }
     .ws-letter-page .letter-enclosures strong { font-weight: 700; }
     .ws-letter-page .letter-enclosures .enclosure-list { margin: 4px 0 0; padding-left: 0; list-style: none; }
+    .ws-letter-disclaimer-overlay { position: fixed; inset: 0; background: rgba(44,62,80,0.5); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 24px; animation: fadeIn 0.3s ease; }
+    .ws-letter-disclaimer { background: #fff; border-radius: 10px; max-width: 480px; width: 100%; padding: 28px 32px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); font-family: 'Plus Jakarta Sans', sans-serif; }
+    .ws-letter-disclaimer h3 { margin: 0 0 14px; font-size: 17px; color: #1b4f72; }
+    .ws-letter-disclaimer p { margin: 0 0 10px; font-size: 13.5px; line-height: 1.6; color: #333; }
     .ws-letter-page:focus { outline: none; }
     .ws-letter-page [style*="color:#999"]:focus { color: #1a1a1a !important; }
     .ws-letter-gen-btn { background: linear-gradient(135deg, var(--navy), #2a5070); color: var(--cream); border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 5px; transition: all 0.15s; }
@@ -6206,6 +6210,26 @@ guideLibrary['disability'] = {
       var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
       if (!file) return;
       if (!isLetterTemplate(file.original_name)) return;
+
+      // Show disclaimer popup first
+      var overlay = document.createElement('div');
+      overlay.className = 'ws-letter-disclaimer-overlay';
+      overlay.innerHTML = '<div class="ws-letter-disclaimer">' +
+        '<h3>Before you continue</h3>' +
+        '<p>The letter generator pulls information from your template and formats it into a standard business letter. It\'s a starting point, not a final draft.</p>' +
+        '<p><strong>Please review and edit the generated letter carefully.</strong> The generator may misplace information, miss fields, or produce wording that doesn\'t fit your situation.</p>' +
+        '<p>You can edit the letter directly, save it to your files for further editing, or download it as a Word document when it\'s ready.</p>' +
+        '<p style="font-size:12px;color:#888;margin-top:16px;">This is not a legal document. Always consult a qualified professional before sending.</p>' +
+        '<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">' +
+        '<button class="ws-viewer-btn" onclick="this.closest(\'.ws-letter-disclaimer-overlay\').remove()">Cancel</button>' +
+        '<button class="ws-viewer-btn" style="background:#1b4f72;color:#fff" onclick="this.closest(\'.ws-letter-disclaimer-overlay\').remove();doGenerateLetter()">Generate Letter</button>' +
+        '</div></div>';
+      document.body.appendChild(overlay);
+    }
+
+    function doGenerateLetter() {
+      var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
+      if (!file) return;
 
       // Save any pending edits first
       if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
