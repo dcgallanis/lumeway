@@ -357,7 +357,7 @@
     .doc-desc { font-size: 12px; font-weight: 300; color: var(--muted); margin-top: 2px; }
 
     /* Document Workspace — sidebar + editor layout */
-    .ws-main { display: grid; grid-template-columns: 300px 1fr; gap: 0; min-height: 600px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
+    .ws-main { display: grid; grid-template-columns: 300px 1fr; gap: 0; height: calc(100vh - 130px); min-height: 600px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--warm-white); width: 100%; }
     @media (max-width: 768px) { .ws-main { grid-template-columns: 1fr; } }
     .ws-sticky-note { position: fixed; z-index: 999; width: 280px; min-height: 40px; background: #FFF9C4; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1); display: none; flex-direction: column; font-family: 'Plus Jakarta Sans', sans-serif; resize: both; overflow: auto; min-width: 200px; max-width: 500px; }
     .ws-sticky-note.open { display: flex; }
@@ -573,7 +573,8 @@
     #sheetTableWrap .jexcel td { font-family: 'Plus Jakarta Sans', sans-serif; }
     #sheetTableWrap .jexcel_content { max-height: none !important; overflow: visible !important; }
     /* TinyMCE overrides */
-    .ws-viewer-body .tox-tinymce { border: none !important; border-radius: 0 !important; }
+    .ws-viewer-body .tox-tinymce { border: none !important; border-radius: 0 !important; height: 100% !important; }
+    .ws-viewer-body #wsDocEditor { height: 100%; }
     .ws-viewer-body .tox .tox-toolbar__primary { background: var(--cream) !important; border-bottom: 1px solid var(--border) !important; }
     .ws-viewer-body .tox .tox-statusbar { background: var(--cream) !important; border-top: 1px solid var(--border) !important; }
 
@@ -5380,7 +5381,7 @@ guideLibrary['disability'] = {
         if (tinymce.get('wsDocEditor')) tinymce.get('wsDocEditor').remove();
         tinymce.init({
           selector: '#wsDocEditor',
-          height: 'calc(100vh - 120px)',
+          height: '100%',
           menubar: 'edit view insert format table',
           plugins: 'lists link table code wordcount searchreplace autolink pagebreak',
           toolbar: 'undo redo | fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link pagebreak | removeformat code',
@@ -5409,6 +5410,31 @@ guideLibrary['disability'] = {
             editor.on('init', function() {
               editor.setContent(html);
               wsEditorDirty = false;
+              // Add page break visual CSS + insert break markers based on content height
+              var doc = editor.getDoc();
+              var style = doc.createElement('style');
+              style.textContent = '.page-break-marker { display:block; height:40px; margin:20px -1.25in 20px; width:calc(100% + 2.5in); background:#e8e4df; box-shadow:inset 0 6px 6px -4px rgba(0,0,0,0.07), inset 0 -6px 6px -4px rgba(0,0,0,0.07); pointer-events:none; } .mce-pagebreak { display:block; height:40px; margin:20px -1.25in 20px; width:calc(100% + 2.5in); background:#e8e4df; box-shadow:inset 0 6px 6px -4px rgba(0,0,0,0.07), inset 0 -6px 6px -4px rgba(0,0,0,0.07); page-break-before:always; cursor:default; border:0; }';
+              doc.head.appendChild(style);
+              // Insert visual page breaks every ~9in of content
+              setTimeout(function() {
+                var body = doc.body;
+                var pageH = 864; // ~9in printable area at 96dpi
+                var children = Array.prototype.slice.call(body.children);
+                var cumH = 0;
+                for (var i = 0; i < children.length; i++) {
+                  var el = children[i];
+                  if (el.classList && el.classList.contains('page-break-marker')) continue;
+                  cumH += el.offsetHeight || 0;
+                  if (cumH >= pageH) {
+                    var pb = doc.createElement('div');
+                    pb.className = 'page-break-marker';
+                    pb.contentEditable = 'false';
+                    body.insertBefore(pb, el);
+                    cumH = 0;
+                  }
+                }
+                wsEditorDirty = false; // Don't count page breaks as edits
+              }, 300);
             });
             editor.on('change keyup', function() {
               wsEditorDirty = true;
