@@ -408,7 +408,7 @@
     .ws-cat-count { font-size: 11px; color: var(--muted); background: var(--cream); padding: 2px 8px; border-radius: 10px; font-weight: 500; }
     .ws-cat-chevron { font-size: 10px; color: var(--muted); transition: transform 0.2s; }
     .ws-cat-card.open .ws-cat-chevron { transform: rotate(90deg); }
-    .ws-cat-files { display: none; border-top: 1px solid var(--border); overflow-y: auto; max-height: 40vh; }
+    .ws-cat-files { display: none; border-top: 1px solid var(--border); }
     .ws-cat-card.open .ws-cat-files { display: block; }
     /* Right-click context menu for file categorization */
     .ws-file-context-menu { position: fixed; z-index: 200; background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.12); padding: 6px 0; min-width: 200px; display: none; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -484,7 +484,7 @@
       .ws-letter-page { position: absolute; left: 0; top: 0; width: 100%; padding: 40px; box-shadow: none; }
       .ws-letter-toolbar { display: none !important; }
     }
-    .ws-viewer-body { flex: 1; overflow: auto; position: relative; background: var(--cream); }
+    .ws-viewer-body { flex: 1; overflow: auto; position: relative; background: var(--cream); min-height: 0; }
     .ws-viewer-body iframe { width: 100%; height: 100%; border: none; }
     .ws-viewer-body img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; margin: 20px auto; }
     .ws-viewer-body .ws-text-editor { width: 100%; height: 100%; border: none; padding: 24px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; line-height: 1.7; color: var(--text); background: var(--warm-white); resize: none; outline: none; }
@@ -573,8 +573,8 @@
     #sheetTableWrap .jexcel td { font-family: 'Plus Jakarta Sans', sans-serif; }
     #sheetTableWrap .jexcel_content { max-height: none !important; overflow: visible !important; }
     /* TinyMCE overrides */
-    .ws-viewer-body .tox-tinymce { border: none !important; border-radius: 0 !important; height: 100% !important; }
-    .ws-viewer-body #wsDocEditor { height: 100%; }
+    .ws-viewer-body .tox-tinymce { border: none !important; border-radius: 0 !important; position: absolute !important; top: 0; left: 0; right: 0; bottom: 0; height: auto !important; }
+    .ws-viewer-body #wsDocEditor { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
     .ws-viewer-body .tox .tox-toolbar__primary { background: var(--cream) !important; border-bottom: 1px solid var(--border) !important; }
     .ws-viewer-body .tox .tox-statusbar { background: var(--cream) !important; border-top: 1px solid var(--border) !important; }
 
@@ -5214,9 +5214,8 @@ guideLibrary['disability'] = {
     }
 
     function cleanupEditor() {
-      if (wsQuill && wsQuill._tinymce && typeof tinymce !== 'undefined') {
-        var ed = tinymce.get('wsDocEditor');
-        if (ed) ed.remove();
+      if (typeof tinymce !== 'undefined') {
+        tinymce.editors.slice().forEach(function(ed) { try { ed.remove(); } catch(e) {} });
       }
       wsQuill = null;
     }
@@ -5414,11 +5413,21 @@ guideLibrary['disability'] = {
     }
 
     function initQuillEditor(body, html, fileId) {
-      body.innerHTML = '<div id="wsDocEditor" style="min-height:400px"></div>';
+      // Pre-process HTML: insert page break markers after "begins on next page" text
+      var pbMarker = '<div class="page-break-marker" contenteditable="false">\u200b</div>';
+      html = html.replace(/(<\/p>|<\/div>|<\/h[1-4]>|<\/li>)/gi, function(match, tag, offset) {
+        // Look backward from this closing tag to find the opening tag content
+        var chunk = html.substring(Math.max(0, offset - 300), offset).toLowerCase();
+        if (chunk.indexOf('begins on next page') >= 0 || chunk.indexOf('form on next page') >= 0 || chunk.indexOf('start on next page') >= 0 || chunk.indexOf('continue on next page') >= 0) {
+          return match + pbMarker;
+        }
+        return match;
+      });
+      body.innerHTML = '<div id="wsDocEditor"></div>';
       // Use TinyMCE for full Word-like editing with tables
       if (typeof tinymce !== 'undefined') {
-        // Remove any existing TinyMCE instances
-        if (tinymce.get('wsDocEditor')) tinymce.get('wsDocEditor').remove();
+        // Remove ALL existing TinyMCE instances to prevent stale editors
+        tinymce.editors.slice().forEach(function(ed) { try { ed.remove(); } catch(e) {} });
         tinymce.init({
           selector: '#wsDocEditor',
           height: '100%',
@@ -5427,7 +5436,7 @@ guideLibrary['disability'] = {
           toolbar: 'undo redo | fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link pagebreak | removeformat code',
           font_family_formats: 'Sans Serif=Plus Jakarta Sans,sans-serif; Arial=Arial,sans-serif; Times New Roman=Times New Roman,serif; Georgia=Georgia,serif; Verdana=Verdana,sans-serif; Courier New=Courier New,monospace; Trebuchet MS=Trebuchet MS,sans-serif; Calibri=Calibri,sans-serif',
           font_size_formats: '8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 24pt 36pt',
-          content_style: 'html { background: #e8e4df; } body { font-family: Plus Jakarta Sans, Calibri, sans-serif; font-size: 11pt; line-height: 1.7; color: #2C3E50; max-width: 8.5in; min-height: 11in; margin: 32px auto; padding: 1in 1.25in; background: #fff; box-shadow: 0 1px 8px rgba(0,0,0,0.1); border-radius: 2px; box-sizing: border-box; } .mce-pagebreak { display: block; border: 0; width: 100%; height: 40px; margin: 0 -1.25in; padding: 0; width: calc(100% + 2.5in); background: #e8e4df; box-shadow: inset 0 8px 6px -6px rgba(0,0,0,0.06), inset 0 -8px 6px -6px rgba(0,0,0,0.06); cursor: default; page-break-before: always; } table { border-collapse: collapse; margin: 12px 0; table-layout: auto; } table:not([style*="width"]) { width: 100%; } td, th { border: 1px solid #d0d7de; padding: 10px 14px; font-size: 11pt; vertical-align: top; min-width: 60px; word-wrap: break-word; } th { background: #f0f2f4; font-weight: 600; } h1 { font-size: 18pt; color: #2C4A5E; } h2 { font-size: 14pt; color: #2C4A5E; } h3 { font-size: 12pt; color: #2C4A5E; }',
+          content_style: 'html { background: #e8e4df; } body { font-family: Plus Jakarta Sans, Calibri, sans-serif; font-size: 11pt; line-height: 1.7; color: #2C3E50; max-width: 8.5in; min-height: 11in; margin: 32px auto; padding: 1in 1.25in; background: #fff; box-shadow: 0 1px 8px rgba(0,0,0,0.1); border-radius: 2px; box-sizing: border-box; } .page-break-marker { display: block; height: 40px; margin: 20px -1.25in; width: calc(100% + 2.5in); background: #e8e4df; box-shadow: inset 0 6px 6px -4px rgba(0,0,0,0.07), inset 0 -6px 6px -4px rgba(0,0,0,0.07); pointer-events: none; } .mce-pagebreak { display: block; border: 0; height: 40px; margin: 20px -1.25in; width: calc(100% + 2.5in); background: #e8e4df; box-shadow: inset 0 8px 6px -6px rgba(0,0,0,0.06), inset 0 -8px 6px -6px rgba(0,0,0,0.06); cursor: default; page-break-before: always; } table { border-collapse: collapse; margin: 12px 0; table-layout: auto; } table:not([style*="width"]) { width: 100%; } td, th { border: 1px solid #d0d7de; padding: 10px 14px; font-size: 11pt; vertical-align: top; min-width: 60px; word-wrap: break-word; } th { background: #f0f2f4; font-weight: 600; } h1 { font-size: 18pt; color: #2C4A5E; } h2 { font-size: 14pt; color: #2C4A5E; } h3 { font-size: 12pt; color: #2C4A5E; }',
           promotion: false,
           branding: false,
           skin: 'oxide',
@@ -5448,48 +5457,13 @@ guideLibrary['disability'] = {
           color_default_background: '#FFFF00',
           setup: function(editor) {
             editor.on('init', function() {
+              // Stale check: if user clicked a different file while this editor was loading, kill it
+              if (wsActiveFileId !== fileId) {
+                try { editor.remove(); } catch(e) {}
+                return;
+              }
               editor.setContent(html);
               wsEditorDirty = false;
-              // Add page break visual CSS + insert break markers based on content height
-              var doc = editor.getDoc();
-              var style = doc.createElement('style');
-              style.textContent = '.page-break-marker { display:block; height:40px; margin:20px -1.25in 20px; width:calc(100% + 2.5in); background:#e8e4df; box-shadow:inset 0 6px 6px -4px rgba(0,0,0,0.07), inset 0 -6px 6px -4px rgba(0,0,0,0.07); pointer-events:none; } .mce-pagebreak { display:block; height:40px; margin:20px -1.25in 20px; width:calc(100% + 2.5in); background:#e8e4df; box-shadow:inset 0 6px 6px -4px rgba(0,0,0,0.07), inset 0 -6px 6px -4px rgba(0,0,0,0.07); page-break-before:always; cursor:default; border:0; }';
-              doc.head.appendChild(style);
-              // Insert page breaks after "form begins on next page" text + at page intervals
-              setTimeout(function() {
-                var body = doc.body;
-                var pageH = 864; // ~9in printable area at 96dpi
-                // First pass: insert breaks after "begins on next page" / "form on next page" text
-                var allEls = body.querySelectorAll('p, div, h1, h2, h3, h4, li, td');
-                for (var j = 0; j < allEls.length; j++) {
-                  var txt = (allEls[j].textContent || '').toLowerCase();
-                  if (txt.indexOf('begins on next page') >= 0 || txt.indexOf('form on next page') >= 0 || txt.indexOf('start on next page') >= 0 || txt.indexOf('continue on next page') >= 0) {
-                    var nextEl = allEls[j].nextElementSibling;
-                    if (nextEl && !nextEl.classList.contains('page-break-marker')) {
-                      var pb = doc.createElement('div');
-                      pb.className = 'page-break-marker';
-                      pb.contentEditable = 'false';
-                      allEls[j].parentNode.insertBefore(pb, nextEl);
-                    }
-                  }
-                }
-                // Second pass: insert breaks at page-height intervals (skip near existing breaks)
-                var children = Array.prototype.slice.call(body.children);
-                var cumH = 0;
-                for (var i = 0; i < children.length; i++) {
-                  var el = children[i];
-                  if (el.classList && el.classList.contains('page-break-marker')) { cumH = 0; continue; }
-                  cumH += el.offsetHeight || 0;
-                  if (cumH >= pageH) {
-                    var pb2 = doc.createElement('div');
-                    pb2.className = 'page-break-marker';
-                    pb2.contentEditable = 'false';
-                    body.insertBefore(pb2, el);
-                    cumH = 0;
-                  }
-                }
-                wsEditorDirty = false; // Don't count page breaks as edits
-              }, 300);
             });
             editor.on('change keyup', function() {
               wsEditorDirty = true;
@@ -5509,7 +5483,7 @@ guideLibrary['disability'] = {
       if (wsQuill && wsQuill._tinymce && tinymce.activeEditor) {
         var content = tinymce.activeEditor.getContent();
         // Strip visual page break markers before saving
-        content = content.replace(/<div class="page-break-marker"[^>]*><\/div>/g, '');
+        content = content.replace(/<div class="page-break-marker"[^>]*>[\s\S]*?<\/div>/g, '');
         return content;
       }
       return '';
