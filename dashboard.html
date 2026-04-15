@@ -5661,7 +5661,7 @@ guideLibrary['disability'] = {
     function universalGenerate(fields, templateName) {
       var sender = findSenderSection(fields);
       var sig = findSignatureSection(fields);
-      var senderName = sectionField(sender, ['Full Name', 'Name', 'Your Full Name', 'Policyholder Name', 'Employee Name']);
+      var senderName = sectionField(sender, ['Full Name', 'Name', 'Your Full Name', 'New Legal Name', 'Policyholder Name', 'Employee Name', 'Previous Legal Name']);
       var senderAddress = sectionField(sender, ['Mailing Address', 'Address', 'Street Address', 'Your Address']);
       var senderCity = sectionField(sender, ['City', 'City/Town']);
       var senderStateZip = sectionField(sender, ['State / ZIP', 'State/ZIP', 'State, ZIP', 'State']);
@@ -5681,10 +5681,27 @@ guideLibrary['disability'] = {
         if (sec.charAt(0) === '_' || isSkipSection(sec) || isSenderSection(sec) || isChecklistSection(sec)) continue;
         var s = fields[sec];
         if (typeof s !== 'object') continue;
-        if (!recipientOrg) recipientOrg = sectionField(s, ['Institution Name', 'Insurance Company', 'Insurance Company Name', 'Company Name', 'Organization', 'Agency Name', 'Employer Name', 'Creditor Name', 'Lender Name', 'Bank Name', 'Landlord Name', 'Landlord/Property Manager Name', 'Property Management Company', 'School Name', 'HOA Name', 'Brokerage/Custodian Name']);
-        if (!recipientDept) recipientDept = sectionField(s, ['Department', 'Customer Service', 'Claims Department']);
-        if (!recipientAddr) recipientAddr = sectionField(s, ['Branch', 'Branch Address', 'Company Address', 'Street Address', 'Address']);
-        if (!recipientAttn) recipientAttn = sectionField(s, ['Agent Name / Contact', 'Agent Name', 'Contact Person', 'HR Manager Name', 'Manager Name', 'Attn']);
+        var orgVal = sectionField(s, ['Institution Name', 'Insurance Company', 'Insurance Company Name', 'Company Name', 'Organization', 'Agency Name', 'Employer Name', 'Creditor Name', 'Lender Name', 'Bank Name', 'Landlord Name', 'Landlord/Property Manager Name', 'Property Management Company', 'School Name', 'HOA Name', 'Brokerage/Custodian Name']);
+        if (orgVal && !recipientOrg) {
+          recipientOrg = orgVal;
+          // Extract address fields from the same section as the org
+          recipientDept = sectionField(s, ['Department', 'Customer Service', 'Claims Department']);
+          recipientAddr = sectionField(s, ['Branch', 'Branch Address', 'Company Address', 'Street Address', 'Mailing Address', 'Address']);
+          var rCity = sectionField(s, ['City', 'City/Town']);
+          var rStateZip = sectionField(s, ['State / ZIP', 'State/ZIP', 'State, ZIP']);
+          if (rCity || rStateZip) recipientCityStateZip = rCity + (rStateZip ? ', ' + rStateZip : '');
+          recipientAttn = sectionField(s, ['Agent Name / Contact', 'Agent Name', 'Contact Person', 'HR Manager Name', 'Manager Name', 'Attn']);
+        }
+      }
+
+      // Sections whose data is already used in the recipient block or opening paragraph
+      var RECIPIENT_SECTION_PATTERNS = ['INSTITUTION', 'NOTIFIED', 'BEING NOTIFIED'];
+      function isRecipientSection(sn) {
+        var u = sn.toUpperCase();
+        for (var i = 0; i < RECIPIENT_SECTION_PATTERNS.length; i++) {
+          if (u.indexOf(RECIPIENT_SECTION_PATTERNS[i]) >= 0) return true;
+        }
+        return false;
       }
 
       // Collect all data sections, checked actions, and checked documents
@@ -5695,6 +5712,8 @@ guideLibrary['disability'] = {
       for (var i = 0; i < sections.length; i++) {
         var sec = sections[i];
         if (sec.charAt(0) === '_' || isSkipSection(sec) || isSenderSection(sec)) continue;
+        // Skip sections whose data was used in the recipient block
+        if (isRecipientSection(sec) && recipientOrg) continue;
         var s = fields[sec];
         if (typeof s !== 'object') continue;
 
@@ -5747,6 +5766,8 @@ guideLibrary['disability'] = {
 
       // Build body paragraphs as HTML (can include <h3>, <ol>, <p>)
       var bodyHtml = [];
+      // Sections to skip from detail rendering (populated by template-specific code below)
+      var skipDetailSections = [];
 
       // Context-aware opening paragraph that weaves in key data
       if (nameUpper.indexOf('DEATH') >= 0 || nameUpper.indexOf('EXECUTOR') >= 0 || nameUpper.indexOf('SURVIVOR') >= 0) {
@@ -5783,8 +5804,29 @@ guideLibrary['disability'] = {
       } else if (nameUpper.indexOf('JOINT ACCOUNT') >= 0 || nameUpper.indexOf('SEPARATION') >= 0) {
         bodyHtml.push('<p>I am writing to request the separation of a joint account following my divorce' + (divorceDate ? ' on ' + escapeHtml(divorceDate) : '') + '. Per the terms of my divorce decree' + (caseNumber ? ' (case number ' + escapeHtml(caseNumber) + ')' : '') + ', I am requesting the modifications described below.</p>');
       } else if (nameUpper.indexOf('NAME CHANGE') >= 0) {
-        var newName = findField(fields, ['New Legal Name', 'New Name']);
-        bodyHtml.push('<p>I am writing to formally notify you of a legal name change. My name has been changed from ' + escapeHtml(senderName || '[Previous Name]') + ' to ' + escapeHtml(newName || '[New Name]') + ', and I am requesting that your records be updated accordingly.</p>');
+        var prevName = sectionField(sender, ['Previous Legal Name', 'Former Name', 'Previous Name']);
+        var newName = sectionField(sender, ['New Legal Name', 'New Name']) || senderName;
+        var orderDate = findField(fields, ['Date of Order', 'Date of Legal Order', 'Effective Date']);
+        var courtNameVal = findField(fields, ['Court Name', 'Court']);
+        var caseNumVal = findField(fields, ['Case Number', 'Court Case Number']);
+        var changeBody = 'I am writing to notify you of a legal name change. I was previously known as ' + escapeHtml(prevName || '[Former Full Name]') + ' and am now known as ' + escapeHtml(newName || '[New Full Name]') + '.';
+        if (orderDate || courtNameVal) {
+          changeBody += ' This name change became effective' + (orderDate ? ' on ' + escapeHtml(orderDate) : '') + (courtNameVal ? ' by court order in ' + escapeHtml(courtNameVal) : '') + (caseNumVal ? ', case number ' + escapeHtml(caseNumVal) : '') + '.';
+        }
+        bodyHtml.push('<p>' + changeBody + '</p>');
+        // Account info paragraph like the example letter
+        var acctNum = findField(fields, ['Account Number', 'Policy Number']);
+        var acctHtml = '<h3>Account Information</h3><p>Please update your records as follows:</p><p>';
+        var acctLines = [];
+        if (prevName) acctLines.push('Former Name: ' + escapeHtml(prevName));
+        if (newName) acctLines.push('New Name: ' + escapeHtml(newName));
+        if (acctNum) acctLines.push('Account Number: ' + escapeHtml(acctNum));
+        var dob = sectionField(sender, ['Date of Birth', 'DOB']);
+        if (dob) acctLines.push('Date of Birth: ' + escapeHtml(dob));
+        acctHtml += acctLines.join('<br>') + '</p>';
+        bodyHtml.push(acctHtml);
+        // Skip court order & institution sections — data already used above and in recipient block
+        skipDetailSections.push('COURT ORDER', 'INSTITUTION');
       } else if (nameUpper.indexOf('CUSTODY') >= 0 || nameUpper.indexOf('SCHOOL NOTIFICATION') >= 0) {
         bodyHtml.push('<p>I am writing to notify you of a change in custody arrangements and to request that your records be updated to reflect the new authorized contacts and guardianship information for my child.</p>');
       } else if (nameUpper.indexOf('PARENTAL CONSENT') >= 0) {
@@ -5858,6 +5900,13 @@ guideLibrary['disability'] = {
       // Detail sections: render as titled paragraphs with clean key-value lines
       for (var i = 0; i < detailSections.length; i++) {
         var ds = detailSections[i];
+        // Skip sections whose data was already used in the opening paragraph
+        var skipThis = false;
+        var dsUpper = ds.name.toUpperCase();
+        for (var si = 0; si < skipDetailSections.length; si++) {
+          if (dsUpper.indexOf(skipDetailSections[si]) >= 0) { skipThis = true; break; }
+        }
+        if (skipThis) continue;
         // Title case the section name
         var sectionTitle = ds.name.toLowerCase().replace(/\b\w/g, function(c) { return c.toUpperCase(); });
         var secHtml = '<h3>' + escapeHtml(sectionTitle) + '</h3>';
@@ -5900,15 +5949,19 @@ guideLibrary['disability'] = {
 
       // Build a contextual subject line
       var subject = prettyName;
-      if (accountNum) {
+      // Account number specifically (not court case numbers)
+      var acctForSubject = findField(fields, ['Account Number', 'Policy Number', 'Loan Number']);
+      if (nameUpper.indexOf('NAME CHANGE') >= 0) {
+        subject = 'Notification of Legal Name Change';
+      } else if (acctForSubject) {
         if (nameUpper.indexOf('DEATH') >= 0 || nameUpper.indexOf('EXECUTOR') >= 0) {
-          subject = 'Death Notification \u2014 Account ' + accountNum;
+          subject = 'Death Notification \u2014 Account ' + acctForSubject;
         } else if (nameUpper.indexOf('DIVORCE') >= 0 || nameUpper.indexOf('CREDITOR') >= 0) {
           subject = 'Account Modification Request \u2014 Divorce Settlement';
         } else if (nameUpper.indexOf('INSURANCE') >= 0 || nameUpper.indexOf('REMOVAL') >= 0) {
           subject = 'Request for Removal from ' + (accountType || 'Insurance') + ' Policy';
         } else {
-          subject = prettyName + ' \u2014 Account ' + accountNum;
+          subject = prettyName + ' \u2014 Account ' + acctForSubject;
         }
       } else if (nameUpper.indexOf('FMLA') >= 0) {
         subject = 'Request for Family and Medical Leave Act (FMLA) Leave';
