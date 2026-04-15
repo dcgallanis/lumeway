@@ -4961,20 +4961,7 @@ guideLibrary['disability'] = {
       if (input) input.value = '';
     }
 
-    function recategorizeFile(id) {
-      var cats = ['legal','financial','insurance','medical','personal','other'];
-      var choice = prompt('Enter new category:\\n' + cats.join(', '));
-      if (!choice) return;
-      choice = choice.trim().toLowerCase();
-      if (cats.indexOf(choice) < 0) { alert('Choose from: ' + cats.join(', ')); return; }
-      fetch('/api/files/' + id + '/category', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ category: choice })
-      }).then(function(r) { return r.json(); }).then(function(d) {
-        if (d.ok) loadUserFiles();
-      });
-    }
+
 
     function deleteFile(id) {
       if (!confirm('Delete this file?')) return;
