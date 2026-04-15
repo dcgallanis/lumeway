@@ -5840,20 +5840,128 @@ guideLibrary['disability'] = {
         bodyHtml.push('<p>I am writing to notify you of a change in custody arrangements and to request that your records be updated to reflect the new authorized contacts and guardianship information for my child.</p>');
       } else if (nameUpper.indexOf('PARENTAL CONSENT') >= 0) {
         var childName = findField(fields, ["Child's Full Legal Name", 'Child Full Name', 'Child Name']);
+        var childDob = findField(fields, ['Date of Birth', 'DOB']);
+        var childAge = findField(fields, ['Age']);
         var activityDesc = findField(fields, ['Description of Activity', 'Type of Permission']);
         var activityDest = findField(fields, ['Destination']);
         var activityStart = findField(fields, ['Start Date']);
         var activityEnd = findField(fields, ['End Date']);
-        var consentBody = 'I am writing to provide my consent and permission for my child, ' + escapeHtml(childName || '[Child\'s Full Name]');
+        var transportation = findField(fields, ['Mode of Transportation']);
+        var emergencyContact = findField(fields, ['Emergency Contact']);
+        // Supervising person fields
+        var supervisorSec = fields['AUTHORIZED ADULT / SUPERVISING PERSON'] || {};
+        var supName = sectionField(supervisorSec, ['Full Name', 'Name']);
+        var supRelation = sectionField(supervisorSec, ['Relationship to Child', 'Relationship']);
+        var supPhone = sectionField(supervisorSec, ['Phone', 'Phone Number']);
+        var supEmail = sectionField(supervisorSec, ['Email', 'Email Address']);
+        var supAddr = sectionField(supervisorSec, ['Mailing Address', 'Address']);
+        // Parent 2 fields
+        var parent2Sec = fields['PARENT / GUARDIAN 2 (IF APPLICABLE)'] || fields['PARENT / GUARDIAN 2'] || {};
+        var p2Name = sectionField(parent2Sec, ['Full Name', 'Name']);
+        var p2Relation = sectionField(parent2Sec, ['Relationship to Child', 'Relationship']);
+        var p2Phone = sectionField(parent2Sec, ['Phone', 'Phone Number']);
+        var p2Email = sectionField(parent2Sec, ['Email', 'Email Address']);
+        // Medical fields
+        var medSec = fields['MEDICAL AUTHORIZATION'] || {};
+        var medConsent = sectionField(medSec, ['Emergency Medical Consent']);
+        var allergies = sectionField(medSec, ['Known Allergies']);
+        var medications = sectionField(medSec, ['Current Medications']);
+        var insurance = sectionField(medSec, ['Insurance Provider & Policy #', 'Insurance Provider']);
+        var prefHospital = sectionField(medSec, ['Preferred Hospital / Doctor', 'Preferred Hospital']);
+        var medInstructions = sectionField(medSec, ['Special Medical Instructions']);
+        // Conditions
+        var condSec = fields['ADDITIONAL CONDITIONS OR RESTRICTIONS'] || {};
+        var dietRestrict = sectionField(condSec, ['Dietary Restrictions']);
+        var actRestrict = sectionField(condSec, ['Activity Restrictions']);
+        var curfew = sectionField(condSec, ['Curfew / Schedule', 'Curfew']);
+        var otherCond = sectionField(condSec, ['Other Conditions']);
+
+        // Opening paragraph
+        var cn = escapeHtml(childName || '[Child\'s Full Name]');
+        var ageInfo = childAge ? ', age ' + escapeHtml(childAge) : '';
+        var consentBody = 'I am writing to provide my consent and permission for my child, ' + cn + ageInfo;
         if (activityDesc) consentBody += ', to ' + escapeHtml(activityDesc);
         if (activityDest) consentBody += ' at ' + escapeHtml(activityDest);
         consentBody += '.';
         if (activityStart) {
-          consentBody += ' The dates of this activity are ' + escapeHtml(activityStart) + (activityEnd ? ' through ' + escapeHtml(activityEnd) : '') + '.';
+          consentBody += ' The dates of this activity are ' + escapeHtml(activityStart) + (activityEnd && activityEnd !== activityStart ? ' through ' + escapeHtml(activityEnd) : '') + '.';
         }
+        if (transportation) consentBody += ' Transportation will be by ' + escapeHtml(transportation) + '.';
         bodyHtml.push('<p>' + consentBody + '</p>');
-        // Skip permission details from body — already in opening
-        skipDetailSections.push('PERMISSION DETAIL');
+
+        // Supervising adult paragraph
+        if (supName) {
+          var supBody = 'While my child is in the care of ' + escapeHtml(supName);
+          if (supRelation) supBody += ' (' + escapeHtml(supRelation) + ')';
+          supBody += ', I authorize them to supervise ' + cn + ' for the duration of this activity.';
+          if (supPhone || supEmail) {
+            supBody += ' ' + escapeHtml(supName) + ' can be reached at ';
+            var supContact = [];
+            if (supPhone) supContact.push(escapeHtml(supPhone));
+            if (supEmail) supContact.push(escapeHtml(supEmail));
+            supBody += supContact.join(' or ') + '.';
+          }
+          bodyHtml.push('<p>' + supBody + '</p>');
+        }
+
+        // Emergency contact and parent 2
+        var emBody = 'In case of emergency during this period, please contact me at ';
+        var myContact = [];
+        if (senderPhone) myContact.push(escapeHtml(senderPhone));
+        if (senderEmail) myContact.push(escapeHtml(senderEmail));
+        emBody += myContact.length ? myContact.join(' or ') : '[phone/email]';
+        emBody += '.';
+        if (p2Name) {
+          emBody += ' You may also contact ' + escapeHtml(p2Name);
+          if (p2Relation) emBody += ' (' + escapeHtml(p2Relation) + ')';
+          if (p2Phone || p2Email) {
+            emBody += ' at ';
+            var p2Contact = [];
+            if (p2Phone) p2Contact.push(escapeHtml(p2Phone));
+            if (p2Email) p2Contact.push(escapeHtml(p2Email));
+            emBody += p2Contact.join(' or ');
+          }
+          emBody += '.';
+        }
+        bodyHtml.push('<p>' + emBody + '</p>');
+
+        // Child info paragraph
+        var childInfo = '<h3>Child Information</h3><p>';
+        var childLines = [];
+        childLines.push('Full Name: ' + cn);
+        if (childDob) childLines.push('Date of Birth: ' + escapeHtml(childDob));
+        if (childAge) childLines.push('Age: ' + escapeHtml(childAge));
+        if (emergencyContact) childLines.push('Emergency Contact: ' + escapeHtml(emergencyContact));
+        childInfo += childLines.join('<br>') + '</p>';
+        bodyHtml.push(childInfo);
+
+        // Medical authorization paragraph
+        if (medConsent || allergies || medications || insurance || prefHospital || medInstructions) {
+          var medBody = '<h3>Medical Authorization</h3><p>';
+          if (medConsent) medBody += 'Emergency medical consent: ' + escapeHtml(medConsent) + '. ';
+          var medDetails = [];
+          if (allergies) medDetails.push('Known allergies: ' + escapeHtml(allergies));
+          if (medications) medDetails.push('Current medications: ' + escapeHtml(medications));
+          if (insurance) medDetails.push('Insurance: ' + escapeHtml(insurance));
+          if (prefHospital) medDetails.push('Preferred hospital/doctor: ' + escapeHtml(prefHospital));
+          if (medDetails.length) medBody += medDetails.join('. ') + '.';
+          if (medInstructions) medBody += ' Special instructions: ' + escapeHtml(medInstructions) + '.';
+          medBody += '</p>';
+          bodyHtml.push(medBody);
+        }
+
+        // Conditions paragraph
+        var condItems = [];
+        if (dietRestrict) condItems.push('Dietary restrictions: ' + escapeHtml(dietRestrict));
+        if (actRestrict) condItems.push('Activity restrictions: ' + escapeHtml(actRestrict));
+        if (curfew) condItems.push('Curfew/schedule: ' + escapeHtml(curfew));
+        if (otherCond) condItems.push(escapeHtml(otherCond));
+        if (condItems.length) {
+          bodyHtml.push('<h3>Additional Conditions</h3><p>' + condItems.join('. ') + '.</p>');
+        }
+
+        // Skip all detail sections — everything handled above
+        skipDetailSections.push('PERMISSION', 'CHILD', 'AUTHORIZED', 'SUPERVISING', 'PARENT / GUARDIAN 2', 'MEDICAL', 'ADDITIONAL CONDITION');
       } else if (nameUpper.indexOf('FMLA') >= 0) {
         bodyHtml.push('<p>I am writing to request leave under the Family and Medical Leave Act (FMLA). I am providing this notice as required, and I am committed to working with you to ensure a smooth transition during my absence.</p>');
       } else if (nameUpper.indexOf('DISABILITY') >= 0 && nameUpper.indexOf('ACCOMMODATION') >= 0) {
