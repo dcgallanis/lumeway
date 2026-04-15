@@ -4611,11 +4611,6 @@ guideLibrary['disability'] = {
         groups[cat].push(f);
       });
 
-      // Add templates if user has template files or purchased bundles
-      var templatePurchases = (dashData.purchases || []).filter(function(p) { return p.download_token && p.product_id !== 'unlimited' && !p.product_id.startsWith('pass-'); });
-      var hasTemplateFiles = groups['templates'] && groups['templates'].length > 0;
-      if (hasTemplateFiles || templatePurchases.length > 0) catOrder.push('templates');
-
       // Dynamically add transition categories that have files
       ['job-loss','estate','divorce','disability','relocation','retirement'].forEach(function(tc) {
           if (groups[tc] && groups[tc].length > 0 && catOrder.indexOf(tc) === -1) catOrder.push(tc);
@@ -4643,42 +4638,24 @@ guideLibrary['disability'] = {
 
       catOrder.forEach(function(cat) {
         var files = groups[cat] || [];
-        if (cat !== 'templates' && files.length === 0) return;
-        if (cat === 'templates' && !hasTemplateFiles && templatePurchases.length === 0) return;
+        if (files.length === 0) return;
 
         var isOpen = wsOpenCats[cat] === true;
         var icon = catIcons[cat] || '\uD83D\uDCC1';
         var label = catLabels[cat] || cat;
-        var count = cat === 'templates' ? (hasTemplateFiles ? (groups['templates'] || []).length : templatePurchases.length) : files.length;
 
         html += '<div class="ws-cat-card' + (isOpen ? ' open' : '') + '">';
         html += '  <div class="ws-cat-header" onclick="toggleCat(\'' + cat + '\')">';
         html += '    <span class="ws-cat-icon">' + icon + '</span>';
         html += '    <span class="ws-cat-name">' + label + '</span>';
-        html += '    <span class="ws-cat-count">' + count + '</span>';
+        html += '    <span class="ws-cat-count">' + files.length + '</span>';
         html += '    <span class="ws-cat-chevron">&#9654;</span>';
         html += '  </div>';
         html += '  <div class="ws-cat-files">';
 
-        if (cat === 'templates') {
-          if (hasTemplateFiles) {
-            (groups['templates'] || []).forEach(function(f) {
-              html += renderFileRow(f);
-            });
-          } else {
-            templatePurchases.forEach(function(p) {
-              html += '<div class="ws-file-row" style="cursor:default">';
-              html += '  <span class="ws-file-icon">\uD83D\uDCE6</span>';
-              html += '  <span class="ws-file-name">' + p.product_name + '</span>';
-              html += '  <a href="/download/' + p.download_token + '" style="font-size:11px;color:var(--navy);text-decoration:none;font-weight:500" title="Download">Download</a>';
-              html += '</div>';
-            });
-          }
-        } else {
-          files.forEach(function(f) {
-            html += renderFileRow(f);
-          });
-        }
+        files.forEach(function(f) {
+          html += renderFileRow(f);
+        });
 
         html += '  </div>';
         html += '</div>';
