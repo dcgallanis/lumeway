@@ -5517,9 +5517,72 @@ guideLibrary['disability'] = {
       return filename.replace(/^\d+\.\s*/, '').replace(/\.[^.]+$/, '').toLowerCase().replace(/\s+/g, '_');
     }
 
-    // Universal letter detection: any template with "Letter" in the filename
+    // Templates that get the Generate Letter button (normalized filenames)
+    var LETTER_TEMPLATE_LIST = [
+      // Job Loss
+      'severance_response_letter',
+      'severance_counteroffer_letter',
+      'hardship_letter_to_creditor',
+      'general_authorization_letter',
+      '401k_rollover_request_letter',
+      'professional_reference_request_letter',
+      'linkedin_networking_message_template',
+      'cobra_election_letter',
+      'unemployment_appeal_information_organizer',
+      // Estate
+      'employer_notification_of_death_letter',
+      'estate_executor_introduction_letter',
+      'bank_death_notification_letter',
+      'credit_bureau_death_notification_letter',
+      'utility_account_transfer_cancellation_letter',
+      'subscription_membership_cancellation_letter',
+      'vehicle_title_transfer_letter',
+      'safe_deposit_box_access_letter',
+      'survivor_benefits_information_organizer',
+      'personal_affidavit_information_organizer',
+      'gift_letter_information_organizer',
+      'life_insurance_claim_preparation_checklist',
+      // Divorce
+      'parental_consent_permission_letter',
+      'name_change_notification_letter',
+      'creditor_notification_of_divorce_letter',
+      'retirement_account_division_information_request_letter',
+      'joint_account_separation_request_letter',
+      'school_notification_of_custody_change_letter',
+      'insurance_removal_request_letter',
+      'divorce_financial_disclosure_information_organizer',
+      // Disability
+      'medical_authorization_letter',
+      'caregiver_authorization_letter',
+      'fmla_leave_request_letter',
+      'workplace_accommodation_request_ada',
+      'return_to_work_letter_after_disability',
+      'disability_accommodation_followup_letter',
+      'letter_to_employer_during_fmla_leave',
+      'ssdi_appeal_information_organizer',
+      'ssdi_application_information_organizer',
+      'disability_insurance_claim_preparation_checklist',
+      // Relocation
+      'proof_of_residency_letter',
+      'landlord_reference_letter',
+      'early_lease_termination_letter',
+      'landlord_moveout_notice_letter',
+      'school_transfer_request_letter',
+      'employer_remote_work_state_change_notification',
+      'hoa_transfer_notification_letter',
+      // Retirement
+      'employer_retirement_notification_letter',
+      'rmd_distribution_request_letter',
+      'retirement_account_beneficiary_update_letter',
+      'retiree_health_insurance_continuation_request',
+      'letter_of_instruction_to_heirs',
+      'medicare_enrollment_checklist_and_cover_letter',
+      'legacy_letter_ethical_will'
+    ];
+
     function isLetterTemplate(filename) {
-      return /letter/i.test(filename);
+      var norm = normalizeTemplateName(filename);
+      return LETTER_TEMPLATE_LIST.indexOf(norm) >= 0;
     }
 
     // Sections to skip when building letter body (info tables, branding, etc.)
