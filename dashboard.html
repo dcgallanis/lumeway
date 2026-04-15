@@ -5258,7 +5258,7 @@ guideLibrary['disability'] = {
       // Show/hide Generate Letter button for letter-type templates
       var genLetterBtn = document.getElementById('wsGenLetterBtn');
       if (genLetterBtn) {
-        genLetterBtn.style.display = getLetterTemplate(file.original_name) ? 'flex' : 'none';
+        genLetterBtn.style.display = isLetterTemplate(file.original_name) ? 'flex' : 'none';
       }
 
       var ext = file.original_name.split('.').pop().toLowerCase();
@@ -5517,144 +5517,180 @@ guideLibrary['disability'] = {
       return filename.replace(/^\d+\.\s*/, '').replace(/\.[^.]+$/, '').toLowerCase().replace(/\s+/g, '_');
     }
 
-    var LETTER_TEMPLATES = {
-      'bank_death_notification_letter': {
-        title: 'Bank Death Notification Letter',
-        recipientLabel: 'Bank / Financial Institution',
-        generate: function(f) {
-          var sender = f['SENDER INFORMATION'] || {};
-          var deceased = f['DECEASED ACCOUNT HOLDER'] || {};
-          var account = f['ACCOUNT INFORMATION'] || {};
-          var actions = f['ACTIONS REQUESTED'] || {};
-          var enclosed = f['ENCLOSED DOCUMENTS'] || {};
-          var sig = f['SIGNATURE'] || {};
-          var checkedActions = actions._checked || [];
-          var checkedDocs = enclosed._checked || [];
-          var accountLines = [];
-          if (account['Account 1 Number']) accountLines.push('Account #' + account['Account 1 Number'] + (account['Account Type'] ? ' (' + account['Account Type'] + ')' : ''));
-          if (account['Account 2 Number']) accountLines.push('Account #' + account['Account 2 Number']);
-          if (account['Account 3 Number']) accountLines.push('Account #' + account['Account 3 Number']);
-          var bodyParts = [];
-          bodyParts.push('I am writing to formally notify you of the death of ' + (deceased['Full Legal Name'] || '[Name]') + ', who passed away on ' + (deceased['Date of Death'] || '[Date]') + '. I am the authorized representative handling the estate and related financial matters.');
-          if (accountLines.length > 0) {
-            bodyParts.push('The deceased held the following account(s) at your institution: ' + accountLines.join('; ') + '.');
-          }
-          if (checkedActions.length > 0) {
-            bodyParts.push('I respectfully request the following actions be taken:\n' + checkedActions.map(function(a) { return '\u2022 ' + a; }).join('\n'));
-          }
-          if (checkedDocs.length > 0) {
-            bodyParts.push('Enclosed with this letter, please find the following supporting documents for your review.');
-          }
-          bodyParts.push('Please contact me at your earliest convenience to confirm receipt of this letter and to advise of any additional documentation or steps required to process these requests. Thank you for your prompt attention to this matter.');
-          return {
-            date: f._date || '',
-            senderName: sender['Full Name'] || '',
-            senderAddress: sender['Mailing Address'] || '',
-            senderCityStateZip: (sender['City'] || '') + (sender['State / ZIP'] ? ', ' + sender['State / ZIP'] : ''),
-            senderPhone: sender['Phone'] || '',
-            senderEmail: sender['Email'] || '',
-            recipientName: account['Institution Name'] || 'To Whom It May Concern',
-            recipientAddress: account['Branch'] || '',
-            subject: 'Notification of Death \u2014 ' + (deceased['Full Legal Name'] || '') + (deceased['SSN (last 4)'] ? ' (SSN ending ' + deceased['SSN (last 4)'] + ')' : ''),
-            salutation: 'Dear Sir or Madam',
-            bodyParagraphs: bodyParts,
-            closing: 'Sincerely',
-            signatureName: sig['Signature'] || sender['Full Name'] || '',
-            printedName: sig['Printed Name'] || sender['Full Name'] || '',
-            enclosures: checkedDocs
-          };
-        }
-      },
-      'credit_bureau_death_notification_letter': {
-        title: 'Credit Bureau Death Notification Letter',
-        recipientLabel: 'Credit Bureau',
-        generate: function(f) {
-          var sender = f['SENDER INFORMATION'] || {};
-          var deceased = f['DECEASED INDIVIDUAL'] || {};
-          var actions = f['ACTIONS REQUESTED'] || {};
-          var enclosed = f['ENCLOSED DOCUMENTS'] || {};
-          var sig = f['SIGNATURE'] || {};
-          var checkedActions = actions._checked || [];
-          var checkedDocs = enclosed._checked || [];
-          var bodyParts = [];
-          bodyParts.push('I am writing to notify you of the death of ' + (deceased['Full Legal Name'] || '[Name]') + ', who passed away on ' + (deceased['Date of Death'] || '[Date]') + '. I am the ' + (sender['Relationship to Deceased'] || 'authorized representative') + ' and am requesting that you update your records accordingly.');
-          bodyParts.push('The deceased\u2019s information is as follows: Date of Birth: ' + (deceased['Date of Birth'] || 'N/A') + '; Social Security Number: ' + (deceased['Social Security Number'] || 'N/A') + '; Last Known Address: ' + (deceased['Last Known Address'] || 'N/A') + '.');
-          if (checkedActions.length > 0) {
-            bodyParts.push('I respectfully request the following actions:\n' + checkedActions.map(function(a) { return '\u2022 ' + a; }).join('\n'));
-          }
-          if (checkedDocs.length > 0) {
-            bodyParts.push('Enclosed please find the supporting documentation listed below for your records.');
-          }
-          bodyParts.push('Please confirm receipt of this notification and advise if any additional information is required. Taking prompt action will help protect the deceased\u2019s identity and prevent potential fraud. Thank you for your assistance.');
-          return {
-            date: f._date || '',
-            senderName: sender['Full Name'] || '',
-            senderAddress: sender['Mailing Address'] || '',
-            senderCityStateZip: (sender['City'] || '') + (sender['State / ZIP'] ? ', ' + sender['State / ZIP'] : ''),
-            senderPhone: sender['Phone'] || '',
-            senderEmail: sender['Email'] || '',
-            recipientName: 'Credit Bureau',
-            recipientAddress: '',
-            subject: 'Deceased Consumer Notification \u2014 ' + (deceased['Full Legal Name'] || '') + (deceased['Social Security Number'] ? ' (SSN: ' + deceased['Social Security Number'] + ')' : ''),
-            salutation: 'To Whom It May Concern',
-            bodyParagraphs: bodyParts,
-            closing: 'Sincerely',
-            signatureName: sig['Signature'] || sender['Full Name'] || '',
-            printedName: sig['Printed Name'] || sender['Full Name'] || '',
-            enclosures: checkedDocs
-          };
-        }
-      },
-      'insurance_removal_request_letter': {
-        title: 'Insurance Removal Request Letter',
-        recipientLabel: 'Insurance Company',
-        generate: function(f) {
-          var sender = f['POLICYHOLDER INFORMATION'] || {};
-          var policy = f['INSURANCE POLICY INFORMATION'] || {};
-          var person = f['PERSON TO REMOVE'] || {};
-          var changes = f['REQUESTED CHANGES'] || {};
-          var enclosed = f['ENCLOSED DOCUMENTS'] || {};
-          var sig = f['SIGNATURE'] || {};
-          var effective = f['_effective_date'] || '';
-          var checkedChanges = changes._checked || [];
-          var checkedDocs = enclosed._checked || [];
-          var bodyParts = [];
-          bodyParts.push('I am writing to formally request changes to my ' + (policy['Policy Type'] || 'insurance') + ' policy, number ' + (policy['Policy Number'] || '[Policy Number]') + ', held with ' + (policy['Insurance Company'] || 'your company') + '.');
-          bodyParts.push('Specifically, I am requesting the removal of ' + (person['Full Name'] || '[Name]') + ' from this policy. The reason for this request is: ' + (person['Reason for Removal'] || 'divorce/separation') + '. The date of divorce or separation was ' + (person['Date of Divorce / Separation'] || '[Date]') + '.');
-          if (checkedChanges.length > 0) {
-            bodyParts.push('The following changes are requested:\n' + checkedChanges.map(function(a) { return '\u2022 ' + a; }).join('\n'));
-          }
-          if (effective) {
-            bodyParts.push('I request these changes take effect as of ' + effective + '.');
-          }
-          if (checkedDocs.length > 0) {
-            bodyParts.push('Enclosed please find the supporting documentation for this request.');
-          }
-          bodyParts.push('Please contact me at your earliest convenience to confirm receipt and to advise of any additional steps required. Thank you for your prompt attention to this matter.');
-          return {
-            date: f._date || '',
-            senderName: sender['Full Name'] || '',
-            senderAddress: sender['Mailing Address'] || '',
-            senderCityStateZip: (sender['City'] || '') + (sender['State / ZIP'] ? ', ' + sender['State / ZIP'] : ''),
-            senderPhone: sender['Phone'] || '',
-            senderEmail: sender['Email'] || '',
-            recipientName: policy['Insurance Company'] || 'Insurance Company',
-            recipientAddress: policy['Agent Name / Contact'] ? 'Attn: ' + policy['Agent Name / Contact'] : '',
-            subject: 'Policy Modification Request \u2014 Policy #' + (policy['Policy Number'] || ''),
-            salutation: 'Dear ' + (policy['Agent Name / Contact'] || 'Sir or Madam'),
-            bodyParagraphs: bodyParts,
-            closing: 'Sincerely',
-            signatureName: sig['Signature'] || sender['Full Name'] || '',
-            printedName: sig['Printed Name'] || sender['Full Name'] || '',
-            enclosures: checkedDocs
-          };
+    // Universal letter detection: any template with "Letter" in the filename
+    function isLetterTemplate(filename) {
+      return /letter/i.test(filename);
+    }
+
+    // Sections to skip when building letter body (info tables, branding, etc.)
+    var SKIP_SECTIONS = ['ABOUT THIS TEMPLATE', 'SIGNATURE', '_ungrouped'];
+    // Sections that contain sender/from info
+    var SENDER_PATTERNS = ['SENDER', 'POLICYHOLDER', 'YOUR INFORMATION', 'APPLICANT', 'REQUESTOR', 'FROM'];
+    // Sections that contain checked items (actions, documents, changes)
+    var CHECKLIST_PATTERNS = ['ACTION', 'REQUEST', 'ENCLOSED', 'DOCUMENT', 'ATTACHMENT'];
+
+    function findSenderSection(fields) {
+      var keys = Object.keys(fields);
+      for (var i = 0; i < keys.length; i++) {
+        var k = keys[i].toUpperCase();
+        for (var j = 0; j < SENDER_PATTERNS.length; j++) {
+          if (k.indexOf(SENDER_PATTERNS[j]) >= 0) return fields[keys[i]];
         }
       }
-    };
+      return {};
+    }
 
-    function getLetterTemplate(filename) {
-      var norm = normalizeTemplateName(filename);
-      return LETTER_TEMPLATES[norm] || null;
+    function findSignatureSection(fields) {
+      var keys = Object.keys(fields);
+      for (var i = 0; i < keys.length; i++) {
+        if (keys[i].toUpperCase().indexOf('SIGNATURE') >= 0) return fields[keys[i]];
+      }
+      return {};
+    }
+
+    function isChecklistSection(sectionName) {
+      var upper = sectionName.toUpperCase();
+      for (var i = 0; i < CHECKLIST_PATTERNS.length; i++) {
+        if (upper.indexOf(CHECKLIST_PATTERNS[i]) >= 0) return true;
+      }
+      return false;
+    }
+
+    function isSenderSection(sectionName) {
+      var upper = sectionName.toUpperCase();
+      for (var i = 0; i < SENDER_PATTERNS.length; i++) {
+        if (upper.indexOf(SENDER_PATTERNS[i]) >= 0) return true;
+      }
+      return false;
+    }
+
+    function isSkipSection(sectionName) {
+      var upper = sectionName.toUpperCase();
+      for (var i = 0; i < SKIP_SECTIONS.length; i++) {
+        if (upper.indexOf(SKIP_SECTIONS[i]) >= 0) return true;
+      }
+      return upper.indexOf('SIGNATURE') >= 0;
+    }
+
+    // Build a letter universally from any parsed template fields
+    function universalGenerate(fields, templateName) {
+      var sender = findSenderSection(fields);
+      var sig = findSignatureSection(fields);
+      var senderName = sender['Full Name'] || sender['Name'] || '';
+      var senderAddress = sender['Mailing Address'] || sender['Address'] || '';
+      var senderCity = sender['City'] || '';
+      var senderStateZip = sender['State / ZIP'] || sender['State/ZIP'] || sender['State'] || '';
+      var senderCityStateZip = senderCity + (senderStateZip ? ', ' + senderStateZip : '');
+      var senderPhone = sender['Phone'] || sender['Phone Number'] || '';
+      var senderEmail = sender['Email'] || sender['Email Address'] || '';
+
+      // Try to find a recipient from non-sender, non-checklist sections
+      var recipientName = '';
+      var recipientAddress = '';
+      var sections = Object.keys(fields);
+      for (var i = 0; i < sections.length; i++) {
+        var sec = sections[i];
+        if (sec.charAt(0) === '_' || isSkipSection(sec) || isSenderSection(sec) || isChecklistSection(sec)) continue;
+        var s = fields[sec];
+        if (typeof s !== 'object') continue;
+        // Look for institution/company/organization name fields
+        var nameVal = s['Institution Name'] || s['Insurance Company'] || s['Company Name'] || s['Organization'] || s['Agency Name'] || s['Employer Name'] || s['Creditor Name'] || s['Lender Name'] || '';
+        if (nameVal && !recipientName) recipientName = nameVal;
+        var addrVal = s['Branch'] || s['Agent Name / Contact'] || s['Department'] || '';
+        if (addrVal && !recipientAddress) recipientAddress = addrVal;
+      }
+
+      // Build body paragraphs from all non-sender, non-checklist sections
+      var bodyParts = [];
+      var allCheckedActions = [];
+      var allCheckedDocs = [];
+      var detailSections = [];
+
+      for (var i = 0; i < sections.length; i++) {
+        var sec = sections[i];
+        if (sec.charAt(0) === '_' || isSkipSection(sec) || isSenderSection(sec)) continue;
+        var s = fields[sec];
+        if (typeof s !== 'object') continue;
+
+        if (isChecklistSection(sec)) {
+          // Collect checked items
+          var checked = s._checked || [];
+          if (checked.length > 0) {
+            var upper = sec.toUpperCase();
+            if (upper.indexOf('ENCLOSED') >= 0 || upper.indexOf('DOCUMENT') >= 0 || upper.indexOf('ATTACHMENT') >= 0) {
+              allCheckedDocs = allCheckedDocs.concat(checked);
+            } else {
+              allCheckedActions = allCheckedActions.concat(checked);
+            }
+          }
+          continue;
+        }
+
+        // Regular data section — collect all filled fields
+        var filledFields = [];
+        var fieldKeys = Object.keys(s);
+        for (var j = 0; j < fieldKeys.length; j++) {
+          var k = fieldKeys[j];
+          if (k.charAt(0) === '_') continue;
+          var v = s[k];
+          if (v && v.trim()) filledFields.push({ label: k, value: v.trim() });
+        }
+        if (filledFields.length > 0) {
+          detailSections.push({ name: sec, fields: filledFields });
+        }
+      }
+
+      // Build the letter body text
+      // Friendly title from template name
+      var prettyName = templateName.replace(/^\d+\.\s*/, '').replace(/\.[^.]+$/, '').replace(/_/g, ' ');
+
+      // Opening paragraph referencing the purpose
+      bodyParts.push('I am writing regarding the matter referenced above. Please find the relevant details below for your review and action.');
+
+      // Detail sections become paragraphs
+      for (var i = 0; i < detailSections.length; i++) {
+        var ds = detailSections[i];
+        var sectionTitle = ds.name.charAt(0) + ds.name.slice(1).toLowerCase();
+        var lines = [];
+        for (var j = 0; j < ds.fields.length; j++) {
+          lines.push(ds.fields[j].label + ': ' + ds.fields[j].value);
+        }
+        bodyParts.push(sectionTitle + ':\n' + lines.join('\n'));
+      }
+
+      // Checked actions
+      if (allCheckedActions.length > 0) {
+        bodyParts.push('I respectfully request the following actions be taken:\n' + allCheckedActions.map(function(a) { return '\u2022 ' + a; }).join('\n'));
+      }
+
+      // Enclosed documents
+      if (allCheckedDocs.length > 0) {
+        bodyParts.push('Enclosed with this letter, please find the following supporting documents for your review.');
+      }
+
+      // Closing paragraph
+      bodyParts.push('Please contact me at your earliest convenience to confirm receipt of this letter and to advise of any additional documentation or steps required. Thank you for your prompt attention to this matter.');
+
+      // Build subject line from template name
+      var subject = prettyName;
+
+      return {
+        date: fields._date || '',
+        senderName: senderName,
+        senderAddress: senderAddress,
+        senderCityStateZip: senderCityStateZip,
+        senderPhone: senderPhone,
+        senderEmail: senderEmail,
+        recipientName: recipientName || '',
+        recipientAddress: recipientAddress || '',
+        subject: subject,
+        salutation: recipientAddress ? 'Dear ' + recipientAddress.replace(/^Attn:\s*/i, '') : 'To Whom It May Concern',
+        bodyParagraphs: bodyParts,
+        closing: 'Sincerely',
+        signatureName: sig['Signature'] || senderName || '',
+        printedName: sig['Printed Name'] || senderName || '',
+        enclosures: allCheckedDocs
+      };
     }
 
     function parseTemplateFields(html) {
@@ -5817,17 +5853,16 @@ guideLibrary['disability'] = {
     function generateLetterFromTemplate() {
       var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
       if (!file) return;
-      var config = getLetterTemplate(file.original_name);
-      if (!config) return;
+      if (!isLetterTemplate(file.original_name)) return;
 
       // Save any pending edits first
       if (wsQuill && wsEditorDirty && wsActiveFileId) saveFileEdit(wsActiveFileId);
 
       var html = getEditorHtml();
       var fields = parseTemplateFields(html);
-      var letterData = config.generate(fields);
+      var letterData = universalGenerate(fields, file.original_name);
       var letterHtml = buildLetterHtml(letterData);
-      showLetterPreview(letterHtml, config.title);
+      showLetterPreview(letterHtml, file.original_name);
     }
 
     var wsHiddenForLetter = []; // track elements hidden when entering letter mode
@@ -5857,7 +5892,8 @@ guideLibrary['disability'] = {
         '<span class="ws-letter-badge">Generated Letter</span>' +
         '<span style="flex:1"></span>' +
         '<button class="ws-viewer-btn" onclick="printLetterPreview()" title="Print letter"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print</button>' +
-        '<button class="ws-viewer-btn" onclick="downloadLetterDocx()" title="Download as Word document"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>';
+        '<button class="ws-viewer-btn" onclick="downloadLetterDocx()" title="Download as Word document"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>' +
+        '<button class="ws-viewer-btn" id="wsLetterSaveBtn" onclick="saveLetterAsFile()" title="Save letter as a new file in your workspace"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save to Files</button>';
 
       var content = document.createElement('div');
       content.className = 'ws-letter-wrap';
@@ -5880,7 +5916,7 @@ guideLibrary['disability'] = {
       wsHiddenForLetter = [];
       // Show generate letter button again
       var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
-      if (file && getLetterTemplate(file.original_name)) {
+      if (file && isLetterTemplate(file.original_name)) {
         var genBtn = document.getElementById('wsGenLetterBtn');
         if (genBtn) genBtn.style.display = 'flex';
       }
@@ -5888,6 +5924,56 @@ guideLibrary['disability'] = {
 
     function printLetterPreview() {
       window.print();
+    }
+
+    function saveLetterAsFile() {
+      var content = document.getElementById('wsLetterContent');
+      if (!content) return;
+      var letterPage = content.querySelector('.ws-letter-page');
+      if (!letterPage) return;
+      var file = userFiles.find(function(f) { return f.id === wsActiveFileId; });
+      var baseName = file ? file.original_name.replace(/\.[^.]+$/, '') : 'Letter';
+      var saveName = baseName + ' - Generated Letter.docx';
+
+      var fullHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:Georgia,serif;font-size:12pt;line-height:1.8;color:#1a1a1a;max-width:650px;margin:0 auto;padding:40px}.letter-date{margin-bottom:28px}.letter-sender-block,.letter-recipient-block{margin-bottom:24px;line-height:1.6}.letter-subject{font-weight:bold;margin-bottom:20px}.letter-salutation{margin-bottom:16px}.letter-body p{margin:0 0 14px;text-align:justify}.letter-closing{margin-top:28px;margin-bottom:48px}.letter-signature{font-style:italic;margin-bottom:6px}.letter-printed-name{font-weight:bold}.letter-enclosures{margin-top:28px;border-top:1px solid #ccc;padding-top:16px;font-size:11pt;color:#555}.letter-enclosures ul{margin:4px 0 0;padding-left:18px}</style></head><body>' + letterPage.innerHTML + '</body></html>';
+
+      // Build a DOCX blob and upload it as a new file
+      var blob;
+      if (typeof htmlDocx !== 'undefined' && htmlDocx.asBlob) {
+        blob = htmlDocx.asBlob(fullHtml);
+      } else {
+        blob = new Blob([fullHtml], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      }
+
+      var formData = new FormData();
+      formData.append('file', blob, saveName);
+      formData.append('category', 'legal');
+
+      var saveBtn = document.getElementById('wsLetterSaveBtn');
+      if (saveBtn) { saveBtn.textContent = 'Saving\u2026'; saveBtn.disabled = true; }
+
+      fetch('/api/files/upload', { method: 'POST', body: formData })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.error) {
+            alert('Could not save: ' + d.error);
+          } else {
+            if (saveBtn) saveBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Saved!';
+            // Refresh file list so the new file appears
+            loadUserFiles();
+          }
+        })
+        .catch(function() {
+          alert('Could not save the letter. Please try downloading instead.');
+        })
+        .finally(function() {
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            setTimeout(function() {
+              saveBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save to Files';
+            }, 3000);
+          }
+        });
     }
 
     function downloadLetterDocx() {
