@@ -5705,9 +5705,10 @@ def blog():
         return send_from_directory(".", "blog.html")
     cards_html = ""
     for p in posts:
-        cards_html += f'''<div class="blog-card">
+        cat = p.get("category", "General")
+        cards_html += f'''<div class="blog-card" data-category="{cat}">
           <a href="/blog/{p['slug']}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;height:100%">
-            <span class="blog-tag">{p.get("category", "General")}</span>
+            <span class="blog-tag">{cat}</span>
             <h2 class="blog-card-title">{p.get("title", "Untitled")}</h2>
             <p class="blog-card-excerpt">{p.get("excerpt", "")}</p>
             <span class="blog-card-date" style="font-size:12px;color:#6E7D8A;margin-top:auto">{p.get("date", "")}</span>
@@ -5844,23 +5845,28 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
     <div class="post-body">
       {{ post.get('body_html', '') | safe }}
     </div>
-    {% set category_links = {
-      'Job Loss': ('/job-loss', 'Job Loss & Income Crisis Guide'),
-      'Job Loss Worksheet': ('/job-loss', 'Job Loss & Income Crisis Guide'),
-      'Estate': ('/estate', 'Death & Estate Guide'),
-      'Death': ('/estate', 'Death & Estate Guide'),
-      'Divorce': ('/divorce', 'Divorce & Separation Guide'),
-      'Relocation': ('/relocation', 'Moving & Relocation Guide'),
-      'Moving': ('/relocation', 'Moving & Relocation Guide'),
-      'Disability': ('/disability', 'Disability & Benefits Guide'),
-      'Retirement': ('/retirement', 'Retirement Planning Guide')
+    {% set category_cta = {
+      'Job Loss': {'path': '/job-loss', 'label': 'job loss', 'bridge': "If you just got laid off, Lumeway gives you a personalized timeline, every deadline you need to hit, and the exact documents to send — generated from your situation.", 'features': "Your free dashboard includes: a phased checklist organized by urgency, auto-calculated deadlines for unemployment filing, COBRA election, and WARN Act notice, and guides with exact scripts for what to say when you call HR."},
+      'Job Loss Worksheet': {'path': '/job-loss', 'label': 'job loss', 'bridge': "If you just got laid off, Lumeway gives you a personalized timeline, every deadline you need to hit, and the exact documents to send — generated from your situation.", 'features': "Your free dashboard includes: a phased checklist organized by urgency, auto-calculated deadlines for unemployment filing, COBRA election, and WARN Act notice, and guides with exact scripts for what to say when you call HR."},
+      'Estate': {'path': '/estate', 'label': 'estate', 'bridge': "If you're dealing with this right now, Lumeway can walk you through every step — from the first phone call to the last filing deadline.", 'features': "Your free dashboard includes: a phased checklist (what to do this week vs. this month vs. 6 months from now), auto-calculated deadlines for COBRA, survivor benefits, and probate, and guides that tell you exactly what to say when you call the bank, Social Security, and insurance companies."},
+      'Death': {'path': '/estate', 'label': 'estate', 'bridge': "If you're dealing with this right now, Lumeway can walk you through every step — from the first phone call to the last filing deadline.", 'features': "Your free dashboard includes: a phased checklist (what to do this week vs. this month vs. 6 months from now), auto-calculated deadlines for COBRA, survivor benefits, and probate, and guides that tell you exactly what to say when you call the bank, Social Security, and insurance companies."},
+      'Divorce': {'path': '/divorce', 'label': 'divorce', 'bridge': "If you're going through a divorce, Lumeway organizes every step — from separating accounts to filing paperwork to knowing exactly what to bring to your attorney.", 'features': "Your free dashboard includes: auto-calculated deadlines for filing windows and response periods, guides with conversation scripts for hard topics, and tools to organize financial disclosure documents."},
+      'Relocation': {'path': '/relocation', 'label': 'relocation', 'bridge': "If you're planning a move, Lumeway coordinates every moving part — from giving notice to transferring utilities to updating registrations in your new state.", 'features': "Your free dashboard includes: a phased checklist organized by your move date, deadline tracking for leases, utilities, and registrations, and state-specific guides for licenses and voter registration."},
+      'Moving': {'path': '/relocation', 'label': 'relocation', 'bridge': "If you're planning a move, Lumeway coordinates every moving part — from giving notice to transferring utilities to updating registrations in your new state.", 'features': "Your free dashboard includes: a phased checklist organized by your move date, deadline tracking for leases, utilities, and registrations, and state-specific guides for licenses and voter registration."},
+      'Disability': {'path': '/disability', 'label': 'disability', 'bridge': "If you're navigating a disability claim, Lumeway walks you through the process — from initial application to appeal, with every deadline tracked.", 'features': "Your free dashboard includes: a phased checklist for SSDI and insurance claims, auto-calculated deadlines for filing windows and appeals, and guides explaining every form and who to contact."},
+      'Retirement': {'path': '/retirement', 'label': 'retirement', 'bridge': "If you're planning for retirement, Lumeway helps you navigate Social Security timing, Medicare enrollment, and every step of the transition.", 'features': "Your free dashboard includes: a personalized retirement checklist, deadline tracking for enrollment windows, and guides for Social Security, Medicare, and pension decisions."}
     } %}
     {% set cat = post.get('category', '') %}
-    {% if cat in category_links %}
-    <div style="background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:28px;margin-top:48px;text-align:center">
-      <p style="font-family:'Libre Baskerville',serif;font-size:20px;color:var(--navy);margin-bottom:8px">Need a full step-by-step plan?</p>
-      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Our {{ category_links[cat][1] }} walks you through timelines, deadlines, and resources.</p>
-      <a href="{{ category_links[cat][0] }}" style="display:inline-block;padding:12px 28px;background:var(--accent);color:white;border-radius:8px;font-size:14px;text-decoration:none">View the guide</a>
+    {% if cat in category_cta %}
+    {% set cta = category_cta[cat] %}
+    <div style="background:var(--warm-white);border:1px solid var(--border);border-radius:16px;padding:32px;margin-top:48px;">
+      <p style="font-family:'Libre Baskerville',serif;font-size:20px;color:var(--navy);margin-bottom:12px;line-height:1.4">{{ cta.bridge }}</p>
+      <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:24px">{{ cta.features }}</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+        <a href="/login" style="display:inline-block;padding:13px 28px;background:var(--accent);color:white;border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.2s">Start free — get your personalized {{ cta.label }} dashboard</a>
+        <a href="/chat" target="_blank" style="display:inline-block;padding:13px 28px;border:1.5px solid var(--accent);color:var(--accent);border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.2s">Talk to the Navigator — no signup required</a>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-top:8px">Prefer individual worksheets? <a href="/templates" style="color:var(--muted);text-decoration:underline">Browse the shop</a></p>
     </div>
     {% endif %}
     <a href="/blog" class="post-back">&larr; Back to all posts</a>
