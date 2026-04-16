@@ -5691,7 +5691,7 @@ guideLibrary['disability'] = {
         if (sec.charAt(0) === '_' || isSkipSection(sec) || isSenderSection(sec) || isChecklistSection(sec)) continue;
         var s = fields[sec];
         if (typeof s !== 'object') continue;
-        var orgVal = sectionField(s, ['Institution Name', 'Insurance Company', 'Insurance Company Name', 'Company Name', 'Organization', 'Agency Name', 'Employer Name', 'Creditor Name', 'Lender Name', 'Bank Name', 'Landlord Name', 'Landlord/Property Manager Name', 'Property Management Company', 'School Name', 'HOA Name', 'Brokerage/Custodian Name']);
+        var orgVal = sectionField(s, ['Institution Name', 'Insurance Company', 'Insurance Company Name', 'Company Name', 'Organization', 'Agency Name', 'Employer Name', 'Creditor Name', 'Creditor / Lender Name', 'Lender Name', 'Bank Name', 'Bank / Institution Name', 'Bank / Financial Institution', 'Landlord Name', 'Landlord/Property Manager Name', 'Property Management Company', 'Company / Property Name', 'School Name', 'HOA Name', 'HOA / Association Name', 'Brokerage/Custodian Name', 'Financial Institution / Custodian', 'Financial Institution / Insurance Company', 'Financial Institution', 'Employer / Plan Sponsor', 'Plan Administrator Name', 'Plan Administrator', 'Receiving Institution', 'Recipient Company', 'Benefits Administrator / Contact', 'Management Company', 'Full Name / Company', 'Name / Organization', 'State Unemployment Agency Name']);
         if (orgVal && !recipientOrg) {
           recipientOrg = orgVal;
           recipientSectionName = sec;
@@ -6092,6 +6092,34 @@ guideLibrary['disability'] = {
         bodyHtml.push('<p>I am writing to formally notify you that I will be relocating to a new state and to discuss any implications for my remote work arrangement, tax withholding, and benefits.</p>');
       } else if (nameUpper.indexOf('HOA') >= 0) {
         bodyHtml.push('<p>I am writing to notify you of a change in property ownership and to provide the information needed to transfer the HOA account and responsibilities.</p>');
+      } else if (nameUpper.indexOf('RETIREMENT') >= 0 && (nameUpper.indexOf('DIVISION') >= 0 || nameUpper.indexOf('QDRO') >= 0)) {
+        // Retirement account division / QDRO request (divorce context)
+        var planParticipant = fields['PLAN PARTICIPANT (ACCOUNT HOLDER)'] || fields['PLAN PARTICIPANT'] || {};
+        var partName = sectionField(planParticipant, ['Full Name', 'Name']) || senderName;
+        var partDob = sectionField(planParticipant, ['Date of Birth', 'DOB']);
+        var partSsn = sectionField(planParticipant, ['SSN (last 4)', 'SSN', 'Social Security Number']);
+        var planSponsor = sectionField(planParticipant, ['Employer / Plan Sponsor', 'Plan Sponsor', 'Employer']);
+        var planName = findField(fields, ['Plan Name', 'Plan Number']);
+        var divBody = 'I am writing to request information regarding the division of a retirement account as part of a divorce settlement.';
+        if (divorceDate || caseNumber) {
+          divBody += ' My divorce was finalized';
+          if (divorceDate) divBody += ' on ' + escapeHtml(divorceDate);
+          if (caseNumber) divBody += ' (case number ' + escapeHtml(caseNumber) + (courtName ? ', ' + escapeHtml(courtName) : '') + ')';
+          divBody += '.';
+        }
+        divBody += ' My divorce decree requires the division of retirement benefits, and I am seeking guidance on the procedures and requirements for dividing this account.';
+        bodyHtml.push('<p>' + divBody + '</p>');
+        // Participant info block
+        var partLines = [];
+        if (partName) partLines.push('Participant Name: ' + escapeHtml(partName));
+        if (partSsn) partLines.push('Social Security Number (last 4): ' + escapeHtml(partSsn));
+        if (partDob) partLines.push('Date of Birth: ' + escapeHtml(partDob));
+        if (planSponsor) partLines.push('Employer / Plan Sponsor: ' + escapeHtml(planSponsor));
+        if (planName) partLines.push('Plan: ' + escapeHtml(planName));
+        if (partLines.length) bodyHtml.push('<h3>Participant Information</h3><p>' + partLines.join('<br>') + '</p>');
+        // Use plan sponsor as recipient if no other recipient found
+        if (!recipientOrg && planSponsor) { recipientOrg = planSponsor; recipientSectionName = ''; }
+        skipDetailSections.push('PLAN PARTICIPANT', 'ACCOUNT HOLDER', 'CASE INFORMATION');
       } else if (nameUpper.indexOf('RETIREMENT') >= 0 && nameUpper.indexOf('NOTIFICATION') >= 0) {
         bodyHtml.push('<p>I am writing to formally notify you of my decision to retire from my position' + (jobTitle ? ' as ' + escapeHtml(jobTitle) : '') + (effectiveDate ? ', effective ' + escapeHtml(effectiveDate) : '') + '.</p>');
       } else if (nameUpper.indexOf('RMD') >= 0) {
@@ -6190,6 +6218,8 @@ guideLibrary['disability'] = {
         subject = 'Request for Early Lease Termination';
       } else if (nameUpper.indexOf('ACCOMMODATION') >= 0 || nameUpper.indexOf('ADA') >= 0) {
         subject = 'Request for Reasonable Workplace Accommodation';
+      } else if (nameUpper.indexOf('RETIREMENT') >= 0 && (nameUpper.indexOf('DIVISION') >= 0 || nameUpper.indexOf('QDRO') >= 0)) {
+        subject = 'Request for Information on Account Division \u2014 Divorce Settlement';
       } else if (nameUpper.indexOf('RETIREMENT') >= 0 && nameUpper.indexOf('NOTIFICATION') >= 0) {
         subject = 'Retirement Notification' + (effectiveDate ? ' \u2014 Effective ' + effectiveDate : '');
       }
