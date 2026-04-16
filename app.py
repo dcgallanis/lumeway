@@ -5717,7 +5717,7 @@ def blog():
     blog_html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "blog.html")
     with open(blog_html_path, "r") as f:
         html = f.read()
-    html = html.replace('<div class="blog-grid reveal-stagger">', '<div class="blog-grid reveal-stagger">' + cards_html)
+    html = html.replace('<div class="blog-grid reveal-stagger" id="blogGrid">', '<div class="blog-grid reveal-stagger" id="blogGrid">' + cards_html)
     return html
 
 @app.route("/blog/<slug>")
