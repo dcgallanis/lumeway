@@ -400,6 +400,47 @@
     .friend-feature-title { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
     .friend-feature-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
 
+    /* ── Transition Selector ── */
+    .selector-bar {
+      display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+      margin-top: 24px;
+    }
+    .selector-btn {
+      padding: 10px 22px; border-radius: 100px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500;
+      cursor: pointer; border: 1.5px solid var(--border);
+      background: transparent; color: var(--muted); text-decoration: none;
+      transition: all 0.18s; display: inline-block;
+    }
+    .selector-btn:hover { border-color: var(--terracotta); color: var(--navy); background: var(--blush-light); }
+
+    /* ── See Inside ── */
+    .see-inside-section {
+      width: 100%; padding: 100px 5%;
+      background: var(--cream);
+    }
+    .see-inside-header { text-align: center; margin-bottom: 56px; }
+    .see-inside-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px; max-width: 1200px; margin: 0 auto;
+    }
+    .see-inside-card {
+      background: var(--warm-white); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden; transition: transform 0.2s;
+    }
+    .see-inside-card:hover { transform: translateY(-4px); }
+    .see-inside-card img { width: 100%; display: block; border-bottom: 1px solid var(--border); }
+    .see-inside-caption {
+      padding: 20px 24px;
+    }
+    .see-inside-caption h3 {
+      font-family: 'Libre Baskerville', serif; font-size: 16px; font-weight: 400;
+      color: var(--navy); margin-bottom: 6px;
+    }
+    .see-inside-caption p {
+      font-size: 13.5px; color: var(--muted); line-height: 1.6; font-weight: 300;
+    }
+
     /* ── How it Works — Full Bleed ── */
     .how-section {
       width: 100%;
@@ -767,7 +808,16 @@
         <a href="/chat" target="_blank" class="btn-large btn-large-primary">Start free — no signup required &rarr;</a>
       </div>
       <a href="/chat" target="_blank" class="hero-help-now reveal" style="display:inline-block;margin-top:16px;font-size:14px;font-weight:500;color:var(--terracotta);text-decoration:none;padding:8px 0;transition:opacity 0.2s;">I need help right now &rarr;</a>
-      <p class="hero-proof reveal" style="font-size:12.5px;color:var(--muted);margin-top:20px;line-height:1.6;font-weight:300;">Used by people navigating job loss, estate settlement, divorce, disability, relocation, and retirement across all 50 states.</p>
+      <p class="hero-proof reveal" style="font-size:12.5px;color:var(--muted);margin-top:20px;line-height:1.6;font-weight:300;">Used by people navigating job loss, estate settlement, divorce, disability, relocation, and retirement across all 50 states. <span style="white-space:nowrap;">Available on desktop and <a href="/ios-preview" style="color:var(--muted);text-decoration:underline;">mobile</a>.</span></p>
+      <div class="selector-bar reveal" style="justify-content:flex-start;margin-top:20px;">
+        <span style="font-size:13px;color:var(--muted);font-weight:400;align-self:center;">I'm going through:</span>
+        <a href="/job-loss" class="selector-btn">Job Loss</a>
+        <a href="/estate" class="selector-btn">Death of a Loved One</a>
+        <a href="/divorce" class="selector-btn">Divorce</a>
+        <a href="/disability" class="selector-btn">Disability</a>
+        <a href="/relocation" class="selector-btn">Moving</a>
+        <a href="/retirement" class="selector-btn">Retirement</a>
+      </div>
     </div>
     <div class="hero-image">
       <img src="/static/images/heroimage.jpg" alt="Planners and journal on a marble desk with coffee and rose gold pen" />
@@ -939,7 +989,58 @@
     </div>
   </section>
 
-  <!-- How it Works section removed -->
+  <!-- ═══ See Inside the Dashboard ═══ -->
+  <section class="see-inside-section">
+    <div class="see-inside-header">
+      <div class="section-label reveal">See inside</div>
+      <h2 class="section-title reveal">What you get <em>inside Lumeway</em></h2>
+      <p class="products-subtitle reveal">The dashboard is the product — and it does a lot more than you'd expect. Here's what's waiting for you.</p>
+    </div>
+    <div class="see-inside-grid reveal-stagger">
+      <div class="see-inside-card reveal">
+        <img src="/static/images/features/dashboard-overview.png" alt="Lumeway command center showing next step card and progress ring" loading="lazy" />
+        <div class="see-inside-caption">
+          <h3>Your command center</h3>
+          <p>Your next step, upcoming deadlines, and quick links — all in one view.</p>
+        </div>
+      </div>
+      <div class="see-inside-card reveal">
+        <img src="/static/images/features/dashboard-guides.png" alt="Lumeway guide with conversation scripts" loading="lazy" />
+        <div class="see-inside-caption">
+          <h3>Guides with conversation scripts</h3>
+          <p>Step-by-step instructions — including exactly what to say when you call.</p>
+        </div>
+      </div>
+      <div class="see-inside-card reveal">
+        <img src="/static/images/features/dashboard-letter.png" alt="Lumeway letter generation from worksheet" loading="lazy" />
+        <div class="see-inside-caption">
+          <h3>Letter generation</h3>
+          <p>Fill in the worksheet. We'll generate the letter — ready to sign and send.</p>
+        </div>
+      </div>
+      <div class="see-inside-card reveal">
+        <img src="/static/images/features/dashboard-calendar.png" alt="Lumeway calendar with auto-calculated deadlines" loading="lazy" />
+        <div class="see-inside-caption">
+          <h3>Auto-calculated deadlines</h3>
+          <p>Every deadline for your situation — calculated automatically from a single date.</p>
+        </div>
+      </div>
+      <div class="see-inside-card reveal">
+        <img src="/static/images/features/dashboard-navigator.png" alt="Lumeway Navigator conversation with document sidebar" loading="lazy" />
+        <div class="see-inside-caption">
+          <h3>The Lumeway Navigator</h3>
+          <p>Ask anything about your situation. The Navigator suggests the right documents as you talk.</p>
+        </div>
+      </div>
+      <div class="see-inside-card reveal">
+        <img src="/static/images/features/mobile-app-preview.png" alt="Lumeway mobile app on iPhone" loading="lazy" />
+        <div class="see-inside-caption">
+          <h3>Take it with you</h3>
+          <p>Access your dashboard, checklists, and Navigator on your phone — so you have guidance when you need it most.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ═══ Products ═══ -->
   <!-- ═══ Free Resources ═══ -->
@@ -1065,7 +1166,7 @@
   <footer>
     <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo reveal">
     <p class="footer-note reveal">Lumeway is a guidance tool, not a licensed professional. Always consult a qualified advisor.</p>
-    <p class="footer-note reveal"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a> &nbsp;&middot;&nbsp; <a href="/terms">Terms</a></p>
+    <p class="footer-note reveal"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a> &nbsp;&middot;&nbsp; <a href="/terms">Terms</a> &nbsp;&middot;&nbsp; <a href="/contact">Contact</a></p>
     <div class="footer-social reveal">
       <a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a>
     </div>
