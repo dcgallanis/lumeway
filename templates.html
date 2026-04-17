@@ -664,8 +664,10 @@
       .then(function(r) { return r.json(); })
       .then(function(data) {
         msg.style.display = 'block';
-        msg.textContent = 'Downloading your Emergency Kit...';
-        setTimeout(function() { window.location.href = '/static/downloads/Life-Transition-Emergency-Kit.pdf'; }, 500);
+        msg.textContent = 'Thanks! Browse our free and premium worksheets below.';
+        msg.style.color = '#2d6a4f';
+        document.getElementById('kit-email').value = '';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       })
       .catch(function() {
         msg.style.display = 'block';

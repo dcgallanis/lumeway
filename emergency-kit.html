@@ -361,10 +361,7 @@ function submitKit(e) {
   .then(function(r) { return r.json(); })
   .then(function(data) {
     if (data.ok) {
-      msg.className = 'form-msg success';
-      msg.innerHTML = "You're in. Your downloads are ready below.";
-      form.querySelector('input[type="email"]').value = '';
-      showDownloads();
+      window.location.href = '/templates';
     } else {
       msg.className = 'form-msg error';
       msg.textContent = data.message || 'Something went wrong. Try again.';
