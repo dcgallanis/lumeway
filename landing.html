@@ -487,23 +487,48 @@
     .dp-nextstep { background: var(--cream); border: 1px solid var(--border); border-left: 3px solid var(--terracotta); border-radius: 0 12px 12px 0; padding: 16px 20px; margin-bottom: 20px; }
     .dp-nextstep-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--terracotta); margin-bottom: 6px; }
     .dp-nextstep-text { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+    .dp-nextstep-phase { font-size: 11px; color: var(--terracotta); font-weight: 500; margin-bottom: 6px; }
     .dp-nextstep-hint { font-size: 13px; color: var(--muted); line-height: 1.6; }
-    .dp-stats-row { display: flex; gap: 16px; margin-bottom: 20px; }
-    .dp-stat { flex: 1; background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; text-align: center; }
-    .dp-stat-num { font-family: 'Libre Baskerville', serif; font-size: 24px; font-weight: 700; color: var(--navy); }
-    .dp-stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
-    .dp-quicklinks { display: flex; gap: 8px; flex-wrap: wrap; }
-    .dp-quicklink { font-size: 12px; padding: 6px 14px; border-radius: 100px; border: 1px solid var(--border); color: var(--muted); background: var(--cream); }
+    .dp-nextstep-link { font-size: 13px; color: var(--navy); font-weight: 500; text-decoration: none; margin-top: 8px; display: inline-block; }
+    .dp-nextstep-link:hover { color: var(--terracotta); }
 
-    /* Guide panel */
-    .dp-guide-intro { font-size: 13.5px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    /* Overview layout - two column with sidebar */
+    .dp-overview-layout { display: grid; grid-template-columns: 1fr 160px; gap: 20px; }
+    .dp-overview-main { min-width: 0; }
+    .dp-overview-sidebar { display: flex; flex-direction: column; gap: 20px; }
+    .dp-card-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .dp-deadlines-card { background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    .dp-deadline-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.04); }
+    .dp-deadline-item:last-of-type { border-bottom: none; }
+    .dp-deadline-title { font-size: 13px; color: var(--text); }
+    .dp-deadline-date { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .dp-deadline-urgent { color: var(--terracotta); font-weight: 600; }
+    .dp-view-all { font-size: 12px; color: var(--navy); text-decoration: none; display: block; margin-top: 8px; }
+    .dp-goals-card { background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .dp-goal-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 13px; color: var(--text); }
+    .dp-progress-ring { text-align: center; background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .dp-progress-detail { font-size: 11px; color: var(--muted); margin-top: 6px; }
+    .dp-sidebar-links { background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .dp-sidebar-links a { display: block; font-size: 12px; color: var(--navy); text-decoration: none; padding: 4px 0; }
+
+    /* Guide panel - two column layout */
+    .dp-guide-layout { display: grid; grid-template-columns: 160px 1fr; gap: 0; }
+    .dp-guide-sidebar { border-right: 1px solid var(--border); padding-right: 14px; }
+    .dp-guide-nav-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .dp-guide-nav-item { display: block; font-size: 12px; color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 6px; margin-bottom: 2px; line-height: 1.4; }
+    .dp-guide-nav-item:hover { background: var(--cream); color: var(--navy); }
+    .dp-guide-nav-item.active { background: var(--blush-light); color: var(--navy); font-weight: 500; }
+    .dp-guide-main { padding-left: 16px; }
+    .dp-guide-section-title { font-family: 'Libre Baskerville', serif; font-size: 16px; color: var(--navy); margin-bottom: 14px; }
+    .dp-guide-task { border-bottom: 1px solid rgba(0,0,0,0.04); padding: 8px 0; }
+    .dp-guide-task-header { display: flex; align-items: center; gap: 10px; }
+    .dp-guide-task-detail { font-size: 13px; color: var(--muted); line-height: 1.7; padding: 10px 0 6px 32px; background: var(--cream); border-radius: 8px; margin-top: 8px; padding: 12px 14px; }
 
     /* Calendar panel */
     .dp-cal-month { font-family: 'Libre Baskerville', serif; font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 12px; }
     .dp-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 20px; }
     .dp-cal-day { font-size: 12px; text-align: center; padding: 8px 4px; color: var(--muted); border-radius: 6px; }
     .dp-cal-header { font-weight: 600; color: var(--navy); font-size: 11px; }
-    .dp-cal-today { background: var(--terracotta); color: #fff; font-weight: 600; border-radius: 50%; }
     .dp-cal-dot { position: relative; }
     .dp-cal-dot::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: var(--terracotta); }
     .dp-cal-deadlines { display: flex; flex-direction: column; gap: 8px; }
@@ -1047,27 +1072,52 @@
             <div class="dp-header">
               <div class="dp-header-left">
                 <span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-                <div><div class="dp-title">Dashboard</div><div class="dp-sub">Death &amp; Estate &middot; Illinois</div></div>
+                <div><div class="dp-title">Dashboard Overview</div><div class="dp-sub">Death &amp; Estate &middot; Illinois</div></div>
               </div>
               <div class="dp-badge">9%</div>
             </div>
             <div class="dp-body dp-overview-body">
-              <div class="dp-nextstep">
-                <div class="dp-nextstep-label">Your next step</div>
-                <div class="dp-nextstep-text">Obtain certified death certificates (10+ copies)</div>
-                <div class="dp-nextstep-hint">Order from the county clerk or through the funeral home. You'll need originals for banks, insurance, and government agencies.</div>
-              </div>
-              <div class="dp-stats-row">
-                <div class="dp-stat"><div class="dp-stat-num">3</div><div class="dp-stat-label">Completed</div></div>
-                <div class="dp-stat"><div class="dp-stat-num">31</div><div class="dp-stat-label">Remaining</div></div>
-                <div class="dp-stat"><div class="dp-stat-num">4</div><div class="dp-stat-label">Upcoming deadlines</div></div>
-              </div>
-              <div class="dp-quicklinks">
-                <span class="dp-quicklink">Checklist</span>
-                <span class="dp-quicklink">Guide</span>
-                <span class="dp-quicklink">Calendar</span>
-                <span class="dp-quicklink">Files</span>
-                <span class="dp-quicklink">Notes</span>
+              <div class="dp-overview-layout">
+                <div class="dp-overview-main">
+                  <div class="dp-nextstep">
+                    <div class="dp-nextstep-label">Your next step</div>
+                    <div class="dp-nextstep-phase">Death &amp; Estate &mdash; Immediate (First 48 Hours)</div>
+                    <div class="dp-nextstep-text">Obtain certified death certificates (10+ copies)</div>
+                    <div class="dp-nextstep-hint">Order from the county clerk or through the funeral home. You'll need originals for banks, insurance, and government agencies.</div>
+                    <a href="/chat" target="_blank" class="dp-nextstep-link">Open checklist &rarr;</a>
+                  </div>
+                  <div class="dp-deadlines-card">
+                    <div class="dp-card-label">Upcoming Deadlines</div>
+                    <div class="dp-deadline-item"><div class="dp-deadline-left"><div class="dp-deadline-title">Notify Social Security Administration</div></div><div class="dp-deadline-date dp-deadline-urgent">7 days left</div></div>
+                    <div class="dp-deadline-item"><div class="dp-deadline-left"><div class="dp-deadline-title">Life insurance claims</div></div><div class="dp-deadline-date">30 days left</div></div>
+                    <div class="dp-deadline-item"><div class="dp-deadline-left"><div class="dp-deadline-title">Bank notification letters</div></div><div class="dp-deadline-date">30 days left</div></div>
+                    <div class="dp-deadline-item"><div class="dp-deadline-left"><div class="dp-deadline-title">Estate tax return (Form 706)</div></div><div class="dp-deadline-date">9 months</div></div>
+                    <a href="#" class="dp-view-all">View all in calendar &rarr;</a>
+                  </div>
+                  <div class="dp-goals-card">
+                    <div class="dp-card-label">My Goals</div>
+                    <div class="dp-goal-item"><div class="dp-check"></div><span>Organize all financial accounts by May 1</span></div>
+                    <div class="dp-goal-item"><div class="dp-check"></div><span>Meet with estate attorney this week</span></div>
+                    <div class="dp-goal-item done"><div class="dp-check checked"></div><span class="dp-text done">Call funeral home about arrangements</span></div>
+                  </div>
+                </div>
+                <div class="dp-overview-sidebar">
+                  <div class="dp-progress-ring">
+                    <div class="dp-card-label">Progress</div>
+                    <svg viewBox="0 0 80 80" width="80" height="80">
+                      <circle cx="40" cy="40" r="30" fill="none" stroke="var(--border)" stroke-width="5"/>
+                      <circle cx="40" cy="40" r="30" fill="none" stroke="var(--terracotta)" stroke-width="5" stroke-dasharray="188.5" stroke-dashoffset="171" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+                      <text x="40" y="44" text-anchor="middle" font-size="14" font-weight="600" fill="var(--navy)">9%</text>
+                    </svg>
+                    <div class="dp-progress-detail">3 of 34 tasks</div>
+                  </div>
+                  <div class="dp-sidebar-links">
+                    <div class="dp-card-label">Quick Links</div>
+                    <a href="#">Navigator Chat &rarr;</a>
+                    <a href="#">Notes &rarr;</a>
+                    <a href="#">Activity Log &rarr;</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1079,18 +1129,67 @@
             <div class="dp-header">
               <div class="dp-header-left">
                 <span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-                <div><div class="dp-title">Step-by-Step Guide</div><div class="dp-sub">Notify banks &amp; credit card companies</div></div>
+                <div><div class="dp-title">Guides</div><div class="dp-sub">Step-by-step guidance for what you're going through</div></div>
               </div>
-              <div class="dp-badge">Step 3/8</div>
             </div>
             <div class="dp-body">
-              <div class="dp-guide-intro">This guide walks you through notifying each financial institution about the death. You'll need a certified death certificate and your ID for each one.</div>
-              <div class="dp-row done"><div class="dp-check checked"></div><span class="dp-text done">Gather: death certificate, your ID, account numbers</span><span class="dp-tag dp-tag-done">Done</span></div>
-              <div class="dp-row done"><div class="dp-check checked"></div><span class="dp-text done">Call each bank's bereavement department</span><span class="dp-tag dp-tag-done">Done</span></div>
-              <div class="dp-row"><div class="dp-check"></div><span class="dp-text">Request account freeze to prevent unauthorized charges</span><span class="dp-tag dp-tag-urgent">Action</span></div>
-              <div class="dp-row"><div class="dp-check"></div><span class="dp-text">Ask about joint account conversion vs. closure</span><span class="dp-tag dp-tag-soon">Decision</span></div>
-              <div class="dp-row"><div class="dp-check"></div><span class="dp-text">Send written notification (use letter template)</span><span class="dp-tag dp-tag-info">Generate letter</span></div>
-              <div class="dp-row"><div class="dp-check"></div><span class="dp-text">Document confirmation numbers and rep names</span><span class="dp-tag dp-tag-info">Record</span></div>
+              <div class="dp-guide-layout">
+                <div class="dp-guide-sidebar">
+                  <div class="dp-guide-nav-label">Death &amp; Estate</div>
+                  <a href="#" class="dp-guide-nav-item">Immediate (First 48 Hours)</a>
+                  <a href="#" class="dp-guide-nav-item">Notify Government &amp; Agencies</a>
+                  <a href="#" class="dp-guide-nav-item active">Notify Financial Institutions</a>
+                  <a href="#" class="dp-guide-nav-item">Insurance &amp; Benefits</a>
+                  <a href="#" class="dp-guide-nav-item">Legal &amp; Probate</a>
+                  <a href="#" class="dp-guide-nav-item">Property &amp; Assets</a>
+                  <a href="#" class="dp-guide-nav-item">Tax &amp; Final Returns</a>
+                  <a href="#" class="dp-guide-nav-item">Ongoing Administration</a>
+                </div>
+                <div class="dp-guide-main">
+                  <div class="dp-guide-section-title">Notify Financial Institutions</div>
+                  <div class="dp-guide-task expanded">
+                    <div class="dp-guide-task-header">
+                      <div class="dp-check checked"></div>
+                      <span class="dp-text done">Gather: death certificate, your ID, account numbers</span>
+                      <span class="dp-tag dp-tag-done">Done</span>
+                    </div>
+                  </div>
+                  <div class="dp-guide-task expanded">
+                    <div class="dp-guide-task-header">
+                      <div class="dp-check checked"></div>
+                      <span class="dp-text done">Call each bank's bereavement department</span>
+                      <span class="dp-tag dp-tag-done">Done</span>
+                    </div>
+                  </div>
+                  <div class="dp-guide-task expanded">
+                    <div class="dp-guide-task-header">
+                      <div class="dp-check"></div>
+                      <span class="dp-text">Request account freeze to prevent unauthorized charges</span>
+                    </div>
+                    <div class="dp-guide-task-detail">
+                      Call the bank's bereavement or estate department (not general customer service). Ask them to freeze the account to prevent any new charges. You'll need the death certificate and your letters testamentary or executor appointment.
+                    </div>
+                  </div>
+                  <div class="dp-guide-task">
+                    <div class="dp-guide-task-header">
+                      <div class="dp-check"></div>
+                      <span class="dp-text">Ask about joint account conversion vs. closure</span>
+                    </div>
+                  </div>
+                  <div class="dp-guide-task">
+                    <div class="dp-guide-task-header">
+                      <div class="dp-check"></div>
+                      <span class="dp-text">Send written notification letter</span>
+                    </div>
+                  </div>
+                  <div class="dp-guide-task">
+                    <div class="dp-guide-task-header">
+                      <div class="dp-check"></div>
+                      <span class="dp-text">Document confirmation numbers and rep names</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1101,22 +1200,22 @@
             <div class="dp-header">
               <div class="dp-header-left">
                 <span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-                <div><div class="dp-title">Deadline Calendar</div><div class="dp-sub">Auto-calculated from April 16, 2026</div></div>
+                <div><div class="dp-title">Deadline Calendar</div><div class="dp-sub">Auto-calculated from your start date</div></div>
               </div>
               <div class="dp-badge">5 deadlines</div>
             </div>
             <div class="dp-body">
-              <div class="dp-cal-month">April &ndash; May 2026</div>
+              <div class="dp-cal-month">April 2026</div>
               <div class="dp-cal-grid">
                 <div class="dp-cal-day dp-cal-header">S</div><div class="dp-cal-day dp-cal-header">M</div><div class="dp-cal-day dp-cal-header">T</div><div class="dp-cal-day dp-cal-header">W</div><div class="dp-cal-day dp-cal-header">T</div><div class="dp-cal-day dp-cal-header">F</div><div class="dp-cal-day dp-cal-header">S</div>
-                <div class="dp-cal-day"></div><div class="dp-cal-day"></div><div class="dp-cal-day"></div><div class="dp-cal-day">15</div><div class="dp-cal-day dp-cal-today">16</div><div class="dp-cal-day">17</div><div class="dp-cal-day">18</div>
+                <div class="dp-cal-day"></div><div class="dp-cal-day"></div><div class="dp-cal-day"></div><div class="dp-cal-day">1</div><div class="dp-cal-day">2</div><div class="dp-cal-day">3</div><div class="dp-cal-day">4</div>
+                <div class="dp-cal-day">5</div><div class="dp-cal-day">6</div><div class="dp-cal-day">7</div><div class="dp-cal-day">8</div><div class="dp-cal-day">9</div><div class="dp-cal-day">10</div><div class="dp-cal-day">11</div>
+                <div class="dp-cal-day">12</div><div class="dp-cal-day">13</div><div class="dp-cal-day">14</div><div class="dp-cal-day">15</div><div class="dp-cal-day">16</div><div class="dp-cal-day">17</div><div class="dp-cal-day">18</div>
                 <div class="dp-cal-day">19</div><div class="dp-cal-day">20</div><div class="dp-cal-day">21</div><div class="dp-cal-day">22</div><div class="dp-cal-day dp-cal-dot">23</div><div class="dp-cal-day">24</div><div class="dp-cal-day">25</div>
-                <div class="dp-cal-day">26</div><div class="dp-cal-day">27</div><div class="dp-cal-day">28</div><div class="dp-cal-day">29</div><div class="dp-cal-day">30</div><div class="dp-cal-day">1</div><div class="dp-cal-day">2</div>
-                <div class="dp-cal-day">3</div><div class="dp-cal-day">4</div><div class="dp-cal-day">5</div><div class="dp-cal-day">6</div><div class="dp-cal-day">7</div><div class="dp-cal-day">8</div><div class="dp-cal-day">9</div>
-                <div class="dp-cal-day">10</div><div class="dp-cal-day">11</div><div class="dp-cal-day">12</div><div class="dp-cal-day">13</div><div class="dp-cal-day">14</div><div class="dp-cal-day">15</div><div class="dp-cal-day dp-cal-dot">16</div>
+                <div class="dp-cal-day">26</div><div class="dp-cal-day">27</div><div class="dp-cal-day">28</div><div class="dp-cal-day">29</div><div class="dp-cal-day">30</div><div class="dp-cal-day"></div><div class="dp-cal-day"></div>
               </div>
               <div class="dp-cal-deadlines">
-                <div class="dp-cal-dl"><span class="dp-cal-dl-date">Apr 23</span><span class="dp-cal-dl-text">SSA notification deadline</span></div>
+                <div class="dp-cal-dl"><span class="dp-cal-dl-date">Apr 23</span><span class="dp-cal-dl-text">Notify Social Security Administration</span></div>
                 <div class="dp-cal-dl"><span class="dp-cal-dl-date">May 16</span><span class="dp-cal-dl-text">Bank notification letters due</span></div>
                 <div class="dp-cal-dl"><span class="dp-cal-dl-date">May 16</span><span class="dp-cal-dl-text">Life insurance claims deadline</span></div>
                 <div class="dp-cal-dl"><span class="dp-cal-dl-date">Jun 15</span><span class="dp-cal-dl-text">COBRA election (if applicable)</span></div>

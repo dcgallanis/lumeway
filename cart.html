@@ -21,11 +21,11 @@
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
 
     /* Nav */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 14px 5%; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(232,224,214,0.6); }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .nav-logo-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--navy); letter-spacing: 0.08em; text-transform: uppercase; }
     .nav-sun svg { stroke: var(--accent); }
-    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost { padding: 8px 20px; border: 1.5px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
     .btn-ghost:hover { background: var(--navy); color: var(--cream); }
     .btn-primary { padding: 8px 20px; border: none; border-radius: 8px; background: var(--accent); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
     .nav-left { display: flex; align-items: center; gap: 36px; }
@@ -33,14 +33,14 @@
     .nav-right { display: flex; gap: 10px; align-items: center; }
     .nav-link { font-size: 14px; color: var(--muted); text-decoration: none; padding: 6px 12px; transition: color 0.15s; font-weight: 400; }
     .nav-link:hover { color: var(--navy); }
-    .nav-dropdown { position: relative; }
-    .nav-drop-btn { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
+    .nav-dropdown { position: relative; padding-bottom: 8px; margin-bottom: -8px; }
+    .nav-drop-btn { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 12px; transition: color 0.15s; display: flex; align-items: center; gap: 5px; font-weight: 400; }
     .nav-drop-btn:hover { color: var(--navy); }
-    .nav-drop-btn .chev { display: inline-block; transition: transform 0.2s ease; }
-    .nav-drop-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
-    .nav-drop-menu { display: none; position: absolute; top: 100%; left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 14px 6px 6px; min-width: 200px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
-    .nav-drop-menu a { display: block; padding: 9px 12px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 7px; }
-    .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--cream); color: var(--navy); }
+    .nav-drop-btn .chev { display: inline-block; font-size: 10px; transition: transform 0.2s ease; }
+    .nav-dropdown:hover .nav-drop-btn .chev { transform: rotate(180deg); }
+    .nav-drop-menu { display: none; position: absolute; top: 100%; left: -8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 14px 6px 6px; min-width: 210px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
+    .nav-drop-menu a { display: block; padding: 9px 14px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 8px; transition: background 0.12s; }
+    .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--blush-light); color: var(--navy); }
     .nav-drop-menu .menu-div { height: 1px; background: var(--border); margin: 4px 6px; }
     .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
     .sun-icon { display: inline-flex; } .sun-icon svg { stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; }
@@ -64,7 +64,7 @@
     .cart-item { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; background: var(--warm-white); border: 1px solid var(--border); border-bottom: none; }
     .cart-item:first-child { border-radius: 12px 12px 0 0; }
     .cart-item:last-child { border-bottom: 1px solid var(--border); border-radius: 0 0 12px 12px; }
-    .cart-item:only-child { border-radius: 12px; border-bottom: 1px solid var(--border); }
+    .cart-item:only-child { border-radius: 12px; border-bottom: 1px solid rgba(232,224,214,0.6); }
     .cart-item-info { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; }
     .cart-item-type { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; flex-shrink: 0; }
     .cart-item-type.bundle { background: var(--navy); color: var(--cream); }
@@ -153,7 +153,7 @@
       </div>
     </div>
     <div class="nav-right">
-      <a href="/login" class="btn-ghost" id="navAccount">Sign in</a>
+      <a href="/login" class="nav-link" id="navAccount">Sign in</a>
       <a href="/templates" class="btn-ghost">Shop</a>
       <a href="/chat" target="_blank" class="btn-primary">Try it free</a>
       <a href="/cart" class="btn-ghost" title="Cart" style="font-size:18px">&#128722;</a>

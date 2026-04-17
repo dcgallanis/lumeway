@@ -26,25 +26,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --cream: #FAF7F2; --warm-white: #FDFCFA; --text: #2C3E50; --muted: #6B7B8D; --navy: #2C4A5E; --gold: #B8977E; --accent: #C4704E; --accent-light: #D4896C; --border: #E8E0D6; --shadow: 0 2px 40px rgba(44,74,94,0.09); }
+    :root { --cream: #FAF7F2; --warm-white: #FDFCFA; --text: #2C3E50; --muted: #6B7B8D; --navy: #2C4A5E; --gold: #B8977E; --accent: #C4704E; --accent-light: #D4896C; --blush-light: #F9F1EC; --border: #E8E0D6; --shadow: 0 2px 40px rgba(44,74,94,0.09); }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(250,247,242,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 14px 5%; display: flex; align-items: center; justify-content: space-between; background: rgba(250,247,242,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(232,224,214,0.6); }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .sun-icon { display: flex; align-items: center; }
     .nav-logo-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--navy); letter-spacing: 0.08em; text-transform: uppercase; }
-    .btn-ghost { padding: 8px 20px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost { padding: 8px 20px; border: 1.5px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
     .btn-ghost:hover { background: var(--accent); color: white; }
     .btn-primary { padding: 8px 20px; border: none; border-radius: 8px; background: var(--accent); color: white; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; text-decoration: none; transition: all 0.2s; }
-    .nav-left { display: flex; align-items: center; gap: 28px; }
+    .nav-left { display: flex; align-items: center; gap: 36px; }
     .nav-right { display: flex; gap: 12px; align-items: center; }
-    .nav-dropdown { position: relative; }
-    .nav-drop-btn { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 4px; transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
+    .nav-dropdown { position: relative; padding-bottom: 8px; margin-bottom: -8px; }
+    .nav-drop-btn { background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px 12px; transition: color 0.15s; display: flex; align-items: center; gap: 5px; font-weight: 400; }
     .nav-drop-btn:hover { color: var(--navy); }
-    .nav-drop-btn .chev { display: inline-block; transition: transform 0.2s ease; }
-    .nav-drop-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
-    .nav-drop-menu { display: none; position: absolute; top: 100%; left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 14px 6px 6px; min-width: 200px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
-    .nav-drop-menu a { display: block; padding: 9px 12px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 7px; }
-    .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--cream); color: var(--navy); }
+    .nav-drop-btn .chev { display: inline-block; font-size: 10px; transition: transform 0.2s ease; }
+    .nav-dropdown:hover .nav-drop-btn .chev { transform: rotate(180deg); }
+    .nav-drop-menu { display: none; position: absolute; top: 100%; left: -8px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 14px 6px 6px; min-width: 210px; box-shadow: 0 8px 24px rgba(27,58,92,0.1); z-index: 200; }
+    .nav-drop-menu a { display: block; padding: 9px 14px; font-size: 13.5px; color: var(--text); text-decoration: none; border-radius: 8px; transition: background 0.12s; }
+    .nav-drop-menu a:hover, .nav-drop-menu a.active { background: var(--blush-light); color: var(--navy); }
     .nav-drop-menu .menu-div { height: 1px; background: var(--border); margin: 4px 6px; }
     .nav-dropdown:hover .nav-drop-menu, .nav-dropdown.open .nav-drop-menu { display: block; }
     .nav-links { display: flex; align-items: center; gap: 6px; }
