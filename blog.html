@@ -23,7 +23,7 @@
   <meta name="twitter:card" content="summary"/>
   <meta name="twitter:title" content="Blog — Lumeway"/>
   <meta name="twitter:description" content="Practical guides, checklists, and honest advice for navigating life's hardest transitions — from the Lumeway team."/>
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --cream: #FAF7F2; --warm-white: #FDFCFA; --text: #2C3E50; --muted: #6B7B8D; --navy: #2C4A5E; --gold: #B8977E; --accent: #C4704E; --accent-light: #D4896C; --blush-light: #F9F1EC; --border: #E8E0D6; --terracotta: #C4704E; --shadow: 0 2px 40px rgba(44,74,94,0.09); }
@@ -74,13 +74,10 @@
     /* ── Featured Post ── */
     .featured-post { display: grid; grid-template-columns: 1fr 1fr; gap: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 48px; transition: transform 0.3s, box-shadow 0.3s; }
     .featured-post:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(44,74,94,0.08); }
-    .featured-visual { background: linear-gradient(135deg, var(--navy) 0%, #3A5F75 100%); padding: 48px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
-    .featured-visual::before { content: ''; position: absolute; top: -50%; right: -30%; width: 200px; height: 200px; border-radius: 50%; background: rgba(196,112,78,0.15); }
-    .featured-visual::after { content: ''; position: absolute; bottom: -30%; left: -20%; width: 150px; height: 150px; border-radius: 50%; background: rgba(184,151,126,0.1); }
-    .featured-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; position: relative; z-index: 1; }
-    .featured-icon svg { width: 24px; height: 24px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
-    .featured-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; position: relative; z-index: 1; }
-    .featured-quote { font-family: 'Libre Baskerville', serif; font-size: 20px; font-style: italic; color: rgba(250,247,242,0.7); line-height: 1.5; position: relative; z-index: 1; }
+    .featured-visual { background: var(--warm-white); padding: 52px 48px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; border-right: 1px solid var(--border); }
+    .featured-visual::before { content: '\201C'; position: absolute; top: 20px; left: 28px; font-family: 'Cormorant Garamond', serif; font-size: 120px; color: rgba(196,112,78,0.12); line-height: 1; pointer-events: none; }
+    .featured-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; position: relative; z-index: 1; }
+    .featured-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(24px, 2.8vw, 32px); font-style: italic; font-weight: 400; color: var(--accent); line-height: 1.45; position: relative; z-index: 1; letter-spacing: -0.01em; }
     .featured-content { padding: 48px; display: flex; flex-direction: column; justify-content: center; }
     .featured-tag { display: inline-block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); background: var(--blush-light); border: 1px solid rgba(196,112,78,0.2); padding: 4px 12px; border-radius: 100px; margin-bottom: 16px; align-self: flex-start; }
     .featured-title { font-family: 'Libre Baskerville', serif; font-size: clamp(22px, 2.5vw, 28px); font-weight: 400; color: var(--navy); line-height: 1.3; margin-bottom: 14px; }
@@ -261,9 +258,6 @@
     <!-- Featured Post (populated by JS from first card) -->
     <a href="#" class="featured-post reveal" id="featuredPost" style="text-decoration:none;color:inherit;display:none">
       <div class="featured-visual">
-        <div class="featured-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-        </div>
         <span class="featured-label">Latest</span>
         <p class="featured-quote" id="featuredQuote">"The first 24 hours matter most."</p>
       </div>
