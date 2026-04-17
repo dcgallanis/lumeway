@@ -1177,7 +1177,7 @@
         categories: [
           { name: 'Insurance Changes', risk: 'medium', tasks: [
             { id: 'jl-1-1', title: 'Evaluate COBRA vs. Marketplace vs. Spouse\'s Plan', risk: 'medium',
-              crossRef: ['Estate & Survivor', 'Disability & Benefits'],
+              crossRef: ['Estate', 'Disability & Benefits'],
               what: 'Comparing three health insurance routes after losing employer coverage \u2014 federal COBRA continuation, ACA marketplace plans, or coverage through a spouse/partner\'s employer.',
               why: 'You have 60 days from job loss to elect COBRA, and marketplace open enrollment windows are limited. Missing either deadline locks you out for months. Choosing wrong costs $400\u2013$800/month more than necessary.',
               steps: [
@@ -9013,7 +9013,7 @@ guideLibrary['disability'] = {
       var ncName = dashData.user && dashData.user.display_name;
       var ncTier = tier;
       var ncHasHistory = ncSessions.length > 0;
-      var ncTransitionLabels = { 'job-loss': 'Job Loss & Income Crisis', 'estate': 'Estate & Survivor', 'divorce': 'Divorce & Separation', 'disability': 'Disability & Benefits', 'relocation': 'Relocation', 'retirement': 'Retirement' };
+      var ncTransitionLabels = { 'job-loss': 'Job Loss & Income Crisis', 'estate': 'Estate', 'divorce': 'Divorce & Separation', 'disability': 'Disability & Benefits', 'relocation': 'Relocation', 'retirement': 'Retirement' };
 
       html += '    <div class="nav-chat-welcome" id="ncWelcome">';
       html += '      <img src="/static/logos/sun-mark-navy-on-cream-transparent.png" alt="Lumeway" style="width:48px;height:48px;object-fit:contain;margin-bottom:4px">';
@@ -11479,7 +11479,7 @@ guideLibrary['disability'] = {
       var ncTier = (dashData && dashData.effective_tier) || 'free';
       var ncTransitions = (dashData && dashData.active_transitions) || [];
       var ncState = dashData && dashData.user && dashData.user.us_state;
-      var ncLabels = { 'job-loss': 'Job Loss & Income Crisis', 'estate': 'Estate & Survivor', 'divorce': 'Divorce & Separation', 'disability': 'Disability & Benefits', 'relocation': 'Relocation', 'retirement': 'Retirement' };
+      var ncLabels = { 'job-loss': 'Job Loss & Income Crisis', 'estate': 'Estate', 'divorce': 'Divorce & Separation', 'disability': 'Disability & Benefits', 'relocation': 'Relocation', 'retirement': 'Retirement' };
 
       if ((ncTier === 'one_transition' || ncTier === 'pass') && ncTransitions.length > 0) {
         var bundleName = ncLabels[ncTransitions[0]] || ncTransitions[0];

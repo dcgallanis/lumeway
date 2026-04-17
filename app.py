@@ -1649,7 +1649,7 @@ YOUR BOUNDARIES:
   [professional] can give you the specific guidance you need."
 
 LIFE TRANSITIONS YOU COVER:
-Job Loss, Estate & Survivor, Divorce, Disability, Relocation, Retirement, Addiction & Recovery
+Job Loss, Estate, Divorce, Disability, Relocation, Retirement, Addiction & Recovery
 
 OPENING CONVERSATION FLOW:
 When a user starts a new conversation, follow this sequence:
@@ -1983,7 +1983,7 @@ Job Loss:
 - Job Offer Evaluation Worksheet
 - First 24 Hours After Losing Your Job
 
-Estate & Survivor:
+Estate:
 - Survivor Benefits Information Organizer
 - Employer Notification of Death Letter
 - Estate Executor Introduction Letter
@@ -2372,7 +2372,7 @@ PRODUCTS = {
         "long_desc": "Everything Lumeway offers in one package. All six bundles covering job loss, estate settlement, divorce, disability, relocation, and retirement — 90 documents plus bonus wellness worksheets.",
         "includes": [
             ("Job Loss Survivor Kit (14 docs)", "Complete toolkit for severance, COBRA, unemployment, budgeting, job search, and more."),
-            ("Estate & Survivor Bundle (16 docs)", "Notification letters, benefits claims, estate settlement, executor tools, and more."),
+            ("Estate Bundle (16 docs)", "Notification letters, benefits claims, estate settlement, executor tools, and more."),
             ("Divorce & Separation Bundle (14 docs)", "Financial disclosure, co-parenting, asset inventory, notification letters, and more."),
             ("Disability & Benefits Bundle (15 docs)", "SSDI application and appeal organizers, FMLA letters, accommodation requests, and more."),
             ("Moving & Relocation Bundle (13 docs)", "Address change checklists, transfer documents, notification letters, and more."),
@@ -2405,7 +2405,7 @@ PRODUCTS = {
         ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Step-by-step worksheets with plain-language instructions", "Letter templates ready to customize and send", "Budget and job search tracking tools", "First 24 Hours action guide"],
         "transition_page": "/job-loss"},
-    "estate": {"name": "Estate & Survivor Bundle", "price": 1800, "desc": "16 documents for death & estate",
+    "estate": {"name": "Estate Bundle", "price": 1800, "desc": "16 documents for death & estate",
         "headline": "The To-Do List Nobody Warns You About.",
         "emoji": "🕊️", "count": "16",
         "long_desc": "Step-by-step guidance for the hardest days — notification letters, benefits claims, estate settlement tools, and a complete first-steps guide.",
@@ -5634,6 +5634,7 @@ BLOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "blog-posts"
 
 def parse_html_post(filepath):
     """Parse a cowork-generated HTML blog post, extract content and metadata."""
+    import html as html_mod
     with open(filepath, "r") as f:
         raw = f.read()
     meta = {}
@@ -5646,7 +5647,7 @@ def parse_html_post(filepath):
     # Extract title from <h1>
     title_match = re.search(r"<h1[^>]*>(.*?)</h1>", raw, re.DOTALL)
     if title_match:
-        meta["title"] = re.sub(r"<[^>]+>", "", title_match.group(1)).strip()
+        meta["title"] = html_mod.unescape(re.sub(r"<[^>]+>", "", title_match.group(1)).strip())
     # Extract meta description
     desc_match = re.search(r'<meta\s+name="description"\s+content="([^"]*)"', raw)
     if desc_match:
@@ -5847,8 +5848,8 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
 
     /* ── Post Body — Magazine Style ── */
     .post-body{font-size:16px;line-height:1.85;font-weight:300;color:var(--text)}
-    .post-body h2{font-family:'Libre Baskerville',serif;font-size:24px;font-weight:400;margin:48px 0 20px;color:var(--navy);line-height:1.3}
-    .post-body h3{font-size:18px;font-weight:500;margin:28px 0 12px;color:var(--text)}
+    .post-body h2{font-family:'Libre Baskerville',serif;font-size:24px;font-weight:400;margin:48px 0 20px;color:var(--terracotta);line-height:1.3}
+    .post-body h3{font-size:18px;font-weight:500;margin:28px 0 12px;color:var(--navy)}
     .post-body p{margin-bottom:18px}
     .post-body ul,.post-body ol{margin:0 0 20px 24px}
     .post-body li{margin-bottom:8px;line-height:1.7}
