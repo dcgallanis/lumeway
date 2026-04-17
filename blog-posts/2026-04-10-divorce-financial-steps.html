@@ -92,8 +92,9 @@
       font-size: 14px;
       color: #9a8b7e;
       font-style: italic;
-      margin-bottom: 40px;
+      margin-bottom: 8px;
     }
+    .author-byline { font-size: 14px; color: #9a8b7e; margin-bottom: 40px; font-weight: 400; }
 
     h2 {
       font-family: 'Montserrat', sans-serif;
@@ -173,15 +174,26 @@
       margin-bottom: 16px;
       font-size: 14px;
     }
+
+    ul { list-style: none; margin: 12px 0 18px 0; padding: 0; }
+    ul li { margin-bottom: 8px; color: #5c4d43; line-height: 1.7; padding-left: 28px; position: relative; }
+    ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 14px;
+      height: 14px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b3a5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
   </style>
 </head>
 <body>
   <nav>
     <div class="nav-inner">
-      <a href="/" class="nav-logo">
-        <span class="sun-icon nav-sun"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-        <span class="nav-logo-text">Lumeway</span>
-      </a>
+      <a href="https://lumeway.co" class="nav-brand">Lumeway</a>
       <div class="nav-links">
         <a href="https://lumeway.co/job-loss">Job Loss</a>
         <a href="https://lumeway.co/divorce">Divorce</a>
@@ -198,6 +210,7 @@
     <div class="category-tag">Divorce</div>
     <h1>Filing for Divorce? 5 Financial Steps Most People Miss</h1>
     <p class="publish-date">April 10, 2026</p>
+    <p class="author-byline">By Cara G</p>
 
     <p>Most people walk into the divorce process focused on custody, the house, and the filing itself. Those things matter. But there are financial moves that need to happen early &mdash; sometimes before you even file &mdash; that get overlooked until the damage is already done.</p>
 
@@ -224,7 +237,7 @@
     <p>Your filing status will change. If you were filing jointly, you may need to file as single or head of household depending on your situation and timing. Alimony, retirement account divisions, and the sale of the family home all have tax consequences that affect how much you actually receive. Talk to a tax professional or ask your attorney to walk you through the basics. The settlement that looks fair on paper may not be fair after taxes.</p>
 
     <div class="cta-block">
-      <p>Lumeway&rsquo;s <strong>Divorce Financial Disclosure &mdash; Information Organizer</strong> helps you document income, expenses, debts, and assets in one structured worksheet. The <strong>Asset &amp; Property Inventory Worksheet</strong> gives you a place to record everything you own and owe. Both are available in the <a href="https://lumeway.co/templates">Divorce &amp; Separation bundle at lumeway.co</a>.</p>
+      <p>Lumeway&rsquo;s <strong>Divorce Financial Disclosure &mdash; Information Organizer</strong> helps you document income, expenses, debts, and assets in one structured worksheet. The <strong>Asset &amp; Property Inventory Worksheet</strong> gives you a place to record everything you own and owe. Both are available in the <a href="https://lumeway.co/templates">Divorce bundle at lumeway.co</a>.</p>
     </div>
 
     <p class="closing">Handle the finances early. It changes everything that comes after.</p>
