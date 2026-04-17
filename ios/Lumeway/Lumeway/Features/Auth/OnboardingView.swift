@@ -13,7 +13,7 @@ struct OnboardingView: View {
         ("disability", "Disability & Benefits", "🩺", "New diagnosis or disability claim"),
         ("relocation", "Moving & Relocation", "🏠", "Moving to a new city or state"),
         ("retirement", "Retirement Planning", "🌅", "Planning your next chapter"),
-        ("addiction", "Addiction & Recovery", "🫂", "Supporting a loved one"),
+        // ("addiction", "Addiction & Recovery", "🫂", "Supporting a loved one"),  // hidden until launch
     ]
 
     var body: some View {

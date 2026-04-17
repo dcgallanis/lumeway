@@ -19,7 +19,7 @@ final class StoreKitManager: ObservableObject {
         "co.lumeway.pass.disability",
         "co.lumeway.pass.relocation",
         "co.lumeway.pass.retirement",
-        "co.lumeway.pass.addiction",
+        // "co.lumeway.pass.addiction",  // hidden until launch
         "co.lumeway.bundle.pick3",
         "co.lumeway.bundle.all",
     ]
