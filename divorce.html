@@ -581,6 +581,10 @@
   <p style="font-size:13px;color:var(--muted);margin-top:20px;font-weight:300">Free to start. No credit card required.</p>
 </div>
 
+<div style="text-align:center;padding:20px 5%;font-size:13px;color:var(--muted);font-weight:300;">
+  If you or someone you know is experiencing domestic violence, call the National DV Hotline: <strong>1-800-799-7233</strong> — available 24/7.
+</div>
+
 <footer>
     <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo reveal">
     <p class="footer-note reveal">Lumeway is a guidance tool, not a licensed professional. Always consult a qualified advisor.</p>
@@ -697,6 +701,9 @@
   })();
 </script>
 <script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>
+<!-- Suppress email popup on sensitive pages — mark visit so popup is skipped -->
+<script>localStorage.setItem('lumeway_sensitive_visit', Date.now());</script>
+
 <!-- Feedback modal -->
 <div class="fb-overlay" id="fbOverlay" onclick="if(event.target===this)closeFeedback()">
   <div class="fb-card">

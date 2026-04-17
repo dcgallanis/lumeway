@@ -58,6 +58,12 @@
     .dash-tab .tab-lock { font-size: 10px; margin-left: 4px; opacity: 0.5; }
     .dash-tab.locked { color: var(--muted); opacity: 0.7; }
     .dash-tab.locked:hover { opacity: 0.85; }
+    .dash-tab-more { position: relative; display: inline-flex; }
+    .dash-tab-more-menu { display: none; position: absolute; top: 100%; left: 0; background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 6px; min-width: 160px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 50; }
+    .dash-tab-more.open .dash-tab-more-menu { display: block; }
+    .dash-tab-more-item { display: block; width: 100%; text-align: left; padding: 8px 14px; background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; color: var(--text); cursor: pointer; border-radius: 6px; transition: background 0.12s; }
+    .dash-tab-more-item:hover { background: var(--cream); }
+    .dash-tab-more-item.locked { color: var(--muted); opacity: 0.7; }
     .tab-locked-preview { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 48px 32px; text-align: center; max-width: 480px; margin: 40px auto; }
     .tab-locked-preview h3 { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 400; color: var(--navy); margin-bottom: 10px; }
     .tab-locked-preview p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
@@ -610,7 +616,7 @@
     .note-card { background: transparent; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 16px 18px; transition: background 0.15s; }
     .note-card:last-child { border-bottom: none; }
     .note-card:hover { background: rgba(0,0,0,0.015); }
-    .note-content { font-size: 15px; font-weight: 400; line-height: 1.65; white-space: pre-wrap; color: var(--text); }
+    .note-content { font-size: 15px; font-weight: 400; line-height: 1.65; white-space: pre-wrap; overflow-wrap: break-word; word-wrap: break-word; color: var(--text); }
     .note-content.truncated { max-height: 3.4em; overflow: hidden; position: relative; }
     .note-content.truncated::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1.2em; background: linear-gradient(transparent, var(--warm-white)); }
     .note-card:hover .note-content.truncated::after { background: linear-gradient(transparent, #fdfcfb); }
@@ -7766,11 +7772,16 @@ guideLibrary['disability'] = {
       html += '  <button class="dash-tab' + (!filesUnlocked ? ' locked' : '') + '" data-tab="documents" onclick="switchTab(\'documents\')">Files & Templates' + (!filesUnlocked ? lockIcon : '') + '</button>';
       html += '  <button class="dash-tab' + (!unlocked ? ' locked' : '') + '" data-tab="guides" onclick="switchTab(\'guides\')">Guides' + (!unlocked ? lockIcon : '') + '</button>';
       html += '  <button class="dash-tab' + (!unlocked ? ' locked' : '') + '" data-tab="notes" onclick="switchTab(\'notes\')">Notes' + (!unlocked ? lockIcon : '') + '</button>';
-      html += '  <button class="dash-tab' + (!unlocked ? ' locked' : '') + '" data-tab="activity" onclick="switchTab(\'activity\')">Activity Log' + (!unlocked ? lockIcon : '') + '</button>';
-      html += '  <button class="dash-tab' + (!unlocked ? ' locked' : '') + '" data-tab="history" onclick="switchTab(\'history\')">History' + (!unlocked ? lockIcon : '') + '</button>';
+      html += '  <div class="dash-tab-more">';
+      html += '    <button class="dash-tab" onclick="this.parentElement.classList.toggle(\'open\')">More &#9662;</button>';
+      html += '    <div class="dash-tab-more-menu">';
+      html += '      <button class="dash-tab-more-item' + (!unlocked ? ' locked' : '') + '" onclick="switchTab(\'activity\');this.closest(\'.dash-tab-more\').classList.remove(\'open\')">Activity Log' + (!unlocked ? lockIcon : '') + '</button>';
+      html += '      <button class="dash-tab-more-item' + (!unlocked ? ' locked' : '') + '" onclick="switchTab(\'history\');this.closest(\'.dash-tab-more\').classList.remove(\'open\')">History' + (!unlocked ? lockIcon : '') + '</button>';
       if (tier !== 'free') {
-        html += '  <button class="dash-tab" data-tab="community" onclick="switchTab(\'community\')">Community</button>';
+        html += '      <button class="dash-tab-more-item" onclick="switchTab(\'community\');this.closest(\'.dash-tab-more\').classList.remove(\'open\')">Community</button>';
       }
+      html += '    </div>';
+      html += '  </div>';
       html += '  <button class="dash-tab" data-tab="account" onclick="switchTab(\'account\')" style="margin-left:auto">⚙ Account Settings</button>';
       html += '</div>';
 
@@ -7837,7 +7848,7 @@ guideLibrary['disability'] = {
         upcomingDeadlines.forEach(function(d) {
           var days = daysUntil(d.deadline_date);
           var cls = days < 0 ? ' upcoming-overdue' : (days >= 0 && days <= 7) ? ' upcoming-urgent' : '';
-          var label = days < 0 ? (Math.abs(days) + ' days overdue') : days === 0 ? 'Today' : ('You have ' + days + ' day' + (days !== 1 ? 's' : '') + ' left');
+          var label = days < 0 ? ('Past suggested date — still worth doing') : days === 0 ? 'Today' : ('You have ' + days + ' day' + (days !== 1 ? 's' : '') + ' left');
           html += '<div class="upcoming-item">';
           html += '  <div class="upcoming-left">';
           html += '    <div class="upcoming-title">' + d.title + '</div>';

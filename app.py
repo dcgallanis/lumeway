@@ -5729,6 +5729,15 @@ def blog_post(slug):
     elif os.path.exists(md_path):
         post = parse_md_post(md_path)
     else:
+        # Try matching slug without date prefix (e.g., "first-24-hours..." matches "2026-03-31-first-24-hours...")
+        import glob as glob_mod
+        matches = glob_mod.glob(os.path.join(BLOG_DIR, f"*-{slug}.html"))
+        if not matches:
+            matches = glob_mod.glob(os.path.join(BLOG_DIR, f"*-{slug}.md"))
+        if matches:
+            matched_file = matches[0]
+            matched_slug = os.path.basename(matched_file).rsplit(".", 1)[0]
+            return redirect(f"/blog/{matched_slug}", code=301)
         return "Post not found", 404
     return render_template_string(BLOG_POST_TEMPLATE, post=post)
 
@@ -7252,20 +7261,14 @@ DEFAULT_CHECKLISTS = {
             "Create a moving timeline and checklist",
             "Research your new state's requirements (license, registration, voting)",
             "Research schools in the new area if applicable",
-            "Notify your landlord or list your home for sale",
             "Get quotes from moving companies or plan a DIY move",
         ],
         "First Week": [
-            "Set up mail forwarding through USPS",
             "Notify your employer and update payroll address",
-            "Transfer or set up utilities at new address",
             "Update address with banks and financial institutions",
             "Transfer medical records and find new healthcare providers",
         ],
         "First Month": [
-            "Register to vote at your new address",
-            "Get a new driver's license in your new state",
-            "Register your vehicle in the new state",
             "Update your address with the IRS",
             "Find new local services (doctor, dentist, vet, etc.)",
         ],
