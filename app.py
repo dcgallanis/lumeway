@@ -5842,12 +5842,12 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
     .post-breadcrumb a{color:var(--muted);text-decoration:none}
     .post-breadcrumb a:hover{color:var(--accent)}
     .post-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:var(--warm-white);border:1px solid var(--border);padding:3px 10px;border-radius:100px;margin-bottom:16px}
-    .post-title{font-family:'Libre Baskerville',serif;font-size:clamp(28px,4vw,42px);font-weight:400;line-height:1.2;letter-spacing:-0.02em;margin-bottom:12px}
+    .post-title{font-family:'Libre Baskerville',serif;font-size:clamp(28px,4vw,42px);font-weight:400;line-height:1.2;letter-spacing:-0.02em;margin-bottom:12px;color:var(--navy)}
     .post-date{font-size:13px;color:var(--muted)}
     .post-divider{width:60px;height:2px;background:var(--gold);margin-bottom:40px}
 
     /* ── Post Body — Magazine Style ── */
-    .post-body{font-size:16px;line-height:1.85;font-weight:300;color:var(--text)}
+    .post-body{font-size:16px;line-height:1.85;font-weight:300;color:var(--navy)}
     .post-body h2{font-family:'Libre Baskerville',serif;font-size:24px;font-weight:400;margin:48px 0 20px;color:var(--terracotta);line-height:1.3}
     .post-body h3{font-size:18px;font-weight:500;margin:28px 0 12px;color:var(--navy)}
     .post-body p{margin-bottom:18px}
