@@ -14,7 +14,10 @@
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
 
     .login-container { max-width: 420px; width: 100%; text-align: center; }
-    .login-logo { font-family: 'Libre Baskerville', serif; font-size: 28px; font-weight: 500; color: var(--navy); margin-bottom: 48px; }
+    .login-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 48px; text-decoration: none; }
+    .login-logo .sun-icon { display: inline-flex; }
+    .login-logo .sun-icon svg { stroke: var(--accent); fill: none; stroke-width: 1.5; stroke-linecap: round; }
+    .login-logo .logo-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--navy); letter-spacing: 0.08em; text-transform: uppercase; }
     .login-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px; padding: 40px 32px; }
     .login-card h1 { font-family: 'Libre Baskerville', serif; font-size: 32px; font-weight: 300; margin-bottom: 8px; }
     .login-card p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
@@ -52,7 +55,10 @@
 </head>
 <body>
   <div class="login-container">
-    <div class="login-logo">Lumeway</div>
+    <a href="/" class="login-logo">
+      <span class="sun-icon"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
+      <span class="logo-text">Lumeway</span>
+    </a>
     <div class="login-card">
       <div id="step-email">
         <h1>Welcome</h1>
