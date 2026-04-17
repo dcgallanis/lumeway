@@ -9490,6 +9490,11 @@ def admin_email_queue():
     return jsonify({"emails": emails})
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return open('404.html').read(), 404
+
+
 if __name__ == "__main__":
     print("\n✓ Lumeway is running!")
     app.run(debug=True, port=int(os.environ.get("PORT", 5000)))

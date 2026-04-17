@@ -450,6 +450,7 @@
       background: var(--warm-white); border: 1px solid var(--border);
       border-radius: 20px; overflow: hidden;
       box-shadow: 0 4px 24px rgba(44,74,94,0.06);
+      min-height: 480px; display: flex; flex-direction: column;
     }
     .dp-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -460,7 +461,7 @@
     .dp-title { font-family: 'Libre Baskerville', serif; font-size: 16px; font-weight: 700; color: var(--navy); }
     .dp-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
     .dp-badge { font-size: 13px; font-weight: 600; color: var(--terracotta); background: var(--blush-light); padding: 4px 12px; border-radius: 100px; }
-    .dp-body { padding: 16px 24px 20px; }
+    .dp-body { padding: 16px 24px 20px; flex: 1; }
     .dp-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.04); }
     .dp-row:last-child { border-bottom: none; }
     .dp-check {
@@ -1186,18 +1187,6 @@
                         </ol>
                         <div class="dp-guide-script-label">What to say</div>
                         <div class="dp-guide-script">"I'm calling to report a death. I'm the executor of the estate for [name]. I need to freeze all accounts and begin the estate settlement process."</div>
-                      </div>
-                    </div>
-                    <div class="dp-guide-task-card">
-                      <div class="dp-guide-task-header">
-                        <span class="dp-guide-task-title">Notify credit card companies</span>
-                        <span class="dp-guide-chev">&#9660;</span>
-                      </div>
-                    </div>
-                    <div class="dp-guide-task-card">
-                      <div class="dp-guide-task-header">
-                        <span class="dp-guide-task-title">Contact investment &amp; brokerage accounts</span>
-                        <span class="dp-guide-chev">&#9660;</span>
                       </div>
                     </div>
                   </div>
