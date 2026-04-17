@@ -5662,9 +5662,20 @@ def parse_html_post(filepath):
     if content_match:
         meta["body_html"] = content_match.group(1).strip()
     else:
-        # Fallback: grab everything between </nav> and <footer>
-        fallback = re.search(r"</nav>(.*?)<footer>", raw, re.DOTALL)
-        meta["body_html"] = fallback.group(1).strip() if fallback else ""
+        # Fallback: grab everything inside <main> or between </nav> and <footer>
+        main_match = re.search(r"<main[^>]*>(.*?)</main>", raw, re.DOTALL)
+        if main_match:
+            body = main_match.group(1).strip()
+        else:
+            fallback = re.search(r"</nav>(.*?)<footer>", raw, re.DOTALL)
+            body = fallback.group(1).strip() if fallback else ""
+        # Strip the category tag, h1, and publish date to avoid duplication with template
+        body = re.sub(r'<(?:div|span) class="category-tag">[^<]*</(?:div|span)>\s*', '', body)
+        body = re.sub(r'<h1[^>]*>.*?</h1>\s*', '', body, flags=re.DOTALL)
+        body = re.sub(r'<p class="publish-date">[^<]*</p>\s*', '', body)
+        # Strip <main> and </main> wrapper tags if present
+        body = re.sub(r'</?main[^>]*>\s*', '', body)
+        meta["body_html"] = body
     return meta
 
 def parse_md_post(filepath):
@@ -5706,12 +5717,12 @@ def blog():
     cards_html = ""
     for p in posts:
         cat = p.get("category", "General")
-        cards_html += f'''<div class="blog-card" data-category="{cat}">
+        cards_html += f'''<div class="blog-card reveal" data-category="{cat}">
           <a href="/blog/{p['slug']}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;height:100%">
             <span class="blog-tag">{cat}</span>
             <h2 class="blog-card-title">{p.get("title", "Untitled")}</h2>
             <p class="blog-card-excerpt">{p.get("excerpt", "")}</p>
-            <span class="blog-card-date" style="font-size:12px;color:#6E7D8A;margin-top:auto">{p.get("date", "")}</span>
+            <span class="blog-card-date" style="font-size:12px;color:var(--muted);margin-top:auto;padding-top:12px;border-top:1px solid var(--border)">{p.get("date", "")}</span>
           </a>
         </div>'''
     blog_html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "blog.html")
@@ -5784,48 +5795,110 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--cream:#FAF7F2;--warm-white:#FDFCFA;--text:#2C3E50;--muted:#6B7B8D;--navy:#2C4A5E;--gold:#B8977E;--accent:#C4704E;--accent-light:#D4896C;--border:#E8E0D6}
+    :root{--cream:#FAF7F2;--warm-white:#FDFCFA;--text:#2C3E50;--muted:#6B7B8D;--navy:#2C4A5E;--gold:#B8977E;--accent:#C4704E;--accent-light:#D4896C;--border:#E8E0D6;--blush-light:#F9F1EC;--terracotta:#C4704E}
     body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.7;font-size:17px;font-weight:300}
-    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(250,247,242,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+
+    /* ── Nav (matches site-wide) ── */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 5%;display:flex;align-items:center;justify-content:space-between;background:rgba(250,247,242,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(232,224,214,0.6)}
     .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-    .sun-icon{display:flex;align-items:center}
-    .nav-logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:0.08em}
-    .nav-left{display:flex;align-items:center;gap:28px}
+    .sun-icon{display:inline-flex}
+    .sun-icon svg{stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round}
+    .nav-logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;color:var(--navy);letter-spacing:0.08em;text-transform:uppercase}
+    .nav-left{display:flex;align-items:center;gap:36px}
     .nav-right{display:flex;gap:12px;align-items:center}
-    .btn-ghost{padding:8px 20px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;text-decoration:none;transition:all 0.2s}
+    .btn-ghost{padding:8px 20px;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;text-decoration:none;transition:all 0.2s}
     .btn-ghost:hover{background:var(--accent);color:white}
     .btn-primary{padding:8px 20px;border:none;border-radius:8px;background:var(--accent);color:white;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;text-decoration:none;transition:all 0.2s}
+    .nav-links{display:flex;align-items:center;gap:6px}
+    .nav-link{font-size:14px;color:var(--muted);text-decoration:none;padding:6px 12px;transition:color 0.15s;font-weight:400}
+    .nav-link:hover{color:var(--navy)}
+    .nav-dropdown{position:relative;padding-bottom:8px;margin-bottom:-8px}
+    .nav-drop-btn{background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--muted);cursor:pointer;padding:6px 12px;transition:color 0.15s;display:flex;align-items:center;gap:5px;font-weight:400}
+    .nav-drop-btn:hover{color:var(--navy)}
+    .nav-drop-btn .chev{display:inline-block;font-size:10px;transition:transform 0.2s ease}
+    .nav-dropdown:hover .nav-drop-btn .chev{transform:rotate(180deg)}
+    .nav-drop-menu{display:none;position:absolute;top:100%;left:-8px;background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:14px 6px 6px;min-width:210px;box-shadow:0 8px 24px rgba(27,58,92,0.1);z-index:200}
+    .nav-drop-menu a{display:block;padding:9px 14px;font-size:13.5px;color:var(--text);text-decoration:none;border-radius:8px;transition:background 0.12s}
+    .nav-drop-menu a:hover,.nav-drop-menu a.active{background:var(--blush-light);color:var(--navy)}
+    .nav-drop-menu .menu-div{height:1px;background:var(--border);margin:4px 6px}
+    .nav-dropdown:hover .nav-drop-menu,.nav-dropdown.open .nav-drop-menu{display:block}
+    .nav-sun svg{stroke:var(--accent)}
+    .hamburger{display:none;background:none;border:none;cursor:pointer;padding:8px}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--navy);margin:5px 0;border-radius:2px;transition:all 0.3s}
+    .mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--warm-white);z-index:150;padding:20px 24px;flex-direction:column}
+    .mobile-menu.open{display:flex}
+    .mobile-menu-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+    .mobile-menu-close{background:none;border:none;font-size:28px;color:var(--navy);cursor:pointer;padding:8px}
+    .mobile-menu a{display:block;font-size:16px;color:var(--text);text-decoration:none;padding:14px 0;border-bottom:1px solid var(--border);font-weight:400}
+    .mobile-menu a:hover{color:var(--accent)}
+    .mobile-menu .mobile-cta{margin-top:24px;display:block;text-align:center;padding:14px 24px;background:var(--accent);color:#fff;border-radius:10px;font-size:15px;font-weight:500;text-decoration:none;border:none}
+
+    /* ── Article ── */
     .post-wrapper{padding:0 5%}
     article{max-width:720px;margin:0 auto;padding:120px 0 64px}
     .post-meta{margin-bottom:32px}
+    .post-breadcrumb{font-size:13px;color:var(--muted);margin-bottom:20px}
+    .post-breadcrumb a{color:var(--muted);text-decoration:none}
+    .post-breadcrumb a:hover{color:var(--accent)}
     .post-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:var(--warm-white);border:1px solid var(--border);padding:3px 10px;border-radius:100px;margin-bottom:16px}
     .post-title{font-family:'Libre Baskerville',serif;font-size:clamp(28px,4vw,42px);font-weight:400;line-height:1.2;letter-spacing:-0.02em;margin-bottom:12px}
     .post-date{font-size:13px;color:var(--muted)}
     .post-divider{width:60px;height:2px;background:var(--gold);margin-bottom:40px}
+
+    /* ── Post Body — Magazine Style ── */
     .post-body{font-size:16px;line-height:1.85;font-weight:300;color:var(--text)}
     .post-body h2{font-family:'Libre Baskerville',serif;font-size:24px;font-weight:400;margin:48px 0 20px;color:var(--navy);line-height:1.3}
     .post-body h3{font-size:18px;font-weight:500;margin:28px 0 12px;color:var(--text)}
     .post-body p{margin-bottom:18px}
     .post-body ul,.post-body ol{margin:0 0 20px 24px}
     .post-body li{margin-bottom:8px;line-height:1.7}
-    .post-body strong{font-weight:500}
+    .post-body strong{font-weight:600;color:var(--navy)}
+    .post-body em{color:var(--navy)}
     .post-body a{color:var(--accent);text-decoration:underline;text-decoration-color:var(--border);text-underline-offset:3px}
     .post-body a:hover{text-decoration-color:var(--accent)}
-    .post-body .template-callout{background:var(--warm-white);border-left:3px solid var(--gold);padding:20px 24px;margin:28px 0;border-radius:0 8px 8px 0}
-    .post-body .template-callout p{font-size:15px;color:var(--muted);margin-bottom:0}
+
+    /* Drop cap on first paragraph */
+    .post-body > p:first-child::first-letter{font-family:'Libre Baskerville',serif;font-size:3.5em;float:left;line-height:0.8;margin:6px 12px 0 0;color:var(--accent);font-weight:400}
+
+    /* Pull quotes */
+    .post-body blockquote{position:relative;margin:40px 0;padding:24px 32px 24px 28px;border-left:3px solid var(--accent);background:var(--blush-light);border-radius:0 12px 12px 0;font-family:'Libre Baskerville',serif;font-size:19px;font-style:italic;color:var(--navy);line-height:1.6}
+    .post-body blockquote p{margin-bottom:0;font-size:inherit;line-height:inherit}
+
+    /* Key phrase highlight */
+    .post-body mark,.post-body .highlight{background:linear-gradient(180deg,transparent 60%,rgba(196,112,78,0.15) 60%);padding:0 2px;color:inherit;border-radius:0}
+
+    /* Callout boxes */
+    .post-body .template-callout,.post-body .cta-block{background:var(--warm-white);border-left:3px solid var(--gold);padding:20px 24px;margin:28px 0;border-radius:0 8px 8px 0}
+    .post-body .template-callout p,.post-body .cta-block p{font-size:15px;color:var(--muted);margin-bottom:0}
     .post-body .cta-box{background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:32px;margin:40px 0;text-align:center}
     .post-body .cta-box h3{font-family:'Libre Baskerville',serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:12px}
     .post-body .cta-box p{font-size:15px;color:var(--muted);margin-bottom:20px}
     .post-body .cta-button{display:inline-block;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:white;background:var(--accent);padding:14px 32px;border-radius:8px;text-decoration:none;transition:background 0.2s}
     .post-body .cta-button:hover{background:var(--accent-light);color:white}
+
+    /* Horizontal rule as section break */
+    .post-body hr{border:none;height:1px;background:var(--border);margin:48px auto;width:80px}
+
+    /* Key takeaway / numbered lists */
+    .post-body ol{counter-reset:item;list-style:none;margin-left:0;padding-left:0}
+    .post-body ol li{counter-increment:item;position:relative;padding-left:36px;margin-bottom:16px}
+    .post-body ol li::before{content:counter(item);position:absolute;left:0;top:2px;width:24px;height:24px;background:var(--accent);color:white;font-size:13px;font-weight:600;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1}
+
     .post-body .disclaimer{font-size:13px;font-style:italic;color:var(--muted);border-top:1px solid var(--border);padding-top:32px;margin-top:48px;line-height:1.6}
     .post-back{display:inline-block;margin-top:48px;font-size:14px;color:var(--muted);text-decoration:none}
     .post-back:hover{color:var(--accent)}
+
+    /* ── Footer ── */
     footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:64px}
     .footer-logo{height:80px;object-fit:contain}
     .footer-note{font-size:12px;color:var(--muted);font-weight:300}
     .footer-note a{color:var(--muted)}
-    @media(max-width:768px){nav{padding:14px 20px}article{padding:85px 0 48px}footer{padding:20px;flex-direction:column;text-align:center}}
+    .footer-social{display:flex;gap:16px;align-items:center}
+    .footer-social a{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--border);border-radius:50%;color:var(--muted);text-decoration:none;transition:all 0.15s ease}
+    .footer-social a:hover{border-color:var(--gold);color:var(--navy);background:#EEE8DE}
+    .footer-social svg{width:16px;height:16px;fill:currentColor}
+
+    @media(max-width:768px){nav{padding:14px 20px}.nav-right{display:none}.nav-links{display:none}.hamburger{display:block}article{padding:85px 0 48px}footer{padding:20px;flex-direction:column;text-align:center}.post-body blockquote{margin:28px 0;padding:20px 24px 20px 20px;font-size:17px}}
     @media(max-width:480px){nav{padding:12px 16px}.btn-ghost,.btn-primary{font-size:12px;padding:6px 14px}article{padding:75px 0 36px}}
   </style>
 </head>
@@ -5833,19 +5906,73 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
   <nav>
     <div class="nav-left">
       <a href="/" class="nav-logo">
-        <span class="sun-icon" style="color:var(--accent)"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
+        <span class="sun-icon nav-sun"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
         <span class="nav-logo-text">Lumeway</span>
       </a>
-      <a href="/features" style="font-size:14px;color:var(--muted);text-decoration:none;padding:6px 4px">Features</a>
+      <div class="nav-links">
+        <div class="nav-dropdown">
+          <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Get help with <span class="chev">&#9662;</span></button>
+          <div class="nav-drop-menu">
+            <a href="/estate">Death &amp; Estate</a>
+            <a href="/divorce">Divorce &amp; Separation</a>
+            <a href="/job-loss">Job Loss &amp; Income Crisis</a>
+            <a href="/relocation">Moving &amp; Relocation</a>
+            <a href="/disability">Disability &amp; Benefits</a>
+            <a href="/retirement">Retirement</a>
+          </div>
+        </div>
+        <a href="/features" class="nav-link">Features</a>
+        <div class="nav-dropdown">
+          <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">Explore <span class="chev">&#9662;</span></button>
+          <div class="nav-drop-menu">
+            <a href="/templates">Shop</a>
+            <a href="/pricing">Plans</a>
+            <a href="/faq">FAQ</a>
+            <a href="/blog">Blog</a>
+            <div class="menu-div"></div>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="nav-right">
-      <a href="/chat" target="_blank" class="btn-ghost">Try it free</a>
-      <a href="/templates" class="btn-primary">Shop</a>
+      <a href="/login" class="nav-link" id="navAccount">Sign in</a>
+      <a href="/templates" class="btn-ghost">Shop</a>
+      <a href="/chat" target="_blank" class="btn-primary">Try it free</a>
     </div>
+    <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+      <a href="/" class="nav-logo">
+        <span class="sun-icon nav-sun"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
+        <span class="nav-logo-text">Lumeway</span>
+      </a>
+      <button class="mobile-menu-close" onclick="document.getElementById('mobileMenu').classList.remove('open')" aria-label="Close">&times;</button>
+    </div>
+    <a href="/estate">Death &amp; Estate</a>
+    <a href="/divorce">Divorce &amp; Separation</a>
+    <a href="/job-loss">Job Loss</a>
+    <a href="/relocation">Moving &amp; Relocation</a>
+    <a href="/disability">Disability &amp; Benefits</a>
+    <a href="/retirement">Retirement</a>
+    <a href="/features">Features</a>
+    <a href="/templates">Template Shop</a>
+    <a href="/blog">Blog</a>
+    <a href="/faq">FAQ</a>
+    <a href="/about">About</a>
+    <a href="/login">Log in</a>
+    <a href="/chat" target="_blank" class="mobile-cta">Try it free</a>
+  </div>
   <div class="post-wrapper">
   <article>
     <div class="post-meta">
+      <p class="post-breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; <a href="/blog">Blog</a> &nbsp;/&nbsp; {{ post.get('category', 'General') }}</p>
       <span class="post-tag">{{ post.get('category', 'General') }}</span>
       <h1 class="post-title">{{ post.get('title', 'Untitled') }}</h1>
       <p class="post-date">{{ post.get('date', '') }}</p>
@@ -5855,11 +5982,11 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
       {{ post.get('body_html', '') | safe }}
     </div>
     {% set category_cta = {
-      'Job Loss': {'path': '/job-loss', 'label': 'job loss', 'bridge': "If you just got laid off, Lumeway gives you a personalized timeline, every deadline you need to hit, and the exact documents to send — generated from your situation.", 'features': "Your free dashboard includes: a phased checklist organized by urgency, auto-calculated deadlines for unemployment filing, COBRA election, and WARN Act notice, and guides with exact scripts for what to say when you call HR."},
-      'Job Loss Worksheet': {'path': '/job-loss', 'label': 'job loss', 'bridge': "If you just got laid off, Lumeway gives you a personalized timeline, every deadline you need to hit, and the exact documents to send — generated from your situation.", 'features': "Your free dashboard includes: a phased checklist organized by urgency, auto-calculated deadlines for unemployment filing, COBRA election, and WARN Act notice, and guides with exact scripts for what to say when you call HR."},
-      'Estate': {'path': '/estate', 'label': 'estate', 'bridge': "If you're dealing with this right now, Lumeway can walk you through every step — from the first phone call to the last filing deadline.", 'features': "Your free dashboard includes: a phased checklist (what to do this week vs. this month vs. 6 months from now), auto-calculated deadlines for COBRA, survivor benefits, and probate, and guides that tell you exactly what to say when you call the bank, Social Security, and insurance companies."},
-      'Death': {'path': '/estate', 'label': 'estate', 'bridge': "If you're dealing with this right now, Lumeway can walk you through every step — from the first phone call to the last filing deadline.", 'features': "Your free dashboard includes: a phased checklist (what to do this week vs. this month vs. 6 months from now), auto-calculated deadlines for COBRA, survivor benefits, and probate, and guides that tell you exactly what to say when you call the bank, Social Security, and insurance companies."},
-      'Divorce': {'path': '/divorce', 'label': 'divorce', 'bridge': "If you're going through a divorce, Lumeway organizes every step — from separating accounts to filing paperwork to knowing exactly what to bring to your attorney.", 'features': "Your free dashboard includes: auto-calculated deadlines for filing windows and response periods, guides with conversation scripts for hard topics, and tools to organize financial disclosure documents."},
+      'Job Loss': {'path': '/job-loss', 'label': 'job loss', 'bridge': "If you just got laid off, Lumeway gives you a personalized timeline, every deadline you need to hit, and letter templates to help you notify the right people.", 'features': "Your free dashboard includes: a phased checklist organized by urgency, auto-calculated deadlines for unemployment filing, COBRA election, and WARN Act notice, and step-by-step guides for every task."},
+      'Job Loss Worksheet': {'path': '/job-loss', 'label': 'job loss', 'bridge': "If you just got laid off, Lumeway gives you a personalized timeline, every deadline you need to hit, and letter templates to help you notify the right people.", 'features': "Your free dashboard includes: a phased checklist organized by urgency, auto-calculated deadlines for unemployment filing, COBRA election, and WARN Act notice, and step-by-step guides for every task."},
+      'Estate': {'path': '/estate', 'label': 'estate', 'bridge': "If you're dealing with this right now, Lumeway can walk you through every step — from the first phone call to the last filing deadline.", 'features': "Your free dashboard includes: a phased checklist (what to do this week vs. this month vs. 6 months from now), auto-calculated deadlines for COBRA, survivor benefits, and probate, and step-by-step guides for contacting banks, Social Security, and insurance companies."},
+      'Death': {'path': '/estate', 'label': 'estate', 'bridge': "If you're dealing with this right now, Lumeway can walk you through every step — from the first phone call to the last filing deadline.", 'features': "Your free dashboard includes: a phased checklist (what to do this week vs. this month vs. 6 months from now), auto-calculated deadlines for COBRA, survivor benefits, and probate, and step-by-step guides for contacting banks, Social Security, and insurance companies."},
+      'Divorce': {'path': '/divorce', 'label': 'divorce', 'bridge': "If you're going through a divorce, Lumeway organizes every step — from separating accounts to filing paperwork to knowing exactly what to bring to your attorney.", 'features': "Your free dashboard includes: auto-calculated deadlines for filing windows and response periods, step-by-step guides for every task, and tools to organize financial disclosure documents."},
       'Relocation': {'path': '/relocation', 'label': 'relocation', 'bridge': "If you're planning a move, Lumeway coordinates every moving part — from giving notice to transferring utilities to updating registrations in your new state.", 'features': "Your free dashboard includes: a phased checklist organized by your move date, deadline tracking for leases, utilities, and registrations, and state-specific guides for licenses and voter registration."},
       'Moving': {'path': '/relocation', 'label': 'relocation', 'bridge': "If you're planning a move, Lumeway coordinates every moving part — from giving notice to transferring utilities to updating registrations in your new state.", 'features': "Your free dashboard includes: a phased checklist organized by your move date, deadline tracking for leases, utilities, and registrations, and state-specific guides for licenses and voter registration."},
       'Disability': {'path': '/disability', 'label': 'disability', 'bridge': "If you're navigating a disability claim, Lumeway walks you through the process — from initial application to appeal, with every deadline tracked.", 'features': "Your free dashboard includes: a phased checklist for SSDI and insurance claims, auto-calculated deadlines for filing windows and appeals, and guides explaining every form and who to contact."},
@@ -5884,9 +6011,37 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
   <footer>
     <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-logo">
     <p class="footer-note">Lumeway is a guidance tool, not a licensed professional. Always consult a qualified advisor.</p>
-    <p class="footer-note"><a href="/about">About</a> &middot; <a href="/privacy">Privacy Policy</a></p>
+    <p class="footer-note"><a href="/about">About</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy Policy</a> &nbsp;&middot;&nbsp; <a href="/terms">Terms</a> &nbsp;&middot;&nbsp; <a href="/contact">Contact</a></p>
     <div class="footer-social"><a href="https://www.pinterest.com/lumeway" rel="noopener" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a></div>
   </footer>
+  <!-- Nav dropdown logic -->
+  <script>
+    (function() {
+      var dropdowns = document.querySelectorAll('.nav-dropdown');
+      dropdowns.forEach(function(dd) {
+        var btn = dd.querySelector('.nav-drop-btn');
+        var menu = dd.querySelector('.nav-drop-menu');
+        var links = Array.from(menu.querySelectorAll('a'));
+        links.forEach(function(a) { if (a.getAttribute('href') === window.location.pathname) a.classList.add('active'); });
+        function open() { dropdowns.forEach(function(other) { if (other !== dd) { other.classList.remove('open'); other.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false'); } }); dd.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+        function close() { dd.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+        btn.addEventListener('click', function(e) { e.stopPropagation(); dd.classList.contains('open') ? close() : open(); });
+        menu.addEventListener('click', function(e) { e.stopPropagation(); });
+        btn.addEventListener('keydown', function(e) {
+          if (e.key === 'ArrowDown') { e.preventDefault(); open(); if (links[0]) links[0].focus(); }
+          if (e.key === 'Escape') close();
+        });
+        menu.addEventListener('keydown', function(e) {
+          var idx = links.indexOf(document.activeElement);
+          if (e.key === 'ArrowDown') { e.preventDefault(); if (links[idx + 1]) links[idx + 1].focus(); }
+          if (e.key === 'ArrowUp') { e.preventDefault(); idx > 0 ? links[idx - 1].focus() : btn.focus(); }
+          if (e.key === 'Escape') { close(); btn.focus(); }
+        });
+      });
+      document.addEventListener('click', function() { dropdowns.forEach(function(dd) { dd.classList.remove('open'); dd.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false'); }); });
+    })();
+  </script>
+  <script>fetch("/api/auth/me").then(function(r){return r.json()}).then(function(d){var a=document.getElementById("navAccount");if(a&&d.logged_in){a.href="/dashboard";a.textContent="Dashboard"}}).catch(function(){});</script>
 </body>
 </html>"""
 
