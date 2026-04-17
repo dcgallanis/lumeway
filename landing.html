@@ -246,7 +246,10 @@
       border-radius: 50%;
       flex-shrink: 0;
     }
+    .checklist-circle.checked { background: var(--terracotta); border-color: var(--terracotta); position: relative; }
+    .checklist-circle.checked::after { content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: #fff; font-size: 11px; font-weight: 700; }
     .checklist-item-text { font-size: 14.5px; color: var(--text); }
+    .checklist-item-text.checked { text-decoration: line-through; color: var(--muted); }
     .checklist-tag {
       font-size: 11px; font-weight: 500;
       padding: 4px 12px; border-radius: 100px;
@@ -423,32 +426,8 @@
       display: grid; grid-template-columns: 1.2fr 1fr;
       gap: 60px; align-items: center; max-width: 1200px; margin: 0 auto;
     }
+    .see-inside-left .checklist-card { max-width: 100%; }
     .see-inside-right {  }
-    .see-inside-card {
-      background: var(--warm-white); border: 1px solid var(--border);
-      border-radius: 16px; overflow: hidden; transition: transform 0.2s;
-    }
-    .see-inside-card:hover { transform: translateY(-4px); }
-    .see-inside-card img { width: 100%; display: block; border-bottom: 1px solid var(--border); }
-    .see-inside-caption {
-      padding: 14px 18px;
-    }
-    .see-inside-caption h3 {
-      font-family: 'Libre Baskerville', serif; font-size: 14px; font-weight: 400;
-      color: var(--navy); margin-bottom: 4px;
-    }
-    .see-inside-caption p {
-      font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300;
-    }
-    .see-inside-card-featured { margin-bottom: 20px; }
-    .see-inside-card-featured .see-inside-caption { padding: 20px 24px; }
-    .see-inside-card-featured .see-inside-caption h3 { font-size: 16px; }
-    .see-inside-thumbs {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
-    }
-    .see-inside-thumbs .see-inside-card img { border-bottom: none; }
-    .see-inside-thumbs .see-inside-caption { padding: 10px 12px; }
-    .see-inside-thumbs .see-inside-caption h3 { font-size: 12px; margin-bottom: 0; }
 
     /* ── How it Works — Full Bleed ── */
     .how-section {
@@ -704,7 +683,6 @@
       .checklist-layout { grid-template-columns: 1fr; }
       .see-inside-split { grid-template-columns: 1fr; }
       .see-inside-right { order: -1; }
-      .see-inside-thumbs { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 768px) {
       nav { padding: 14px 20px; }
@@ -927,39 +905,34 @@
   <!-- ═══ See Inside the Dashboard ═══ -->
   <section class="see-inside-section">
     <div class="see-inside-split">
-      <!-- Left: checklist example + dashboard screenshots -->
-      <div class="see-inside-left reveal-stagger">
-        <div class="see-inside-card see-inside-card-featured reveal">
-          <img src="/static/images/features/dashboard-checklist.png" alt="Lumeway checklist with tasks organized by urgency" loading="lazy" />
-          <div class="see-inside-caption">
-            <h3>Your personalized checklist</h3>
-            <p>Every task organized by urgency — today, this week, this month.</p>
-          </div>
+      <!-- Left: interactive dashboard card -->
+      <div class="see-inside-left">
+        <div class="checklist-tabs reveal">
+          <button class="checklist-tab active" onclick="showDashView('overview',this)">Overview</button>
+          <button class="checklist-tab" onclick="showDashView('guide',this)">Guide</button>
+          <button class="checklist-tab" onclick="showDashView('calendar',this)">Calendar</button>
+          <button class="checklist-tab" onclick="showDashView('files',this)">Files</button>
         </div>
-        <div class="see-inside-thumbs">
-          <div class="see-inside-card reveal">
-            <img src="/static/images/features/dashboard-overview.png" alt="Lumeway dashboard overview" loading="lazy" />
-            <div class="see-inside-caption">
-              <h3>Dashboard overview</h3>
+        <div class="checklist-card reveal" id="dashCard">
+          <div class="checklist-card-header">
+            <div class="checklist-card-title-area">
+              <span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
+              <div>
+                <div class="checklist-card-name" id="dashCardName">Dashboard Overview</div>
+                <div class="checklist-card-sub" id="dashCardSub">Death &amp; Estate &middot; Illinois</div>
+              </div>
+            </div>
+            <div class="checklist-card-count">
+              <div class="checklist-card-count-num" id="dashCardCount">3/34</div>
+              <div class="checklist-card-count-label">completed</div>
             </div>
           </div>
-          <div class="see-inside-card reveal">
-            <img src="/static/images/features/dashboard-guides.png" alt="Lumeway step-by-step guide tab" loading="lazy" />
-            <div class="see-inside-caption">
-              <h3>Guides tab</h3>
-            </div>
+          <div id="dashCardItems">
+            <!-- populated by JS -->
           </div>
-          <div class="see-inside-card reveal">
-            <img src="/static/images/features/dashboard-documents.png" alt="Lumeway files and documents tab" loading="lazy" />
-            <div class="see-inside-caption">
-              <h3>Files tab</h3>
-            </div>
-          </div>
-          <div class="see-inside-card reveal">
-            <img src="/static/images/features/dashboard-calendar.png" alt="Lumeway calendar with auto-calculated deadlines" loading="lazy" />
-            <div class="see-inside-caption">
-              <h3>Calendar</h3>
-            </div>
+          <div class="checklist-footer">
+            <span class="checklist-footer-note"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span> Personalized for your transition</span>
+            <a href="/chat" target="_blank" class="checklist-footer-btn">Get started &rarr;</a>
           </div>
         </div>
       </div>
@@ -1280,6 +1253,72 @@
       document.querySelectorAll('.checklist-tab').forEach(function(t) { t.classList.remove('active'); });
       event.target.classList.add('active');
     }
+
+    // Dashboard view switcher for See Inside section
+    var dashViewData = {
+      overview: {
+        name: 'Dashboard Overview', sub: 'Death & Estate \u00b7 Illinois', count: '3/34',
+        items: [
+          { text: 'Your next step: Obtain certified death certificates (10+ copies)', tag: 'Up next', type: 'urgent', checked: false },
+          { text: 'Notify Social Security Administration', tag: 'Within 7 days', type: 'urgent', checked: false },
+          { text: 'Secure the home and change locks if needed', tag: 'Immediately', type: 'urgent', checked: true },
+          { text: 'Locate the will and contact the named executor', tag: 'This week', type: 'info', checked: true },
+          { text: 'Request employer benefits information', tag: 'Within 30 days', type: 'soon', checked: true },
+          { text: 'Contact life insurance companies', tag: 'Within 30 days', type: 'soon', checked: false }
+        ]
+      },
+      guide: {
+        name: 'Step-by-Step Guide', sub: 'Notify banks & credit card companies', count: 'Step 3 of 8',
+        items: [
+          { text: 'Gather: death certificate, your ID, account numbers', tag: 'Prepare', type: 'info', checked: true },
+          { text: 'Call each bank\u2019s bereavement or estate department', tag: 'Action', type: 'urgent', checked: true },
+          { text: 'Request account freeze to prevent unauthorized charges', tag: 'Action', type: 'urgent', checked: false },
+          { text: 'Ask about joint account conversion vs. closure', tag: 'Decision', type: 'soon', checked: false },
+          { text: 'Send formal written notification (use letter template)', tag: 'Generate letter', type: 'soon', checked: false },
+          { text: 'Document confirmation numbers and rep names', tag: 'Record', type: 'info', checked: false }
+        ]
+      },
+      calendar: {
+        name: 'Deadline Calendar', sub: 'Auto-calculated from date of passing', count: '4 upcoming',
+        items: [
+          { text: 'Bank notification letters due', tag: 'May 2 \u2014 16 days', type: 'soon', checked: false },
+          { text: 'Life insurance claims filing deadline', tag: 'May 16 \u2014 30 days', type: 'soon', checked: false },
+          { text: 'COBRA election deadline (if applicable)', tag: 'Jun 15 \u2014 60 days', type: 'info', checked: false },
+          { text: 'Survivor benefits application (SSA)', tag: 'Oct 16 \u2014 6 months', type: 'info', checked: false },
+          { text: 'Estate tax return (Form 706) if required', tag: 'Jan 16 \u2014 9 months', type: 'info', checked: false }
+        ]
+      },
+      files: {
+        name: 'Files & Documents', sub: '3 generated \u00b7 2 uploaded \u00b7 1 draft', count: '6 files',
+        items: [
+          { text: 'Bank Death Notification Letter \u2014 Chase', tag: 'Generated', type: 'info', checked: true },
+          { text: 'Employer Notification of Death Letter', tag: 'Generated', type: 'info', checked: true },
+          { text: 'Estate Executor Introduction Letter', tag: 'Generated', type: 'info', checked: true },
+          { text: 'Death Certificate (uploaded scan)', tag: 'Uploaded', type: 'soon', checked: false },
+          { text: 'Will \u2014 Last Will and Testament (uploaded)', tag: 'Uploaded', type: 'soon', checked: false },
+          { text: 'Credit Bureau Notification Letter', tag: 'Draft', type: 'urgent', checked: false }
+        ]
+      }
+    };
+    function showDashView(type, el) {
+      var data = dashViewData[type];
+      document.getElementById('dashCardName').textContent = data.name;
+      document.getElementById('dashCardSub').innerHTML = data.sub;
+      document.getElementById('dashCardCount').textContent = data.count;
+      var html = '';
+      data.items.forEach(function(item) {
+        var cls = item.checked ? ' checked' : '';
+        html += '<div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle' + cls + '"></div><span class="checklist-item-text' + cls + '">' + item.text + '</span></div><span class="checklist-tag tag-' + item.type + '">' + item.tag + '</span></div>';
+      });
+      document.getElementById('dashCardItems').innerHTML = html;
+      document.querySelectorAll('.see-inside-left .checklist-tab').forEach(function(t) { t.classList.remove('active'); });
+      if (el) el.classList.add('active');
+    }
+    // Initialize the overview tab on load
+    (function() {
+      var el = document.querySelector('.see-inside-left .checklist-tab');
+      if (el) { showDashView('overview', el); }
+    })();
 
     // Scroll reveal
     (function() {
