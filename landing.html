@@ -104,7 +104,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       align-items: center;
-      padding: 80px 5% 0;
+      padding: 48px 5% 0;
       gap: 0;
       overflow: hidden;
     }
@@ -419,11 +419,11 @@
       width: 100%; padding: 100px 5%;
       background: var(--cream);
     }
-    .see-inside-header { text-align: center; margin-bottom: 56px; }
-    .see-inside-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px; max-width: 1200px; margin: 0 auto;
+    .see-inside-split {
+      display: grid; grid-template-columns: 1.2fr 1fr;
+      gap: 60px; align-items: center; max-width: 1200px; margin: 0 auto;
     }
+    .see-inside-right {  }
     .see-inside-card {
       background: var(--warm-white); border: 1px solid var(--border);
       border-radius: 16px; overflow: hidden; transition: transform 0.2s;
@@ -431,15 +431,24 @@
     .see-inside-card:hover { transform: translateY(-4px); }
     .see-inside-card img { width: 100%; display: block; border-bottom: 1px solid var(--border); }
     .see-inside-caption {
-      padding: 20px 24px;
+      padding: 14px 18px;
     }
     .see-inside-caption h3 {
-      font-family: 'Libre Baskerville', serif; font-size: 16px; font-weight: 400;
-      color: var(--navy); margin-bottom: 6px;
+      font-family: 'Libre Baskerville', serif; font-size: 14px; font-weight: 400;
+      color: var(--navy); margin-bottom: 4px;
     }
     .see-inside-caption p {
-      font-size: 13.5px; color: var(--muted); line-height: 1.6; font-weight: 300;
+      font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300;
     }
+    .see-inside-card-featured { margin-bottom: 20px; }
+    .see-inside-card-featured .see-inside-caption { padding: 20px 24px; }
+    .see-inside-card-featured .see-inside-caption h3 { font-size: 16px; }
+    .see-inside-thumbs {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+    }
+    .see-inside-thumbs .see-inside-card img { border-bottom: none; }
+    .see-inside-thumbs .see-inside-caption { padding: 10px 12px; }
+    .see-inside-thumbs .see-inside-caption h3 { font-size: 12px; margin-bottom: 0; }
 
     /* ── How it Works — Full Bleed ── */
     .how-section {
@@ -693,6 +702,9 @@
       .transitions-grid { grid-template-columns: repeat(2, 1fr); }
       .products-grid { grid-template-columns: repeat(2, 1fr); }
       .checklist-layout { grid-template-columns: 1fr; }
+      .see-inside-split { grid-template-columns: 1fr; }
+      .see-inside-right { order: -1; }
+      .see-inside-thumbs { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 768px) {
       nav { padding: 14px 20px; }
@@ -797,15 +809,18 @@
   <!-- ═══ Hero ═══ -->
   <section class="hero">
     <div class="hero-content">
-      <div class="hero-eyebrow reveal">
-        <span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-        Now in Early Access
-      </div>
       <h1 class="hero-title reveal">When life changes,<br><em>find your way<br>through.</em></h1>
-      <p class="hero-subtitle reveal">Lumeway walks you through life's hardest transitions &mdash; from knowing what to do first, to generating the letters you need to send, to tracking every deadline and phone call along the way.</p>
-      <div class="hero-actions reveal" style="margin-top:36px;">
+      <p class="hero-subtitle reveal">Lumeway guides you through life's hardest transitions &mdash; from paperwork and deadlines to knowing who to call and what to do first.</p>
+      <ul class="hero-list reveal">
+        <li>Know what to do first &mdash; and in what order</li>
+        <li>Personalized to your state and situation</li>
+        <li>Tracks everything so nothing falls through the cracks</li>
+        <li>All in one dashboard &mdash; your own command center</li>
+      </ul>
+      <div class="hero-actions reveal">
         <a href="/chat" target="_blank" class="btn-large btn-large-primary">Tell us what you're going through &rarr;</a>
       </div>
+      <a href="#transitions" class="hero-help-now reveal" style="display:inline-block;margin-top:16px;font-size:14px;font-weight:500;color:var(--terracotta);text-decoration:none;padding:8px 0;transition:opacity 0.2s;">I need help right now &rarr;</a>
     </div>
     <div class="hero-image">
       <img src="/static/images/heroimage.jpg" alt="Planners and journal on a marble desk with coffee and rose gold pen" />
@@ -813,14 +828,13 @@
   </section>
 
   <!-- ═══ Transitions ═══ -->
-  <section class="transitions-section">
+  <section class="transitions-section" id="transitions">
     <div class="transitions-header reveal">
       <div>
         <div class="section-label">Who we help</div>
         <h2 class="section-title">Every major life transition,<br><em>handled with care</em></h2>
         <p style="font-size:16px;color:var(--muted);font-weight:300;line-height:1.7;max-width:640px;margin-top:16px;">We've gathered state-specific resources, timelines, and step-by-step guides for each transition. Learn more about what you're going through — and let Lumeway walk you through it.</p>
       </div>
-      <a href="/templates" class="browse-link">Browse all guides &rarr;</a>
     </div>
     <div class="transitions-grid reveal-stagger">
       <a href="/estate" class="transition-card card-blush reveal">
@@ -877,7 +891,7 @@
             <div class="checklist-feature-icon"><span style="font-family:'Libre Baskerville',serif;font-size:16px;font-weight:700;color:var(--terracotta);">2</span></div>
             <div>
               <div class="checklist-feature-title">Your dashboard populates automatically</div>
-              <p class="checklist-feature-desc">34 tasks appear on your checklist, organized by urgency. A calendar shows every deadline — 60 days for COBRA, 6 months for survivor benefits, 9 months for estate tax. Your next step: obtain certified death certificates.</p>
+              <p class="checklist-feature-desc">34 tasks appear on your checklist, organized by urgency. A calendar shows every deadline — 30 days for bank notifications, 6 months for survivor benefits, 9 months for estate tax. Your next step: obtain certified death certificates.</p>
             </div>
           </div>
           <div class="checklist-feature reveal">
@@ -901,41 +915,60 @@
         </div>
       </div>
 
-      <!-- Right: interactive checklist card -->
-      <div class="checklist-right">
-        <div class="checklist-tabs reveal">
-          <button class="checklist-tab active" onclick="showChecklist('jobloss')">Job Loss</button>
-          <button class="checklist-tab" onclick="showChecklist('estate')">Death &amp; Estate</button>
-          <button class="checklist-tab" onclick="showChecklist('relocation')">Moving</button>
-        </div>
-        <div class="checklist-card reveal" id="checklistCard">
-          <div class="checklist-card-header">
-            <div class="checklist-card-title-area">
-              <span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-              <div>
-                <div class="checklist-card-name" id="checklistName">Job Loss Checklist</div>
-                <div class="checklist-card-sub">Lumeway &middot; Step-by-step guide</div>
-              </div>
-            </div>
-            <div class="checklist-card-count">
-              <div class="checklist-card-count-num" id="checklistCount">0/6</div>
-              <div class="checklist-card-count-label">completed</div>
-            </div>
-          </div>
-          <div id="checklistItems">
-            <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">File for unemployment benefits</span></div><span class="checklist-tag tag-urgent">Urgent — within 7 days</span></div>
-            <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Notify your health insurance provider</span></div><span class="checklist-tag tag-soon">Within 30 days</span></div>
-            <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Update your resume and LinkedIn profile</span></div><span class="checklist-tag tag-info">This week</span></div>
-            <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Review your severance agreement</span></div><span class="checklist-tag tag-urgent">Before signing</span></div>
-            <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Set up a job search tracking system</span></div><span class="checklist-tag tag-info">Organize</span></div>
-            <div class="checklist-item"><div class="checklist-item-left"><div class="checklist-circle"></div><span class="checklist-item-text">Explore COBRA or marketplace health plans</span></div><span class="checklist-tag tag-soon">Benefits</span></div>
-          </div>
-          <div class="checklist-footer">
-            <span class="checklist-footer-note"><span class="sun-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span> Organized for your transition</span>
-            <a href="/chat" target="_blank" class="checklist-footer-btn">Get my checklist &rarr;</a>
+      <!-- Right: chat screenshot -->
+      <div class="checklist-right reveal">
+        <video autoplay loop muted playsinline style="width:100%;max-width:520px;border-radius:20px;box-shadow:0 8px 40px rgba(27,58,92,0.12);">
+          <source src="/static/web-designs/chatclip960.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ See Inside the Dashboard ═══ -->
+  <section class="see-inside-section">
+    <div class="see-inside-split">
+      <!-- Left: checklist example + dashboard screenshots -->
+      <div class="see-inside-left reveal-stagger">
+        <div class="see-inside-card see-inside-card-featured reveal">
+          <img src="/static/images/features/dashboard-checklist.png" alt="Lumeway checklist with tasks organized by urgency" loading="lazy" />
+          <div class="see-inside-caption">
+            <h3>Your personalized checklist</h3>
+            <p>Every task organized by urgency — today, this week, this month.</p>
           </div>
         </div>
-        <p class="checklist-bottom-note reveal">Available as a printable worksheet or Google Doc. &nbsp;<a href="/templates">Browse worksheets &rarr;</a></p>
+        <div class="see-inside-thumbs">
+          <div class="see-inside-card reveal">
+            <img src="/static/images/features/dashboard-overview.png" alt="Lumeway dashboard overview" loading="lazy" />
+            <div class="see-inside-caption">
+              <h3>Dashboard overview</h3>
+            </div>
+          </div>
+          <div class="see-inside-card reveal">
+            <img src="/static/images/features/dashboard-guides.png" alt="Lumeway step-by-step guide tab" loading="lazy" />
+            <div class="see-inside-caption">
+              <h3>Guides tab</h3>
+            </div>
+          </div>
+          <div class="see-inside-card reveal">
+            <img src="/static/images/features/dashboard-documents.png" alt="Lumeway files and documents tab" loading="lazy" />
+            <div class="see-inside-caption">
+              <h3>Files tab</h3>
+            </div>
+          </div>
+          <div class="see-inside-card reveal">
+            <img src="/static/images/features/dashboard-calendar.png" alt="Lumeway calendar with auto-calculated deadlines" loading="lazy" />
+            <div class="see-inside-caption">
+              <h3>Calendar</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Right: header -->
+      <div class="see-inside-right">
+        <div class="section-label reveal">See inside</div>
+        <h2 class="section-title reveal">What you get <em>inside Lumeway</em></h2>
+        <p class="products-subtitle reveal" style="text-align:left;">The dashboard is the product — and it does a lot more than you'd expect. Here's what's waiting for you.</p>
+        <a href="/features" class="btn-large btn-large-secondary reveal" style="margin-top:28px;">See all features &rarr;</a>
       </div>
     </div>
   </section>
@@ -972,59 +1005,6 @@
               <p class="friend-feature-desc">We guide you as far as we can, and clearly highlight the specific moments you need an attorney, CPA, or therapist.</p>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ See Inside the Dashboard ═══ -->
-  <section class="see-inside-section">
-    <div class="see-inside-header">
-      <div class="section-label reveal">See inside</div>
-      <h2 class="section-title reveal">What you get <em>inside Lumeway</em></h2>
-      <p class="products-subtitle reveal">The dashboard is the product — and it does a lot more than you'd expect. Here's what's waiting for you.</p>
-    </div>
-    <div class="see-inside-grid reveal-stagger">
-      <div class="see-inside-card reveal">
-        <img src="/static/images/features/dashboard-overview.png" alt="Lumeway command center showing next step card and progress ring" loading="lazy" />
-        <div class="see-inside-caption">
-          <h3>Your command center</h3>
-          <p>Your next step, upcoming deadlines, and quick links — all in one view.</p>
-        </div>
-      </div>
-      <div class="see-inside-card reveal">
-        <img src="/static/images/features/dashboard-guides.png" alt="Lumeway step-by-step guide" loading="lazy" />
-        <div class="see-inside-caption">
-          <h3>Step-by-step guides</h3>
-          <p>Every task broken down — who to contact, what to send, and what to do next.</p>
-        </div>
-      </div>
-      <div class="see-inside-card reveal">
-        <img src="/static/images/features/dashboard-letter.png" alt="Lumeway letter generation from worksheet" loading="lazy" />
-        <div class="see-inside-caption">
-          <h3>Letter generation</h3>
-          <p>Fill in the worksheet. We'll generate the letter — ready to sign and send.</p>
-        </div>
-      </div>
-      <div class="see-inside-card reveal">
-        <img src="/static/images/features/dashboard-calendar.png" alt="Lumeway calendar with auto-calculated deadlines" loading="lazy" />
-        <div class="see-inside-caption">
-          <h3>Auto-calculated deadlines</h3>
-          <p>Every deadline for your situation — calculated automatically from a single date.</p>
-        </div>
-      </div>
-      <div class="see-inside-card reveal">
-        <img src="/static/images/features/dashboard-navigator.png" alt="Lumeway Navigator conversation with document sidebar" loading="lazy" />
-        <div class="see-inside-caption">
-          <h3>The Lumeway Navigator</h3>
-          <p>Ask anything about your situation. The Navigator suggests the right documents as you talk.</p>
-        </div>
-      </div>
-      <div class="see-inside-card reveal">
-        <img src="/static/images/features/mobile-app-preview.png" alt="Lumeway mobile app on iPhone" loading="lazy" />
-        <div class="see-inside-caption">
-          <h3>Take it with you</h3>
-          <p>Access your dashboard, checklists, and Navigator on your phone — so you have guidance when you need it most.</p>
         </div>
       </div>
     </div>
