@@ -1402,7 +1402,8 @@ conversation_log.init_db()
 
 # ── Auth helpers ──
 
-VALID_CATEGORIES = ["job-loss", "estate", "divorce", "disability", "relocation", "retirement", "addiction"]
+VALID_CATEGORIES = ["job-loss", "estate", "divorce", "disability", "relocation", "retirement"]
+# "addiction" hidden until launch — content preserved in CATEGORY_LABELS, PRODUCTS, PASS_PRODUCTS, dashboard guide library
 CATEGORY_LABELS = {
     "job-loss": "Job Loss & Income Crisis",
     "estate": "Death & Estate",
@@ -1426,7 +1427,7 @@ REDEMPTION_CODES = {
     "LUMEWAY-DISABILITY6": {"category": "disability", "credit_cents": 1600},
     "LUMEWAY-RELOCATION4": {"category": "relocation", "credit_cents": 1600},
     "LUMEWAY-RETIREMENT3": {"category": "retirement", "credit_cents": 1600},
-    "LUMEWAY-ADDICTION7": {"category": "addiction", "credit_cents": 1600},
+    # "LUMEWAY-ADDICTION7": {"category": "addiction", "credit_cents": 1600},  # hidden until launch
     "LUMEWAY-LIFE1": {"category": "master", "credit_cents": 6500},
 }
 
@@ -2345,9 +2346,10 @@ def disability():
 def retirement():
     return inject_related_posts("retirement.html", TRANSITION_CATEGORIES["retirement"])
 
-@app.route("/addiction")
-def addiction():
-    return inject_related_posts("addiction.html", TRANSITION_CATEGORIES["addiction"])
+# Hidden until launch — addiction.html preserved
+# @app.route("/addiction")
+# def addiction():
+#     return inject_related_posts("addiction.html", TRANSITION_CATEGORIES["addiction"])
 
 @app.route("/research")
 def research():
@@ -2755,7 +2757,7 @@ def preload_bundle_templates(user_id, category):
 def create_checkout():
     data = request.get_json()
     product_id = data.get("product_id")
-    if product_id not in PRODUCTS:
+    if product_id not in PRODUCTS or product_id == "addiction":
         return jsonify({"error": "Invalid product"}), 400
     product = PRODUCTS[product_id]
     try:
@@ -2788,7 +2790,7 @@ def create_pass_checkout():
         return jsonify({"error": "Not logged in"}), 401
     data = request.get_json()
     pass_id = data.get("pass_id")
-    if pass_id not in PASS_PRODUCTS:
+    if pass_id not in PASS_PRODUCTS or pass_id == "pass-addiction":
         return jsonify({"error": "Invalid pass"}), 400
     product = PASS_PRODUCTS[pass_id]
     try:
@@ -5380,7 +5382,7 @@ def templates():
 
 @app.route("/templates/<product_id>")
 def template_detail(product_id):
-    if product_id not in PRODUCTS:
+    if product_id not in PRODUCTS or product_id == "addiction":
         return redirect("/templates")
     p = PRODUCTS[product_id]
     price_display = f"${p['price'] // 100}" if p['price'] % 100 == 0 else f"${p['price'] / 100:.2f}"
