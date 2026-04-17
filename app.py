@@ -2261,10 +2261,6 @@ def home():
 def chat_page():
     return send_from_directory(".", "index.html")
 
-@app.route("/emergency-kit")
-def emergency_kit():
-    return send_from_directory(".", "emergency-kit.html")
-
 @app.route("/static/logos/<filename>")
 def logo_file(filename):
     return send_from_directory("logos", filename)
@@ -5615,7 +5611,6 @@ def sitemap_xml():
         ("https://lumeway.co/templates", "weekly", "0.8"),
         ("https://lumeway.co/faq", "monthly", "0.6"),
         ("https://lumeway.co/contact", "monthly", "0.6"),
-        ("https://lumeway.co/emergency-kit", "monthly", "0.8"),
         ("https://lumeway.co/privacy", "monthly", "0.3"),
         ("https://lumeway.co/terms", "monthly", "0.3"),
     ]
@@ -6001,7 +5996,7 @@ BLOG_POST_TEMPLATE = """<!DOCTYPE html>
       <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:24px">{{ cta.features }}</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
         <a href="/login" style="display:inline-block;padding:13px 28px;background:var(--accent);color:white;border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.2s">Start free — get your personalized {{ cta.label }} dashboard</a>
-        <a href="/chat" target="_blank" style="display:inline-block;padding:13px 28px;border:1.5px solid var(--accent);color:var(--accent);border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.2s">Talk to the Navigator — no signup required</a>
+        <a href="/chat" target="_blank" style="display:inline-block;padding:13px 28px;border:1.5px solid var(--accent);color:var(--accent);border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.2s">Talk to the Navigator — it's free</a>
       </div>
       <p style="font-size:12px;color:var(--muted);margin-top:8px">Prefer individual worksheets? <a href="/templates" style="color:var(--muted);text-decoration:underline">Browse the shop</a></p>
     </div>

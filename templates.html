@@ -550,19 +550,6 @@
     </div>
   </section>
 
-  <div class="section-free" id="emergency-kit" style="background:var(--warm-white);padding:48px 5%;">
-    <div style="max-width:600px;margin:0 auto;text-align:center;">
-      <span class="free-badge">Free Download</span>
-      <h2 class="section-title" style="margin-bottom:12px;">Life Transition Emergency Kit</h2>
-      <p class="section-subtitle" style="max-width:520px;margin:0 auto 24px;">A starter guide for anyone navigating a major life change. Enter your email to download instantly.</p>
-      <form id="kit-form" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;max-width:420px;margin:0 auto;">
-        <input type="email" id="kit-email" placeholder="Your email" required style="flex:1;min-width:200px;padding:10px 16px;border:1px solid var(--border);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;" />
-        <button type="submit" class="btn-buy" style="padding:10px 24px;">Download free</button>
-      </form>
-      <p id="kit-msg" style="display:none;margin-top:12px;font-size:13px;color:#2d6a4f;"></p>
-    </div>
-  </div>
-
   <div class="trust-bar reveal">
     <div class="trust-item"><span class="trust-icon">✓</span> Professionally designed formats</div>
     <div class="trust-item"><span class="trust-icon">✓</span> Plain language</div>
@@ -651,30 +638,6 @@
       });
     }
 
-    // Emergency Kit download
-    document.getElementById('kit-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      var email = document.getElementById('kit-email').value;
-      var msg = document.getElementById('kit-msg');
-      fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, source: 'emergency-kit' })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        msg.style.display = 'block';
-        msg.textContent = 'Thanks! Browse our free and premium worksheets below.';
-        msg.style.color = '#2d6a4f';
-        document.getElementById('kit-email').value = '';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      })
-      .catch(function() {
-        msg.style.display = 'block';
-        msg.textContent = 'Something went wrong. Please try again.';
-        msg.style.color = '#c0392b';
-      });
-    });
 
     // Tier carousel — one slide at a time, auto-scroll
     (function() {
