@@ -92,7 +92,17 @@
       font-size: 14px;
       color: #9a8b7e;
       font-style: italic;
-      margin-bottom: 40px;
+      margin-bottom: 8px;
+    }
+    .author-byline { font-size: 14px; color: #9a8b7e; margin-bottom: 40px; font-weight: 400; }
+    .author-byline::first-letter {
+      font-size: inherit !important;
+      float: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: inherit !important;
+      initial-letter: normal !important;
+      -webkit-initial-letter: normal !important;
     }
 
     h2 {
@@ -173,15 +183,26 @@
       margin-bottom: 16px;
       font-size: 14px;
     }
+
+    ul { list-style: none !important; margin: 12px 0 18px 0; padding: 0; }
+    ul li { margin-bottom: 8px; color: #5c4d43; line-height: 1.7; padding-left: 28px !important; position: relative !important; }
+    ul li::before {
+      content: '' !important;
+      position: absolute !important;
+      left: 0;
+      top: 7px;
+      width: 14px !important;
+      height: 14px !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b3a5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E") !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
+    }
   </style>
 </head>
 <body>
   <nav>
     <div class="nav-inner">
-      <a href="/" class="nav-logo">
-        <span class="sun-icon nav-sun"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-        <span class="nav-logo-text">Lumeway</span>
-      </a>
+      <a href="https://lumeway.co" class="nav-brand">Lumeway</a>
       <div class="nav-links">
         <a href="https://lumeway.co/job-loss">Job Loss</a>
         <a href="https://lumeway.co/divorce">Divorce</a>
@@ -198,32 +219,33 @@
     <div class="category-tag">Job Loss</div>
     <h1>How to File for Unemployment Benefits Step by Step</h1>
     <p class="publish-date">April 5, 2026</p>
+    <div class="author-byline" style="font-size:14px;color:#9a8b7e;margin-bottom:40px;font-weight:400;display:block;">By Daniel G</div>
 
-    <p>You lost your job. You know you should file for unemployment. But the state website is confusing, the instructions assume you already know how it works, and you&rsquo;re not sure what counts as &ldquo;eligible.&rdquo;</p>
+    <p>You lost your job. You know you should file for unemployment. But the state website is confusing, the instructions assume you already know how it works, and you&rsquo;re not sure what counts as &ldquo;eligible.&rdquo;</div>
 
     <p>Here&rsquo;s a clear walkthrough of what the process actually looks like &mdash; from start to first payment.</p>
 
     <h2>Before you file: what to gather</h2>
 
-    <p>Most state unemployment offices ask for the same core information. Having it ready before you start the application saves time and avoids getting stuck halfway through.</p>
+    <p>Most state unemployment offices ask for the same core information. Having it ready before you start the application saves time and avoids getting stuck halfway through.</div>
 
-    <p><strong>You&rsquo;ll typically need:</strong> your Social Security number, driver&rsquo;s license or state ID, your most recent employer&rsquo;s name, address, and phone number, your dates of employment, the reason you were separated (layoff, reduction in force, termination without cause), and any severance or vacation payout details.</p>
+    <p><strong>You&rsquo;ll typically need:</strong> your Social Security number, driver&rsquo;s license or state ID, your most recent employer&rsquo;s name, address, and phone number, your dates of employment, the reason you were separated (layoff, reduction in force, termination without cause), and any severance or vacation payout details.</div>
 
     <p>If you worked for more than one employer in the past 18 months, gather that information for each one. Most states look at your base period earnings &mdash; typically the earliest four of the last five completed calendar quarters &mdash; to calculate your benefit amount.</p>
 
     <h2>How to file</h2>
 
-    <p>In most states, you file through your state&rsquo;s unemployment insurance website. Search for &ldquo;[your state] unemployment insurance file a claim&rdquo; to find the right portal. Some states also allow filing by phone.</p>
+    <p>In most states, you file through your state&rsquo;s unemployment insurance website. Search for &ldquo;[your state] unemployment insurance file a claim&rdquo; to find the right portal. Some states also allow filing by phone.</div>
 
-    <p>The application itself usually takes 30 to 45 minutes. You&rsquo;ll answer questions about your employment history, the reason for separation, and whether you&rsquo;re able and available to work. Answer honestly &mdash; your former employer will be contacted to verify the information, and discrepancies can delay your claim.</p>
+    <p>The application itself usually takes 30 to 45 minutes. You&rsquo;ll answer questions about your employment history, the reason for separation, and whether you&rsquo;re able and available to work. Answer honestly &mdash; your former employer will be contacted to verify the information, and discrepancies can delay your claim.</div>
 
     <p><strong>File as soon as possible.</strong> Most states have a one-week waiting period before benefits begin, and that clock doesn&rsquo;t start until you file. Waiting costs you money.</p>
 
     <h2>What happens after you file</h2>
 
-    <p>Your state reviews the claim and contacts your former employer. This process typically takes two to three weeks, though some states take longer. You may receive a determination letter in the mail or through the online portal.</p>
+    <p>Your state reviews the claim and contacts your former employer. This process typically takes two to three weeks, though some states take longer. You may receive a determination letter in the mail or through the online portal.</div>
 
-    <p>While you wait, most states require you to certify each week that you&rsquo;re still unemployed and actively searching for work. Missing a weekly certification can pause or cancel your benefits &mdash; even if your claim has been approved. Set a recurring reminder so you don&rsquo;t miss it.</p>
+    <p>While you wait, most states require you to certify each week that you&rsquo;re still unemployed and actively searching for work. Missing a weekly certification can pause or cancel your benefits &mdash; even if your claim has been approved. Set a recurring reminder so you don&rsquo;t miss it.</div>
 
     <p>If your claim is denied, you have the right to appeal. The denial letter will include instructions and a deadline &mdash; usually 10 to 30 days depending on your state. Many initial denials are overturned on appeal when the claimant provides additional documentation.</p>
 
@@ -232,7 +254,7 @@
     <p>Quitting voluntarily without good cause, being fired for misconduct, not earning enough during the base period, or not being available for work. If your situation is more complicated &mdash; say you were pushed to resign or your hours were reduced to zero &mdash; file anyway. The determination process exists to sort out gray areas.</p>
 
     <div class="cta-block">
-      <p>Lumeway&rsquo;s <strong>First 24 Hours Guide: Losing Your Job</strong> walks you through the most time-sensitive steps after a layoff &mdash; including when and how to file. If your claim gets denied, the <strong>Unemployment Appeal &mdash; Information Organizer</strong> helps you gather everything you need for the appeal. Both are in the <a href="/templates">Job Loss &amp; Income Crisis bundle</a>.</p>
+      <p>Lumeway&rsquo;s <strong>First 24 Hours Guide: Losing Your Job</strong> walks you through the most time-sensitive steps after a layoff &mdash; including when and how to file. If your claim gets denied, the <strong>Unemployment Appeal &mdash; Information Organizer</strong> helps you gather everything you need for the appeal. Both are available at <a href="https://lumeway.co/templates">lumeway.co/templates</a>.</p>
     </div>
 
     <p class="closing">The process is bureaucratic. But it&rsquo;s money you earned. File today.</p>

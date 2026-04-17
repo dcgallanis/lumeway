@@ -95,6 +95,16 @@
       font-style: italic;
       margin-bottom: 36px;
     }
+    .author-byline { font-size: 14px; color: #9a8b7e; margin-bottom: 40px; font-weight: 400; }
+    .author-byline::first-letter {
+      font-size: inherit !important;
+      float: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: inherit !important;
+      initial-letter: normal !important;
+      -webkit-initial-letter: normal !important;
+    }
 
     article p {
       margin-bottom: 18px;
@@ -201,10 +211,6 @@
       margin-bottom: 16px;
     }
 
-    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-
     @media (max-width: 600px) {
       h1 { font-size: 28px; }
       article h2 { font-size: 22px; }
@@ -212,16 +218,27 @@
       .nav-links { gap: 16px; }
       .nav-links a { font-size: 13px; }
     }
+
+    ul { list-style: none !important; margin: 12px 0 18px 0; padding: 0; }
+    ul li { margin-bottom: 8px; color: #5c4d43; line-height: 1.7; padding-left: 28px !important; position: relative !important; }
+    ul li::before {
+      content: '' !important;
+      position: absolute !important;
+      left: 0;
+      top: 7px;
+      width: 14px !important;
+      height: 14px !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b3a5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E") !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
+    }
   </style>
 </head>
 <body>
 
   <nav>
     <div class="nav-inner">
-      <a href="/" class="nav-logo">
-        <span class="sun-icon nav-sun"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-        <span class="nav-logo-text">Lumeway</span>
-      </a>
+      <a href="https://lumeway.co" class="nav-logo">LUMEWAY</a>
       <div class="nav-links">
         <a href="https://lumeway.co/job-loss">Job Loss</a>
         <a href="https://lumeway.co/divorce">Divorce</a>
@@ -235,22 +252,23 @@
   </nav>
 
   <main>
-    <span class="category-tag reveal">JOB LOSS</span>
-    <h1 class="reveal">Lost Your Job? Don't Touch Your 401(k) Until You Read This</h1>
-    <p class="publish-date reveal">March 26, 2026</p>
+    <span class="category-tag">JOB LOSS</span>
+    <h1>Lost Your Job? Don't Touch Your 401(k) Until You Read This</h1>
+    <p class="publish-date">March 26, 2026</p>
+    <div class="author-byline" style="font-size:14px;color:#9a8b7e;margin-bottom:40px;font-weight:400;display:block;">By Daniel G</div>
 
     <article>
       <p>You just lost your job. Bills are piling up. And sitting in your old employer's retirement account is a chunk of money that suddenly looks like a lifeline.</p>
 
       <p>Before you cash it out, stop. That decision could cost you thousands — and it's one you can't undo.</p>
 
-      <h2 class="reveal">The Penalty Most People Don't Think About</h2>
+      <h2>The Penalty Most People Don't Think About</h2>
 
       <p>If you withdraw from your 401(k) before age 59&frac12;, you'll typically owe a 10% early withdrawal penalty on top of federal and state income taxes. For a $50,000 withdrawal, that can mean losing $15,000 or more before the money even hits your bank account.</p>
 
       <p>The IRS doesn't care that you lost your job. The penalty applies regardless of your reason for withdrawing — with a few narrow exceptions.</p>
 
-      <h2 class="reveal">Your Four Options — Ranked</h2>
+      <h2>Your Four Options — Ranked</h2>
 
       <p>When you leave a job, you generally have four choices for your 401(k). Here's how most financial professionals rank them, from best to worst:</p>
 
@@ -262,7 +280,7 @@
 
       <p><strong>4. Cash it out.</strong> This is almost always the worst option. You'll lose a significant portion to taxes and penalties, and you'll be starting over on retirement savings at the worst possible time.</p>
 
-      <h2 class="reveal">The "Direct Rollover" Detail That Matters</h2>
+      <h2>The "Direct Rollover" Detail That Matters</h2>
 
       <p>If you decide to roll your 401(k) into an IRA, make sure it's a direct rollover — also called a trustee-to-trustee transfer. Your former employer sends the money directly to your new IRA provider.</p>
 
@@ -270,19 +288,19 @@
 
       <p>That 60-day clock is unforgiving.</p>
 
-      <h2 class="reveal">When Cashing Out Might Make Sense</h2>
+      <h2>When Cashing Out Might Make Sense</h2>
 
       <p>There are rare situations where accessing retirement funds early is the least bad option — like preventing eviction or keeping the lights on when every other avenue is exhausted. But even then, it's worth exploring alternatives first: emergency funds, hardship provisions in your plan, or a short-term personal loan.</p>
 
       <p>If you're considering it, talk to a financial professional before making the call. The math matters, and it's different for everyone.</p>
 
-      <h2 class="reveal">One Step You Can Take Today</h2>
+      <h2>One Step You Can Take Today</h2>
 
       <p>Before you do anything with your 401(k), find out what's in it. Log into your account, note the balance, and check whether your former employer's plan charges any fees. That information alone puts you in a better position to decide.</p>
 
       <div class="template-callout">
         <p>Lumeway's <strong>401(k) Rollover Request Letter</strong> helps you organize the details you'll need — account numbers, provider contacts, rollover instructions — so you're prepared when you're ready to move forward. It's a step-by-step planning worksheet, not financial advice.</p>
-        <p>Grab it as part of the <a href="/templates">Job Loss &amp; Income Crisis bundle</a>.</p>
+        <p>Available at <a href="https://lumeway.co/templates">lumeway.co/templates</a>.</p>
       </div>
 
       <div class="cta-block">
@@ -292,21 +310,20 @@
 
       <div class="separator">———</div>
 
-      <p class="disclaimer reveal">Disclaimer: This article is for general informational purposes only and does not constitute legal, financial, or tax advice. Consult a qualified professional for guidance specific to your situation. Lumeway products are organizational tools designed to help you prepare — not legal documents or substitutes for professional advice.</p>
+      <p class="disclaimer">Disclaimer: This article is for general informational purposes only and does not constitute legal, financial, or tax advice. Consult a qualified professional for guidance specific to your situation. Lumeway products are organizational tools designed to help you prepare — not legal documents or substitutes for professional advice.</p>
     </article>
   </main>
 
   <footer>
-    <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-brand" style="height:80px;object-fit:contain">
+    <div class="footer-brand">LUMEWAY</div>
     <div class="footer-tagline">When life changes, find your way through.</div>
     <p>
       <a href="https://lumeway.co">lumeway.co</a> &nbsp;|&nbsp;
       <a href="mailto:hello@lumeway.co">hello@lumeway.co</a> &nbsp;|&nbsp;
-      <a href="/templates">Template Shop</a>
+      <a href="https://lumeway.co/templates">Shop</a>
     </p>
     <p style="margin-top: 12px; font-size: 12px; color: #8d7768;">&copy; 2026 Lumeway. All rights reserved.</p>
   </footer>
 
-<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

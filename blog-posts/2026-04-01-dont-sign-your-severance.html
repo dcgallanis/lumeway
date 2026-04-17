@@ -92,7 +92,17 @@
       font-size: 14px;
       color: #9a8b7e;
       font-style: italic;
-      margin-bottom: 40px;
+      margin-bottom: 8px;
+    }
+    .author-byline { font-size: 14px; color: #9a8b7e; margin-bottom: 40px; font-weight: 400; }
+    .author-byline::first-letter {
+      font-size: inherit !important;
+      float: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: inherit !important;
+      initial-letter: normal !important;
+      -webkit-initial-letter: normal !important;
     }
 
     h2 {
@@ -109,13 +119,19 @@
       color: #5c4d43;
     }
 
-    ul {
-      margin: 12px 0 18px 24px;
-      padding: 0;
-    }
-    ul li {
-      margin-bottom: 8px;
-      padding-left: 4px;
+
+    ul { list-style: none !important; margin: 12px 0 18px 0; padding: 0; }
+    ul li { margin-bottom: 8px; color: #5c4d43; line-height: 1.7; padding-left: 28px !important; position: relative !important; }
+    ul li::before {
+      content: '' !important;
+      position: absolute !important;
+      left: 0;
+      top: 7px;
+      width: 14px !important;
+      height: 14px !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b3a5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E") !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
     }
     ul li::marker { color: #b8a192; }
 
@@ -188,10 +204,7 @@
 <body>
   <nav>
     <div class="nav-inner">
-      <a href="/" class="nav-logo">
-        <span class="sun-icon nav-sun"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-        <span class="nav-logo-text">Lumeway</span>
-      </a>
+      <a href="https://lumeway.co" class="nav-brand">Lumeway</a>
       <div class="nav-links">
         <a href="https://lumeway.co/job-loss">Job Loss</a>
         <a href="https://lumeway.co/divorce">Divorce</a>
@@ -208,26 +221,27 @@
     <div class="category-tag">Job Loss</div>
     <h1>Don't Sign Your Severance Until You Read This</h1>
     <p class="publish-date">April 1, 2026</p>
+    <div class="author-byline" style="font-size:14px;color:#9a8b7e;margin-bottom:40px;font-weight:400;display:block;">By Daniel G</div>
 
-    <p>You just got handed a severance agreement. There's a dollar amount, a signature line, and a deadline. Your former employer is waiting.</p>
+    <p>You just got handed a severance agreement. There's a dollar amount, a signature line, and a deadline. Your former employer is waiting.</div>
 
-    <p>Before you sign anything, slow down.</p>
+    <p>Before you sign anything, slow down.</div>
 
     <p>Severance agreements are negotiable. Most people don't know that. The document sitting in front of you is a starting offer &mdash; not a final answer.</p>
 
     <h2>What a severance agreement typically includes</h2>
 
-    <p>Most severance packages contain a few standard elements: a lump sum or continued salary payments, details about health insurance continuation, a non-compete or non-solicitation clause, a release of claims, and a deadline to sign.</p>
+    <p>Most severance packages contain a few standard elements: a lump sum or continued salary payments, details about health insurance continuation, a non-compete or non-solicitation clause, a release of claims, and a deadline to sign.</div>
 
     <p>That deadline is usually 21 days for workers under 40, and 21 to 45 days for workers over 40 under the Older Workers Benefit Protection Act. It exists to give you time to review the terms, ask questions, and consult a professional. Use every day of it.</p>
 
     <h2>What to look at before signing</h2>
 
-    <p>Start with the payout. Is it based on your tenure, your salary, or a flat amount? In many cases, companies have room to offer more &mdash; especially if the separation wasn't performance-related.</p>
+    <p>Start with the payout. Is it based on your tenure, your salary, or a flat amount? In many cases, companies have room to offer more &mdash; especially if the separation wasn't performance-related.</div>
 
-    <p>Check whether your health insurance will continue. Some agreements include COBRA coverage for a set period. If yours doesn't, that's a negotiation point. COBRA premiums can run $600 or more per month for individual coverage, so even a few months of employer-paid COBRA can save you thousands.</p>
+    <p>Check whether your health insurance will continue. Some agreements include COBRA coverage for a set period. If yours doesn't, that's a negotiation point. COBRA premiums can run $600 or more per month for individual coverage, so even a few months of employer-paid COBRA can save you thousands.</div>
 
-    <p>Look at any non-compete or non-solicitation language. Some clauses are overly broad &mdash; restricting where you can work or who you can contact for months or years. Know what you're agreeing to before you sign.</p>
+    <p>Look at any non-compete or non-solicitation language. Some clauses are overly broad &mdash; restricting where you can work or who you can contact for months or years. Know what you're agreeing to before you sign.</div>
 
     <p>Review the release of claims. By signing, you're typically giving up your right to take legal action against your employer. That's a significant concession, and it should come with fair compensation.</p>
 
@@ -252,7 +266,7 @@
     <p>If your severance involves a non-compete, a release of claims, or a payout tied to complex equity, an employment attorney can review the agreement &mdash; often for a flat fee. It's worth the investment when the stakes are high.</p>
 
     <div class="cta-block">
-      <p>For organizing your response, Lumeway's <strong>Severance Response Letter</strong> worksheet walks you through the key terms to review and helps you draft a professional reply. If you're considering a counter-offer, the <strong>Severance Counter-Offer Letter</strong> worksheet helps you structure your ask clearly. Both are available in the <a href="/templates">Job Loss &amp; Income Crisis bundle</a> &mdash; instant download, works in Google Docs.</p>
+      <p>For organizing your response, Lumeway's <strong>Severance Response Letter</strong> worksheet walks you through the key terms to review and helps you draft a professional reply. If you're considering a counter-offer, the <strong>Severance Counter-Offer Letter</strong> worksheet helps you structure your ask clearly. Both are available at <a href="https://lumeway.co/templates">lumeway.co/templates</a> &mdash; instant download, works in Google Docs.</p>
     </div>
 
     <p class="closing">You earned this severance. Take the time to understand what's being offered &mdash; and what you can ask for.</p>

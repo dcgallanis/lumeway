@@ -92,7 +92,17 @@
       font-size: 14px;
       color: #9a8b7e;
       font-style: italic;
-      margin-bottom: 40px;
+      margin-bottom: 8px;
+    }
+    .author-byline { font-size: 14px; color: #9a8b7e; margin-bottom: 40px; font-weight: 400; }
+    .author-byline::first-letter {
+      font-size: inherit !important;
+      float: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: inherit !important;
+      initial-letter: normal !important;
+      -webkit-initial-letter: normal !important;
     }
 
     h2 {
@@ -173,15 +183,26 @@
       margin-bottom: 16px;
       font-size: 14px;
     }
+
+    ul { list-style: none !important; margin: 12px 0 18px 0; padding: 0; }
+    ul li { margin-bottom: 8px; color: #5c4d43; line-height: 1.7; padding-left: 28px !important; position: relative !important; }
+    ul li::before {
+      content: '' !important;
+      position: absolute !important;
+      left: 0;
+      top: 7px;
+      width: 14px !important;
+      height: 14px !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b3a5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E") !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
+    }
   </style>
 </head>
 <body>
   <nav>
     <div class="nav-inner">
-      <a href="/" class="nav-logo">
-        <span class="sun-icon nav-sun"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-        <span class="nav-logo-text">Lumeway</span>
-      </a>
+      <a href="https://lumeway.co" class="nav-brand">Lumeway</a>
       <div class="nav-links">
         <a href="https://lumeway.co/job-loss">Job Loss</a>
         <a href="https://lumeway.co/divorce">Divorce</a>
@@ -198,43 +219,44 @@
     <div class="category-tag">Job Loss</div>
     <h1>COBRA vs Marketplace: Which Costs Less After Job Loss</h1>
     <p class="publish-date">April 3, 2026</p>
+    <div class="author-byline" style="font-size:14px;color:#9a8b7e;margin-bottom:40px;font-weight:400;display:block;">By Daniel G</div>
 
-    <p>You lost your job. Your health insurance ends soon. And now you have two options staring you down &mdash; COBRA or the Health Insurance Marketplace. Both keep you covered. But the costs are wildly different depending on your situation.</p>
+    <p>You lost your job. Your health insurance ends soon. And now you have two options staring you down &mdash; COBRA or the Health Insurance Marketplace. Both keep you covered. But the costs are wildly different depending on your situation.</div>
 
     <p>Here&rsquo;s how they compare so you can make the right call before your deadlines hit.</p>
 
     <h2>What COBRA actually costs</h2>
 
-    <p>COBRA lets you keep your employer&rsquo;s group health plan for up to 18 months after losing your job. Same doctors, same network, same coverage. The catch &mdash; you now pay the full premium. That means your share plus whatever your employer was covering, plus a 2% administrative fee.</p>
+    <p>COBRA lets you keep your employer&rsquo;s group health plan for up to 18 months after losing your job. Same doctors, same network, same coverage. The catch &mdash; you now pay the full premium. That means your share plus whatever your employer was covering, plus a 2% administrative fee.</div>
 
     <p>For most people, that adds up fast. The average COBRA premium for individual coverage runs around $700&ndash;$800 per month. Family coverage can exceed $2,000 per month. If you were only paying $200 out of your paycheck before, the sticker shock is real.</p>
 
     <h2>What the Marketplace offers</h2>
 
-    <p>The ACA Health Insurance Marketplace (healthcare.gov) lets you shop for new coverage when you lose employer insurance. Losing your job triggers a Special Enrollment Period &mdash; you typically have 60 days from your coverage end date to enroll.</p>
+    <p>The ACA Health Insurance Marketplace (healthcare.gov) lets you shop for new coverage when you lose employer insurance. Losing your job triggers a Special Enrollment Period &mdash; you typically have 60 days from your coverage end date to enroll.</div>
 
     <p>Marketplace plans come in tiers &mdash; Bronze, Silver, Gold, Platinum &mdash; and premiums vary by age, location, and income. The key advantage: if your income dropped significantly after job loss, you may qualify for premium tax credits that dramatically lower your monthly cost. Some people qualify for plans under $100 per month.</p>
 
     <h2>The real comparison</h2>
 
-    <p>COBRA keeps your exact plan. No new doctors, no network changes, no gaps in coverage. If you&rsquo;re mid-treatment or have a specialist you can&rsquo;t switch, that continuity matters. But you pay top dollar for it.</p>
+    <p>COBRA keeps your exact plan. No new doctors, no network changes, no gaps in coverage. If you&rsquo;re mid-treatment or have a specialist you can&rsquo;t switch, that continuity matters. But you pay top dollar for it.</div>
 
     <p>Marketplace plans are almost always cheaper &mdash; especially with subsidies. But you may need to switch providers, and the coverage levels may differ from what you had. A Bronze plan has lower premiums but higher out-of-pocket costs when you actually use it. A Silver plan with cost-sharing reductions can be the sweet spot if your income qualifies.</p>
 
     <h2>Which deadlines matter</h2>
 
-    <p>You typically have 60 days to elect COBRA from the date you receive your election notice. You also have 60 days to enroll in a Marketplace plan from your coverage loss date. These windows can overlap, which gives you time to compare. But once they close, they close.</p>
+    <p>You typically have 60 days to elect COBRA from the date you receive your election notice. You also have 60 days to enroll in a Marketplace plan from your coverage loss date. These windows can overlap, which gives you time to compare. But once they close, they close.</div>
 
     <p>One thing most people don&rsquo;t realize &mdash; you can elect COBRA now and switch to a Marketplace plan later during Open Enrollment. COBRA can serve as a bridge while you figure out your next move.</p>
 
     <h2>How to decide</h2>
 
-    <p>Ask yourself three questions. Are you mid-treatment with a specific provider? COBRA keeps that provider. Did your income drop significantly? The Marketplace subsidies could save you hundreds. Do you need family coverage? Marketplace family plans with subsidies are typically far less expensive than COBRA family premiums.</p>
+    <p>Ask yourself three questions. Are you mid-treatment with a specific provider? COBRA keeps that provider. Did your income drop significantly? The Marketplace subsidies could save you hundreds. Do you need family coverage? Marketplace family plans with subsidies are typically far less expensive than COBRA family premiums.</div>
 
     <p>There&rsquo;s no universal right answer. But comparing actual numbers &mdash; your COBRA premium notice versus a Marketplace quote at healthcare.gov &mdash; takes 30 minutes and can save you thousands over the next year.</p>
 
     <div class="cta-block">
-      <p>Lumeway&rsquo;s <strong>Health Insurance Comparison Worksheet</strong> puts COBRA, Marketplace, and spouse&rsquo;s plan costs side by side in one place. The <strong>COBRA Election Letter</strong> helps you organize your election paperwork before the deadline. Both are available in the <a href="/templates">Job Loss &amp; Income Crisis bundle</a> &mdash; instant download, works in Google Docs.</p>
+      <p>Lumeway&rsquo;s <strong>Health Insurance Comparison Worksheet</strong> puts COBRA, Marketplace, and spouse&rsquo;s plan costs side by side in one place. The <strong>COBRA Election Letter</strong> helps you organize your election paperwork before the deadline. Both are available at <a href="https://lumeway.co/templates">lumeway.co/templates</a> &mdash; instant download, works in Google Docs.</p>
     </div>
 
     <p class="closing">The right health insurance decision after job loss isn&rsquo;t about which option is &ldquo;better.&rdquo; It&rsquo;s about which one fits your budget, your health needs, and your timeline right now.</p>

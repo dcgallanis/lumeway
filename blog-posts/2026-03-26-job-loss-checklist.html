@@ -289,10 +289,6 @@
             color: var(--warm-gray);
         }
 
-        .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-
         @media (max-width: 640px) {
             h1 { font-size: 32px; }
             h2 { font-size: 24px; }
@@ -300,28 +296,51 @@
             .nav-links a { font-size: 12px; }
             .blog-container { padding: 40px 20px 60px; }
         }
-    </style>
+  
+    ul { list-style: none !important; margin: 12px 0 18px 0; padding: 0; }
+    ul li { margin-bottom: 8px; color: #5c4d43; line-height: 1.7; padding-left: 28px !important; position: relative !important; }
+    ul li::before {
+      content: '' !important;
+      position: absolute !important;
+      left: 0;
+      top: 7px;
+      width: 14px !important;
+      height: 14px !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b3a5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E") !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
+    }
+    .author-byline { font-size: 14px; color: #9a8b7e; margin-bottom: 40px; font-weight: 400; }
+    .author-byline::first-letter {
+      font-size: inherit !important;
+      float: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: inherit !important;
+      initial-letter: normal !important;
+      -webkit-initial-letter: normal !important;
+    }
+  </style>
 </head>
 <body>
 
     <nav>
         <div class="nav-inner">
-            <a href="/" class="nav-logo">
-        <span class="sun-icon nav-sun"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-        <span class="nav-logo-text">Lumeway</span>
-      </a>
+            <a href="https://lumeway.co" class="nav-brand">Lumeway</a>
             <ul class="nav-links">
                 <li><a href="https://lumeway.co">Home</a></li>
                 <li><a href="https://lumeway.co/blog">Blog</a></li>
                 <li><a href="https://lumeway.co/chat">Navigator</a></li>
+                <li><a href="https://lumeway.co/templates">Shop</a></li>
             </ul>
         </div>
     </nav>
 
     <article class="blog-container">
-        <div class="blog-category reveal">Job Loss</div>
-        <h1 class="reveal">The Complete Job Loss Checklist: Everything to Handle and When</h1>
-        <div class="blog-date reveal">Published March 27, 2026</div>
+        <div class="blog-category">Job Loss</div>
+        <h1>The Complete Job Loss Checklist: Everything to Handle and When</h1>
+        <div class="blog-date">Published March 27, 2026</div>
+        <div class="author-byline" style="font-size:14px;color:#9a8b7e;margin-bottom:40px;font-weight:400;display:block;">By Cara G</div>
         <div class="blog-divider"></div>
 
         <div class="blog-content">
@@ -331,7 +350,7 @@
 
             <p>This checklist breaks down what to handle and when &mdash; organized by urgency so you can focus on what matters most right now and get to the rest when you&rsquo;re ready.</p>
 
-            <h2 class="reveal">The First 24 Hours</h2>
+            <h2>The First 24 Hours</h2>
 
             <p>Before you do anything else, handle these. They&rsquo;re time-sensitive or they set the foundation for everything that follows.</p>
 
@@ -346,10 +365,10 @@
             <p><strong>Take a breath.</strong> You don&rsquo;t have to figure out everything today. You just need to protect what has a ticking clock.</p>
 
             <div class="template-callout">
-                <p>Lumeway&rsquo;s <em>First 24 Hours Guide: Losing Your Job</em> walks you through exactly what to prioritize on day one &mdash; step by step. <a href="/templates">View templates</a></p>
+                <p>Lumeway&rsquo;s <em>First 24 Hours Guide: Losing Your Job</em> walks you through exactly what to prioritize on day one &mdash; step by step. Available at <a href="https://lumeway.co/templates">lumeway.co/templates</a></p>
             </div>
 
-            <h2 class="reveal">The First Week</h2>
+            <h2>The First Week</h2>
 
             <p>Once you&rsquo;ve handled the immediate deadlines, the first week is about getting organized and understanding your options.</p>
 
@@ -364,10 +383,10 @@
             <p><strong>Start a job search tracker.</strong> Every application, every contact, every follow-up. Some states require proof of active job searching to maintain unemployment benefits.</p>
 
             <div class="template-callout">
-                <p>Lumeway&rsquo;s <em>Budget Reduction Worksheet</em> helps you map your new financial reality &mdash; income, expenses, and how long your savings will last. <a href="/templates">View templates</a></p>
+                <p>Lumeway&rsquo;s <em>Budget Reduction Worksheet</em> helps you map your new financial reality &mdash; income, expenses, and how long your savings will last. Available at <a href="https://lumeway.co/templates">lumeway.co/templates</a></p>
             </div>
 
-            <h2 class="reveal">The First Month</h2>
+            <h2>The First Month</h2>
 
             <p>By now you should have the urgent items handled. The first month is about building structure and making sure nothing falls through the cracks.</p>
 
@@ -382,10 +401,10 @@
             <p><strong>Evaluate job offers carefully.</strong> If offers start coming in, don&rsquo;t accept out of panic. Compare salary, benefits, commute, growth potential, and culture. The goal is a job that works for your life &mdash; not just the first one that says yes.</p>
 
             <div class="template-callout">
-                <p>Lumeway&rsquo;s <em>Job Search Tracker Worksheet</em> keeps every application, contact, and follow-up organized in one place &mdash; so nothing gets lost. <a href="/templates">View templates</a></p>
+                <p>Lumeway&rsquo;s <em>Job Search Tracker Worksheet</em> keeps every application, contact, and follow-up organized in one place &mdash; so nothing gets lost. Available at <a href="https://lumeway.co/templates">lumeway.co/templates</a></p>
             </div>
 
-            <h2 class="reveal">Things People Forget</h2>
+            <h2>Things People Forget</h2>
 
             <p>Even with a checklist, some things slip through. These are the items people most commonly miss in the first 30 days after a layoff.</p>
 
@@ -399,33 +418,34 @@
 
             <p><strong>Your emotional health.</strong> Job loss is one of the top five most stressful life events. If you&rsquo;re feeling stuck, anxious, or overwhelmed, that&rsquo;s not weakness &mdash; that&rsquo;s a normal response to a hard situation. Reach out to someone you trust.</p>
 
-            <h2 class="reveal">What to Do Right Now</h2>
+            <h2>What to Do Right Now</h2>
 
             <p>Pick one section from this checklist and start there. You don&rsquo;t have to do everything today. You just need to start with the items that have the shortest deadlines and work forward.</p>
 
             <p>If you&rsquo;re not sure where to begin, the free <a href="https://lumeway.co/chat">Transition Navigator</a> at lumeway.co can walk you through the general job loss timeline &mdash; what to handle first, what can wait, and where to find help.</p>
 
-            <div class="cta-box reveal">
+            <div class="cta-box">
                 <h3>Stay organized through job loss</h3>
-                <p>The Job Loss &amp; Income Crisis Bundle includes 14 step-by-step worksheets covering severance, COBRA, budgeting, job search tracking, and more.</p>
+                <p>The Job Loss bundle includes 14 step-by-step worksheets covering severance, COBRA, budgeting, job search tracking, and more.</p>
+                <a href="https://lumeway.co/templates" class="cta-button">View Planning Tools</a>
             </div>
 
-            <p class="disclaimer reveal">This post is for informational purposes only and does not constitute legal, financial, or medical advice. Consult a licensed professional for guidance specific to your situation.</p>
+            <p class="disclaimer">This post is for informational purposes only and does not constitute legal, financial, or medical advice. Consult a licensed professional for guidance specific to your situation.</p>
         </div>
     </article>
 
     <footer>
-        <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-brand" style="height:80px;object-fit:contain">
+        <div class="footer-brand">Lumeway</div>
         <div class="footer-tagline">When life changes, find your way through</div>
         <ul class="footer-links">
             <li><a href="https://lumeway.co">Home</a></li>
             <li><a href="https://lumeway.co/blog">Blog</a></li>
             <li><a href="https://lumeway.co/chat">Navigator</a></li>
+            <li><a href="https://lumeway.co/templates">Shop</a></li>
             <li><a href="mailto:hello@lumeway.co">Contact</a></li>
         </ul>
         <div class="footer-copy">&copy; 2026 Lumeway. All rights reserved.</div>
     </footer>
 
-<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

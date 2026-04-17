@@ -95,6 +95,16 @@
       font-style: italic;
       margin-bottom: 32px;
     }
+    .author-byline { font-size: 14px; color: #9a8b7e; margin-bottom: 40px; font-weight: 400; }
+    .author-byline::first-letter {
+      font-size: inherit !important;
+      float: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: inherit !important;
+      initial-letter: normal !important;
+      -webkit-initial-letter: normal !important;
+    }
 
     .divider {
       width: 80px;
@@ -166,10 +176,6 @@
       color: #b8a192;
     }
 
-    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-
     @media (max-width: 600px) {
       h1 { font-size: 32px; }
       h2 { font-size: 24px; }
@@ -177,15 +183,26 @@
       .nav-links { gap: 16px; }
       .nav-links a { font-size: 12px; }
     }
+
+    ul { list-style: none !important; margin: 12px 0 18px 0; padding: 0; }
+    ul li { margin-bottom: 8px; color: #5c4d43; line-height: 1.7; padding-left: 28px !important; position: relative !important; }
+    ul li::before {
+      content: '' !important;
+      position: absolute !important;
+      left: 0;
+      top: 7px;
+      width: 14px !important;
+      height: 14px !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b3a5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E") !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
+    }
   </style>
 </head>
 <body>
   <nav>
     <div class="nav-inner">
-      <a href="/" class="nav-logo">
-        <span class="sun-icon nav-sun"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-        <span class="nav-logo-text">Lumeway</span>
-      </a>
+      <a href="https://lumeway.co" class="nav-logo">LUMEWAY</a>
       <div class="nav-links">
         <a href="https://lumeway.co/job-loss">Job Loss</a>
         <a href="https://lumeway.co/divorce">Divorce</a>
@@ -199,63 +216,63 @@
   </nav>
 
   <main>
-    <span class="category-tag reveal">JOB LOSS</span>
-    <h1 class="reveal">Template Spotlight: Severance Counter-Offer Letter</h1>
-    <p class="publish-date reveal">Published March 29, 2026</p>
+    <span class="category-tag">JOB LOSS</span>
+    <h1>Template Spotlight: Severance Counter-Offer Letter</h1>
+    <p class="publish-date">Published March 29, 2026</p>
+    <div class="author-byline" style="font-size:14px;color:#9a8b7e;margin-bottom:40px;font-weight:400;display:block;">By Daniel G</div>
     <div class="divider"></div>
 
-    <p>You just got a severance offer. Your employer slid a packet across the table &mdash; or more likely, emailed you a PDF &mdash; and gave you a deadline to sign. The number they put in front of you feels final. It isn&rsquo;t.</p>
+    <p>You just got a severance offer. Your employer slid a packet across the table &mdash; or more likely, emailed you a PDF &mdash; and gave you a deadline to sign. The number they put in front of you feels final. It isn&rsquo;t.</div>
 
     <p>Most people don&rsquo;t know this, but severance is almost always negotiable. The first offer is a starting point, not the finish line. And how you respond in writing can make the difference between walking away with two weeks of pay or two months.</p>
 
-    <h2 class="reveal">Why This Worksheet Exists</h2>
+    <h2>Why This Worksheet Exists</h2>
 
-    <p>When you&rsquo;re negotiating severance, emotions are running high. You might feel grateful to get anything at all. You might feel angry. You might feel too exhausted to push back. All of that is normal.</p>
+    <p>When you&rsquo;re negotiating severance, emotions are running high. You might feel grateful to get anything at all. You might feel angry. You might feel too exhausted to push back. All of that is normal.</div>
 
-    <p>The <strong>Severance Counter-Offer Letter</strong> worksheet helps you organize your response before you send it. It walks you through what to include, how to frame your ask, and what tone to strike &mdash; professional, firm, and specific.</p>
+    <p>The <strong>Severance Counter-Offer Letter</strong> worksheet helps you organize your response before you send it. It walks you through what to include, how to frame your ask, and what tone to strike &mdash; professional, firm, and specific.</div>
 
     <p>This isn&rsquo;t about being combative. It&rsquo;s about being prepared.</p>
 
-    <h2 class="reveal">What You Can Actually Negotiate</h2>
+    <h2>What You Can Actually Negotiate</h2>
 
-    <p>Most people think severance is just about the money. It&rsquo;s not. Here&rsquo;s what&rsquo;s typically on the table:</p>
+    <p>Most people think severance is just about the money. It&rsquo;s not. Here&rsquo;s what&rsquo;s typically on the table:</div>
 
-    <p><strong>The payout itself.</strong> Some employers start low expecting a counter. Two weeks might become six weeks or more, depending on your tenure and role.</p>
+    <p><strong>The payout itself.</strong> Some employers start low expecting a counter. Two weeks might become six weeks or more, depending on your tenure and role.</div>
 
-    <p><strong>Health insurance continuation.</strong> You may be able to negotiate employer-paid COBRA coverage for a set number of months &mdash; which can save you hundreds per month.</p>
+    <p><strong>Health insurance continuation.</strong> You may be able to negotiate employer-paid COBRA coverage for a set number of months &mdash; which can save you hundreds per month.</div>
 
-    <p><strong>Outplacement services.</strong> Some companies offer career coaching, resume services, or job placement support as part of a severance package.</p>
+    <p><strong>Outplacement services.</strong> Some companies offer career coaching, resume services, or job placement support as part of a severance package.</div>
 
-    <p><strong>Non-compete or non-disparagement terms.</strong> If you&rsquo;re being asked to sign restrictive clauses, you can negotiate the scope or push back entirely.</p>
+    <p><strong>Non-compete or non-disparagement terms.</strong> If you&rsquo;re being asked to sign restrictive clauses, you can negotiate the scope or push back entirely.</div>
 
     <p><strong>Reference letter or agreed-upon language.</strong> How your departure is described to future employers matters. You can negotiate the wording.</p>
 
-    <h2 class="reveal">How the Worksheet Helps You Prepare</h2>
+    <h2>How the Worksheet Helps You Prepare</h2>
 
-    <p>The Severance Counter-Offer Letter worksheet gives you a guided format to draft your response. It helps you lay out what you&rsquo;re asking for, why you&rsquo;re asking for it, and how to keep the tone right. You fill in your specifics. The structure keeps your thinking organized.</p>
+    <p>The Severance Counter-Offer Letter worksheet gives you a guided format to draft your response. It helps you lay out what you&rsquo;re asking for, why you&rsquo;re asking for it, and how to keep the tone right. You fill in your specifics. The structure keeps your thinking organized.</div>
 
-    <p>It&rsquo;s not a legal document. It&rsquo;s an organizational tool that helps you prepare a clear, professional counter-offer &mdash; one you can share with an employment attorney before sending, if you choose.</p>
+    <p>It&rsquo;s not a legal document. It&rsquo;s an organizational tool that helps you prepare a clear, professional counter-offer &mdash; one you can share with an employment attorney before sending, if you choose.</div>
 
-    <p>The Severance Counter-Offer Letter is part of the <a href="/templates">Job Loss &amp; Income Crisis Bundle</a> &mdash; 14 worksheets covering severance, COBRA, unemployment, budgeting, job search, and more.</p>
+    <p>The Severance Counter-Offer Letter is available at <a href="https://lumeway.co/templates">lumeway.co/templates</a> along with worksheets covering severance, COBRA, unemployment, budgeting, job search, and more.</p>
 
-    <h2 class="reveal">One More Thing</h2>
+    <h2>One More Thing</h2>
 
-    <p>Don&rsquo;t rush it. Most severance agreements give you at least 21 days to review &mdash; and if you&rsquo;re over 40, federal law typically requires a minimum 21-day consideration period. That time exists for a reason. Use it.</p>
+    <p>Don&rsquo;t rush it. Most severance agreements give you at least 21 days to review &mdash; and if you&rsquo;re over 40, federal law typically requires a minimum 21-day consideration period. That time exists for a reason. Use it.</div>
 
     <p>If you&rsquo;re unsure whether to counter, talk to an employment attorney. Many offer free initial consultations specifically for severance review. The cost of a one-hour consultation is almost always worth it.</p>
 
-    <div class="cta-box reveal">
+    <div class="cta-box">
       <p>Free planning tools and our Transition Navigator are available at <a href="https://lumeway.co">lumeway.co</a> &mdash; general process guidance and timelines for job loss, divorce, estate planning, disability, relocation, and retirement.</p>
     </div>
 
-    <p class="disclaimer reveal">This article is for general informational purposes only and does not constitute legal, financial, or professional advice. Every severance situation is different. Consult a licensed employment attorney for guidance specific to your circumstances.</p>
+    <p class="disclaimer">This article is for general informational purposes only and does not constitute legal, financial, or professional advice. Every severance situation is different. Consult a licensed employment attorney for guidance specific to your circumstances.</p>
   </main>
 
   <footer>
-    <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-brand" style="height:80px;object-fit:contain">
+    <div class="footer-brand">LUMEWAY</div>
     <div class="footer-tagline">When life changes, find your way through.</div>
     <p><a href="https://lumeway.co">lumeway.co</a> &nbsp;&middot;&nbsp; <a href="https://lumeway.co/blog">Blog</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@lumeway.co">hello@lumeway.co</a></p>
   </footer>
-<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>

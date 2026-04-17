@@ -289,10 +289,6 @@
             color: var(--warm-gray);
         }
 
-        .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-
         @media (max-width: 640px) {
             h1 { font-size: 32px; }
             h2 { font-size: 24px; }
@@ -300,28 +296,51 @@
             .nav-links a { font-size: 12px; }
             .blog-container { padding: 40px 20px 60px; }
         }
-    </style>
+  
+    ul { list-style: none !important; margin: 12px 0 18px 0; padding: 0; }
+    ul li { margin-bottom: 8px; color: #5c4d43; line-height: 1.7; padding-left: 28px !important; position: relative !important; }
+    ul li::before {
+      content: '' !important;
+      position: absolute !important;
+      left: 0;
+      top: 7px;
+      width: 14px !important;
+      height: 14px !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b3a5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E") !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
+    }
+    .author-byline { font-size: 14px; color: #9a8b7e; margin-bottom: 40px; font-weight: 400; }
+    .author-byline::first-letter {
+      font-size: inherit !important;
+      float: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: inherit !important;
+      initial-letter: normal !important;
+      -webkit-initial-letter: normal !important;
+    }
+  </style>
 </head>
 <body>
 
     <nav>
         <div class="nav-inner">
-            <a href="/" class="nav-logo">
-        <span class="sun-icon nav-sun"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></span>
-        <span class="nav-logo-text">Lumeway</span>
-      </a>
+            <a href="https://lumeway.co" class="nav-brand">Lumeway</a>
             <ul class="nav-links">
                 <li><a href="https://lumeway.co">Home</a></li>
                 <li><a href="https://lumeway.co/blog">Blog</a></li>
                 <li><a href="https://lumeway.co/chat">Navigator</a></li>
+                <li><a href="https://lumeway.co/templates">Shop</a></li>
             </ul>
         </div>
     </nav>
 
     <article class="blog-container">
-        <div class="blog-category reveal">Job Loss</div>
-        <h1 class="reveal">COBRA Health Insurance: Deadlines, Costs, and What to Do</h1>
-        <div class="blog-date reveal">Published April 13, 2026</div>
+        <div class="blog-category">Job Loss</div>
+        <h1>COBRA Health Insurance: Deadlines, Costs, and What to Do</h1>
+        <div class="blog-date">Published April 13, 2026</div>
+        <div class="author-byline" style="font-size:14px;color:#9a8b7e;margin-bottom:40px;font-weight:400;display:block;">By Cara G</div>
         <div class="blog-divider"></div>
 
         <div class="blog-content">
@@ -333,7 +352,7 @@
 
             <p>This post breaks down how COBRA actually works, what it costs, when your deadlines hit, and how to decide whether it&rsquo;s the right choice for you.</p>
 
-            <h2 class="reveal">How COBRA Works</h2>
+            <h2>How COBRA Works</h2>
 
             <p>When your employment ends, your employer is required to send you a COBRA election notice within 14 days. That notice will include details about your coverage options, the cost, and your election deadline.</p>
 
@@ -341,7 +360,7 @@
 
             <p>COBRA typically lasts 18 months for most qualifying events. In some cases &mdash; like disability or the death of the covered employee &mdash; it can extend to 29 or 36 months. Your election notice will specify your maximum coverage period.</p>
 
-            <h2 class="reveal">What It Costs &mdash; and Why It&rsquo;s a Shock</h2>
+            <h2>What It Costs &mdash; and Why It&rsquo;s a Shock</h2>
 
             <p>Here&rsquo;s the part that catches most people off guard. When you were employed, your employer likely paid 50% to 80% of your health insurance premium. You only saw the employee portion on your paycheck.</p>
 
@@ -351,7 +370,7 @@
 
             <p>This is why COBRA is rarely the cheapest option &mdash; but it&rsquo;s sometimes the right one. If you&rsquo;re mid-treatment, have a specific provider you need to keep, or have already hit your deductible for the year, the continuity might be worth the cost.</p>
 
-            <h2 class="reveal">Your Three Options &mdash; Side by Side</h2>
+            <h2>Your Three Options &mdash; Side by Side</h2>
 
             <p>After losing employer coverage, most people have three paths. Each has trade-offs.</p>
 
@@ -364,12 +383,12 @@
             <p>The key is to compare all three before your 60-day window closes. Look at premiums, deductibles, out-of-pocket maximums, prescription coverage, and whether your current providers are in-network.</p>
 
             <div class="template-callout">
-                <p>Lumeway&rsquo;s <em>Health Insurance Comparison Worksheet</em> helps you line up COBRA, marketplace, and spouse&rsquo;s plan details side by side &mdash; premiums, deductibles, networks, and prescription coverage in one view. <a href="/templates">View templates</a></p>
+                <p>Lumeway&rsquo;s <em>Health Insurance Comparison Worksheet</em> helps you line up COBRA, marketplace, and spouse&rsquo;s plan details side by side &mdash; premiums, deductibles, networks, and prescription coverage in one view. <a href="https://lumeway.co/templates">Available at lumeway.co/templates</a></p>
             </div>
 
-            <h2 class="reveal">Key Deadlines You Cannot Miss</h2>
+            <h2>Key Deadlines You Cannot Miss</h2>
 
-            <p><strong>Within 44 days of your last day:</strong> Your employer and plan administrator must send you the COBRA election notice. (Your employer has 30 days to notify the plan administrator, who then has 14 days to send you the notice.)</p>
+            <p><strong>14 days after your last day:</strong> Your employer must send you the COBRA election notice.</p>
 
             <p><strong>60 days after receiving the notice:</strong> Your deadline to elect COBRA. This is firm.</p>
 
@@ -379,7 +398,7 @@
 
             <p>Write these dates down the day you receive your COBRA notice. Put them in your phone. These are not the kind of deadlines that send reminders.</p>
 
-            <h2 class="reveal">When COBRA Makes Sense &mdash; and When It Doesn&rsquo;t</h2>
+            <h2>When COBRA Makes Sense &mdash; and When It Doesn&rsquo;t</h2>
 
             <p>COBRA is worth considering if you&rsquo;re in the middle of a treatment plan and switching providers would disrupt your care. It can also make sense if you&rsquo;ve already met your annual deductible &mdash; starting over with a new plan means paying that deductible again.</p>
 
@@ -390,10 +409,10 @@
             <p>That said, the retroactive strategy carries risk. If something serious happens during the gap and you haven&rsquo;t elected yet, you&rsquo;ll need to act fast.</p>
 
             <div class="template-callout">
-                <p>If you decide to elect COBRA, Lumeway&rsquo;s <em>COBRA Election Letter</em> worksheet walks you through organizing your response &mdash; step by step, with all the details your plan administrator needs. <a href="/templates">View templates</a></p>
+                <p>If you decide to elect COBRA, Lumeway&rsquo;s <em>COBRA Election Letter</em> worksheet walks you through organizing your response &mdash; step by step, with all the details your plan administrator needs. <a href="https://lumeway.co/templates">Available at lumeway.co/templates</a></p>
             </div>
 
-            <h2 class="reveal">What to Do This Week</h2>
+            <h2>What to Do This Week</h2>
 
             <p>If you&rsquo;ve recently lost your job and your health coverage is ending, here&rsquo;s what to handle now.</p>
 
@@ -409,29 +428,30 @@
 
             <p>Every situation is different. If your medical needs are complex or you have dependents on your plan, consider speaking with a licensed insurance broker who can walk you through the specifics.</p>
 
-            <div class="cta-box reveal">
+            <div class="cta-box">
                 <h3>Stay organized through job loss</h3>
-                <p>The Job Loss &amp; Income Crisis Bundle includes 14 step-by-step worksheets covering severance, COBRA, budgeting, job search tracking, and more.</p>
+                <p>The Job Loss bundle includes 14 step-by-step worksheets covering severance, COBRA, budgeting, job search tracking, and more.</p>
+                <a href="https://lumeway.co/templates" class="cta-button">View Planning Tools</a>
             </div>
 
             <p>Not sure where to start? Our free <a href="https://lumeway.co/chat">Transition Navigator</a> at lumeway.co walks you through the general timeline for job loss &mdash; step by step.</p>
 
-            <p class="disclaimer reveal">This post is for informational purposes only and does not constitute legal, financial, or medical advice. Consult a licensed professional for guidance specific to your situation.</p>
+            <p class="disclaimer">This post is for informational purposes only and does not constitute legal, financial, or medical advice. Consult a licensed professional for guidance specific to your situation.</p>
         </div>
     </article>
 
     <footer>
-        <img src="/static/logos/lockup-h-navy-cream-v2-transparent.png" alt="Lumeway" class="footer-brand" style="height:80px;object-fit:contain">
+        <div class="footer-brand">Lumeway</div>
         <div class="footer-tagline">When life changes, find your way through</div>
         <ul class="footer-links">
             <li><a href="https://lumeway.co">Home</a></li>
             <li><a href="https://lumeway.co/blog">Blog</a></li>
             <li><a href="https://lumeway.co/chat">Navigator</a></li>
+            <li><a href="https://lumeway.co/templates">Shop</a></li>
             <li><a href="mailto:hello@lumeway.co">Contact</a></li>
         </ul>
         <div class="footer-copy">&copy; 2026 Lumeway. All rights reserved.</div>
     </footer>
 
-<script>(function(){var r=document.querySelectorAll(".reveal");if(!("IntersectionObserver" in window)){r.forEach(function(e){e.classList.add("visible")});return}var o=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");o.unobserve(entry.target)}})},{threshold:0.15});r.forEach(function(e){o.observe(e)})})();</script>
 </body>
 </html>
