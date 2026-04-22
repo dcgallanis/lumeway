@@ -201,9 +201,16 @@ tr:hover { background: var(--cream); }
   </div>
 
   <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap">
       <h2 style="margin-bottom:0">Expenses</h2>
-      <input type="month" id="exp-month-filter" onchange="loadExpenses()" style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--cream)">
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="exp-view" onchange="onExpViewChange()" style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--cream)">
+          <option value="month">Month</option>
+          <option value="ytd">Year to Date</option>
+          <option value="all">All Time</option>
+        </select>
+        <input type="month" id="exp-month-filter" onchange="loadExpenses()" style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--cream)">
+      </div>
     </div>
     <div class="stats-grid" id="expense-stats"></div>
     <div class="table-wrap">
@@ -234,7 +241,10 @@ tr:hover { background: var(--cream); }
 <!-- P&L TAB -->
 <div class="tab-content" id="tab-pnl">
   <div class="card">
-    <h2>YTD Summary</h2>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap">
+      <h2 style="margin-bottom:0">YTD Summary</h2>
+      <button class="btn btn-ghost" onclick="exportPnlCSV()" style="padding:6px 14px;font-size:12px">Export CSV</button>
+    </div>
     <div class="stats-grid" id="pnl-ytd-stats"></div>
   </div>
   <div class="card">
@@ -403,9 +413,23 @@ function addExpense(e) {
   return false;
 }
 
+function onExpViewChange() {
+  var view = document.getElementById('exp-view').value;
+  var filter = document.getElementById('exp-month-filter');
+  filter.disabled = (view !== 'month');
+  filter.style.opacity = (view === 'month') ? '1' : '0.4';
+  loadExpenses();
+}
+
 function loadExpenses() {
-  var month = document.getElementById('exp-month-filter').value;
-  var url = '/api/admin/expenses' + (month ? '?month=' + month : '');
+  var view = document.getElementById('exp-view').value;
+  var url = '/api/admin/expenses';
+  if (view === 'month') {
+    var month = document.getElementById('exp-month-filter').value;
+    if (month) url += '?month=' + month;
+  } else if (view === 'ytd') {
+    url += '?month=' + new Date().getFullYear();
+  }
   api(url).then(function(r) { return r.json(); }).then(function(data) {
     allExpenses = data.expenses || [];
     renderExpenses();
@@ -414,6 +438,8 @@ function loadExpenses() {
 
 function renderExpenses() {
   var expenses = allExpenses;
+  var view = document.getElementById('exp-view').value;
+  var totalLabel = view === 'ytd' ? 'YTD Total' : (view === 'all' ? 'All-Time Total' : 'Total');
   var total = expenses.reduce(function(s, e) { return s + e.amount_cents; }, 0);
   var cats = {};
   expenses.forEach(function(e) { cats[e.category] = (cats[e.category] || 0) + e.amount_cents; });
@@ -423,7 +449,7 @@ function renderExpenses() {
   }
 
   document.getElementById('expense-stats').innerHTML =
-    '<div class="stat-box"><div class="stat-value">' + fmt(total) + '</div><div class="stat-label">Total</div></div>' +
+    '<div class="stat-box"><div class="stat-value">' + fmt(total) + '</div><div class="stat-label">' + totalLabel + '</div></div>' +
     '<div class="stat-box"><div class="stat-value">' + expenses.length + '</div><div class="stat-label">Entries</div></div>' +
     '<div class="stat-box"><div class="stat-value">' + topCat + '</div><div class="stat-label">Top Category</div></div>';
 
@@ -454,6 +480,8 @@ function deleteExpense(id) {
 
 function exportExpenseCSV() {
   if (allExpenses.length === 0) return;
+  var view = document.getElementById('exp-view').value;
+  var suffix = view === 'ytd' ? 'ytd-' + new Date().getFullYear() : (view === 'all' ? 'all-time' : new Date().toISOString().slice(0, 10));
   var csv = 'Date,Category,Description,Amount,Payment Method,Notes\n';
   allExpenses.forEach(function(e) {
     csv += e.date + ',"' + e.category + '","' + e.description.replace(/"/g, '""') + '",' + (e.amount_cents / 100).toFixed(2) + ',"' + (e.payment_method || '') + '","' + (e.notes || '').replace(/"/g, '""') + '"\n';
@@ -462,7 +490,7 @@ function exportExpenseCSV() {
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
   a.href = url;
-  a.download = 'lumeway-expenses-' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.download = 'lumeway-expenses-' + suffix + '.csv';
   a.click();
   URL.revokeObjectURL(url);
   showToast('CSV downloaded');
@@ -601,6 +629,8 @@ function deleteRevEntry(id) {
   });
 }
 
+var lastPnl = null;
+
 function loadPnl() {
   Promise.all([
     api('/api/admin/pnl').then(function(r) { return r.json(); }),
@@ -608,8 +638,57 @@ function loadPnl() {
   ]).then(function(results) {
     var pnl = results[0];
     var entries = results[1].entries || [];
+    lastPnl = pnl;
     renderPnl(pnl, entries);
   });
+}
+
+function exportPnlCSV() {
+  if (!lastPnl) { showToast('Loading... try again in a moment'); return; }
+  var pnl = lastPnl;
+  var year = pnl.year;
+  var totalRev = pnl.total_revenue;
+  var totalExp = pnl.expenses.total;
+  var net = pnl.net_profit;
+  var money = function(c) { return (c / 100).toFixed(2); };
+  var esc = function(s) { return '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"'; };
+
+  var csv = 'Lumeway P&L — Year to Date ' + year + '\n';
+  csv += 'Generated,' + new Date().toISOString().slice(0, 10) + '\n\n';
+
+  csv += 'Section,Category,Amount (USD)\n';
+
+  if (pnl.stripe_revenue.categories.length > 0) {
+    pnl.stripe_revenue.categories.forEach(function(c) {
+      csv += 'Revenue - Dashboard/Stripe,' + esc(c.category) + ',' + money(c.amount_cents) + '\n';
+    });
+    csv += 'Revenue - Dashboard/Stripe Subtotal,,' + money(pnl.stripe_revenue.total) + '\n';
+  }
+  if (pnl.manual_revenue.categories.length > 0) {
+    pnl.manual_revenue.categories.forEach(function(c) {
+      csv += 'Revenue - Manual,' + esc(c.category) + ',' + money(c.amount_cents) + '\n';
+    });
+    csv += 'Revenue - Manual Subtotal,,' + money(pnl.manual_revenue.total) + '\n';
+  }
+  csv += 'Total Revenue,,' + money(totalRev) + '\n\n';
+
+  if (pnl.expenses.categories.length > 0) {
+    pnl.expenses.categories.forEach(function(c) {
+      csv += 'Expense,' + esc(c.category) + ',' + money(c.amount_cents) + '\n';
+    });
+  }
+  csv += 'Total Expenses,,' + money(totalExp) + '\n\n';
+
+  csv += 'Net Profit,,' + money(net) + '\n';
+
+  var blob = new Blob([csv], { type: 'text/csv' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'lumeway-pnl-ytd-' + year + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('P&L CSV downloaded');
 }
 
 function renderPnl(pnl, entries) {
