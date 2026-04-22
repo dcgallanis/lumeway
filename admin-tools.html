@@ -221,6 +221,9 @@ tr:hover { background: var(--cream); }
           <option value="all">All Time</option>
         </select>
         <input type="month" id="exp-month-filter" onchange="loadExpenses()" style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--cream)">
+        <select id="exp-category-filter" onchange="renderExpenses()" style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--cream)">
+          <option value="">All Categories</option>
+        </select>
       </div>
     </div>
     <div class="stats-grid" id="expense-stats"></div>
@@ -596,9 +599,21 @@ function loadExpenses() {
 }
 
 function renderExpenses() {
-  var expenses = allExpenses;
   var view = document.getElementById('exp-view').value;
   var totalLabel = view === 'ytd' ? 'YTD Total' : (view === 'all' ? 'All-Time Total' : 'Total');
+
+  var catFilterEl = document.getElementById('exp-category-filter');
+  var selectedCat = catFilterEl.value;
+  var availableCats = Array.from(new Set(allExpenses.map(function(e) { return e.category; }))).sort();
+  var optsHtml = '<option value="">All Categories</option>' +
+    availableCats.map(function(c) { return '<option value="' + c + '"' + (c === selectedCat ? ' selected' : '') + '>' + c + '</option>'; }).join('');
+  catFilterEl.innerHTML = optsHtml;
+  if (selectedCat && availableCats.indexOf(selectedCat) === -1) {
+    catFilterEl.value = '';
+    selectedCat = '';
+  }
+
+  var expenses = selectedCat ? allExpenses.filter(function(e) { return e.category === selectedCat; }) : allExpenses;
   var total = expenses.reduce(function(s, e) { return s + e.amount_cents; }, 0);
   var cats = {};
   expenses.forEach(function(e) { cats[e.category] = (cats[e.category] || 0) + e.amount_cents; });
@@ -775,9 +790,13 @@ function deleteRecurring(id) {
 function exportExpenseCSV() {
   if (allExpenses.length === 0) return;
   var view = document.getElementById('exp-view').value;
+  var selectedCat = document.getElementById('exp-category-filter').value;
+  var exportList = selectedCat ? allExpenses.filter(function(e) { return e.category === selectedCat; }) : allExpenses;
+  if (exportList.length === 0) return;
   var suffix = view === 'ytd' ? 'ytd-' + new Date().getFullYear() : (view === 'all' ? 'all-time' : new Date().toISOString().slice(0, 10));
+  if (selectedCat) suffix += '-' + selectedCat.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   var csv = 'Date,Category,Description,Amount,Payment Method,Notes\n';
-  allExpenses.forEach(function(e) {
+  exportList.forEach(function(e) {
     csv += e.date + ',"' + e.category + '","' + e.description.replace(/"/g, '""') + '",' + (e.amount_cents / 100).toFixed(2) + ',"' + (e.payment_method || '') + '","' + (e.notes || '').replace(/"/g, '""') + '"\n';
   });
   var blob = new Blob([csv], { type: 'text/csv' });
