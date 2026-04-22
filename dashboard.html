@@ -5674,6 +5674,165 @@ guideLibrary['disability'] = {
       return '';
     }
 
+    // === Data-driven letter config (preferred over universalGenerate) ===
+    //
+    // Each entry describes how to render one letter. Placeholders in body/subject/salutation:
+    //   {Field Name}          search all sections for that label
+    //   {SECTION.Field Name}  look in a specific section
+    //   {sender.Field}        look in the configured senderSection
+    //   {recipient.Field}     look in the configured recipient.section
+    //   {_date}               template date
+    //   {checklist:SECTION}   render _checked items in that section as <li> elements (body only)
+    // Missing values render as grey [Field Name] so the user can see what to fill in.
+    //
+    // buildLetterHtml handles sender header, recipient block, subject line, signature,
+    // and enclosures — a config entry only defines what changes between letters.
+    var LETTER_TEMPLATES = {
+      'school_transfer_request_letter': {
+        subject: 'Student Records Transfer Request',
+        senderSection: 'PARENT / GUARDIAN',
+        recipient: {
+          section: 'CURRENT SCHOOL',
+          orgField: 'School Name',
+          attn: 'Principal/Records Manager'
+        },
+        body: [
+          '<p>I am writing to request that the academic records for my child, {Student Full Name}, be transferred to {NEW SCHOOL.School Name}. They are currently in grade {Current Grade} at {CURRENT SCHOOL.School Name} and will be transferring on {NEW SCHOOL.Enrollment Date}.</p>',
+          '<h3>Student Information</h3><p>Student Name: {Student Full Name}<br>Current Grade: {Current Grade}<br>Date of Birth: {Date of Birth}<br>Student ID: {Student ID Number}</p>',
+          '<h3>New School Information</h3><p>School Name: {NEW SCHOOL.School Name}<br>Address: {NEW SCHOOL.Address}<br>{NEW SCHOOL.City}, {NEW SCHOOL.State / ZIP}<br>Phone: {NEW SCHOOL.Phone}<br>Enrollment Date: {NEW SCHOOL.Enrollment Date}</p>',
+          '<h3>Records & Documents Needed</h3><p>Please transfer the following records to the new school:</p><ol>{checklist:RECORDS TRANSFER REQUEST}</ol>',
+          '<p>Please let me know if you need any additional information or documentation. Thank you for your prompt attention to this matter.</p>'
+        ]
+      },
+      'fmla_leave_request_letter': {
+        subject: 'Request for Family and Medical Leave Act (FMLA) Leave',
+        senderSection: 'EMPLOYEE INFORMATION',
+        recipient: {
+          section: 'EMPLOYER / HR CONTACT',
+          orgField: 'Company Name',
+          attnField: 'HR Contact Name',
+          addressField: 'HR Department Address / Email'
+        },
+        body: [
+          '<p>I am writing to request leave under the Family and Medical Leave Act (FMLA). I am providing this notice as required and am committed to working with you to ensure a smooth transition during my absence.</p>',
+          '<h3>Employee Information</h3><p>Full Name: {EMPLOYEE INFORMATION.Full Name}<br>Job Title: {EMPLOYEE INFORMATION.Job Title}<br>Department: {EMPLOYEE INFORMATION.Department}<br>Employee ID: {EMPLOYEE INFORMATION.Employee ID}<br>Hire Date: {EMPLOYEE INFORMATION.Hire Date}<br>Direct Supervisor: {EMPLOYEE INFORMATION.Direct Supervisor}</p>',
+          '<h3>Reason for Leave</h3><p>Type of FMLA Leave: {LEAVE REQUEST DETAILS.Type of FMLA Leave}<br>Family Member Name & Relationship: {LEAVE REQUEST DETAILS.Family Member Name & Relationship}</p>',
+          '<h3>Leave Timeline</h3><p>Requested Start Date: {LEAVE REQUEST DETAILS.Requested Start Date}<br>Estimated Return Date: {LEAVE REQUEST DETAILS.Estimated Return Date}<br>Continuous or Intermittent: {LEAVE REQUEST DETAILS.Continuous or Intermittent}<br>If Intermittent — Frequency & Duration: {LEAVE REQUEST DETAILS.If Intermittent — Frequency & Duration}</p>',
+          '<p>I am prepared to provide medical certification from my healthcare provider in support of this request, as required by law, and will submit the certification within 15 days or as soon as it is available.</p>',
+          '<p>I understand that my job position or an equivalent position will be available upon my return, and that my health insurance benefits will continue during my leave under the same terms.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      }
+    };
+
+    function renderLetter(fields, filename) {
+      var cfg = LETTER_TEMPLATES[normalizeTemplateName(filename)];
+      if (!cfg) return null;
+
+      var sender = (cfg.senderSection && fields[cfg.senderSection]) || {};
+      var recipient = (cfg.recipient && fields[cfg.recipient.section]) || {};
+
+      function resolvePlain(ref) {
+        if (ref === '_date') return fields._date || '';
+        if (ref.indexOf('checklist:') === 0) return '';
+        if (ref.indexOf('sender.') === 0) return sectionField(sender, [ref.substring(7)]);
+        if (ref.indexOf('recipient.') === 0) return sectionField(recipient, [ref.substring(10)]);
+        if (ref.indexOf('.') > 0) {
+          var dot = ref.indexOf('.');
+          var sec = fields[ref.substring(0, dot)];
+          if (!sec) return '';
+          return sectionField(sec, [ref.substring(dot + 1)]);
+        }
+        return findField(fields, [ref]);
+      }
+
+      function placeholderLabel(ref) {
+        var label = ref.replace(/^(sender|recipient)\./, '');
+        var dot = label.indexOf('.');
+        return dot >= 0 ? label.substring(dot + 1) : label;
+      }
+
+      function resolveHtml(ref) {
+        if (ref.indexOf('checklist:') === 0) {
+          var sec = fields[ref.substring('checklist:'.length)];
+          if (!sec || !sec._checked || !sec._checked.length) return '';
+          return sec._checked.map(function(item) { return '<li>' + escapeHtml(item) + '</li>'; }).join('');
+        }
+        var v = resolvePlain(ref);
+        if (!v) return '<span style="color:#999">[' + escapeHtml(placeholderLabel(ref)) + ']</span>';
+        return escapeHtml(v);
+      }
+
+      function substituteHtml(text) {
+        return text.replace(/\{([^}]+)\}/g, function(_, ref) { return resolveHtml(ref); });
+      }
+      function substituteText(text) {
+        return text.replace(/\{([^}]+)\}/g, function(_, ref) {
+          var v = resolvePlain(ref);
+          return v || ('[' + placeholderLabel(ref) + ']');
+        });
+      }
+
+      // Sender letterhead — pulls from the configured sender section
+      var senderName = sectionField(sender, ['Full Name', 'Name', 'Your Full Name', 'Employee Name', 'Policyholder Name']);
+      var senderAddress = sectionField(sender, ['Mailing Address', 'New Address', 'Address', 'Street Address']);
+      var senderCity = sectionField(sender, ['City', 'City/Town']);
+      var senderStateZip = sectionField(sender, ['State / ZIP', 'State/ZIP', 'State, ZIP']);
+      var senderCityStateZip = senderCity + (senderStateZip ? ', ' + senderStateZip : '');
+      var senderPhone = sectionField(sender, ['Phone', 'Phone Number']);
+      var senderEmail = sectionField(sender, ['Email', 'Email Address']);
+
+      // Recipient block — pulls from configured recipient.section
+      var recipOrg = '', recipAddr = '', recipCityStateZip = '', recipAttn = '';
+      if (cfg.recipient) {
+        recipOrg = sectionField(recipient, [cfg.recipient.orgField, 'School Name', 'Company Name', 'Name']);
+        if (cfg.recipient.addressField) {
+          recipAddr = sectionField(recipient, [cfg.recipient.addressField]);
+        } else {
+          recipAddr = sectionField(recipient, ['Address', 'Street Address', 'Mailing Address']);
+          var rCity = sectionField(recipient, ['City']);
+          var rStateZip = sectionField(recipient, ['State / ZIP', 'State/ZIP']);
+          if (rCity || rStateZip) recipCityStateZip = rCity + (rStateZip ? ', ' + rStateZip : '');
+        }
+        if (cfg.recipient.attnField) recipAttn = sectionField(recipient, [cfg.recipient.attnField]);
+        if (!recipAttn && cfg.recipient.attn) recipAttn = cfg.recipient.attn;
+      }
+
+      var salutation = cfg.salutation
+        ? substituteText(cfg.salutation)
+        : (recipAttn ? 'Dear ' + recipAttn : (recipOrg ? 'Dear ' + recipOrg : 'To Whom It May Concern'));
+
+      var enclosures = (cfg.enclosures || []).slice();
+      if (cfg.enclosuresSection) {
+        var encSec = fields[cfg.enclosuresSection];
+        if (encSec && encSec._checked) enclosures = enclosures.concat(encSec._checked);
+      }
+
+      var sig = findSignatureSection(fields);
+      var printedName = sectionField(sig, ['Printed Name', 'Full Name', 'Name']) || senderName;
+
+      return {
+        date: fields._date || '',
+        senderName: senderName,
+        senderAddress: senderAddress,
+        senderCityStateZip: senderCityStateZip,
+        senderPhone: senderPhone,
+        senderEmail: senderEmail,
+        recipientOrg: recipOrg,
+        recipientDept: '',
+        recipientAddr: recipAddr,
+        recipientCityStateZip: recipCityStateZip,
+        recipientAttn: recipAttn,
+        subject: substituteText(cfg.subject || ''),
+        salutation: salutation,
+        bodyHtml: (cfg.body || []).map(substituteHtml),
+        closing: cfg.closing || 'Sincerely',
+        printedName: printedName,
+        enclosures: enclosures,
+        templateDisplayName: filename.replace(/^\d+\.\s*/, '').replace(/\.[^.]+$/, '').replace(/_/g, ' ')
+      };
+    }
+
     // Build a letter universally from any parsed template fields
     function universalGenerate(fields, templateName) {
       var sender = findSenderSection(fields);
@@ -6467,7 +6626,7 @@ guideLibrary['disability'] = {
 
       var html = getEditorHtml();
       var fields = parseTemplateFields(html);
-      var letterData = universalGenerate(fields, file.original_name);
+      var letterData = renderLetter(fields, file.original_name) || universalGenerate(fields, file.original_name);
       var letterHtml = buildLetterHtml(letterData);
       showLetterPreview(letterHtml, file.original_name);
     }
