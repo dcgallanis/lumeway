@@ -238,12 +238,12 @@ tr:hover { background: var(--cream); }
   </div>
   <div class="card">
     <h2>Recover Missing Purchase</h2>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Paste a Stripe Checkout Session ID to re-process a payment that didn't get recorded.</p>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Paste either a Stripe <strong>Payment ID</strong> (<code>pi_...</code>) or <strong>Checkout Session ID</strong> (<code>cs_...</code>) to re-process a payment that didn't get recorded. You can find the Payment ID on the payment detail page in Stripe Dashboard.</p>
     <form onsubmit="return retryPurchase(event)">
       <div class="form-row">
         <div class="form-group full">
-          <label>Stripe Session ID</label>
-          <input type="text" id="retry-session-id" placeholder="cs_live_..." required>
+          <label>Stripe Payment ID or Session ID</label>
+          <input type="text" id="retry-session-id" placeholder="pi_... or cs_live_..." required>
         </div>
       </div>
       <div class="btn-row">

@@ -9115,15 +9115,26 @@ def admin_delete_purchase():
 
 @app.route("/api/admin/retry-purchase", methods=["POST"])
 def admin_retry_purchase():
-    """Admin tool: re-process a Stripe checkout session to create missing purchase records."""
+    """Admin tool: re-process a Stripe checkout session to create missing purchase records.
+
+    Accepts either a Checkout Session ID (cs_...) or a Payment Intent ID (pi_...).
+    If a Payment Intent ID is given, looks up the associated Checkout Session.
+    """
     if not check_admin():
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
-    session_id = data.get("session_id", "").strip()
-    if not session_id:
+    raw_id = data.get("session_id", "").strip()
+    if not raw_id:
         return jsonify({"error": "session_id required"}), 400
     try:
-        session_data = stripe.checkout.Session.retrieve(session_id)
+        # Resolve to a Checkout Session
+        if raw_id.startswith("pi_"):
+            sessions = stripe.checkout.Session.list(payment_intent=raw_id, limit=1)
+            if not sessions.data:
+                return jsonify({"error": "No Checkout Session found for that Payment Intent"}), 404
+            session_data = stripe.checkout.Session.retrieve(sessions.data[0].id)
+        else:
+            session_data = stripe.checkout.Session.retrieve(raw_id)
         if session_data.payment_status != "paid":
             return jsonify({"error": "Session not paid"}), 400
         raw_meta = session_data.metadata
