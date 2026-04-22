@@ -8825,6 +8825,28 @@ def admin_add_expense():
     conn.close()
     return jsonify({"ok": True})
 
+@app.route("/api/admin/expenses/<int:expense_id>", methods=["PUT"])
+def admin_update_expense(expense_id):
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    date = data.get("date", "")
+    amount = data.get("amount", 0)
+    category = data.get("category", "")
+    description = data.get("description", "")
+    payment_method = data.get("payment_method", "")
+    notes = data.get("notes", "")
+    if not date or not amount or not category or not description:
+        return jsonify({"error": "Missing required fields"}), 400
+    amount_cents = int(round(float(amount) * 100))
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"UPDATE expenses SET date = {param}, amount_cents = {param}, category = {param}, description = {param}, payment_method = {param}, notes = {param} WHERE id = {param}",
+        (date, amount_cents, category, description, payment_method, notes, expense_id))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
 @app.route("/api/admin/expenses/<int:expense_id>", methods=["DELETE"])
 def admin_delete_expense(expense_id):
     if not check_admin():

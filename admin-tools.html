@@ -132,8 +132,12 @@ tr:hover { background: var(--cream); }
 <!-- EXPENSES TAB -->
 <div class="tab-content active" id="tab-expenses">
   <div class="card">
-    <h2>Add Expense</h2>
-    <form id="expenseForm" onsubmit="return addExpense(event)">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 id="exp-form-title">Add Expense</h2>
+      <button type="button" class="btn btn-ghost" id="exp-cancel-edit" style="display:none" onclick="cancelEditExpense()">Cancel Edit</button>
+    </div>
+    <form id="expenseForm" onsubmit="return submitExpense(event)">
+      <input type="hidden" id="exp-edit-id" value="">
       <div class="form-row">
         <div class="form-group">
           <label>Date</label>
@@ -417,8 +421,9 @@ function setToday() {
 }
 
 // ── EXPENSES ──
-function addExpense(e) {
+function submitExpense(e) {
   e.preventDefault();
+  var editId = document.getElementById('exp-edit-id').value;
   var data = {
     date: document.getElementById('exp-date').value,
     amount: parseFloat(document.getElementById('exp-amount').value),
@@ -427,23 +432,47 @@ function addExpense(e) {
     payment_method: document.getElementById('exp-payment').value,
     notes: document.getElementById('exp-notes').value
   };
-  api('/api/admin/expenses', {
-    method: 'POST',
+  var url = editId ? '/api/admin/expenses/' + editId : '/api/admin/expenses';
+  var method = editId ? 'PUT' : 'POST';
+  api(url, {
+    method: method,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   }).then(function(r) { return r.json(); }).then(function(res) {
     if (res.ok) {
-      showToast('$' + data.amount.toFixed(2) + ' added — ' + data.category);
-      document.getElementById('exp-amount').value = '';
-      document.getElementById('exp-desc').value = '';
-      document.getElementById('exp-notes').value = '';
-      document.getElementById('exp-amount').focus();
+      showToast(editId ? 'Expense updated' : '$' + data.amount.toFixed(2) + ' added — ' + data.category);
+      cancelEditExpense();
       loadExpenses();
     } else {
-      showToast(res.error || 'Error adding expense');
+      showToast(res.error || 'Error saving expense');
     }
   });
   return false;
+}
+
+function editExpense(id) {
+  var exp = allExpenses.find(function(e) { return e.id === id; });
+  if (!exp) return;
+  document.getElementById('exp-edit-id').value = id;
+  document.getElementById('exp-date').value = exp.date;
+  document.getElementById('exp-amount').value = (exp.amount_cents / 100).toFixed(2);
+  document.getElementById('exp-category').value = exp.category;
+  document.getElementById('exp-desc').value = exp.description;
+  document.getElementById('exp-payment').value = exp.payment_method || '';
+  document.getElementById('exp-notes').value = exp.notes || '';
+  document.getElementById('exp-form-title').textContent = 'Edit Expense';
+  document.getElementById('exp-cancel-edit').style.display = '';
+  document.querySelector('#expenseForm button[type="submit"]').textContent = 'Save Changes';
+  document.getElementById('exp-date').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function cancelEditExpense() {
+  document.getElementById('exp-edit-id').value = '';
+  document.getElementById('exp-form-title').textContent = 'Add Expense';
+  document.getElementById('exp-cancel-edit').style.display = 'none';
+  document.querySelector('#expenseForm button[type="submit"]').textContent = 'Add Expense';
+  document.getElementById('expenseForm').reset();
+  setToday();
 }
 
 function onExpViewChange() {
@@ -496,7 +525,7 @@ function renderExpenses() {
   expenses.forEach(function(e) {
     var d = new Date(e.date + 'T12:00:00');
     var ds = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    html += '<tr><td>' + ds + '</td><td><span class="category-tag">' + e.category + '</span></td><td>' + e.description + '</td><td class="amount">' + fmt(e.amount_cents) + '</td><td style="color:var(--muted);font-size:12px">' + (e.payment_method || '—') + '</td><td><button class="btn-danger" onclick="deleteExpense(' + e.id + ')" title="Delete">&times;</button></td></tr>';
+    html += '<tr><td>' + ds + '</td><td><span class="category-tag">' + e.category + '</span></td><td>' + e.description + '</td><td class="amount">' + fmt(e.amount_cents) + '</td><td style="color:var(--muted);font-size:12px">' + (e.payment_method || '—') + '</td><td style="white-space:nowrap"><button class="btn btn-ghost" style="padding:2px 6px;font-size:12px;min-width:0" onclick="editExpense(' + e.id + ')" title="Edit">&#9998;</button> <button class="btn-danger" onclick="deleteExpense(' + e.id + ')" title="Delete">&times;</button></td></tr>';
   });
   html += '</tbody></table>';
   document.getElementById('expense-table').innerHTML = html;
