@@ -225,15 +225,25 @@ tr:hover { background: var(--cream); }
 <!-- REVENUE TAB -->
 <div class="tab-content" id="tab-revenue">
   <div class="card">
-    <h2>Revenue Overview</h2>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap">
+      <h2 style="margin-bottom:0">Revenue Overview</h2>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="rev-view" onchange="onRevViewChange()" style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--cream)">
+          <option value="month">Month</option>
+          <option value="ytd">Year to Date</option>
+          <option value="all">All Time</option>
+        </select>
+        <input type="month" id="rev-month-filter" onchange="renderRevenue()" style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--cream)">
+      </div>
+    </div>
     <div class="stats-grid" id="revenue-stats"></div>
   </div>
   <div class="card">
-    <h3>Monthly Revenue</h3>
+    <h3>Monthly Revenue (Net)</h3>
     <div class="bar-chart" id="revenue-chart"></div>
   </div>
   <div class="card">
-    <h2>Recent Purchases</h2>
+    <h2>Purchases</h2>
     <div id="revenue-list"></div>
   </div>
   <div class="card">
@@ -561,49 +571,91 @@ function deletePurchase(sessionId) {
   });
 }
 
+var allPurchases = [];
+
+function stripeFee(amountCents) {
+  if (amountCents <= 0) return 0;
+  return Math.round(amountCents * 0.029 + 30);
+}
+
+function netAmount(amountCents) {
+  return amountCents - stripeFee(amountCents);
+}
+
+function onRevViewChange() {
+  var view = document.getElementById('rev-view').value;
+  var filter = document.getElementById('rev-month-filter');
+  filter.disabled = (view !== 'month');
+  filter.style.opacity = (view === 'month') ? '1' : '0.4';
+  renderRevenue();
+}
+
 function loadRevenue() {
   api('/api/admin/revenue').then(function(r) { return r.json(); }).then(function(data) {
-    var purchases = data.purchases || [];
-    // Filter out $0 bundle grants for revenue calculations
-    var paidPurchases = purchases.filter(function(p) { return p.amount_cents > 0; });
-    var total = paidPurchases.reduce(function(s, p) { return s + p.amount_cents; }, 0);
-    var thisMonth = new Date().toISOString().slice(0, 7);
-    var monthTotal = paidPurchases.filter(function(p) { return (p.purchased_at || '').startsWith(thisMonth); }).reduce(function(s, p) { return s + p.amount_cents; }, 0);
-
-    document.getElementById('revenue-stats').innerHTML =
-      '<div class="stat-box green"><div class="stat-value">' + fmt(total) + '</div><div class="stat-label">Total Revenue</div></div>' +
-      '<div class="stat-box green"><div class="stat-value">' + fmt(monthTotal) + '</div><div class="stat-label">This Month</div></div>' +
-      '<div class="stat-box"><div class="stat-value">' + purchases.length + '</div><div class="stat-label">Purchases</div></div>';
-
-    // Group by month for chart
-    var byMonth = {};
-    purchases.forEach(function(p) {
-      var m = (p.purchased_at || '').slice(0, 7);
-      if (m) byMonth[m] = (byMonth[m] || 0) + p.amount_cents;
-    });
-    var months = Object.keys(byMonth).sort().slice(-6);
-    var maxVal = Math.max.apply(null, months.map(function(m) { return byMonth[m]; })) || 1;
-    var chartHtml = '';
-    months.forEach(function(m) {
-      var pct = Math.max(2, (byMonth[m] / maxVal) * 100);
-      var label = new Date(m + '-15').toLocaleDateString('en-US', { month: 'short' });
-      chartHtml += '<div class="bar-col"><div class="bar-value">' + fmt(byMonth[m]) + '</div><div class="bar green" style="height:' + pct + '%"></div><div class="bar-label">' + label + '</div></div>';
-    });
-    document.getElementById('revenue-chart').innerHTML = chartHtml || '<div class="empty">No revenue data yet.</div>';
-
-    // List
-    if (paidPurchases.length === 0) {
-      document.getElementById('revenue-list').innerHTML = '<div class="empty">No purchases yet.</div>';
-      return;
-    }
-    var listHtml = '';
-    paidPurchases.slice(0, 50).forEach(function(p) {
-      var d = p.purchased_at ? new Date(p.purchased_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
-      var delBtn = p.stripe_session_id ? '<button class="btn-danger" onclick="deletePurchase(\'' + p.stripe_session_id.replace(/'/g, "\\'") + '\')" title="Delete purchase record" style="margin-left:8px">&times;</button>' : '';
-      listHtml += '<div class="rev-item"><div><div class="rev-name">' + p.product_name + '</div><div class="rev-meta">' + p.email + ' · ' + d + '</div></div><div style="display:flex;align-items:center"><div class="rev-amount">' + fmt(p.amount_cents) + '</div>' + delBtn + '</div></div>';
-    });
-    document.getElementById('revenue-list').innerHTML = listHtml;
+    allPurchases = data.purchases || [];
+    renderRevenue();
   });
+}
+
+function renderRevenue() {
+  var view = document.getElementById('rev-view').value;
+  var purchases = allPurchases;
+
+  // Filter by view
+  if (view === 'month') {
+    var month = document.getElementById('rev-month-filter').value;
+    if (month) purchases = purchases.filter(function(p) { return (p.purchased_at || '').startsWith(month); });
+  } else if (view === 'ytd') {
+    var year = String(new Date().getFullYear());
+    purchases = purchases.filter(function(p) { return (p.purchased_at || '').startsWith(year); });
+  }
+
+  var paidPurchases = purchases.filter(function(p) { return p.amount_cents > 0; });
+  var totalGross = paidPurchases.reduce(function(s, p) { return s + p.amount_cents; }, 0);
+  var totalFees = paidPurchases.reduce(function(s, p) { return s + stripeFee(p.amount_cents); }, 0);
+  var totalNet = totalGross - totalFees;
+  var viewLabel = view === 'ytd' ? 'YTD' : (view === 'all' ? 'All-Time' : 'Month');
+
+  document.getElementById('revenue-stats').innerHTML =
+    '<div class="stat-box green"><div class="stat-value">' + fmt(totalNet) + '</div><div class="stat-label">' + viewLabel + ' Net</div></div>' +
+    '<div class="stat-box"><div class="stat-value">' + fmt(totalGross) + '</div><div class="stat-label">Gross</div></div>' +
+    '<div class="stat-box accent"><div class="stat-value">' + fmt(totalFees) + '</div><div class="stat-label">Stripe Fees</div></div>' +
+    '<div class="stat-box"><div class="stat-value">' + paidPurchases.length + '</div><div class="stat-label">Purchases</div></div>';
+
+  // Group by month for chart (net amounts, always uses all purchases)
+  var byMonth = {};
+  var byMonthCount = {};
+  allPurchases.filter(function(p) { return p.amount_cents > 0; }).forEach(function(p) {
+    var m = (p.purchased_at || '').slice(0, 7);
+    if (m) {
+      byMonth[m] = (byMonth[m] || 0) + netAmount(p.amount_cents);
+      byMonthCount[m] = (byMonthCount[m] || 0) + 1;
+    }
+  });
+  var months = Object.keys(byMonth).sort().slice(-6);
+  var maxVal = Math.max.apply(null, months.map(function(m) { return byMonth[m]; })) || 1;
+  var chartHtml = '';
+  months.forEach(function(m) {
+    var pct = Math.max(2, (byMonth[m] / maxVal) * 100);
+    var label = new Date(m + '-15').toLocaleDateString('en-US', { month: 'short' });
+    chartHtml += '<div class="bar-col"><div class="bar-value">' + fmt(byMonth[m]) + '</div><div class="bar green" style="height:' + pct + '%"></div><div class="bar-label">' + label + '</div></div>';
+  });
+  document.getElementById('revenue-chart').innerHTML = chartHtml || '<div class="empty">No revenue data yet.</div>';
+
+  // List
+  if (paidPurchases.length === 0) {
+    document.getElementById('revenue-list').innerHTML = '<div class="empty">No purchases for this period.</div>';
+    return;
+  }
+  var listHtml = '';
+  paidPurchases.slice(0, 50).forEach(function(p) {
+    var d = p.purchased_at ? new Date(p.purchased_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+    var net = netAmount(p.amount_cents);
+    var fee = stripeFee(p.amount_cents);
+    var delBtn = p.stripe_session_id ? '<button class="btn-danger" onclick="deletePurchase(\'' + p.stripe_session_id.replace(/'/g, "\\'") + '\')" title="Delete purchase record" style="margin-left:8px">&times;</button>' : '';
+    listHtml += '<div class="rev-item"><div><div class="rev-name">' + p.product_name + '</div><div class="rev-meta">' + p.email + ' · ' + d + '</div></div><div style="display:flex;align-items:center"><div class="rev-amount">' + fmt(net) + '</div><div style="font-size:11px;color:var(--muted);margin-left:6px">(−' + fmt(fee) + ' fee)</div>' + delBtn + '</div></div>';
+  });
+  document.getElementById('revenue-list').innerHTML = listHtml;
 }
 
 // ── ANALYTICS ──
@@ -721,13 +773,13 @@ function exportPnlCSV() {
   var csv = 'Lumeway P&L — Year to Date ' + year + '\n';
   csv += 'Generated,' + new Date().toISOString().slice(0, 10) + '\n\n';
 
-  csv += 'Section,Category,Amount (USD)\n';
+  csv += 'Section,Category,Net (USD),Stripe Fees (USD)\n';
 
   if (pnl.stripe_revenue.categories.length > 0) {
     pnl.stripe_revenue.categories.forEach(function(c) {
-      csv += 'Revenue - Dashboard/Stripe,' + esc(c.category) + ',' + money(c.amount_cents) + '\n';
+      csv += 'Revenue - Dashboard/Stripe,' + esc(c.category) + ',' + money(c.amount_cents) + ',' + money(c.fee_cents || 0) + '\n';
     });
-    csv += 'Revenue - Dashboard/Stripe Subtotal,,' + money(pnl.stripe_revenue.total) + '\n';
+    csv += 'Revenue - Dashboard/Stripe Subtotal,,' + money(pnl.stripe_revenue.total) + ',' + money(pnl.stripe_revenue.fees || 0) + '\n';
   }
   if (pnl.manual_revenue.categories.length > 0) {
     pnl.manual_revenue.categories.forEach(function(c) {
@@ -760,21 +812,24 @@ function renderPnl(pnl, entries) {
   var totalRev = pnl.total_revenue;
   var totalExp = pnl.expenses.total;
   var net = pnl.net_profit;
+  var stripeFees = (pnl.stripe_revenue.fees || 0);
 
   // YTD Summary
   document.getElementById('pnl-ytd-stats').innerHTML =
-    '<div class="stat-box green"><div class="stat-value">' + fmt(totalRev) + '</div><div class="stat-label">YTD Revenue</div></div>' +
+    '<div class="stat-box green"><div class="stat-value">' + fmt(totalRev) + '</div><div class="stat-label">YTD Revenue (Net)</div></div>' +
     '<div class="stat-box accent"><div class="stat-value">' + fmt(totalExp) + '</div><div class="stat-label">YTD Expenses</div></div>' +
-    '<div class="stat-box ' + (net >= 0 ? 'green' : 'accent') + '"><div class="stat-value">' + fmt(net) + '</div><div class="stat-label">Net Profit</div></div>';
+    '<div class="stat-box ' + (net >= 0 ? 'green' : 'accent') + '"><div class="stat-value">' + fmt(net) + '</div><div class="stat-label">Net Profit</div></div>' +
+    (stripeFees ? '<div class="stat-box"><div class="stat-value">' + fmt(stripeFees) + '</div><div class="stat-label">Stripe Fees</div></div>' : '');
 
   // Revenue breakdown
   var revHtml = '';
   if (pnl.stripe_revenue.categories.length > 0) {
-    revHtml += '<div style="margin-bottom:12px"><span style="font-size:12px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:0.05em">Dashboard / Stripe</span></div>';
+    revHtml += '<div style="margin-bottom:12px"><span style="font-size:12px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:0.05em">Dashboard / Stripe (Net after fees)</span></div>';
     pnl.stripe_revenue.categories.forEach(function(c) {
-      revHtml += '<div class="rev-item"><div class="rev-name">' + c.category + '</div><div class="rev-amount">' + fmt(c.amount_cents) + '</div></div>';
+      var feeNote = c.fee_cents ? '<span style="font-size:11px;color:var(--muted);margin-left:6px">(−' + fmt(c.fee_cents) + ' fees)</span>' : '';
+      revHtml += '<div class="rev-item"><div class="rev-name">' + c.category + '</div><div class="rev-amount">' + fmt(c.amount_cents) + feeNote + '</div></div>';
     });
-    revHtml += '<div class="rev-item" style="border-top:2px solid var(--border);font-weight:600"><div>Subtotal</div><div class="rev-amount">' + fmt(pnl.stripe_revenue.total) + '</div></div>';
+    revHtml += '<div class="rev-item" style="border-top:2px solid var(--border);font-weight:600"><div>Subtotal (Net)</div><div class="rev-amount">' + fmt(pnl.stripe_revenue.total) + '</div></div>';
   }
   if (pnl.manual_revenue.categories.length > 0) {
     revHtml += '<div style="margin:16px 0 12px"><span style="font-size:12px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:0.05em">Manual / External</span></div>';
@@ -855,6 +910,7 @@ function exportSubscribers() {
 setToday();
 setRevDate();
 document.getElementById('exp-month-filter').value = new Date().toISOString().slice(0, 7);
+document.getElementById('rev-month-filter').value = new Date().toISOString().slice(0, 7);
 loadExpenses();
 </script>
 </body>

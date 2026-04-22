@@ -8890,19 +8890,30 @@ def admin_pnl():
     cur = db_execute(conn, f"SELECT category, SUM(amount_cents) FROM revenue_entries WHERE date LIKE {param} GROUP BY category ORDER BY SUM(amount_cents) DESC", (year + "%",))
     manual_rev_cats = [{"category": r[0], "amount_cents": r[1]} for r in cur.fetchall()]
     # Dashboard/Stripe revenue by product (YTD) — only paid purchases
-    cur = db_execute(conn, f"SELECT product_name, SUM(amount_cents) FROM purchases WHERE purchased_at LIKE {param} AND amount_cents > 0 GROUP BY product_name ORDER BY SUM(amount_cents) DESC", (year + "%",))
-    stripe_rev_cats = [{"category": r[0], "amount_cents": r[1]} for r in cur.fetchall()]
+    # Fetch per-transaction amounts so we can calculate per-transaction Stripe fees
+    cur = db_execute(conn, f"SELECT product_name, amount_cents FROM purchases WHERE purchased_at LIKE {param} AND amount_cents > 0", (year + "%",))
+    stripe_txns = [(r[0], r[1]) for r in cur.fetchall()]
+    # Aggregate by category
+    stripe_cat_gross = {}
+    stripe_cat_fees = {}
+    for name, amt in stripe_txns:
+        fee = round(amt * 0.029 + 30)
+        stripe_cat_gross[name] = stripe_cat_gross.get(name, 0) + amt
+        stripe_cat_fees[name] = stripe_cat_fees.get(name, 0) + fee
+    stripe_rev_cats = [{"category": k, "amount_cents": stripe_cat_gross[k] - stripe_cat_fees[k], "gross_cents": stripe_cat_gross[k], "fee_cents": stripe_cat_fees[k]} for k in sorted(stripe_cat_gross, key=lambda k: stripe_cat_gross[k], reverse=True)]
     # Totals
     total_expenses = sum(e["amount_cents"] for e in expense_cats)
     total_manual_rev = sum(r["amount_cents"] for r in manual_rev_cats)
-    total_stripe_rev = sum(r["amount_cents"] for r in stripe_rev_cats)
-    total_revenue = total_manual_rev + total_stripe_rev
+    total_stripe_gross = sum(c["gross_cents"] for c in stripe_rev_cats)
+    total_stripe_fees = sum(c["fee_cents"] for c in stripe_rev_cats)
+    total_stripe_net = total_stripe_gross - total_stripe_fees
+    total_revenue = total_manual_rev + total_stripe_net
     conn.close()
     return jsonify({
         "year": year,
         "expenses": {"total": total_expenses, "categories": expense_cats},
         "manual_revenue": {"total": total_manual_rev, "categories": manual_rev_cats},
-        "stripe_revenue": {"total": total_stripe_rev, "categories": stripe_rev_cats},
+        "stripe_revenue": {"total": total_stripe_net, "gross": total_stripe_gross, "fees": total_stripe_fees, "categories": stripe_rev_cats},
         "total_revenue": total_revenue,
         "net_profit": total_revenue - total_expenses
     })
