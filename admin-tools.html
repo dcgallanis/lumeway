@@ -497,6 +497,23 @@ function exportExpenseCSV() {
 }
 
 // ── REVENUE ──
+function deletePurchase(sessionId) {
+  if (!sessionId) return;
+  if (!confirm('Delete this purchase record? This only removes it from the admin totals — it does NOT refund the customer.')) return;
+  api('/api/admin/delete-purchase', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ session_id: sessionId })
+  }).then(function(r) { return r.json(); }).then(function(res) {
+    if (res.ok) {
+      showToast('Purchase deleted');
+      loadRevenue();
+    } else {
+      showToast(res.error || 'Error deleting purchase');
+    }
+  });
+}
+
 function loadRevenue() {
   api('/api/admin/revenue').then(function(r) { return r.json(); }).then(function(data) {
     var purchases = data.purchases || [];
@@ -535,7 +552,8 @@ function loadRevenue() {
     var listHtml = '';
     paidPurchases.slice(0, 50).forEach(function(p) {
       var d = p.purchased_at ? new Date(p.purchased_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
-      listHtml += '<div class="rev-item"><div><div class="rev-name">' + p.product_name + '</div><div class="rev-meta">' + p.email + ' · ' + d + '</div></div><div class="rev-amount">' + fmt(p.amount_cents) + '</div></div>';
+      var delBtn = p.stripe_session_id ? '<button class="btn-danger" onclick="deletePurchase(\'' + p.stripe_session_id.replace(/'/g, "\\'") + '\')" title="Delete purchase record" style="margin-left:8px">&times;</button>' : '';
+      listHtml += '<div class="rev-item"><div><div class="rev-name">' + p.product_name + '</div><div class="rev-meta">' + p.email + ' · ' + d + '</div></div><div style="display:flex;align-items:center"><div class="rev-amount">' + fmt(p.amount_cents) + '</div>' + delBtn + '</div></div>';
     });
     document.getElementById('revenue-list').innerHTML = listHtml;
   });

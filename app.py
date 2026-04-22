@@ -4161,15 +4161,20 @@ def fulfill_purchase(session_data):
         product_id = getattr(session_data.metadata, 'product_id', None) if hasattr(session_data, 'metadata') else None
         session_id = getattr(session_data, 'id', None)
         payment_intent = getattr(session_data, 'payment_intent', None)
+        amount_total = getattr(session_data, 'amount_total', None)
     else:
         email = (session_data.get("customer_details") or {}).get("email") or session_data.get("customer_email")
         product_id = (session_data.get("metadata") or {}).get("product_id")
         session_id = session_data.get("id")
         payment_intent = session_data.get("payment_intent")
+        amount_total = session_data.get("amount_total")
     if not email or not product_id or product_id not in PRODUCTS:
         print(f"Cannot fulfill: email={email}, product_id={product_id}")
         return
     product = PRODUCTS[product_id]
+    # Use the actual amount paid (after discounts) from Stripe when available;
+    # fall back to list price for safety if the session doesn't include it.
+    amount_paid = amount_total if amount_total is not None else product["price"]
     token = secrets.token_urlsafe(32)
     now = datetime.now(timezone.utc).isoformat()
     try:
@@ -4178,7 +4183,7 @@ def fulfill_purchase(session_data):
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""" if USE_POSTGRES else
             """INSERT INTO purchases (email, product_id, product_name, amount_cents, stripe_session_id, stripe_payment_intent, purchased_at, download_token, fulfilled)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (email, product_id, product["name"], product["price"],
+            (email, product_id, product["name"], amount_paid,
              session_id, payment_intent,
              now, token, True if USE_POSTGRES else 1))
         conn.commit()
@@ -8908,8 +8913,8 @@ def admin_revenue():
         return jsonify({"error": "Unauthorized"}), 401
     conn = get_db()
     # All purchases
-    cur = db_execute(conn, "SELECT product_id, product_name, amount_cents, purchased_at, email FROM purchases ORDER BY purchased_at DESC")
-    purchases = [{"product_id": r[0], "product_name": r[1], "amount_cents": r[2], "purchased_at": r[3], "email": r[4]} for r in cur.fetchall()]
+    cur = db_execute(conn, "SELECT product_id, product_name, amount_cents, purchased_at, email, stripe_session_id FROM purchases ORDER BY purchased_at DESC")
+    purchases = [{"product_id": r[0], "product_name": r[1], "amount_cents": r[2], "purchased_at": r[3], "email": r[4], "stripe_session_id": r[5]} for r in cur.fetchall()]
     conn.close()
     return jsonify({"purchases": purchases})
 
