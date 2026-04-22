@@ -236,6 +236,22 @@ tr:hover { background: var(--cream); }
     <h2>Recent Purchases</h2>
     <div id="revenue-list"></div>
   </div>
+  <div class="card">
+    <h2>Recover Missing Purchase</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Paste a Stripe Checkout Session ID to re-process a payment that didn't get recorded.</p>
+    <form onsubmit="return retryPurchase(event)">
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Stripe Session ID</label>
+          <input type="text" id="retry-session-id" placeholder="cs_live_..." required>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button type="submit" class="btn btn-primary" id="retry-btn">Recover Purchase</button>
+      </div>
+      <div id="retry-result" style="margin-top:12px;font-size:13px"></div>
+    </form>
+  </div>
 </div>
 
 <!-- P&L TAB -->
@@ -497,6 +513,37 @@ function exportExpenseCSV() {
 }
 
 // ── REVENUE ──
+function retryPurchase(e) {
+  e.preventDefault();
+  var sid = document.getElementById('retry-session-id').value.trim();
+  if (!sid) return false;
+  var btn = document.getElementById('retry-btn');
+  var result = document.getElementById('retry-result');
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+  result.innerHTML = '';
+  api('/api/admin/retry-purchase', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ session_id: sid })
+  }).then(function(r) { return r.json(); }).then(function(res) {
+    btn.disabled = false;
+    btn.textContent = 'Recover Purchase';
+    if (res.ok) {
+      result.innerHTML = '<span style="color:var(--green)">Purchase recovered successfully.</span>';
+      document.getElementById('retry-session-id').value = '';
+      loadRevenue();
+    } else {
+      result.innerHTML = '<span style="color:var(--red)">' + (res.error || 'Error recovering purchase') + '</span>';
+    }
+  }).catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'Recover Purchase';
+    result.innerHTML = '<span style="color:var(--red)">Network error — try again.</span>';
+  });
+  return false;
+}
+
 function deletePurchase(sessionId) {
   if (!sessionId) return;
   if (!confirm('Delete this purchase record? This only removes it from the admin totals — it does NOT refund the customer.')) return;
