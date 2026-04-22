@@ -6431,23 +6431,21 @@ guideLibrary['disability'] = {
           var cells = rows[r].querySelectorAll('td, th');
           if (cells.length === 0) continue;
 
-          // Check if this is a section header (dark navy background)
-          // Templates use #1b4f72 as the header color
-          // Browser DOM may convert hex to rgb(), so check both formats
-          var firstCell = cells[0];
-          var bg = firstCell.style.background || firstCell.style.backgroundColor || '';
-          var cellHtml = firstCell.outerHTML || '';
-          var bgCheck = (bg + ' ' + cellHtml).toLowerCase();
-          var isHeader = bgCheck.indexOf('1b4f72') >= 0 || bgCheck.indexOf('1b3a5c') >= 0 ||
-                         bgCheck.indexOf('rgb(27, 79, 114)') >= 0 || bgCheck.indexOf('rgb(27,79,114)') >= 0 ||
-                         bgCheck.indexOf('rgb(27, 58, 92)') >= 0 || bgCheck.indexOf('rgb(27,58,92)') >= 0;
-          // Fallback: detect headers by pattern — single cell, ALL CAPS text, no colon
-          if (!isHeader && cells.length === 1) {
-            var hdrText = firstCell.textContent.trim();
-            if (hdrText.length > 3 && hdrText === hdrText.toUpperCase() && hdrText.indexOf(':') < 0 && /^[A-Z\s\/\-\(\)]+$/.test(hdrText)) {
+          // Section header detection: single-cell row with a single line of ALL-CAPS text.
+          // We used to also check for navy background color, but that false-positived on
+          // column-header rows (e.g. "Record | Requested") and on info boxes whose nested
+          // elements happened to use the navy color. The text pattern alone is reliable
+          // because Lumeway templates follow the convention of uppercase section headers.
+          var isHeader = false;
+          if (cells.length === 1) {
+            var hdrText = cells[0].textContent.trim();
+            if (hdrText && hdrText.length > 3 && hdrText.length < 80 &&
+                hdrText.indexOf('\n') < 0 && hdrText.indexOf(':') < 0 &&
+                !/[a-z]/.test(hdrText) && /[A-Z]/.test(hdrText)) {
               isHeader = true;
             }
           }
+          var firstCell = cells[0];
 
           if (isHeader) {
             var headerText = firstCell.textContent.trim();
