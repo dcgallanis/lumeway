@@ -743,7 +743,7 @@ function renderPnl(pnl, entries) {
   entries.forEach(function(e) {
     var d = new Date(e.date + 'T12:00:00');
     var ds = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    html += '<tr><td>' + ds + '</td><td><span class="category-tag">' + e.category + '</span></td><td>' + e.description + '</td><td class="amount" style="color:var(--green)">' + fmt(e.amount_cents) + '</td><td><button class="btn-danger" onclick="deleteRevEntry(' + e.id + ')">&times;</button></td></tr>';
+    html += '<tr><td>' + ds + '</td><td><span class="category-tag">' + e.category + '</span></td><td>' + e.description + '</td><td class="amount" style="color:var(--green)">' + fmt(e.amount_cents) + '</td><td><button class="btn-danger" onclick="deleteRevEntry(' + e.id + ')" title="Delete">&times;</button></td></tr>';
   });
   html += '</tbody></table>';
   document.getElementById('rev-entries-table').innerHTML = html;
