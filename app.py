@@ -876,6 +876,46 @@ def init_subscribers_db():
             conn3.close()
         except Exception:
             pass
+    # Recurring expenses table (idempotent)
+    try:
+        conn_rec = get_db()
+        if USE_POSTGRES:
+            db_execute(conn_rec, """CREATE TABLE IF NOT EXISTS recurring_expenses (
+                id SERIAL PRIMARY KEY,
+                amount_cents INTEGER NOT NULL,
+                category TEXT NOT NULL,
+                description TEXT NOT NULL,
+                payment_method TEXT,
+                notes TEXT,
+                frequency TEXT NOT NULL,
+                start_date TEXT NOT NULL,
+                next_due_date TEXT NOT NULL,
+                end_date TEXT,
+                active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL
+            )""")
+        else:
+            db_execute(conn_rec, """CREATE TABLE IF NOT EXISTS recurring_expenses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                amount_cents INTEGER NOT NULL,
+                category TEXT NOT NULL,
+                description TEXT NOT NULL,
+                payment_method TEXT,
+                notes TEXT,
+                frequency TEXT NOT NULL,
+                start_date TEXT NOT NULL,
+                next_due_date TEXT NOT NULL,
+                end_date TEXT,
+                active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL
+            )""")
+        conn_rec.commit()
+        conn_rec.close()
+    except Exception:
+        try:
+            conn_rec.close()
+        except Exception:
+            pass
     # Revenue entries table (for manual revenue tracking)
     try:
         conn4 = get_db()
@@ -8857,6 +8897,138 @@ def admin_delete_expense(expense_id):
     conn.commit()
     conn.close()
     return jsonify({"ok": True})
+
+
+def _advance_date(date_str, frequency):
+    """Advance a YYYY-MM-DD date by one unit of frequency. Clamps day-of-month for short months."""
+    from calendar import monthrange
+    y, m, d = int(date_str[0:4]), int(date_str[5:7]), int(date_str[8:10])
+    if frequency == "weekly":
+        dt = datetime(y, m, d) + timedelta(days=7)
+        return dt.strftime("%Y-%m-%d")
+    if frequency == "monthly":
+        m += 1
+        if m > 12:
+            y += 1
+            m = 1
+    elif frequency == "yearly":
+        y += 1
+    else:
+        return date_str
+    last = monthrange(y, m)[1]
+    d = min(d, last)
+    return f"{y:04d}-{m:02d}-{d:02d}"
+
+
+def _process_recurring_expenses():
+    """Generate due expense entries from active recurring rules. Returns count generated."""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    now = datetime.now(timezone.utc).isoformat()
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, "SELECT id, amount_cents, category, description, payment_method, notes, frequency, next_due_date, end_date FROM recurring_expenses WHERE active = 1")
+    rows = cur.fetchall()
+    generated = 0
+    for r in rows:
+        rec_id, amount_cents, category, description, payment_method, notes, frequency, next_due, end_date = r
+        while next_due <= today and (not end_date or next_due <= end_date):
+            db_execute(conn,
+                f"INSERT INTO expenses (date, amount_cents, category, description, payment_method, notes, created_at) VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param})",
+                (next_due, amount_cents, category, description, payment_method, notes, now))
+            generated += 1
+            next_due = _advance_date(next_due, frequency)
+        db_execute(conn, f"UPDATE recurring_expenses SET next_due_date = {param} WHERE id = {param}", (next_due, rec_id))
+    conn.commit()
+    conn.close()
+    return generated
+
+
+@app.route("/api/admin/recurring-expenses", methods=["GET"])
+def admin_list_recurring_expenses():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    _process_recurring_expenses()
+    conn = get_db()
+    cur = db_execute(conn, "SELECT id, amount_cents, category, description, payment_method, notes, frequency, start_date, next_due_date, end_date, active, created_at FROM recurring_expenses ORDER BY active DESC, next_due_date ASC")
+    rows = cur.fetchall()
+    conn.close()
+    return jsonify({"recurring": [{
+        "id": r[0], "amount_cents": r[1], "category": r[2], "description": r[3],
+        "payment_method": r[4], "notes": r[5], "frequency": r[6],
+        "start_date": r[7], "next_due_date": r[8], "end_date": r[9],
+        "active": bool(r[10]), "created_at": r[11]
+    } for r in rows]})
+
+
+@app.route("/api/admin/recurring-expenses", methods=["POST"])
+def admin_add_recurring_expense():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    amount = data.get("amount", 0)
+    category = data.get("category", "")
+    description = data.get("description", "")
+    payment_method = data.get("payment_method", "")
+    notes = data.get("notes", "")
+    frequency = data.get("frequency", "")
+    start_date = data.get("start_date", "")
+    end_date = data.get("end_date") or None
+    if not amount or not category or not description or not frequency or not start_date:
+        return jsonify({"error": "Missing required fields"}), 400
+    if frequency not in ("weekly", "monthly", "yearly"):
+        return jsonify({"error": "Invalid frequency"}), 400
+    amount_cents = int(round(float(amount) * 100))
+    now = datetime.now(timezone.utc).isoformat()
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn,
+        f"INSERT INTO recurring_expenses (amount_cents, category, description, payment_method, notes, frequency, start_date, next_due_date, end_date, active, created_at) VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param}, {param}, {param}, 1, {param})",
+        (amount_cents, category, description, payment_method, notes, frequency, start_date, start_date, end_date, now))
+    conn.commit()
+    conn.close()
+    _process_recurring_expenses()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/admin/recurring-expenses/<int:rec_id>", methods=["PUT"])
+def admin_update_recurring_expense(rec_id):
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    amount = data.get("amount", 0)
+    category = data.get("category", "")
+    description = data.get("description", "")
+    payment_method = data.get("payment_method", "")
+    notes = data.get("notes", "")
+    frequency = data.get("frequency", "")
+    end_date = data.get("end_date") or None
+    active = 1 if data.get("active", True) else 0
+    if not amount or not category or not description or not frequency:
+        return jsonify({"error": "Missing required fields"}), 400
+    if frequency not in ("weekly", "monthly", "yearly"):
+        return jsonify({"error": "Invalid frequency"}), 400
+    amount_cents = int(round(float(amount) * 100))
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn,
+        f"UPDATE recurring_expenses SET amount_cents = {param}, category = {param}, description = {param}, payment_method = {param}, notes = {param}, frequency = {param}, end_date = {param}, active = {param} WHERE id = {param}",
+        (amount_cents, category, description, payment_method, notes, frequency, end_date, active, rec_id))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/admin/recurring-expenses/<int:rec_id>", methods=["DELETE"])
+def admin_delete_recurring_expense(rec_id):
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"DELETE FROM recurring_expenses WHERE id = {param}", (rec_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
 
 @app.route("/api/admin/subscribers", methods=["GET"])
 def admin_get_subscribers():

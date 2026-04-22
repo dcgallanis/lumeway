@@ -231,6 +231,103 @@ tr:hover { background: var(--cream); }
       <button class="btn btn-ghost" onclick="exportExpenseCSV()">Export CSV</button>
     </div>
   </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap">
+      <h2 style="margin-bottom:0">Recurring Expenses</h2>
+      <button type="button" class="btn btn-primary" id="rec-show-form-btn" onclick="showRecurringForm()">+ Add Recurring</button>
+    </div>
+    <div style="color:var(--muted);font-size:13px;margin-bottom:12px">Set up monthly, yearly, or weekly recurring expenses. They're auto-generated as real expense entries when due.</div>
+    <form id="recurringForm" onsubmit="return submitRecurring(event)" style="display:none;border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px;background:var(--cream)">
+      <input type="hidden" id="rec-edit-id" value="">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Amount ($)</label>
+          <input type="number" id="rec-amount" step="0.01" min="0" placeholder="0.00" required>
+        </div>
+        <div class="form-group">
+          <label>Frequency</label>
+          <select id="rec-frequency" required>
+            <option value="">Select...</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+            <option value="weekly">Weekly</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="rec-category" required>
+            <option value="">Select...</option>
+            <option>Templates & Products</option>
+            <option>Software & Tools</option>
+            <option>Marketing & Ads</option>
+            <option>Design & Branding</option>
+            <option>Web Hosting & Domain</option>
+            <option>AI & API Costs</option>
+            <option>Payment Processing</option>
+            <option>Platform Fees</option>
+            <option>Notary Expenses</option>
+            <option>Professional Services</option>
+            <option>Education & Training</option>
+            <option>Legal & Compliance</option>
+            <option>Insurance</option>
+            <option>Office Supplies</option>
+            <option>Travel & Mileage</option>
+            <option>Subscriptions</option>
+            <option>Equipment & Hardware</option>
+            <option>Bank Fees</option>
+            <option>Taxes & Licenses</option>
+            <option>Contractors & Freelancers</option>
+            <option>Meals & Entertainment</option>
+            <option>Home Office</option>
+            <option>Shipping & Postage</option>
+            <option>Miscellaneous</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Payment Method</label>
+          <select id="rec-payment">
+            <option value="">Select...</option>
+            <option>Credit Card</option>
+            <option>Debit Card</option>
+            <option>PayPal</option>
+            <option>Bank Transfer</option>
+            <option>Cash</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Description</label>
+          <input type="text" id="rec-desc" placeholder="e.g., Claude API subscription" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Start Date</label>
+          <input type="date" id="rec-start" required>
+        </div>
+        <div class="form-group">
+          <label>End Date (optional)</label>
+          <input type="date" id="rec-end">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Notes (optional)</label>
+          <textarea id="rec-notes" placeholder="Any details..."></textarea>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button type="submit" class="btn btn-primary" id="rec-submit-btn">Add Recurring</button>
+        <button type="button" class="btn btn-ghost" onclick="hideRecurringForm()">Cancel</button>
+      </div>
+    </form>
+    <div id="recurring-table"></div>
+  </div>
 </div>
 
 <!-- REVENUE TAB -->
@@ -537,6 +634,141 @@ function deleteExpense(id) {
   api('/api/admin/expenses/' + id, { method: 'DELETE' }).then(function() {
     loadExpenses();
     showToast('Expense deleted');
+  });
+}
+
+// ── RECURRING EXPENSES ──
+var allRecurring = [];
+
+function showRecurringForm() {
+  document.getElementById('recurringForm').style.display = '';
+  document.getElementById('rec-show-form-btn').style.display = 'none';
+  document.getElementById('rec-edit-id').value = '';
+  document.getElementById('rec-submit-btn').textContent = 'Add Recurring';
+  document.getElementById('rec-start').valueAsDate = new Date();
+}
+
+function hideRecurringForm() {
+  document.getElementById('recurringForm').style.display = 'none';
+  document.getElementById('rec-show-form-btn').style.display = '';
+  document.getElementById('recurringForm').reset();
+  document.getElementById('rec-edit-id').value = '';
+}
+
+function submitRecurring(e) {
+  e.preventDefault();
+  var editId = document.getElementById('rec-edit-id').value;
+  var data = {
+    amount: parseFloat(document.getElementById('rec-amount').value),
+    category: document.getElementById('rec-category').value,
+    description: document.getElementById('rec-desc').value,
+    payment_method: document.getElementById('rec-payment').value,
+    notes: document.getElementById('rec-notes').value,
+    frequency: document.getElementById('rec-frequency').value,
+    start_date: document.getElementById('rec-start').value,
+    end_date: document.getElementById('rec-end').value || null,
+    active: true
+  };
+  var url = editId ? '/api/admin/recurring-expenses/' + editId : '/api/admin/recurring-expenses';
+  var method = editId ? 'PUT' : 'POST';
+  api(url, {
+    method: method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(function(r) { return r.json(); }).then(function(res) {
+    if (res.ok) {
+      showToast(editId ? 'Recurring expense updated' : 'Recurring expense added');
+      hideRecurringForm();
+      loadRecurring();
+      loadExpenses();
+    } else {
+      showToast(res.error || 'Error saving');
+    }
+  });
+  return false;
+}
+
+function loadRecurring() {
+  api('/api/admin/recurring-expenses').then(function(r) { return r.json(); }).then(function(data) {
+    allRecurring = data.recurring || [];
+    renderRecurring();
+  });
+}
+
+function renderRecurring() {
+  if (allRecurring.length === 0) {
+    document.getElementById('recurring-table').innerHTML = '<div class="empty">No recurring expenses yet.</div>';
+    return;
+  }
+  var html = '<table><thead><tr><th>Description</th><th>Category</th><th>Frequency</th><th>Amount</th><th>Next Due</th><th>Status</th><th></th></tr></thead><tbody>';
+  allRecurring.forEach(function(r) {
+    var nextDue = new Date(r.next_due_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    var freq = r.frequency.charAt(0).toUpperCase() + r.frequency.slice(1);
+    var statusColor = r.active ? 'var(--sage)' : 'var(--muted)';
+    var statusText = r.active ? 'Active' : 'Paused';
+    var toggleLabel = r.active ? 'Pause' : 'Resume';
+    html += '<tr' + (r.active ? '' : ' style="opacity:0.55"') + '>' +
+      '<td>' + r.description + '</td>' +
+      '<td><span class="category-tag">' + r.category + '</span></td>' +
+      '<td>' + freq + '</td>' +
+      '<td class="amount">' + fmt(r.amount_cents) + '</td>' +
+      '<td>' + nextDue + '</td>' +
+      '<td><span style="color:' + statusColor + ';font-weight:600;font-size:12px">' + statusText + '</span></td>' +
+      '<td style="white-space:nowrap">' +
+        '<button class="btn btn-ghost" style="padding:2px 8px;font-size:12px;min-width:0" onclick="toggleRecurring(' + r.id + ')">' + toggleLabel + '</button> ' +
+        '<button class="btn btn-ghost" style="padding:2px 6px;font-size:12px;min-width:0" onclick="editRecurring(' + r.id + ')" title="Edit">&#9998;</button> ' +
+        '<button class="btn-danger" onclick="deleteRecurring(' + r.id + ')" title="Delete">&times;</button>' +
+      '</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('recurring-table').innerHTML = html;
+}
+
+function editRecurring(id) {
+  var r = allRecurring.find(function(x) { return x.id === id; });
+  if (!r) return;
+  showRecurringForm();
+  document.getElementById('rec-edit-id').value = id;
+  document.getElementById('rec-amount').value = (r.amount_cents / 100).toFixed(2);
+  document.getElementById('rec-category').value = r.category;
+  document.getElementById('rec-desc').value = r.description;
+  document.getElementById('rec-payment').value = r.payment_method || '';
+  document.getElementById('rec-notes').value = r.notes || '';
+  document.getElementById('rec-frequency').value = r.frequency;
+  document.getElementById('rec-start').value = r.start_date;
+  document.getElementById('rec-end').value = r.end_date || '';
+  document.getElementById('rec-submit-btn').textContent = 'Save Changes';
+  document.getElementById('rec-amount').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function toggleRecurring(id) {
+  var r = allRecurring.find(function(x) { return x.id === id; });
+  if (!r) return;
+  var data = {
+    amount: r.amount_cents / 100,
+    category: r.category,
+    description: r.description,
+    payment_method: r.payment_method,
+    notes: r.notes,
+    frequency: r.frequency,
+    end_date: r.end_date,
+    active: !r.active
+  };
+  api('/api/admin/recurring-expenses/' + id, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(function() {
+    showToast(r.active ? 'Paused' : 'Resumed');
+    loadRecurring();
+  });
+}
+
+function deleteRecurring(id) {
+  if (!confirm('Delete this recurring expense? (Past generated entries will remain.)')) return;
+  api('/api/admin/recurring-expenses/' + id, { method: 'DELETE' }).then(function() {
+    loadRecurring();
+    showToast('Recurring expense deleted');
   });
 }
 
@@ -998,6 +1230,7 @@ setRevDate();
 document.getElementById('exp-month-filter').value = new Date().toISOString().slice(0, 7);
 document.getElementById('rev-month-filter').value = new Date().toISOString().slice(0, 7);
 loadExpenses();
+loadRecurring();
 </script>
 </body>
 </html>
