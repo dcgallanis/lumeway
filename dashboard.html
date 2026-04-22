@@ -6480,23 +6480,21 @@ guideLibrary['disability'] = {
             var lastCell = cells[cells.length - 1];
             var lastTxt = lastCell.textContent.trim();
             var firstTxt = cells[0].textContent.trim();
-            // Skip header rows like "Action | Requested" or "Document | Included"
-            var isCheckboxHeader = (firstTxt === 'Action' && lastTxt === 'Requested') || (firstTxt === 'Document' && lastTxt === 'Included');
-            // Detect if this is a checkbox-style row: last cell contains a check marker or empty checkbox
-            var isCheckboxRow = !isCheckboxHeader && (lastTxt === '\u2610' || lastTxt === '\u2611' || lastTxt === '\u2612' || lastTxt === '\u2713' || lastTxt === '\u2714' || lastTxt === 'X' || lastTxt === 'x' || lastTxt === '\u2714\uFE0F' || lastTxt === '\u2705');
-            // Also detect if the last cell innerHTML has checkbox Unicode
-            if (!isCheckboxRow && !isCheckboxHeader) {
-              var lastInner = lastCell.innerHTML || '';
-              if (lastInner.indexOf('\u2610') >= 0 || lastInner.indexOf('\u2611') >= 0 || lastInner.indexOf('\u2612') >= 0) isCheckboxRow = true;
-            }
+            // Skip the "Action | Requested" / "Document | Included" / "Record | Requested" header rows
+            var isCheckboxHeader = (firstTxt === 'Action' || firstTxt === 'Document' || firstTxt === 'Record') && (lastTxt === 'Requested' || lastTxt === 'Included');
+            // Detect checkbox row: last cell contains a checkbox glyph OR is a short check mark
+            // Tolerates extra whitespace and check-next-to-box scenarios like "X ☐" or "☐X"
+            var lastInner = lastCell.innerHTML || '';
+            var hasBoxGlyph = /[\u2610\u2611\u2612\u25A1]/.test(lastTxt) || /[\u2610\u2611\u2612\u25A1]/.test(lastInner);
+            var isShortMark = lastTxt.length > 0 && lastTxt.length <= 3 && /^[Xx\u2713\u2714\u2714\uFE0F\u2705\u2611\u2612]+$/.test(lastTxt);
+            var isCheckboxRow = !isCheckboxHeader && (hasBoxGlyph || isShortMark);
             if (isCheckboxRow) {
-              // Determine if it's checked: anything other than ☐ (empty checkbox) means checked
-              var isChecked = lastTxt !== '\u2610' && lastTxt !== '' && lastTxt !== '\u25A1';
-              // Also check innerHTML for ☑ or ☒
-              if (!isChecked) {
-                var li = lastCell.innerHTML || '';
-                isChecked = li.indexOf('\u2611') >= 0 || li.indexOf('\u2612') >= 0 || li.indexOf('\u2713') >= 0 || li.indexOf('\u2714') >= 0;
-              }
+              // Checked if cell has an explicit check mark (☑ ☒ ✓ ✔ ✅ X x)
+              // or contains any non-whitespace, non-empty-box content beyond the ☐ glyph.
+              var hasCheckedGlyph = /[\u2611\u2612\u2713\u2714\u2705]/.test(lastTxt) || /[\u2611\u2612\u2713\u2714\u2705]/.test(lastInner);
+              var hasXMark = /[Xx]/.test(lastTxt);
+              var residual = lastTxt.replace(/[\u2610\u25A1\s]/g, '');
+              var isChecked = hasCheckedGlyph || hasXMark || residual.length > 0;
               if (isChecked && firstTxt) {
                 // Handle "Other: ___" rows
                 if (firstTxt.indexOf('Other:') === 0) {
