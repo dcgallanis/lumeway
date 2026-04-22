@@ -161,6 +161,23 @@
     .bundle-price { font-family: 'Libre Baskerville', serif; font-size: 28px; font-weight: 500; color: var(--navy); margin-bottom: 16px; }
     .bundle-price span { font-size: 14px; font-weight: 300; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; }
 
+    /* Template carousel inside each bundle — compact card replacing static image */
+    .template-carousel-wrap { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 20px 22px 14px; display: flex; flex-direction: column; max-width: 380px; width: 100%; box-shadow: 0 2px 16px rgba(27,58,92,0.04); }
+    .bundle-row .template-carousel-wrap { margin-right: auto; }
+    .bundle-row-reverse .template-carousel-wrap { margin-left: auto; }
+    .template-carousel-eyebrow { font-size: 9.5px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+    .template-carousel-viewport { position: relative; overflow: hidden; flex: 1; display: flex; align-items: stretch; height: 150px; }
+    .template-carousel-track { display: flex; transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); width: 100%; }
+    .template-slide { min-width: 100%; padding: 2px; display: flex; flex-direction: column; justify-content: flex-start; box-sizing: border-box; }
+    .template-slide h4 { font-family: 'Libre Baskerville', serif; font-size: 15px; font-weight: 400; color: var(--navy); line-height: 1.3; margin: 0 0 8px; letter-spacing: -0.01em; }
+    .template-slide p { font-size: 12.5px; color: var(--muted); font-weight: 300; line-height: 1.6; margin: 0; }
+    .template-carousel-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .template-counter { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; }
+    .template-nav-btns { display: flex; gap: 6px; }
+    .template-arrow { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); background: var(--cream); color: var(--navy); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; transition: all 0.2s; padding: 0; line-height: 1; }
+    .template-arrow:hover { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+    .template-arrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
     .trust-bar { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; width: 100%; padding: 40px 5%; margin-top: 0; background: var(--cream); }
     .trust-item { font-size: 13px; color: var(--muted); font-weight: 400; display: flex; align-items: center; gap: 6px; }
     .trust-icon { font-size: 16px; }
@@ -409,7 +426,34 @@
   <section class="bundle-section" id="job-loss" style="background:var(--cream);border-left:4px solid #B8977E;">
     <div class="bundle-row reveal">
       <div class="bundle-image">
-        <img src="/static/web-designs/jobloss.svg" alt="Job Loss Survivor Kit">
+        <div class="template-carousel-wrap" data-carousel>
+          <div class="template-carousel-eyebrow">What's inside</div>
+          <div class="template-carousel-viewport">
+            <div class="template-carousel-track">
+              <div class="template-slide"><h4>Severance Response Letter</h4><p>Don't sign your severance agreement without reviewing it first. This worksheet helps you break down every clause, understand what's standard, and organize your response before your deadline.</p></div>
+              <div class="template-slide"><h4>Severance Negotiation / Counter-Offer Letter</h4><p>Severance is almost always negotiable. This worksheet helps you identify what to ask for — extended benefits, additional pay, outplacement support — and organize your counter-offer professionally.</p></div>
+              <div class="template-slide"><h4>COBRA Election — Information Organizer</h4><p>You have 60 days to elect COBRA after losing your job. This worksheet helps you understand your options, compare costs, and track the deadline so you don't lose coverage.</p></div>
+              <div class="template-slide"><h4>Hardship Letter to Creditor</h4><p>Behind on payments after losing your job? This letter notifies your creditors and requests temporary relief — most have hardship programs, but you have to ask.</p></div>
+              <div class="template-slide"><h4>General Authorization Letter</h4><p>When you need someone you trust to handle paperwork, phone calls, or account access on your behalf, this letter gives them documented authorization.</p></div>
+              <div class="template-slide"><h4>401(k) Rollover Request Letter</h4><p>Your 401(k) doesn't leave with you automatically. This worksheet helps you understand your rollover options and organize the request — so your retirement savings move safely.</p></div>
+              <div class="template-slide"><h4>Professional Reference Request Letter</h4><p>Asking a former boss or colleague for a reference feels awkward. This letter makes the ask professional and easy — and gives them exactly what they need to say yes.</p></div>
+              <div class="template-slide"><h4>LinkedIn Networking Message Template</h4><p>Your network is your best job-search tool, but the outreach has to feel genuine. This template gives you a starting point for messages that get responses — not ignored.</p></div>
+              <div class="template-slide"><h4>Unemployment Appeal — Information Organizer</h4><p>If your unemployment claim was denied, you have the right to appeal — but the window is tight. This worksheet helps you organize your evidence and timeline before you file.</p></div>
+              <div class="template-slide"><h4>Health Insurance Comparison Worksheet</h4><p>COBRA vs. marketplace vs. a spouse's plan — there are more options than you think after losing employer coverage. This worksheet lays them side by side so you can compare costs and coverage.</p></div>
+              <div class="template-slide"><h4>Job Search Tracker Worksheet</h4><p>When you're applying to dozens of jobs, things get lost fast — which version of your resume you sent, who you talked to, what the next step is. This tracker keeps it all in one place.</p></div>
+              <div class="template-slide"><h4>Budget Reduction Worksheet</h4><p>Your income just changed. This worksheet helps you map your new financial reality — what you're actually bringing in, what's going out, and where to cut first.</p></div>
+              <div class="template-slide"><h4>Job Offer Evaluation Worksheet</h4><p>When you finally get an offer (or two), don't just look at the salary. This worksheet helps you compare total compensation — benefits, PTO, commute, growth potential — side by side.</p></div>
+              <div class="template-slide"><h4>First 24 Hours After Losing Your Job</h4><p>You just got laid off and your brain is foggy. This guide tells you what to handle today, what to save before you lose access, and what can wait until next week.</p></div>
+            </div>
+          </div>
+          <div class="template-carousel-nav">
+            <span class="template-counter">1 of 14</span>
+            <div class="template-nav-btns">
+              <button type="button" class="template-arrow template-prev" aria-label="Previous template">&#8249;</button>
+              <button type="button" class="template-arrow template-next" aria-label="Next template">&#8250;</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="bundle-content">
         <h3 class="bundle-name">Job Loss Survivor Kit</h3>
@@ -433,7 +477,36 @@
   <section class="bundle-section" id="estate" style="background:var(--warm-white);border-left:4px solid #2C4A5E;">
     <div class="bundle-row-reverse reveal">
       <div class="bundle-image">
-        <img src="/static/web-designs/Estate.svg" alt="Estate Bundle">
+        <div class="template-carousel-wrap" data-carousel>
+          <div class="template-carousel-eyebrow">What's inside</div>
+          <div class="template-carousel-viewport">
+            <div class="template-carousel-track">
+              <div class="template-slide"><h4>Survivor Benefits — Information Organizer</h4><p>There may be Social Security survivor benefits, pension benefits, or life insurance payouts you're entitled to. This worksheet helps you identify and organize every potential claim.</p></div>
+              <div class="template-slide"><h4>Employer Notification of Death Letter</h4><p>Notifying a loved one's employer is one of those tasks nobody prepares you for. This letter handles it respectfully and covers everything HR needs to process final pay and benefits.</p></div>
+              <div class="template-slide"><h4>Estate Executor Introduction Letter</h4><p>You've been named executor and need to notify banks, agencies, and institutions. This letter introduces you in that role and requests the information you need to settle the estate.</p></div>
+              <div class="template-slide"><h4>Beneficiary Change — Preparation Worksheet</h4><p>After a death, your own beneficiary designations probably need updating — life insurance, retirement accounts, bank accounts. This worksheet walks you through every one.</p></div>
+              <div class="template-slide"><h4>Personal Affidavit — Information Organizer</h4><p>Some estate and benefits processes require a sworn statement of facts. This worksheet helps you organize the key details before working with a notary or attorney.</p></div>
+              <div class="template-slide"><h4>Gift Letter — Information Organizer</h4><p>Mortgage lenders require documentation when a down payment includes gift money. This worksheet helps you organize the details lenders need — amounts, relationships, and account information.</p></div>
+              <div class="template-slide"><h4>Bank / Financial Institution Death Notification Letter</h4><p>Every bank account, investment account, and financial institution needs to be notified. This letter handles the notification and requests information about what happens next.</p></div>
+              <div class="template-slide"><h4>Credit Bureau Death Notification Letter</h4><p>Notifying the three credit bureaus prevents identity theft and fraudulent accounts in your loved one's name. This letter handles all three — Experian, Equifax, and TransUnion.</p></div>
+              <div class="template-slide"><h4>Utility Account Transfer / Cancellation Letter</h4><p>Electric, gas, water, internet — every utility needs to be transferred to a surviving household member or cancelled. This letter handles either situation.</p></div>
+              <div class="template-slide"><h4>Subscription / Membership Cancellation Letter</h4><p>Streaming services, gym memberships, magazine subscriptions — they add up fast if nobody cancels them. This letter handles cancellations so you're not paying for accounts nobody's using.</p></div>
+              <div class="template-slide"><h4>Life Insurance Claim — Preparation Checklist</h4><p>Filing a life insurance claim means gathering a death certificate, policy number, and beneficiary documentation. This checklist organizes everything the insurer needs so your claim doesn't stall.</p></div>
+              <div class="template-slide"><h4>Digital Accounts &amp; Passwords Inventory</h4><p>Email, social media, online banking, cloud storage — a person's digital life doesn't close itself. This worksheet helps you catalog every account and plan what to memorialize, close, or transfer.</p></div>
+              <div class="template-slide"><h4>Vehicle Title Transfer Letter</h4><p>Transferring a vehicle title after a death involves the DMV, the estate, and sometimes a court order. This letter gets the process started with the right documentation request.</p></div>
+              <div class="template-slide"><h4>Safe Deposit Box Access Letter</h4><p>Accessing a deceased person's safe deposit box requires specific documentation. This letter requests access and outlines the legal relationship — so the bank knows you're authorized.</p></div>
+              <div class="template-slide"><h4>Obituary Writing Guide &amp; Worksheet</h4><p>Writing an obituary while grieving is one of the hardest things you'll do that week. This guide walks you through what to include, in what order, with prompts for the details that matter most.</p></div>
+              <div class="template-slide"><h4>First 24 Hours After a Death</h4><p>Someone you love just died and you don't know what to do first. This guide tells you — what to handle today, who to call, what can wait, and what to absolutely not worry about yet.</p></div>
+            </div>
+          </div>
+          <div class="template-carousel-nav">
+            <span class="template-counter">1 of 16</span>
+            <div class="template-nav-btns">
+              <button type="button" class="template-arrow template-prev" aria-label="Previous template">&#8249;</button>
+              <button type="button" class="template-arrow template-next" aria-label="Next template">&#8250;</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="bundle-content">
         <h3 class="bundle-name">Estate Bundle</h3>
@@ -457,7 +530,34 @@
   <section class="bundle-section" id="divorce" style="background:var(--cream);border-left:4px solid #C4704E;">
     <div class="bundle-row reveal">
       <div class="bundle-image">
-        <img src="/static/web-designs/divorce.svg" alt="Divorce &amp; Separation Bundle">
+        <div class="template-carousel-wrap" data-carousel>
+          <div class="template-carousel-eyebrow">What's inside</div>
+          <div class="template-carousel-viewport">
+            <div class="template-carousel-track">
+              <div class="template-slide"><h4>Divorce Financial Disclosure — Information Organizer</h4><p>Courts require full financial disclosure. This worksheet helps you organize every account, asset, and debt before the process starts — so nothing gets missed or forgotten.</p></div>
+              <div class="template-slide"><h4>Parental Consent / Permission Letter</h4><p>Travel, medical decisions, school enrollment — when your child needs to do something and you share custody, this letter covers permission clearly and professionally.</p></div>
+              <div class="template-slide"><h4>Co-Parenting Communication — Planning Worksheet</h4><p>Different houses, same kids. This worksheet helps you and your co-parent set clear guidelines for communication, scheduling, and decision-making before conflict happens.</p></div>
+              <div class="template-slide"><h4>Asset &amp; Property Inventory Worksheet</h4><p>During divorce, everything you own needs to be documented — bank accounts, property, vehicles, valuables. This worksheet organizes it all in one place so you walk into negotiations prepared.</p></div>
+              <div class="template-slide"><h4>Name Change Notification Letter</h4><p>After a divorce, updating your name means contacting banks, insurance, the DMV, your employer, and more. This letter handles all of them — one format, every account.</p></div>
+              <div class="template-slide"><h4>Creditor Notification of Divorce Letter</h4><p>Joint debts don't automatically separate when you divorce. This letter notifies creditors of your situation and protects your credit score during the process.</p></div>
+              <div class="template-slide"><h4>Retirement Account Division Information Request Letter</h4><p>Retirement accounts don't split automatically in a divorce — there's a legal process. This letter requests the information you need to understand your options and protect your share.</p></div>
+              <div class="template-slide"><h4>Joint Account Separation Request Letter</h4><p>Shared checking, savings, credit cards — this letter formally requests separation of joint accounts so your finances are protected as things move forward.</p></div>
+              <div class="template-slide"><h4>Divorce Attorney Meeting — Preparation Worksheet</h4><p>Your first meeting with a divorce attorney goes faster (and costs less) when you show up prepared. This worksheet organizes every question, document, and detail they'll need from you.</p></div>
+              <div class="template-slide"><h4>Child Support Modification — Information Organizer</h4><p>Income changed. Kids' needs changed. This worksheet helps you organize the information you need before requesting a child support modification — including what courts typically look at.</p></div>
+              <div class="template-slide"><h4>School Notification of Custody Change Letter</h4><p>When custody arrangements change, the school needs to know who can pick up, who gets called in emergencies, and who receives report cards. This letter handles it clearly.</p></div>
+              <div class="template-slide"><h4>Insurance Removal Request Letter</h4><p>After a divorce, you'll need to remove your former spouse from your insurance policies — auto, home, health. This letter makes the request clean and documented.</p></div>
+              <div class="template-slide"><h4>Post-Divorce Financial Reset Checklist</h4><p>The decree is final. Now what? This checklist walks you through every financial step to rebuild — new budget, new accounts, updated beneficiaries, and everything in between.</p></div>
+              <div class="template-slide"><h4>First 24 Hours After Being Served Divorce Papers</h4><p>You just got served and your head is spinning. This guide tells you what to handle today, what can wait until tomorrow, and what not to do while emotions are high.</p></div>
+            </div>
+          </div>
+          <div class="template-carousel-nav">
+            <span class="template-counter">1 of 14</span>
+            <div class="template-nav-btns">
+              <button type="button" class="template-arrow template-prev" aria-label="Previous template">&#8249;</button>
+              <button type="button" class="template-arrow template-next" aria-label="Next template">&#8250;</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="bundle-content">
         <h3 class="bundle-name">Divorce &amp; Separation Bundle</h3>
@@ -481,7 +581,35 @@
   <section class="bundle-section" id="disability" style="background:var(--warm-white);border-left:4px solid #5B7B9A;">
     <div class="bundle-row-reverse reveal">
       <div class="bundle-image">
-        <img src="/static/web-designs/disability.svg" alt="Disability &amp; Benefits Bundle">
+        <div class="template-carousel-wrap" data-carousel>
+          <div class="template-carousel-eyebrow">What's inside</div>
+          <div class="template-carousel-viewport">
+            <div class="template-carousel-track">
+              <div class="template-slide"><h4>SSDI Appeal — Information Organizer</h4><p>65% of initial SSDI applications get denied. This worksheet helps you organize your medical evidence, work history, and timeline before filing your appeal — so you don't miss what made the difference.</p></div>
+              <div class="template-slide"><h4>Beneficiary Review After Diagnosis</h4><p>A new diagnosis changes everything — including who should be on your accounts. This worksheet walks you through every policy and account that needs a beneficiary review.</p></div>
+              <div class="template-slide"><h4>Medical Authorization Letter</h4><p>Your doctor, specialists, and care team need permission to share records with each other — and with Social Security if you're filing. This letter gives them clear, documented authorization.</p></div>
+              <div class="template-slide"><h4>Caregiver Authorization Letter</h4><p>When someone is stepping in to help with your care, appointments, or paperwork, this letter gives them the authorization they need to act on your behalf.</p></div>
+              <div class="template-slide"><h4>Benefits Appeal Follow-Up — Tracking Worksheet</h4><p>Filed an appeal and waiting? This tracker keeps every follow-up date, contact name, and reference number in one place so nothing stalls because you lost track.</p></div>
+              <div class="template-slide"><h4>FMLA Leave Request Letter</h4><p>You have the legal right to take unpaid, job-protected leave under FMLA. This letter puts your request in writing so there's a clear, documented record.</p></div>
+              <div class="template-slide"><h4>Workplace Accommodation Request (ADA)</h4><p>Under the ADA, you have the right to request reasonable accommodations at work. This worksheet helps you organize your request clearly and professionally — with the language employers expect.</p></div>
+              <div class="template-slide"><h4>SSDI Application — Information Organizer</h4><p>The SSDI application asks for years of work history, medical records, and doctor information. This worksheet organizes everything you need before you start — so you don't have to scramble mid-application.</p></div>
+              <div class="template-slide"><h4>Disability Insurance Claim Preparation</h4><p>Filing a disability insurance claim means gathering medical records, policy details, and employment documents. This worksheet lays out exactly what to collect and where to send it.</p></div>
+              <div class="template-slide"><h4>Return to Work Letter After Disability</h4><p>Ready to go back? This letter notifies your employer professionally, confirms your return date, and addresses any accommodations you may need for the transition.</p></div>
+              <div class="template-slide"><h4>Disability Accommodation Follow-Up Letter</h4><p>You asked for an accommodation and didn't hear back. This letter follows up in writing — creating a documented trail that protects you if things escalate.</p></div>
+              <div class="template-slide"><h4>Letter to Employer During FMLA Leave</h4><p>On leave and need to update your employer? This letter keeps them in the loop about your expected return — professionally, briefly, and on your terms.</p></div>
+              <div class="template-slide"><h4>SSDI Timeline &amp; Deadline Tracker</h4><p>The SSDI process has specific windows for appeals, hearings, and documentation. This tracker puts every deadline in one place so you never miss a critical date.</p></div>
+              <div class="template-slide"><h4>Disability Daily Symptom Journal</h4><p>Your SSDI case depends on documentation. This journal helps you track daily symptoms, limitations, and how your condition affects work — the kind of detail that strengthens your claim.</p></div>
+              <div class="template-slide"><h4>First 24 Hours After a Disability Diagnosis</h4><p>You just got a life-changing diagnosis. This guide walks you through what to handle first — insurance, work notification, benefits — so you can focus on what matters most.</p></div>
+            </div>
+          </div>
+          <div class="template-carousel-nav">
+            <span class="template-counter">1 of 15</span>
+            <div class="template-nav-btns">
+              <button type="button" class="template-arrow template-prev" aria-label="Previous template">&#8249;</button>
+              <button type="button" class="template-arrow template-next" aria-label="Next template">&#8250;</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="bundle-content">
         <h3 class="bundle-name">Disability &amp; Benefits Bundle</h3>
@@ -505,7 +633,33 @@
   <section class="bundle-section" id="relocation" style="background:var(--cream);border-left:4px solid #6B8F5E;">
     <div class="bundle-row reveal">
       <div class="bundle-image">
-        <img src="/static/web-designs/relocation.svg" alt="Moving &amp; Relocation Bundle">
+        <div class="template-carousel-wrap" data-carousel>
+          <div class="template-carousel-eyebrow">What's inside</div>
+          <div class="template-carousel-viewport">
+            <div class="template-carousel-track">
+              <div class="template-slide"><h4>Relocation Address Change Master Checklist</h4><p>Moving means updating your address with dozens of accounts, agencies, and institutions. This checklist covers every single one — banks, insurance, subscriptions, government agencies, and more.</p></div>
+              <div class="template-slide"><h4>Proof of Residency Letter</h4><p>New state, new lease, new job — sometimes you need to prove you actually live where you say you live. This letter provides a clean, professional proof of residency.</p></div>
+              <div class="template-slide"><h4>Landlord Reference Letter</h4><p>Applying for a new apartment? A reference from your current landlord can make or break your application. This letter makes it easy for them to vouch for you.</p></div>
+              <div class="template-slide"><h4>Early Lease Termination Letter</h4><p>Breaking your lease doesn't have to mean burning a bridge. This letter handles the notification professionally and helps you understand your obligations under the lease.</p></div>
+              <div class="template-slide"><h4>Utility Transfer — Setup &amp; Cancellation Tracker</h4><p>Electric, gas, water, internet, trash — every utility needs to be cancelled at the old place and set up at the new one. This tracker makes sure nothing gets missed (or double-billed).</p></div>
+              <div class="template-slide"><h4>Landlord Move-Out Notice Letter</h4><p>Most leases require written notice before you move out — and missing the deadline can cost you your deposit. This letter gives proper notice on the record.</p></div>
+              <div class="template-slide"><h4>School Transfer Request Letter</h4><p>When your kids are changing schools mid-year or between districts, this letter requests the transfer and makes sure records follow them to the new school.</p></div>
+              <div class="template-slide"><h4>Employer Remote Work / State Change Notification</h4><p>Moving to a new state affects your taxes, benefits, and employment status. This letter notifies your employer professionally — because they need to know even if your job doesn't change.</p></div>
+              <div class="template-slide"><h4>Vehicle Registration Transfer Checklist</h4><p>New state means new plates, new registration, sometimes a new license and inspection. This checklist covers every step — and the deadlines vary by state, so timing matters.</p></div>
+              <div class="template-slide"><h4>HOA Transfer Notification Letter</h4><p>Selling a home or buying in an HOA community? Both associations need to be notified. This letter handles the transfer cleanly so nothing follows you (or surprises the new owner).</p></div>
+              <div class="template-slide"><h4>Post-Move Government Updates Checklist</h4><p>Voter registration, driver's license, vehicle registration, tax withholding — the government doesn't update itself when you move. This checklist makes sure every agency knows your new address.</p></div>
+              <div class="template-slide"><h4>Pet Registration Transfer Checklist</h4><p>Moving with pets means updating licenses, vaccinations, vet records, and registration — and some states and cities have breed-specific rules. This checklist covers all of it.</p></div>
+              <div class="template-slide"><h4>First 24 Hours After Deciding to Move</h4><p>You've made the decision. Now what? This guide walks you through the first things to handle — giving notice, budgeting the move, and the timeline for everything else.</p></div>
+            </div>
+          </div>
+          <div class="template-carousel-nav">
+            <span class="template-counter">1 of 13</span>
+            <div class="template-nav-btns">
+              <button type="button" class="template-arrow template-prev" aria-label="Previous template">&#8249;</button>
+              <button type="button" class="template-arrow template-next" aria-label="Next template">&#8250;</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="bundle-content">
         <h3 class="bundle-name">Moving &amp; Relocation Bundle</h3>
@@ -529,7 +683,35 @@
   <section class="bundle-section" id="retirement" style="background:var(--warm-white);border-left:4px solid #D4956E;">
     <div class="bundle-row-reverse reveal">
       <div class="bundle-image">
-        <img src="/static/web-designs/retirement.svg" alt="Retirement Planning Bundle">
+        <div class="template-carousel-wrap" data-carousel>
+          <div class="template-carousel-eyebrow">What's inside</div>
+          <div class="template-carousel-viewport">
+            <div class="template-carousel-track">
+              <div class="template-slide"><h4>Social Security Application — Information Organizer</h4><p>The Social Security application asks for decades of work history, tax information, and personal details. This worksheet organizes everything before you start — so the application doesn't take all day.</p></div>
+              <div class="template-slide"><h4>Employer Retirement Notification Letter</h4><p>Giving notice of your retirement is different from quitting. This letter handles it with the professionalism and gratitude the moment deserves — and covers what HR needs to process your exit.</p></div>
+              <div class="template-slide"><h4>Pension Benefit Election Comparison Worksheet</h4><p>Lump sum or monthly payments? Survivor benefit or higher payout? These decisions are permanent. This worksheet puts your options side by side so you can compare before you commit.</p></div>
+              <div class="template-slide"><h4>Required Minimum Distribution (RMD) Request Letter</h4><p>Once you hit the RMD age, you're required to take distributions from certain retirement accounts — and missing one means a steep penalty. This letter organizes the request.</p></div>
+              <div class="template-slide"><h4>Medicare Enrollment Checklist &amp; Cover Letter</h4><p>Medicare enrollment has specific windows, and missing them means paying more for coverage later. This checklist tracks every deadline and document you need.</p></div>
+              <div class="template-slide"><h4>Roth Conversion — Decision Worksheet</h4><p>Converting a traditional IRA to a Roth has tax implications that depend on your income, age, and timeline. This worksheet helps you organize the decision — not make it for you.</p></div>
+              <div class="template-slide"><h4>Retirement Account Beneficiary Update Letter</h4><p>Retiring is a natural time to review who's listed on your retirement accounts, life insurance, and pensions. This letter requests updates so everything reflects your current wishes.</p></div>
+              <div class="template-slide"><h4>Retiree Health Insurance Continuation Request</h4><p>If your employer offers retiree health coverage, you need to formally request continuation before your last day. This letter handles that — so there's no gap in your coverage.</p></div>
+              <div class="template-slide"><h4>Power of Attorney Preparation Checklist</h4><p>Designating a power of attorney is one of the most important things you can do in retirement. This checklist helps you organize what your POA will need to know — and what documents to prepare.</p></div>
+              <div class="template-slide"><h4>Letter of Instruction to Heirs</h4><p>This isn't a will — it's the practical companion to one. Where the accounts are, who to contact, what the passwords are, what you'd want them to know. Everything in one place.</p></div>
+              <div class="template-slide"><h4>Social Security Delay Strategy Worksheet</h4><p>Every year you delay Social Security (up to age 70), your monthly benefit grows. This worksheet helps you compare claiming ages and see how the numbers actually play out for your situation.</p></div>
+              <div class="template-slide"><h4>Legacy Letter / Ethical Will</h4><p>Not about money or property — this is about what you want your family to know. Your values, your stories, the things you hope they carry forward. A guided worksheet to help you write it.</p></div>
+              <div class="template-slide"><h4>Healthcare Bridge Cost Comparison (Pre-Medicare)</h4><p>Retiring before 65? You'll need health insurance to bridge the gap until Medicare kicks in. This worksheet compares your options — COBRA, marketplace, spouse's plan — side by side.</p></div>
+              <div class="template-slide"><h4>Medicare Plan Comparison Worksheet</h4><p>Original Medicare, Medicare Advantage, Medigap, Part D — the options are genuinely confusing. This worksheet breaks down what each covers and helps you compare plans for your situation.</p></div>
+              <div class="template-slide"><h4>First 24 Hours After Deciding to Retire</h4><p>You've made the decision. This guide walks you through what to handle first — employer notification timeline, benefits review, and the financial steps that set up everything else.</p></div>
+            </div>
+          </div>
+          <div class="template-carousel-nav">
+            <span class="template-counter">1 of 15</span>
+            <div class="template-nav-btns">
+              <button type="button" class="template-arrow template-prev" aria-label="Previous template">&#8249;</button>
+              <button type="button" class="template-arrow template-next" aria-label="Next template">&#8250;</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="bundle-content">
         <h3 class="bundle-name">Retirement Planning Bundle</h3>
@@ -697,6 +879,46 @@
       }, { passive: true });
 
       startAuto();
+    })();
+
+    // Per-bundle template carousels — arrows + touch swipe, no auto-rotate
+    (function() {
+      var carousels = document.querySelectorAll('[data-carousel]');
+      carousels.forEach(function(wrap) {
+        var track = wrap.querySelector('.template-carousel-track');
+        var slides = wrap.querySelectorAll('.template-slide');
+        var prevBtn = wrap.querySelector('.template-prev');
+        var nextBtn = wrap.querySelector('.template-next');
+        var counter = wrap.querySelector('.template-counter');
+        var total = slides.length;
+        var current = 0;
+
+        function update() {
+          track.style.transform = 'translateX(-' + (current * 100) + '%)';
+          counter.textContent = (current + 1) + ' of ' + total;
+        }
+
+        prevBtn.addEventListener('click', function() {
+          current = (current - 1 + total) % total;
+          update();
+        });
+        nextBtn.addEventListener('click', function() {
+          current = (current + 1) % total;
+          update();
+        });
+
+        var startX = 0;
+        wrap.addEventListener('touchstart', function(e) {
+          startX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        wrap.addEventListener('touchend', function(e) {
+          var diff = startX - e.changedTouches[0].screenX;
+          if (Math.abs(diff) > 50) {
+            current = diff > 0 ? (current + 1) % total : (current - 1 + total) % total;
+            update();
+          }
+        }, { passive: true });
+      });
     })();
   </script>
 <script>
