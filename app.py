@@ -916,6 +916,94 @@ def init_subscribers_db():
             conn_rec.close()
         except Exception:
             pass
+    # Tax settings table (idempotent)
+    try:
+        conn_tax = get_db()
+        if USE_POSTGRES:
+            db_execute(conn_tax, """CREATE TABLE IF NOT EXISTS tax_settings (
+                tax_year INTEGER PRIMARY KEY,
+                filing_status TEXT NOT NULL DEFAULT 'single',
+                other_household_income INTEGER NOT NULL DEFAULT 0,
+                standard_deduction INTEGER NOT NULL DEFAULT 1500000,
+                federal_bracket_override REAL NULL,
+                il_state_rate REAL NOT NULL DEFAULT 0.0495,
+                se_tax_rate REAL NOT NULL DEFAULT 0.153,
+                se_tax_ss_cap INTEGER NOT NULL DEFAULT 17610000,
+                qbi_deduction_pct REAL NOT NULL DEFAULT 0.20,
+                home_office_method TEXT NOT NULL DEFAULT 'simplified',
+                home_office_sqft INTEGER NOT NULL DEFAULT 0,
+                home_total_sqft INTEGER NOT NULL DEFAULT 0,
+                home_monthly_rent_or_mortgage INTEGER NOT NULL DEFAULT 0,
+                home_monthly_utilities INTEGER NOT NULL DEFAULT 0,
+                home_monthly_internet INTEGER NOT NULL DEFAULT 0,
+                home_monthly_insurance INTEGER NOT NULL DEFAULT 0,
+                set_aside_pct_override REAL NULL,
+                business_start_date TEXT NOT NULL DEFAULT '2026-01-01',
+                updated_at TEXT NOT NULL DEFAULT ''
+            )""")
+        else:
+            db_execute(conn_tax, """CREATE TABLE IF NOT EXISTS tax_settings (
+                tax_year INTEGER PRIMARY KEY,
+                filing_status TEXT NOT NULL DEFAULT 'single',
+                other_household_income INTEGER NOT NULL DEFAULT 0,
+                standard_deduction INTEGER NOT NULL DEFAULT 1500000,
+                federal_bracket_override REAL NULL,
+                il_state_rate REAL NOT NULL DEFAULT 0.0495,
+                se_tax_rate REAL NOT NULL DEFAULT 0.153,
+                se_tax_ss_cap INTEGER NOT NULL DEFAULT 17610000,
+                qbi_deduction_pct REAL NOT NULL DEFAULT 0.20,
+                home_office_method TEXT NOT NULL DEFAULT 'simplified',
+                home_office_sqft INTEGER NOT NULL DEFAULT 0,
+                home_total_sqft INTEGER NOT NULL DEFAULT 0,
+                home_monthly_rent_or_mortgage INTEGER NOT NULL DEFAULT 0,
+                home_monthly_utilities INTEGER NOT NULL DEFAULT 0,
+                home_monthly_internet INTEGER NOT NULL DEFAULT 0,
+                home_monthly_insurance INTEGER NOT NULL DEFAULT 0,
+                set_aside_pct_override REAL NULL,
+                business_start_date TEXT NOT NULL DEFAULT '2026-01-01',
+                updated_at TEXT NOT NULL DEFAULT ''
+            )""")
+        conn_tax.commit()
+        conn_tax.close()
+    except Exception:
+        try:
+            conn_tax.close()
+        except Exception:
+            pass
+    # Tax payments table (idempotent)
+    try:
+        conn_tp = get_db()
+        if USE_POSTGRES:
+            db_execute(conn_tp, """CREATE TABLE IF NOT EXISTS tax_payments (
+                id SERIAL PRIMARY KEY,
+                tax_year INTEGER NOT NULL,
+                quarter INTEGER NOT NULL,
+                paid_date TEXT NOT NULL,
+                amount_federal INTEGER NOT NULL DEFAULT 0,
+                amount_state INTEGER NOT NULL DEFAULT 0,
+                confirmation_number TEXT,
+                notes TEXT,
+                created_at TEXT NOT NULL
+            )""")
+        else:
+            db_execute(conn_tp, """CREATE TABLE IF NOT EXISTS tax_payments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                tax_year INTEGER NOT NULL,
+                quarter INTEGER NOT NULL,
+                paid_date TEXT NOT NULL,
+                amount_federal INTEGER NOT NULL DEFAULT 0,
+                amount_state INTEGER NOT NULL DEFAULT 0,
+                confirmation_number TEXT,
+                notes TEXT,
+                created_at TEXT NOT NULL
+            )""")
+        conn_tp.commit()
+        conn_tp.close()
+    except Exception:
+        try:
+            conn_tp.close()
+        except Exception:
+            pass
     # Revenue entries table (for manual revenue tracking)
     try:
         conn4 = get_db()
@@ -9025,6 +9113,389 @@ def admin_delete_recurring_expense(rec_id):
     conn = get_db()
     param = "%s" if USE_POSTGRES else "?"
     db_execute(conn, f"DELETE FROM recurring_expenses WHERE id = {param}", (rec_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
+# ── TAX MODULE ──
+
+FEDERAL_BRACKETS_2026 = {
+    "single": [
+        (0, 1192500, 0.10),
+        (1192500, 4847500, 0.12),
+        (4847500, 10335000, 0.22),
+        (10335000, 19730000, 0.24),
+        (19730000, 25052500, 0.32),
+        (25052500, 62635000, 0.35),
+        (62635000, None, 0.37),
+    ],
+    "mfj": [
+        (0, 2385000, 0.10),
+        (2385000, 9695000, 0.12),
+        (9695000, 20670000, 0.22),
+        (20670000, 39460000, 0.24),
+        (39460000, 50105000, 0.32),
+        (50105000, 75160000, 0.35),
+        (75160000, None, 0.37),
+    ],
+}
+
+
+def _get_tax_settings(conn, year):
+    param = "%s" if USE_POSTGRES else "?"
+    row = db_execute(conn, f"SELECT * FROM tax_settings WHERE tax_year = {param}", (year,)).fetchone()
+    if row:
+        cols = ["tax_year", "filing_status", "other_household_income", "standard_deduction",
+                "federal_bracket_override", "il_state_rate", "se_tax_rate", "se_tax_ss_cap",
+                "qbi_deduction_pct", "home_office_method", "home_office_sqft", "home_total_sqft",
+                "home_monthly_rent_or_mortgage", "home_monthly_utilities", "home_monthly_internet",
+                "home_monthly_insurance", "set_aside_pct_override", "business_start_date", "updated_at"]
+        return dict(zip(cols, row))
+    return None
+
+
+def _ensure_tax_settings(conn, year):
+    s = _get_tax_settings(conn, year)
+    if s:
+        return s
+    now = datetime.now(timezone.utc).isoformat()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"INSERT INTO tax_settings (tax_year, updated_at) VALUES ({param}, {param})", (year, now))
+    conn.commit()
+    return _get_tax_settings(conn, year)
+
+
+def _find_marginal_rate(total_income_cents, filing_status):
+    brackets = FEDERAL_BRACKETS_2026.get(filing_status, FEDERAL_BRACKETS_2026["single"])
+    rate = 0.10
+    for low, high, r in brackets:
+        if high is None or total_income_cents <= high:
+            rate = r
+            break
+    return rate
+
+
+def _compute_tax(conn, year):
+    s = _ensure_tax_settings(conn, year)
+    param = "%s" if USE_POSTGRES else "?"
+    now = datetime.now(timezone.utc)
+    today_str = now.strftime("%Y-%m-%d")
+
+    # Months elapsed from business start
+    start_date = s["business_start_date"] or f"{year}-01-01"
+    start_y, start_m = int(start_date[:4]), int(start_date[5:7])
+    cur_m = now.month
+    cur_y = now.year
+    months_elapsed = max(1, (cur_y - start_y) * 12 + cur_m - start_m + 1)
+    months_elapsed = min(months_elapsed, 12)
+
+    # Revenue YTD (same logic as P&L)
+    cur_exp = db_execute(conn, f"SELECT COALESCE(SUM(amount_cents), 0) FROM expenses WHERE date LIKE {param}", (str(year) + "%",))
+    expenses_ytd = cur_exp.fetchone()[0]
+    # Stripe revenue (active, net of fees)
+    cur_stripe = db_execute(conn, f"SELECT amount_cents, refunded_at FROM purchases WHERE purchased_at LIKE {param} AND amount_cents > 0", (str(year) + "%",))
+    stripe_txns = cur_stripe.fetchall()
+    stripe_gross = 0
+    stripe_fees = 0
+    refund_fee_loss = 0
+    for row in stripe_txns:
+        amt, refunded_at = row[0], row[1]
+        fee = round(amt * 0.029 + 30)
+        if refunded_at:
+            refund_fee_loss += fee
+        else:
+            stripe_gross += amt
+            stripe_fees += fee
+    stripe_net = stripe_gross - stripe_fees - refund_fee_loss
+    # Manual revenue
+    cur_manual = db_execute(conn, f"SELECT COALESCE(SUM(amount_cents), 0) FROM revenue_entries WHERE date LIKE {param}", (str(year) + "%",))
+    manual_rev = cur_manual.fetchone()[0]
+    revenue_ytd = stripe_net + manual_rev
+    net_profit_ytd = revenue_ytd - expenses_ytd
+
+    # Home office deduction
+    ho_method = s["home_office_method"]
+    ho_deduction_ytd = 0
+    ho_deduction_annual = 0
+    if ho_method == "simplified":
+        sqft = min(s["home_office_sqft"], 300)
+        ho_deduction_annual = sqft * 500  # $5/sqft * 100 cents
+        ho_deduction_ytd = round(ho_deduction_annual * months_elapsed / 12)
+    elif ho_method == "actual":
+        if s["home_total_sqft"] > 0:
+            biz_pct = s["home_office_sqft"] / s["home_total_sqft"]
+        else:
+            biz_pct = 0
+        monthly_cost = (s["home_monthly_rent_or_mortgage"] + s["home_monthly_utilities"] +
+                        s["home_monthly_internet"] + s["home_monthly_insurance"])
+        ho_deduction_ytd = round(monthly_cost * biz_pct * months_elapsed)
+        ho_deduction_annual = round(monthly_cost * biz_pct * 12)
+
+    # Cap: home office cannot create or increase a loss
+    ho_applied = min(ho_deduction_ytd, max(net_profit_ytd, 0))
+
+    adjusted_profit = net_profit_ytd - ho_applied
+
+    # SE tax (only if adjusted_profit > $400 = 40000 cents)
+    se_tax = 0
+    se_ss = 0
+    se_medicare = 0
+    se_deduction = 0
+    se_base = 0
+    if adjusted_profit > 40000:
+        se_base = round(adjusted_profit * 0.9235)
+        ss_cap = s["se_tax_ss_cap"]
+        se_ss = round(min(se_base, ss_cap) * 0.124)
+        se_medicare = round(se_base * 0.029)
+        se_tax = se_ss + se_medicare
+        se_deduction = round(se_tax / 2)
+
+    # QBI deduction
+    qbi_income = adjusted_profit - se_deduction
+    qbi_deduction = round(qbi_income * s["qbi_deduction_pct"]) if qbi_income > 0 else 0
+
+    # Federal taxable business income
+    fed_taxable = adjusted_profit - se_deduction - qbi_deduction
+    if fed_taxable < 0:
+        fed_taxable = 0
+
+    # Federal income tax: marginal rate on business income
+    annualization_factor = 12 / months_elapsed if months_elapsed > 0 else 1
+    projected_annual_biz = round(fed_taxable * annualization_factor)
+    other_income = s["other_household_income"]
+    projected_total = other_income + projected_annual_biz
+
+    if s["federal_bracket_override"]:
+        marginal_rate = s["federal_bracket_override"]
+    else:
+        filing = s["filing_status"] if s["filing_status"] in ("single", "mfj") else "single"
+        marginal_rate = _find_marginal_rate(projected_total, filing)
+
+    fed_tax_ytd = round(fed_taxable * marginal_rate) if fed_taxable > 0 else 0
+
+    # IL state tax
+    il_rate = s["il_state_rate"]
+    state_tax_ytd = round(adjusted_profit * il_rate) if adjusted_profit > 0 else 0
+
+    # Total
+    total_tax_ytd = fed_tax_ytd + se_tax + state_tax_ytd
+
+    # Effective rate
+    effective_rate = total_tax_ytd / net_profit_ytd if net_profit_ytd > 0 else 0
+    set_aside_rate = s["set_aside_pct_override"] if s["set_aside_pct_override"] else effective_rate
+
+    # Payments YTD
+    cur_pay = db_execute(conn, f"SELECT quarter, paid_date, amount_federal, amount_state, confirmation_number, notes, id FROM tax_payments WHERE tax_year = {param} ORDER BY quarter, paid_date", (year,))
+    payments = [{"quarter": r[0], "paid_date": r[1], "amount_federal": r[2], "amount_state": r[3],
+                 "confirmation_number": r[4], "notes": r[5], "id": r[6]} for r in cur_pay.fetchall()]
+    total_paid_federal = sum(p["amount_federal"] for p in payments)
+    total_paid_state = sum(p["amount_state"] for p in payments)
+    total_paid = total_paid_federal + total_paid_state
+
+    recommended_set_aside = max(0, total_tax_ytd - total_paid)
+
+    # Annualized projections
+    projected_annual_profit = round(net_profit_ytd * annualization_factor)
+    projected_annual_tax = round(total_tax_ytd * annualization_factor)
+
+    # Quarterly schedule
+    quarter_deadlines = [
+        {"quarter": 1, "period": "Jan–Mar", "due": f"{year}-04-15"},
+        {"quarter": 2, "period": "Apr–May", "due": f"{year}-06-15"},
+        {"quarter": 3, "period": "Jun–Aug", "due": f"{year}-09-15"},
+        {"quarter": 4, "period": "Sep–Dec", "due": f"{year + 1}-01-15"},
+    ]
+    for qd in quarter_deadlines:
+        q = qd["quarter"]
+        q_payments = [p for p in payments if p["quarter"] == q]
+        q_paid = sum(p["amount_federal"] + p["amount_state"] for p in q_payments)
+        prior_paid = sum(p["amount_federal"] + p["amount_state"] for p in payments if p["quarter"] < q)
+        q_estimate = max(0, round(projected_annual_tax * 0.25 * q) - prior_paid - q_paid)
+        is_past = today_str > qd["due"]
+        is_current = not is_past and (q == 1 or today_str > quarter_deadlines[q - 2]["due"])
+        qd["estimated"] = q_estimate
+        qd["paid"] = q_paid
+        qd["payment_count"] = len(q_payments)
+        qd["status"] = "paid" if (q_paid > 0 and is_past) else ("upcoming" if is_current else ("overdue" if (is_past and projected_annual_tax > 0) else "future"))
+
+    # Next deadline
+    next_q = None
+    for qd in quarter_deadlines:
+        if qd["due"] >= today_str:
+            next_q = qd
+            break
+    if not next_q:
+        next_q = quarter_deadlines[-1]
+
+    return {
+        "year": year,
+        "months_elapsed": months_elapsed,
+        "revenue_ytd": revenue_ytd,
+        "expenses_ytd": expenses_ytd,
+        "net_profit_ytd": net_profit_ytd,
+        "home_office": {
+            "method": ho_method,
+            "sqft": s["home_office_sqft"],
+            "deduction_annual": ho_deduction_annual,
+            "deduction_ytd": ho_deduction_ytd,
+            "deduction_applied": ho_applied,
+        },
+        "adjusted_profit": adjusted_profit,
+        "se_tax": {
+            "base": se_base,
+            "ss": se_ss,
+            "medicare": se_medicare,
+            "total": se_tax,
+            "deduction": se_deduction,
+        },
+        "qbi": {
+            "income": max(qbi_income, 0),
+            "deduction": qbi_deduction,
+        },
+        "federal": {
+            "taxable_business": fed_taxable,
+            "marginal_rate": marginal_rate,
+            "tax_ytd": fed_tax_ytd,
+            "other_household_income": other_income,
+            "projected_total_income": projected_total,
+        },
+        "state": {
+            "rate": il_rate,
+            "tax_ytd": state_tax_ytd,
+        },
+        "total_tax_ytd": total_tax_ytd,
+        "effective_rate": effective_rate,
+        "set_aside_rate": set_aside_rate,
+        "recommended_set_aside": recommended_set_aside,
+        "total_paid": total_paid,
+        "payments": payments,
+        "annualized": {
+            "factor": annualization_factor,
+            "projected_profit": projected_annual_profit,
+            "projected_tax": projected_annual_tax,
+        },
+        "quarters": quarter_deadlines,
+        "next_quarter": next_q,
+        "settings": s,
+    }
+
+
+@app.route("/api/admin/tax/summary", methods=["GET"])
+def admin_tax_summary():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    year = int(request.args.get("year", datetime.now(timezone.utc).year))
+    conn = get_db()
+    result = _compute_tax(conn, year)
+    conn.close()
+    return jsonify(result)
+
+
+@app.route("/api/admin/tax/settings", methods=["GET"])
+def admin_tax_settings_get():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    year = int(request.args.get("year", datetime.now(timezone.utc).year))
+    conn = get_db()
+    s = _ensure_tax_settings(conn, year)
+    conn.close()
+    return jsonify(s)
+
+
+@app.route("/api/admin/tax/settings", methods=["POST"])
+def admin_tax_settings_save():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    year = int(data.get("tax_year", datetime.now(timezone.utc).year))
+    conn = get_db()
+    _ensure_tax_settings(conn, year)
+    param = "%s" if USE_POSTGRES else "?"
+    allowed_fields = {
+        "filing_status": str,
+        "other_household_income": lambda v: int(round(float(v) * 100)),
+        "standard_deduction": lambda v: int(round(float(v) * 100)),
+        "federal_bracket_override": lambda v: float(v) if v else None,
+        "il_state_rate": float,
+        "se_tax_rate": float,
+        "se_tax_ss_cap": lambda v: int(round(float(v) * 100)),
+        "qbi_deduction_pct": float,
+        "home_office_method": str,
+        "home_office_sqft": int,
+        "home_total_sqft": int,
+        "home_monthly_rent_or_mortgage": lambda v: int(round(float(v) * 100)),
+        "home_monthly_utilities": lambda v: int(round(float(v) * 100)),
+        "home_monthly_internet": lambda v: int(round(float(v) * 100)),
+        "home_monthly_insurance": lambda v: int(round(float(v) * 100)),
+        "set_aside_pct_override": lambda v: float(v) if v else None,
+        "business_start_date": str,
+    }
+    updates = {}
+    for key, converter in allowed_fields.items():
+        if key in data:
+            try:
+                updates[key] = converter(data[key])
+            except (ValueError, TypeError):
+                pass
+    if not updates:
+        return jsonify({"error": "No valid fields"}), 400
+    updates["updated_at"] = datetime.now(timezone.utc).isoformat()
+    set_clause = ", ".join(f"{k} = {param}" for k in updates)
+    values = list(updates.values()) + [year]
+    db_execute(conn, f"UPDATE tax_settings SET {set_clause} WHERE tax_year = {param}", tuple(values))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/admin/tax/payments", methods=["GET"])
+def admin_tax_payments_get():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    year = int(request.args.get("year", datetime.now(timezone.utc).year))
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    cur = db_execute(conn, f"SELECT id, tax_year, quarter, paid_date, amount_federal, amount_state, confirmation_number, notes, created_at FROM tax_payments WHERE tax_year = {param} ORDER BY quarter, paid_date", (year,))
+    rows = [{"id": r[0], "tax_year": r[1], "quarter": r[2], "paid_date": r[3], "amount_federal": r[4],
+             "amount_state": r[5], "confirmation_number": r[6], "notes": r[7], "created_at": r[8]} for r in cur.fetchall()]
+    conn.close()
+    return jsonify({"payments": rows})
+
+
+@app.route("/api/admin/tax/payments", methods=["POST"])
+def admin_tax_payment_add():
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    year = int(data.get("tax_year", datetime.now(timezone.utc).year))
+    quarter = int(data.get("quarter", 0))
+    paid_date = data.get("paid_date", "")
+    amount_federal = int(round(float(data.get("amount_federal", 0)) * 100))
+    amount_state = int(round(float(data.get("amount_state", 0)) * 100))
+    conf = data.get("confirmation_number", "")
+    notes = data.get("notes", "")
+    if quarter < 1 or quarter > 4 or not paid_date:
+        return jsonify({"error": "Quarter (1-4) and paid_date required"}), 400
+    if amount_federal <= 0 and amount_state <= 0:
+        return jsonify({"error": "Payment amount must be > 0"}), 400
+    now = datetime.now(timezone.utc).isoformat()
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"INSERT INTO tax_payments (tax_year, quarter, paid_date, amount_federal, amount_state, confirmation_number, notes, created_at) VALUES ({param}, {param}, {param}, {param}, {param}, {param}, {param}, {param})",
+               (year, quarter, paid_date, amount_federal, amount_state, conf, notes, now))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/admin/tax/payments/<int:payment_id>", methods=["DELETE"])
+def admin_tax_payment_delete(payment_id):
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    db_execute(conn, f"DELETE FROM tax_payments WHERE id = {param}", (payment_id,))
     conn.commit()
     conn.close()
     return jsonify({"ok": True})

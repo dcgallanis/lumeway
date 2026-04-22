@@ -127,6 +127,7 @@ tr:hover { background: var(--cream); }
   <button class="admin-tab" onclick="switchTab('pnl')">P&amp;L</button>
   <button class="admin-tab" onclick="switchTab('subscribers')">Subscribers</button>
   <button class="admin-tab" onclick="switchTab('analytics')">Analytics</button>
+  <button class="admin-tab" onclick="switchTab('tax')">Tax</button>
 </div>
 
 <!-- EXPENSES TAB -->
@@ -486,6 +487,203 @@ tr:hover { background: var(--cream); }
   </div>
 </div>
 
+<!-- TAX TAB -->
+<div class="tab-content" id="tab-tax">
+  <!-- Summary card -->
+  <div class="card">
+    <h2>Tax Estimate — <span id="tax-year-label">2026</span></h2>
+    <div class="stats-grid" id="tax-summary-stats"></div>
+    <div id="tax-loss-note" style="display:none;text-align:center;padding:8px;color:var(--muted);font-size:13px;font-weight:300">No tax owed — net loss YTD.</div>
+  </div>
+
+  <!-- Liability breakdown -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleTaxBreakdown()">
+      <h2 style="margin-bottom:0">Liability Breakdown</h2>
+      <span id="tax-breakdown-arrow" style="font-size:18px;color:var(--muted);transition:transform .2s">&#9660;</span>
+    </div>
+    <div id="tax-breakdown" style="display:none;margin-top:16px">
+      <div id="tax-breakdown-content" style="font-family:monospace;font-size:13px;line-height:2;white-space:pre-wrap"></div>
+    </div>
+  </div>
+
+  <!-- Quarterly schedule -->
+  <div class="card">
+    <h2>Quarterly Estimated Payments</h2>
+    <div class="table-wrap">
+      <div id="tax-quarters-table"></div>
+    </div>
+    <div style="margin-top:16px;border:1px solid var(--border);border-radius:8px;padding:16px;background:var(--cream)" id="tax-payment-form-wrap" style="display:none">
+      <h3>Log Payment</h3>
+      <form id="taxPaymentForm" onsubmit="return submitTaxPayment(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Quarter</label>
+            <select id="tp-quarter" required>
+              <option value="1">Q1 (Jan–Mar)</option>
+              <option value="2">Q2 (Apr–May)</option>
+              <option value="3">Q3 (Jun–Aug)</option>
+              <option value="4">Q4 (Sep–Dec)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date Paid</label>
+            <input type="date" id="tp-date" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Federal ($)</label>
+            <input type="number" id="tp-federal" step="0.01" min="0" placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <label>State ($)</label>
+            <input type="number" id="tp-state" step="0.01" min="0" placeholder="0.00">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Confirmation # (optional)</label>
+            <input type="text" id="tp-conf" placeholder="e.g., EFTPS-123456">
+          </div>
+          <div class="form-group">
+            <label>Notes (optional)</label>
+            <input type="text" id="tp-notes" placeholder="">
+          </div>
+        </div>
+        <div class="btn-row">
+          <button type="submit" class="btn btn-primary">Log Payment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Home office card -->
+  <div class="card">
+    <h2>Home Office Deduction</h2>
+    <div id="tax-home-office-summary"></div>
+  </div>
+
+  <!-- Settings -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleTaxSettings()">
+      <h2 style="margin-bottom:0">Tax Settings</h2>
+      <span id="tax-settings-arrow" style="font-size:18px;color:var(--muted);transition:transform .2s">&#9660;</span>
+    </div>
+    <div id="tax-settings-panel" style="display:none;margin-top:16px">
+      <h3>Household</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Filing Status</label>
+          <select id="ts-filing">
+            <option value="single">Single</option>
+            <option value="mfj">Married Filing Jointly</option>
+            <option value="mfs">Married Filing Separately</option>
+            <option value="hoh">Head of Household</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Other Household W-2 Income ($)</label>
+          <input type="number" id="ts-other-income" step="1" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Standard Deduction ($)</label>
+          <input type="number" id="ts-std-deduction" step="1" min="0" placeholder="15000">
+        </div>
+        <div class="form-group">
+          <label>Business Start Date</label>
+          <input type="date" id="ts-biz-start">
+        </div>
+      </div>
+
+      <h3 style="margin-top:16px">Rates</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>IL State Rate (%)</label>
+          <input type="number" id="ts-il-rate" step="0.01" min="0" placeholder="4.95">
+        </div>
+        <div class="form-group">
+          <label>SE Tax Rate (%)</label>
+          <input type="number" id="ts-se-rate" step="0.01" min="0" placeholder="15.3">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>SS Wage Base ($)</label>
+          <input type="number" id="ts-ss-cap" step="1" min="0" placeholder="176100">
+        </div>
+        <div class="form-group">
+          <label>QBI Deduction (%)</label>
+          <input type="number" id="ts-qbi-pct" step="0.01" min="0" placeholder="20">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Federal Bracket Override (%)</label>
+          <input type="number" id="ts-fed-override" step="0.01" min="0" placeholder="Auto">
+        </div>
+        <div class="form-group">
+          <label>Set-Aside % Override</label>
+          <input type="number" id="ts-setaside-override" step="0.01" min="0" placeholder="Auto">
+        </div>
+      </div>
+
+      <h3 style="margin-top:16px">Home Office</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Method</label>
+          <select id="ts-ho-method" onchange="toggleHomeOfficeFields()">
+            <option value="simplified">Simplified ($5/sq ft)</option>
+            <option value="actual">Actual Expenses</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Office Sq Ft</label>
+          <input type="number" id="ts-ho-sqft" step="1" min="0" placeholder="0">
+        </div>
+      </div>
+      <div id="ts-ho-actual-fields" style="display:none">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Home Total Sq Ft</label>
+            <input type="number" id="ts-ho-total-sqft" step="1" min="0" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label>Monthly Rent/Mortgage ($)</label>
+            <input type="number" id="ts-ho-rent" step="0.01" min="0" placeholder="0">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Monthly Utilities ($)</label>
+            <input type="number" id="ts-ho-utilities" step="0.01" min="0" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label>Monthly Internet ($)</label>
+            <input type="number" id="ts-ho-internet" step="0.01" min="0" placeholder="0">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Monthly Insurance ($)</label>
+            <input type="number" id="ts-ho-insurance" step="0.01" min="0" placeholder="0">
+          </div>
+          <div class="form-group"></div>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:16px">
+        <button type="button" class="btn btn-primary" onclick="saveTaxSettings()">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:12px;color:var(--muted);font-size:11px;font-weight:300">Estimates only. Not tax advice. Consult a CPA for filing.</div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -504,6 +702,7 @@ function switchTab(tab) {
   if (tab === 'pnl') loadPnl();
   if (tab === 'subscribers') loadSubscribers();
   if (tab === 'analytics') loadAnalytics();
+  if (tab === 'tax') loadTax();
 }
 
 function showToast(msg) {
@@ -1244,6 +1443,261 @@ function exportSubscribers() {
 }
 
 // Init
+// ── TAX ──
+var taxData = null;
+
+function loadTax() {
+  var year = new Date().getFullYear();
+  api('/api/admin/tax/summary?year=' + year).then(function(r) { return r.json(); }).then(function(data) {
+    taxData = data;
+    renderTaxSummary();
+    renderTaxBreakdown();
+    renderTaxQuarters();
+    renderHomeOffice();
+    populateTaxSettings();
+  });
+}
+
+function renderTaxSummary() {
+  var d = taxData;
+  document.getElementById('tax-year-label').textContent = d.year;
+
+  var setAsideLabel = d.net_profit_ytd > 0 ? '(' + (d.set_aside_rate * 100).toFixed(1) + '% of net profit)' : '';
+  var nextDueDate = new Date(d.next_quarter.due + 'T12:00:00');
+  var nextDueStr = '$' + (d.next_quarter.estimated / 100).toFixed(0) + ' by ' + nextDueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  var paidCount = d.payments.length;
+
+  document.getElementById('tax-summary-stats').innerHTML =
+    '<div class="stat-box"><div class="stat-value">' + fmt(d.recommended_set_aside) + '</div><div class="stat-label">Set Aside for Taxes</div>' + (setAsideLabel ? '<div style="font-size:11px;color:var(--muted);margin-top:2px">' + setAsideLabel + '</div>' : '') + '</div>' +
+    '<div class="stat-box"><div class="stat-value" style="font-size:16px">' + nextDueStr + '</div><div class="stat-label">Next Quarterly Due</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Q' + d.next_quarter.quarter + ' ' + d.year + '</div></div>' +
+    '<div class="stat-box"><div class="stat-value">' + fmt(d.total_paid) + '</div><div class="stat-label">YTD Paid</div><div style="font-size:11px;color:var(--muted);margin-top:2px">' + paidCount + ' payment' + (paidCount !== 1 ? 's' : '') + '</div></div>';
+
+  var lossNote = document.getElementById('tax-loss-note');
+  lossNote.style.display = d.net_profit_ytd <= 0 ? '' : 'none';
+}
+
+function toggleTaxBreakdown() {
+  var el = document.getElementById('tax-breakdown');
+  var arrow = document.getElementById('tax-breakdown-arrow');
+  if (el.style.display === 'none') {
+    el.style.display = '';
+    arrow.innerHTML = '&#9650;';
+  } else {
+    el.style.display = 'none';
+    arrow.innerHTML = '&#9660;';
+  }
+}
+
+function renderTaxBreakdown() {
+  var d = taxData;
+  var lines = [];
+  function line(label, val, indent) {
+    var prefix = indent ? '  ' : '';
+    var sign = val < 0 ? '−' : ' ';
+    var abs = Math.abs(val);
+    var dollars = '$' + (abs / 100).toFixed(2);
+    var pad = Math.max(0, 42 - prefix.length - label.length);
+    return prefix + label + ' '.repeat(pad) + sign + dollars;
+  }
+  lines.push(line('Net profit YTD', d.net_profit_ytd));
+  if (d.home_office.method !== 'none') {
+    var hoLabel = 'Home office (' + d.home_office.method + ')';
+    lines.push(line(hoLabel, -d.home_office.deduction_applied, true));
+  }
+  lines.push(line('Adjusted business profit', d.adjusted_profit));
+  lines.push('─'.repeat(50));
+  lines.push(line('Self-employment tax (15.3%)', d.se_tax.total));
+  lines.push(line('SS portion (12.4%)', d.se_tax.ss, true));
+  lines.push(line('Medicare portion (2.9%)', d.se_tax.medicare, true));
+  lines.push(line('Deductible half', -d.se_tax.deduction, true));
+  lines.push('');
+  lines.push(line('QBI deduction (20%)', -d.qbi.deduction));
+  lines.push(line('Federal taxable biz income', d.federal.taxable_business));
+  lines.push(line('× Marginal bracket (' + (d.federal.marginal_rate * 100).toFixed(0) + '%)', d.federal.tax_ytd, true));
+  lines.push('');
+  lines.push(line('Illinois state tax (4.95%)', d.state.tax_ytd));
+  lines.push('─'.repeat(50));
+  lines.push(line('Total tax liability YTD', d.total_tax_ytd));
+  lines.push(line('Payments made YTD', -d.total_paid, true));
+  lines.push('─'.repeat(50));
+  lines.push(line('Recommended set-aside now', d.recommended_set_aside));
+
+  document.getElementById('tax-breakdown-content').textContent = lines.join('\n');
+}
+
+function renderTaxQuarters() {
+  var d = taxData;
+  var html = '<table><thead><tr><th>Q</th><th>Period</th><th>Due</th><th>Estimated</th><th>Paid</th><th>Status</th><th></th></tr></thead><tbody>';
+  d.quarters.forEach(function(q) {
+    var due = new Date(q.due + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    var statusHtml = '';
+    var statusColor = 'var(--muted)';
+    if (q.status === 'paid') { statusHtml = '✓ Paid'; statusColor = 'var(--green)'; }
+    else if (q.status === 'upcoming') { statusHtml = '● Upcoming'; statusColor = 'var(--accent)'; }
+    else if (q.status === 'overdue') { statusHtml = '! Overdue'; statusColor = 'var(--red)'; }
+    else { statusHtml = '—'; }
+    html += '<tr><td><strong>Q' + q.quarter + '</strong></td><td>' + q.period + '</td><td>' + due + '</td><td class="amount">' + fmt(q.estimated) + '</td><td class="amount">' + (q.paid > 0 ? fmt(q.paid) : '—') + '</td><td style="color:' + statusColor + ';font-weight:600;font-size:12px">' + statusHtml + '</td><td></td></tr>';
+  });
+  html += '</tbody></table>';
+
+  if (d.payments.length > 0) {
+    html += '<div style="margin-top:12px"><h3>Payment History</h3><table><thead><tr><th>Q</th><th>Date</th><th>Federal</th><th>State</th><th>Conf #</th><th></th></tr></thead><tbody>';
+    d.payments.forEach(function(p) {
+      var pd = new Date(p.paid_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      html += '<tr><td>Q' + p.quarter + '</td><td>' + pd + '</td><td class="amount">' + fmt(p.amount_federal) + '</td><td class="amount">' + fmt(p.amount_state) + '</td><td style="font-size:12px;color:var(--muted)">' + (p.confirmation_number || '—') + '</td><td><button class="btn-danger" onclick="deleteTaxPayment(' + p.id + ')" title="Delete">&times;</button></td></tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+
+  document.getElementById('tax-quarters-table').innerHTML = html;
+  document.getElementById('tp-date').valueAsDate = new Date();
+}
+
+function submitTaxPayment(e) {
+  e.preventDefault();
+  var data = {
+    tax_year: taxData.year,
+    quarter: parseInt(document.getElementById('tp-quarter').value),
+    paid_date: document.getElementById('tp-date').value,
+    amount_federal: parseFloat(document.getElementById('tp-federal').value) || 0,
+    amount_state: parseFloat(document.getElementById('tp-state').value) || 0,
+    confirmation_number: document.getElementById('tp-conf').value,
+    notes: document.getElementById('tp-notes').value
+  };
+  if (data.amount_federal <= 0 && data.amount_state <= 0) {
+    showToast('Enter a payment amount');
+    return false;
+  }
+  api('/api/admin/tax/payments', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(function(r) { return r.json(); }).then(function(res) {
+    if (res.ok) {
+      showToast('Payment logged');
+      document.getElementById('tp-federal').value = '';
+      document.getElementById('tp-state').value = '';
+      document.getElementById('tp-conf').value = '';
+      document.getElementById('tp-notes').value = '';
+      loadTax();
+    } else {
+      showToast(res.error || 'Error');
+    }
+  });
+  return false;
+}
+
+function deleteTaxPayment(id) {
+  if (!confirm('Delete this tax payment?')) return;
+  api('/api/admin/tax/payments/' + id, { method: 'DELETE' }).then(function() {
+    showToast('Payment deleted');
+    loadTax();
+  });
+}
+
+function renderHomeOffice() {
+  var ho = taxData.home_office;
+  var html = '';
+  if (ho.method === 'none') {
+    html = '<div class="empty">Home office deduction is disabled. Enable it in Tax Settings below.</div>';
+  } else if (ho.method === 'simplified') {
+    var capped = Math.min(ho.sqft, 300);
+    html = '<div style="font-size:14px;line-height:1.8">' +
+      '<strong>Method:</strong> Simplified ($5/sq ft)<br>' +
+      '<strong>Office size:</strong> ' + ho.sqft + ' sq ft' + (ho.sqft > 300 ? ' (capped at 300)' : '') + '<br>' +
+      '<strong>Annual deduction:</strong> ' + fmt(ho.deduction_annual) + '<br>' +
+      '<strong>YTD applied:</strong> ' + fmt(ho.deduction_applied) + ' (' + taxData.months_elapsed + ' months in)' +
+      '</div>';
+  } else {
+    html = '<div style="font-size:14px;line-height:1.8">' +
+      '<strong>Method:</strong> Actual expenses<br>' +
+      '<strong>Office size:</strong> ' + ho.sqft + ' sq ft<br>' +
+      '<strong>Annual deduction:</strong> ' + fmt(ho.deduction_annual) + '<br>' +
+      '<strong>YTD applied:</strong> ' + fmt(ho.deduction_applied) + ' (' + taxData.months_elapsed + ' months in)' +
+      '</div>';
+  }
+  if (ho.deduction_ytd > ho.deduction_applied && taxData.net_profit_ytd <= 0) {
+    html += '<div style="margin-top:8px;padding:8px 12px;background:var(--cream);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--muted)">Home office deduction capped at net profit. Cannot create or increase a loss.</div>';
+  }
+  document.getElementById('tax-home-office-summary').innerHTML = html;
+}
+
+function toggleTaxSettings() {
+  var el = document.getElementById('tax-settings-panel');
+  var arrow = document.getElementById('tax-settings-arrow');
+  if (el.style.display === 'none') {
+    el.style.display = '';
+    arrow.innerHTML = '&#9650;';
+  } else {
+    el.style.display = 'none';
+    arrow.innerHTML = '&#9660;';
+  }
+}
+
+function toggleHomeOfficeFields() {
+  var method = document.getElementById('ts-ho-method').value;
+  document.getElementById('ts-ho-actual-fields').style.display = method === 'actual' ? '' : 'none';
+}
+
+function populateTaxSettings() {
+  var s = taxData.settings;
+  document.getElementById('ts-filing').value = s.filing_status;
+  document.getElementById('ts-other-income').value = s.other_household_income ? (s.other_household_income / 100).toFixed(0) : '';
+  document.getElementById('ts-std-deduction').value = s.standard_deduction ? (s.standard_deduction / 100).toFixed(0) : '';
+  document.getElementById('ts-biz-start').value = s.business_start_date || '';
+  document.getElementById('ts-il-rate').value = s.il_state_rate ? (s.il_state_rate * 100).toFixed(2) : '';
+  document.getElementById('ts-se-rate').value = s.se_tax_rate ? (s.se_tax_rate * 100).toFixed(1) : '';
+  document.getElementById('ts-ss-cap').value = s.se_tax_ss_cap ? (s.se_tax_ss_cap / 100).toFixed(0) : '';
+  document.getElementById('ts-qbi-pct').value = s.qbi_deduction_pct ? (s.qbi_deduction_pct * 100).toFixed(0) : '';
+  document.getElementById('ts-fed-override').value = s.federal_bracket_override ? (s.federal_bracket_override * 100).toFixed(1) : '';
+  document.getElementById('ts-setaside-override').value = s.set_aside_pct_override ? (s.set_aside_pct_override * 100).toFixed(1) : '';
+  document.getElementById('ts-ho-method').value = s.home_office_method;
+  document.getElementById('ts-ho-sqft').value = s.home_office_sqft || '';
+  document.getElementById('ts-ho-total-sqft').value = s.home_total_sqft || '';
+  document.getElementById('ts-ho-rent').value = s.home_monthly_rent_or_mortgage ? (s.home_monthly_rent_or_mortgage / 100).toFixed(2) : '';
+  document.getElementById('ts-ho-utilities').value = s.home_monthly_utilities ? (s.home_monthly_utilities / 100).toFixed(2) : '';
+  document.getElementById('ts-ho-internet').value = s.home_monthly_internet ? (s.home_monthly_internet / 100).toFixed(2) : '';
+  document.getElementById('ts-ho-insurance').value = s.home_monthly_insurance ? (s.home_monthly_insurance / 100).toFixed(2) : '';
+  toggleHomeOfficeFields();
+}
+
+function saveTaxSettings() {
+  var fedOverride = document.getElementById('ts-fed-override').value;
+  var setAsideOverride = document.getElementById('ts-setaside-override').value;
+  var data = {
+    tax_year: taxData.year,
+    filing_status: document.getElementById('ts-filing').value,
+    other_household_income: parseFloat(document.getElementById('ts-other-income').value) || 0,
+    standard_deduction: parseFloat(document.getElementById('ts-std-deduction').value) || 15000,
+    federal_bracket_override: fedOverride ? parseFloat(fedOverride) / 100 : null,
+    il_state_rate: (parseFloat(document.getElementById('ts-il-rate').value) || 4.95) / 100,
+    se_tax_rate: (parseFloat(document.getElementById('ts-se-rate').value) || 15.3) / 100,
+    se_tax_ss_cap: parseFloat(document.getElementById('ts-ss-cap').value) || 176100,
+    qbi_deduction_pct: (parseFloat(document.getElementById('ts-qbi-pct').value) || 20) / 100,
+    home_office_method: document.getElementById('ts-ho-method').value,
+    home_office_sqft: parseInt(document.getElementById('ts-ho-sqft').value) || 0,
+    home_total_sqft: parseInt(document.getElementById('ts-ho-total-sqft').value) || 0,
+    home_monthly_rent_or_mortgage: parseFloat(document.getElementById('ts-ho-rent').value) || 0,
+    home_monthly_utilities: parseFloat(document.getElementById('ts-ho-utilities').value) || 0,
+    home_monthly_internet: parseFloat(document.getElementById('ts-ho-internet').value) || 0,
+    home_monthly_insurance: parseFloat(document.getElementById('ts-ho-insurance').value) || 0,
+    set_aside_pct_override: setAsideOverride ? parseFloat(setAsideOverride) / 100 : null,
+    business_start_date: document.getElementById('ts-biz-start').value
+  };
+  api('/api/admin/tax/settings', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(function(r) { return r.json(); }).then(function(res) {
+    if (res.ok) {
+      showToast('Tax settings saved');
+      loadTax();
+    } else {
+      showToast(res.error || 'Error saving');
+    }
+  });
+}
+
 setToday();
 setRevDate();
 document.getElementById('exp-month-filter').value = new Date().toISOString().slice(0, 7);
