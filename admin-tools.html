@@ -634,23 +634,33 @@ function renderRevenue() {
   var activePurchases = paidPurchases.filter(function(p) { return !p.refunded_at; });
   var refundedPurchases = paidPurchases.filter(function(p) { return p.refunded_at; });
   var totalGross = activePurchases.reduce(function(s, p) { return s + p.amount_cents; }, 0);
-  var totalFees = activePurchases.reduce(function(s, p) { return s + stripeFee(p.amount_cents); }, 0);
+  // Stripe keeps the fee even on refunded transactions, so include fees on ALL paid purchases
+  var activeFees = activePurchases.reduce(function(s, p) { return s + stripeFee(p.amount_cents); }, 0);
+  var refundedFees = refundedPurchases.reduce(function(s, p) { return s + stripeFee(p.amount_cents); }, 0);
+  var totalFees = activeFees + refundedFees;
   var totalNet = totalGross - totalFees;
   var totalRefunded = refundedPurchases.reduce(function(s, p) { return s + p.amount_cents; }, 0);
   var viewLabel = view === 'ytd' ? 'YTD' : (view === 'all' ? 'All-Time' : 'Month');
 
+  var feeSub = refundedFees > 0
+    ? '<div style="font-size:10px;color:var(--muted);margin-top:2px">incl. ' + fmt(refundedFees) + ' on refunds</div>'
+    : '';
+
   document.getElementById('revenue-stats').innerHTML =
     '<div class="stat-box green"><div class="stat-value">' + fmt(totalNet) + '</div><div class="stat-label">' + viewLabel + ' Net</div></div>' +
     '<div class="stat-box"><div class="stat-value">' + fmt(totalGross) + '</div><div class="stat-label">Gross</div></div>' +
-    '<div class="stat-box accent"><div class="stat-value">' + fmt(totalFees) + '</div><div class="stat-label">Stripe Fees</div></div>' +
+    '<div class="stat-box accent"><div class="stat-value">' + fmt(totalFees) + '</div><div class="stat-label">Stripe Fees</div>' + feeSub + '</div>' +
     '<div class="stat-box accent"><div class="stat-value">' + fmt(totalRefunded) + '</div><div class="stat-label">Refunded</div></div>' +
     '<div class="stat-box"><div class="stat-value">' + activePurchases.length + '</div><div class="stat-label">Purchases</div></div>';
 
-  // Group by month for chart (net amounts, excludes refunded)
+  // Group by month for chart — net = gross (non-refunded) minus ALL fees that month (incl. refund fees)
   var byMonth = {};
-  allPurchases.filter(function(p) { return p.amount_cents > 0 && !p.refunded_at; }).forEach(function(p) {
+  allPurchases.filter(function(p) { return p.amount_cents > 0; }).forEach(function(p) {
     var m = (p.purchased_at || '').slice(0, 7);
-    if (m) byMonth[m] = (byMonth[m] || 0) + netAmount(p.amount_cents);
+    if (!m) return;
+    var fee = stripeFee(p.amount_cents);
+    var contribution = p.refunded_at ? -fee : (p.amount_cents - fee);
+    byMonth[m] = (byMonth[m] || 0) + contribution;
   });
   var months = Object.keys(byMonth).sort().slice(-6);
   var maxVal = Math.max.apply(null, months.map(function(m) { return byMonth[m]; })) || 1;
@@ -812,6 +822,9 @@ function exportPnlCSV() {
     pnl.stripe_revenue.categories.forEach(function(c) {
       csv += 'Revenue - Dashboard/Stripe,' + esc(c.category) + ',' + money(c.amount_cents) + ',' + money(c.fee_cents || 0) + '\n';
     });
+    if (pnl.stripe_revenue.refund_fee_loss) {
+      csv += 'Revenue - Refund Fee Loss,,' + money(-pnl.stripe_revenue.refund_fee_loss) + ',' + money(pnl.stripe_revenue.refund_fee_loss) + '\n';
+    }
     csv += 'Revenue - Dashboard/Stripe Subtotal,,' + money(pnl.stripe_revenue.total) + ',' + money(pnl.stripe_revenue.fees || 0) + '\n';
   }
   if (pnl.manual_revenue.categories.length > 0) {
@@ -846,13 +859,17 @@ function renderPnl(pnl, entries) {
   var totalExp = pnl.expenses.total;
   var net = pnl.net_profit;
   var stripeFees = (pnl.stripe_revenue.fees || 0);
+  var refundFeeLoss = (pnl.stripe_revenue.refund_fee_loss || 0);
+  var feeSub = refundFeeLoss > 0
+    ? '<div style="font-size:10px;color:var(--muted);margin-top:2px">incl. ' + fmt(refundFeeLoss) + ' on refunds</div>'
+    : '';
 
   // YTD Summary
   document.getElementById('pnl-ytd-stats').innerHTML =
     '<div class="stat-box green"><div class="stat-value">' + fmt(totalRev) + '</div><div class="stat-label">YTD Revenue (Net)</div></div>' +
     '<div class="stat-box accent"><div class="stat-value">' + fmt(totalExp) + '</div><div class="stat-label">YTD Expenses</div></div>' +
     '<div class="stat-box ' + (net >= 0 ? 'green' : 'accent') + '"><div class="stat-value">' + fmt(net) + '</div><div class="stat-label">Net Profit</div></div>' +
-    (stripeFees ? '<div class="stat-box"><div class="stat-value">' + fmt(stripeFees) + '</div><div class="stat-label">Stripe Fees</div></div>' : '');
+    (stripeFees ? '<div class="stat-box"><div class="stat-value">' + fmt(stripeFees) + '</div><div class="stat-label">Stripe Fees</div>' + feeSub + '</div>' : '');
 
   // Revenue breakdown
   var revHtml = '';

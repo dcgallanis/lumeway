@@ -8904,23 +8904,28 @@ def admin_pnl():
     # Manual revenue entries by category (YTD)
     cur = db_execute(conn, f"SELECT category, SUM(amount_cents) FROM revenue_entries WHERE date LIKE {param} GROUP BY category ORDER BY SUM(amount_cents) DESC", (year + "%",))
     manual_rev_cats = [{"category": r[0], "amount_cents": r[1]} for r in cur.fetchall()]
-    # Dashboard/Stripe revenue by product (YTD) — only paid, non-refunded purchases
-    # Fetch per-transaction amounts so we can calculate per-transaction Stripe fees
-    cur = db_execute(conn, f"SELECT product_name, amount_cents FROM purchases WHERE purchased_at LIKE {param} AND amount_cents > 0 AND refunded_at IS NULL", (year + "%",))
-    stripe_txns = [(r[0], r[1]) for r in cur.fetchall()]
-    # Aggregate by category
+    # Dashboard/Stripe revenue by product (YTD) — fetch active and refunded separately
+    # so we can count fees on refunded txns (Stripe keeps them) but exclude refunded gross.
+    cur = db_execute(conn, f"SELECT product_name, amount_cents, refunded_at FROM purchases WHERE purchased_at LIKE {param} AND amount_cents > 0", (year + "%",))
+    stripe_txns = [(r[0], r[1], r[2]) for r in cur.fetchall()]
+    # Aggregate by category (active only contribute to gross; all txns contribute fees)
     stripe_cat_gross = {}
     stripe_cat_fees = {}
-    for name, amt in stripe_txns:
+    refund_fee_loss = 0
+    for name, amt, refunded_at in stripe_txns:
         fee = round(amt * 0.029 + 30)
-        stripe_cat_gross[name] = stripe_cat_gross.get(name, 0) + amt
-        stripe_cat_fees[name] = stripe_cat_fees.get(name, 0) + fee
+        if refunded_at:
+            refund_fee_loss += fee
+        else:
+            stripe_cat_gross[name] = stripe_cat_gross.get(name, 0) + amt
+            stripe_cat_fees[name] = stripe_cat_fees.get(name, 0) + fee
     stripe_rev_cats = [{"category": k, "amount_cents": stripe_cat_gross[k] - stripe_cat_fees[k], "gross_cents": stripe_cat_gross[k], "fee_cents": stripe_cat_fees[k]} for k in sorted(stripe_cat_gross, key=lambda k: stripe_cat_gross[k], reverse=True)]
     # Totals
     total_expenses = sum(e["amount_cents"] for e in expense_cats)
     total_manual_rev = sum(r["amount_cents"] for r in manual_rev_cats)
     total_stripe_gross = sum(c["gross_cents"] for c in stripe_rev_cats)
-    total_stripe_fees = sum(c["fee_cents"] for c in stripe_rev_cats)
+    total_stripe_active_fees = sum(c["fee_cents"] for c in stripe_rev_cats)
+    total_stripe_fees = total_stripe_active_fees + refund_fee_loss
     total_stripe_net = total_stripe_gross - total_stripe_fees
     total_revenue = total_manual_rev + total_stripe_net
     conn.close()
@@ -8928,7 +8933,13 @@ def admin_pnl():
         "year": year,
         "expenses": {"total": total_expenses, "categories": expense_cats},
         "manual_revenue": {"total": total_manual_rev, "categories": manual_rev_cats},
-        "stripe_revenue": {"total": total_stripe_net, "gross": total_stripe_gross, "fees": total_stripe_fees, "categories": stripe_rev_cats},
+        "stripe_revenue": {
+            "total": total_stripe_net,
+            "gross": total_stripe_gross,
+            "fees": total_stripe_fees,
+            "refund_fee_loss": refund_fee_loss,
+            "categories": stripe_rev_cats
+        },
         "total_revenue": total_revenue,
         "net_profit": total_revenue - total_expenses
     })
