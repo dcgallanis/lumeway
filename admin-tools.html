@@ -571,6 +571,26 @@ function deletePurchase(sessionId) {
   });
 }
 
+function toggleRefund(sessionId, makeRefunded) {
+  if (!sessionId) return;
+  var msg = makeRefunded
+    ? 'Mark this purchase as refunded? (Issue the refund in Stripe first — this only updates the admin records.)'
+    : 'Unmark this purchase as refunded? It will count as revenue again.';
+  if (!confirm(msg)) return;
+  api('/api/admin/refund-purchase', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ session_id: sessionId, refunded: makeRefunded })
+  }).then(function(r) { return r.json(); }).then(function(res) {
+    if (res.ok) {
+      showToast(makeRefunded ? 'Marked as refunded' : 'Refund removed');
+      loadRevenue();
+    } else {
+      showToast(res.error || 'Error updating purchase');
+    }
+  });
+}
+
 var allPurchases = [];
 
 function stripeFee(amountCents) {
@@ -611,26 +631,26 @@ function renderRevenue() {
   }
 
   var paidPurchases = purchases.filter(function(p) { return p.amount_cents > 0; });
-  var totalGross = paidPurchases.reduce(function(s, p) { return s + p.amount_cents; }, 0);
-  var totalFees = paidPurchases.reduce(function(s, p) { return s + stripeFee(p.amount_cents); }, 0);
+  var activePurchases = paidPurchases.filter(function(p) { return !p.refunded_at; });
+  var refundedPurchases = paidPurchases.filter(function(p) { return p.refunded_at; });
+  var totalGross = activePurchases.reduce(function(s, p) { return s + p.amount_cents; }, 0);
+  var totalFees = activePurchases.reduce(function(s, p) { return s + stripeFee(p.amount_cents); }, 0);
   var totalNet = totalGross - totalFees;
+  var totalRefunded = refundedPurchases.reduce(function(s, p) { return s + p.amount_cents; }, 0);
   var viewLabel = view === 'ytd' ? 'YTD' : (view === 'all' ? 'All-Time' : 'Month');
 
   document.getElementById('revenue-stats').innerHTML =
     '<div class="stat-box green"><div class="stat-value">' + fmt(totalNet) + '</div><div class="stat-label">' + viewLabel + ' Net</div></div>' +
     '<div class="stat-box"><div class="stat-value">' + fmt(totalGross) + '</div><div class="stat-label">Gross</div></div>' +
     '<div class="stat-box accent"><div class="stat-value">' + fmt(totalFees) + '</div><div class="stat-label">Stripe Fees</div></div>' +
-    '<div class="stat-box"><div class="stat-value">' + paidPurchases.length + '</div><div class="stat-label">Purchases</div></div>';
+    '<div class="stat-box accent"><div class="stat-value">' + fmt(totalRefunded) + '</div><div class="stat-label">Refunded</div></div>' +
+    '<div class="stat-box"><div class="stat-value">' + activePurchases.length + '</div><div class="stat-label">Purchases</div></div>';
 
-  // Group by month for chart (net amounts, always uses all purchases)
+  // Group by month for chart (net amounts, excludes refunded)
   var byMonth = {};
-  var byMonthCount = {};
-  allPurchases.filter(function(p) { return p.amount_cents > 0; }).forEach(function(p) {
+  allPurchases.filter(function(p) { return p.amount_cents > 0 && !p.refunded_at; }).forEach(function(p) {
     var m = (p.purchased_at || '').slice(0, 7);
-    if (m) {
-      byMonth[m] = (byMonth[m] || 0) + netAmount(p.amount_cents);
-      byMonthCount[m] = (byMonthCount[m] || 0) + 1;
-    }
+    if (m) byMonth[m] = (byMonth[m] || 0) + netAmount(p.amount_cents);
   });
   var months = Object.keys(byMonth).sort().slice(-6);
   var maxVal = Math.max.apply(null, months.map(function(m) { return byMonth[m]; })) || 1;
@@ -652,8 +672,21 @@ function renderRevenue() {
     var d = p.purchased_at ? new Date(p.purchased_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
     var net = netAmount(p.amount_cents);
     var fee = stripeFee(p.amount_cents);
-    var delBtn = p.stripe_session_id ? '<button class="btn-danger" onclick="deletePurchase(\'' + p.stripe_session_id.replace(/'/g, "\\'") + '\')" title="Delete purchase record" style="margin-left:8px">&times;</button>' : '';
-    listHtml += '<div class="rev-item"><div><div class="rev-name">' + p.product_name + '</div><div class="rev-meta">' + p.email + ' · ' + d + '</div></div><div style="display:flex;align-items:center"><div class="rev-amount">' + fmt(net) + '</div><div style="font-size:11px;color:var(--muted);margin-left:6px">(−' + fmt(fee) + ' fee)</div>' + delBtn + '</div></div>';
+    var isRefunded = !!p.refunded_at;
+    var sid = p.stripe_session_id ? p.stripe_session_id.replace(/'/g, "\\'") : '';
+    var refundBtn = '';
+    if (p.stripe_session_id) {
+      if (isRefunded) {
+        refundBtn = '<button class="btn btn-ghost" onclick="toggleRefund(\'' + sid + '\', false)" title="Unmark refund" style="margin-left:8px;padding:4px 10px;font-size:11px">Undo refund</button>';
+      } else {
+        refundBtn = '<button class="btn btn-ghost" onclick="toggleRefund(\'' + sid + '\', true)" title="Mark as refunded" style="margin-left:8px;padding:4px 10px;font-size:11px">Refund</button>';
+      }
+    }
+    var delBtn = p.stripe_session_id ? '<button class="btn-danger" onclick="deletePurchase(\'' + sid + '\')" title="Delete purchase record" style="margin-left:4px">&times;</button>' : '';
+    var refundBadge = isRefunded ? '<span style="display:inline-block;background:var(--accent);color:#fff;font-size:10px;padding:1px 8px;border-radius:10px;margin-left:8px;text-transform:uppercase;letter-spacing:0.05em">Refunded</span>' : '';
+    var rowStyle = isRefunded ? 'opacity:0.55' : '';
+    var amountStyle = isRefunded ? 'text-decoration:line-through;color:var(--muted)' : '';
+    listHtml += '<div class="rev-item" style="' + rowStyle + '"><div><div class="rev-name">' + p.product_name + refundBadge + '</div><div class="rev-meta">' + p.email + ' · ' + d + '</div></div><div style="display:flex;align-items:center"><div class="rev-amount" style="' + amountStyle + '">' + fmt(net) + '</div><div style="font-size:11px;color:var(--muted);margin-left:6px">(−' + fmt(fee) + ' fee)</div>' + refundBtn + delBtn + '</div></div>';
   });
   document.getElementById('revenue-list').innerHTML = listHtml;
 }

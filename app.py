@@ -753,6 +753,21 @@ def init_subscribers_db():
             conn_obs.close()
         except Exception:
             pass
+    # Refunds column on purchases (idempotent)
+    try:
+        conn_ref = get_db()
+        if USE_POSTGRES:
+            db_execute(conn_ref, "ALTER TABLE purchases ADD COLUMN IF NOT EXISTS refunded_at TEXT DEFAULT NULL")
+        else:
+            db_execute(conn_ref, "ALTER TABLE purchases ADD COLUMN refunded_at TEXT DEFAULT NULL")
+        conn_ref.commit()
+        conn_ref.close()
+    except Exception:
+        try:
+            conn_ref.rollback()
+            conn_ref.close()
+        except Exception:
+            pass
     # Code redemptions table (idempotent)
     try:
         conn_codes = get_db()
@@ -8889,9 +8904,9 @@ def admin_pnl():
     # Manual revenue entries by category (YTD)
     cur = db_execute(conn, f"SELECT category, SUM(amount_cents) FROM revenue_entries WHERE date LIKE {param} GROUP BY category ORDER BY SUM(amount_cents) DESC", (year + "%",))
     manual_rev_cats = [{"category": r[0], "amount_cents": r[1]} for r in cur.fetchall()]
-    # Dashboard/Stripe revenue by product (YTD) — only paid purchases
+    # Dashboard/Stripe revenue by product (YTD) — only paid, non-refunded purchases
     # Fetch per-transaction amounts so we can calculate per-transaction Stripe fees
-    cur = db_execute(conn, f"SELECT product_name, amount_cents FROM purchases WHERE purchased_at LIKE {param} AND amount_cents > 0", (year + "%",))
+    cur = db_execute(conn, f"SELECT product_name, amount_cents FROM purchases WHERE purchased_at LIKE {param} AND amount_cents > 0 AND refunded_at IS NULL", (year + "%",))
     stripe_txns = [(r[0], r[1]) for r in cur.fetchall()]
     # Aggregate by category
     stripe_cat_gross = {}
@@ -8923,9 +8938,9 @@ def admin_revenue():
     if not check_admin():
         return jsonify({"error": "Unauthorized"}), 401
     conn = get_db()
-    # All purchases
-    cur = db_execute(conn, "SELECT product_id, product_name, amount_cents, purchased_at, email, stripe_session_id FROM purchases ORDER BY purchased_at DESC")
-    purchases = [{"product_id": r[0], "product_name": r[1], "amount_cents": r[2], "purchased_at": r[3], "email": r[4], "stripe_session_id": r[5]} for r in cur.fetchall()]
+    # All purchases (include refund status)
+    cur = db_execute(conn, "SELECT product_id, product_name, amount_cents, purchased_at, email, stripe_session_id, refunded_at FROM purchases ORDER BY purchased_at DESC")
+    purchases = [{"product_id": r[0], "product_name": r[1], "amount_cents": r[2], "purchased_at": r[3], "email": r[4], "stripe_session_id": r[5], "refunded_at": r[6]} for r in cur.fetchall()]
     conn.close()
     return jsonify({"purchases": purchases})
 
@@ -9123,6 +9138,28 @@ def admin_delete_purchase():
     conn.commit()
     conn.close()
     return jsonify({"ok": True})
+
+@app.route("/api/admin/refund-purchase", methods=["POST"])
+def admin_refund_purchase():
+    """Admin tool: toggle a purchase's refunded status. Does NOT issue a Stripe refund —
+    run the refund in Stripe Dashboard first, then mark it here so it's excluded
+    from revenue totals.
+    """
+    if not check_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    session_id = data.get("session_id", "").strip()
+    refunded = bool(data.get("refunded", True))
+    if not session_id:
+        return jsonify({"error": "session_id required"}), 400
+    conn = get_db()
+    param = "%s" if USE_POSTGRES else "?"
+    value = datetime.now(timezone.utc).isoformat() if refunded else None
+    db_execute(conn, f"UPDATE purchases SET refunded_at = {param} WHERE stripe_session_id = {param}", (value, session_id))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "refunded_at": value})
+
 
 @app.route("/api/admin/retry-purchase", methods=["POST"])
 def admin_retry_purchase():
