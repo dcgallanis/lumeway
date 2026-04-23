@@ -161,8 +161,10 @@
     .bundle-price { font-family: 'Libre Baskerville', serif; font-size: 28px; font-weight: 500; color: var(--navy); margin-bottom: 16px; }
     .bundle-price span { font-size: 14px; font-weight: 300; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; }
 
-    /* Template carousel inside each bundle — fills the grid column */
-    .template-carousel-wrap { background: var(--warm-white); border: 1px solid var(--border); border-radius: 18px; padding: 28px 30px 20px; display: flex; flex-direction: column; width: 100%; box-shadow: 0 2px 20px rgba(27,58,92,0.05); }
+    /* Template carousel inside each bundle — sits in the grid column, ~40% of page */
+    .template-carousel-wrap { background: var(--warm-white); border: 1px solid var(--border); border-radius: 18px; padding: 28px 30px 20px; display: flex; flex-direction: column; width: 100%; max-width: 480px; box-shadow: 0 2px 20px rgba(27,58,92,0.05); }
+    .bundle-row .template-carousel-wrap { margin-right: auto; }
+    .bundle-row-reverse .template-carousel-wrap { margin-left: auto; }
     .template-carousel-eyebrow { font-size: 10.5px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
     .template-carousel-viewport { position: relative; overflow: hidden; flex: 1; display: flex; align-items: stretch; height: 200px; }
     .template-carousel-track { display: flex; transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); width: 100%; }
