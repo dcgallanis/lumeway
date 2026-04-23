@@ -5720,6 +5720,956 @@ guideLibrary['disability'] = {
           '<p>I understand that my job position or an equivalent position will be available upon my return, and that my health insurance benefits will continue during my leave under the same terms.</p>'
         ],
         enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Severance Response Letter
+      'severance_response_letter': {
+        subject: 'Response to Severance Offer',
+        senderSection: 'EMPLOYEE INFORMATION',
+        recipient: {
+          section: 'EMPLOYER INFORMATION',
+          orgField: 'Company Name',
+          attnField: 'HR Contact Name / Title',
+          addressField: 'Company Address'
+        },
+        body: [
+          '<p>Thank you for the severance offer dated {SEVERANCE OFFER RECEIVED.Date Offer Received}. I am writing to formally respond and share my decision.</p>',
+          '<h3>Employee Information</h3><p>Full Name: {EMPLOYEE INFORMATION.Full Name}<br>Employee ID: {EMPLOYEE INFORMATION.Employee ID}<br>Job Title: {EMPLOYEE INFORMATION.Job Title}<br>Department: {EMPLOYEE INFORMATION.Department}<br>Hire Date: {EMPLOYEE INFORMATION.Hire Date}<br>Last Day of Employment: {EMPLOYEE INFORMATION.Last Day of Employment}</p>',
+          '<h3>Offer Summary</h3><p>Date Offer Received: {SEVERANCE OFFER RECEIVED.Date Offer Received}<br>Review Deadline: {SEVERANCE OFFER RECEIVED.Review Deadline}<br>Severance Pay Offered: {SEVERANCE OFFER RECEIVED.Severance Pay Offered}<br>Payment Structure: {SEVERANCE OFFER RECEIVED.Payment Structure}<br>Benefits Continuation Period: {SEVERANCE OFFER RECEIVED.Benefits Continuation Period}<br>Non-Compete / Non-Solicitation Terms: {SEVERANCE OFFER RECEIVED.Non-Compete / Non-Solicitation Terms}<br>Release of Claims Included: {SEVERANCE OFFER RECEIVED.Release of Claims Included}</p>',
+          '<h3>My Response</h3><p>Response Type: {RESPONSE.Response Type}<br>If Accepting — Terms Accepted: {RESPONSE.If Accepting — Terms Accepted}<br>If Declining — Reason: {RESPONSE.If Declining — Reason}<br>If Requesting Modifications: {RESPONSE.If Requesting Modifications}<br>Questions or Clarifications: {RESPONSE.Questions or Clarifications}</p>',
+          '<p>Thank you for your time and consideration. Please let me know the next steps or if any further information is needed on my end.</p>'
+        ]
+      },
+
+      // Severance CounterOffer Letter
+      'severance_counteroffer_letter': {
+        subject: 'Response to Severance Offer — Requested Modifications',
+        senderSection: 'EMPLOYEE INFORMATION',
+        recipient: {
+          section: 'EMPLOYER INFORMATION',
+          orgField: 'Company Name',
+          attnField: 'HR Contact Name / Title',
+          addressField: 'Company Address'
+        },
+        body: [
+          '<p>Thank you for the severance offer dated {ORIGINAL SEVERANCE TERMS.Date Offer Received}. I appreciate the opportunity to review the terms and would like to propose several modifications that would better reflect my tenure and circumstances.</p>',
+          '<h3>Original Terms Offered</h3><p>Date Offer Received: {ORIGINAL SEVERANCE TERMS.Date Offer Received}<br>Severance Pay Offered: {ORIGINAL SEVERANCE TERMS.Severance Pay Offered}<br>Benefits Continuation: {ORIGINAL SEVERANCE TERMS.Benefits Continuation}<br>Non-Compete / NDA Terms: {ORIGINAL SEVERANCE TERMS.Non-Compete / NDA Terms}</p>',
+          '<h3>Requested Modifications</h3><p>Requested Severance Pay: {COUNTER-PROPOSAL.Requested Severance Pay}<br>Requested Benefits Continuation: {COUNTER-PROPOSAL.Requested Benefits Continuation}<br>Requested Non-Compete/NDA Modifications: {COUNTER-PROPOSAL.Requested Non-Compete/NDA Modifications}<br>Outplacement Services / Career Coaching: {COUNTER-PROPOSAL.Outplacement Services / Career Coaching}<br>Stock Option Exercise Period Extension: {COUNTER-PROPOSAL.Stock Option Exercise Period Extension}<br>Neutral / Positive Reference Agreement: {COUNTER-PROPOSAL.Neutral / Positive Reference Agreement}<br>Other Requests: {COUNTER-PROPOSAL.Other Requests}</p>',
+          '<h3>Rationale</h3><p>{COUNTER-PROPOSAL.Rationale / Justification}</p>',
+          '<p>I remain a committed professional and want to ensure this transition is structured fairly for both of us. I am happy to discuss these items further at your convenience.</p>'
+        ]
+      },
+
+      // Hardship Letter to Creditor
+      'hardship_letter_to_creditor': {
+        subject: 'Request for Payment Hardship Assistance — Account {BORROWER INFORMATION.Account Number}',
+        senderSection: 'BORROWER INFORMATION',
+        recipient: {
+          section: 'CREDITOR INFORMATION',
+          orgField: 'Creditor / Lender Name',
+          attnField: 'Hardship Department',
+          addressField: 'Mailing Address'
+        },
+        body: [
+          '<p>I am writing to inform you of a financial hardship and to request your assistance in restructuring my account. I am committed to resolving this balance and maintaining a positive relationship with your company.</p>',
+          '<h3>Account Information</h3><p>Account Number: {BORROWER INFORMATION.Account Number}<br>Account Type: {BORROWER INFORMATION.Account Type}</p>',
+          '<h3>Hardship Details</h3><p>Type of Hardship: {HARDSHIP DETAILS.Type of Hardship}<br>Date Hardship Began: {HARDSHIP DETAILS.Date Hardship Began}<br>Description of Circumstances: {HARDSHIP DETAILS.Description of Circumstances}<br>Current Employment Status: {HARDSHIP DETAILS.Current Employment Status}<br>Current Monthly Income: {HARDSHIP DETAILS.Current Monthly Income}<br>Current Monthly Expenses: {HARDSHIP DETAILS.Current Monthly Expenses}<br>Temporary or Long-Term: {HARDSHIP DETAILS.Temporary or Long-Term}<br>Expected Resolution Date: {HARDSHIP DETAILS.Expected Resolution Date}</p>',
+          '<h3>Relief Requested</h3><p>I respectfully request your consideration of the following options:</p><ol>{checklist:RELIEF REQUESTED}</ol>',
+          '<p>I am happy to provide any additional documentation needed to support this request. Thank you for your consideration during this difficult time.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // 401k Rollover Request Letter
+      '401k_rollover_request_letter': {
+        subject: '401(k) Rollover Request',
+        senderSection: 'ACCOUNT HOLDER INFORMATION',
+        recipient: {
+          section: 'CURRENT 401(K) PLAN',
+          orgField: 'Plan Administrator / Custodian',
+          attnField: 'Plan Name',
+          attn: 'Plan Administrator'
+        },
+        body: [
+          '<p>I am writing to request a rollover of my 401(k) account balance from {CURRENT 401(K) PLAN.Plan Name} to {RECEIVING ACCOUNT.Receiving Institution}, effective {ROLLOVER DETAILS.Effective Date Requested}.</p>',
+          '<h3>Account Holder Information</h3><p>Full Name: {ACCOUNT HOLDER INFORMATION.Full Name}<br>SSN (last 4): {ACCOUNT HOLDER INFORMATION.SSN (last 4)}<br>Date of Birth: {ACCOUNT HOLDER INFORMATION.Date of Birth}</p>',
+          '<h3>Current 401(k) Plan</h3><p>Employer / Plan Sponsor: {CURRENT 401(K) PLAN.Employer / Plan Sponsor}<br>Plan Name: {CURRENT 401(K) PLAN.Plan Name}<br>Plan / Account Number: {CURRENT 401(K) PLAN.Plan / Account Number}<br>Last Day of Employment: {CURRENT 401(K) PLAN.Last Day of Employment}</p>',
+          '<h3>Receiving Account</h3><p>Receiving Institution: {RECEIVING ACCOUNT.Receiving Institution}<br>Account Number: {RECEIVING ACCOUNT.Account Number}<br>Account Type: {RECEIVING ACCOUNT.Account Type}<br>Institution Mailing Address: {RECEIVING ACCOUNT.Institution Mailing Address}<br>Contact Name: {RECEIVING ACCOUNT.Contact Name}</p>',
+          '<h3>Rollover Details</h3><p>Rollover Amount: {ROLLOVER DETAILS.Rollover Amount}<br>Transfer Method: {ROLLOVER DETAILS.Transfer Method}<br>If Check — Make Payable To: {ROLLOVER DETAILS.If Check — Make Payable To}<br>Effective Date Requested: {ROLLOVER DETAILS.Effective Date Requested}<br>Additional Instructions: {ROLLOVER DETAILS.Additional Instructions}</p>',
+          '<p>Please let me know if you require any additional forms or documentation to process this rollover. Thank you for your prompt attention to this request.</p>'
+        ]
+      },
+
+      // Professional Reference Request Letter
+      'professional_reference_request_letter': {
+        subject: 'Request for Professional Reference',
+        senderSection: 'SENDER INFORMATION',
+        recipient: {
+          section: 'REFERENCE CONTACT',
+          orgField: 'Company',
+          attnField: 'Full Name'
+        },
+        body: [
+          '<p>I hope this message finds you well. I am reaching out because I have great respect for your perspective on my work, and I would be grateful for your support as I pursue my next opportunity.</p>',
+          '<h3>About My Search</h3><p>Positions or Roles Being Pursued: {REQUEST DETAILS.Positions or Roles Being Pursued}<br>Key Skills / Accomplishments to Highlight: {REQUEST DETAILS.Key Skills / Accomplishments to Highlight}<br>Timeframe: {REQUEST DETAILS.Timeframe}<br>Preferred Method for Reference Checks: {REQUEST DETAILS.Preferred Method for Reference Checks}<br>Additional Context: {REQUEST DETAILS.Additional Context}</p>',
+          '<h3>What I\'m Asking</h3><p>If you are comfortable serving as a reference, I would appreciate your permission to list you, along with your current contact information and title. I am happy to share talking points or a brief summary of the roles I am targeting so you have what you need if contacted.</p>',
+          '<p>I completely understand if this is not possible, and there is no pressure either way. Thank you so much for considering it.</p>'
+        ]
+      },
+
+      // LinkedIn Networking Message Template
+      'linkedin_networking_message_template': {
+        subject: 'Networking Outreach',
+        senderSection: 'YOUR INFORMATION',
+        recipient: {
+          section: 'RECIPIENT INFORMATION',
+          orgField: 'Recipient Company',
+          attnField: 'Recipient Name'
+        },
+        body: [
+          '<p>I am reaching out to connect regarding opportunities in {YOUR INFORMATION.Industry / Field}. I appreciate your work at {RECIPIENT INFORMATION.Recipient Company} and thought your perspective would be valuable as I explore {YOUR INFORMATION.Target Role(s)}.</p>',
+          '<h3>About Me</h3><p>Full Name: {YOUR INFORMATION.Full Name}<br>Current / Most Recent Job Title: {YOUR INFORMATION.Current / Most Recent Job Title}<br>Industry / Field: {YOUR INFORMATION.Industry / Field}<br>Target Role(s): {YOUR INFORMATION.Target Role(s)}<br>LinkedIn Profile: {YOUR INFORMATION.LinkedIn Profile URL}</p>',
+          '<h3>How I Know You</h3><p>{RECIPIENT INFORMATION.How You Know Them}</p>',
+          '<h3>Message</h3><p>Opening: {MESSAGE DRAFT WORKSHEET.Opening — Personal Hook}<br>Context: {MESSAGE DRAFT WORKSHEET.Context — Your Situation}<br>The Ask: {MESSAGE DRAFT WORKSHEET.The Ask — Specific Request}<br>The Easy Out: {MESSAGE DRAFT WORKSHEET.The Easy Out}</p>',
+          '<p>No pressure at all — I know everyone is busy. If this works for you, I would really appreciate the chance to connect briefly.</p>'
+        ]
+      },
+
+      // COBRA Election Letter
+      'cobra_election_letter': {
+        subject: 'COBRA Continuation Coverage Election',
+        senderSection: 'EMPLOYEE / BENEFICIARY INFORMATION',
+        recipient: {
+          section: 'EMPLOYER / PLAN INFORMATION',
+          orgField: 'Former Employer Name',
+          attnField: 'Plan Administrator Name',
+          addressField: 'Plan Administrator Address'
+        },
+        body: [
+          '<p>I am writing to formally elect COBRA continuation coverage under the {EMPLOYER / PLAN INFORMATION.Group Health Plan Name} following my qualifying event on {EMPLOYEE / BENEFICIARY INFORMATION.Date of Qualifying Event}.</p>',
+          '<h3>Employee / Beneficiary Information</h3><p>Full Name: {EMPLOYEE / BENEFICIARY INFORMATION.Full Name}<br>Date of Birth: {EMPLOYEE / BENEFICIARY INFORMATION.Date of Birth}<br>SSN (last 4): {EMPLOYEE / BENEFICIARY INFORMATION.SSN (last 4)}<br>Qualifying Event: {EMPLOYEE / BENEFICIARY INFORMATION.Qualifying Event}<br>Date of Qualifying Event: {EMPLOYEE / BENEFICIARY INFORMATION.Date of Qualifying Event}<br>Date Coverage Ended: {EMPLOYEE / BENEFICIARY INFORMATION.Date Coverage Ended}</p>',
+          '<h3>Plan Information</h3><p>Group Health Plan Name: {EMPLOYER / PLAN INFORMATION.Group Health Plan Name}<br>Group Plan Number: {EMPLOYER / PLAN INFORMATION.Group Plan Number}<br>Previous Employee ID: {EMPLOYER / PLAN INFORMATION.Previous Employee ID}</p>',
+          '<h3>Coverage Election</h3><p>Coverage Level Elected: {COVERAGE ELECTION.Coverage Level Elected}<br>Individuals to Be Covered: {COVERAGE ELECTION.Individuals to Be Covered}<br>Person 1: {COVERAGE ELECTION.Name / DOB / Relationship (Person 1)}<br>Person 2: {COVERAGE ELECTION.Name / DOB / Relationship (Person 2)}<br>Plan Option Selected: {COVERAGE ELECTION.Plan Option Selected}<br>Dental Included: {COVERAGE ELECTION.Dental Included}<br>Vision Included: {COVERAGE ELECTION.Vision Included}</p>',
+          '<h3>Payment Information</h3><p>Monthly Premium Amount: {PAYMENT INFORMATION.Monthly Premium Amount}<br>First Payment Due Date: {PAYMENT INFORMATION.First Payment Due Date}<br>Payment Method: {PAYMENT INFORMATION.Payment Method}</p>',
+          '<p>Please confirm receipt of this election and provide instructions for submitting my initial premium payment. Thank you for your prompt attention.</p>'
+        ]
+      },
+
+      // Unemployment Appeal Information Organizer
+      'unemployment_appeal_information_organizer': {
+        subject: 'Appeal of Unemployment Benefits Denial — Claim {CLAIMANT INFORMATION.Claimant ID / Case Number}',
+        senderSection: 'CLAIMANT INFORMATION',
+        recipient: {
+          section: 'DENIAL INFORMATION',
+          orgField: 'State Unemployment Agency Name',
+          attn: 'Appeals Administrator',
+          addressField: 'Agency Mailing Address for Appeals'
+        },
+        body: [
+          '<p>I am appealing the denial of my unemployment benefits claim dated {DENIAL INFORMATION.Date of Denial Notice}. I believe the decision is incorrect and respectfully request a full review of my case.</p>',
+          '<h3>Claimant Information</h3><p>Full Name: {CLAIMANT INFORMATION.Full Name}<br>SSN (last 4): {CLAIMANT INFORMATION.SSN (last 4)}<br>Date of Birth: {CLAIMANT INFORMATION.Date of Birth}<br>Claimant ID / Case Number: {CLAIMANT INFORMATION.Claimant ID / Case Number}</p>',
+          '<h3>Employment Information</h3><p>Former Employer: {EMPLOYMENT INFORMATION.Former Employer Name}<br>Your Job Title: {EMPLOYMENT INFORMATION.Your Job Title}<br>Date of Hire: {EMPLOYMENT INFORMATION.Date of Hire}<br>Last Day of Employment: {EMPLOYMENT INFORMATION.Last Day of Employment}<br>Employer\'s Version of Separation: {EMPLOYMENT INFORMATION.Reason for Separation (Employer\u2019s Version)}<br>My Description: {EMPLOYMENT INFORMATION.Your Description of Separation}</p>',
+          '<h3>Denial Details</h3><p>Date of Denial Notice: {DENIAL INFORMATION.Date of Denial Notice}<br>Reason for Denial: {DENIAL INFORMATION.Reason for Denial}<br>Appeal Deadline: {DENIAL INFORMATION.Appeal Deadline}</p>',
+          '<h3>Grounds for Appeal</h3><p>Reason 1: {APPEAL ARGUMENTS.Reason 1 — Why Denial Is Incorrect}<br>Reason 2: {APPEAL ARGUMENTS.Reason 2 — Additional Argument}<br>Reason 3: {APPEAL ARGUMENTS.Reason 3 (if applicable)}<br>Summary of Events: {APPEAL ARGUMENTS.Summary of Events}<br>Voluntary Resignation or Laid Off: {APPEAL ARGUMENTS.Voluntary Resignation or Terminated / Laid Off}<br>If Resigned — Good Cause: {APPEAL ARGUMENTS.If Resigned — Good Cause Reason}</p>',
+          '<p>I respectfully request a full review of my case and am available to participate in a hearing as scheduled. Thank you for your consideration.</p>'
+        ],
+        enclosuresSection: 'EVIDENCE AND DOCUMENTATION'
+      },
+
+      // Employer Notification of Death Letter
+      'employer_notification_of_death_letter': {
+        subject: 'Notification of Death — {DECEASED EMPLOYEE INFORMATION.Full Name}, Employee ID {DECEASED EMPLOYEE INFORMATION.Employee ID}',
+        senderSection: 'SENDER INFORMATION',
+        recipient: {
+          section: 'EMPLOYER / HR CONTACT',
+          orgField: 'Company Name',
+          attnField: 'HR Contact Name',
+          addressField: 'HR Department Address / Email'
+        },
+        body: [
+          '<p>I am writing to notify you of the passing of my {SENDER INFORMATION.Relationship to Deceased}, {DECEASED EMPLOYEE INFORMATION.Full Name}, on {DECEASED EMPLOYEE INFORMATION.Date of Death}. I would appreciate your assistance in settling {DECEASED EMPLOYEE INFORMATION.Full Name}\'s final employment matters.</p>',
+          '<h3>Deceased Employee Information</h3><p>Full Name: {DECEASED EMPLOYEE INFORMATION.Full Name}<br>Employee ID: {DECEASED EMPLOYEE INFORMATION.Employee ID}<br>Department: {DECEASED EMPLOYEE INFORMATION.Department}<br>Job Title: {DECEASED EMPLOYEE INFORMATION.Job Title}<br>Date of Hire: {DECEASED EMPLOYEE INFORMATION.Date of Hire}<br>Last Day Worked: {DECEASED EMPLOYEE INFORMATION.Last Day Worked}<br>Date of Death: {DECEASED EMPLOYEE INFORMATION.Date of Death}</p>',
+          '<h3>Information & Benefits Requested</h3><p>Please provide information regarding the following:</p><ol>{checklist:INFORMATION REQUESTED}</ol>',
+          '<p>Please let me know what additional documentation you require. Thank you for your compassion and prompt attention during this difficult time.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Estate Executor Introduction Letter
+      'estate_executor_introduction_letter': {
+        subject: 'Introduction as Executor — Estate of {DECEASED INFORMATION.Full Legal Name}',
+        senderSection: 'EXECUTOR INFORMATION',
+        recipient: {
+          section: 'INSTITUTION BEING NOTIFIED',
+          orgField: 'Institution Name',
+          attnField: 'Department / Contact'
+        },
+        body: [
+          '<p>I am writing to introduce myself as the executor / personal representative of the estate of {DECEASED INFORMATION.Full Legal Name}, who passed away on {DECEASED INFORMATION.Date of Death}. I am reaching out to begin the settlement process for any accounts or assets held with your institution.</p>',
+          '<h3>Deceased Information</h3><p>Full Legal Name: {DECEASED INFORMATION.Full Legal Name}<br>Date of Birth: {DECEASED INFORMATION.Date of Birth}<br>Date of Death: {DECEASED INFORMATION.Date of Death}<br>SSN (last 4): {DECEASED INFORMATION.SSN (last 4)}<br>Last Known Address: {DECEASED INFORMATION.Last Known Address}</p>',
+          '<h3>Court Appointment</h3><p>Probate Court: {COURT APPOINTMENT.Probate Court Name}<br>County and State: {COURT APPOINTMENT.County and State}<br>Case Number: {COURT APPOINTMENT.Case Number}<br>Date of Appointment: {COURT APPOINTMENT.Date of Appointment}<br>Estate EIN: {COURT APPOINTMENT.Estate EIN}</p>',
+          '<h3>Account Information on File</h3><p>Account Number(s): {INSTITUTION BEING NOTIFIED.Account Number(s)}</p>',
+          '<h3>Actions Requested</h3><ol>{checklist:ACTIONS REQUESTED}</ol>',
+          '<p>Please let me know what additional documentation is needed to verify my authority and what the next steps are. Thank you for your assistance during this difficult time.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Bank Death Notification Letter
+      'bank_death_notification_letter': {
+        subject: 'Death Notification — Account Holder {DECEASED ACCOUNT HOLDER.Full Legal Name}',
+        senderSection: 'SENDER INFORMATION',
+        recipient: {
+          section: 'ACCOUNT INFORMATION',
+          orgField: 'Institution Name',
+          attnField: 'Branch',
+          attn: 'Accounts Department'
+        },
+        body: [
+          '<p>I am writing to notify you of the passing of {DECEASED ACCOUNT HOLDER.Full Legal Name} on {DECEASED ACCOUNT HOLDER.Date of Death}. {DECEASED ACCOUNT HOLDER.Full Legal Name} held accounts at your institution, and I need to initiate the process to settle these banking affairs.</p>',
+          '<h3>Deceased Account Holder</h3><p>Full Legal Name: {DECEASED ACCOUNT HOLDER.Full Legal Name}<br>Date of Birth: {DECEASED ACCOUNT HOLDER.Date of Birth}<br>Date of Death: {DECEASED ACCOUNT HOLDER.Date of Death}<br>SSN (last 4): {DECEASED ACCOUNT HOLDER.SSN (last 4)}</p>',
+          '<h3>Account Information</h3><p>Branch: {ACCOUNT INFORMATION.Branch}<br>Account 1 Number: {ACCOUNT INFORMATION.Account 1 Number}<br>Account Type: {ACCOUNT INFORMATION.Account Type}<br>Account 2 Number: {ACCOUNT INFORMATION.Account 2 Number}<br>Account 3 Number: {ACCOUNT INFORMATION.Account 3 Number}</p>',
+          '<h3>Actions Requested</h3><ol>{checklist:ACTIONS REQUESTED}</ol>',
+          '<p>Please let me know the next steps and any additional forms I need to complete. I can be reached at the contact information above.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Credit Bureau Death Notification Letter
+      'credit_bureau_death_notification_letter': {
+        subject: 'Request for Deceased Person Alert on Credit Report',
+        senderSection: 'SENDER INFORMATION',
+        recipient: {
+          section: 'DECEASED INDIVIDUAL',
+          orgField: 'Full Legal Name',
+          attn: 'Fraud / Deceased Alert Department'
+        },
+        body: [
+          '<p>I am writing to request that you place a deceased person alert on the credit file of {DECEASED INDIVIDUAL.Full Legal Name}. This alert will help protect the estate and surviving family members from identity theft and fraudulent new accounts.</p>',
+          '<h3>Deceased Individual Information</h3><p>Full Legal Name: {DECEASED INDIVIDUAL.Full Legal Name}<br>Date of Birth: {DECEASED INDIVIDUAL.Date of Birth}<br>Date of Death: {DECEASED INDIVIDUAL.Date of Death}<br>Social Security Number: {DECEASED INDIVIDUAL.Social Security Number}<br>Last Known Address: {DECEASED INDIVIDUAL.Last Known Address}</p>',
+          '<h3>Actions Requested</h3><ol>{checklist:ACTIONS REQUESTED}</ol>',
+          '<p>I am {SENDER INFORMATION.Relationship to Deceased} and have enclosed proof of my authority along with a certified death certificate. Please confirm in writing once the alert has been placed. Thank you for your assistance in protecting the estate from fraud.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Utility Account Transfer Cancellation Letter
+      'utility_account_transfer_cancellation_letter': {
+        subject: 'Account {CURRENT ACCOUNT HOLDER.Account Number} — Transfer or Cancellation Request',
+        senderSection: 'SENDER INFORMATION',
+        recipient: {
+          section: 'CURRENT ACCOUNT HOLDER',
+          orgField: 'Full Name on Account',
+          attn: 'Customer Service Department'
+        },
+        body: [
+          '<p>I am writing regarding the utility account held by {CURRENT ACCOUNT HOLDER.Full Name on Account} (account number {CURRENT ACCOUNT HOLDER.Account Number}) at {SENDER INFORMATION.Service Address}. {CURRENT ACCOUNT HOLDER.Full Name on Account} passed away on {CURRENT ACCOUNT HOLDER.Date of Death}, and I need to arrange the transfer or cancellation of this account.</p>',
+          '<h3>Account Details</h3><p>Account Holder: {CURRENT ACCOUNT HOLDER.Full Name on Account}<br>Account Number: {CURRENT ACCOUNT HOLDER.Account Number}<br>Service Type: {CURRENT ACCOUNT HOLDER.Service Type}<br>Date of Death: {CURRENT ACCOUNT HOLDER.Date of Death}</p>',
+          '<h3>Requested Action</h3><p>New Account Holder Name: {ACTIONS REQUESTED.New Account Holder Name}<br>Effective Date: {ACTIONS REQUESTED.Effective Date}<br>Final Bill Mailing Address: {ACTIONS REQUESTED.Final Bill Mailing Address}</p><ol>{checklist:ACTIONS REQUESTED}</ol>',
+          '<p>I am {SENDER INFORMATION.Relationship to Account Holder} and have enclosed supporting documentation. Please confirm the transfer or cancellation and provide any final bill to the address listed above.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Subscription Membership Cancellation Letter
+      'subscription_membership_cancellation_letter': {
+        subject: 'Membership / Subscription Cancellation — {ACCOUNT / MEMBERSHIP DETAILS.Account Holder Name}',
+        senderSection: 'SENDER INFORMATION',
+        recipient: {
+          section: 'ACCOUNT / MEMBERSHIP DETAILS',
+          orgField: 'Service / Subscription',
+          attn: 'Customer Service / Cancellation Department'
+        },
+        body: [
+          '<p>I am writing to request the cancellation of the membership / subscription held by {ACCOUNT / MEMBERSHIP DETAILS.Account Holder Name}, who passed away. Please stop all recurring charges and confirm the cancellation in writing.</p>',
+          '<h3>Account Details</h3><p>Account Holder Name: {ACCOUNT / MEMBERSHIP DETAILS.Account Holder Name}<br>Account / Member Number: {ACCOUNT / MEMBERSHIP DETAILS.Account / Member Number}<br>Service / Subscription: {ACCOUNT / MEMBERSHIP DETAILS.Service / Subscription}<br>Billing Address on File: {ACCOUNT / MEMBERSHIP DETAILS.Billing Address on File}</p>',
+          '<h3>Cancellation Request</h3><p>Effective Cancellation Date: {CANCELLATION REQUEST.Effective Cancellation Date}<br>Refund Requested: {CANCELLATION REQUEST.Refund Requested}<br>Credit Card / Payment to Stop Charging: {CANCELLATION REQUEST.Credit Card / Payment to Stop Charging}<br>Additional Instructions: {CANCELLATION REQUEST.Additional Instructions}</p>',
+          '<p>I am {SENDER INFORMATION.Relationship to Account Holder} and have enclosed supporting documentation. Thank you for your prompt attention during this difficult time.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Vehicle Title Transfer Letter
+      'vehicle_title_transfer_letter': {
+        subject: 'Application for Vehicle Title Transfer — {VEHICLE INFORMATION.Year} {VEHICLE INFORMATION.Make} {VEHICLE INFORMATION.Model}',
+        senderSection: 'REQUESTOR INFORMATION',
+        recipient: {
+          section: 'DECEASED OWNER',
+          orgField: 'Full Legal Name',
+          attn: 'Department of Motor Vehicles — Title Division'
+        },
+        body: [
+          '<p>I am writing to request the transfer of vehicle title for the vehicle listed below. The current owner, {DECEASED OWNER.Full Legal Name}, passed away on {DECEASED OWNER.Date of Death}, and the vehicle is now part of the estate.</p>',
+          '<h3>Vehicle Information</h3><p>Year / Make / Model: {VEHICLE INFORMATION.Year} {VEHICLE INFORMATION.Make} {VEHICLE INFORMATION.Model}<br>Color: {VEHICLE INFORMATION.Color}<br>VIN: {VEHICLE INFORMATION.VIN}<br>Current Plate Number: {VEHICLE INFORMATION.Current Plate Number}<br>Title Number: {VEHICLE INFORMATION.Title Number}<br>Lien Holder: {VEHICLE INFORMATION.Lien Holder (if any)}<br>Odometer Reading: {VEHICLE INFORMATION.Odometer Reading}</p>',
+          '<h3>Deceased Owner</h3><p>Full Legal Name: {DECEASED OWNER.Full Legal Name}<br>Date of Death: {DECEASED OWNER.Date of Death}<br>SSN (last 4): {DECEASED OWNER.SSN (last 4)}</p>',
+          '<h3>Transfer Request</h3><p>Transfer Title To: {TRANSFER REQUEST.Transfer Title To}<br>New Owner Relationship: {TRANSFER REQUEST.New Owner Relationship to Deceased}<br>New Owner Address: {TRANSFER REQUEST.New Owner Address}<br>City, State / ZIP: {TRANSFER REQUEST.New Owner City, State / ZIP}</p>',
+          '<p>I am {REQUESTOR INFORMATION.Relationship to Deceased} and have authority to manage the vehicle transfer. Please let me know if any additional forms or fees are required.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Safe Deposit Box Access Letter
+      'safe_deposit_box_access_letter': {
+        subject: 'Request for Access to Safe Deposit Box — {DECEASED BOX HOLDER.Full Legal Name}',
+        senderSection: 'EXECUTOR INFORMATION',
+        recipient: {
+          section: 'SAFE DEPOSIT BOX INFORMATION',
+          orgField: 'Bank / Institution Name',
+          attnField: 'Branch Location',
+          attn: 'Safe Deposit Box Department'
+        },
+        body: [
+          '<p>I am writing to request access to the safe deposit box held by {DECEASED BOX HOLDER.Full Legal Name}, who passed away on {DECEASED BOX HOLDER.Date of Death}. I am {EXECUTOR INFORMATION.Relationship to Deceased} and have the legal authority to access the box as part of settling the estate.</p>',
+          '<h3>Deceased Box Holder</h3><p>Full Legal Name: {DECEASED BOX HOLDER.Full Legal Name}<br>Date of Death: {DECEASED BOX HOLDER.Date of Death}<br>SSN (last 4): {DECEASED BOX HOLDER.SSN (last 4)}<br>Last Known Address: {DECEASED BOX HOLDER.Last Known Address}</p>',
+          '<h3>Box Information</h3><p>Branch Location: {SAFE DEPOSIT BOX INFORMATION.Branch Location}<br>Box Number: {SAFE DEPOSIT BOX INFORMATION.Box Number}<br>Key Available: {SAFE DEPOSIT BOX INFORMATION.Key Available (Yes / No)}</p>',
+          '<h3>Court Authority</h3><p>Probate Court: {REQUEST.Probate Court Name}<br>Case Number: {REQUEST.Case Number}<br>Date of Appointment: {REQUEST.Date of Appointment}</p>',
+          '<p>Please let me know what documentation and procedures are required to gain access to the box, and whether an inventory is made during my visit. I can be reached at the contact information above to schedule access.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Survivor Benefits Information Organizer
+      'survivor_benefits_information_organizer': {
+        subject: 'Application for Survivor Benefits — {DECEASED INFORMATION.Full Legal Name}',
+        senderSection: 'APPLICANT INFORMATION',
+        recipient: {
+          section: 'DECEASED INFORMATION',
+          orgField: 'Full Legal Name',
+          attn: 'Benefits Administrator'
+        },
+        body: [
+          '<p>I am writing to submit an application for survivor benefits following the passing of {DECEASED INFORMATION.Full Legal Name} on {DECEASED INFORMATION.Date of Death}. I am sharing the information below to support the application.</p>',
+          '<h3>Applicant Information</h3><p>Full Name: {APPLICANT INFORMATION.Full Name}<br>SSN: {APPLICANT INFORMATION.SSN}<br>Date of Birth: {APPLICANT INFORMATION.Date of Birth}<br>Relationship to Deceased: {APPLICANT INFORMATION.Relationship to Deceased}</p>',
+          '<h3>Deceased Information</h3><p>Full Legal Name: {DECEASED INFORMATION.Full Legal Name}<br>SSN: {DECEASED INFORMATION.SSN}<br>Date of Birth: {DECEASED INFORMATION.Date of Birth}<br>Date of Death: {DECEASED INFORMATION.Date of Death}<br>Place of Death: {DECEASED INFORMATION.Place of Death}<br>Last Known Address: {DECEASED INFORMATION.Last Known Address}</p>',
+          '<h3>Marriage / Relationship</h3><p>Date of Marriage: {MARRIAGE / RELATIONSHIP INFORMATION.Date of Marriage}<br>Place of Marriage: {MARRIAGE / RELATIONSHIP INFORMATION.Place of Marriage}<br>Married at Time of Death: {MARRIAGE / RELATIONSHIP INFORMATION.Were You Married at Time of Death}<br>Previous Marriages: {MARRIAGE / RELATIONSHIP INFORMATION.Previous Marriages}</p>',
+          '<h3>Benefits Requested</h3><ol>{checklist:BENEFITS REQUESTED}</ol>',
+          '<h3>Direct Deposit Information</h3><p>Bank Name: {DIRECT DEPOSIT INFORMATION.Bank Name}<br>Routing Number: {DIRECT DEPOSIT INFORMATION.Routing Number}<br>Account Number: {DIRECT DEPOSIT INFORMATION.Account Number}<br>Account Type: {DIRECT DEPOSIT INFORMATION.Account Type}</p>',
+          '<p>Please let me know what additional documentation or forms are needed to complete this application. Thank you for your assistance.</p>'
+        ],
+        enclosuresSection: 'DOCUMENTS TO BRING'
+      },
+
+      // Gift Letter Information Organizer
+      'gift_letter_information_organizer': {
+        subject: 'Gift Letter for Mortgage Application — {BORROWER (RECIPIENT) INFORMATION.Full Name}',
+        senderSection: 'DONOR INFORMATION',
+        recipient: {
+          section: 'LENDER PREPARATION',
+          orgField: 'Lender Name',
+          attnField: 'Loan Officer Name',
+          attn: 'Loan Department'
+        },
+        body: [
+          '<p>I am writing to certify that I have made a gift of funds to {BORROWER (RECIPIENT) INFORMATION.Full Name} for use in the purchase of {PROPERTY INFORMATION.Property Address}. This letter serves as documentation that the funds provided are a gift and not a loan requiring repayment.</p>',
+          '<h3>Donor Information</h3><p>Full Name: {DONOR INFORMATION.Full Name}<br>Relationship to Borrower: {DONOR INFORMATION.Relationship to Borrower}<br>Bank / Financial Institution: {DONOR INFORMATION.Bank / Financial Institution}<br>Account Number (last 4): {DONOR INFORMATION.Account Number (last 4)}<br>Account Type: {DONOR INFORMATION.Account Type}</p>',
+          '<h3>Recipient Information</h3><p>Full Name: {BORROWER (RECIPIENT) INFORMATION.Full Name}<br>Address: {BORROWER (RECIPIENT) INFORMATION.Mailing Address}</p>',
+          '<h3>Property Information</h3><p>Property Address: {PROPERTY INFORMATION.Property Address}<br>City, State / ZIP: {PROPERTY INFORMATION.City}, {PROPERTY INFORMATION.State / ZIP}<br>Loan Type: {PROPERTY INFORMATION.Loan Type}<br>Lender Name: {PROPERTY INFORMATION.Lender Name}</p>',
+          '<h3>Gift Details</h3><p>Gift Amount: {GIFT DETAILS.Gift Amount}<br>Date of Transfer: {GIFT DETAILS.Date of Transfer}<br>Method of Transfer: {GIFT DETAILS.Method of Transfer}<br>Purpose: {GIFT DETAILS.Purpose}</p>',
+          '<p>I certify that the above-stated amount is a true gift, made freely and without any expectation of repayment. The recipient is under no obligation to return these funds. Please let me know if any additional documentation is required.</p>'
+        ]
+      },
+
+      // Life Insurance Claim Preparation Checklist
+      'life_insurance_claim_preparation_checklist': {
+        subject: 'Life Insurance Claim — Policy {INSURED / POLICYHOLDER.Policy Number}',
+        senderSection: 'CLAIMANT INFORMATION',
+        recipient: {
+          section: 'INSURED / POLICYHOLDER',
+          orgField: 'Full Legal Name of Insured',
+          attn: 'Claims Department'
+        },
+        body: [
+          '<p>I am writing to submit a life insurance claim following the passing of {INSURED / POLICYHOLDER.Full Legal Name of Insured} on {INSURED / POLICYHOLDER.Date of Death}. Please find the claim details below.</p>',
+          '<h3>Claimant Information</h3><p>Full Name: {CLAIMANT INFORMATION.Full Name}<br>Relationship to Insured: {CLAIMANT INFORMATION.Relationship to Insured}</p>',
+          '<h3>Insured / Policyholder</h3><p>Full Legal Name: {INSURED / POLICYHOLDER.Full Legal Name of Insured}<br>Date of Birth: {INSURED / POLICYHOLDER.Date of Birth}<br>Date of Death: {INSURED / POLICYHOLDER.Date of Death}<br>Policy Number: {INSURED / POLICYHOLDER.Policy Number}<br>Group Number: {INSURED / POLICYHOLDER.Group Number}</p>',
+          '<h3>Claim Details</h3><p>Cause of Death: {CLAIM DETAILS.Cause of Death}<br>Place of Death: {CLAIM DETAILS.Place of Death}<br>Manner of Death: {CLAIM DETAILS.Manner of Death}<br>Payment Preference: {CLAIM DETAILS.Payment Preference}</p>',
+          '<p>Please confirm receipt of this claim and let me know if you need any further information or documentation to process it. Thank you for your prompt attention.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Parental Consent Permission Letter
+      'parental_consent_permission_letter': {
+        subject: 'Parental Consent and Permission for {CHILD INFORMATION.Child’s Full Legal Name}',
+        senderSection: 'PARENT / GUARDIAN 1',
+        recipient: {
+          section: 'AUTHORIZED ADULT / SUPERVISING PERSON',
+          orgField: 'Full Name',
+          attn: 'To Whom It May Concern'
+        },
+        body: [
+          '<p>I am writing to provide my consent and permission for my child, {CHILD INFORMATION.Child\u2019s Full Legal Name} (age {CHILD INFORMATION.Age}), to participate in the activity described below under the supervision of {AUTHORIZED ADULT / SUPERVISING PERSON.Full Name}.</p>',
+          '<h3>Child Information</h3><p>Full Legal Name: {CHILD INFORMATION.Child\u2019s Full Legal Name}<br>Date of Birth: {CHILD INFORMATION.Date of Birth}<br>Age: {CHILD INFORMATION.Age}<br>Passport Number: {CHILD INFORMATION.Passport Number}<br>Insurance Policy #: {CHILD INFORMATION.Insurance Policy #}</p>',
+          '<h3>Supervising Adult</h3><p>Full Name: {AUTHORIZED ADULT / SUPERVISING PERSON.Full Name}<br>Relationship to Child: {AUTHORIZED ADULT / SUPERVISING PERSON.Relationship to Child}<br>Phone: {AUTHORIZED ADULT / SUPERVISING PERSON.Phone}<br>Email: {AUTHORIZED ADULT / SUPERVISING PERSON.Email}<br>Government-Issued ID #: {AUTHORIZED ADULT / SUPERVISING PERSON.Government-Issued ID #}</p>',
+          '<h3>Permission Details</h3><p>Type of Permission: {PERMISSION DETAILS.Type of Permission}<br>Description of Activity: {PERMISSION DETAILS.Description of Activity}<br>Destination: {PERMISSION DETAILS.Destination}<br>Mode of Transportation: {PERMISSION DETAILS.Mode of Transportation}<br>Start Date: {PERMISSION DETAILS.Start Date}<br>End Date: {PERMISSION DETAILS.End Date}<br>Accommodation Details: {PERMISSION DETAILS.Accommodation Details}<br>Emergency Contact: {PERMISSION DETAILS.Emergency Contact}</p>',
+          '<h3>Medical Authorization</h3><p>Emergency Medical Consent: {MEDICAL AUTHORIZATION.Emergency Medical Consent}<br>Known Allergies: {MEDICAL AUTHORIZATION.Known Allergies}<br>Current Medications: {MEDICAL AUTHORIZATION.Current Medications}<br>Insurance Provider & Policy #: {MEDICAL AUTHORIZATION.Insurance Provider & Policy #}<br>Preferred Hospital / Doctor: {MEDICAL AUTHORIZATION.Preferred Hospital / Doctor}<br>Special Medical Instructions: {MEDICAL AUTHORIZATION.Special Medical Instructions}</p>',
+          '<h3>Additional Conditions</h3><p>Dietary Restrictions: {ADDITIONAL CONDITIONS OR RESTRICTIONS.Dietary Restrictions}<br>Activity Restrictions: {ADDITIONAL CONDITIONS OR RESTRICTIONS.Activity Restrictions}<br>Curfew / Schedule: {ADDITIONAL CONDITIONS OR RESTRICTIONS.Curfew / Schedule}<br>Other: {ADDITIONAL CONDITIONS OR RESTRICTIONS.Other Conditions}</p>',
+          '<p>Please contact me immediately in the event of any emergency. I appreciate your care and attention to my child during this period.</p>'
+        ]
+      },
+
+      // Name Change Notification Letter
+      'name_change_notification_letter': {
+        subject: 'Notification of Legal Name Change',
+        senderSection: 'YOUR INFORMATION',
+        recipient: {
+          section: 'INSTITUTION BEING NOTIFIED',
+          orgField: 'Institution Name',
+          attnField: 'Department'
+        },
+        body: [
+          '<p>I am writing to notify you of a legal name change. I was previously known as {YOUR INFORMATION.Previous Legal Name} and am now legally known as {YOUR INFORMATION.New Legal Name}. Please update your records accordingly.</p>',
+          '<h3>Name Change Details</h3><p>Previous Legal Name: {YOUR INFORMATION.Previous Legal Name}<br>New Legal Name: {YOUR INFORMATION.New Legal Name}<br>Date of Birth: {YOUR INFORMATION.Date of Birth}<br>SSN (last 4): {YOUR INFORMATION.SSN (last 4)}</p>',
+          '<h3>Court Order</h3><p>Court Name: {COURT ORDER INFORMATION.Court Name}<br>County and State: {COURT ORDER INFORMATION.County and State}<br>Case Number: {COURT ORDER INFORMATION.Case Number}<br>Date of Order: {COURT ORDER INFORMATION.Date of Order}<br>Reason for Name Change: {COURT ORDER INFORMATION.Reason for Name Change}</p>',
+          '<h3>Account Information</h3><p>Account Number: {INSTITUTION BEING NOTIFIED.Account Number}<br>Account Type: {INSTITUTION BEING NOTIFIED.Account Type}</p>',
+          '<h3>Actions Requested</h3><ol>{checklist:ACTIONS REQUESTED}</ol>',
+          '<p>Please process this update and confirm the change in writing. Let me know if you need any additional documentation.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Creditor Notification of Divorce Letter
+      'creditor_notification_of_divorce_letter': {
+        subject: 'Account Modification Request — Divorce Settlement',
+        senderSection: 'SENDER INFORMATION',
+        recipient: {
+          section: 'ACCOUNT INFORMATION',
+          orgField: 'Creditor / Lender Name',
+          attn: 'Customer Service Department'
+        },
+        body: [
+          '<p>I am writing regarding a joint account held with my former spouse. Per the terms of my divorce decree, I am requesting that this account be modified as described below.</p>',
+          '<h3>Account Details</h3><p>Creditor / Lender Name: {ACCOUNT INFORMATION.Creditor / Lender Name}<br>Account Number: {ACCOUNT INFORMATION.Account Number}<br>Account Type: {ACCOUNT INFORMATION.Account Type}<br>Names on Account: {ACCOUNT INFORMATION.Names on Account}<br>Account Balance: {ACCOUNT INFORMATION.Account Balance}</p>',
+          '<h3>Requested Action</h3><p>Action Requested: {NOTIFICATION.Action Requested}<br>Date of Filing / Separation: {NOTIFICATION.Date of Filing / Separation}<br>Court Jurisdiction: {NOTIFICATION.Court Jurisdiction}<br>Additional Instructions: {NOTIFICATION.Additional Instructions}</p>',
+          '<p>I have enclosed supporting documentation. Please process this request and confirm the change in writing to both account holders. I can be reached at the contact information above if you need additional information.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Retirement Account Division Information Request Letter
+      'retirement_account_division_information_request_letter': {
+        subject: 'QDRO Information Request',
+        senderSection: 'REQUESTING PARTY',
+        recipient: {
+          section: 'PLAN PARTICIPANT (ACCOUNT HOLDER)',
+          orgField: 'Employer / Plan Sponsor',
+          attn: 'Plan Administrator'
+        },
+        body: [
+          '<p>I am writing to request information regarding the division of a retirement plan account held by {PLAN PARTICIPANT (ACCOUNT HOLDER).Full Name} as part of divorce proceedings. The information below will support the preparation of a Qualified Domestic Relations Order (QDRO).</p>',
+          '<h3>Requesting Party</h3><p>Full Name: {REQUESTING PARTY.Full Name}<br>Attorney Name: {REQUESTING PARTY.Attorney Name}<br>Attorney Phone / Email: {REQUESTING PARTY.Attorney Phone / Email}</p>',
+          '<h3>Plan Participant</h3><p>Full Name: {PLAN PARTICIPANT (ACCOUNT HOLDER).Full Name}<br>Date of Birth: {PLAN PARTICIPANT (ACCOUNT HOLDER).Date of Birth}<br>SSN (last 4): {PLAN PARTICIPANT (ACCOUNT HOLDER).SSN (last 4)}<br>Employer / Plan Sponsor: {PLAN PARTICIPANT (ACCOUNT HOLDER).Employer / Plan Sponsor}</p>',
+          '<h3>Case Information</h3><p>Court Name: {CASE INFORMATION.Court Name}<br>County: {CASE INFORMATION.County}<br>State: {CASE INFORMATION.State}<br>Case Number: {CASE INFORMATION.Case Number}</p>',
+          '<h3>Information Requested</h3><ol>{checklist:INFORMATION REQUESTED}</ol>',
+          '<p>Please send the requested information and any model QDRO forms to the contact information above. Thank you for your prompt attention.</p>'
+        ]
+      },
+
+      // Joint Account Separation Request Letter
+      'joint_account_separation_request_letter': {
+        subject: 'Joint Account Separation Request — Divorce Settlement',
+        senderSection: 'REQUESTING PARTY',
+        recipient: {
+          section: 'ACCOUNT DETAILS',
+          orgField: 'Financial Institution',
+          attnField: 'Branch',
+          attn: 'Accounts Department'
+        },
+        body: [
+          '<p>I am writing to request the separation of a joint account into individual accounts following my divorce. The terms of the divorce decree permit the division of jointly held assets, including this account.</p>',
+          '<h3>Joint Account Holder</h3><p>Full Name: {JOINT ACCOUNT HOLDER.Full Name}<br>Relationship: {JOINT ACCOUNT HOLDER.Relationship}</p>',
+          '<h3>Account Details</h3><p>Financial Institution: {ACCOUNT DETAILS.Financial Institution}<br>Branch: {ACCOUNT DETAILS.Branch}<br>Account Number: {ACCOUNT DETAILS.Account Number}<br>Account Type: {ACCOUNT DETAILS.Account Type}<br>Current Approximate Balance: {ACCOUNT DETAILS.Current Approximate Balance}</p>',
+          '<h3>Request</h3><p>Action Requested: {REQUEST.Action Requested}<br>Proposed Distribution of Funds: {REQUEST.Proposed Distribution of Funds}<br>Court Order Reference: {REQUEST.Court Order Reference}<br>Effective Date Requested: {REQUEST.Effective Date Requested}</p>',
+          '<p>I have enclosed the supporting documentation. Please confirm the separation in writing and let me know what additional steps or forms are required.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // School Notification of Custody Change Letter
+      'school_notification_of_custody_change_letter': {
+        subject: 'Notification of Change in Custody Arrangements',
+        senderSection: 'PARENT / GUARDIAN INFORMATION',
+        recipient: {
+          section: 'STUDENT INFORMATION',
+          orgField: 'School Name',
+          attn: 'Principal / School Registrar'
+        },
+        body: [
+          '<p>I am writing to notify you of a change in custody arrangements for my child, {STUDENT INFORMATION.Student Full Name}, who attends {STUDENT INFORMATION.School Name}. Please update your records with the information below.</p>',
+          '<h3>Student Information</h3><p>Student Full Name: {STUDENT INFORMATION.Student Full Name}<br>Date of Birth: {STUDENT INFORMATION.Date of Birth}<br>Grade: {STUDENT INFORMATION.Grade}<br>Teacher / Homeroom: {STUDENT INFORMATION.Teacher / Homeroom}</p>',
+          '<h3>Custody Arrangement</h3><p>Type of Custody: {CUSTODY ARRANGEMENT.Type of Custody}<br>Date of Custody Order: {CUSTODY ARRANGEMENT.Date of Custody Order}<br>Primary Residential Parent: {CUSTODY ARRANGEMENT.Primary Residential Parent}<br>Decision-Making Authority: {CUSTODY ARRANGEMENT.Decision-Making Authority}<br>Pickup Authorization: {CUSTODY ARRANGEMENT.Pickup Authorization}<br>Restrictions on Contact or Access: {CUSTODY ARRANGEMENT.Restrictions on Contact or Access}</p>',
+          '<h3>Updated Emergency Contacts</h3><p>Contact 1: {UPDATED EMERGENCY CONTACTS.Contact 1 Name} — {UPDATED EMERGENCY CONTACTS.Phone} ({UPDATED EMERGENCY CONTACTS.Relationship})<br>Authorized for Pickup: {UPDATED EMERGENCY CONTACTS.Authorized for Pickup}<br>Contact 2: {UPDATED EMERGENCY CONTACTS.Contact 2 Name}</p>',
+          '<p>Please let me know if you need any additional documentation or have questions about the updated arrangement. Thank you for your prompt attention to this matter.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Insurance Removal Request Letter
+      'insurance_removal_request_letter': {
+        subject: 'Request for Removal of Ex-Spouse from Insurance Policy',
+        senderSection: 'POLICYHOLDER INFORMATION',
+        recipient: {
+          section: 'INSURANCE POLICY INFORMATION',
+          orgField: 'Insurance Company',
+          attnField: 'Agent Name / Contact',
+          attn: 'Customer Service Department'
+        },
+        body: [
+          '<p>I am writing to request the removal of my former spouse from the insurance policy described below. Per the terms of my divorce, I am requesting this change effective as soon as permitted.</p>',
+          '<h3>Policy Information</h3><p>Insurance Company: {INSURANCE POLICY INFORMATION.Insurance Company}<br>Policy Number: {INSURANCE POLICY INFORMATION.Policy Number}<br>Policy Type: {INSURANCE POLICY INFORMATION.Policy Type}<br>Agent Name / Contact: {INSURANCE POLICY INFORMATION.Agent Name / Contact}</p>',
+          '<h3>Person to Remove</h3><p>Full Name: {PERSON TO REMOVE.Full Name}<br>Date of Birth: {PERSON TO REMOVE.Date of Birth}<br>SSN (last 4): {PERSON TO REMOVE.SSN (last 4)}<br>Reason for Removal: {PERSON TO REMOVE.Reason for Removal}<br>Date of Divorce / Separation: {PERSON TO REMOVE.Date of Divorce / Separation}</p>',
+          '<h3>Requested Changes</h3><p>Effective Date of Change: {REQUESTED CHANGES.Effective Date of Change}</p><ol>{checklist:REQUESTED CHANGES}</ol>',
+          '<p>I have enclosed supporting documentation. Please process this request and confirm the change in writing. Let me know if any further information is needed.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Divorce Financial Disclosure Information Organizer
+      'divorce_financial_disclosure_information_organizer': {
+        subject: 'Financial Disclosure Submission — Case {CASE INFORMATION.Case Number}',
+        senderSection: 'FILING PARTY INFORMATION',
+        recipient: {
+          section: 'RECIPIENT',
+          orgField: 'Opposing Party Name',
+          attnField: 'Opposing Attorney',
+          attn: 'Opposing Counsel'
+        },
+        body: [
+          '<p>I am submitting the enclosed financial disclosure documents in connection with divorce proceedings in {CASE INFORMATION.Court Name}, case number {CASE INFORMATION.Case Number}. This submission is made in compliance with applicable disclosure rules.</p>',
+          '<h3>Filing Party</h3><p>Full Name: {FILING PARTY INFORMATION.Full Name}<br>Attorney Name: {FILING PARTY INFORMATION.Attorney Name}<br>Attorney Contact: {FILING PARTY INFORMATION.Attorney Contact}</p>',
+          '<h3>Case Information</h3><p>Court Name: {CASE INFORMATION.Court Name}<br>County and State: {CASE INFORMATION.County and State}<br>Case Number: {CASE INFORMATION.Case Number}<br>Petitioner: {CASE INFORMATION.Petitioner}<br>Respondent: {CASE INFORMATION.Respondent}<br>Date of Filing: {CASE INFORMATION.Date of Filing}<br>Date of Separation: {CASE INFORMATION.Date of Separation}</p>',
+          '<p>I certify that the financial information provided is complete and accurate to the best of my knowledge. I am available to provide additional documentation or clarification on any disclosure. Please acknowledge receipt of these disclosures at your convenience.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Medical Authorization Letter
+      'medical_authorization_letter': {
+        subject: 'Authorization to Release Medical Records and Information',
+        senderSection: 'PATIENT INFORMATION',
+        recipient: {
+          section: 'HEALTHCARE PROVIDER',
+          orgField: 'Provider / Facility Name',
+          attnField: 'Department'
+        },
+        body: [
+          '<p>I am writing to authorize you to release my medical records and health information to the person or entity identified below.</p>',
+          '<h3>Patient Information</h3><p>Full Name: {PATIENT INFORMATION.Full Name}<br>Date of Birth: {PATIENT INFORMATION.Date of Birth}<br>SSN (last 4): {PATIENT INFORMATION.SSN (last 4)}</p>',
+          '<h3>Authorized Recipient</h3><p>Name / Organization: {AUTHORIZED RECIPIENT OF RECORDS.Name / Organization}<br>Contact Person: {AUTHORIZED RECIPIENT OF RECORDS.Contact Person}<br>Address: {AUTHORIZED RECIPIENT OF RECORDS.Mailing Address}<br>City, State / ZIP: {AUTHORIZED RECIPIENT OF RECORDS.City}, {AUTHORIZED RECIPIENT OF RECORDS.State / ZIP}<br>Phone: {AUTHORIZED RECIPIENT OF RECORDS.Phone}<br>Fax: {AUTHORIZED RECIPIENT OF RECORDS.Fax}<br>Purpose of Disclosure: {AUTHORIZED RECIPIENT OF RECORDS.Purpose of Disclosure}</p>',
+          '<h3>Records to Be Released</h3><ol>{checklist:RECORDS TO BE RELEASED}</ol>',
+          '<h3>Authorization Terms</h3><p>Valid Until: {AUTHORIZATION TERMS.Valid Until (date or event)}</p>',
+          '<p>I understand that I may revoke this authorization at any time by submitting a written notice. Please contact me if any additional information is needed to process this release.</p>'
+        ]
+      },
+
+      // Caregiver Authorization Letter
+      'caregiver_authorization_letter': {
+        subject: 'Authorization for Caregiver to Act on My Behalf',
+        senderSection: 'PERSON GRANTING AUTHORIZATION',
+        recipient: {
+          section: 'AUTHORIZED CAREGIVER',
+          orgField: 'Full Name',
+          attn: 'To Whom It May Concern'
+        },
+        body: [
+          '<p>I am writing to authorize {AUTHORIZED CAREGIVER.Full Name} to act on my behalf in matters related to my care and personal affairs as described below.</p>',
+          '<h3>Person Granting Authorization</h3><p>Full Name: {PERSON GRANTING AUTHORIZATION.Full Name}<br>Date of Birth: {PERSON GRANTING AUTHORIZATION.Date of Birth}</p>',
+          '<h3>Authorized Caregiver</h3><p>Full Name: {AUTHORIZED CAREGIVER.Full Name}<br>Relationship: {AUTHORIZED CAREGIVER.Relationship}<br>Date of Birth: {AUTHORIZED CAREGIVER.Date of Birth}<br>Phone: {AUTHORIZED CAREGIVER.Phone}<br>Email: {AUTHORIZED CAREGIVER.Email}<br>Government-Issued ID: {AUTHORIZED CAREGIVER.Government-Issued ID Type & Number}</p>',
+          '<h3>Person Receiving Care (if different)</h3><p>Full Name: {PERSON RECEIVING CARE (IF DIFFERENT).Full Name}<br>Date of Birth: {PERSON RECEIVING CARE (IF DIFFERENT).Date of Birth}<br>Relationship to Grantor: {PERSON RECEIVING CARE (IF DIFFERENT).Relationship to Grantor}<br>Medical Conditions: {PERSON RECEIVING CARE (IF DIFFERENT).Medical Conditions}</p>',
+          '<h3>Scope of Caregiving Authorization</h3><ol>{checklist:SCOPE OF CAREGIVING AUTHORIZATION}</ol>',
+          '<h3>Limitations</h3><p>Actions NOT Authorized: {LIMITATIONS.Actions NOT Authorized}<br>Maximum Financial Transaction: {LIMITATIONS.Maximum Financial Transaction}<br>Institutions This Covers: {LIMITATIONS.Institutions This Covers}</p>',
+          '<h3>Duration</h3><p>Effective Start Date: {DURATION.Effective Start Date}<br>Expiration Date: {DURATION.Expiration Date}<br>How to Revoke: {DURATION.How to Revoke}</p>',
+          '<p>This authorization may be revoked in writing at any time. Please contact me if any additional documentation is needed.</p>'
+        ]
+      },
+
+      // Workplace Accommodation Request ADA
+      'workplace_accommodation_request_ada': {
+        subject: 'Request for Reasonable Workplace Accommodation',
+        senderSection: 'EMPLOYEE INFORMATION',
+        recipient: {
+          section: 'EMPLOYER / HR CONTACT',
+          orgField: 'Company Name',
+          attnField: 'HR Contact Name',
+          addressField: 'HR Department Address / Email'
+        },
+        body: [
+          '<p>I am writing to request a reasonable accommodation under the Americans with Disabilities Act (ADA) to help me perform my job effectively. With this accommodation in place, I am confident I can continue to be a productive member of the team.</p>',
+          '<h3>Employee Information</h3><p>Full Name: {EMPLOYEE INFORMATION.Full Name}<br>Employee ID: {EMPLOYEE INFORMATION.Employee ID}<br>Department: {EMPLOYEE INFORMATION.Department}<br>Job Title: {EMPLOYEE INFORMATION.Job Title}<br>Hire Date: {EMPLOYEE INFORMATION.Hire Date}<br>Direct Supervisor: {EMPLOYEE INFORMATION.Direct Supervisor}</p>',
+          '<h3>Accommodation Request</h3><p>General Description of Condition: {ACCOMMODATION REQUEST.General Description of Condition}<br>Job Function(s) Affected: {ACCOMMODATION REQUEST.Job Function(s) Affected}<br>Accommodation(s) Requested: {ACCOMMODATION REQUEST.Accommodation(s) Requested}<br>How This Would Help: {ACCOMMODATION REQUEST.How This Would Help}<br>Preferred Start Date: {ACCOMMODATION REQUEST.Preferred Start Date}<br>Temporary or Permanent: {ACCOMMODATION REQUEST.Temporary or Permanent}<br>Alternative Accommodations: {ACCOMMODATION REQUEST.Alternative Accommodations}</p>',
+          '<p>I am prepared to provide supporting medical documentation and am open to an interactive discussion to identify the most effective solution. Please contact me at your convenience to begin that conversation.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Return to Work Letter After Disability
+      'return_to_work_letter_after_disability': {
+        subject: 'Return-to-Work Notification',
+        senderSection: 'EMPLOYEE INFORMATION',
+        recipient: {
+          section: 'EMPLOYEE INFORMATION',
+          orgField: 'Direct Supervisor',
+          attn: 'Human Resources'
+        },
+        body: [
+          '<p>I am writing to notify you of my planned return to work following my recent leave. The details below outline my proposed return schedule and any accommodations I may need.</p>',
+          '<h3>Employee Information</h3><p>Full Name: {EMPLOYEE INFORMATION.Full Name}<br>Employee ID: {EMPLOYEE INFORMATION.Employee ID}<br>Department: {EMPLOYEE INFORMATION.Department}<br>Job Title: {EMPLOYEE INFORMATION.Job Title}<br>Direct Supervisor: {EMPLOYEE INFORMATION.Direct Supervisor}</p>',
+          '<h3>Leave Information</h3><p>Type of Leave: {LEAVE INFORMATION.Type of Leave}<br>Leave Start Date: {LEAVE INFORMATION.Leave Start Date}<br>Leave End Date: {LEAVE INFORMATION.Leave End Date}<br>Reason for Leave (general): {LEAVE INFORMATION.Reason for Leave (general)}</p>',
+          '<h3>Return to Work Details</h3><p>Proposed Return Date: {RETURN TO WORK DETAILS.Proposed Return Date}<br>Full-Time or Phased Return: {RETURN TO WORK DETAILS.Full-Time or Phased Return}<br>If Phased — Proposed Schedule: {RETURN TO WORK DETAILS.If Phased — Proposed Schedule}<br>Accommodations Needed: {RETURN TO WORK DETAILS.Accommodations Needed}<br>Restrictions from Doctor: {RETURN TO WORK DETAILS.Restrictions from Doctor}<br>Expected Duration of Restrictions: {RETURN TO WORK DETAILS.Expected Duration of Restrictions}</p>',
+          '<p>Please let me know if any additional paperwork or meetings are needed before my first day back. I look forward to returning and getting reacquainted with the team.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Disability Accommodation FollowUp Letter
+      'disability_accommodation_followup_letter': {
+        subject: 'Follow-Up on Accommodation Request',
+        senderSection: 'EMPLOYEE INFORMATION',
+        recipient: {
+          section: 'EMPLOYEE INFORMATION',
+          orgField: 'Direct Supervisor',
+          attn: 'Human Resources'
+        },
+        body: [
+          '<p>I am writing to follow up on my accommodation request submitted on {ORIGINAL REQUEST.Date of Original Request}. I have not yet received a final response and would like to check on the status of my request.</p>',
+          '<h3>Employee Information</h3><p>Full Name: {EMPLOYEE INFORMATION.Full Name}<br>Employee ID: {EMPLOYEE INFORMATION.Employee ID}<br>Department: {EMPLOYEE INFORMATION.Department}<br>Job Title: {EMPLOYEE INFORMATION.Job Title}<br>Direct Supervisor: {EMPLOYEE INFORMATION.Direct Supervisor}</p>',
+          '<h3>Original Request</h3><p>Date of Original Request: {ORIGINAL REQUEST.Date of Original Request}<br>Accommodation(s) Requested: {ORIGINAL REQUEST.Accommodation(s) Requested}<br>Submitted To: {ORIGINAL REQUEST.Submitted To}<br>Response Received: {ORIGINAL REQUEST.Response Received}</p>',
+          '<h3>Follow-Up</h3><p>Current Status of Request: {FOLLOW-UP.Current Status of Request}<br>Impact of Delay on Your Work: {FOLLOW-UP.Impact of Delay on Your Work}<br>Proposed Meeting Date / Time: {FOLLOW-UP.Proposed Meeting Date / Time}<br>Additional Information: {FOLLOW-UP.Additional Information}</p>',
+          '<p>I remain committed to working collaboratively to resolve this matter. Please contact me at your earliest convenience to schedule a time to discuss next steps.</p>'
+        ]
+      },
+
+      // Letter to Employer During FMLA Leave
+      'letter_to_employer_during_fmla_leave': {
+        subject: 'Update During FMLA Leave',
+        senderSection: 'EMPLOYEE INFORMATION',
+        recipient: {
+          section: 'EMPLOYEE INFORMATION',
+          orgField: 'Direct Supervisor',
+          attn: 'Human Resources'
+        },
+        body: [
+          '<p>I am writing to provide an update on my status during my Family and Medical Leave Act (FMLA) leave, which began on {LEAVE INFORMATION.FMLA Leave Start Date}. Thank you for your continued support during this time.</p>',
+          '<h3>Employee Information</h3><p>Full Name: {EMPLOYEE INFORMATION.Full Name}<br>Employee ID: {EMPLOYEE INFORMATION.Employee ID}<br>Department: {EMPLOYEE INFORMATION.Department}<br>Job Title: {EMPLOYEE INFORMATION.Job Title}<br>Direct Supervisor: {EMPLOYEE INFORMATION.Direct Supervisor}</p>',
+          '<h3>Leave Information</h3><p>FMLA Leave Start Date: {LEAVE INFORMATION.FMLA Leave Start Date}<br>Original Expected Return: {LEAVE INFORMATION.Original Expected Return}<br>Type of Leave: {LEAVE INFORMATION.Type of Leave}</p>',
+          '<h3>Purpose of This Letter</h3><ol>{checklist:PURPOSE OF THIS LETTER}</ol>',
+          '<h3>Details</h3><p>Updated Return Date (if changed): {DETAILS.Updated Return Date (if changed)}<br>Extension Requested Through: {DETAILS.Extension Requested Through}<br>Reason for Extension: {DETAILS.Reason for Extension}<br>Additional Information: {DETAILS.Additional Information}</p>',
+          '<p>Please let me know if any additional paperwork is needed. I remain committed to a smooth return and will keep you updated if my timeline changes.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // SSDI Appeal Information Organizer
+      'ssdi_appeal_information_organizer': {
+        subject: 'SSDI Benefits Appeal — {CLAIMANT INFORMATION.Full Name}',
+        senderSection: 'CLAIMANT INFORMATION',
+        recipient: {
+          section: 'CLAIM INFORMATION',
+          orgField: 'Claim Number',
+          attn: 'Social Security Administration — Office of Disability Adjudication and Review'
+        },
+        body: [
+          '<p>I am writing to appeal the denial of my SSDI benefits claim. The information below is provided to support the appeal and document the medical and vocational factors that justify a reversal of the decision.</p>',
+          '<h3>Claimant Information</h3><p>Full Name: {CLAIMANT INFORMATION.Full Name}<br>SSN: {CLAIMANT INFORMATION.SSN}<br>Date of Birth: {CLAIMANT INFORMATION.Date of Birth}<br>Attorney / Representative: {CLAIMANT INFORMATION.Attorney / Representative}<br>Attorney Phone / Email: {CLAIMANT INFORMATION.Attorney Phone / Email}</p>',
+          '<h3>Claim Information</h3><p>Claim Number: {CLAIM INFORMATION.Claim Number}<br>Date of Initial Application: {CLAIM INFORMATION.Date of Initial Application}<br>Date of Denial: {CLAIM INFORMATION.Date of Denial}<br>Type of Denial: {CLAIM INFORMATION.Type of Denial}</p>',
+          '<h3>Appeal Level</h3><ol>{checklist:APPEAL LEVEL}</ol>',
+          '<h3>Appeal Arguments</h3><p>Primary Reasons Denial Was Incorrect: {APPEAL ARGUMENTS.Primary Reasons Denial Was Incorrect}<br>New Evidence Since Denial: {APPEAL ARGUMENTS.New Evidence Since Denial}<br>Conditions That Have Worsened: {APPEAL ARGUMENTS.Conditions That Have Worsened}</p>',
+          '<h3>Medical Information Update</h3><p>New Treating Physician(s): {MEDICAL INFORMATION UPDATE.New Treating Physician(s)}<br>New Diagnoses Since Denial: {MEDICAL INFORMATION UPDATE.New Diagnoses Since Denial}<br>New Medications Prescribed: {MEDICAL INFORMATION UPDATE.New Medications Prescribed}<br>Hospitalizations / ER Visits: {MEDICAL INFORMATION UPDATE.Hospitalizations / ER Visits}<br>New Test Results or Imaging: {MEDICAL INFORMATION UPDATE.New Test Results or Imaging}<br>Updated Functional Capacity Evaluation: {MEDICAL INFORMATION UPDATE.Updated Functional Capacity Evaluation}</p>',
+          '<p>Please confirm receipt of this appeal and let me know what additional information is needed. Thank you for your careful review.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // SSDI Application Information Organizer
+      'ssdi_application_information_organizer': {
+        subject: 'SSDI Application Submission — {APPLICANT INFORMATION.Full Name}',
+        senderSection: 'APPLICANT INFORMATION',
+        recipient: {
+          section: 'DISABILITY INFORMATION',
+          orgField: 'Last Employer',
+          attn: 'Social Security Administration — Disability Benefits Application Unit'
+        },
+        body: [
+          '<p>I am writing to submit my Social Security Disability Insurance (SSDI) application. The information below organizes the key details regarding my disability, medical care, and work history.</p>',
+          '<h3>Applicant Information</h3><p>Full Name: {APPLICANT INFORMATION.Full Name}<br>SSN: {APPLICANT INFORMATION.SSN}<br>Date of Birth: {APPLICANT INFORMATION.Date of Birth}</p>',
+          '<h3>Disability Information</h3><p>Primary Disabling Condition(s): {DISABILITY INFORMATION.Primary Disabling Condition(s)}<br>Date Disability Began: {DISABILITY INFORMATION.Date Disability Began}<br>Date You Stopped Working: {DISABILITY INFORMATION.Date You Stopped Working}<br>Last Employer: {DISABILITY INFORMATION.Last Employer}</p>',
+          '<h3>Medical Providers</h3><p>Treating Physician: {MEDICAL PROVIDERS.Treating Physician Name} ({MEDICAL PROVIDERS.Treating Physician Phone})<br>Hospital(s) / Clinic(s): {MEDICAL PROVIDERS.Hospital(s) / Clinic(s)}<br>Medications Currently Prescribed: {MEDICAL PROVIDERS.Medications Currently Prescribed}<br>Other Medical Professionals: {MEDICAL PROVIDERS.Other Medical Professionals}<br>Functional Limitations: {MEDICAL PROVIDERS.Functional Limitations}</p>',
+          '<h3>Work History (Last 15 Years)</h3><p>Job Title: {WORK HISTORY (LAST 15 YEARS).Job Title}<br>Employer Name: {WORK HISTORY (LAST 15 YEARS).Employer Name}<br>Dates Employed: {WORK HISTORY (LAST 15 YEARS).Dates Employed}<br>Physical Demands: {WORK HISTORY (LAST 15 YEARS).Physical Demands}</p>',
+          '<h3>Education & Training</h3><p>Highest Level of Education: {EDUCATION & TRAINING.Highest Level of Education}<br>Schools / Institutions Attended: {EDUCATION & TRAINING.Schools / Institutions Attended}<br>Vocational Training or Certifications: {EDUCATION & TRAINING.Vocational Training or Certifications}<br>Specialized Job Skills: {EDUCATION & TRAINING.Specialized Job Skills}</p>',
+          '<p>Please confirm receipt of this submission and let me know what additional documentation is needed to complete the application.</p>'
+        ],
+        enclosuresSection: 'DOCUMENTS TO INCLUDE'
+      },
+
+      // Disability Insurance Claim Preparation Checklist
+      'disability_insurance_claim_preparation_checklist': {
+        subject: 'Disability Insurance Claim Submission',
+        senderSection: 'YOUR INFORMATION',
+        recipient: {
+          section: 'POLICY INFORMATION',
+          orgField: 'Insurance Company Name',
+          attn: 'Claims Department'
+        },
+        body: [
+          '<p>I am writing to submit a disability insurance claim. The information below summarizes my policy, medical diagnosis, and filing status.</p>',
+          '<h3>Your Information</h3><p>Full Name: {YOUR INFORMATION.Full Name}<br>Date of Birth: {YOUR INFORMATION.Date of Birth}<br>Social Security Number: {YOUR INFORMATION.Social Security Number}<br>Date Disability Began: {YOUR INFORMATION.Date Disability Began}</p>',
+          '<h3>Policy Information</h3><p>Insurance Company: {POLICY INFORMATION.Insurance Company Name}<br>Policy Number: {POLICY INFORMATION.Policy Number}<br>Employer-Provided or Individual: {POLICY INFORMATION.Is this employer-provided or individual policy?}<br>Employer Name: {POLICY INFORMATION.Employer Name}<br>HR/Benefits Contact: {POLICY INFORMATION.HR/Benefits Contact Name}<br>HR Phone: {POLICY INFORMATION.HR Phone Number}</p>',
+          '<h3>Medical Information</h3><p>Treating Physician: {MEDICAL INFORMATION.Treating Physician Name}<br>Specialty: {MEDICAL INFORMATION.Physician Specialty}<br>Physician Phone: {MEDICAL INFORMATION.Physician Phone Number}<br>Physician Fax: {MEDICAL INFORMATION.Physician Fax Number}<br>Primary Diagnosis: {MEDICAL INFORMATION.Primary Diagnosis}<br>Date of Diagnosis: {MEDICAL INFORMATION.Date of Diagnosis}</p>',
+          '<h3>Claim Filing Tracker</h3><p>Date You Called Insurer: {CLAIM FILING TRACKER.Date You Called Insurer}<br>Claim Filing Deadline: {CLAIM FILING TRACKER.Claim Filing Deadline (given by insurer)}<br>Claim Forms Received: {CLAIM FILING TRACKER.Claim Forms Received Date}<br>Claim Forms Submitted: {CLAIM FILING TRACKER.Claim Forms Submitted Date}<br>Claim Number: {CLAIM FILING TRACKER.Claim Number (assigned by insurer)}<br>Adjuster: {CLAIM FILING TRACKER.Name of Adjuster/Claims Handler} ({CLAIM FILING TRACKER.Adjuster Phone Number})<br>Expected Decision Date: {CLAIM FILING TRACKER.Expected Decision Date}</p>',
+          '<p>Please confirm receipt of this claim and let me know if any additional information is required. Thank you for your prompt attention.</p>'
+        ]
+      },
+
+      // Proof of Residency Letter
+      'proof_of_residency_letter': {
+        subject: 'Proof of Residency',
+        senderSection: 'PERSON WRITING THE LETTER',
+        recipient: {
+          section: 'PURPOSE',
+          orgField: 'Institution Requesting This Letter',
+          attn: 'To Whom It May Concern'
+        },
+        body: [
+          '<p>I am writing to confirm that {RESIDENT INFORMATION.Resident\u2019s Full Name} resides at the address listed below. This letter is provided for the purpose of {PURPOSE.Purpose of Verification}.</p>',
+          '<h3>Letter Writer</h3><p>Full Name: {PERSON WRITING THE LETTER.Full Name}<br>Relationship to Resident: {PERSON WRITING THE LETTER.Relationship to Resident}</p>',
+          '<h3>Resident Information</h3><p>Full Name: {RESIDENT INFORMATION.Resident\u2019s Full Name}<br>Date of Birth: {RESIDENT INFORMATION.Resident\u2019s Date of Birth}<br>Address: {RESIDENT INFORMATION.Resident\u2019s Address}<br>City, State / ZIP: {RESIDENT INFORMATION.City}, {RESIDENT INFORMATION.State / ZIP}<br>Move-In Date: {RESIDENT INFORMATION.Move-In Date}<br>Current Resident Since: {RESIDENT INFORMATION.Current Resident Since}</p>',
+          '<p>Please feel free to contact me if you need any additional information or verification.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Landlord Reference Letter
+      'landlord_reference_letter': {
+        subject: 'Tenant Reference — {TENANT INFORMATION.Tenant Full Name}',
+        senderSection: 'LANDLORD / PROPERTY MANAGER',
+        recipient: {
+          section: 'TENANT INFORMATION',
+          orgField: 'Tenant Full Name',
+          attn: 'Prospective Landlord / Property Manager'
+        },
+        body: [
+          '<p>I am writing to provide a reference for {TENANT INFORMATION.Tenant Full Name}, who was my tenant at {TENANT INFORMATION.Property Address Rented} from {TENANT INFORMATION.Lease Start Date} to {TENANT INFORMATION.Lease End Date}.</p>',
+          '<h3>Tenancy Details</h3><p>Property Address: {TENANT INFORMATION.Property Address Rented}<br>City, State / ZIP: {TENANT INFORMATION.City}, {TENANT INFORMATION.State / ZIP}<br>Lease Start Date: {TENANT INFORMATION.Lease Start Date}<br>Lease End Date: {TENANT INFORMATION.Lease End Date}<br>Monthly Rent Amount: {TENANT INFORMATION.Monthly Rent Amount}</p>',
+          '<h3>Reference Details</h3><p>Rent Paid On Time: {REFERENCE DETAILS.Rent Paid On Time}<br>Property Condition at Move-Out: {REFERENCE DETAILS.Property Condition at Move-Out}<br>Lease Violations: {REFERENCE DETAILS.Lease Violations}<br>Security Deposit Returned: {REFERENCE DETAILS.Security Deposit Returned}<br>Would Rent to Tenant Again: {REFERENCE DETAILS.Would You Rent to This Tenant Again}<br>Additional Comments: {REFERENCE DETAILS.Additional Comments}</p>',
+          '<p>Please feel free to contact me directly if you have any questions or need additional information.</p>'
+        ]
+      },
+
+      // Early Lease Termination Letter
+      'early_lease_termination_letter': {
+        subject: 'Request for Early Lease Termination',
+        senderSection: 'TENANT INFORMATION',
+        recipient: {
+          section: 'LANDLORD / PROPERTY MANAGER',
+          orgField: 'Full Name / Company',
+          attn: 'Property Management'
+        },
+        body: [
+          '<p>I am writing to request early termination of my lease for the property at {TENANT INFORMATION.Current Address (Rental Property)}. My current lease runs through {LEASE INFORMATION.Lease End Date}, but I am requesting to be released effective {TERMINATION REQUEST.Requested Move-Out Date}.</p>',
+          '<h3>Lease Information</h3><p>Lease Start Date: {LEASE INFORMATION.Lease Start Date}<br>Lease End Date: {LEASE INFORMATION.Lease End Date}<br>Monthly Rent: {LEASE INFORMATION.Monthly Rent}<br>Early Termination Clause: {LEASE INFORMATION.Early Termination Clause in Lease}<br>Penalty Amount: {LEASE INFORMATION.Penalty Amount}</p>',
+          '<h3>Termination Request</h3><p>Requested Move-Out Date: {TERMINATION REQUEST.Requested Move-Out Date}<br>Reason for Early Termination: {TERMINATION REQUEST.Reason for Early Termination}<br>Proposed Terms: {TERMINATION REQUEST.Proposed Terms}<br>Forwarding Address: {TERMINATION REQUEST.Forwarding Address}</p>',
+          '<p>I value my tenancy and want to resolve this transition smoothly. I am happy to assist with finding a replacement tenant and to discuss terms that work for both of us. Please let me know your thoughts at your earliest convenience.</p>'
+        ],
+        enclosuresSection: 'ENCLOSED DOCUMENTS'
+      },
+
+      // Landlord MoveOut Notice Letter
+      'landlord_moveout_notice_letter': {
+        subject: 'Notice of Intent to Vacate',
+        senderSection: 'TENANT INFORMATION',
+        recipient: {
+          section: 'LANDLORD / PROPERTY MANAGER',
+          orgField: 'Full Name / Company',
+          attn: 'Property Management'
+        },
+        body: [
+          '<p>I am writing to formally notify you that I will be vacating the property at {TENANT INFORMATION.Current Address} on {NOTICE DETAILS.Intended Move-Out Date}. This notice is provided in accordance with my lease\'s notice requirements.</p>',
+          '<h3>Notice Details</h3><p>Intended Move-Out Date: {NOTICE DETAILS.Intended Move-Out Date}<br>Last Day of Lease Term: {NOTICE DETAILS.Last Day of Lease Term}<br>Notice Period Required by Lease: {NOTICE DETAILS.Notice Period Required by Lease}<br>Forwarding Address: {NOTICE DETAILS.Forwarding Address for Deposit Return}<br>Forwarding City, State / ZIP: {NOTICE DETAILS.Forwarding City, State / ZIP}</p>',
+          '<h3>Requests</h3><ol>{checklist:REQUESTS}</ol>',
+          '<p>I commit to leaving the property clean and in good condition and returning all keys upon move-out. Please confirm receipt of this notice and share any final instructions for the move-out process.</p>'
+        ]
+      },
+
+      // Employer Remote Work State Change Notification
+      'employer_remote_work_state_change_notification': {
+        subject: 'Notification of Relocation to {NEW LOCATION.State / ZIP}',
+        senderSection: 'EMPLOYEE INFORMATION',
+        recipient: {
+          section: 'EMPLOYEE INFORMATION',
+          orgField: 'Direct Supervisor',
+          attn: 'Human Resources'
+        },
+        body: [
+          '<p>I am writing to notify you that I will be relocating on {NEW LOCATION.Move Date}. I am providing advance notice so we can plan for any changes to tax withholding, benefits, and work arrangement that may result from the move.</p>',
+          '<h3>Employee Information</h3><p>Full Name: {EMPLOYEE INFORMATION.Full Name}<br>Employee ID: {EMPLOYEE INFORMATION.Employee ID}<br>Department: {EMPLOYEE INFORMATION.Department}<br>Job Title: {EMPLOYEE INFORMATION.Job Title}<br>Direct Supervisor: {EMPLOYEE INFORMATION.Direct Supervisor}</p>',
+          '<h3>Current Location</h3><p>Current Address: {CURRENT LOCATION.Current Address}<br>City, State / ZIP: {CURRENT LOCATION.City}, {CURRENT LOCATION.State / ZIP}</p>',
+          '<h3>New Location</h3><p>New Address: {NEW LOCATION.New Address}<br>City, State / ZIP: {NEW LOCATION.City}, {NEW LOCATION.State / ZIP}<br>Move Date: {NEW LOCATION.Move Date}<br>Start Working from New State: {NEW LOCATION.Start Working from New State}</p>',
+          '<h3>Work Arrangement</h3><p>Current Work Arrangement: {WORK ARRANGEMENT.Current Work Arrangement}<br>Proposed After Move: {WORK ARRANGEMENT.Proposed After Move}<br>Frequency of Office Visits: {WORK ARRANGEMENT.Frequency of Office Visits (if any)}<br>Time Zone Change: {WORK ARRANGEMENT.Time Zone Change}</p>',
+          '<h3>Action Items for HR</h3><ol>{checklist:ACTION ITEMS FOR HR}</ol>',
+          '<p>I am committed to making this transition seamless. Please let me know what paperwork is required and how this affects my employment arrangement, benefits, or role.</p>'
+        ]
+      },
+
+      // HOA Transfer Notification Letter
+      'hoa_transfer_notification_letter': {
+        subject: 'Property Transfer Notification',
+        senderSection: 'CURRENT OWNER / SELLER',
+        recipient: {
+          section: 'HOA INFORMATION',
+          orgField: 'HOA / Association Name',
+          attnField: 'Contact Name',
+          addressField: 'Mailing Address'
+        },
+        body: [
+          '<p>I am writing to notify {HOA INFORMATION.HOA / Association Name} of a property transfer for the unit located at {CURRENT OWNER / SELLER.Property Address} (Unit/Lot {CURRENT OWNER / SELLER.Unit / Lot Number}). The transfer is expected to close on {REQUESTS.Closing / Transfer Date}.</p>',
+          '<h3>Current Owner / Seller</h3><p>Full Name: {CURRENT OWNER / SELLER.Full Name}<br>Property Address: {CURRENT OWNER / SELLER.Property Address}<br>City, State / ZIP: {CURRENT OWNER / SELLER.City}, {CURRENT OWNER / SELLER.State / ZIP}<br>Unit / Lot Number: {CURRENT OWNER / SELLER.Unit / Lot Number}</p>',
+          '<h3>New Owner / Buyer</h3><p>Full Name: {NEW OWNER / BUYER (IF KNOWN).Full Name}<br>Phone: {NEW OWNER / BUYER (IF KNOWN).Phone}<br>Email: {NEW OWNER / BUYER (IF KNOWN).Email}</p>',
+          '<h3>Requests</h3><p>Closing / Transfer Date: {REQUESTS.Closing / Transfer Date}</p><ol>{checklist:REQUESTS}</ol>',
+          '<p>Please confirm the transfer has been processed in your records and share any documents the new owner will need to remain in good standing with the association.</p>'
+        ]
+      },
+
+      // Employer Retirement Notification Letter
+      'employer_retirement_notification_letter': {
+        subject: 'Intent to Retire',
+        senderSection: 'EMPLOYEE INFORMATION',
+        recipient: {
+          section: 'EMPLOYER / HR CONTACT',
+          orgField: 'Company Name',
+          attnField: 'HR Contact Name / Title',
+          addressField: 'HR Department Address / Email'
+        },
+        body: [
+          '<p>I am writing to formally notify you of my intent to retire from my position as {EMPLOYEE INFORMATION.Job Title} at {EMPLOYER / HR CONTACT.Company Name}, effective {RETIREMENT DETAILS.Retirement Effective Date}. I have greatly valued my time with the company and appreciate the opportunities I have had over my {EMPLOYEE INFORMATION.Years of Service} of service.</p>',
+          '<h3>Employee Information</h3><p>Full Name: {EMPLOYEE INFORMATION.Full Name}<br>Employee ID: {EMPLOYEE INFORMATION.Employee ID}<br>Department: {EMPLOYEE INFORMATION.Department}<br>Job Title: {EMPLOYEE INFORMATION.Job Title}<br>Hire Date: {EMPLOYEE INFORMATION.Hire Date}<br>Years of Service: {EMPLOYEE INFORMATION.Years of Service}<br>Direct Supervisor: {EMPLOYEE INFORMATION.Direct Supervisor}</p>',
+          '<h3>Retirement Details</h3><p>Intended Last Day: {RETIREMENT DETAILS.Intended Last Day}<br>Retirement Effective Date: {RETIREMENT DETAILS.Retirement Effective Date}<br>Willing to Assist with Transition: {RETIREMENT DETAILS.Willing to Assist with Transition}<br>Available for Consulting After Retirement: {RETIREMENT DETAILS.Available for Consulting After Retirement}<br>Transition Period Proposed: {RETIREMENT DETAILS.Transition Period Proposed}</p>',
+          '<h3>Benefits & Compensation Questions</h3><p>Before my retirement date, I would appreciate information on the following:</p><ol>{checklist:BENEFITS & COMPENSATION QUESTIONS}</ol>',
+          '<p>I am happy to meet with HR or benefits personnel to discuss the transition. Thank you again for my years with the company, and I wish the organization continued success.</p>'
+        ]
+      },
+
+      // RMD Distribution Request Letter
+      'rmd_distribution_request_letter': {
+        subject: 'Required Minimum Distribution Request for Tax Year {DISTRIBUTION REQUEST.Tax Year for This RMD}',
+        senderSection: 'ACCOUNT HOLDER INFORMATION',
+        recipient: {
+          section: 'ACCOUNT INFORMATION',
+          orgField: 'Financial Institution / Custodian',
+          attn: 'Retirement Services Department'
+        },
+        body: [
+          '<p>I am writing to request a Required Minimum Distribution (RMD) from my retirement account for tax year {DISTRIBUTION REQUEST.Tax Year for This RMD}.</p>',
+          '<h3>Account Holder</h3><p>Full Name: {ACCOUNT HOLDER INFORMATION.Full Name}<br>SSN (last 4): {ACCOUNT HOLDER INFORMATION.SSN (last 4)}<br>Date of Birth: {ACCOUNT HOLDER INFORMATION.Date of Birth}</p>',
+          '<h3>Account Information</h3><p>Financial Institution: {ACCOUNT INFORMATION.Financial Institution / Custodian}<br>Account Number: {ACCOUNT INFORMATION.Account Number}<br>Account Type: {ACCOUNT INFORMATION.Account Type}<br>Account Balance (Dec 31 of Prior Year): {ACCOUNT INFORMATION.Account Balance (Dec 31 of Prior Year)}</p>',
+          '<h3>Distribution Request</h3><p>Tax Year: {DISTRIBUTION REQUEST.Tax Year for This RMD}<br>RMD Amount: {DISTRIBUTION REQUEST.RMD Amount (or request custodian calculate)}<br>Distribution Frequency: {DISTRIBUTION REQUEST.Distribution Frequency}<br>Distribute from Specific Investments: {DISTRIBUTION REQUEST.Distribute from Specific Investments}</p>',
+          '<h3>Payment Method</h3><p>Payment Method: {PAYMENT METHOD.Payment Method}<br>Bank Name: {PAYMENT METHOD.Bank Name}<br>Routing Number: {PAYMENT METHOD.Routing Number}<br>Account Number: {PAYMENT METHOD.Account Number}</p>',
+          '<h3>Tax Withholding</h3><p>Federal Tax Withholding: {TAX WITHHOLDING.Federal Tax Withholding}<br>State Tax Withholding: {TAX WITHHOLDING.State Tax Withholding}</p>',
+          '<p>Please confirm the distribution and provide any forms I need to complete. Thank you for your prompt attention.</p>'
+        ]
+      },
+
+      // Retirement Account Beneficiary Update Letter
+      'retirement_account_beneficiary_update_letter': {
+        subject: 'Request to Update Beneficiary Designations',
+        senderSection: 'ACCOUNT HOLDER INFORMATION',
+        recipient: {
+          section: 'ACCOUNT INFORMATION',
+          orgField: 'Financial Institution / Custodian',
+          attn: 'Retirement Plan Administrator'
+        },
+        body: [
+          '<p>I am writing to update the beneficiary designations on my retirement account. Please process this change and confirm in writing once completed.</p>',
+          '<h3>Account Holder</h3><p>Full Name: {ACCOUNT HOLDER INFORMATION.Full Name}<br>SSN (last 4): {ACCOUNT HOLDER INFORMATION.SSN (last 4)}<br>Date of Birth: {ACCOUNT HOLDER INFORMATION.Date of Birth}</p>',
+          '<h3>Account Information</h3><p>Financial Institution: {ACCOUNT INFORMATION.Financial Institution / Custodian}<br>Account Number: {ACCOUNT INFORMATION.Account Number}<br>Account Type: {ACCOUNT INFORMATION.Account Type}</p>',
+          '<h3>Primary Beneficiary</h3><p>Full Name: {PRIMARY BENEFICIARY DESIGNATION.Full Name}<br>Relationship: {PRIMARY BENEFICIARY DESIGNATION.Relationship}<br>Date of Birth: {PRIMARY BENEFICIARY DESIGNATION.Date of Birth}<br>SSN (last 4): {PRIMARY BENEFICIARY DESIGNATION.SSN (last 4)}<br>Percentage: {PRIMARY BENEFICIARY DESIGNATION.Percentage}<br>Address: {PRIMARY BENEFICIARY DESIGNATION.Address}<br>Additional Primary Beneficiary: {PRIMARY BENEFICIARY DESIGNATION.Primary Beneficiary 2}</p>',
+          '<h3>Contingent Beneficiary</h3><p>Full Name: {CONTINGENT BENEFICIARY.Full Name}<br>Relationship: {CONTINGENT BENEFICIARY.Relationship}<br>Date of Birth: {CONTINGENT BENEFICIARY.Date of Birth}<br>SSN (last 4): {CONTINGENT BENEFICIARY.SSN (last 4)}<br>Percentage: {CONTINGENT BENEFICIARY.Percentage}<br>Address: {CONTINGENT BENEFICIARY.Address}</p>',
+          '<h3>Per Stirpes & Spousal Consent</h3><p>Per Stirpes Designation: {PER STIRPES & SPOUSAL CONSENT.Per Stirpes Designation}<br>Spouse Name: {PER STIRPES & SPOUSAL CONSENT.Spouse Name}<br>Spouse Signature: {PER STIRPES & SPOUSAL CONSENT.Spouse Signature}<br>Date: {PER STIRPES & SPOUSAL CONSENT.Date}</p>',
+          '<p>Please let me know if any additional forms are required to complete this update.</p>'
+        ]
+      },
+
+      // Retiree Health Insurance Continuation Request
+      'retiree_health_insurance_continuation_request': {
+        subject: 'Request for Health Insurance Continuation into Retirement',
+        senderSection: 'RETIREE INFORMATION',
+        recipient: {
+          section: 'EMPLOYER / BENEFITS ADMINISTRATOR',
+          orgField: 'Company Name',
+          attnField: 'Benefits Administrator / Contact',
+          addressField: 'Benefits Department Address / Email'
+        },
+        body: [
+          '<p>I am retiring from {EMPLOYER / BENEFITS ADMINISTRATOR.Company Name} effective {RETIREE INFORMATION.Retirement Date} and am writing to request continuation of my health insurance coverage beyond my employment.</p>',
+          '<h3>Retiree Information</h3><p>Full Name: {RETIREE INFORMATION.Full Name}<br>Employee ID: {RETIREE INFORMATION.Employee ID}<br>Date of Birth: {RETIREE INFORMATION.Date of Birth}<br>Retirement Date: {RETIREE INFORMATION.Retirement Date}<br>Years of Service: {RETIREE INFORMATION.Years of Service}</p>',
+          '<h3>Current Coverage</h3><p>Current Health Plan: {CURRENT COVERAGE.Current Health Plan Name}<br>Plan Type: {CURRENT COVERAGE.Current Plan Type}<br>Current Monthly Premium: {CURRENT COVERAGE.Current Monthly Premium}<br>Dependents Currently Covered: {CURRENT COVERAGE.Dependents Currently Covered}<br>Coverage End Date Under Active Plan: {CURRENT COVERAGE.Coverage End Date Under Active Plan}</p>',
+          '<h3>Retiree Coverage Request</h3><p>Retiree Plan Option Requested: {RETIREE COVERAGE REQUEST.Retiree Plan Option Requested}<br>Coverage Level: {RETIREE COVERAGE REQUEST.Coverage Level}<br>Dependents to Cover: {RETIREE COVERAGE REQUEST.Dependents to Cover}<br>Requested Effective Date: {RETIREE COVERAGE REQUEST.Requested Effective Date}<br>Medicare Eligible: {RETIREE COVERAGE REQUEST.Medicare Eligible (Yes / No)}<br>Coordination with Medicare: {RETIREE COVERAGE REQUEST.Coordination with Medicare}</p>',
+          '<h3>Payment Information</h3><p>Estimated Monthly Premium: {PAYMENT INFORMATION.Estimated Monthly Retiree Premium}<br>Payment Method: {PAYMENT INFORMATION.Payment Method}</p>',
+          '<p>Please confirm the continuation of coverage and provide any enrollment forms required. Thank you for your assistance.</p>'
+        ]
+      },
+
+      // Letter of Instruction to Heirs
+      'letter_of_instruction_to_heirs': {
+        subject: 'Letter of Instruction to My Heirs',
+        senderSection: 'PERSONAL INFORMATION',
+        recipient: {
+          section: 'IMPORTANT CONTACTS',
+          orgField: 'Spouse / Partner',
+          attn: 'My Family'
+        },
+        body: [
+          '<p>If you are reading this letter, something has happened to me. I wanted to make sure you knew where to find important information and documents. Please take your time — the people and institutions listed here can help guide you through what comes next.</p>',
+          '<h3>My Information</h3><p>Full Legal Name: {PERSONAL INFORMATION.Full Legal Name}<br>Date of Birth: {PERSONAL INFORMATION.Date of Birth}<br>Social Security Number: {PERSONAL INFORMATION.Social Security Number}<br>Home Address: {PERSONAL INFORMATION.Home Address}</p>',
+          '<h3>Important Contacts</h3><p>Spouse / Partner: {IMPORTANT CONTACTS.Spouse / Partner} ({IMPORTANT CONTACTS.Phone})<br>Estate Attorney: {IMPORTANT CONTACTS.Estate Attorney}<br>Financial Advisor: {IMPORTANT CONTACTS.Financial Advisor}<br>CPA / Tax Advisor: {IMPORTANT CONTACTS.CPA / Tax Advisor}<br>Insurance Agent: {IMPORTANT CONTACTS.Insurance Agent}<br>Executor of Estate: {IMPORTANT CONTACTS.Executor of Estate}<br>POA (Financial): {IMPORTANT CONTACTS.POA (Financial)}<br>POA (Healthcare): {IMPORTANT CONTACTS.POA (Healthcare)}</p>',
+          '<h3>Location of Important Documents</h3><p>Will / Trust: {LOCATION OF IMPORTANT DOCUMENTS.Will / Trust}<br>Power of Attorney Documents: {LOCATION OF IMPORTANT DOCUMENTS.Power of Attorney Documents}<br>Healthcare Directive: {LOCATION OF IMPORTANT DOCUMENTS.Healthcare Directive / Living Will}<br>Life Insurance Policies: {LOCATION OF IMPORTANT DOCUMENTS.Life Insurance Policies}<br>Social Security Card: {LOCATION OF IMPORTANT DOCUMENTS.Social Security Card}<br>Birth Certificate: {LOCATION OF IMPORTANT DOCUMENTS.Birth Certificate}<br>Tax Returns (last 3 years): {LOCATION OF IMPORTANT DOCUMENTS.Tax Returns (last 3 years)}<br>Property Deeds / Vehicle Titles: {LOCATION OF IMPORTANT DOCUMENTS.Property Deeds / Vehicle Titles}<br>Safe Deposit Box: {LOCATION OF IMPORTANT DOCUMENTS.Safe Deposit Box Location & Key}</p>',
+          '<h3>Financial Accounts</h3><p>Bank 1: {FINANCIAL ACCOUNTS.Bank 1} (Account #: {FINANCIAL ACCOUNTS.Account #})<br>Bank 2: {FINANCIAL ACCOUNTS.Bank 2}<br>Investment / Brokerage: {FINANCIAL ACCOUNTS.Investment / Brokerage}<br>Retirement (IRA/401k): {FINANCIAL ACCOUNTS.Retirement (IRA/401k)}<br>Pension: {FINANCIAL ACCOUNTS.Pension} (Contact: {FINANCIAL ACCOUNTS.Contact})<br>Social Security: {FINANCIAL ACCOUNTS.Social Security} (Monthly Amount: {FINANCIAL ACCOUNTS.Monthly Amount})</p>',
+          '<h3>Insurance Policies</h3><p>Life Insurance 1: {INSURANCE POLICIES.Life Insurance 1} (Policy #: {INSURANCE POLICIES.Policy #})<br>Health Insurance: {INSURANCE POLICIES.Health Insurance}<br>Auto Insurance: {INSURANCE POLICIES.Auto Insurance}<br>Homeowner\'s / Renter\'s: {INSURANCE POLICIES.Homeowner\u2019s / Renter\u2019s}<br>Long-Term Care: {INSURANCE POLICIES.Long-Term Care}</p>',
+          '<h3>Debts and Obligations</h3><p>Mortgage: {DEBTS AND OBLIGATIONS.Mortgage} (Balance: {DEBTS AND OBLIGATIONS.Balance})<br>Auto Loan: {DEBTS AND OBLIGATIONS.Auto Loan}<br>Credit Card 1: {DEBTS AND OBLIGATIONS.Credit Card 1}<br>Credit Card 2: {DEBTS AND OBLIGATIONS.Credit Card 2}<br>Other Debts: {DEBTS AND OBLIGATIONS.Other Debts}</p>',
+          '<h3>Digital Accounts</h3><p>Password Manager: {DIGITAL ACCOUNTS.Password Manager Used}<br>Master Password Location: {DIGITAL ACCOUNTS.Master Password Location}<br>Email Account(s): {DIGITAL ACCOUNTS.Email Account(s)}<br>Social Media Accounts: {DIGITAL ACCOUNTS.Social Media Accounts}</p>',
+          '<h3>Funeral & Memorial Wishes</h3><p>Burial or Cremation: {FUNERAL & MEMORIAL WISHES.Burial or Cremation Preference}<br>Funeral Home: {FUNERAL & MEMORIAL WISHES.Funeral Home Preference}<br>Pre-Paid Plan: {FUNERAL & MEMORIAL WISHES.Pre-Paid Funeral Plan}<br>Religious or Cultural Ceremonies: {FUNERAL & MEMORIAL WISHES.Religious or Cultural Ceremonies}<br>In Lieu of Flowers / Donations To: {FUNERAL & MEMORIAL WISHES.In Lieu of Flowers} / {FUNERAL & MEMORIAL WISHES.Donations To}<br>Organ / Tissue Donation: {FUNERAL & MEMORIAL WISHES.Organ / Tissue Donation Preference}</p>',
+          '<h3>Personal Messages</h3><p>To my spouse / partner: {PERSONAL MESSAGES.Message to Spouse / Partner}<br>To my children: {PERSONAL MESSAGES.Message to Children}<br>To other loved ones: {PERSONAL MESSAGES.Message to Other Loved Ones}</p>',
+          '<p>Please lean on one another and on the professionals listed above. I love you all.</p>'
+        ]
+      },
+
+      // Medicare Enrollment Checklist and Cover Letter
+      'medicare_enrollment_checklist_and_cover_letter': {
+        subject: 'Medicare Enrollment Submission',
+        senderSection: 'APPLICANT INFORMATION',
+        recipient: {
+          section: 'APPLICANT INFORMATION',
+          orgField: 'Medicare Beneficiary ID (if assigned)',
+          attn: 'Medicare Enrollment Office'
+        },
+        body: [
+          '<p>I am writing to submit my Medicare enrollment materials. The information below summarizes my eligibility, current coverage, and the parts of Medicare for which I am enrolling.</p>',
+          '<h3>Applicant Information</h3><p>Full Name: {APPLICANT INFORMATION.Full Name}<br>SSN: {APPLICANT INFORMATION.SSN}<br>Date of Birth: {APPLICANT INFORMATION.Date of Birth}<br>Medicare Beneficiary ID: {APPLICANT INFORMATION.Medicare Beneficiary ID (if assigned)}</p>',
+          '<h3>Enrollment Type</h3><ol>{checklist:ENROLLMENT TYPE}</ol>',
+          '<h3>Current Coverage Information</h3><p>Currently Covered by Employer Plan: {CURRENT COVERAGE INFORMATION.Currently Covered by Employer Plan}<br>Employer Name: {CURRENT COVERAGE INFORMATION.Employer Name}<br>Coverage End Date: {CURRENT COVERAGE INFORMATION.Coverage End Date}<br>COBRA Coverage: {CURRENT COVERAGE INFORMATION.COBRA Coverage}<br>VA Coverage: {CURRENT COVERAGE INFORMATION.VA Coverage}</p>',
+          '<h3>Enrollment Checklist Completed</h3><ol>{checklist:ENROLLMENT CHECKLIST}</ol>',
+          '<p>Please confirm receipt of this submission and let me know if any additional documentation is needed to complete my enrollment.</p>'
+        ]
+      },
+
+      // Legacy Letter Ethical Will
+      'legacy_letter_ethical_will': {
+        subject: 'A Letter from the Heart',
+        senderSection: 'WITH LOVE',
+        recipient: {
+          section: 'MY HOPES FOR YOU',
+          orgField: 'My hopes for my spouse / partner',
+          attn: 'My Loved Ones'
+        },
+        body: [
+          '<p>I am writing this letter to share with you the values, lessons, and hopes that have shaped my life. This is not about money or possessions — it is about the things that truly matter.</p>',
+          '<h3>My Values</h3><p>The values I\'ve tried to live by: {MY VALUES.The values I\u2019ve tried to live by}<br>What I believe matters most in life: {MY VALUES.What I believe matters most in life}<br>Lessons I learned the hard way: {MY VALUES.Lessons I learned the hard way}</p>',
+          '<h3>My Hopes for You</h3><p>For my spouse / partner: {MY HOPES FOR YOU.My hopes for my spouse / partner}<br>For my children: {MY HOPES FOR YOU.My hopes for my children}<br>For my grandchildren: {MY HOPES FOR YOU.My hopes for my grandchildren}</p>',
+          '<h3>My Life Story</h3><p>The moments that shaped me most: {MY LIFE STORY.The moments that shaped me most}<br>My proudest accomplishments: {MY LIFE STORY.My proudest accomplishments}<br>My greatest challenges and what they taught me: {MY LIFE STORY.My greatest challenges and what they taught me}<br>Things I wish I had done differently: {MY LIFE STORY.Things I wish I had done differently}</p>',
+          '<h3>Gratitude</h3><p>I am grateful for: {GRATITUDE.I am grateful for}<br>People I want to thank: {GRATITUDE.People I want to thank}</p>',
+          '<h3>Traditions and Wishes</h3><p>Family traditions I hope you\'ll continue: {TRADITIONS AND WISHES.Family traditions I hope you\u2019ll continue}<br>How I\'d like to be remembered: {TRADITIONS AND WISHES.How I\u2019d like to be remembered}</p>',
+          '<h3>Final Words</h3><p>{FINAL WORDS.If I could say one last thing, it would be}</p>',
+          '<p>Carry the good memories. Carry the love. I am so proud of each of you.</p>'
+        ]
       }
     };
 
