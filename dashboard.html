@@ -5535,7 +5535,6 @@ guideLibrary['disability'] = {
       'severance_response_letter',
       'severance_counteroffer_letter',
       'hardship_letter_to_creditor',
-      'general_authorization_letter',
       '401k_rollover_request_letter',
       'professional_reference_request_letter',
       'linkedin_networking_message_template',
@@ -5551,7 +5550,6 @@ guideLibrary['disability'] = {
       'vehicle_title_transfer_letter',
       'safe_deposit_box_access_letter',
       'survivor_benefits_information_organizer',
-      'personal_affidavit_information_organizer',
       'gift_letter_information_organizer',
       'life_insurance_claim_preparation_checklist',
       // Divorce
@@ -5780,24 +5778,6 @@ guideLibrary['disability'] = {
           '<p>I am happy to provide any additional documentation needed to support this request. Thank you for your consideration during this difficult time.</p>'
         ],
         enclosuresSection: 'ENCLOSED DOCUMENTS'
-      },
-
-      // General Authorization Letter
-      'general_authorization_letter': {
-        subject: 'Authorization Letter',
-        senderSection: 'AUTHORIZING PERSON',
-        recipient: {
-          section: 'AUTHORIZED REPRESENTATIVE',
-          orgField: 'Full Name',
-          attn: 'To Whom It May Concern'
-        },
-        body: [
-          '<p>I, {AUTHORIZING PERSON.Full Name}, hereby authorize {AUTHORIZED REPRESENTATIVE.Full Name} ({AUTHORIZED REPRESENTATIVE.Relationship}) to act on my behalf for the purposes described below.</p>',
-          '<h3>Authorizing Person</h3><p>Full Name: {AUTHORIZING PERSON.Full Name}<br>Date of Birth: {AUTHORIZING PERSON.Date of Birth}<br>ID Number: {AUTHORIZING PERSON.ID Number}</p>',
-          '<h3>Authorized Representative</h3><p>Full Name: {AUTHORIZED REPRESENTATIVE.Full Name}<br>Relationship: {AUTHORIZED REPRESENTATIVE.Relationship}<br>Phone: {AUTHORIZED REPRESENTATIVE.Phone}<br>Email: {AUTHORIZED REPRESENTATIVE.Email}<br>ID Number: {AUTHORIZED REPRESENTATIVE.ID Number}</p>',
-          '<h3>Scope of Authorization</h3><p>Authorized Action(s): {SCOPE OF AUTHORIZATION.Authorized Action(s)}<br>Institutions or Parties: {SCOPE OF AUTHORIZATION.Institutions or Parties}<br>Specific Accounts or Reference Numbers: {SCOPE OF AUTHORIZATION.Specific Accounts or Reference Numbers}<br>Limitations on Authority: {SCOPE OF AUTHORIZATION.Limitations on Authority}<br>Effective Start Date: {SCOPE OF AUTHORIZATION.Effective Start Date}<br>Expiration Date: {SCOPE OF AUTHORIZATION.Expiration Date}</p>',
-          '<p>The authorized person will present a copy of this letter along with a valid government-issued ID. You may contact me directly to confirm this authorization at the phone or email above. This authorization may be revoked in writing at any time.</p>'
-        ]
       },
 
       // 401k Rollover Request Letter
@@ -6067,24 +6047,6 @@ guideLibrary['disability'] = {
           '<p>Please let me know what additional documentation or forms are needed to complete this application. Thank you for your assistance.</p>'
         ],
         enclosuresSection: 'DOCUMENTS TO BRING'
-      },
-
-      // Personal Affidavit Information Organizer
-      'personal_affidavit_information_organizer': {
-        subject: 'Submission of Personal Affidavit',
-        senderSection: 'AFFIANT INFORMATION',
-        recipient: {
-          section: 'PURPOSE OF AFFIDAVIT',
-          orgField: 'Institution or Party Requesting This',
-          attn: 'To Whom It May Concern'
-        },
-        body: [
-          '<p>I am submitting this letter alongside a sworn personal affidavit in connection with {PURPOSE OF AFFIDAVIT.Purpose}. The information below summarizes the facts contained in the affidavit.</p>',
-          '<h3>Affiant Information</h3><p>Full Legal Name: {AFFIANT INFORMATION.Full Legal Name}<br>Date of Birth: {AFFIANT INFORMATION.Date of Birth}<br>SSN (last 4): {AFFIANT INFORMATION.SSN (last 4)}<br>Government-Issued ID: {AFFIANT INFORMATION.Government-Issued ID Type & Number}</p>',
-          '<h3>Purpose of Affidavit</h3><p>Institution or Party Requesting This: {PURPOSE OF AFFIDAVIT.Institution or Party Requesting This}<br>Purpose: {PURPOSE OF AFFIDAVIT.Purpose}<br>Related Case / Claim / Account Number: {PURPOSE OF AFFIDAVIT.Related Case / Claim / Account Number}</p>',
-          '<h3>Key Facts in the Affidavit</h3><p>Key Fact 1: {INFORMATION TO INCLUDE IN YOUR STATEMENT.Key Fact 1}<br>Key Fact 2: {INFORMATION TO INCLUDE IN YOUR STATEMENT.Key Fact 2}<br>Key Fact 3: {INFORMATION TO INCLUDE IN YOUR STATEMENT.Key Fact 3}<br>Key Fact 4: {INFORMATION TO INCLUDE IN YOUR STATEMENT.Key Fact 4}<br>Supporting Details: {INFORMATION TO INCLUDE IN YOUR STATEMENT.Supporting Details}</p>',
-          '<p>All statements in the affidavit are made under oath and to the best of my knowledge. Please let me know if any additional documentation or clarification is required.</p>'
-        ]
       },
 
       // Gift Letter Information Organizer

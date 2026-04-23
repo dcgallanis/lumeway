@@ -2116,7 +2116,7 @@ Job Loss:
 - Severance Counter-Offer Letter
 - COBRA Election Letter
 - Hardship Letter to Creditor
-- General Authorization Letter
+- Networking Tracker Worksheet
 - 401(k) Rollover Request Letter
 - Professional Reference Request Letter
 - LinkedIn Networking Message Template
@@ -2126,13 +2126,14 @@ Job Loss:
 - Budget Reduction Worksheet
 - Job Offer Evaluation Worksheet
 - First 24 Hours After Losing Your Job
+- Employer Exit Checklist
 
 Estate:
 - Survivor Benefits Information Organizer
 - Employer Notification of Death Letter
 - Estate Executor Introduction Letter
 - Beneficiary Change Request
-- Personal Affidavit Information Organizer
+- Debt & Liability Inventory
 - Gift Letter Information Organizer
 - Bank Death Notification Letter
 - Credit Bureau Death Notification Letter
@@ -2144,6 +2145,9 @@ Estate:
 - Safe Deposit Box Access Letter
 - Obituary Writing Guide & Worksheet
 - First 24 Hours After a Death
+- Estate Settlement Timeline & Checklist
+- Final Arrangements Worksheet
+- Inherited Property Decision Worksheet
 
 Divorce:
 - Divorce Financial Disclosure Information Organizer
@@ -2512,8 +2516,8 @@ PRODUCTS = {
         "emoji": "📦", "count": "90",
         "long_desc": "Everything Lumeway offers in one package. All six bundles covering job loss, estate settlement, divorce, disability, relocation, and retirement — 90 documents plus bonus wellness worksheets.",
         "includes": [
-            ("Job Loss Survivor Kit (14 docs)", "Complete toolkit for severance, COBRA, unemployment, budgeting, job search, and more."),
-            ("Estate Bundle (16 docs)", "Notification letters, benefits claims, estate settlement, executor tools, and more."),
+            ("Job Loss Survivor Kit (15 docs)", "Complete toolkit for severance, COBRA, unemployment, budgeting, job search, and more."),
+            ("Estate Bundle (19 docs)", "Notification letters, benefits claims, estate settlement, executor tools, and more."),
             ("Divorce & Separation Bundle (14 docs)", "Financial disclosure, co-parenting, asset inventory, notification letters, and more."),
             ("Disability & Benefits Bundle (15 docs)", "SSDI application and appeal organizers, FMLA letters, accommodation requests, and more."),
             ("Moving & Relocation Bundle (13 docs)", "Address change checklists, transfer documents, notification letters, and more."),
@@ -2524,16 +2528,16 @@ PRODUCTS = {
         ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Step-by-step worksheets with plain-language instructions", "Information organizers to keep everything in one place", "First 24 Hours guides for each transition", "Professionally formatted and print-ready"],
         "transition_page": None},
-    "job-loss": {"name": "Job Loss Survivor Kit", "price": 1800, "desc": "14 documents for job loss & income crisis",
+    "job-loss": {"name": "Job Loss Survivor Kit", "price": 1800, "desc": "15 documents for job loss & income crisis",
         "headline": "Lost Your Job. Know Your Next Move.",
-        "emoji": "💼", "count": "14",
+        "emoji": "💼", "count": "15",
         "long_desc": "Worksheets, checklists, and letter templates to help you stay organized through unemployment, COBRA decisions, severance negotiations, and financial stabilization.",
         "includes": [
             ("Severance Response Letter", "A professional letter template to acknowledge and respond to a severance offer, giving you time to review the terms."),
             ("Severance Negotiation / Counter-Offer Letter", "A structured template for negotiating better severance terms — covers pay, benefits continuation, and non-compete clauses."),
             ("COBRA Election — Information Organizer", "Helps you formally elect COBRA continuation coverage with your former employer's benefits administrator."),
             ("Hardship Letter to Creditor", "A letter explaining your financial situation to creditors, requesting temporary payment adjustments or forbearance."),
-            ("General Authorization Letter", "Authorizes someone to act on your behalf for specific tasks — useful when you need help managing accounts or paperwork."),
+            ("Networking Tracker Worksheet", "Track every person you've reached out to during your job search — conversations, follow-ups, and next steps — so no connection falls through the cracks."),
             ("401(k) Rollover Request Letter", "A letter to initiate rolling over your employer-sponsored retirement account to an IRA or new employer plan."),
             ("Professional Reference Request Letter", "A polite, professional template for asking former colleagues or managers to serve as references."),
             ("LinkedIn Networking Message Template", "Ready-to-customize messages for reconnecting with your professional network during a job search."),
@@ -2543,19 +2547,20 @@ PRODUCTS = {
             ("Budget Reduction Worksheet", "Helps you identify where to cut expenses and build a bare-bones budget to stretch your savings."),
             ("Job Offer Evaluation Worksheet", "Compare multiple job offers across salary, benefits, commute, growth potential, and other factors that matter to you."),
             ("What to Do in the First 24 Hours After Losing Your Job", "A step-by-step guide for the first day — what to do immediately, what can wait, and what to avoid."),
+            ("Employer Exit Checklist", "A checklist for your last day — returning equipment, saving personal files, securing benefits paperwork, and confirming final-paycheck details so you walk out with everything you need."),
         ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Step-by-step worksheets with plain-language instructions", "Letter templates ready to customize and send", "Budget and job search tracking tools", "First 24 Hours action guide"],
         "transition_page": "/job-loss"},
-    "estate": {"name": "Estate Bundle", "price": 1800, "desc": "16 documents for death & estate",
+    "estate": {"name": "Estate Bundle", "price": 1800, "desc": "19 documents for death & estate",
         "headline": "The To-Do List Nobody Warns You About.",
-        "emoji": "🕊️", "count": "16",
+        "emoji": "🕊️", "count": "19",
         "long_desc": "Step-by-step guidance for the hardest days — notification letters, benefits claims, estate settlement tools, and a complete first-steps guide.",
         "includes": [
             ("Survivor Benefits Information Organizer", "Helps you gather and organize the information needed to file for Social Security survivor benefits, pension benefits, and life insurance claims."),
             ("Employer Notification of Death Letter", "A professional letter to notify the deceased's employer and begin the process of collecting final pay, benefits, and retirement accounts."),
             ("Estate Executor Introduction Letter", "Introduces you as the executor or personal representative to banks, insurers, and other institutions that need to work with you."),
             ("Beneficiary Change — Preparation Worksheet", "A template for updating beneficiary designations on accounts that need to be changed after a death."),
-            ("Personal Affidavit Information Organizer", "Helps you prepare the information needed for a small estate affidavit — often required to transfer assets without full probate."),
+            ("Debt & Liability Inventory", "Catalog every debt, balance, and creditor in the estate — so you know what's owed and nothing blindsides you as creditors come calling."),
             ("Gift Letter — Information Organizer", "Organizes the details needed when documenting gifts from an estate, often required by mortgage lenders or the IRS."),
             ("Bank / Financial Institution Death Notification Letter", "Notifies the bank of a death and requests next steps for accessing or closing the deceased's accounts."),
             ("Credit Bureau Death Notification Letter", "Notifies Equifax, Experian, and TransUnion to flag the deceased's credit file and help prevent identity theft."),
@@ -2567,6 +2572,9 @@ PRODUCTS = {
             ("Safe Deposit Box Access Letter", "A letter requesting access to the deceased's safe deposit box, including the documentation banks typically require."),
             ("Obituary Writing Guide & Worksheet", "A step-by-step guide and fill-in worksheet that walks you through writing a meaningful obituary."),
             ("What to Do in the First 24 Hours After a Death", "What to do immediately, what can wait, and who to call first — a calm, step-by-step guide for the hardest day."),
+            ("Estate Settlement Timeline & Checklist", "A phase-by-phase checklist covering the full estate settlement process, with deadlines for what to handle now, next, and before the court expects it."),
+            ("Final Arrangements Worksheet", "Organizes every decision for the first few days — funeral home, burial vs. cremation, service details, obituary placement, flowers, and reception — so you're not choosing on the fly while grieving."),
+            ("Inherited Property Decision Worksheet", "Helps you weigh your options for inherited property (keep, sell, rent, transfer), understand the tax implications, and organize the next steps."),
         ],
         "features": ["Editable .docx files — works in Word and Google Docs", "Notification letter templates for banks, employers, and creditors", "Estate organization worksheets", "Digital accounts inventory", "First 24 Hours action guide"],
         "transition_page": "/estate"},
